@@ -47,8 +47,6 @@
 #include "va.h"
 #include "winquake.h"
 
-#include <commctrl.h>
-
 extern void (*vid_menudrawfn) (void);
 extern void (*vid_menukeyfn) (int);
 
@@ -1560,7 +1558,7 @@ VID_Init (unsigned char *palette)
 
 	hIcon = LoadIcon (global_hInstance, MAKEINTRESOURCE (IDI_ICON1));
 
-	InitCommonControls ();
+//        InitCommonControls ();
 
 	VID_InitDIB (global_hInstance);
 	basenummodes = nummodes = 1;
