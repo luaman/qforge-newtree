@@ -26,22 +26,44 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <SDL/SDL.h>
-#include <keys.h>
-#include <quakedef.h>
-#include <d_local.h>
-#include <cvar.h>
-#include <draw.h>
-#include <sys.h>
-#include <lib_replace.h>
-#include <cmd.h>
-#include <client.h>
+
+#include "bothdefs.h"   // needed by: common.h, net.h, client.
+
+#include "quakedef.h"
+#include "menu.h"
+#include "vid.h"
+#include "sys.h"
+#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
+			//  modelgen.h, glmodel.h
+#include "wad.h"
+#include "draw.h"
+#include "cvar.h"
+#include "net.h"        // needed by: client.h
+#include "protocol.h"   // needed by: client.h
+#include "cmd.h"
+#include "keys.h"
+#include "sbar.h"
+#include "sound.h"
+#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
+#include "client.h"     // need cls in this file
+#include "console.h"
+#include "qendian.h"
+#include "qargs.h"
+#include "compat.h"
+#include "d_local.h"
+#include "input.h"
 
 
-cvar_t	*in_grab;
+cvar_t	*_windowed_mouse;
 
+int old_windowed_mouse;
 
-static float oldin_grab = 0;
+// static float oldin_grab = 0;
 
 extern viddef_t    vid;                // global video state
 unsigned short  d_8to16table[256];
@@ -56,17 +78,11 @@ unsigned short  d_8to16table[256];
 int    VGA_width, VGA_height, VGA_rowbytes, VGA_bufferrowbytes = 0;
 byte    *VGA_pagebase;
 
-int	VID_options_items = 1;
-
 static SDL_Surface *screen = NULL;
 
 static qboolean mouse_avail;
 static float   mouse_x, mouse_y;
 static int mouse_oldbuttonstate = 0;
-
-// No support for option menus
-// void (*vid_menudrawfn)(void) = NULL;
-// void (*vid_menukeyfn)(int key) = NULL;
 
 void    VID_SetPalette (unsigned char *palette)
 {
@@ -110,8 +126,8 @@ void    VID_Init (unsigned char *palette)
     {
         if (pnum >= com_argc-2)
             Sys_Error("VID: -winsize <width> <height>\n");
-        vid.width = Q_atoi(com_argv[pnum+1]);
-        vid.height = Q_atoi(com_argv[pnum+2]);
+        vid.width = atoi(com_argv[pnum+1]);
+        vid.height = atoi(com_argv[pnum+2]);
         if (!vid.width || !vid.height)
             Sys_Error("VID: Bad window width/height\n");
     }
@@ -226,15 +242,15 @@ void D_EndDirectRect (int x, int y, int width, int height)
 
 /*
 ================
-Sys_SendKeyEvents
+IN_SendKeyEvents
 ================
 */
 
-void Sys_SendKeyEvents(void)
+void IN_SendKeyEvents (void)
 {
-    SDL_Event event;
-    int sym, state;
-     int modstate;
+	SDL_Event event;
+	int sym, state, but;
+	int modstate;
 
     while (SDL_PollEvent(&event))
     {
@@ -278,7 +294,7 @@ void Sys_SendKeyEvents(void)
                    case SDLK_LCTRL: sym = K_CTRL; break;
                    case SDLK_RALT:
                    case SDLK_LALT: sym = K_ALT; break;
-		   case SDLK_CAPSLOCK:	sym = K_CAPSLOCK; break;
+                   case SDLK_CAPSLOCK: sym = K_CAPSLOCK; break;
                    case SDLK_KP0:
                        if(modstate & KMOD_NUM) sym = K_INS;
                        else sym = SDLK_0;
@@ -333,21 +349,53 @@ void Sys_SendKeyEvents(void)
                 Key_Event(sym, state);
                 break;
 
-            case SDL_MOUSEMOTION:
-                if (in_grab->value)
+	    case SDL_MOUSEBUTTONDOWN:
+	    case SDL_MOUSEBUTTONUP:
+		but = event.button.button;
+		if (but == 2)
+			but = 3;
+		else if (but == 3)
+			but = 2;
+
+		switch (but)
 		{
-		   if ((event.motion.x != (vid.width/2)) ||
-			(event.motion.y != (vid.height/2)) ) {
-                    mouse_x = event.motion.xrel*10;
-                    mouse_y = event.motion.yrel*10;
-                    if ( (event.motion.x < ((vid.width/2)-(vid.width/4))) ||
-                         (event.motion.x > ((vid.width/2)+(vid.width/4))) ||
-                         (event.motion.y < ((vid.height/2)-(vid.height/4))) ||
-                         (event.motion.y > ((vid.height/2)+(vid.height/4))) ) {
-                        SDL_WarpMouse(vid.width/2, vid.height/2);
-                    }
-		  }
+			case 1:
+			case 2:
+			case 3:
+				 Key_Event(K_MOUSE1 + but - 1, event.type
+						 == SDL_MOUSEBUTTONDOWN);
+				 break;
+			case 4:
+				 Key_Event(K_MWHEELUP, 1);
+				 Key_Event(K_MWHEELUP, 0);
+				 break;
+			case 5:
+				 Key_Event(K_MWHEELDOWN, 1);
+				 Key_Event(K_MWHEELDOWN, 0);
+				 break;
+		}
+		break;
+
+            case SDL_MOUSEMOTION:
+                if (_windowed_mouse->value)
+		{
+		   if ((event.motion.x != (vid.width/2))
+			   || (event.motion.y != (vid.height/2)) )
+		   {
+		       mouse_x = event.motion.xrel*10;
+		       mouse_y = event.motion.yrel*10;
+		       if ((event.motion.x < ((vid.width/2)-(vid.width/4))) ||
+		           (event.motion.x > ((vid.width/2)+(vid.width/4))) ||
+                           (event.motion.y < ((vid.height/2)-(vid.height/4))) ||
+                           (event.motion.y > ((vid.height/2)+(vid.height/4))) )
+			       SDL_WarpMouse(vid.width/2, vid.height/2);
+		   }
                 }
+		else
+		{
+			mouse_x = event.motion.xrel*10;
+			mouse_y = event.motion.yrel*10;
+		}
                 break;
 
             case SDL_QUIT:
@@ -358,22 +406,27 @@ void Sys_SendKeyEvents(void)
                 break;
         }
     }
-     if (oldin_grab != in_grab->value)
-	{ oldin_grab = in_grab->value;
-	  if (in_grab->value && !COM_CheckParm("-nomouse"))
-	  { mouse_avail = 1;
-	  }
-	  else
-	  { mouse_avail = 0;
-	  }
+}
+
+
+void
+IN_Commands (void)
+{
+	if (old_windowed_mouse != _windowed_mouse->value)
+	{
+		old_windowed_mouse = _windowed_mouse->value;
+		if (!_windowed_mouse->value)
+			SDL_WM_GrabInput (SDL_GRAB_OFF);
+		else
+			SDL_WM_GrabInput (SDL_GRAB_ON);
 	}
 }
 
 void IN_Init (void)
 {
-    in_grab = Cvar_Get ("in_grab","0",CVAR_ARCHIVE,"None");
+    _windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
 
-    if ( COM_CheckParm("-nomouse") && !in_grab->value)
+    if ( COM_CheckParm("-nomouse") && !_windowed_mouse->value)
         return;
 
     mouse_x = mouse_y = 0.0;
@@ -383,10 +436,6 @@ void IN_Init (void)
 void IN_Shutdown (void)
 {
     mouse_avail = 0;
-}
-void IN_SendKeyEvents (void)
-{
-    Sys_SendKeyEvents ();
 }
 
 void IN_Frame(void)
@@ -439,34 +488,6 @@ void IN_Move (usercmd_t *cmd)
     mouse_x = mouse_y = 0.0;
 }
 
-/*
-================
-Sys_ConsoleInput
-================
-*/
-/*
-char *Sys_ConsoleInput (void)
-{
-    return 0;
-}
-*/
-
-void VID_ExtraOptionDraw(unsigned int options_draw_cursor)
-{
-	// Windowed Mouse
-        M_Print (16, options_draw_cursor+=8, "             Use Mouse");
-        M_DrawCheckbox (220, options_draw_cursor, in_grab->value);
-}
-
-void VID_ExtraOptionCmd(int option_cursor)
-{
-	switch(option_cursor) {
-	case 1:	// in_grab
-		in_grab->value = !in_grab->value;
-		break;
-
-	}
-}
 
 void VID_InitCvars ()
 {
