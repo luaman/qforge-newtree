@@ -112,7 +112,7 @@ int         DIBWidth, DIBHeight;
 RECT        WindowRect;
 DWORD       WindowStyle, ExWindowStyle;
 
-HWND        mainwindow, dibwindow;
+HWND        mainwindow;
 
 int         vid_modenum = NO_MODE;
 int         vid_realmode;
@@ -252,23 +252,23 @@ VID_SetWindowedMode (int modenum)
 	height = rect.bottom - rect.top;
 
 	// Create the DIB window
-	dibwindow = CreateWindowEx (ExWindowStyle,
-								"WinQuake",
-								"GLQuake",
+        mainwindow = CreateWindowEx (ExWindowStyle,
+                                                                "QuakeForge",
+                                                                "GLQuakeWorld",
 								WindowStyle,
 								rect.left, rect.top,
 								width,
 								height, NULL, NULL, global_hInstance, NULL);
 
-	if (!dibwindow)
+        if (!mainwindow)
 		Sys_Error ("Couldn't create DIB window");
 
 	// Center and show the DIB window
-	CenterWindow (dibwindow, WindowRect.right - WindowRect.left,
+        CenterWindow (mainwindow, WindowRect.right - WindowRect.left,
 				  WindowRect.bottom - WindowRect.top, false);
 
-	ShowWindow (dibwindow, SW_SHOWDEFAULT);
-	UpdateWindow (dibwindow);
+        ShowWindow (mainwindow, SW_SHOWDEFAULT);
+        UpdateWindow (mainwindow);
 
 	modestate = MS_WINDOWED;
 
@@ -276,9 +276,9 @@ VID_SetWindowedMode (int modenum)
 // (to avoid flickering when re-sizing the window on the desktop),
 // we clear the window to black when created, otherwise it will be
 // empty while Quake starts up.
-	hdc = GetDC (dibwindow);
+        hdc = GetDC (mainwindow);
 	PatBlt (hdc, 0, 0, WindowRect.right, WindowRect.bottom, BLACKNESS);
-	ReleaseDC (dibwindow, hdc);
+        ReleaseDC (mainwindow, hdc);
 
 	if (vid.conheight > modelist[modenum].height)
 		vid.conheight = modelist[modenum].height;
@@ -288,8 +288,6 @@ VID_SetWindowedMode (int modenum)
 	vid.height = vid.conheight;
 
 	vid.numpages = 2;
-
-	mainwindow = dibwindow;
 
 	SendMessage (mainwindow, WM_SETICON, (WPARAM) TRUE, (LPARAM) hIcon);
 	SendMessage (mainwindow, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);
@@ -339,27 +337,27 @@ VID_SetFullDIBMode (int modenum)
 	height = rect.bottom - rect.top;
 
 	// Create the DIB window
-	dibwindow = CreateWindowEx (ExWindowStyle,
-								"WinQuake",
-								"GLQuake",
+        mainwindow = CreateWindowEx (ExWindowStyle,
+                                                                "QuakeForge",
+                                                                "GLQuakeWorld",
 								WindowStyle,
 								rect.left, rect.top,
 								width,
 								height, NULL, NULL, global_hInstance, NULL);
 
-	if (!dibwindow)
+        if (!mainwindow)
 		Sys_Error ("Couldn't create DIB window");
 
-	ShowWindow (dibwindow, SW_SHOWDEFAULT);
-	UpdateWindow (dibwindow);
+        ShowWindow (mainwindow, SW_SHOWDEFAULT);
+        UpdateWindow (mainwindow);
 
 	// Because we have set the background brush for the window to NULL
 	// (to avoid flickering when re-sizing the window on the desktop), we
 	// clear the window to black when created, otherwise it will be
 	// empty while Quake starts up.
-	hdc = GetDC (dibwindow);
+        hdc = GetDC (mainwindow);
 	PatBlt (hdc, 0, 0, WindowRect.right, WindowRect.bottom, BLACKNESS);
-	ReleaseDC (dibwindow, hdc);
+        ReleaseDC (mainwindow, hdc);
 
 	if (vid.conheight > modelist[modenum].height)
 		vid.conheight = modelist[modenum].height;
@@ -373,8 +371,6 @@ VID_SetFullDIBMode (int modenum)
 // needed because we're not getting WM_MOVE messages fullscreen on NT
 	window_x = 0;
 	window_y = 0;
-
-	mainwindow = dibwindow;
 
 	SendMessage (mainwindow, WM_SETICON, (WPARAM) TRUE, (LPARAM) hIcon);
 	SendMessage (mainwindow, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);
@@ -808,14 +804,14 @@ VID_Shutdown (void)
 		if (hRC)
 			wglDeleteContext (hRC);
 
-		if (hDC && dibwindow)
-			ReleaseDC (dibwindow, hDC);
+                if (hDC && mainwindow)
+                        ReleaseDC (mainwindow, hDC);
 
 		if (modestate == MS_FULLDIB)
 			ChangeDisplaySettings (NULL, 0);
 
-		if (maindc && dibwindow)
-			ReleaseDC (dibwindow, maindc);
+                if (maindc && mainwindow)
+                        ReleaseDC (mainwindow, maindc);
 
 		AppActivate (false, false);
 	}
@@ -1126,8 +1122,8 @@ MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case WM_DESTROY:
 			{
-				if (dibwindow)
-					DestroyWindow (dibwindow);
+                                if (mainwindow)
+                                        DestroyWindow (mainwindow);
 
 				PostQuitMessage (0);
 			}
@@ -1327,7 +1323,7 @@ VID_InitDIB (HINSTANCE hInstance)
 	wc.hCursor = LoadCursor (NULL, IDC_ARROW);
 	wc.hbrBackground = NULL;
 	wc.lpszMenuName = 0;
-	wc.lpszClassName = "WinQuake";
+        wc.lpszClassName = "QuakeForge";
 
 	if (!RegisterClass (&wc))
 		Sys_Error ("Couldn't register window class");
