@@ -362,7 +362,7 @@ Shared_Init8bitPalette (void)
 			*newPalette++ = *oldPalette++;
 		}
 
-		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_COLOR_INDEX8_EXT, 256, GL_RGB, GL_UNSIGNED_BYTE, thePalette);
+		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_COLOR_INDEX8_EXT, 256, GL_COLOR_INDEX8_EXT, GL_UNSIGNED_BYTE, thePalette);
 		is8bit = true;
 	}
 }
