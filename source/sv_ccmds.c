@@ -408,7 +408,7 @@ SV_Status_f
 */
 void SV_Status_f (void)
 {
-	int			i, j, l;
+	int			i;
 	client_t	*cl;
 	float		cpu, avg, pak;
 	char		*s;
@@ -424,7 +424,7 @@ void SV_Status_f (void)
 	Con_Printf ("cpu utilization  : %3i%%\n",(int)cpu);
 	Con_Printf ("avg response time: %i ms\n",(int)avg);
 	Con_Printf ("packets/frame    : %5.2f (%d)\n", pak, num_prstr);
-	
+
 // min fps lat drp
 	if (sv_redirected != RD_NONE) {
 		// most remote clients are 40 columns
@@ -442,7 +442,7 @@ void SV_Status_f (void)
 			Con_Printf ("%6i %5i", cl->userid, (int)cl->edict->v.frags);
 			if (cl->spectator)
 				Con_Printf(" (s)\n");
-			else			
+			else
 				Con_Printf("\n");
 
 			s = NET_BaseAdrToString ( cl->netchan.remote_address);
@@ -472,15 +472,11 @@ void SV_Status_f (void)
 			Con_Printf ("%5i %6i ", (int)cl->edict->v.frags,  cl->userid);
 
 			s = NET_BaseAdrToString ( cl->netchan.remote_address);
-			Con_Printf ("%s", s);
-			l = 16 - strlen(s);
-			for (j=0 ; j<l ; j++)
-				Con_Printf (" ");
-			
-			Con_Printf ("%s", cl->name);
-			l = 16 - strlen(cl->name);
-			for (j=0 ; j<l ; j++)
-				Con_Printf (" ");
+
+			Con_Printf ("%-15.15s ", s);
+
+			Con_Printf ("%-15.15s ", cl->name);
+
 			if (cl->state == cs_connected)
 			{
 				Con_Printf ("CONNECTING\n");
@@ -498,10 +494,10 @@ void SV_Status_f (void)
 				, cl->netchan.qport);
 			if (cl->spectator)
 				Con_Printf(" (s)\n");
-			else			
+			else
 				Con_Printf("\n");
 
-				
+
 		}
 	}
 	Con_Printf ("\n");
