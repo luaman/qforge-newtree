@@ -241,12 +241,19 @@ AC_CHECK_FUNCS(
 )
 
 dnl Checks for stricmp/strcasecmp
-AC_CHECK_FUNC(strcasecmp,,
-	AC_CHECK_FUNC(stricmp,
+#AC_CHECK_FUNC(strcasecmp,,
+#	AC_CHECK_FUNC(stricmp,
+#		AC_DEFINE(strcasecmp, stricmp),
+#		AC_MSG_ERROR([Neither stricmp nor strcasecmp found])
+#	)
+#)
+AC_CHECK_FUNC(strcasecmp, strcasecmp=yes, strcasecmp=no)
+if test $strcasecmp = no; then
+	AC_CHECK_FUNC(stricmp, 
 		AC_DEFINE(strcasecmp, stricmp),
 		AC_MSG_ERROR([Neither stricmp nor strcasecmp found])
 	)
-)
+fi
 
 dnl Checks for working -lm
 AC_CHECK_LIB(m, pow,,
