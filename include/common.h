@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 //#include "protocol.h" // for struct usercmd_s
 
+#ifndef _DEF_BYTE_
+# define _DEF_BYTE_
 typedef unsigned char 		byte;
-#define _DEF_BYTE_
+#endif
 
 // KJB Undefined true and false defined in SciTech's DEBUG.H header
 #undef true
