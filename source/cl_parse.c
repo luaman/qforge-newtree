@@ -394,8 +394,7 @@ void CL_ParseDownload (void)
 	if (size == -2) {
 		char *newname = MSG_ReadString();
 		if (strncmp (newname, cls.downloadname, strlen(cls.downloadname))
-			|| strstr(newname, "/../")
-			|| strstr(newname, "/./")) {
+			|| strstr(newname+strlen(cls.downloadname), "/")) {
 			Con_Printf ("WARNING: server tried to give a strange new name: %s\n",
 						newname);
 			CL_RequestNextDownload ();
