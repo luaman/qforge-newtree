@@ -25,17 +25,12 @@
 
 	$Id$
 */
-
-
-//  Some of this may not work. I'm not overly familiar with SDL, I just sort
-//  of podged this together from the SDL headers, and the other cd-rom code.
-//       -- Mark Baker <homer1@together.net>
-
-#include <SDL/SDL.h>
-
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
+#include <SDL.h>
+
 #include <windows.h>
 #include "qargs.h"
 #include "console.h"
