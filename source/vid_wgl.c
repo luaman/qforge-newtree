@@ -950,8 +950,6 @@ MAIN WINDOW
 ===================================================================
 */
 
-extern qboolean keydown[256];
-
 /*
 ================
 ClearAllStates
@@ -959,15 +957,7 @@ ClearAllStates
 */
 void ClearAllStates (void)
 {
-	int		i;
-
-// send an up event for each key, to make sure the server clears them all
-	for (i=0 ; i<256 ; i++)
-	{
-		if (keydown[i])
-			Key_Event (i, false);
-	}
-
+	CL_ClearStates ();
 	Key_ClearStates ();
 	IN_ClearStates ();
 }

@@ -449,6 +449,7 @@ extern 	kbutton_t 	in_strafe;
 extern 	kbutton_t 	in_speed;
 
 void CL_InitInput (void);
+void CL_ClearStates (void);
 void CL_SendCmd (void);
 void CL_SendMove (usercmd_t *cmd);
 
