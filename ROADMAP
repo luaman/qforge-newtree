@@ -18,4 +18,7 @@ o  Endy's effects need to be made to work properly
 ?  software targets should mix color at 16/16 or 24/32 color
 ?  Draw_Pic and other tex draw functions should to use local palettes
 ?  wad loader should load wad3 and fall back to wad2 if necessary
+o  timestamping server (and optionally client) consoles
+o  better control over client console logging
+?  ban reasons and expire times
 
