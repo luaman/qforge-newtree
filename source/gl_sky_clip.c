@@ -194,7 +194,7 @@ set_vertex (struct box_def *box, int face, int ind, vec3_t v)
 		box[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
 		break;
 	case 5:
-		box[face].poly.verts[ind][3] = (1024 - v[0]) / 2048;
+		box[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
 		box[face].poly.verts[ind][4] = (1024 - v[1]) / 2048;
 		break;
 	}
@@ -290,6 +290,35 @@ render_box (struct box_def *box)
 }
 
 /*
+	insert_cube_vertexen
+
+	insert the given cube vertexen into the vertex list of the poly in the
+	correct location.
+*/
+static void
+insert_cube_vertexen (struct box_def *box, int face, vec3_t v1, vec3_t v2)
+{
+	if (box[face].leave_vertex == box[face].poly.numverts - 1) {
+		// the vertex the sky poly left this cube fase through is very
+		// conveniently the last vertex of the face poly. this means we
+		// can just append the two vetexen
+		add_vertex (box, face, v1);
+		add_vertex (box, face, v2);
+	} else {
+		// we have to insert the two cube vertexen into the face poly
+		// vertex list
+		glpoly_t *p = &box[face].poly;
+		int insert = box[face].leave_vertex + 1;
+		int count = p->numverts - insert;
+		const int vert_size = sizeof (p->verts[0]);
+		memmove (p->verts[insert + 2], p->verts[insert], count * vert_size);
+		p->numverts += 2;
+		set_vertex (box, face, insert, v1);
+		set_vertex (box, face, insert + 1, v2);
+	}
+}
+
+/*
 	fixup_center_face
 
 	add the vertexen of the cube face that should be draw but was not
@@ -309,25 +338,7 @@ fixup_center_face (struct box_def *box, int c_face)
 	}
 	for (i = 0; i < 4; i++) {
 		int ind = face_loop[c_face][i];
-
-		if (box[ind].leave_vertex == box[ind].poly.numverts - 1) {
-			// the vertex the sky poly left this cube fase through is very
-			// conveniently the last vertex of the face poly. this means we
-			// can just append the two vetexen
-			add_vertex (box, ind, v[i]);
-			add_vertex (box, ind, v[(i - 1) & 3]);
-		} else {
-			// we have to insert the two cube vertexen into the face poly
-			// vertex list
-			glpoly_t *p = &box[ind].poly;
-			int insert = box[ind].leave_vertex + 1;
-			int count = p->numverts - insert;
-			const int vert_size = sizeof (p->verts[0]);
-			memmove (p->verts[insert + 2], p->verts[insert], count * vert_size);
-			p->numverts += 2;
-			set_vertex (box, ind, insert, v[i]);
-			set_vertex (box, ind, insert + 1, v[(i - 1) & 3]);
-		}
+		insert_cube_vertexen (box, ind, v[i], v[(i - 1) % 4]);
 	}
 }
 
@@ -339,7 +350,7 @@ fixup_center_face (struct box_def *box, int c_face)
 	the edge :). The poly edge is going from face 1 to face 2 (for
 	enter/leave purposes).
 */
-void
+static void
 cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
 				 vec3_t v2)
 {
@@ -353,6 +364,49 @@ cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
 	enter_face (box, face1, face2);
 	box[face2].enter_vertex = box[face2].poly.numverts;
 	add_vertex(box, face2, l);
+}
+
+static void
+fix_missed_vertexen (struct box_def *box, int *faces, int face_count)
+{
+	if (face_count == 4) {
+		if (abs (faces[2] - faces[0]) == 3
+			&& abs (faces[3] - faces[1]) == 3) {
+			int framed_face;
+			int sum, diff;
+			sum = faces[0] + faces[1] + faces[2] + faces[3];
+			diff = faces[1] - faces[0];
+			sum %= 3;
+			diff = (diff + 6) % 6;
+			framed_face = faces_table[sum][diff];
+			if (box[framed_face].poly.numverts == 0)
+				fixup_center_face (box, framed_face);
+			else
+				printf ("email bill@taniwha.org re framed face > 0 verts\n");
+		} else {
+			int l_f, t_f, r_f, b_f;
+			vec3_t v_l, v_r;
+
+			if (abs (faces[2] - faces[0]) == 3) {
+				l_f = faces[0];
+				t_f = faces[1];
+				r_f = faces[2];
+				b_f = faces[3];
+			} else if (abs (faces[3] - faces[1]) == 3) {
+				l_f = faces[1];
+				t_f = faces[2];
+				r_f = faces[3];
+				b_f = faces[0];
+			} else {
+				return;
+			}
+			find_cube_vertex (l_f, t_f, b_f, v_l);
+			find_cube_vertex (r_f, t_f, b_f, v_r);
+
+			insert_cube_vertexen (box, t_f, v_r, v_l);
+			insert_cube_vertexen (box, b_f, v_l, v_r);
+		}
+	}
 }
 
 void
@@ -417,21 +471,8 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		VectorCopy (v, last_v);
 		prev_face = face;
 	}
-	if (face_count == 4
-		&& abs (visited_faces[2] - visited_faces[0]) == 3
-		&& abs (visited_faces[3] - visited_faces[1]) == 3) {
-		int framed_face;
-		int sum, diff;
-		sum = visited_faces[0] + visited_faces[1] + visited_faces[2] + visited_faces[3];
-		diff = visited_faces[1] - visited_faces[0];
-		sum %= 3;
-		diff = (diff + 6) % 6;
-		framed_face = faces_table[sum][diff];
-		if (box[framed_face].poly.numverts == 0)
-			fixup_center_face (box, framed_face);
-		else
-			printf ("email bill@taniwha.org re framed face > 0 verts\n");
-	}
+
+	fix_missed_vertexen (box, visited_faces, face_count);
 
 	render_box (box);
 }
