@@ -41,6 +41,7 @@
 #include "input.h"
 #include "joystick.h"
 #include "keys.h"
+#include "menu.h"
 #include "sys.h"
 #include "qargs.h"
 #include "qendian.h"

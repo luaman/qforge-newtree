@@ -227,6 +227,7 @@ DEPEND = \
    $(OBJS)\cl_slist.obj\
    $(OBJS)\mathlib.obj\
    $(OBJS)\nonintel.obj\
+   $(OBJS)\menu.obj\
    $(OBJS)\keys.obj\
    $(OBJS)\console.obj\
    $(OBJS)\wad.obj\
@@ -343,6 +344,7 @@ $(OBJS)\cl_sys_win.obj+
 $(OBJS)\cl_slist.obj+
 $(OBJS)\mathlib.obj+
 $(OBJS)\nonintel.obj+
+$(OBJS)\menu.obj+
 $(OBJS)\keys.obj+
 $(OBJS)\console.obj+
 $(OBJS)\wad.obj+
@@ -739,6 +741,11 @@ $(OBJS)\mathlib.obj :  $(QFROOT)\source\mathlib.c
 $(OBJS)\nonintel.obj :  $(QFROOT)\source\nonintel.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\nonintel.c
+|
+
+$(OBJS)\menu.obj :  $(QFROOT)\source\menu.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\menu.c
 |
 
 $(OBJS)\keys.obj :  $(QFROOT)\source\keys.c

@@ -36,6 +36,10 @@
 typedef struct server_entry_s {
   	char *server;
 	char *desc;
+	char *status;
+	int waitstatus;
+	double pingsent;
+	double pongback;
 	struct server_entry_s *next;
 	struct server_entry_s *prev;
   } server_entry_t;
@@ -58,5 +62,5 @@ void SL_Shutdown(server_entry_t *start);
 char *gettokstart(char *str, int req, char delim);
 int gettoklen(char *str, int req, char delim);
 
-void timepassed (struct timeval *time1, struct timeval *time2);
+void timepassed (double time1, double *time2);
 #endif	// _CL_SLIST_H

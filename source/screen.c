@@ -40,6 +40,7 @@
 #include "draw.h"
 #include "host.h"
 #include "keys.h"
+#include "menu.h"
 #include "pcx.h"
 #include "qendian.h"
 #include "sbar.h"
@@ -59,6 +60,7 @@ notify lines
 intermission / finale overlay
 loading plaque
 console
+menu
 
 required background clears
 required update regions
@@ -1005,6 +1007,7 @@ SCR_UpdateScreen (void)
 		SCR_CheckDrawCenterString ();
 		Sbar_Draw ();
 		SCR_DrawConsole ();
+		M_Draw ();
 	}
 
 

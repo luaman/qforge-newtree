@@ -44,6 +44,7 @@
 #include "wad.h"
 #include "draw.h"
 #include "cvar.h"
+#include "menu.h"
 #include "net.h"						// needed by: client.h
 #include "protocol.h"					// needed by: client.h
 #include "cmd.h"

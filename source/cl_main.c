@@ -51,6 +51,7 @@
 #include "view.h"
 #include "checksum.h"
 #include "sys.h"
+#include "menu.h"
 #include "compat.h"
 #include "buildnum.h"
 #include "keys.h"
@@ -93,6 +94,9 @@
 #endif
 
 void        CL_RemoveQFInfoKeys ();
+
+// we need to declare some mouse variables here, because the menu system
+// references them even when on a unix system.
 
 qboolean    noclip_anglehack;			// remnant from old quake
 
@@ -211,6 +215,10 @@ CL_Quit_f
 void
 CL_Quit_f (void)
 {
+	if (confirm_quit->int_val) {
+		M_Menu_Quit_f ();
+		return;
+	}
 	CL_Disconnect ();
 	Sys_Quit ();
 }
@@ -992,7 +1000,29 @@ CL_ConnectionlessPacket (void)
 	}
 	// print command from somewhere
 	if (c == A2C_PRINT) {
+		netadr_t addy;
+		server_entry_t *temp;
 		s = MSG_ReadString ();
+		for (temp = slist; temp; temp = temp->next)
+			if (temp->waitstatus)
+			{
+				NET_StringToAdr (temp->server, &addy);
+				if (NET_CompareBaseAdr (net_from, addy))
+				{
+					int i;
+					temp->status = realloc(temp->status, strlen(s) + 1);
+					strcpy(temp->status, s);
+					temp->waitstatus = 0;
+					for (i = 0; i < strlen(temp->status); i++)
+						if (temp->status[i] == '\n')
+						{
+							temp->status[i] = '\\';
+							break;
+						}
+					Con_Printf("status response\n");
+					return;
+				}
+			} 
 		Con_Printf ("print\n");
 		Con_Print (s);
 		return;
@@ -1037,6 +1067,22 @@ CL_ConnectionlessPacket (void)
 	Con_Printf ("unknown:  %c\n", c);
 }
 
+void
+CL_PingPacket (void)
+{
+	server_entry_t *temp;
+	netadr_t addy;
+	MSG_ReadByte ();;
+	for (temp = slist; temp; temp = temp->next)
+		if (temp->pingsent && !temp->pongback) {
+			NET_StringToAdr (temp->server, &addy);
+			if (NET_CompareBaseAdr (net_from, addy)) {
+				temp->pongback = Sys_DoubleTime ();
+				timepassed(temp->pingsent, &temp->pongback);
+			}
+		} 
+}		
+
 /*
 =================
 CL_ReadPackets
@@ -1052,6 +1098,11 @@ CL_ReadPackets (void)
 		//
 		if (*(int *) net_message.data == -1) {
 			CL_ConnectionlessPacket ();
+			continue;
+		}
+		if (*(char *) net_message.data == A2A_ACK)
+		{
+			CL_PingPacket ();
 			continue;
 		}
 		if (net_message.cursize < 8) {
@@ -1651,6 +1702,7 @@ Host_Init (void)
 	W_LoadWadFile ("gfx.wad");
 	Key_Init ();
 	Con_Init ();
+	M_Init ();
 	Mod_Init ();
 
 //  Con_Printf ("Exe: "__TIME__" "__DATE__"\n");

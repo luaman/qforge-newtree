@@ -47,6 +47,9 @@
 #include "sbar.h"
 #include "host.h"
 
+extern void (*vid_menudrawfn) (void);
+extern void (*vid_menukeyfn) (int);
+
 #define MAX_MODE_LIST	30
 #define VID_ROW_SIZE	3
 #define WARP_WIDTH		320
@@ -136,6 +139,9 @@ unsigned char d_15to8table[65536];
 float       gldepthmin, gldepthmax;
 
 modestate_t modestate = MS_UNINIT;
+
+void        VID_MenuDraw (void);
+void        VID_MenuKey (int key);
 
 LONG WINAPI MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void        AppActivate (BOOL fActive, BOOL minimize);
@@ -1745,6 +1751,9 @@ VID_Init (unsigned char *palette)
 	// Check for 3DFX Extensions and initialize them.
 	VID_Init8bitPalette ();
 
+	vid_menudrawfn = VID_MenuDraw;
+	vid_menukeyfn = VID_MenuKey;
+
 	strcpy (badmode.modedesc, "Bad mode");
 	vid_canalttab = true;
 
@@ -1759,6 +1768,17 @@ VID_Init_Cvars ()
 }
 
 
+//========================================================
+// Video menu stuff
+//========================================================
+
+extern void M_Menu_Options_f (void);
+extern void M_Print (int cx, int cy, char *str);
+extern void M_PrintWhite (int cx, int cy, char *str);
+extern void M_DrawCharacter (int cx, int line, int num);
+extern void M_DrawTransPic (int x, int y, qpic_t *pic);
+extern void M_DrawPic (int x, int y, qpic_t *pic);
+
 static int  vid_line, vid_wmodes;
 
 typedef struct {
@@ -1772,6 +1792,93 @@ typedef struct {
 #define MAX_MODEDESCS		(MAX_COLUMN_SIZE*3)
 
 static modedesc_t modedescs[MAX_MODEDESCS];
+
+/*
+================
+VID_MenuDraw
+================
+*/
+void
+VID_MenuDraw (void)
+{
+	qpic_t     *p;
+	char       *ptr;
+	int         lnummodes, i, k, column, row;
+	vmode_t    *pv;
+
+	p = Draw_CachePic ("gfx/vidmodes.lmp");
+	M_DrawPic ((320 - p->width) / 2, 4, p);
+
+	vid_wmodes = 0;
+	lnummodes = VID_NumModes ();
+
+	for (i = 1; (i < lnummodes) && (vid_wmodes < MAX_MODEDESCS); i++) {
+		ptr = VID_GetModeDescription (i);
+		pv = VID_GetModePtr (i);
+
+		k = vid_wmodes;
+
+		modedescs[k].modenum = i;
+		modedescs[k].desc = ptr;
+		modedescs[k].iscur = 0;
+
+		if (i == vid_modenum)
+			modedescs[k].iscur = 1;
+
+		vid_wmodes++;
+
+	}
+
+	if (vid_wmodes > 0) {
+		M_Print (2 * 8, 36 + 0 * 8, "Fullscreen Modes (WIDTHxHEIGHTxBPP)");
+
+		column = 8;
+		row = 36 + 2 * 8;
+
+		for (i = 0; i < vid_wmodes; i++) {
+			if (modedescs[i].iscur)
+				M_PrintWhite (column, row, modedescs[i].desc);
+			else
+				M_Print (column, row, modedescs[i].desc);
+
+			column += 13 * 8;
+
+			if ((i % VID_ROW_SIZE) == (VID_ROW_SIZE - 1)) {
+				column = 8;
+				row += 8;
+			}
+		}
+	}
+
+	M_Print (3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 2,
+			 "Video modes must be set from the");
+	M_Print (3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 3,
+			 "command line with -width <width>");
+	M_Print (3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 4,
+			 "and -bpp <bits-per-pixel>");
+	M_Print (3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 6,
+			 "Select windowed mode with -window");
+}
+
+
+/*
+================
+VID_MenuKey
+================
+*/
+void
+VID_MenuKey (int key)
+{
+	switch (key) {
+		case K_ESCAPE:
+			S_LocalSound ("misc/menu1.wav");
+			M_Menu_Options_f ();
+			break;
+
+		default:
+			break;
+	}
+}
 
 void
 VID_SetCaption (char *text)
