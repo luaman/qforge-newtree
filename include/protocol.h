@@ -191,27 +191,27 @@
 
 ///////////////////////////////////////////////////////////////////////////
 // QSG Protocol Extensions (Version 2)
-// Network definitions for the engine, as defined in protocol.h
+// Network definitions for the engine
 
-#define U_EXTEND1       (1<<7)
+#define U_EXTEND1	(1<<7)
 
-#define U_ALPHA         (1<<17) // 1 byte, 0.0-1.0 = 0-255 (Unsent if 1)
-#define U_SCALE         (1<<18) // 1 byte, scale / 16 positive, (Unsent if 1)
-#define U_EFFECTS2      (1<<19) // 1 byte, .effects & 0xFF00
-#define U_GLOWSIZE      (1<<20) // 1 byte, float/8.0, signed. Unsent if 1
-#define U_GLOWCOLOR     (1<<21) // 1 byte, palette index, default, 254.
-#define U_COLORMOD      (1<<22) // 1 byte, rrrgggbb. Model tinting
-#define U_EXTEND2       (1<<23) // Another byte to follow
+// LordHavoc: would be U_DELTA here (as in DarkPlaces), but in QW everything is delta compressed...
+#define U_ALPHA		(1<<17) // 1 byte, 0.0-1.0 = 0-255 (Unsent if 1)
+#define U_SCALE		(1<<18) // 1 byte, scale / 16 positive, (Unsent if 1)
+#define U_EFFECTS2	(1<<19) // 1 byte, .effects & 0xFF00
+#define U_GLOWSIZE	(1<<20) // 1 byte, float/8.0, signed. Unsent if 1
+#define U_GLOWCOLOR	(1<<21) // 1 byte, palette index, default, 254.
+#define U_COLORMOD	(1<<22) // 1 byte, rrrgggbb. Model tinting
+#define U_EXTEND2	(1<<23) // Another byte to follow
 
-#define U_GLOWTRAIL     (1<<24) // Leave U_GLOW* trail
-#define U_VIEWMODEL     (1<<25) // Attach model to view (relative). Owner only
-#define U_FRAME2        (1<<26) // 1 byte .frame & 0xFF00 (second byte)
+#define U_GLOWTRAIL	(1<<24) // Leave U_GLOW* trail
+#define U_VIEWMODEL	(1<<25) // Attach model to view (relative). Owner only
+#define U_FRAME2	(1<<26) // 1 byte .frame & 0xFF00 (second byte)
 #define U_UNUSED27	(1<<27) // future expansion
 #define U_UNUSED28	(1<<28) // future expansion
 #define U_UNUSED29	(1<<29) // future expansion
 #define U_UNUSED30	(1<<30) // future expansion
 #define U_EXTEND3	(1<<31) // another byte to follow, future expansion
-
 
 //==============================================
 

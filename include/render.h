@@ -150,7 +150,8 @@ void R_ParticleExplosion (vec3_t org);
 void R_LavaSplash (vec3_t org);
 void R_TeleportSplash (vec3_t org);
 
-void R_PushDlights (void);
+// LordHavoc: relative bmodel lighting
+void R_PushDlights (vec3_t entorigin);
 void R_InitParticles (void);
 void R_ClearParticles (void);
 void R_DrawParticles (void);
