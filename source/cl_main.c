@@ -67,8 +67,7 @@
 #endif
 #include <cl_slist.h>
 
-extern cvar_t *fs_userpath;
-extern cvar_t *fs_sharepath;
+
 // we need to declare some mouse variables here, because the menu system
 // references them even when on a unix system.
 

@@ -33,10 +33,14 @@
 
 #include "qtypes.h"
 #include "quakeio.h"
+#include "cvar.h"
 
 //============================================================================
 
 #define	MAX_OSPATH	128		// max length of a filesystem pathname
+
+extern cvar_t *fs_userpath;
+extern cvar_t *fs_sharepath;
 
 extern int com_filesize;
 struct cache_user_s;

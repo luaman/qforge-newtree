@@ -38,9 +38,9 @@
 #include "console.h"
 #include "commdef.h"
 #include "zone.h"
+#include "quakefs.h"
 #include <string.h>
 
-extern cvar_t *fs_userpath;
 server_entry_t	*slist;
   
 server_entry_t *Server_List_Add (server_entry_t *start, char *ip, char *desc) {
