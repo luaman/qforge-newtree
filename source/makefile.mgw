@@ -123,7 +123,7 @@ soft_SOURCES=	cl_trans.c d_edge.c d_fill.c d_init.c d_modech.c \
 
 server_SYS = fnmatch.c dirent.c sv_sys_win.c sys_win.c
 
-server_SOURCES= pr_cmds.c pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
+server_SOURCES= sv_pr_cmds.c pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
 		sv_ents.c sv_init.c sv_main.c sv_misc.c sv_model.c \
 		sv_move.c sv_nchan.c sv_phys.c sv_send.c sv_user.c \
                 ver_check.c world.c sv_progs.c $(world_ASM)
