@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#include "client.h"
 #include "server.h"
 #include "crc.h"
 #include "msg.h"
@@ -38,7 +39,7 @@
 #include "sys.h"
 #include "pmove.h"
 
-client_state_t cls;
+client_static_t cls;
 
 void
 Draw_BeginDisc(void)
