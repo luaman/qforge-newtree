@@ -472,6 +472,28 @@ void SCR_DrawFPS (void)
 	Draw_String8 (x, y, st);
 }
 
+/* Misty: I like to see the time */
+void SCR_DrawTime (void)
+{
+	extern cvar_t *show_time;
+	int x, y;
+	char st[80];
+	char local_time[120];
+	time_t systime;
+	
+	if (!show_time->int_val)
+		return;
+	
+	/* actually find the time and set systime to it*/
+	time(&systime);
+	/* now set local_time to 24 hour time using hours:minutes format */
+	strftime(local_time, sizeof(local_time), "%k:%M", localtime(&systime));
+	/* now actually print it to the screen directly below where show_fps is */
+	sprintf(st, "%s", local_time);
+	x = vid.width - strlen(st) * 8 - 8;
+	y = vid.height - sb_lines - 0;
+	Draw_String8 (x, y, st);
+}
 
 /*
 ==============
@@ -1071,6 +1093,7 @@ SCR_UpdateScreen (void)
 		
 		SCR_DrawNet ();
 		SCR_DrawFPS ();
+		SCR_DrawTime ();
 		SCR_DrawTurtle ();
 		SCR_DrawPause ();
 		SCR_CheckDrawCenterString ();

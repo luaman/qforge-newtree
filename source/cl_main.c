@@ -182,6 +182,7 @@ byte		*host_colormap;
 
 cvar_t	*host_speeds;			// set for running times
 cvar_t	*show_fps;			// set for running times
+cvar_t	*show_time;
 cvar_t	*developer;
 
 int			fps_count;
@@ -1252,6 +1253,9 @@ void CL_Init_Cvars (void)
 
 	show_fps = Cvar_Get("show_fps", "0", CVAR_NONE,
 			"display realtime frames per second");
+	// Misty: I like to be able to see the time when I play
+	show_time = Cvar_Get("show_time", "0", CVAR_NONE,
+			"display time in 24 hr:min format");
 	host_speeds = Cvar_Get("host_speeds", "0", CVAR_NONE,
 			"display host processing times");
 	developer = Cvar_Get("developer", "0", CVAR_NONE,
