@@ -416,7 +416,8 @@ Cvar_CvarList_f (void)
 	if (Cmd_Argc () > 1)
 		showhelp = 1;
 	for (var = cvar_vars, i = 0; var; var = var->next, i++) {
-		Con_Printf ("%c%c%c ",
+		Con_Printf ("%c%c%c%c ",
+					var->flags & CVAR_ROM ? 'r' : ' ',
 					var->flags & CVAR_ARCHIVE ? '*' : ' ',
 					var->flags & CVAR_USERINFO ? 'u' : ' ',
 					var->flags & CVAR_SERVERINFO ? 's' : ' ');
