@@ -411,13 +411,20 @@ Cvar_CvarList_f (void)
 {
 	cvar_t     *var;
 	int         i;
+	int         showhelp = 0;
 
-	for (var = cvar_vars, i = 0; var; var = var->next, i++)
-		Con_Printf ("%c%c%c %s\n",
+	if (Cmd_Argc () > 1)
+		showhelp = 1;
+	for (var = cvar_vars, i = 0; var; var = var->next, i++) {
+		Con_Printf ("%c%c%c ",
 					var->flags & CVAR_ARCHIVE ? '*' : ' ',
 					var->flags & CVAR_USERINFO ? 'u' : ' ',
-					var->flags & CVAR_SERVERINFO ? 's' : ' ', var->name);
-
+					var->flags & CVAR_SERVERINFO ? 's' : ' ');
+		if (showhelp)
+			Con_Printf ("%-20s : %s\n", var->name, var->description);
+		else
+			Con_Printf ("%s\n", var->name);
+	}
 
 	Con_Printf ("------------\n%d variables\n", i);
 }
