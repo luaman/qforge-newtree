@@ -544,6 +544,7 @@ void CL_StopUpload(void)
 
 void Draw_ClearCache (void);
 
+void CL_ClearBaselines(); // LordHavoc: BIG BUG-FIX!
 /*
 ==================
 CL_ParseServerData
@@ -649,6 +650,23 @@ void CL_ParseServerData (void)
 
 	// now waiting for downloads, etc
 	cls.state = ca_onserver;
+
+	CL_ClearBaselines();
+}
+
+// LordHavoc: BIG BUG-FIX!  Clear baselines each time it connects...
+void CL_ClearBaselines()
+{
+	int i;
+	memset(cl_baselines, 0, sizeof(cl_baselines));
+	for (i = 0;i < MAX_EDICTS;i++)
+	{
+		cl_baselines[i].alpha = 255;
+		cl_baselines[i].scale = 16;
+		cl_baselines[i].glowcolor = 254;
+		cl_baselines[i].glowsize = 0;
+		cl_baselines[i].colormod = 255;
+	}
 }
 
 /*

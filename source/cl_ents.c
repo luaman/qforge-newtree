@@ -257,24 +257,16 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 // Ender (QSG - Begin)
 	if (bits & U_ALPHA)
 		to->alpha = MSG_ReadByte();
-	else if (!to->alpha)
-		to->alpha = 1;
 	if (bits & U_SCALE)
 		to->scale = MSG_ReadByte();
-	else if (!to->scale)
-		to->scale = 16;
 	if (bits & U_EFFECTS2)
 		to->effects = (to->effects & 0xFF) | (MSG_ReadByte() << 8);
 	if (bits & U_GLOWSIZE)
 		to->glowsize = MSG_ReadByte();
 	if (bits & U_GLOWCOLOR)
 		to->glowcolor = MSG_ReadByte();
-	else if (!to->glowcolor)
-		to->glowcolor = 254;
 	if (bits & U_COLORMOD)
 		to->colormod = MSG_ReadByte();
-	else if (!to->colormod)
-		to->colormod = 255;
 	if (bits & U_FRAME2)
 		to->frame = (to->frame & 0xFF) | (MSG_ReadByte() << 8);
 // Ender (QSG - End)
@@ -312,12 +304,6 @@ void FlushEntityPacket (void)
 	Con_DPrintf ("FlushEntityPacket\n");
 
 	memset (&olde, 0, sizeof(olde));
-	// LordHavoc: more state setup...
-	olde.alpha = 255;
-	olde.scale = 16;
-	olde.glowsize = 0;
-	olde.glowcolor = 254;
-	olde.colormod = 255;
 
 	cl.validsequence = 0;		// can't render a frame
 	cl.frames[cls.netchan.incoming_sequence&UPDATE_MASK].invalid = true;
@@ -729,15 +715,15 @@ void CL_LinkProjectiles (void)
 
 	for (i=0, pr=cl_projectiles ; i<cl_num_projectiles ; i++, pr++)
 	{
+		if (pr->modelindex < 1)
+			continue;
+
 		// grab an entity to fill in
 		if (cl_numvisedicts == MAX_VISEDICTS)
 			break;		// object list is full
 		ent = &cl_visedicts[cl_numvisedicts];
 		cl_numvisedicts++;
 		ent->keynum = 0;
-
-		if (pr->modelindex < 1)
-			continue;
 		ent->model = cl.model_precache[pr->modelindex];
 		ent->skinnum = 0;
 		ent->frame = 0;
