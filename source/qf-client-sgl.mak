@@ -84,7 +84,7 @@ MISCINCLUDES = $(DIRECTXSDK)\include;$(SDLSDK)\include;$(ZLIB)
 
 INCLUDES = $(QFINCLUDES);$(SYSINCLUDE);$(MISCINCLUDES)
 
-DEFINES=WIN32SDL=1;_WINDOWS=1;_WIN32=1;WINDOWS=1;WIN32=1;HAVE_CONFIG_H=1;HAVE_FNMATCH_H=1;USE_INTEL_ASM=1
+DEFINES=_WINDOWS=1;_WIN32=1;WINDOWS=1;WIN32=1;HAVE_CONFIG_H=1;HAVE_FNMATCH_H=1;USE_INTEL_ASM=1
 
 # for releases
 DEBUGOPTS = -k- -vi
@@ -206,7 +206,7 @@ DEPEND = \
    $(OBJS)\crc.obj\
    $(OBJS)\fnmatch.obj\
    $(OBJS)\sys_win.obj\
-   $(OBJS)\snd_sdl.obj\
+   $(OBJS)\snd_win.obj\
    $(OBJS)\cd_sdl.obj\
    $(OBJS)\in_sdl.obj\
    $(OBJS)\cl_sys_sdl.obj\
@@ -304,7 +304,7 @@ $(OBJS)\cvar.obj+
 $(OBJS)\crc.obj+
 $(OBJS)\fnmatch.obj+
 $(OBJS)\sys_win.obj+
-$(OBJS)\snd_sdl.obj+
+$(OBJS)\snd_win.obj+
 $(OBJS)\cd_sdl.obj+
 $(OBJS)\in_sdl.obj+
 $(OBJS)\cl_sys_sdl.obj+
@@ -645,9 +645,9 @@ $(OBJS)\sys_win.obj :  $(QFROOT)\source\sys_win.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sys_win.c
 |
 
-$(OBJS)\snd_sdl.obj :  $(QFROOT)\source\snd_sdl.c
+$(OBJS)\snd_win.obj :  $(QFROOT)\source\snd_win.c
   $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_sdl.c
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_win.c
 |
 
 $(OBJS)\cd_sdl.obj :  $(QFROOT)\source\cd_sdl.c
