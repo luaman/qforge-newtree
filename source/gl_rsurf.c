@@ -914,29 +914,18 @@ R_RecursiveWorldNode
 void R_RecursiveWorldNode (mnode_t *node)
 {
 	int			c, side;
-	mplane_t	*plane;
 	msurface_t	*surf, **mark;
 	mleaf_t		*pleaf;
 	double		dot;
 
-	if (node->contents == CONTENTS_SOLID)
-		return;		// solid
-
-	if (node->visframe != r_visframecount)
-		return;
-	if (R_CullBox (node->minmaxs, node->minmaxs+3))
-		return;
-	
-	// if a leaf node, draw stuff
+// if a leaf node, draw stuff
 	if (node->contents < 0)
 	{
 		pleaf = (mleaf_t *)node;
 
-		mark = pleaf->firstmarksurface;
-		c = pleaf->nummarksurfaces;
-
-		if (c)
+		if ((c = pleaf->nummarksurfaces))
 		{
+			mark = pleaf->firstmarksurface;
 			do
 			{
 				(*mark)->visframe = r_framecount;
@@ -951,74 +940,66 @@ void R_RecursiveWorldNode (mnode_t *node)
 		return;
 	}
 
-	// node is just a decision point, so go down the apropriate sides
+// node is just a decision point, so go down the apropriate sides
 
-	// find which side of the node we are on
-	plane = node->plane;
-
-	switch (plane->type)
+// find which side of the node we are on
+	switch (node->plane->type)
 	{
 	case PLANE_X:
-		dot = modelorg[0] - plane->dist;
+		dot = modelorg[0] - node->plane->dist;
 		break;
 	case PLANE_Y:
-		dot = modelorg[1] - plane->dist;
+		dot = modelorg[1] - node->plane->dist;
 		break;
 	case PLANE_Z:
-		dot = modelorg[2] - plane->dist;
+		dot = modelorg[2] - node->plane->dist;
 		break;
 	default:
-		dot = DotProduct (modelorg, plane->normal) - plane->dist;
+		dot = DotProduct (modelorg, node->plane->normal) - node->plane->dist;
 		break;
 	}
 
 	side = dot < 0;
 
-	// recurse down the children, front side first
-	R_RecursiveWorldNode (node->children[side]);
+// recurse down the children, front side first
+	// LordHavoc: save a stack frame by avoiding a call
+	if (node->children[side]->contents != CONTENTS_SOLID && node->children[side]->visframe == r_visframecount && !R_CullBox (node->children[side]->minmaxs, node->children[side]->minmaxs+3))
+		R_RecursiveWorldNode (node->children[side]);
 
-	// draw stuff
-	c = node->numsurfaces;
-
-	if (c)
+// draw stuff
+	if ((c = node->numsurfaces))
 	{
 		surf = cl.worldmodel->surfaces + node->firstsurface;
 
-		if (dot < 0 -BACKFACE_EPSILON)
+		if (dot < -BACKFACE_EPSILON)
 			side = SURF_PLANEBACK;
 		else if (dot > BACKFACE_EPSILON)
 			side = 0;
+
 		for ( ; c ; c--, surf++)
 		{
 			if (surf->visframe != r_framecount)
 				continue;
 
-			// don't backface underwater surfaces, because they warp
 			if ((dot < 0) ^ !!(surf->flags & SURF_PLANEBACK))
 				continue;		// wrong side
 
 			// if sorting by texture, just store it out
 			if (gl_texsort->value)
 			{
-				if (!mirror
-				|| surf->texinfo->texture != cl.worldmodel->textures[mirrortexturenum])
-				{
-					surf->texturechain = surf->texinfo->texture->texturechain;
-					surf->texinfo->texture->texturechain = surf;
-				}
-			} else if (surf->flags & SURF_DRAWSKY) {
-				surf->texturechain = skychain;
-				skychain = surf;
-			} else if (surf->flags & SURF_DRAWTURB) {
-				surf->texturechain = waterchain;
-				waterchain = surf;
-			} else
-				R_DrawSequentialPoly (surf);
+				surf->texturechain = surf->texinfo->texture->texturechain;
+				surf->texinfo->texture->texturechain = surf;
 			}
+			else
+				R_DrawSequentialPoly (surf);
+		}
 	}
 
-	// recurse down the back side
-	R_RecursiveWorldNode (node->children[!side]);
+// recurse down the back side
+	// LordHavoc: save a stack frame by avoiding a call
+	side = !side;
+	if (node->children[side]->contents != CONTENTS_SOLID && node->children[side]->visframe == r_visframecount && !R_CullBox (node->children[side]->minmaxs, node->children[side]->minmaxs+3))
+		R_RecursiveWorldNode (node->children[side]);
 }
 
 
