@@ -38,6 +38,7 @@
 #include "commdef.h"
 #include "console.h"
 #include "cvar.h"
+#include "keys.h"
 #include "mathlib.h"
 #include "pmove.h"
 
@@ -149,6 +150,7 @@ CL_PredictMove (void)
 		// first update is the final signon stage
 		VID_SetCaption (cls.servername);
 		cls.state = ca_active;
+		key_dest = key_game;
 	}
 
 	if (cl_nopred->int_val) {
