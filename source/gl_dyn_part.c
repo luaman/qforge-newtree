@@ -64,8 +64,6 @@ typedef struct particle_s {
 	float       color;
 	float       alpha;
 	float       scale;
-	// drivers never touch the following fields
-	struct particle_s *next;
 	vec3_t      vel;
 	float       ramp;
 	float       die;
