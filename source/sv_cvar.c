@@ -35,8 +35,6 @@
 
 void        SV_SendServerInfoChange (char *key, char *value);
 
-extern cvar_t *sv_highchars;
-
 /*
 
 	Cvar_Info
@@ -62,10 +60,10 @@ Cvar_Info (cvar_t *var)
 			}
 			*p = 0;
 			Info_SetValueForKey (svs.info, var->name, info,
-								 MAX_SERVERINFO_STRING);
+								 MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 		} else
 			Info_SetValueForKey (svs.info, var->name, var->string,
-								 MAX_SERVERINFO_STRING);
+								 MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 
 		SV_SendServerInfoChange (var->name, var->string);
 //      SV_BroadcastCommand ("fullserverinfo \"%s\"\n", svs.info);

@@ -714,7 +714,7 @@ SVC_DirectConnect (void)
 			return;
 		}
 		Info_RemoveKey (userinfo, "spectator");	// remove passwd
-		Info_SetValueForStarKey (userinfo, "*spectator", "1", MAX_INFO_STRING);
+		Info_SetValueForStarKey (userinfo, "*spectator", "1", MAX_INFO_STRING, !sv_highchars->int_val);
 		spectator = true;
 	} else {
 		s = Info_ValueForKey (userinfo, "password");
@@ -1402,10 +1402,10 @@ SV_CheckVars (void)
 
 	Con_Printf ("Updated needpass.\n");
 	if (!v)
-		Info_SetValueForKey (svs.info, "needpass", "", MAX_SERVERINFO_STRING);
+		Info_SetValueForKey (svs.info, "needpass", "", MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 	else
 		Info_SetValueForKey (svs.info, "needpass", va ("%i", v),
-							 MAX_SERVERINFO_STRING);
+							 MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 }
 
 /*
@@ -1606,13 +1606,13 @@ SV_InitLocal (void)
 		snprintf (localmodels[i], sizeof (localmodels[i]), "*%i", i);
 
 	Info_SetValueForStarKey (svs.info, "*version", QW_VERSION,
-							 MAX_SERVERINFO_STRING);
+							 MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 
 	// Brand server as QF, with appropriate QSG standards version  --KB
 	Info_SetValueForStarKey (svs.info, "*qf_version", VERSION,
-							 MAX_SERVERINFO_STRING);
+							 MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 	Info_SetValueForStarKey (svs.info, "*qsg_version", QSG_VERSION,
-							 MAX_SERVERINFO_STRING);
+							 MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 
 	// init fraglog stuff
 	svs.logsequence = 1;
@@ -1733,12 +1733,12 @@ SV_ExtractFromUserinfo (client_t *cl)
 	p[1] = 0;
 
 	if (strcmp (val, newname)) {
-		Info_SetValueForKey (cl->userinfo, "name", newname, MAX_INFO_STRING);
+		Info_SetValueForKey (cl->userinfo, "name", newname, MAX_INFO_STRING, !sv_highchars->int_val);
 		val = Info_ValueForKey (cl->userinfo, "name");
 	}
 
 	if (!val[0] || strcaseequal (val, "console")) {
-		Info_SetValueForKey (cl->userinfo, "name", "unnamed", MAX_INFO_STRING);
+		Info_SetValueForKey (cl->userinfo, "name", "unnamed", MAX_INFO_STRING, !sv_highchars->int_val);
 		val = Info_ValueForKey (cl->userinfo, "name");
 	}
 	// check to see if another user by the same name exists
@@ -1763,7 +1763,7 @@ SV_ExtractFromUserinfo (client_t *cl)
 
 			snprintf (newname, sizeof (newname), "(%d)%-.40s", dupc++, p);
 			Info_SetValueForKey (cl->userinfo, "name", newname,
-								 MAX_INFO_STRING);
+								 MAX_INFO_STRING, !sv_highchars->int_val);
 			val = Info_ValueForKey (cl->userinfo, "name");
 
                         // if the new name was not set (due to the info string being too long), drop the client to prevent an infinite loop

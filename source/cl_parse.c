@@ -1034,7 +1034,8 @@ CL_SetInfo (void)
 
 	Con_DPrintf ("SETINFO %s: %s=%s\n", player->name, key, value);
 
-	Info_SetValueForKey (player->userinfo, key, value, MAX_INFO_STRING);
+	Info_SetValueForKey (player->userinfo, key, value, MAX_INFO_STRING,
+						 (!strequal (key, "name"))| (strequal (key, "team") << 1));
 
 	CL_ProcessUserInfo (slot, player);
 }
@@ -1055,7 +1056,8 @@ CL_ServerInfo (void)
 
 	Con_DPrintf ("SERVERINFO: %s=%s\n", key, value);
 
-	Info_SetValueForKey (cl.serverinfo, key, value, MAX_SERVERINFO_STRING);
+	Info_SetValueForKey (cl.serverinfo, key, value, MAX_SERVERINFO_STRING,
+						 (!strequal (key, "name"))| (strequal (key, "team") << 1));
 }
 
 /*

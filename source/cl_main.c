@@ -651,11 +651,11 @@ CL_AddQFInfoKeys (void)
 #ifdef HAVE_ZLIB
 	strncat (cap, "z", sizeof (cap) - strlen (cap) - 1);
 #endif
-	Info_SetValueForStarKey (cls.userinfo, "*cap", cap, MAX_INFO_STRING);
+	Info_SetValueForStarKey (cls.userinfo, "*cap", cap, MAX_INFO_STRING, 0);
 	Info_SetValueForStarKey (cls.userinfo, "*qf_version", VERSION,
-							 MAX_INFO_STRING);
+							 MAX_INFO_STRING, 0);
 	Info_SetValueForStarKey (cls.userinfo, "*qsg_version", QSG_VERSION,
-							 MAX_INFO_STRING);
+							 MAX_INFO_STRING, 0);
 	Con_Printf ("QuakeForge server detected\n");
 }
 
@@ -717,7 +717,9 @@ CL_FullInfo_f (void)
 		if (strcaseequal (key, pmodel_name) || strcaseequal (key, emodel_name))
 			continue;
 
-		Info_SetValueForKey (cls.userinfo, key, value, MAX_INFO_STRING);
+		Info_SetValueForKey (cls.userinfo, key, value, MAX_INFO_STRING,
+							 (!strequal (key, "name"))
+							  | (strequal (key, "team") << 1));
 	}
 }
 
@@ -742,7 +744,8 @@ CL_SetInfo_f (void)
 		return;
 
 	Info_SetValueForKey (cls.userinfo, Cmd_Argv (1), Cmd_Argv (2),
-						 MAX_INFO_STRING);
+						 MAX_INFO_STRING, (!strequal (Cmd_Argv (1), "name"))
+										   | (strequal (Cmd_Argv (2), "team") << 1));
 	if (cls.state >= ca_connected)
 		Cmd_ForwardToServer ();
 }
@@ -1143,14 +1146,14 @@ CL_Init (void)
 
 	cls.state = ca_disconnected;
 
-	Info_SetValueForKey (cls.userinfo, "name", "unnamed", MAX_INFO_STRING);
-	Info_SetValueForKey (cls.userinfo, "topcolor", "0", MAX_INFO_STRING);
-	Info_SetValueForKey (cls.userinfo, "bottomcolor", "0", MAX_INFO_STRING);
-	Info_SetValueForKey (cls.userinfo, "rate", "2500", MAX_INFO_STRING);
-	Info_SetValueForKey (cls.userinfo, "msg", "1", MAX_INFO_STRING);
+	Info_SetValueForKey (cls.userinfo, "name", "unnamed", MAX_INFO_STRING, 0);
+	Info_SetValueForKey (cls.userinfo, "topcolor", "0", MAX_INFO_STRING, 0);
+	Info_SetValueForKey (cls.userinfo, "bottomcolor", "0", MAX_INFO_STRING, 0);
+	Info_SetValueForKey (cls.userinfo, "rate", "2500", MAX_INFO_STRING, 0);
+	Info_SetValueForKey (cls.userinfo, "msg", "1", MAX_INFO_STRING, 0);
 //  snprintf (st, sizeof(st), "%s-%04d", QW_VERSION, build_number());
 	snprintf (st, sizeof (st), "%s", QW_VERSION);
-	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING);
+	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING, 0);
 #ifdef PACKET_LOGGING
         Net_Log_Init();
 #endif

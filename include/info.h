@@ -45,8 +45,8 @@ qboolean Info_FilterForKey (const char *key);
 void Info_Print (char *s);
 void Info_RemoveKey (char *s, char *key);
 void Info_RemovePrefixedKeys (char *start, char prefix);
-void Info_SetValueForKey (char *s, char *key, char *value, size_t maxsize);
-void Info_SetValueForStarKey (char *s, char *key, char *value, size_t maxsize);
+void Info_SetValueForKey (char *s, char *key, char *value, size_t maxsize, int flags);
+void Info_SetValueForStarKey (char *s, char *key, char *value, size_t maxsize, int flags);
 char *Info_ValueForKey (char *s, char *key);
 qboolean Info_Validate (char *s);
 

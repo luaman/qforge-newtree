@@ -124,7 +124,7 @@ ED_Parse_Extra_Fields (progs_t *pr, char *key, char *value)
 			|| strcaseequal (key, "skyname")
 			|| strcaseequal (key, "qlsky")) {
 		Info_SetValueForKey (svs.info, "skybox",
-							 "1", MAX_SERVERINFO_STRING);
+							 "1", MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 		Cvar_Set (r_skyname, value);
 		return 1;
 	}

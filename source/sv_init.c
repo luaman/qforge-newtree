@@ -336,7 +336,7 @@ SV_SpawnServer (char *server)
 	// which determines how big each edict is
 	SV_LoadProgs ();
 	Info_SetValueForStarKey (svs.info, "*progs", va ("%i", sv_pr_state.crc),
-							 MAX_SERVERINFO_STRING);
+							 MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 
 	// allocate edicts
 	sv.edicts = Hunk_AllocName (MAX_EDICTS * sv_pr_state.pr_edict_size, "edicts");
@@ -422,6 +422,6 @@ SV_SpawnServer (char *server)
 	SV_CreateBaseline ();
 	sv.signon_buffer_size[sv.num_signon_buffers - 1] = sv.signon.cursize;
 
-	Info_SetValueForKey (svs.info, "map", sv.name, MAX_SERVERINFO_STRING);
+	Info_SetValueForKey (svs.info, "map", sv.name, MAX_SERVERINFO_STRING, !sv_highchars->int_val);
 	Con_DPrintf ("Server spawned.\n");
 }

@@ -109,7 +109,7 @@ Mod_LoadAliasModel (model_t *mod, void *buffer)
 		Info_SetValueForKey (cls.userinfo,
 							 !strcmp (loadmodel->name,
 									  "progs/player.mdl") ? pmodel_name :
-							 emodel_name, st, MAX_INFO_STRING);
+							 emodel_name, st, MAX_INFO_STRING, 0);
 
 		if (cls.state >= ca_connected) {
 			MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
