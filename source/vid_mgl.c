@@ -270,44 +270,43 @@ VID_AllocBuffers
 qboolean
 VID_AllocBuffers (int width, int height)
 {
-	int		tbuffersize, tcachesize;
-	void	*temp_z, *temp_sc;
+        int             zbuffersize, cachesize;
 
-	tbuffersize = width * height * sizeof (*d_pzbuffer);
-	tcachesize = D_SurfaceCacheForRes (width, height);
+	// Calculate the sizes we want first
 
-	// Allocate the new z-buffer
-	temp_z = calloc (tbuffersize, 1);
-	if (temp_z == NULL) {
-		Sys_Printf ("Not enough memory for video mode\n");
-		return false;
-	}
+        zbuffersize = width * height * sizeof (*d_pzbuffer);
+        cachesize = D_SurfaceCacheForRes(width, height);
 
-	// Allocate the new surface cache
-	temp_sc = calloc (tcachesize, 1);
-	if (temp_sc == NULL) {
-		free (temp_z);
-		Sys_Printf ("Not enough memory for video mode\n");
-		return false;
-	}
-
-	// Free the old z-buffer, switch to the new one
+	// Free the old z-buffer
 	if (d_pzbuffer) {
 		free (d_pzbuffer);
-		d_pzbuffer = temp_z;
-		temp_z = NULL;
+		d_pzbuffer = NULL;
 	}
-
-	vid_surfcachesize = tcachesize;
-
-	// Free surface cache, switch to the new one
+	
+	// Free the old surface cache
 	vid_surfcache = D_SurfaceCacheAddress ();
+
 	if (vid_surfcache) {
 		D_FlushCaches ();
 		free (vid_surfcache);
+		vid_surfcache = NULL;
 	}
-	vid_surfcache = temp_sc;
-	temp_sc = NULL;
+
+	// Allocate the new z-buffer
+	d_pzbuffer = calloc (zbuffersize, 1);
+	if (!d_pzbuffer) {
+		free (vid.buffer);
+		Sys_Error ("Not enough memory for video mode\n");
+	}
+
+	// Allocate the new surface cache; free the z-buffer if we fail
+	vid_surfcache = calloc (cachesize, 1);
+	if (!vid_surfcache) {
+		free (d_pzbuffer);
+		d_pzbuffer = NULL;
+		Sys_Error ("Not enough memory for video mode\n");
+	}
+        vid_surfcachesize = cachesize;
 
 	return true;
 }
@@ -1723,7 +1722,7 @@ int VID_SetMode (int modenum, unsigned char *palette)
 		return false;
 	}
 
-	D_InitCaches (vid_surfcache, vid_surfcachesize);
+        D_InitCaches (vid_surfcache, vid_surfcachesize);
 
 	while (PeekMessage (&msg, NULL, 0, 0, PM_REMOVE))
 	{
