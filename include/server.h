@@ -248,6 +248,7 @@ typedef struct
 } server_static_t;
 
 typedef struct foobar_s {
+	qboolean	demoplayback;
 	int		qport;
 } foobar_t;
 

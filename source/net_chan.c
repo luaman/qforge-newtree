@@ -137,7 +137,7 @@ void Netchan_OutOfBand (netadr_t adr, int length, byte *data)
 
 // send the datagram
 	//zoid, no input in demo playback mode
-	if (!cls.demoplayback && !is_server)
+	if (!cls.demoplayback)
 		NET_SendPacket (send.cursize, send.data, adr);
 }
 
@@ -296,7 +296,7 @@ void Netchan_Transmit (netchan_t *chan, int length, byte *data)
 	chan->outgoing_time[i] = realtime;
 
 	//zoid, no input in demo playback mode
-	if (!cls.demoplayback && !is_server)
+	if (!cls.demoplayback)
 		NET_SendPacket (send.cursize, send.data, chan->remote_address);
 
 	if (chan->cleartime < realtime)
@@ -330,7 +330,7 @@ qboolean Netchan_Process (netchan_t *chan)
 	unsigned		reliable_ack, reliable_message;
 	int			qport;
 
-	if ( !cls.demoplayback && !is_server && 
+	if ( !cls.demoplayback && 
 		!NET_CompareAdr (net_from, chan->remote_address))
 		return false;
 	else if (is_server && !NET_CompareAdr (net_from, chan->remote_address))

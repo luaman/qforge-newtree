@@ -27,7 +27,7 @@
 */
 #include "qwsvdef.h"
 
-foobar_t cls = {0};
+foobar_t cls = {true, 0};
 
 void
 Draw_BeginDisc(void)
