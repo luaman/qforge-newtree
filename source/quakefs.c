@@ -68,6 +68,11 @@
 #endif
 #include <limits.h>
 
+// LordHavoc: win32 would not compile without this
+#ifndef __const
+#define __const const
+#endif
+
 #ifndef HAVE_FNMATCH_PROTO
 int fnmatch (__const char *__pattern, __const char *__string, int __flags);
 #endif
