@@ -215,7 +215,7 @@ Interactive line editing and console scrollback
 void Key_Console (int key)
 {
 #ifdef _WIN32
-	char	*cmd, *s;
+//	char	*cmd, *s;
 	int		i;
 	HANDLE	th;
 	char	*clipText, *textCopied;

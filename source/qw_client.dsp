@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 dxguid.lib ..\scitech\lib\win32\vc\mgllt.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  winmm.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 dxguid.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib mglfx.lib /nologo /subsystem:windows /machine:I386
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
 
@@ -320,6 +320,10 @@ SOURCE=.\r_vars.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\r_view.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\sbar.c
 # End Source File
 # Begin Source File
@@ -353,10 +357,6 @@ SOURCE=.\sys_win.c
 # Begin Source File
 
 SOURCE=.\vid_win.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\view.c
 # End Source File
 # Begin Source File
 

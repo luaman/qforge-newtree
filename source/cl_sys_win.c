@@ -180,8 +180,8 @@ Sys_Init
 */
 void Sys_Init (void)
 {
-	LARGE_INTEGER	PerformanceFreq;
-	unsigned int	lowpart, highpart;
+//	LARGE_INTEGER	PerformanceFreq;
+//	unsigned int	lowpart, highpart;
 	OSVERSIONINFO	vinfo;
 
 #ifndef SERVERONLY
@@ -255,8 +255,8 @@ void Sys_Init (void)
 void Sys_Error (char *error, ...)
 {
 	va_list		argptr;
-	char		text[1024], text2[1024];
-	DWORD		dummy;
+	char		text[1024];//, text2[1024];
+//	DWORD		dummy;
 
 	Host_Shutdown ();
 
@@ -276,8 +276,8 @@ void Sys_Error (char *error, ...)
 void Sys_Printf (char *fmt, ...)
 {
 	va_list		argptr;
-	char		text[1024];
-	DWORD		dummy;
+//	char		text[1024];
+//	DWORD		dummy;
 	
 	va_start (argptr,fmt);
 	vprintf (fmt, argptr);
@@ -400,7 +400,7 @@ double Sys_DoubleTime (void)
 	static DWORD starttime;
 	static qboolean first = true;
 	DWORD now;
-	double t;
+//	double t;
 
 	now = timeGetTime();
 
@@ -424,7 +424,7 @@ char *Sys_ConsoleInput (void)
 	static char	text[256];
 	static int		len;
 	INPUT_RECORD	recs[1024];
-	int		count;
+//	int		count;
 	int		i, dummy;
 	int		ch, numread, numevents;
 	HANDLE	th;
@@ -577,7 +577,7 @@ HWND		hwnd_dialog;
 
 int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    MSG				msg;
+//    MSG				msg;
 	quakeparms_t	parms;
 	double			time, oldtime, newtime;
 	MEMORYSTATUS	lpBuffer;
