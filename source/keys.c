@@ -789,12 +789,14 @@ void Key_Event (int key, qboolean down)
 	if (down)
 	{
 		key_repeats[key]++;
-		if ((key != K_BACKSPACE && key != K_DEL
+		if (key_repeats[key] > 1)
+		{
+			if ((key != K_BACKSPACE && key != K_DEL
 			&& key != K_LEFTARROW && key != K_RIGHTARROW
-			&& key != K_PGUP && key != K_PGDN
-			&& key_repeats[key] > 1) ||
-			(key_dest == key_game && cls.state == ca_active))
-			return;	// ignore most autorepeats
+			&& key != K_PGUP && key != K_PGDN)
+			|| (key_dest == key_game && cls.state == ca_active))
+				return;	// ignore most autorepeats
+		}
 			
 		if (key >= 200 && !keybindings[key])
 			Con_Printf ("%s is unbound, hit F4 to set.\n", Key_KeynumToString (key) );
