@@ -84,6 +84,9 @@ const char *gl_extensions;
 
 qboolean is8bit = false;
 qboolean gl_mtexable = false;
+int gl_mtex_enum = TEXTURE0_SGIS;
+
+int modestate;
 
 static qboolean mouse_avail;
 static float    mouse_x, mouse_y;
@@ -672,3 +675,10 @@ void
 VID_UnlockBuffer ( void )
 {      
 } 
+
+void
+VID_SetCaption (char *text)
+{
+        SDL_WM_SetCaption(text, NULL);
+}
+
