@@ -108,50 +108,50 @@ console is:
 
 */
 
-extern	byte		*host_basepal;
-extern	double		host_frametime;
-extern	double		realtime;
-int                     glx, gly, glwidth, glheight;
+extern byte 	*host_basepal;
+extern double	host_frametime;
+extern double	realtime;
+int 			glx, gly, glwidth, glheight;
 
 // only the refresh window will be updated unless these variables are flagged 
-int                     scr_copytop;
-int                     scr_copyeverything;
+int 			scr_copytop;
+int 			scr_copyeverything;
 
-float           scr_con_current;
-float           scr_conlines;           // lines of console to display
+float			scr_con_current;
+float			scr_conlines;           // lines of console to display
 
-float           oldscreensize, oldfov;
-cvar_t          *scr_viewsize;
-cvar_t          *scr_fov; // 10 - 170
-cvar_t          *scr_conspeed;
-cvar_t          *scr_centertime;
-cvar_t          *scr_showturtle;
-cvar_t          *scr_showpause;
-cvar_t          *scr_printspeed;
+float			oldscreensize, oldfov;
+cvar_t			*scr_viewsize;
+cvar_t			*scr_fov; // 10 - 170
+cvar_t			*scr_conspeed;
+cvar_t			*scr_centertime;
+cvar_t			*scr_showturtle;
+cvar_t			*scr_showpause;
+cvar_t			*scr_printspeed;
 cvar_t			*gl_triplebuffer;
-extern  		cvar_t  *crosshair;
+extern cvar_t	*crosshair;
 
-qboolean        scr_initialized;                // ready to draw
+qboolean		scr_initialized;                // ready to draw
 
-qpic_t          *scr_ram;
-qpic_t          *scr_net;
-qpic_t          *scr_turtle;
+qpic_t			*scr_ram;
+qpic_t			*scr_net;
+qpic_t			*scr_turtle;
 
-int                     scr_fullupdate;
+int 			scr_fullupdate;
 
-int                     clearconsole;
-int                     clearnotify;
+int 			clearconsole;
+int 			clearnotify;
 
-extern			 int                     sb_lines;
+extern int		sb_lines;
 
-viddef_t        vid;                            // global video state
+viddef_t		vid;                            // global video state
 
-vrect_t         scr_vrect;
+vrect_t 		scr_vrect;
 
-qboolean        scr_disabled_for_loading;
-float           scr_disabled_time;
+qboolean		scr_disabled_for_loading;
+float			scr_disabled_time;
 
-qboolean        block_drawing;
+qboolean		block_drawing;
 
 void SCR_ScreenShot_f (void);
 void SCR_RSShot_f (void);
@@ -164,12 +164,12 @@ CENTER PRINTING
 ===============================================================================
 */
 
-char            scr_centerstring[1024];
-float           scr_centertime_start;   // for slow victory printing
-float           scr_centertime_off;
-int                     scr_center_lines;
-int                     scr_erase_lines;
-int                     scr_erase_center;
+char			scr_centerstring[1024];
+float			scr_centertime_start;   // for slow victory printing
+float			scr_centertime_off;
+int 			scr_center_lines;
+int 			scr_erase_lines;
+int 			scr_erase_center;
 
 /*
 ==============
@@ -185,10 +185,9 @@ void SCR_CenterPrint (char *str)
 	scr_centertime_off = scr_centertime->value;
 	scr_centertime_start = cl.time;
 
-// count the number of lines for centering
+	// count the number of lines for centering
 	scr_center_lines = 1;
-	while (*str)
-	{
+	while (*str) {
 		if (*str == '\n')
 			scr_center_lines++;
 		str++;
@@ -198,13 +197,13 @@ void SCR_CenterPrint (char *str)
 
 void SCR_DrawCenterString (void)
 {
-	char    *start;
-	int             l;
-	int             j;
-	int             x, y;
-	int             remaining;
+	char	*start;
+	int 	l;
+	int 	j;
+	int 	x, y;
+	int 	remaining;
 
-// the finale prints the characters one at a time
+	// the finale prints the characters one at a time
 	if (cl.intermission)
 		remaining = scr_printspeed->value * (cl.time - scr_centertime_start);
 	else
@@ -218,15 +217,12 @@ void SCR_DrawCenterString (void)
 	else
 		y = 48;
 
-	do      
-	{
-	// scan the width of the line
-		for (l=0 ; l<40 ; l++)
+	do {	// scan the width of the line
+		for (l = 0; l < 40; l++)
 			if (start[l] == '\n' || !start[l])
 				break;
 		x = (vid.width - l*8)/2;
-		for (j=0 ; j<l ; j++, x+=8)
-		{
+		for (j = 0; j < l; j++, x += 8) {
 			Draw_Character8 (x, y, start[j]);        
 			if (!remaining--)
 				return;
@@ -1030,20 +1026,17 @@ void SCR_UpdateScreen (void)
 	scr_copytop = 0;
 	scr_copyeverything = 0;
 
-	if (scr_disabled_for_loading)
-	{
-		if (realtime - scr_disabled_time > 60)
-		{
+	if (scr_disabled_for_loading) {
+		if (realtime - scr_disabled_time > 60) {
 			scr_disabled_for_loading = false;
 			Con_Printf ("load failed.\n");
-		}
-		else
+		} else {
 			return;
+		}
 	}
 
-	if (!scr_initialized || !con_initialized)
-		return;                         // not initialized yet
-
+	if (!scr_initialized || !con_initialized)	// not initialized yet
+		return;
 
 	if (oldsbar != cl_sbar->int_val) {
 		oldsbar = cl_sbar->int_val;
@@ -1052,18 +1045,13 @@ void SCR_UpdateScreen (void)
 
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	
-	if (r_speeds->int_val)
-	{
+	if (r_speeds->int_val) {
 		time1 = Sys_DoubleTime ();
 		c_brush_polys = 0;
 		c_alias_polys = 0;
 	}
 
-	//
-	// determine size of refresh window
-	//
-	if (oldfov != scr_fov->value)
-	{
+	if (oldfov != scr_fov->value) {	// determine size of refresh window
 		oldfov = scr_fov->value;
 		vid.recalc_refdef = true;
 	}
@@ -1071,19 +1059,15 @@ void SCR_UpdateScreen (void)
 	if (vid.recalc_refdef)
 		SCR_CalcRefdef ();
 
-//
-// do 3D refresh drawing, and then update the screen
-//
+	// do 3D refresh drawing, and then update the screen
 
-	// LordHavoc: set lighthalf based on gl_lightmode cvar
-	if (lighthalf != gl_lightmode->int_val)
-	{
+	if (lighthalf != gl_lightmode->int_val) {
 		lighthalf = gl_lightmode->int_val;
 		if (lighthalf)
 			lighthalf_v[0] = lighthalf_v[1] = lighthalf_v[2] = 128;
 		else
 			lighthalf_v[0] = lighthalf_v[1] = lighthalf_v[2] = 255;
-		R_ForceLightUpdate();
+		R_ForceLightUpdate ();
 	}
 
 	SCR_SetUpToDrawConsole ();
@@ -1092,9 +1076,7 @@ void SCR_UpdateScreen (void)
 
 	GL_Set2D ();
 
-	//
 	// draw any areas not covered by the refresh
-	//
 	SCR_TileClear ();
 
 	if (r_netgraph->int_val)
@@ -1122,48 +1104,47 @@ void SCR_UpdateScreen (void)
 // LordHavoc: adjustable brightness and contrast,
 //            also makes polyblend apply to whole screen
 	glDisable(GL_TEXTURE_2D);
+	glEnable (GL_BLEND);
 	Cvar_SetValue (brightness, bound (1, brightness->value, 5));
 	if (lighthalf) // LordHavoc: render was done at half brightness
 		f = brightness->value * 2;
 	else
 		f = brightness->value;
-	if (f >= 1.005) // epsilon
-	{
+	if (f >= 1.001) {	// Make sure we don't get bit by roundoff errors
 		glBlendFunc (GL_DST_COLOR, GL_ONE);
 		glBegin (GL_QUADS);
-		while (f >= 1.005) // epsilon
-		{
+		while (f >= 1.001) {	// precision
 			if (f >= 2)
 				glColor3f (1, 1, 1);
 			else
 				glColor3f (f-1, f-1, f-1);
-			glVertex2f (0,0);
-			glVertex2f (vid.width, 0);
-			glVertex2f (vid.width, vid.height);
-			glVertex2f (0, vid.height);
+			glVertex2i (0, 0);
+			glVertex2i (vid.width, 0);
+			glVertex2i (vid.width, vid.height);
+			glVertex2i (0, vid.height);
 			f *= 0.5;
 		}
 		glEnd ();
-		glColor3ubv(lighthalf_v);
+		glColor3ubv (lighthalf_v);
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	Cvar_SetValue (contrast, bound (0.1, contrast->value, 1));
-	if (v_blend[3] || contrast->value < 0.999) { // epsilon
+	Cvar_SetValue (contrast, bound (0.0, contrast->value, 1.0));
+	if (v_blend[3] || (contrast->value < 0.999)) { // precision
 		glBegin (GL_QUADS);
-		if (contrast->value < 0.999) { // epsilon
-			glColor4f (1, 1, 1, (1 - contrast->value));
-			glVertex2f (0,0);
-			glVertex2f (vid.width, 0);
-			glVertex2f (vid.width, vid.height);
-			glVertex2f (0, vid.height);
+		if (contrast->value < 0.999) { // precision
+			glColor4f (0.5, 0.5, 0.5, (1 - contrast->value));
+			glVertex2i (0, 0);
+			glVertex2i (vid.width, 0);
+			glVertex2i (vid.width, vid.height);
+			glVertex2i (0, vid.height);
 		}
 		
 		if (v_blend[3]) {
 			glColor4fv (v_blend);
-			glVertex2f (0,0);
-			glVertex2f (vid.width, 0);
-			glVertex2f (vid.width, vid.height);
-			glVertex2f (0, vid.height);
+			glVertex2i (0, 0);
+			glVertex2i (vid.width, 0);
+			glVertex2i (vid.width, vid.height);
+			glVertex2i (0, vid.height);
 		}
 		glEnd ();
 		glColor3ubv(lighthalf_v);

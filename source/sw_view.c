@@ -116,7 +116,7 @@ BuildGammaTable (float b, float c)
 		return;
 	}
 	
-	for (i=0 ; i<256 ; i++) {	 // weighted average toward the median, 127
+	for (i = 0; i < 256; i++) {	 // weighted average toward the median, 127
 		inf = (i * b);	// gamma is brightness now, and positive
 		inf = bound (0, inf, 255);
 		gammatable[i] = inf + (int) ((127 - inf) * (1 - c));
