@@ -993,14 +993,14 @@ void CL_ConnectionlessPacket (void)
 		return;
 	}
 
-#if 0
 	if (c == svc_disconnect) {
-		Con_Printf ("disconnect\n");
-
-		Host_EndGame ("Server disconnected");
+		if (cls.demoplayback)
+			Host_EndGame ("End of demo");
+		else
+			Con_Printf ("svc_disconnect\n");
+//		Host_EndGame ("Server disconnected");
 		return;
 	}
-#endif
 
 	Con_Printf ("unknown:  %c\n", c);
 }
