@@ -272,19 +272,18 @@ event_motion (XEvent *event)
 		mouse_x += event->xmotion.x_root * in_dga_mouseaccel->value;
 		mouse_y += event->xmotion.y_root * in_dga_mouseaccel->value;
 	} else {
+		if (!p_mouse_x && !p_mouse_y) {
+			Con_Printf("event->xmotion.x: %d\n", event->xmotion.x); 
+			Con_Printf("event->xmotion.y: %d\n", event->xmotion.y); 
+		}
 		//printf("_windowed_mouse: %f\n", _windowed_mouse->int_val);
 		//printf("CurrentTime: %ld\n", CurrentTime);
 		if (_windowed_mouse->int_val) {
 			if (!event->xmotion.send_event) {
 				mouse_x += (event->xmotion.x - p_mouse_x);
 				mouse_y += (event->xmotion.y - p_mouse_y);
-#undef ABS
-#define ABS(a) (((int)(a) < 0) ? -(a) : (a))
-				if (ABS(vid.width/2 - event->xmotion.x)
-				    > vid.width / 4
-				    || ABS(vid.height/2 - event->xmotion.y)
-				    > vid.height / 4) {
-#undef ABS
+				if (abs(vid.width/2 - event->xmotion.x) > vid.width / 4
+				    || abs(vid.height/2 - event->xmotion.y) > vid.height / 4) {
 					center_pointer();
 				}
 			}
@@ -352,10 +351,10 @@ IN_Move (usercmd_t *cmd)
 	if (m_filter->int_val) {
 		mouse_x = (mouse_x + old_mouse_x) * 0.5;
 		mouse_y = (mouse_y + old_mouse_y) * 0.5;
-	}
 
-	old_mouse_x = mouse_x;
-	old_mouse_y = mouse_y;
+		old_mouse_x = mouse_x;
+		old_mouse_y = mouse_y;
+	}
 
 	mouse_x *= sensitivity->value;
 	mouse_y *= sensitivity->value;
