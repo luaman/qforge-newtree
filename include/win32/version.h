@@ -1,13 +1,9 @@
 /*
 	version.h
 
-	version numbers for the win32 builds that don't use autoconf
+	Version numbers for Win32 builds not using autoconf
 
-	Copyright (C) 2000  contributors of the QuakeForge project
-	Please see the file "AUTHORS" for a list of contributors
-
-	Author: Thad Ward
-	Date: 22 May 2000
+	Copyright (C) 2000 Jeff Teunissen
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -26,8 +22,6 @@
 		Free Software Foundation, Inc.
 		59 Temple Place - Suite 330
 		Boston, MA  02111-1307, USA
-
-	$Id$
 */
 
 #ifndef _VERSION_H
@@ -38,6 +32,6 @@
 #define PROGRAM 	"QuakeForge"
 #define VERSION 	"0.1.99pre2"
 #define QW_VERSION	"2.40"
-#define QSG_VERSION "1.0"
+#define QSG_VERSION	"1.0"
 
 #endif	// _VERSION_H

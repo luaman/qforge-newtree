@@ -84,10 +84,12 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_C_BIGENDIAN
 
+AC_MSG_CHECKING(for socklen_t in sys/types.h)
 AC_TRY_COMPILE(
 	[#include <sys/types.h>],
 	[ socklen_t x = 0;],
-        AC_DEFINE(HAVE_SOCKLEN_T) AC_MSG_RESULT(yes),
+	AC_DEFINE(HAVE_SOCKLEN_T)
+	AC_MSG_RESULT(yes),
 	AC_MSG_RESULT(no)
 	dnl FreeBSD 4.0 has it in sys/socket.h
 	AC_MSG_CHECKING(for socklen_t in sys/socket.h)
