@@ -34,7 +34,7 @@
 #include "cvar.h"
 #include "zone.h"
 
-// !!! if this is changed, it much be changed in asm_i386.h too !!!
+// !!! if this is changed, it must be changed in asm_i386.h too !!!
 typedef struct
 {
 	int left;
@@ -79,13 +79,15 @@ typedef struct
 	int		leftvol;		// 0-255 volume
 	int		rightvol;		// 0-255 volume
 	int		end;			// end time in global paintsamples
-	int 	pos;			// sample position in sfx
+	int	 	pos;			// sample position in sfx
 	int		looping;		// where to loop, -1 = no looping
 	int		entnum;			// to allow overriding a specific sound
 	int		entchannel;		//
 	vec3_t	origin;			// origin of sound effect
 	vec_t	dist_mult;		// distance multiplier (attenuation/clipK)
-	int		master_vol;		// 0-255 master volume
+	int	master_vol;		// 0-255 master volume
+	int	phase;	// phase shift between l-r in samples
+	int	oldphase;	// phase shift between l-r in samples
 } channel_t;
 
 typedef struct
@@ -137,7 +139,7 @@ void SNDDMA_Shutdown(void);
 // User-setable variables
 // ====================================================================
 
-#define	MAX_CHANNELS			128
+#define	MAX_CHANNELS			256
 #define	MAX_DYNAMIC_CHANNELS	8
 
 extern	channel_t   channels[MAX_CHANNELS];
@@ -170,6 +172,7 @@ extern	cvar_t *bgmvolume;
 extern	cvar_t *volume;
 
 extern	cvar_t	*snd_interp;
+extern cvar_t *snd_stereo_phase_separation;
 
 extern qboolean	snd_initialized;
 

@@ -30,13 +30,13 @@
 # include "config.h"
 #endif
 
-#include "host.h"
-#include "sys.h"
-#include "sound.h"
+#include "client.h"
 #include "cmd.h"
 #include "console.h"
-#include "client.h"
+#include "host.h"
 #include "qargs.h"
+#include "sys.h"
+#include "sound.h"
 
 // fixme: Damn crappy complier doesn't allow me to UNDEF _win32 on command line!
 #ifdef WIN32SDL
@@ -54,7 +54,7 @@
 void        S_Play (void);
 void        S_PlayVol (void);
 void        S_SoundList (void);
-void        S_Update_ ();
+void        S_Update_ (void);
 void        S_StopAllSounds (qboolean clear);
 void        S_StopAllSoundsC (void);
 
@@ -108,6 +108,8 @@ cvar_t     *ambient_fade;
 cvar_t     *snd_noextraupdate;
 cvar_t     *snd_show;
 cvar_t     *snd_interp;
+cvar_t     *snd_phasesep;
+cvar_t     *snd_volumesep;
 cvar_t     *_snd_mixahead;
 
 
@@ -198,14 +200,13 @@ void
 S_Init (void)
 {
 
-//  Con_Printf("\nSound Initialization\n");
+	Con_Printf("\nSound Initialization\n");
 
 	Cmd_AddCommand ("play", S_Play);
 	Cmd_AddCommand ("playvol", S_PlayVol);
 	Cmd_AddCommand ("stopsound", S_StopAllSoundsC);
 	Cmd_AddCommand ("soundlist", S_SoundList);
 	Cmd_AddCommand ("soundinfo", S_SoundInfo_f);
-
 
 	if (COM_CheckParm ("-nosound"))
 		return;
@@ -219,12 +220,11 @@ S_Init (void)
 	}
 
 
-
 	snd_initialized = true;
 
 	S_Startup ();
 
-	if (sound_started == 0)				// sound startup failed? Bail out.
+	if (sound_started == 0)		// sound startup failed? Bail out.
 		return;
 
 	SND_InitScaletable ();
@@ -276,6 +276,8 @@ S_Init_Cvars (void)
 	snd_interp =
 		Cvar_Get ("snd_interp", "1", CVAR_ARCHIVE,
 				  "control sample interpolation");
+	snd_phasesep = Cvar_Get ("snd_phasesep", "0.0", CVAR_ARCHIVE, "max stereo phase separation in ms. 0.6 is for 20cm head");
+	snd_volumesep = Cvar_Get("snd_volumesep", "1.0", CVAR_ARCHIVE, "max stereo volume separation in ms. 1.0 is max");
 	_snd_mixahead = Cvar_Get ("_snd_mixahead", "0.1", CVAR_ARCHIVE, "None");
 }
 
@@ -406,12 +408,8 @@ SND_PickChannel (int entnum, int entchannel)
 		 ch_idx++) {
 		if (entchannel != 0				// channel 0 never overrides
 			&& channels[ch_idx].entnum == entnum
-			&& (channels[ch_idx].entchannel == entchannel || entchannel == -1)) {	// allways 
-																					// override 
-																					// sound 
-																					// from 
-																					// same 
-																					// entity
+			&& (channels[ch_idx].entchannel == entchannel || entchannel == -1)) {
+			// always override sound from same entity
 			first_to_die = ch_idx;
 			break;
 		}
@@ -445,6 +443,7 @@ SND_Spatialize (channel_t *ch)
 {
 	vec_t       dot;
 	vec_t       dist;
+	int	phase;	// in samples
 	vec_t       lscale, rscale, scale;
 	vec3_t      source_vec;
 	sfx_t      *snd;
@@ -453,6 +452,7 @@ SND_Spatialize (channel_t *ch)
 	if (ch->entnum == cl.viewentity) {
 		ch->leftvol = ch->master_vol;
 		ch->rightvol = ch->master_vol;
+		ch->phase = 0;
 		return;
 	}
 // calculate stereo seperation and distance attenuation
@@ -467,9 +467,11 @@ SND_Spatialize (channel_t *ch)
 	if (shm->channels == 1) {
 		rscale = 1.0;
 		lscale = 1.0;
+		phase = 0;
 	} else {
-		rscale = 1.0 + dot;
-		lscale = 1.0 - dot;
+		rscale = 1.0 + dot * snd_volumesep->value;
+		lscale = 1.0 - dot * snd_volumesep->value;
+		phase = snd_phasesep->value * 0.001 * shm->speed * dot;
 	}
 
 // add in distance effect
@@ -482,6 +484,8 @@ SND_Spatialize (channel_t *ch)
 	ch->leftvol = (int) (ch->master_vol * scale);
 	if (ch->leftvol < 0)
 		ch->leftvol = 0;
+
+	ch->phase = phase;
 }
 
 
@@ -690,6 +694,7 @@ S_StaticSound (sfx_t *sfx, vec3_t origin, float vol, float attenuation)
 	ss->end = paintedtime + sc->length;
 
 	SND_Spatialize (ss);
+	ss->oldphase = ss->phase;
 }
 
 
@@ -780,6 +785,7 @@ S_Update (vec3_t origin, vec3_t forward, vec3_t right, vec3_t up)
 	for (i = NUM_AMBIENTS; i < total_channels; i++, ch++) {
 		if (!ch->sfx)
 			continue;
+		ch->oldphase = ch->phase;		// prepare to lerp from prev to next phase
 		SND_Spatialize (ch);			// respatialize channel
 		if (!ch->leftvol && !ch->rightvol)
 			continue;

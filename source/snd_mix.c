@@ -32,8 +32,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
-#include "sound.h"
+
 #include "console.h"
+#include "sound.h"
 
 // fixme: Damn crappy complier doesn't allow me to UNDEF _win32 on command line!
 #ifdef WIN32SDL
@@ -47,7 +48,8 @@
 #endif
 
 #define	PAINTBUFFER_SIZE	512
-portable_samplepair_t paintbuffer[PAINTBUFFER_SIZE];
+portable_samplepair_t paintbuffer[PAINTBUFFER_SIZE * 2];
+int max_overpaint; // number of extra samples painted due to phase shift
 int         snd_scaletable[32][256];
 int        *snd_p, snd_linear_count, snd_vol;
 short      *snd_out;
@@ -289,9 +291,9 @@ S_PaintChannels (int endtime)
 			end = paintedtime + PAINTBUFFER_SIZE;
 
 		// clear the paint buffer
-		memset (paintbuffer, 0,
-
-				(end - paintedtime) * sizeof (portable_samplepair_t));
+//		memset (paintbuffer, 0,
+//				(end - paintedtime) * sizeof (portable_samplepair_t));
+		max_overpaint = 0;
 
 		// paint in the channels.
 		ch = channels;
@@ -336,6 +338,12 @@ S_PaintChannels (int endtime)
 
 		// transfer out according to DMA format
 		S_TransferPaintBuffer (end);
+
+		memmove (paintbuffer, paintbuffer + end - paintedtime,
+			max_overpaint * sizeof (paintbuffer[0]));
+		memset (paintbuffer + max_overpaint, 0, sizeof (paintbuffer)
+			- max_overpaint * sizeof (paintbuffer[0]));
+
 		paintedtime = end;
 	}
 }
@@ -389,19 +397,96 @@ SND_PaintChannelFrom16 (channel_t *ch, sfxcache_t *sc, int count)
 	int         left, right;
 	int         leftvol, rightvol;
 	signed short *sfx;
-	int         i;
+	unsigned int	i = 0;
+	unsigned int	left_phase, right_phase;	// Never allowed < 0 anyway
 
 	leftvol = ch->leftvol;
 	rightvol = ch->rightvol;
+
+	max_overpaint = max (abs (ch->phase),
+			     max (abs (ch->oldphase), max_overpaint));
+
 	sfx = (signed short *) sc->data + ch->pos;
+	ch->pos += count;
+
+	if (ch->phase >= 0) {
+		left_phase = ch->phase;
+		right_phase = 0;
+	} else {
+		left_phase = 0;
+		right_phase = -ch->phase;
+	}
+
+	if (ch->oldphase != ch->phase) {
+		unsigned int    old_phase_left, old_phase_right;
+		unsigned int    new_phase_left, new_phase_right;
+		unsigned int    count_left, count_right, c;
+
+		if (ch->oldphase >= 0) {
+			old_phase_left = ch->oldphase;
+			old_phase_right = 0;
+		} else {
+			old_phase_left = 0;
+			old_phase_right = -ch->oldphase;
+		}
+		new_phase_left = left_phase;
+                new_phase_right = right_phase;
+
+		if (new_phase_left > old_phase_left)
+			count_left = 2 * (new_phase_left - old_phase_left);
+		else
+			count_left = old_phase_left - new_phase_left;
+
+		if (new_phase_right > old_phase_right)
+			count_right = 2 * (new_phase_right - old_phase_right);
+		else
+			count_right = old_phase_right - new_phase_right;
+
+		c = min (count, max (count_right, count_left));
+		count -= c;
+		while (c) {
+			int data = sfx[i];
+			int left = (data * leftvol) >> 8;
+			int right = (data * rightvol) >> 8;
+
+			if (new_phase_left < old_phase_left) {
+				if (!(count_left & 1)) {
+					paintbuffer[i + old_phase_left].left += left;
+					old_phase_left--;
+				}
+				count_left--;
+			} else if (new_phase_left > old_phase_left) {
+				paintbuffer[i + old_phase_left].left += left;
+				old_phase_left++;
+				paintbuffer[i + old_phase_left].left += left;
+			} else {
+				paintbuffer[i + old_phase_left].left += left;
+			}
+
+			if (new_phase_right < old_phase_right) {
+				if (!(count_right & 1)) {
+					paintbuffer[i + old_phase_right].right += right;
+					old_phase_right--;
+				}
+				count_right--;
+			} else if (new_phase_right > old_phase_right) {
+				paintbuffer[i + old_phase_right].right += right;
+				old_phase_right++;
+				paintbuffer[i + old_phase_right].right += right;
+			} else {
+				paintbuffer[i + old_phase_right].right += right;
+			}
+
+			c--;
+			i++;
+		}
+	}
 
 	for (i = 0; i < count; i++) {
 		data = sfx[i];
 		left = (data * leftvol) >> 8;
 		right = (data * rightvol) >> 8;
-		paintbuffer[i].left += left;
-		paintbuffer[i].right += right;
+		paintbuffer[i + left_phase].left += left;
+		paintbuffer[i + right_phase].right += right;
 	}
-
-	ch->pos += count;
 }

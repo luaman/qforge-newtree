@@ -89,11 +89,13 @@
 #define ch_pos			16
 #define ch_looping		20
 #define ch_entnum		24
-#define ch_entchannel	28
+#define ch_entchannel		28
 #define ch_origin		32
-#define ch_dist_mult	44
-#define ch_master_vol	48
-#define ch_size			52
+#define ch_dist_mult		44
+#define ch_master_vol		48
+#define ch_phase		52
+#define ch_oldphase		56
+#define ch_size			60
 
 // portable_samplepair_t structure
 // !!! if this is changed, it much be changed in sound.h too !!!
@@ -102,4 +104,3 @@
 #define psp_size		8
 
 #endif
-
