@@ -291,8 +291,8 @@ x11_set_vidmode(int width, int height)
 void
 x11_Init_Cvars ()
 {
-	vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ARCHIVE,
-			"Toggles fullscreen game mode");
+	vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ROM,
+							   "Toggles fullscreen game mode");
 }
 
 void
