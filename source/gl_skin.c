@@ -72,7 +72,7 @@ Skin_Set_Translate (player_info_t *player)
 static void
 build_skin_8 (byte * original, int tinwidth, int tinheight,
 			  unsigned int scaled_width, unsigned int scaled_height,
-			  int inwidth)
+			  int inwidth, qboolean alpha)
 {
 	unsigned int frac, fracstep;
 	byte       *inrow;
@@ -97,18 +97,19 @@ build_skin_8 (byte * original, int tinwidth, int tinheight,
 		}
 	}
 
-	GL_Upload8_EXT ((byte *) pixels, scaled_width, scaled_height, false, false);
+	GL_Upload8_EXT ((byte *) pixels, scaled_width, scaled_height, false, alpha);
 }
 
 static void
 build_skin_32 (byte * original, int tinwidth, int tinheight,
 			   unsigned int scaled_width, unsigned int scaled_height,
-			   int inwidth)
+			   int inwidth, qboolean alpha)
 {
 	unsigned int frac, fracstep;
 	byte       *inrow;
 	unsigned int pixels[512 * 256], *out;
 	int         i, j;
+	int         samples = alpha ? gl_alpha_format : gl_solid_format;
 
 	out = pixels;
 	memset (pixels, 0, sizeof (pixels));
@@ -128,7 +129,7 @@ build_skin_32 (byte * original, int tinwidth, int tinheight,
 		}
 	}
 
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format,
+	glTexImage2D (GL_TEXTURE_2D, 0, samples,
 				  scaled_width, scaled_height, 0, GL_RGBA,
 				  GL_UNSIGNED_BYTE, pixels);
 
@@ -137,7 +138,7 @@ build_skin_32 (byte * original, int tinwidth, int tinheight,
 }
 
 static void
-build_skin (int texnum, byte *ptexels, int width, int height)
+build_skin (int texnum, byte *ptexels, int width, int height, qboolean alpha)
 {
 	int         tinwidth, tinheight;
 	unsigned int scaled_width, scaled_height;
@@ -160,10 +161,10 @@ build_skin (int texnum, byte *ptexels, int width, int height)
 
 	if (VID_Is8bit ()) {				// 8bit texture upload
 		build_skin_8 (ptexels, tinwidth, tinheight, scaled_width,
-					  scaled_height, width);
+					  scaled_height, width, alpha);
 	} else {
 		build_skin_32 (ptexels, tinwidth, tinheight, scaled_width,
-					   scaled_height, width);
+					   scaled_height, width, alpha);
 	}
 }
 
@@ -189,7 +190,7 @@ Skin_Do_Translation (player_info_t *player)
 		inheight = 194;
 	}
 	texnum = playertextures + (player - cl.players);
-	build_skin (texnum, original, inwidth, inheight);
+	build_skin (texnum, original, inwidth, inheight, false);
 }
 
 void
@@ -211,6 +212,6 @@ Skin_Process (skin_t *skin, tex_t *tex)
 
 	if (Mod_CalcFullbright (tex->data, ptexels, pixels)) {
 		skin->fb_texture = player_fb_textures + (skin - skin_cache);
-		build_skin (skin->fb_texture, ptexels, tex->width, tex->height);
+		build_skin (skin->fb_texture, ptexels, tex->width, tex->height, true);
 	}
 }
