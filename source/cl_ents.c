@@ -72,13 +72,13 @@ CL_AllocDlight
 
 ===============
 */
-dlight_t   *
+dlight_t *
 CL_AllocDlight (int key)
 {
 	int         i;
 	dlight_t   *dl;
 
-// first look for an exact key match
+	// first look for an exact key match
 	if (key) {
 		dl = cl_dlights;
 		for (i = 0; i < MAX_DLIGHTS; i++, dl++) {
@@ -90,7 +90,7 @@ CL_AllocDlight (int key)
 			}
 		}
 	}
-// then look for anything else
+	// then look for anything else
 	dl = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++) {
 		if (dl->die < cl.time) {
@@ -114,8 +114,7 @@ CL_NewDlight
 ===============
 */
 void
-CL_NewDlight (int key, float x, float y, float z, float radius, float time,
-			  int type)
+CL_NewDlight (int key, float x, float y, float z, float radius, float time, int type)
 {
 	dlight_t   *dl;
 
@@ -508,6 +507,7 @@ CL_LinkPacketEntities (void)
 			&& ((i = s1->frame) == 49 || i == 60 || i == 69 || i == 84
 				|| i == 93 || i == 102))
 			continue;
+
 		if (cl_gibfilter->int_val &&
 			(s1->modelindex == cl_h_playerindex
 			 || s1->modelindex == cl_gib1index || s1->modelindex == cl_gib2index
@@ -591,9 +591,8 @@ CL_LinkPacketEntities (void)
 			}
 		}
 
-		if (i == cl_oldnumvisedicts) {
-			// not in last message
-			ent->pose1 = ent->pose2 = -1;		// don't lerp 
+		if (i == cl_oldnumvisedicts) {	// not in last message, don't lerp 
+			ent->pose1 = ent->pose2 = -1;
 			continue;
 		}
 
@@ -963,8 +962,7 @@ CL_LinkPlayers (void)
 		if (cl_numvisedicts == MAX_VISEDICTS)	// object list is full
 			break;
 
-		ent = &cl_visedicts[cl_numvisedicts];
-		cl_numvisedicts++;
+		ent = &cl_visedicts[cl_numvisedicts++];
 
 		ent->frame = state->frame;
 
@@ -975,10 +973,12 @@ CL_LinkPlayers (void)
 				ent->frame_interval = cl_oldvisedicts[i].frame_interval;
 				ent->pose1 = cl_oldvisedicts[i].pose1;
 				ent->pose2 = cl_oldvisedicts[i].pose2;
+				break;
 			}
 		}
 
 		ent->keynum = 0;
+//		ent->keynum = state->number;
 		ent->model = cl.model_precache[state->modelindex];
 		ent->skinnum = state->skinnum;
 		ent->colormap = info->translations;
