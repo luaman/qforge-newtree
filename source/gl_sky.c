@@ -541,13 +541,15 @@ R_DrawSkyChain (msurface_t *sky_chain)
 		int i,j;
 		glColor3f (1, 0, 0);
 		for (i=0; i<6; i++) {
+			vec3_t v;
 			glBegin (GL_LINES);
 			for (j=0; j<4; j++) {
-				vec3_t v;
 				memcpy (v, &skyvec[i][j][2], sizeof(v));
 				VectorAdd (v, r_refdef.vieworg, v);
 				glVertex3fv (v);
 			}
+			memcpy (v, &skyvec[i][j][2], sizeof(v));
+			VectorAdd (v, r_refdef.vieworg, v);
 			glVertex3fv (&skyvec[i][0][2]);
 			glEnd ();
 		}
