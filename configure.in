@@ -401,12 +401,8 @@ else
 fi
 
 if test "x$HAVE_GLX" = xyes; then
-	if test "x$GLX_CFLAGS" != x; then
-		GLX_CFLAGS="-I$GLX_CFLAGS"
-	fi
-	if test "x$glx_libraries" != x; then
-		GLX_LIBS="-L$glx_libraries"
-	fi
+	test "x$GLX_CFLAGS" != x &&	GLX_CFLAGS="-I$GLX_CFLAGS"
+	test "x$glx_libraries" != x && GLX_LIBS="-L$glx_libraries"
 	GLX_LIBS="$GLX_LIBS -l$GLX_NAME"
 	AC_DEFINE(HAVE_GLX)
 else
@@ -435,6 +431,23 @@ case "${host}" in
 esac
 AM_CONDITIONAL(SYSTYPE_WIN32, test "$SYSTYPE" = "WIN32")
 
+dnl Check for ia32
+AC_MSG_CHECKING(for an ia32 machine)
+case "${host}" in
+	i?86-*-*)
+		AC_MSG_RESULT(yes)
+		AC_MSG_CHECKING(to see if we should disable asm optimizations)
+		AC_ARG_ENABLE(asmopt,
+			[  --disable-asmopt        disable assembler optimization],
+			ASM_ARCH=none
+			AC_MSG_RESULT(yes),
+			AC_DEFINE(USE_INTEL_ASM)
+			AC_MSG_RESULT(no)
+		)
+		;;
+	*) AC_MSG_RESULT(no)
+esac
+AC_SUBST(ASM_ARCH)
 
 dnl ==================================================================
 dnl Checks for sound
@@ -649,11 +662,13 @@ if test "x$RELEASE" = xyes; then
 	fi
 fi
 
-dnl QuakeForge code has lots of BCPL-style (//) comments, which cause
-dnl problems with any compiler that is ANSI/ISO-C compliant.
+dnl QuakeForge uses lots of BCPL-style (//) comments, which can cause problems
+dnl with many compilers that don't support the latest ISO standards. Well,
+dnl that is our cover story -- the reality is that we like them and don't want
+dnl to give them up. :)
 dnl Make the compiler swallow its pride...
 if test "x$GCC" != xyes; then
-   AC_MSG_CHECKING(for how to deal with C++ comments)
+   AC_MSG_CHECKING(for how to deal with BCPL-style comments)
    case "${host}" in
    *-aix*)
 	CFLAGS="$CFLAGS -qcpluscmt"
@@ -679,38 +694,14 @@ if test "x$GCC" = xyes; then
 #   CFLAGS="$CFLAGS -Wall -pedantic"
 fi
 
-dnl Check for ia32
-AC_MSG_CHECKING(for an ia32 machine)
-case "${host}" in
-	i?86-*-*)
-		AC_MSG_RESULT(yes)
-		AC_MSG_CHECKING(to see if we should disable asm optimizations)
-		AC_ARG_ENABLE(asmopt,
-			[  --disable-asmopt        disable assembler optimization],
-			ASM_ARCH=none
-			AC_MSG_RESULT(yes),
-			AC_DEFINE(USE_INTEL_ASM)
-			AC_MSG_RESULT(no)
-		)
-		;;
-	*) AC_MSG_RESULT(no)
-esac
-AC_SUBST(ASM_ARCH)
-
-
 dnl ==================================================================
 dnl Find out what to build and finish
 dnl ==================================================================
 
-if test "x$HAVE_MGL" = xyes; then
-	TARGETS="$TARGETS qf-client-mgl\$(EXEEXT)"
-fi
-if test "x$HAVE_GGI" = xyes; then
-	TARGETS="$TARGETS qf-client-ggi\$(EXEEXT)"
-fi
-if test "x$HAVE_SVGA" = xyes; then
-	TARGETS="$TARGETS qf-client-svga\$(EXEEXT)"
-fi
+test "x$HAVE_MGL" = xyes && TARGETS="$TARGETS qf-client-mgl\$(EXEEXT)"
+test "x$HAVE_GGI" = xyes && TARGETS="$TARGETS qf-client-ggi\$(EXEEXT)"
+test "x$HAVE_SDL" = xyes && TARGETS="$TARGETS qf-client-sdl\$(EXEEXT)"
+test "x$HAVE_SVGA" = xyes && TARGETS="$TARGETS qf-client-svga\$(EXEEXT)"
 if test "x$HAVE_X" = xyes; then
 	TARGETS="$TARGETS qf-client-x11\$(EXEEXT)"
 	if test "x$HAVE_GLX" = xyes; then
