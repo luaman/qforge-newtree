@@ -54,13 +54,13 @@ vec3_t      forward, right, up;
 vec3_t      player_mins = { -16, -16, -24 };
 vec3_t      player_maxs = { 16, 16, 32 };
 
-void        PM_InitBoxHull (void);
+extern void 	InitBoxHull (void);
 void        PM_CategorizePosition (void);
 
 void
 Pmove_Init (void)
 {
-	PM_InitBoxHull ();
+	InitBoxHull ();
 }
 
 void
@@ -126,7 +126,7 @@ PM_FlyMove (void)
 	vec3_t      planes[MAX_CLIP_PLANES];
 	vec3_t      primal_velocity, original_velocity;
 	int         i, j;
-	pmtrace_t   trace;
+	trace_t   trace;
 	vec3_t      end;
 	float       time_left;
 	int         blocked;
@@ -161,7 +161,7 @@ PM_FlyMove (void)
 			break;						// moved the entire distance
 
 		// save entity for contact
-		pmove.touchindex[pmove.numtouch] = trace.ent;
+		pmove.touchindex[pmove.numtouch] = trace.entnum;
 		pmove.numtouch++;
 
 		if (trace.plane.normal[2] > 0.7) {
@@ -237,7 +237,7 @@ void
 PM_FlymodeMove (void)
 {
 	vec3_t      start, dest, pmvel, pmtmp;
-	pmtrace_t   trace;
+	trace_t   trace;
 	float       pmspeed;
 
 	pmvel[0] =
@@ -280,7 +280,7 @@ void
 PM_GroundMove (void)
 {
 	vec3_t      start, dest;
-	pmtrace_t   trace;
+	trace_t   trace;
 	vec3_t      original, originalvel, down, up, downvel;
 	float       downdist, updist;
 
@@ -367,7 +367,7 @@ PM_Friction (void)
 	float       friction;
 	float       drop;
 	vec3_t      start, stop;
-	pmtrace_t   trace;
+	trace_t   trace;
 
 	if (pmove.waterjumptime)
 		return;
@@ -482,7 +482,7 @@ PM_WaterMove (void)
 	float       wishspeed;
 	vec3_t      wishdir;
 	vec3_t      start, dest;
-	pmtrace_t   trace;
+	trace_t   trace;
 
 //
 // user intentions
@@ -607,7 +607,7 @@ PM_CategorizePosition (void)
 {
 	vec3_t      point;
 	int         cont;
-	pmtrace_t   tr;
+	trace_t   tr;
 
 // if the player hull point one unit down is solid, the player
 // is on ground
@@ -623,15 +623,16 @@ PM_CategorizePosition (void)
 		if (tr.plane.normal[2] < 0.7)
 			onground = -1;				// too steep
 		else
-			onground = tr.ent;
+			onground = tr.entnum;
 		if (onground != -1) {
 			pmove.waterjumptime = 0;
 			if (!tr.startsolid && !tr.allsolid)
 				VectorCopy (tr.endpos, pmove.origin);
 		}
 		// standing on an entity other than the world
-		if (tr.ent > 0) {
-			pmove.touchindex[pmove.numtouch] = tr.ent;
+
+		if (tr.entnum > 0) {
+			pmove.touchindex[pmove.numtouch] = tr.entnum;
 			pmove.numtouch++;
 		}
 	}
