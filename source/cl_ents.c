@@ -46,6 +46,7 @@
 #include "view.h"
 #include "teamplay.h"
 #include "r_dynamic.h"
+#include "r_local.h"
 #include "cl_cam.h"
 #include "cl_pred.h"
 #include "cl_main.h"
@@ -578,6 +579,10 @@ CL_LinkPacketEntities (void)
 
 		// set frame
 		(*ent)->frame = s1->frame;
+		if ((*ent)->visframe != r_framecount - 1) {
+			(*ent)->pose1 = (*ent)->pose2 = -1;
+		}
+		(*ent)->visframe = r_framecount;
 
 		if (model->flags & EF_ROTATE) { // rotate binary objects locally
 			(*ent)->angles[0] = 0;
