@@ -175,7 +175,6 @@ CL_GLX_sources=\
   gl_mesh.c \
   gl_model.c \
   gl_ngraph.c \
-  gl_parse.c \
   gl_part.c \
   gl_refrag.c \
   gl_rlight.c \
