@@ -36,28 +36,30 @@
 #include <signal.h>
 #include <values.h>
 
-#include "SDL.h"
+#include <SDL.h>
 
-#include "qtypes.h"
-#include "quakedef.h"
-#include "qendian.h"
-#include "glquake.h"
-#include "cvar.h"
-#include "qargs.h"
 #include "console.h"
+#include "cvar.h"
+#include "draw.h"
+#include "glquake.h"
+#include "input.h"
+#include "joystick.h"
 #include "keys.h"
 #include "menu.h"
 #include "sys.h"
-#include "draw.h"
+#include "qargs.h"
+#include "qendian.h"
+#include "qtypes.h"
+#include "quakedef.h"
 
 #define	WARP_WIDTH	320
 #define	WARP_HEIGHT	200
 
 static qboolean		vid_initialized = false;
 
-cvar_t  *vid_fullscreen;
-cvar_t	  *_windowed_mouse;
-cvar_t	  *m_filter;
+cvar_t	*vid_fullscreen;
+cvar_t	*_windowed_mouse;
+cvar_t	*m_filter;
 
 #ifdef WIN32
 /* fixme: this is evil hack */
@@ -92,7 +94,7 @@ int modestate;
 static qboolean mouse_avail;
 static float	mouse_x, mouse_y;
 static float	old_mouse_x, old_mouse_y;
-static float	old__windowed_mouse;
+static float	old_windowed_mouse;
 
 void
 D_BeginDirectRect (int x, int y, byte *pbitmap, int width, int height)
@@ -116,7 +118,7 @@ VID_Shutdown (void)
 }
 #ifndef WIN32
 static void
-signal_handler(int sig)
+signal_handler (int sig)
 {
 	printf("Received signal %d, exiting...\n", sig);
 	Sys_Quit();
@@ -124,7 +126,7 @@ signal_handler(int sig)
 }
 
 static void
-InitSig(void)
+InitSig (void)
 {
 	signal(SIGHUP, signal_handler);
 	signal(SIGINT, signal_handler);
@@ -161,7 +163,7 @@ VID_SetPalette (unsigned char *palette)
 
 	pal = palette;
 	table = d_8to24table;
-	for (i=0; i<256; i++)	{
+	for (i=0; i<256; i++) {
 		r = pal[0];
 		g = pal[1];
 		b = pal[2];
@@ -282,7 +284,7 @@ GL_EndRendering (void)
 }
 
 qboolean
-VID_Is8bit(void)
+VID_Is8bit (void)
 {
 	return is8bit;
 }
@@ -316,7 +318,7 @@ VID_Init8bitPalette (void)
 #else
 
 void
-VID_Init8bitPalette(void)
+VID_Init8bitPalette (void)
 {
 }
 
@@ -404,7 +406,7 @@ VID_Init (unsigned char *palette)
 	InitSig (); // trap evil signals
 #endif
 
-	GL_Init();
+	GL_Init ();
 
 	snprintf(gldir, sizeof(gldir), "%s/glquake", com_gamedir);
 	Sys_mkdir (gldir);
@@ -428,7 +430,8 @@ VID_Init (unsigned char *palette)
 	vid.recalc_refdef = 1;	  // force a surface cache flush
 }
 
-void VID_InitCvars()
+void
+VID_InitCvars ()
 {
 }
 
@@ -619,6 +622,8 @@ IN_SendKeyEvents (void)
 void
 IN_Init (void)
 {
+	JOY_Init ();
+
 	_windowed_mouse = Cvar_Get ("_windowed_mouse", "0", CVAR_ARCHIVE, "Grab mouse and keyboard input");
 	m_filter = Cvar_Get ("m_filter", "0", CVAR_ARCHIVE, "None");
 
@@ -635,16 +640,21 @@ IN_Init (void)
 void
 IN_Shutdown (void)
 {
+	JOY_Shutdown ();
+
+	Con_Printf ("IN_Shutdown\n");
 	mouse_avail = 0;
 }
 
 void
-IN_Commands(void)
+IN_Commands (void)
 {
-	if (old__windowed_mouse != _windowed_mouse->value) {
-		old__windowed_mouse = _windowed_mouse->value;
+	JOY_Command ();
 
-		if (_windowed_mouse->value) {	// grab the pointer
+	if (old_windowed_mouse != _windowed_mouse->int_val) {
+		old_windowed_mouse = _windowed_mouse->int_val;
+
+		if (_windowed_mouse->int_val) {	// grab the pointer
 			SDL_ShowCursor (0);
 			SDL_WM_GrabInput (SDL_GRAB_ON);
 		} else {	// ungrab the pointer
@@ -655,8 +665,10 @@ IN_Commands(void)
 }
 
 void
-IN_Move(usercmd_t *cmd)
+IN_Move (usercmd_t *cmd)
 {
+	JOY_Move (cmd);
+	
 	if (!mouse_avail)
 		return;
 
@@ -671,15 +683,17 @@ IN_Move(usercmd_t *cmd)
 	mouse_x *= sensitivity->value;
 	mouse_y *= sensitivity->value;
 
-	if ( (in_strafe.state & 1) || (lookstrafe->value && (in_mlook.state & 1) ))
+	if ((in_strafe.state & 1) || (lookstrafe->value && freelook))
 		cmd->sidemove += m_side->value * mouse_x;
 	else
 		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
-	if (in_mlook.state & 1)
+
+	if (freelook)
 		V_StopPitchDrift ();
 
-	if ( (in_mlook.state & 1) && !(in_strafe.state & 1)) {
-		cl.viewangles[PITCH] = bound (-70, cl.viewangles[PITCH] + (m_pitch->value * mouse_y), 80);
+	if (freelook && !(in_strafe.state & 1)) {
+		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
+		cl.viewangles[PITCH] = bound (-70, cl.viewangles[PITCH], 80);
 	} else {
 		if ((in_strafe.state & 1) && noclip_anglehack)
 			cmd->upmove -= m_forward->value * mouse_y;
@@ -690,12 +704,12 @@ IN_Move(usercmd_t *cmd)
 }
 
 void
-VID_LockBuffer ( void )
+VID_LockBuffer (void)
 {      
 }      
 
 void
-VID_UnlockBuffer ( void )
+VID_UnlockBuffer (void)
 {      
 } 
 
