@@ -53,7 +53,7 @@ endif
 common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c hash.c \
 	info.c link.c mathlib.c mdfour.c model.c model_brush.c \
 	msg.c pmove.c pmovetst.c qargs.c qendian.c quakefs.c quakeio.c \
-	sizebuf.c va.c zone.c $(math_ASM) $(packetlogger) $(world_ASM)
+	sizebuf.c sys.c va.c zone.c $(math_ASM) $(packetlogger) $(world_ASM)
 
 #
 # ... Network type
@@ -71,9 +71,9 @@ EXTRA_libqfnet_a_SOURCES= net_chan.c net_com.c net_udp.c net_udp6.c
 # ... System type
 #
 if SYSTYPE_WIN32
-libqfsys_sv_a_SOURCES=	fnmatch.c dirent.c sv_sys_win.c sys.c
+libqfsys_sv_a_SOURCES=	fnmatch.c dirent.c sv_sys_win.c
 else
-libqfsys_sv_a_SOURCES=	sv_sys_unix.c sys.c
+libqfsys_sv_a_SOURCES=	sv_sys_unix.c
 endif
 EXTRA_libqfsys_sv_a_SOURCES= fnmatch.c dirent.c sv_sys_unix.c sv_sys_win.c sys.c sys.c
 
@@ -92,9 +92,9 @@ qf_server_DEPENDENCIES= libqfnet.a libqfsys_sv.a
 # ... System type
 #
 if SYSTYPE_WIN32
-libqfsys_cl_a_SOURCES=	cl_sys_win.c fnmatch.c dirent.c sys.c
+libqfsys_cl_a_SOURCES=	fnmatch.c dirent.c
 else
-libqfsys_cl_a_SOURCES=	cl_sys_unix.c sys.c
+libqfsys_cl_a_SOURCES=	
 endif
 EXTRA_libqfsys_cl_a_SOURCES= cl_sys_sdl.c cl_sys_unix.c cl_sys_win.c sys.c sys.c fnmatch.c dirent.c
 
@@ -203,7 +203,7 @@ soft_SOURCES=	d_edge.c d_fill.c d_init.c d_modech.c \
 # ... Linux FBDev
 #
 YFLAGS = -d
-fbdev_SOURCES=		fbset.c fbset_modes_y.y fbset_modes_l.l vid_fbdev.c in_fbdev.c
+fbdev_SOURCES=		fbset.c fbset_modes_y.y fbset_modes_l.l vid_fbdev.c in_fbdev.c cl_sys_unix.c
 YACCLEX_CLEANFILES=	fbset_modes_y.c fbset_modes_y.h fbset_modes_y.tab.h fbset_modes_l.c
 EXTRA_qf_client_fbdev_SOURCES=fbset_modes_y.h
 
@@ -219,7 +219,7 @@ qf_client_fbdev_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqf
 #
 # ... GGI
 #
-ggi_SOURCES=		vid_ggi.c in_ggi.c
+ggi_SOURCES=		vid_ggi.c in_ggi.c cl_sys_unix.c
 
 qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(ggi_SOURCES)
 qf_client_ggi_LDADD=	$(GGI_LIBS) $(CLIENT_LIBS)
@@ -228,7 +228,7 @@ qf_client_ggi_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs
 #
 # ... SciTech MGL
 #
-mgl_SOURCES=		vid_mgl.c in_win.c
+mgl_SOURCES=		vid_mgl.c in_win.c cl_sys_win.c
 
 qf_client_mgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(mgl_SOURCES)
 qf_client_mgl_LDADD=	$(MGL_LIBS) $(CLIENT_LIBS)
@@ -246,7 +246,7 @@ qf_client_sdl_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs
 #
 # ... Linux SVGAlib
 #
-svga_SOURCES=		d_copy.S vid_svgalib.c in_svgalib.c
+svga_SOURCES=		d_copy.S vid_svgalib.c in_svgalib.c cl_sys_unix.c
 
 qf_client_svga_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(svga_SOURCES)
 qf_client_svga_LDADD=	$(SVGA_LIBS) $(CLIENT_LIBS)
@@ -255,7 +255,7 @@ qf_client_svga_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfj
 #
 # ... X11
 #
-x11_SOURCES=		vid_x11.c in_x11.c context_x11.c dga_check.c
+x11_SOURCES=		vid_x11.c in_x11.c context_x11.c dga_check.c cl_sys_unix.c
 
 qf_client_x11_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(x11_SOURCES)
 qf_client_x11_LDADD=	$(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB) $(CLIENT_LIBS)
@@ -277,7 +277,7 @@ ogl_SOURCES=	fractalnoise.c gl_draw.c gl_dyn_fires.c gl_dyn_part.c \
 #
 # ... 3Dfx Voodoo 1 and 2 SVGAlib-based console GL
 #
-tdfx_SOURCES=	vid_3dfxsvga.c vid_common_gl.c in_svgalib.c
+tdfx_SOURCES=	vid_3dfxsvga.c vid_common_gl.c in_svgalib.c cl_sys_unix.c
 
 qf_client_3dfx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(tdfx_SOURCES)
 qf_client_3dfx_LDADD=	$(TDFXGL_LIBS) $(SVGA_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
@@ -286,7 +286,7 @@ qf_client_3dfx_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfj
 #
 # ... OpenGL in X Window
 #
-glx_SOURCES=	vid_glx.c vid_common_gl.c in_x11.c context_x11.c dga_check.c
+glx_SOURCES=	vid_glx.c vid_common_gl.c in_x11.c context_x11.c dga_check.c cl_sys_unix.c
 
 qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
 qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
@@ -304,7 +304,7 @@ qf_client_sgl_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs
 #
 # SGI/Microsoft WGL (Windows OpenGL)
 #
-wgl_SOURCES=	vid_wgl.c in_win.c
+wgl_SOURCES=	vid_wgl.c in_win.c cl_sys_win.c
 
 qf_client_wgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(wgl_SOURCES)
 qf_client_wgl_LDADD=	$(CLIENT_LIBS) $(GLX_LIBS) -lgdi32 -lwinmm
