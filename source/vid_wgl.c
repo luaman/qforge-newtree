@@ -42,6 +42,9 @@
 #include "cmd.h"
 #include "qendian.h"
 #include "draw.h"
+#include "cdaudio.h"
+#include "console.h"
+#include "sbar.h"
 
 #define MAX_MODE_LIST	30
 #define VID_ROW_SIZE	3
@@ -215,7 +218,6 @@ void D_EndDirectRect (int x, int y, int width, int height)
 
 void CenterWindow(HWND hWndCenter, int width, int height, BOOL lefttopjustify)
 {
-    RECT    rect;
     int     CenterX, CenterY;
 
 	CenterX = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
@@ -400,7 +402,6 @@ int VID_SetMode (int modenum, unsigned char *palette)
 	int				original_mode, temp;
 	qboolean		stat;
     MSG				msg;
-	HDC				hdc;
 
 	if ((windowed && (modenum != 0)) ||
 		(!windowed && (modenum < 1)) ||
@@ -717,13 +718,9 @@ void	VID_SetPalette (unsigned char *palette)
 	unsigned r,g,b;
 	unsigned v;
 	int     r1,g1,b1;
-	int		j,k,l,m;
+	int		j,k,l;
 	unsigned short i;
 	unsigned	*table;
-	FILE *f;
-	char s[255];
-	HWND hDlg, hProgress;
-	float gamma;
 
 //
 // 8 8 8 encoding
@@ -975,9 +972,6 @@ void AppActivate(BOOL fActive, BOOL minimize)
 *
 ****************************************************************************/
 {
-	MSG msg;
-    HDC			hdc;
-    int			i, t;
 	static BOOL	sound_active;
 
 	ActiveApp = fActive;
@@ -1034,6 +1028,7 @@ void AppActivate(BOOL fActive, BOOL minimize)
 }
 
 
+LONG CDAudio_MessageHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 /* main window procedure */
 LONG WINAPI MainWndProc (
     HWND    hWnd,
@@ -1042,7 +1037,7 @@ LONG WINAPI MainWndProc (
     LPARAM  lParam)
 {
     LONG    lRet = 1;
-	int		fwKeys, xPos, yPos, fActive, fMinimized, temp;
+	int		fActive, fMinimized, temp;
 	extern unsigned int uiWheelMessage;
 
 	if ( uMsg == uiWheelMessage )
@@ -1330,8 +1325,6 @@ void VID_DescribeModes_f (void)
 void VID_InitDIB (HINSTANCE hInstance)
 {
 	WNDCLASS		wc;
-	HDC				hdc;
-	int				i;
 
 	/* Register the frame class */
     wc.style         = 0;
@@ -1387,7 +1380,7 @@ VID_InitFullDIB
 void VID_InitFullDIB (HINSTANCE hInstance)
 {
 	DEVMODE	devmode;
-	int		i, modenum, cmodes, originalnummodes, existingmode, numlowresmodes;
+	int		i, modenum, originalnummodes, existingmode, numlowresmodes;
 	int		j, bpp, done;
 	BOOL	stat;
 
@@ -1567,7 +1560,6 @@ void	VID_Init (unsigned char *palette)
 {
 	int		i, existingmode;
 	int		basenummodes, width, height, bpp, findbpp, done;
-	byte	*ptmp;
 	char	gldir[MAX_OSPATH];
 	HDC		hdc;
 	DEVMODE	devmode;
@@ -1861,8 +1853,7 @@ void VID_MenuDraw (void)
 {
 	qpic_t		*p;
 	char		*ptr;
-	int			lnummodes, i, j, k, column, row, dup, dupmode;
-	char		temp[100];
+	int			lnummodes, i, k, column, row;
 	vmode_t		*pv;
 
 	p = Draw_CachePic ("gfx/vidmodes.lmp");
