@@ -1220,6 +1220,10 @@ SOURCE=.\sys_win.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\teamplay.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\va.c
 # End Source File
 # Begin Source File
