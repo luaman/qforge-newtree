@@ -306,6 +306,8 @@ Cmd_Exec_File (char *path)
 	int         len;
 	QFile      *file;
 
+	if (!path || !*path)
+		return;
 	if ((file = Qopen (path, "r")) != NULL) {
 		len = COM_filelength (file);
 		f = (char *) Hunk_TempAlloc (len + 1);
