@@ -74,6 +74,9 @@ extern byte	*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
 qpic_t		*draw_backtile;
 
+int			ltexcrctable[256];  // cache mismatch checking  --KB
+
+
 int			translate_texture;
 int			char_texture;
 int			cs_texture; // crosshair texture
@@ -112,6 +115,7 @@ typedef struct
 	char	identifier[64];
 	int		width, height;
 	qboolean	mipmap;
+	int		crc;	// not really a standard CRC, but it works
 } gltexture_t;
 
 #define	MAX_GLTEXTURES	1024
@@ -1334,8 +1338,18 @@ GL_LoadTexture
 int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha)
 {
 	int			i;
+	int			s;
+	int			lcrc;
 	gltexture_t	*glt;
 
+	// LordHavoc's cache check, not a standard crc but it works  --KB
+	lcrc = 0;
+	s = width*height; // size
+	for (i = 0; i < 256; i++)
+		ltexcrctable[i] = i + 1;
+	for (i = 0; i < s; i++)
+		lcrc += (ltexcrctable[data[i] & 255]++);
+	
 	// see if the texture is allready present
 	if (identifier[0])
 	{
@@ -1343,37 +1357,34 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 		{
 			if (!strcmp (identifier, glt->identifier))
 			{
-				if (width != glt->width || height != glt->height)
-				{
-					glt->width = width;
-					glt->height = height;
-					glt->mipmap = mipmap;
-
-					GL_Bind (glt->texnum);
-
-					GL_Upload8 (data, width, height, mipmap, alpha);
-				}
-				return gltextures[i].texnum;
+				if (lcrc != glt->crc
+						|| width != glt->width
+						|| height != glt->height)
+					goto SetupTexture;
+				else
+					return gltextures[i].texnum;
 			}
 		}
 	}
-	else
-		glt = &gltextures[numgltextures];
+
+	glt = &gltextures[numgltextures];
 	numgltextures++;
 
 	strcpy (glt->identifier, identifier);
 	glt->texnum = texture_extension_number;
+	texture_extension_number++;
+
+SetupTexture:
+	glt->crc = lcrc;
 	glt->width = width;
 	glt->height = height;
 	glt->mipmap = mipmap;
 
-	GL_Bind(texture_extension_number );
+	GL_Bind(glt->texnum);
 
 	GL_Upload8 (data, width, height, mipmap, alpha);
 
-	texture_extension_number++;
-
-	return texture_extension_number-1;
+	return glt->texnum;
 }
 
 /*
