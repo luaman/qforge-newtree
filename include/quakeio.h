@@ -30,6 +30,7 @@
 #ifndef _QUAKEIO_H
 #define _QUAKEIO_H
 
+#include "gcc_attr.h"
 #include <stdio.h>
 
 #include <config.h>
@@ -41,7 +42,7 @@ FILE *Qdopen(int fd, const char *mode);
 void Qclose(FILE *file);
 int Qread(FILE *file, void *buf, int count);
 int Qwrite(FILE *file, void *buf, int count);
-int Qprintf(FILE *file, const char *fmt, ...);
+int Qprintf(FILE *file, const char *fmt, ...) __attribute__((format(printf,2,3)));
 char *Qgets(FILE *file, char *buf, int count);
 int Qgetc(FILE *file);
 int Qputc(FILE *file, int c);

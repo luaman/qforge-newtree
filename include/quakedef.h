@@ -29,6 +29,8 @@
 #ifndef _QUAKEDEF_H
 #define _QUAKEDEF_H
 
+#include "gcc_attr.h"
+
 #define	QUAKE_GAME			// as opposed to utilities
 
 //define	PARANOID			// speed sapping error checking
@@ -71,12 +73,12 @@ void Host_ServerFrame (void);
 void Host_InitCommands (void);
 void Host_Init (quakeparms_t *parms);
 void Host_Shutdown(void);
-void Host_Error (char *error, ...);
-void Host_EndGame (char *message, ...);
+void Host_Error (char *error, ...) __attribute__((format(printf,1,2)));
+void Host_EndGame (char *message, ...) __attribute__((format(printf,1,2)));
 qboolean Host_SimulationTime(float time);
 void Host_Frame (float time);
 void Host_Quit_f (void);
-void Host_ClientCommands (char *fmt, ...);
+void Host_ClientCommands (char *fmt, ...) __attribute__((format(printf,1,2)));
 void Host_ShutdownServer (qboolean crash);
 
 #endif // _QUAKEDEH_H

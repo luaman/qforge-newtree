@@ -557,7 +557,7 @@ void VID_Init (unsigned char *palette)
 			printf("	-visualid %d\n", (int)(x_visinfo[i].visualid));
 	} else if (num_visuals == 0) {
 		if (template_mask == VisualIDMask) {
-			Sys_Error("VID: Bad visual id %d\n",
+			Sys_Error("VID: Bad visual id %ld\n",
 				  template.visualid);
 		} else {
 			Sys_Error("VID: No visuals at depth %d\n",

@@ -1258,13 +1258,13 @@ void CL_ParseServerMessage (void)
 			for (i=0 ; i<3 ; i++)
 			{
 				cl.simorg[i] = MSG_ReadCoord ();
-				Con_DPrintf ("%i ", cl.simorg[i]);
+				Con_DPrintf ("%f ", cl.simorg[i]);
 			}
 			Con_DPrintf ("\nintermission simangles: ");
 			for (i=0 ; i<3 ; i++)
 			{
 				cl.simangles[i] = MSG_ReadAngle ();
-				Con_DPrintf ("%i ", cl.simangles[i]);
+				Con_DPrintf ("%f ", cl.simangles[i]);
 			}
 			Con_DPrintf ("\n");
 			VectorCopy (vec3_origin, cl.simvel);

@@ -35,6 +35,7 @@
 #endif
 
 #include "cvar.h"
+#include "gcc_attr.h"
 
 /* The host system specifies the base of the directory tree, the
    command line parms passed to the program, and the amount of memory
@@ -61,7 +62,7 @@ extern	qboolean	host_initialized;	/* True if into command execution. */
 extern	double		realtime;			/* Not bounded in any way, changed at
 										   start of every frame, never reset */
 
-char	*va(char *format, ...);
+char	*va(char *format, ...) __attribute__((format(printf,1,2)));
 // does a varargs printf into a temp buffer
 
 #endif // _COMMDEF_H
