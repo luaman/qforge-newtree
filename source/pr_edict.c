@@ -856,6 +856,9 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 		if (keyname[0] == '_')
 			continue;
 
+		// If skyname is set, we want to allow skyboxes and set what
+		//  the skybox name should be.  "qlsky" is supported since
+		//  at least one other map uses it already.  --KB
 		if (stricmp (keyname, "skyname") == 0 ||
 				stricmp (keyname, "qlsky") == 0)
 		{
