@@ -13,9 +13,8 @@ EXTRA_DIST=	README.WIN newtree.dsw ChangeLog \
 NOCONV_DIST=	$(distdir)/include/win32/resources/icon1.ico
 
 changelog::
-	-touch ChangeLog
-	-tools/cvs2cl/cvs2cl.pl -b --utc
-	-rm -f ChangeLog.bak
+	( cd $(top_srcdir); \
+	tools/cvs2cl/cvs2cl.pl --stdout -b --utc ) > ChangeLog
 
 dist-zip: distdir
 	-chmod -R a+r $(distdir)
