@@ -1,7 +1,7 @@
 /*
 	math.S
 
-	(description)
+	x86 assembly-language math routines.
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +25,6 @@
 
 	$Id$
 */
-// math.s
-// x86 assembly-language math routines.
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	nonintel.c
 
-	(description)
+	code for non-Intel processors only
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// nonintel.c: code for non-Intel processors only
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

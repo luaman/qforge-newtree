@@ -1,7 +1,7 @@
 /*
 	pr_edict.c
 
-	(description)
+	entity dictionary
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// sv_edict.c -- entity dictionary
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

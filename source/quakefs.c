@@ -4,9 +4,6 @@
 	virtual filesystem functions
 
 	Copyright (C) 1996-1997  Id Software, Inc.
-	Copyright (C) 1999,2000  Nelson Rush.
-	Copyright (C) 1999,2000  contributors of the QuakeForge project
-	Please see the file "AUTHORS" for a list of contributors
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -108,15 +105,6 @@ char    gamedirfile[MAX_OSPATH];
 cvar_t	*fs_userpath;
 cvar_t	*fs_sharepath;
 
-#ifdef GENERATIONS
-#include <unzip.h>
-typedef unsigned char byte_t;
-
-#ifndef _AIX
-typedef unsigned int uint_t;
-typedef unsigned short ushort_t;
-#endif
-#endif
 
 int com_filesize;
 
@@ -425,14 +413,6 @@ COM_FOpenFile (char *filename, QFile **gzfile)
 	pack_t		*pak;
 	int			i;
 	int			findtime;
-#ifdef HAS_ZLIB
-	char		gzfilename[MAX_OSPATH];
-	int		filenamelen;;
-
-	filenamelen = strlen(filename);
-	strncpy(gzfilename,filename,sizeof(gzfilename));
-	strncat(gzfilename,".gz",sizeof(gzfilename));
-#endif
 
 	file_from_pak = 0;
 
@@ -448,17 +428,8 @@ COM_FOpenFile (char *filename, QFile **gzfile)
 			pak = search->pack;
 			for (i=0 ; i<pak->numfiles ; i++) {
 				char *fn=0;
-#ifdef HAS_ZLIB
-				if (!strncmp(pak->files[i].name, filename, filenamelen)) {
-					if (!pak->files[i].name[filenamelen])
-						fn=filename;
-					else if (!strcmp (pak->files[i].name, gzfilename))
-						fn=gzfilename;
-				}
-#else
 				if (!strcmp (pak->files[i].name, filename))
 					fn=filename;
-#endif
 				if (fn)
 				{	// found it!
 					if (developer->value)
@@ -479,12 +450,6 @@ COM_FOpenFile (char *filename, QFile **gzfile)
 
 			findtime = Sys_FileTime (netpath);
 			if (findtime == -1) {
-#ifdef HAS_ZLIB
-				snprintf(netpath, sizeof(netpath), "%s/%s",search->filename,
-						 gzfilename);
-				findtime = Sys_FileTime (netpath);
-				if (findtime == -1)
-#endif
 					continue;
 			}
 
@@ -656,135 +621,6 @@ COM_LoadPackFile (char *packfile)
 	return pack;
 }
 
-#ifdef GENERATIONS
-int
-COM_pakzip_checkfile(unzFile *pak, const char *path)
-{
-    int status;
-
-    status = unzLocateFile(pak, path, 2);
-    return (status == UNZ_OK);
-}
-
-void
-COM_pakzip_closepak(unzFile *pak)
-{
-    if (pak)
-        unzClose(pak);
-    pak = NULL;
-}
-
-void
-COM_pakzip_close(unzFile *pak)
-{
-    unzCloseCurrentFile(pak);
-}
-
-int
-COM_pakzip_read(unzFile *pak, void *buf, uint_t size, uint_t nmemb)
-{
-    int len = unzReadCurrentFile(pak, buf, size * nmemb);
-    return len / size;
-}
-
-int
-COM_pakzip_open(unzFile *pak, const char *path)
-{
-   if (unzLocateFile(pak, path, 2) != UNZ_OK)
-       return 0;
-   if (unzOpenCurrentFile(pak) != UNZ_OK)
-       return 0;
-   return 1;
-}
-
-uint_t
-COM_pakzip_getlen(unzFile *pak)
-{
-    unz_file_info info;
-
-    if (unzGetCurrentFileInfo(pak, &info, NULL, 0, NULL, 0, NULL, 0)
-        != UNZ_OK)
-        return 0;
-    return info.uncompressed_size;
-}
-
-uint_t
-COM_pakzip_readfile(unzFile *pak, const char *path, uint_t bufsize, byte_t *buf)
-{
-    uint_t len;
-
-    if (!COM_pakzip_open(pak,path))
-        return 0;
-
-    if ((len = COM_pakzip_getlen(pak)) != 0)
-    {
-        if (COM_pakzip_read(pak, (void*)buf, 1, len) != len)
-            len = 0;
-    }
-    COM_pakzip_close(pak);
-    return len;
-}
-
-
-pack_t *
-COM_LoadPackZipFile (char *packfile)
-{
-	int				i=0;
-	packfile_t              	*newfiles;
-	float                  		numpackfiles;
-	unzFile            		*pak;
-	pack_t 				*pack_old;
-	int 				status;
-
-//	This following variable info is unused ATM.
-//	dpackfile_t            		info[MAX_FILES_IN_PACK];
-	char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
-
-	pak = unzOpen(packfile);
-
-	numpackfiles = 0;
-	Con_Printf ("Assigned Numpackfiles\n");
-
-	if (!pak)
-		return NULL;
-
-	newfiles = Hunk_AllocName (numpackfiles * sizeof(unzFile), "packfile");
-
-	status=unzGoToFirstFile(pak);
-
-	while(status == UNZ_OK) {
-//		unzGetCurrentFileInfo(pak,NULL,&szCurrentFileName,64,NULL,0,NULL,0);
-
-		if(strcmp(newfiles[i].name, szCurrentFileName)==0)
-			break;
-
-		strcpy (newfiles[i].name, szCurrentFileName);
-		Con_Printf ("strcpy'ed %s into newfiles[%i].name Ok\n",szCurrentFileName, i);
-
-		newfiles[i].filepos = LittleLong(unztell(pak));
-//		newfiles[i].filelen = LittleLong(COM_pak3_readfile(pak,packfile,64,64));
-
-		Con_Printf ("Added File\n");
-		status=unzGoToNextFile(pak);
-		++numpackfiles;
-		++i;
-	}
-
-	Con_Printf ("Added files in %s to game data Ok\n", packfile);
-
-	pack_old = Hunk_Alloc (sizeof (pack_t));
-	strcpy (pack_old->filename, packfile);
-	//pack_old->handle = unzGetLocalExtrafield(packfile, NULL, NULL);
-	pack_old->numfiles = numpackfiles;
-	pack_old->files = newfiles;
-
-	Con_Printf ("Added packfile %s (%.0f files)\n", packfile, numpackfiles);
-
-	COM_pakzip_close(pak);
-	return pack_old;
-}
-#endif
-
 #define FBLOCK_SIZE	32
 #define FNAME_SIZE	MAX_OSPATH
 
@@ -888,23 +724,6 @@ COM_LoadGameDirectory_free:
 	for (i = 0; i < count; i++)
 		free(pakfiles[i]);
 	free(pakfiles);
-
-#ifdef GENERATIONS
-	for (done=false, i=0 ; !done ; i++ ) {
-		snprintf(pakfile, sizeof(pakfile), "%s/pak%i.qz", dir, i);
-
-		pak = COM_LoadPackZipFile(pakfile);
-
-		if(!pak) {
-			done = true;
-		} else {
-			search = Hunk_Alloc (sizeof(searchpath_t));
-			search->pack = pak;
-			search->next = com_searchpaths;
-			com_searchpaths = search;
-		}
-	}
-#endif
 }
 
 /*

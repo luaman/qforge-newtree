@@ -1,7 +1,7 @@
 /*
 	mathlib.c
 
-	(description)
+	math primitives
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// mathlib.c -- math primitives
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -34,6 +33,7 @@
 #include "qtypes.h"
 #include "mathlib.h"
 #include "model.h"
+
 void Sys_Error (char *error, ...);
 
 vec3_t vec3_origin = {0,0,0};
