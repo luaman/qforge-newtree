@@ -854,6 +854,27 @@ Key_Event (int key, int alt_key, qboolean down)
 		return;
 	}
 
+//
+// if not a consolekey, send to the interpreter no matter what mode is
+//
+        if ((key_dest == key_console && !consolekeys[key])
+		|| (key_dest == key_game
+			&& (cls.state == ca_active || !consolekeys[key]))) {
+		kb = keybindings[key];
+		if (kb) {
+			if (kb[0] == '+') {			// button commands add keynum as a
+										// parm
+				snprintf (cmd, sizeof (cmd), "%s %i\n", kb, key);
+				Cbuf_AddText (cmd);
+			} else {
+				Cbuf_AddText (kb);
+				Cbuf_AddText ("\n");
+			}
+		}
+		return;
+	}
+
+
 	if (!down)
 		return;							// other systems only care about key
 										// down events
