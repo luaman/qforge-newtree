@@ -64,8 +64,13 @@ qboolean    VID_Is8bit (void);
 void        R_InitBubble ();
 void        R_FireColor_f (void);
 
-cvar_t     *gl_fires;
+cvar_t		*gl_fires;
+cvar_t		*r_netgraph_alpha;
+cvar_t		*r_netgraph_box;
+
+extern cvar_t	*r_netgraph;
 extern cvar_t	*gl_lerp_anim;
+
 qboolean    allowskybox;				// allow skyboxes?  --KB
 
 /*
@@ -226,7 +231,10 @@ R_Init_Cvars (void)
 	r_dynamic = Cvar_Get ("r_dynamic", "1", CVAR_NONE, "None");
 	r_novis = Cvar_Get ("r_novis", "0", CVAR_NONE, "None");
 	r_speeds = Cvar_Get ("r_speeds", "0", CVAR_NONE, "None");
-	r_netgraph = Cvar_Get ("r_netgraph", "0", CVAR_NONE, "None");
+
+	r_netgraph = Cvar_Get ("r_netgraph", "0", CVAR_ARCHIVE, "Graph network stats");
+	r_netgraph_alpha = Cvar_Get ("r_netgraph_alpha", "0.5", CVAR_ARCHIVE, "Net graph translucency");
+	r_netgraph_box = Cvar_Get ("r_netgraph_box", "1", CVAR_ARCHIVE, "Draw box around net graph?");
 
 	gl_clear = Cvar_Get ("gl_clear", "0", CVAR_NONE, "None");
 	gl_texsort = Cvar_Get ("gl_texsort", "1", CVAR_NONE, "None");

@@ -218,7 +218,7 @@ static int  numcachepics;
 
 static byte menuplyr_pixels[4096];
 
-qpic_t     *
+qpic_t *
 Draw_PicFromWad (char *name)
 {
 	qpic_t     *p;
@@ -274,7 +274,7 @@ Draw_ClearCache (void)
 Draw_CachePic
 ================
 */
-qpic_t     *
+qpic_t *
 Draw_CachePic (char *path)
 {
 	cachepic_t *pic;
@@ -393,6 +393,58 @@ Draw_TextureMode_f (void)
 							 gl_filter_max);
 		}
 	}
+}
+
+void
+Draw_TextBox (int x, int y, int width, int lines)
+{
+	qpic_t     *p;
+	int         cx, cy;
+	int         n;
+
+	// draw left side
+	cx = x;
+	cy = y;
+	p = Draw_CachePic ("gfx/box_tl.lmp");
+	Draw_Pic (cx, cy, p);
+	p = Draw_CachePic ("gfx/box_ml.lmp");
+	for (n = 0; n < lines; n++) {
+		cy += 8;
+		Draw_Pic (cx, cy, p);
+	}
+	p = Draw_CachePic ("gfx/box_bl.lmp");
+	Draw_Pic (cx, cy + 8, p);
+
+	// draw middle
+	cx += 8;
+	while (width > 0) {
+		cy = y;
+		p = Draw_CachePic ("gfx/box_tm.lmp");
+		Draw_Pic (cx, cy, p);
+		p = Draw_CachePic ("gfx/box_mm.lmp");
+		for (n = 0; n < lines; n++) {
+			cy += 8;
+			if (n == 1)
+				p = Draw_CachePic ("gfx/box_mm2.lmp");
+			Draw_Pic (cx, cy, p);
+		}
+		p = Draw_CachePic ("gfx/box_bm.lmp");
+		Draw_Pic (cx, cy + 8, p);
+		width -= 2;
+		cx += 16;
+	}
+
+	// draw right side
+	cy = y;
+	p = Draw_CachePic ("gfx/box_tr.lmp");
+	Draw_Pic (cx, cy, p);
+	p = Draw_CachePic ("gfx/box_mr.lmp");
+	for (n = 0; n < lines; n++) {
+		cy += 8;
+		Draw_Pic (cx, cy, p);
+	}
+	p = Draw_CachePic ("gfx/box_br.lmp");
+	Draw_Pic (cx, cy + 8, p);
 }
 
 extern void glrmain_init ();
@@ -634,10 +686,7 @@ Draw_Pic (int x, int y, qpic_t *pic)
 		Scrap_Upload ();
 #endif
 	gl = (glpic_t *) pic->data;
-	if (lighthalf)
-		glColor3f (0.4, 0.4, 0.4);
-	else
-		glColor3f (0.8, 0.8, 0.8);
+
 	glBindTexture (GL_TEXTURE_2D, gl->texnum);
 	glBegin (GL_QUADS);
 	glTexCoord2f (gl->sl, gl->tl);
@@ -649,7 +698,6 @@ Draw_Pic (int x, int y, qpic_t *pic)
 	glTexCoord2f (gl->sl, gl->th);
 	glVertex2f (x, y + pic->height);
 	glEnd ();
-	glColor3ubv (lighthalf_v);
 }
 
 void

@@ -58,10 +58,14 @@
 #include "cl_parse.h"
 
 
-extern byte *draw_chars;				// 8*8 graphic characters
+extern byte 	*draw_chars;	// 8*8 graphic characters
 extern qboolean lighthalf;
 
-int         netgraphtexture;			// netgraph texture
+extern cvar_t	*r_netgraph;
+extern cvar_t	*r_netgraph_alpha;
+extern cvar_t	*r_netgraph_box;
+
+int 	netgraphtexture;		// netgraph texture
 
 #define NET_GRAPHHEIGHT 32
 
@@ -144,14 +148,26 @@ R_NetGraph (void)
 		for (x = 0; x < NET_TIMINGS; x++)
 			ngraph_pixels[y][x] = d_8to24table[ngraph_texels[y][x]];
 
-	x = -((vid.width - 320) >> 1);
+	x = cl_hudswap->int_val ? vid.width - (NET_TIMINGS + 16): 0 ;
 	y = vid.height - sb_lines - 24 - NET_GRAPHHEIGHT - 1;
 
-	M_DrawTextBox (x, y, NET_TIMINGS / 8, NET_GRAPHHEIGHT / 8 + 1);
+	if (r_netgraph_alpha->value < 0.995)	// roundoff
+		glColor4f (1, 1, 1, r_netgraph_alpha->value);
+
+	if (r_netgraph_box->int_val)
+		Draw_TextBox (x, y, NET_TIMINGS / 8, NET_GRAPHHEIGHT / 8 + 1);
+
 	y += 8;
 
 	snprintf (st, sizeof (st), "%3i%% packet loss", lost);
-	Draw_String8 (8, y, st);
+	if (cl_hudswap->int_val) {
+		Draw_String8 (vid.width - ((strlen (st) * 8) + 8), y, st);
+	} else {
+		Draw_String8 (8, y, st);
+	}
+
+	x = cl_hudswap->int_val ? vid.width - (NET_TIMINGS + 8) : 8;
+
 	y += 8;
 
 	glBindTexture (GL_TEXTURE_2D, netgraphtexture);
@@ -163,7 +179,6 @@ R_NetGraph (void)
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	x = 8;
 	glBegin (GL_QUADS);
 	glTexCoord2f (0, 0);
 	glVertex2f (x, y);
@@ -174,4 +189,6 @@ R_NetGraph (void)
 	glTexCoord2f (0, 1);
 	glVertex2f (x, y + NET_GRAPHHEIGHT);
 	glEnd ();
+
+	glColor3ubv (lighthalf_v);
 }

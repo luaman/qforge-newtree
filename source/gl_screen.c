@@ -470,15 +470,17 @@ SCR_DrawNet (void)
 	Draw_Pic (scr_vrect.x + 64, scr_vrect.y, scr_net);
 }
 
+extern cvar_t *show_time;
+extern cvar_t *show_fps;
+
 void
 SCR_DrawFPS (void)
 {
-	extern cvar_t *show_fps;
 	static double lastframetime;
 	double      t;
 	extern int  fps_count;
 	static int  lastfps;
-	int         x, y;
+	int         i, x, y;
 	char        st[80];
 
 	if (!show_fps->int_val)
@@ -490,11 +492,20 @@ SCR_DrawFPS (void)
 		fps_count = 0;
 		lastframetime = t;
 	}
-	snprintf (st, sizeof (st), "%-3d FPS", lastfps);
-	/* Misty: New trick! (for me) the ? makes this work like a if then else - 
+	snprintf (st, sizeof (st), "%3d FPS", lastfps);
+	/*
+		Misty: New trick! (for me) the ? makes this work like a if then else - 
 	   IE: if cl_hudswap->int_val is not null, do first case, else (else is a 
-	   : here) do second case. Deek taught me this trick */
-	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + 8) : 8;
+	   : here) do second case. Deek taught me this trick
+	*/
+	if (show_time->int_val <= 0) {
+		i = 8;
+	} else if (show_time->int_val == 1) {
+		i = 56;
+	} else {
+		i = 80;
+	}
+	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + i) : i;
 	y = vid.height - sb_lines - 8;
 	Draw_String8 (x, y, st);
 
@@ -504,34 +515,28 @@ SCR_DrawFPS (void)
 void
 SCR_DrawTime (void)
 {
-	extern cvar_t *show_time;
 	int         x, y;
 	char        st[80];
 	char        local_time[120];
 	time_t      systime;
 
-	/* any cvar that can take multiple settings must be able to handle abuse. 
-	 */
+	// any cvar that can take multiple settings must be able to handle abuse. 
 	if (show_time->int_val <= 0)
 		return;
 
 	/* actually find the time and set systime to it */
 	time (&systime);
 
-	if (show_time->int_val == 1) {
-		/* now set local_time to 24 hour time using hours:minutes format */
-		strftime (local_time, sizeof (local_time), "%k:%M",
-				  localtime (&systime));
-	} else if (show_time->int_val >= 2) {
-		/* >= is another cvar abuse protector */
-		strftime (local_time, sizeof (local_time), "%l:%M %P",
-				  localtime (&systime));
+	if (show_time->int_val == 1) {	// International format
+		strftime (local_time, sizeof (local_time), "%H:%M", localtime (&systime));
+	} else if (show_time->int_val >= 2) {	// AM/PM display
+		strftime (local_time, sizeof (local_time), "%I:%M %P", localtime (&systime));
 	}
 
-	/* now actually print it to the screen directly above where show_fps is */
+	// Print it next to the fps meter
 	snprintf (st, sizeof (st), "%s", local_time);
-	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + 8) : 8;
-	y = vid.height - sb_lines - 16;
+	x = cl_hudswap->int_val ? (vid.width - ((strlen (st) * 8) + 8)) : 8;
+	y = vid.height - (sb_lines + 8);
 	Draw_String8 (x, y, st);
 }
 
