@@ -43,7 +43,7 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-#ifdef HAS_DGA
+#ifdef HAVE_DGA
 #include <X11/extensions/XShm.h>
 #include <X11/extensions/xf86dga.h>
 #endif
@@ -68,7 +68,7 @@
 
 cvar_t		*_windowed_mouse;
 cvar_t		*m_filter;
-#ifdef HAS_DGA
+#ifdef HAVE_DGA
 cvar_t		*in_dgamouse;
 cvar_t		*vid_dga_mouseaccel;
 #endif
@@ -295,7 +295,7 @@ center_pointer(void)
 static void
 event_motion(XEvent *event)
 {
-#ifdef HAS_DGA
+#ifdef HAVE_DGA
 	if (in_dgamouse->value) {
 		mouse_x += event->xmotion.x_root * vid_dga_mouseaccel->value;
 		mouse_y += event->xmotion.y_root * vid_dga_mouseaccel->value;
@@ -428,7 +428,7 @@ IN_Shutdown(void)
 			nullcursor = None;
 		}
 
-#ifdef HAS_DGA
+#ifdef HAVE_DGA
 		XF86DGADirectVideo(x_disp, DefaultScreen(x_disp), 0);
 #endif
 	}
@@ -461,7 +461,7 @@ IN_Init(void)
 
 	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
 	m_filter = Cvar_Get ("m_filter","0",CVAR_ARCHIVE,"None");
-#ifdef HAS_DGA
+#ifdef HAVE_DGA
 	vid_dga_mouseaccel = Cvar_Get ("vid_dga_mouseaccel","1",CVAR_ARCHIVE,
 					"None");
 
@@ -479,11 +479,11 @@ IN_Init(void)
 		XGrabKeyboard (x_disp, x_win, True, GrabModeAsync, 
 				GrabModeAsync, CurrentTime);
 
-		XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
-				GrabModeAsync, x_win, None, CurrentTime);
-
 		XWarpPointer (x_disp, None, x_win, 0, 0, 0, 0, scr_width,
 				scr_height);
+
+		XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
+				GrabModeAsync, x_win, None, CurrentTime);
 
 		in_dgamouse = Cvar_Get ("in_dgamouse", "1", CVAR_ROM,
 				"1 if you have DGA mouse support");

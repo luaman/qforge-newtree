@@ -297,6 +297,22 @@ if test "x$HAVE_VIDMODE" != xno; then
    CPPFLAGS="$save_CPPFLAGS"
 fi
 
+dnl Check for DGA support
+AC_ARG_ENABLE(DGA,
+[  --enable-DGA            use XFree86 DGA extension, if available],
+HAVE_DGA=$enable_DGA, HAVE_DGA=auto)
+if test "x$HAVE_VIDMODE" = xyes; then
+   if test "x$HAVE_DGA" != xno; then
+      save_CPPFLAGS="$CPPFLAGS"
+      CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+      AC_CHECK_HEADER(X11/extensions/xf86dga.h, HAVE_DGA=yes, HAVE_DGA=no)
+      AC_CHECK_HEADER(X11/extensions/xf86vmode.h, qwfoo=qwfoo, HAVE_DGA=no)
+      CPPFLAGS="$save_CPPFLAGS"
+   else
+      HAVE_DGA=no
+   fi
+fi
+
 dnl Checks for GLX support
 AC_ARG_WITH(glx,
 [  --with-glx[=DIR]        use GLX with libraries found in DIR],
@@ -435,6 +451,19 @@ else
    VIDMODE_LIBS="-lXxf86vm"
 fi
 AC_SUBST(VIDMODE_LIBS)
+
+dnl Make sure DGA works
+if test "x$HAVE_DGA" = xyes; then
+   AC_CHECK_LIB(Xxf86dga, XF86DGAQueryVersion,qwfoo=qwfoo,
+     HAVE_DGA=no, [$X_LIBS -lXext -lX11 $X_EXTRA_LIBS])
+fi
+if test "x$HAVE_DGA" != xyes; then
+   DGA_LIBS=""
+else
+   AC_DEFINE(HAVE_DGA)
+   DGA_LIBS="-lXxf86dga"
+fi
+AC_SUBST(DGA_LIBS)
 
 dnl ==================================================================
 dnl Checks for system type
