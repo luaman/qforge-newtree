@@ -61,6 +61,8 @@ extern  int nanmask;
 									 ((a[1] - b[1]) * (a[1] - b[1])) + \
 									 ((a[2] - b[2]) * (a[2] - b[2])))
 
+#define lhrandom(MIN,MAX) ((rand() & 32767) * (((MAX)-(MIN)) * (1.0f / 32767.0f)) + (MIN))
+
 // up / down
 #define	PITCH	0
 // left / right

@@ -163,7 +163,7 @@ XLateKey(XKeyEvent *ev)
 		case XK_Meta_R:		key = K_ALT; break;
 
 		case XK_Caps_Lock:	key = K_CAPSLOCK; break;
-		case XK_KP_Begin:	key = K_AUX30; break;
+		case XK_KP_Begin:	key = KP_5; break;
 
 		case XK_Insert:		key = K_INS; break;
 		case XK_KP_Insert:	key = KP_INS; break;

@@ -37,6 +37,7 @@
 #include "client.h"
 #include "msg.h"
 #include "console.h"
+#include "r_dynamic.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -185,12 +186,12 @@ CL_ParseTEnt
 */
 void CL_ParseTEnt (void)
 {
-	int		type;
+	byte	type;
 	vec3_t	pos;
 	dlight_t	*dl;
 	int		rnd;
 	explosion_t	*ex;
-	int		cnt;
+	int		cnt = -1;
 
 	type = MSG_ReadByte ();
 	switch (type)
@@ -199,7 +200,8 @@ void CL_ParseTEnt (void)
 		pos[0] = MSG_ReadCoord ();
 		pos[1] = MSG_ReadCoord ();
 		pos[2] = MSG_ReadCoord ();
-		R_RunParticleEffect (pos, vec3_origin, 20, 30);
+		R_RunSpikeEffect (pos, type);
+		//R_RunParticleEffect (pos, 20, 30);
 		S_StartSound (-1, 0, cl_sfx_wizhit, pos, 1, 1);
 		break;
 		
@@ -207,7 +209,8 @@ void CL_ParseTEnt (void)
 		pos[0] = MSG_ReadCoord ();
 		pos[1] = MSG_ReadCoord ();
 		pos[2] = MSG_ReadCoord ();
-		R_RunParticleEffect (pos, vec3_origin, 226, 20);
+		R_RunSpikeEffect (pos, type);
+		//R_RunParticleEffect (pos, 226, 20);
 		S_StartSound (-1, 0, cl_sfx_knighthit, pos, 1, 1);
 		break;
 		
@@ -215,7 +218,8 @@ void CL_ParseTEnt (void)
 		pos[0] = MSG_ReadCoord ();
 		pos[1] = MSG_ReadCoord ();
 		pos[2] = MSG_ReadCoord ();
-		R_RunParticleEffect (pos, vec3_origin, 0, 10);
+		R_RunSpikeEffect (pos, type);
+		//R_RunParticleEffect (pos, 0, 10);
 
 		if ( rand() % 5 )
 			S_StartSound (-1, 0, cl_sfx_tink1, pos, 1, 1);
@@ -234,7 +238,8 @@ void CL_ParseTEnt (void)
 		pos[0] = MSG_ReadCoord ();
 		pos[1] = MSG_ReadCoord ();
 		pos[2] = MSG_ReadCoord ();
-		R_RunParticleEffect (pos, vec3_origin, 0, 20);
+		R_RunSpikeEffect (pos, type);
+		//R_RunParticleEffect (pos, 0, 20);
 
 		if ( rand() % 5 )
 			S_StartSound (-1, 0, cl_sfx_tink1, pos, 1, 1);
@@ -313,28 +318,16 @@ void CL_ParseTEnt (void)
 		break;
 
 	case TE_GUNSHOT:			// bullet hitting wall
-		cnt = MSG_ReadByte ();
-		pos[0] = MSG_ReadCoord ();
-		pos[1] = MSG_ReadCoord ();
-		pos[2] = MSG_ReadCoord ();
-		R_RunParticleEffect (pos, vec3_origin, 0, 20*cnt);
-		break;
-		
 	case TE_BLOOD:				// bullets hitting body
 		cnt = MSG_ReadByte ();
-		pos[0] = MSG_ReadCoord ();
-		pos[1] = MSG_ReadCoord ();
-		pos[2] = MSG_ReadCoord ();
-		R_RunParticleEffect (pos, vec3_origin, 73, 20*cnt);
-		break;
-
 	case TE_LIGHTNINGBLOOD:		// lightning hitting body
 		pos[0] = MSG_ReadCoord ();
 		pos[1] = MSG_ReadCoord ();
 		pos[2] = MSG_ReadCoord ();
-		R_RunParticleEffect (pos, vec3_origin, 225, 50);
+		R_RunPuffEffect (pos, type, cnt);
+		//R_RunParticleEffect (pos, 0, 20*cnt);
 		break;
-
+		
 	default:
 //		Sys_Error ("CL_ParseTEnt: bad type");
 		Host_EndGame ("CL_ParseTEnt: bad type");

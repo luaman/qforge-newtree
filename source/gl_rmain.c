@@ -43,6 +43,7 @@
 #include "model.h"
 #include "render.h"
 #include "sys.h"
+#include "r_dynamic.h"
 
 entity_t	r_worldentity;
 
@@ -59,7 +60,6 @@ int			c_brush_polys, c_alias_polys;
 qboolean	envmap;				// true during envmap command capture 
 
 
-int			particletexture;	// little dot for particles
 int			playertextures;		// up to 16 color translated skins
 
 //
@@ -363,7 +363,7 @@ static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
 
 	if (modelalpha != 1.0)
-		glDepthMask(0);
+		glDepthMask(GL_FALSE);
 
 	while ((count = *order++)) {
 		// get the vertex count and primitive type
@@ -396,7 +396,7 @@ static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 	}
 
 	if (modelalpha != 1.0)
-		glDepthMask(1);
+		glDepthMask(GL_TRUE);
 	glColor3ubv(lighthalf_v);
 }
 
@@ -908,34 +908,6 @@ static void R_SetupGL (void)
 		glShadeModel (GL_FLAT);
 }
 
-/*
-================
-R_RenderScene
-
-r_refdef must be set before the first call
-================
-*/
-static void R_RenderScene (void)
-{
-	R_SetupFrame ();
-
-	R_SetFrustum ();
-
-	R_SetupGL ();
-
-	R_MarkLeaves ();	// done here so we know if we're in water
-
-	R_DrawWorld ();		// adds static entities to the list
-
-	S_ExtraUpdate ();	// don't let sound get messed up if going slow
-
-	R_DrawEntitiesOnList ();
-
-	R_RenderDlights ();
-	R_UpdateFires ();
-	R_DrawParticles ();
-}
-
 
 /*
 =============
@@ -975,7 +947,27 @@ void R_RenderView (void)
 	R_Clear ();
 
 	// render normal view
-	R_RenderScene ();
-	R_DrawViewModel ();
+	R_SetupFrame ();
+
+	R_SetFrustum ();
+
+	R_SetupGL ();
+
+	R_MarkLeaves ();	// done here so we know if we're in water
+
+	R_DrawWorld ();		// adds static entities to the list
+
+	S_ExtraUpdate ();	// don't let sound get messed up if going slow
+
+	R_DrawEntitiesOnList ();
+
+	R_RenderDlights ();
+
 	R_DrawWaterSurfaces ();
+
+	R_UpdateFires ();
+
+	R_DrawParticles ();
+
+	R_DrawViewModel ();
 }

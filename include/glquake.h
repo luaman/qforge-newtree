@@ -180,7 +180,6 @@ extern	texture_t	*r_notexture_mip;
 extern	int		d_lightstylevalue[256];	// 8.8 fraction of base light value
 
 extern	qboolean	envmap;
-extern	int	particletexture;
 extern	int	netgraphtexture;	// netgraph texture
 extern	int	playertextures;
 

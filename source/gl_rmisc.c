@@ -54,6 +54,7 @@
 #include "model.h"   // needed by: glquake.h
 #include "console.h"
 #include "glquake.h"
+#include "r_dynamic.h"
 
 qboolean VID_Is8bit(void);
 void R_InitBubble();
@@ -93,44 +94,6 @@ void	R_InitTextures (void)
 					*dest++ = 0xff;
 			}
 	}	
-}
-
-byte	dottexture[8][8] =
-{
-	{0,1,1,0,0,0,0,0},
-	{1,1,1,1,0,0,0,0},
-	{1,1,1,1,0,0,0,0},
-	{0,1,1,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-};
-void R_InitParticleTexture (void)
-{
-	int		x,y;
-	byte	data[8][8][4];
-
-	//
-	// particle texture
-	//
-	particletexture = texture_extension_number++;
-    glBindTexture (GL_TEXTURE_2D, particletexture);
-
-	for (x=0 ; x<8 ; x++)
-	{
-		for (y=0 ; y<8 ; y++)
-		{
-			data[y][x][0] = 255;
-			data[y][x][1] = 255;
-			data[y][x][2] = 255;
-			data[y][x][3] = dottexture[x][y]*255;
-		}
-	}
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 /*
@@ -278,7 +241,6 @@ void R_Init (void)
 	R_InitBubble();
 	
 	R_InitParticles ();
-	R_InitParticleTexture ();
 
 	netgraphtexture = texture_extension_number;
 	texture_extension_number++;
