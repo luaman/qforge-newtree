@@ -57,7 +57,7 @@ extern	cvar_t		*sys_nostdout;
 extern	cvar_t		*developer;
 
 extern	qboolean	host_initialized;	/* True if into command execution. */
-extern	double		host_frametime;
+//extern	double		host_frametime;
 extern	double		realtime;			/* Not bounded in any way, changed at
 										   start of every frame, never reset */
 

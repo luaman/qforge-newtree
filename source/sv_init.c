@@ -411,7 +411,7 @@ void SV_SpawnServer (char *server)
 	sv.state = ss_active;
 	
 	// run two frames to allow everything to settle
-	host_frametime = 0.1;
+	sv_frametime = 0.1;
 	SV_Physics ();
 	SV_Physics ();
 

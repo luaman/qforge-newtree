@@ -58,6 +58,8 @@ extern qboolean noclip_anglehack;
 extern cvar_t	*sys_ticrate;
 extern cvar_t	*password;
 
+extern double	host_frametime;		// Tonik
+
 extern byte		*host_basepal;
 extern byte		*host_colormap;
 extern int		host_framecount;	// incremented every frame, never reset

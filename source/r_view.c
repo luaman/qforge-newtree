@@ -40,6 +40,7 @@
 #include "r_local.h"
 #include "msg.h"
 #include "commdef.h"
+#include "quakedef.h"
 
 /*
 

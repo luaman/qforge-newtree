@@ -53,7 +53,7 @@ quakeparms_t host_parms;
 
 qboolean	host_initialized;		// true if into command execution (compatability)
 
-double		host_frametime;
+double		sv_frametime;
 double		realtime;				// without any filtering or bounding
 
 int			host_hunklevel;

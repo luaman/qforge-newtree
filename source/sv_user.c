@@ -1474,10 +1474,10 @@ void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
                         SV_CalcRoll (sv_player->v.angles, sv_player->v.velocity)*4;
         }
 
-        host_frametime = min(0.1, ucmd->msec * 0.001);
+        sv_frametime = min(0.1, ucmd->msec * 0.001);
         
         if (!host_client->spectator) {
-                pr_global_struct->frametime = host_frametime;
+                pr_global_struct->frametime = sv_frametime;
 
                 pr_global_struct->time = sv.time;
                 pr_global_struct->self = EDICT_TO_PROG(sv_player);

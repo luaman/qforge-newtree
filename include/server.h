@@ -364,6 +364,8 @@ extern	int			host_hunklevel;
 extern	FILE		*sv_logfile;
 extern	FILE		*sv_fraglogfile;
 
+extern	double		sv_frametime;
+
 //===========================================================
 // FIXME: declare exported functions in their own relevant .h
 
