@@ -43,7 +43,7 @@
 # ifdef X_XF86VidModeSetClientVersion
 #  define VIDMODE_VERSION 2
 # else
-#  define VIDMODE_VERSION 1
+#  define VIDMODE_VERSION 0
 # endif
 #endif
 
@@ -127,6 +127,8 @@ VID_CheckVMode (Display * dpy, int *maj_ver, int *min_ver)
 	if (!XF86VidModeQueryVersion (dpy, maj_ver, min_ver))
 		return false;
 
+	if (maj_ver && min_ver)
+		printf("VidMode version:%d.%d\n", *maj_ver, *min_ver);
 	if ((!maj_ver) || (*maj_ver != VIDMODE_VERSION))
 		return false;
 
