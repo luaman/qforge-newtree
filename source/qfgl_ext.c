@@ -41,6 +41,11 @@
 # endif
 #endif
 
+#ifdef _WIN32
+// must be BEFORE include gl/gl.h
+# include "winquake.h"
+#endif
+
 #include <GL/gl.h>
 
 #ifdef HAVE_GL_GLX_H

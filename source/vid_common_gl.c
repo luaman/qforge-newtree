@@ -33,11 +33,12 @@
 
 #include <string.h>
 
-#include <GL/gl.h>
-
 #ifdef _WIN32
+// must be BEFORE include gl/gl.h
 # include "winquake.h"
 #endif
+
+#include <GL/gl.h>
 
 #include "console.h"
 #include "glquake.h"
