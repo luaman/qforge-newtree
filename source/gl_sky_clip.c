@@ -313,10 +313,11 @@ fixup_center_face (struct box_def *box, int c_face)
 		} else {
 			// we have to insert the two cube vertexen into the face poly
 			// vertex list
-			int insert = box[ind].leave_vertex + 1;
 			glpoly_t *p = &box[ind].poly;
+			int insert = box[ind].leave_vertex + 1;
+			int count = p->numverts - insert;
 			const int vert_size = sizeof (p->verts[0]);
-			memmove (p->verts[insert + 2], p->verts[insert], 2 * vert_size);
+			memmove (p->verts[insert + 2], p->verts[insert], count * vert_size);
 			p->numverts += 2;
 			set_vertex (box, ind, insert, v[i]);
 			set_vertex (box, ind, insert + 1, v[(i - 1) & 3]);
