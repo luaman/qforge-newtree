@@ -140,6 +140,10 @@ const char *gl_version;
 const char *gl_extensions;
 
 qboolean is8bit = false;
+
+// ARB Multitexture
+int gl_mtex_enum = TEXTURE0_SGIS;
+qboolean gl_arb_mtex = false;
 qboolean gl_mtexable = false;
 
 /*-----------------------------------------------------------------------*/
@@ -292,18 +296,34 @@ void	VID_SetPalette (unsigned char *palette)
 void
 CheckMultiTextureExtensions ( void )
 {
+	if (COM_CheckParm ("-nomtex"))
+	{
+		Con_Printf ("Not using multitexture.");
+		return;
+	}
 #ifdef HAVE_DLOPEN
 	dlhand = dlopen (NULL, RTLD_LAZY);
-	if (dlhand)
+	if (dlhand != NULL)
 	{
-		if (strstr(gl_extensions, "GL_SGIS_multitexture ") && !COM_CheckParm("-nomtex"))
+		Con_Printf("Multitexture enabled ");
+		if (strstr(gl_extensions, "GL_SGIS_multitexture "))
 		{
-			Con_Printf("Multitexture extensions found.\n");
-			qglMTexCoord2fSGIS = (void *)dlsym(dlhand, "glMTexCoord2fSGIS");
-			qglSelectTextureSGIS = (void *)dlsym(dlhand, "glSelectTextureSGIS");
+			Con_Printf ("(SGIS)\n");
+			qglMTexCoord2fSGIS =
+				(void *)dlsym(dlhand, "glMTexCoord2fSGIS");
+			qglSelectTextureSGIS =
+				(void *)dlsym(dlhand, "glSelectTextureSGIS");
+			gl_mtexable = true;
+		} else if (strstr(gl_extensions, "GL_EXT_multitexture "))
+		{
+			Con_Printf ("(EXT)\n");
+			qglMTexCoord2fSGIS =
+				(void *)dlsym(dlhand, "glMTexCoord2fEXT");
+			qglSelectTextureSGIS =
+				(void *)dlsym(dlhand, "glSelectTextureEXT");
 			gl_mtexable = true;
 		} else {
-			Con_Printf ("Not using multitexture extensions.\n");
+			Con_Printf ("(but not found)\n");
 		}
 		dlclose(dlhand);
 		dlhand = NULL;		
@@ -311,7 +331,6 @@ CheckMultiTextureExtensions ( void )
 	}
 #else
 	gl_mtexable = false;
-	Con_Printf ("No dlopen\n");
 #endif
 }
 
