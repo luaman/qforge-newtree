@@ -421,16 +421,16 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		if (face != prev_face) {
 			if (face % 3 == prev_face % 3) {
 			} else {
-				vec3_t l;
+				vec3_t l, t;
 				find_intersect (prev_face, last_v, face, v, l);
 
 				set_vertex(&box[prev_face].poly, l, prev_face);
 				if (box[prev_face].enter >= 0 && box[prev_face].leave == -1) {
-					set_vertex(&box[prev_face].poly, , prev_face);
+					set_vertex(&box[prev_face].poly, t, prev_face);
 				}
 				box[prev_face].leave = face;
 				if (box[face].enter == -1 && box[face].leave >= 0) {
-					set_vertex(&box[face].poly, , face);
+					set_vertex(&box[face].poly, t, face);
 				}
 				box[prev_face].leave = face;
 				set_vertex(&box[face].poly, l, face);
