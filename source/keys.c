@@ -761,8 +761,7 @@ void
 Key_Init_Cvars (void)
 {
 	cl_chatmode = Cvar_Get ("cl_chatmode", "2", 0,
-							"Controls when console text will be treated as a chat message\n"
-							"0 - never, 1 - always, 2 - smart");
+							"Controls when console text will be treated as a chat message: 0 - never, 1 - always, 2 - smart");
 }
 
 /*
