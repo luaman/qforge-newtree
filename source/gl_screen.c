@@ -491,11 +491,9 @@ SCR_DrawFPS (void)
 		lastframetime = t;
 	}
 	snprintf (st, sizeof (st), "%3d FPS", lastfps);
-	/*
-		Misty: New trick! (for me) the ? makes this work like a if then else - 
-	   IE: if cl_hudswap->int_val is not null, do first case, else (else is a 
-	   : here) do second case. Deek taught me this trick
-	*/
+
+	// FIXME! This is evil. -- Deek
+	// calculate the location of the clock
 	if (show_time->int_val <= 0) {
 		i = 8;
 	} else if (show_time->int_val == 1) {
@@ -503,36 +501,45 @@ SCR_DrawFPS (void)
 	} else {
 		i = 80;
 	}
+
 	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + i) : i;
 	y = vid.height - sb_lines - 8;
 	Draw_String8 (x, y, st);
-
 }
 
-/* Misty: I like to see the time */
+
+/*
+	SCR_DrawTime
+
+	Draw a clock on the screen
+	Written by Misty, rewritten by Deek.
+*/
 void
 SCR_DrawTime (void)
 {
-	int         x, y;
-	char        st[80];
-	char        local_time[120];
-	time_t      systime;
+	int 		x, y;
+	char		st[80];
+
+	time_t		utc = 0;
+	struct tm	*local = NULL;
+	char		*timefmt = NULL;
 
 	// any cvar that can take multiple settings must be able to handle abuse. 
 	if (show_time->int_val <= 0)
 		return;
 
-	/* actually find the time and set systime to it */
-	time (&systime);
+	// Get local time
+	utc = time (NULL);
+	local = localtime (&utc);
 
-	if (show_time->int_val == 1) {	// International format
-		strftime (local_time, sizeof (local_time), "%H:%M", localtime (&systime));
-	} else if (show_time->int_val >= 2) {	// AM/PM display
-		strftime (local_time, sizeof (local_time), "%I:%M %P", localtime (&systime));
+	if (show_time->int_val == 1) {	// Use international format
+		timefmt = "%k:%M";
+	} else if (show_time->int_val >= 2) {	// US AM/PM display
+		timefmt = "%l:%M %P";
 	}
+	strftime (st, sizeof (st), timefmt, local);
 
-	// Print it next to the fps meter
-	snprintf (st, sizeof (st), "%s", local_time);
+	// Print it at far left/right of screen
 	x = cl_hudswap->int_val ? (vid.width - ((strlen (st) * 8) + 8)) : 8;
 	y = vid.height - (sb_lines + 8);
 	Draw_String8 (x, y, st);
@@ -898,12 +905,13 @@ SCR_TileClear (void)
 	}
 }
 
-int         oldviewsize = 0;
-extern void R_ForceLightUpdate ();
-qboolean    lighthalf;
-unsigned char lighthalf_v[3];
-extern cvar_t *gl_lightmode, *brightness;
+extern void R_ForceLightUpdate (void);
 
+int 			oldviewsize = 0;
+unsigned char	lighthalf_v[3];
+qboolean		lighthalf;
+extern cvar_t	*gl_lightmode;
+extern cvar_t	*brightness;
 /*
 	SCR_UpdateScreen
 
