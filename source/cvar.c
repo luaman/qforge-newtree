@@ -471,7 +471,7 @@ cvar_t *Cvar_Get(char *name, char *string, int cvarflags, char *description)
 	sets a Cvar's flags simply and easily
 */
 void
-Cvar_SetFlags (cvar_t *var, int cvarflags);
+Cvar_SetFlags (cvar_t *var, int cvarflags)
 {
 	if (var == NULL)
 		return;
