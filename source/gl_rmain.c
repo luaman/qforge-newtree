@@ -118,6 +118,7 @@ cvar_t	*gl_particles;
 
 cvar_t	*r_skyname;
 cvar_t	*gl_skymultipass;
+cvar_t	*gl_sky_clip;
 
 cvar_t *gl_fb_models;
 cvar_t *gl_fb_bmodels;

@@ -29,17 +29,19 @@
 	$Id$
 */
 
-#include "qtypes.h"
-#include "quakedef.h"
-#include "keys.h"
 #include "client.h"
-#include "sys.h"
+#include "cl_input.h"
+#include "cmd.h"
 #include "console.h"
 #include "cvar.h"
-#include "cmd.h"
-#include "qargs.h"
 #include "input.h"
 #include "joystick.h"
+#include "keys.h"
+#include "qargs.h"
+#include "qtypes.h"
+#include "quakedef.h"
+#include "sys.h"
+#include "view.h"
 
 #include <stdio.h>
 #include <stdlib.h>

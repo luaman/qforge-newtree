@@ -247,8 +247,9 @@ void R_Init_Cvars (void)
 	r_skyname = Cvar_Get("r_skyname", "none", CVAR_NONE, 
 			"name of the current skybox");
 	gl_skymultipass = Cvar_Get("gl_skymultipass", "1", CVAR_NONE,
-			"controls wether the skydome is single or double pass");
-
+			"controls whether the skydome is single or double pass");
+	gl_sky_clip = Cvar_Get ("gl_sky_clip", "0", CVAR_NONE,
+			"controls whether sky is drawn first (0) or later (1)");
 }
 
 /*

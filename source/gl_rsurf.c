@@ -65,7 +65,7 @@ int		lightmap_textures;
 
 unsigned int	blocklights[18*18*3];
 
-cvar_t		*gl_colorlights;
+cvar_t	*gl_colorlights;
 
 #define	BLOCK_WIDTH		128
 #define	BLOCK_HEIGHT	128
@@ -91,6 +91,7 @@ int			allocated[MAX_LIGHTMAPS][BLOCK_WIDTH];
 byte		*lightmaps[MAX_LIGHTMAPS];
 
 msurface_t  *waterchain = NULL;
+msurface_t	*sky_chain;
 
 extern qboolean lighthalf;
 
@@ -699,8 +700,7 @@ void DrawTextureChains (void)
 
 	glDisable(GL_BLEND);
 
-	for (i=0 ; i<cl.worldmodel->numtextures ; i++)
-	{
+	for (i=0 ; i<cl.worldmodel->numtextures ; i++) {
 		if (!cl.worldmodel->textures[i])
 			continue;
 		for (s = cl.worldmodel->textures[i]->texturechain;s;s = s->texturechain)
@@ -753,10 +753,12 @@ void R_DrawBrushModel (entity_t *e)
 
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 	memset (fullbright_polys, 0, sizeof(fullbright_polys));
+	if (gl_sky_clip->int_val) {
+		sky_chain = 0;
+	}
 
 	VectorSubtract (r_refdef.vieworg, e->origin, modelorg);
-	if (rotated)
-	{
+	if (rotated) {
 		vec3_t	temp;
 		vec3_t	forward, right, up;
 
@@ -798,10 +800,12 @@ void R_DrawBrushModel (entity_t *e)
 	//
 	// draw texture
 	//
-	for (i=0 ; i<clmodel->nummodelsurfaces ; i++, psurf++)
-	{
-		if (psurf->flags & SURF_DRAWSKY)
+	for (i=0 ; i<clmodel->nummodelsurfaces ; i++, psurf++) {
+		if (psurf->flags & SURF_DRAWSKY) {
+			psurf->texturechain = sky_chain;
+			sky_chain = psurf;
 			return;
+		}
 
 		// find which side of the node we are on
 		pplane = psurf->plane;
@@ -826,6 +830,9 @@ void R_DrawBrushModel (entity_t *e)
 
 	if (gl_fb_bmodels->int_val)
 		R_RenderFullbrights ();
+
+	if (gl_sky_clip->int_val)
+		R_DrawSkyChain (sky_chain);
 
 	glPopMatrix ();
 }
@@ -927,8 +934,11 @@ void R_RecursiveWorldNode (mnode_t *node)
 			if ((dot < 0) ^ !!(surf->flags & SURF_PLANEBACK))
 				continue;		// wrong side
 
-			if (surf->flags & SURF_DRAWSKY)
+			if (surf->flags & SURF_DRAWSKY) {
+				surf->texturechain = sky_chain;
+				sky_chain = surf;
 				continue;
+			}
 
 			if (surf->flags & SURF_DRAWTURB)
 			{
@@ -976,8 +986,12 @@ void R_DrawWorld (void)
 
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 	memset (fullbright_polys, 0, sizeof(fullbright_polys));
-	// Be sure to clear the skybox --KB
-	R_DrawSky ();
+	if (gl_sky_clip->int_val) {
+		sky_chain = 0;
+	} else {
+		// Be sure to clear the skybox --KB
+		R_DrawSky ();
+	}
 
 	R_RecursiveWorldNode (cl.worldmodel->nodes);
 
@@ -988,6 +1002,9 @@ void R_DrawWorld (void)
 
 	if (gl_fb_bmodels->int_val)
 		R_RenderFullbrights ();
+
+	if (gl_sky_clip->int_val)
+		R_DrawSkyChain (sky_chain);
 }
 
 

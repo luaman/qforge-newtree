@@ -53,19 +53,13 @@ msurface_t *warpface;
 
 
 /*
-=================================================================
-
-  Quake 2 environment sky
-
-=================================================================
+	Quake 2 environment sky
 */
 
 #define	SKY_TEX		2000
 
 /*
-==================
-R_LoadSkys
-==================
+	R_LoadSkys
 */
 char       *suf[6] = { "rt", "bk", "lf", "ft", "up", "dn" };
 void
@@ -274,6 +268,41 @@ R_DrawSky (void)
 		R_DrawSkyDome ();
 }
 
+void
+R_DrawSkyBoxPoly (glpoly_t *poly)
+{
+	vec3_t verts[32];
+	int i;
+
+	if (poly->numverts>=32) {
+		Con_Printf ("too many verts!");
+		abort();
+	}
+	for (i=0; i< poly->numverts; i++) {
+		VectorSubtract (poly->verts[i], r_refdef.vieworg, verts[i]);
+	}
+}
+
+void
+R_DrawSkyDomePoly (glpoly_t *poly)
+{
+}
+
+void
+R_DrawSkyChain (msurface_t *sky_chain)
+{
+	if (skyloaded) {
+		while (sky_chain) {
+			R_DrawSkyBoxPoly (sky_chain->polys);
+			sky_chain = sky_chain->texturechain;
+		}
+	} else {
+		while (sky_chain) {
+			R_DrawSkyDomePoly (sky_chain->polys);
+			sky_chain = sky_chain->texturechain;
+		}
+	}
+}
 
 
 //===============================================================

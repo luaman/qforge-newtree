@@ -130,6 +130,7 @@ QFile	*sv_fraglogfile;
 
 void SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
 void Master_Shutdown (void);
+void PR_Init_Cvars (void);
 
 //============================================================================
 

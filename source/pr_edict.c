@@ -48,6 +48,8 @@
 #include <strings.h>
 #endif
 
+cvar_t	*r_skyname;
+
 void SV_Error (char *error, ...);
 void FindEdictFieldOffsets();
 
@@ -829,7 +831,6 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 	qboolean	anglehack;
 	qboolean	init;
 	char		keyname[256];
-	cvar_t		*r_skyname;
 
 	init = false;
 
