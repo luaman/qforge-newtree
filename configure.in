@@ -12,7 +12,7 @@ AC_VALIDATE_CACHED_SYSTEM_TUPLE(
 
 
 dnl This is the only place where the package version appears
-AM_INIT_AUTOMAKE(quakeforge, 0.3.0)
+AM_INIT_AUTOMAKE(quakeforge, 0.3.1)
 
 dnl Define the proper name and extra version numbers for package
 PROGRAM=QuakeForge
@@ -59,22 +59,6 @@ AC_PROG_YACC
 
 AC_CHECK_LIB(l, main, LEXLIB="-ll", AC_CHECK_LIB(fl, main, LEXLIB="-lfl"))
 AC_SUBST(LEXLIB)
-
-set $CC
-if test "$1" = gcc; then
-	shift
-	args="$*"
-	AC_MSG_CHECKING(for fubared gcc)
-	if test `gcc --version` = 2.96; then
-		AC_MSG_RESULT(yes. you poor sod. Hope you have kgcc)
-		CC="kgcc $args"
-		set $CPP
-		shift
-		CPP="kgcc $*"
-	else
-		AC_MSG_RESULT(no. good)
-	fi
-fi
 
 dnl ==================================================================
 dnl Checks for system services
@@ -128,8 +112,8 @@ AC_STRUCT_TM
 if test "x$cross_compiling" = xyes; then
 	AC_MSG_CHECKING(whether byte ordering is bigendian)
 	AC_ARG_WITH(endian,
-[  --with-endian=TYPE            set endian of target system for
-                                cross-compiling. TYPE = little or big.],
+[  --with-endian=TYPE      set endian of target system for
+                          cross-compiling. TYPE = little or big.],
 		endian="$withval",
 	)
 	case "x$endian" in
@@ -1070,8 +1054,8 @@ AC_DEFINE_UNQUOTED(FS_GLOBALCFG, "$globalconf")
 
 AC_ARG_WITH(user-cfg,
 [  --with-user-cfg=FILE    If set will change the name and location of the
-                          global config file used by QuakeForge.  Defaults to
-                          /etc/quakeforge.conf.],
+                          (read-only) user config file. Defaults to
+                          ~/.quakeforgerc],
 userconf="$withval", userconf="auto")
 if test "x$userconf" = "xauto" || test "x$userconf" = "xyes" || \
 	test "x$userconf" = "xno"; then  dnl yes/no sanity checks
@@ -1189,6 +1173,21 @@ if test "x$profile" = xyes; then
 	fi
 fi
 
+dnl Some GCCs can't deal with our current code -- we're working on it, but
+dnl this fixes it up for now
+if test "x$GCC" = xyes; then
+	AC_MSG_CHECKING(whether -fno-strict-aliasing works)
+	saved_CFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -fno-strict-aliasing"
+	AC_TRY_COMPILE(
+		[],
+		[],
+		AC_MSG_RESULT(yes),
+		AC_MSG_RESULT(no)
+		CFLAGS="$saved_CFLAGS"
+	)
+fi
+
 check_pipe=no
 if test "x$GCC" = xyes; then
 	dnl Check for -pipe vs -save-temps.
@@ -1202,18 +1201,13 @@ if test "x$check_pipe" = xyes; then
 	AC_MSG_CHECKING(whether -pipe works)
 	save_CFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -pipe"
-	pipe_ok=no
 	AC_TRY_COMPILE(
 		[],
 		[],
-		pipe_ok=yes
 		AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no)
+		CFLAGS="$save_CFLAGS"
 	)
-	CFLAGS="$save_CFLAGS"
-	if test "x$pipe_ok" = xyes; then
-		CFLAGS="$CFLAGS -pipe"
-	fi
 fi
 
 dnl QuakeForge uses lots of BCPL-style (//) comments, which can cause problems
@@ -1242,10 +1236,12 @@ if test "x$GCC" != xyes; then
   esac
 fi
 
-dnl We want warnings, lots of warnings...
+dnl We want warnings, lots of warnings...except when this is a release
 if test "x$GCC" = xyes; then
-	CFLAGS="$CFLAGS -Wall -Werror"
-#	CFLAGS="$CFLAGS -Wall -pedantic"
+	CFLAGS="$CFLAGS -Wall"
+	if test -d $srcdir/CVS; then
+		CFLAGS="$CFLAGS -Werror"
+	fi
 fi
 
 dnl ==================================================================
