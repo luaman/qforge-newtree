@@ -36,8 +36,13 @@
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
+
 #include <ctype.h>
+
+#ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
+
 #ifdef HAVE_WINSOCK_H
 #include <winsock.h>
 #endif
