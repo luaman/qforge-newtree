@@ -9,8 +9,6 @@ compilers:
 - Borland C++ Builder 5 (commercial)
 - Mingw (free, GPL), (GCC 2.95.2, http://www.mingw.org)
 
-* Mingw compiling instructions will be added shortly.
-
 -----------------------------------------------------------------------
 Steps to compile standalone on win32 platforms with VC++.
 
@@ -147,9 +145,44 @@ qf-client-sdl.mak       Makefile for QuakeWorld client, software SDL renderer
 qf-client-sgl.mak       Makefile for QuakeWorld client, SDL opengl wrapper
                         Requires SDL SDK (www.libsdl.org)
 
------------------------------------------------------------------------
-
 For FREE IDE for your BC 5.5:
 http://www.objectcentral.com/vide.htm
-
 -----------------------------------------------------------------------
+COMPILING NEWTREE WITH MINGW (http://www.mingw.org)
+
+These are MINGW compile instructions for users without cygwin or self-hosting
+mingw. If you've cygwin or self-hosting mingw, you can soon use standard 
+./configure process. You can also build WIN32 binaries under Linux using 
+cross-compiling mingw.
+
+1) Get and install fully working MINGW system. See mingw home page
+for closer details. Make sure your MINGW\BIN directory is in your PATH.
+(if you want easy way in, get http://www.libsdl.org/Xmingw32/mingw32.zip and extract it)
+
+2) Get and install LATEST WIN32API for mingw
+(http://sourceforge.net/project/showfiles.php?group_id=2435)
+
+Latest one at the time of the writing is 
+http://download.sourceforge.net/mingw/w32api-0.4-20001122.tar.gz
+
+3) Get and install ZLIB
+You can either download ZLIB source code from http://www.info-zip.org/pub/infozip/zlib/ 
+and compile it or 
+
+4) If you want to compile SDL/SGL targets, you also need to get SDL 
+Source Code and Win32 Binary Runtime (http://www.libsdl.org.)
+Extract the runtime (sdl.dll) into the lib subdirectory of the SDL 
+Source Code. If you don't know what SDL means, you don't need this.
+
+Look libsdl page for closer details how to get mingw working with sdl.
+
+5) Go to source directory and check paths in makefile.mgw and change them to suit your system.
+
+Then just type:
+
+make -fmakefile.mgw
+
+And hope for best. You will see lot of "warnings" but they're ok as long
+as you manage to get working .EXE files.
+-----------------------------------------------------------------------
+
