@@ -29,14 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <math.h>
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
+#include <math.h>
 #include <stdio.h>
 
 #include "glquake.h"
@@ -118,7 +118,6 @@ R_RenderDlight (dlight_t *light)
 {
 	int         i, j;
 
-//  float   a;
 	vec3_t      v;
 	float       rad;
 	float      *bub_sin, *bub_cos;
@@ -129,7 +128,7 @@ R_RenderDlight (dlight_t *light)
 
 	VectorSubtract (light->origin, r_origin, v);
 	if (Length (v) < rad) {				// view is inside the dlight
-		AddLightBlend (1, 0.5, 0, light->radius * 0.0003);
+		AddLightBlend (light->color[0], light->color[1], light->color[2], light->radius * 0.0003);
 		return;
 	}
 
@@ -144,7 +143,6 @@ R_RenderDlight (dlight_t *light)
 	glVertex3fv (v);
 	glColor3f (0, 0, 0);
 	for (i = 16; i >= 0; i--) {
-//      a = i/16.0 * M_PI*2;
 		for (j = 0; j < 3; j++)
 			v[j] = light->origin[j] + (vright[j] * (*bub_cos) +
 									   +vup[j] * (*bub_sin)) * rad;

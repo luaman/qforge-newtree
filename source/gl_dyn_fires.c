@@ -29,13 +29,13 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
 #include <stdlib.h>
 
 #include "cl_main.h"
@@ -78,7 +78,7 @@ R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
 		f->size = 20;
 		f->die = cl.time + 0.5;
 		f->decay = -1;
-		f->color = r_firecolor->vec;
+		VectorCopy (r_firecolor->vec, f->color);
 	}
 }
 
@@ -101,7 +101,6 @@ R_AllocFire (int key)
 			if (f->key == key) {
 				memset (f, 0, sizeof (*f));
 				f->key = key;
-				f->color = f->_color;
 				return f;
 			}
 	}
@@ -111,7 +110,6 @@ R_AllocFire (int key)
 		if (f->die < cl.time) {
 			memset (f, 0, sizeof (*f));
 			f->key = key;
-			f->color = f->_color;
 			return f;
 		}
 	}
@@ -119,7 +117,6 @@ R_AllocFire (int key)
 	f = &r_fires[0];
 	memset (f, 0, sizeof (*f));
 	f->key = key;
-	f->color = f->_color;
 	return f;
 }
 
@@ -144,7 +141,7 @@ R_DrawFire (fire_t *f)
 	// figure out if we're inside the area of effect
 	VectorSubtract (f->origin, r_origin, vec);
 	if (Length (vec) < radius) {
-		AddLightBlend (1, 0.5, 0, f->size * 0.0003);	// we are
+		AddLightBlend (f->color[0], f->color[1], f->color[2], f->size * 0.0003);	// we are
 		return;
 	}
 	// we're not - draw it

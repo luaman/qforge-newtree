@@ -51,7 +51,7 @@ GDT_Init (void)
 static void
 GDT_InitDotParticleTexture (void)
 {
-	int         x, y, dx, dy, d;
+	int         x, y, dx2, dy, d;
 	byte        data[16][16][2];
 
 	// 
@@ -61,13 +61,13 @@ GDT_InitDotParticleTexture (void)
 	glBindTexture (GL_TEXTURE_2D, part_tex_dot);
 
 	for (x = 0; x < 16; x++) {
+		dx2 = x - 8;
+		dx2 *= dx2;
 		for (y = 0; y < 16; y++) {
 			data[y][x][0] = 255;
-			dx = x - 8;
 			dy = y - 8;
-			d = 255 - 4 * (dx * dx + dy * dy);
+			d = 255 - 4 * (dx2 + dy * dy);
 			if (d<0) d = 0;
-			if (d>255) d = 255;
 			data[y][x][1] = (byte) d;
 		}
 	}
@@ -82,30 +82,33 @@ static void
 GDT_InitSmokeParticleTexture (void)
 {
 	int         i, x, y, d;
-	float       dx, dy;
+	float       dx, dy2;
 	byte        data[32][32][2], noise1[32][32], noise2[32][32];
 
 	for (i = 0; i < 8; i++) {
 		fractalnoise (&noise1[0][0], 32);
 		fractalnoise (&noise2[0][0], 32);
 		for (y = 0; y < 32; y++)
+		{
+			dy2 = y - 16;
+			dy2 *= dy2;
 			for (x = 0; x < 32; x++) {
 				data[y][x][0] = (noise1[y][x] >> 1) + 128;
 				dx = x - 16;
-				dy = y - 16;
 				d = noise2[y][x] * 4 - 512;
 				if (d > 0) {
 					if (d > 255)
 						d = 255;
-					d = (d * (255 - (int) (dx * dx + dy * dy))) >> 8;
+					d = (d * (255 - (int) (dx * dx + dy2))) >> 8;
 					if (d < 0)
 						d = 0;
-					if (d > 255)
-						d = 255;
+//					if (d > 255)
+//						d = 255;
 					data[y][x][1] = (byte) d;
 				} else
 					data[y][x][1] = 0;
 			}
+		}
 		part_tex_smoke[i] = texture_extension_number++;
 		glBindTexture (GL_TEXTURE_2D, part_tex_smoke[i]);
 		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

@@ -29,14 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <math.h>
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -68,9 +68,7 @@ mplane_t	frustum[4];
 
 int 		c_brush_polys, c_alias_polys;
 
-qboolean	envmap;						// true during envmap command capture 
-
-										// 
+qboolean	envmap;						// true during envmap command capture
 
 
 int 	playertextures;				// up to 16 color translated skins
@@ -881,7 +879,7 @@ R_DrawAliasModel (entity_t *e)
 	}
 
 	if (gl_affinemodels->int_val)
-		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE); // DESPAIR: was GL_FASTEST
 
 	glPopMatrix ();
 

@@ -91,7 +91,7 @@ int         gl_lightmap_format = 4;
 int         gl_solid_format = 3;
 int         gl_alpha_format = 4;
 
-static int  gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
+static int  gl_filter_min = GL_LINEAR_MIPMAP_LINEAR;
 static int  gl_filter_max = GL_LINEAR;
 
 
@@ -476,8 +476,10 @@ Draw_Init (void)
 	cs_texture = GL_LoadTexture ("crosshair", 8, 8, cs_data, false, true, 1);
 //  char_texture = GL_LoadTexture ("charset", 128, 128, draw_chars, false, true, 1);    // 1999-12-27 Conwidth/height charset fix by TcT
 
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // DESPAIR: If trilinear, crosshairs are blocks of solid color
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// save a texture slot for translated picture
 	translate_texture = texture_extension_number++;
@@ -505,6 +507,7 @@ Draw_Init_Cvars (void)
 	// LordHavoc: lighting mode
 	gl_lightmode = Cvar_Get ("gl_lightmode", "1", CVAR_ARCHIVE,
 							 "Lighting mode (0 = GLQuake style, 1 = new style)");
+
 	gl_max_size = Cvar_Get ("gl_max_size", "1024", CVAR_NONE, "Texture dimension"); 
 
 	gl_picmip = Cvar_Get ("gl_picmip", "0", CVAR_NONE, "Dimensions of displayed textures. 0 is normal, 1 is half, 2 is 1/4"); 
