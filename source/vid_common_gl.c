@@ -283,7 +283,7 @@ GL_BeginRendering (int *x, int *y, int *width, int *height)
 	*height = scr_height;
 }
 
-qboolean VID_Is8bit(void)
+qboolean VID_Is8bit (void)
 {
 	return is8bit;
 }
@@ -311,7 +311,6 @@ void
 
 		Con_Printf ("3DFX_set_global_palette.\n");
 
-		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
 		oldpal = (char *) d_8to24table; //d_8to24table3dfx;
 		for (i = 0; i < 256; i++) {
 			table[i][2] = *oldpal++;
@@ -320,25 +319,26 @@ void
 			table[i][3] = 255;
 			oldpal++;
 		}
+		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
 		qgl3DfxSetPaletteEXT ((GLuint *) table);
 		is8bit = true;
 	}
 }
 #endif
 
-#ifdef HAVE_PFNGLCOLORTABLEEXTPROC
+#ifndef HAVE_PFNGLCOLORTABLEEXTPROC
+# ifndef PFNGLCOLORTABLEEXTPROC
+typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const GLvoid *table);
+# endif
+#endif
 
-//#ifndef PFNGLCOLORTABLEEXTPROC
-//typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid *table);
-//#endif
-
+#ifdef GL_SHARED_TEXTURE_PALETTE_EXT
 void
 Shared_Init8bitPalette (void)
 {
 	int 	i;
-	GLubyte thePalette[256*3];
+	GLubyte thePalette[256][4];
 	GLubyte	*oldPalette;
-	GLubyte *newPalette;
 
 	PFNGLCOLORTABLEEXTPROC qglColorTableEXT = NULL;
 
@@ -353,16 +353,15 @@ Shared_Init8bitPalette (void)
 
 		Con_Printf ("GL_EXT_shared_texture_palette\n");
 
-		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
 		oldPalette = (GLubyte *) d_8to24table; //d_8to24table3dfx;
-		newPalette = thePalette;
-		for (i = 0; i < 256; i++, oldPalette++) {
-			*newPalette++ = *oldPalette++;
-			*newPalette++ = *oldPalette++;
-			*newPalette++ = *oldPalette++;
+		for (i = 0; i < 256; i++) {
+			thePalette[i][0] = *oldPalette++;
+			thePalette[i][1] = *oldPalette++;
+			thePalette[i][2] = *oldPalette++;
+			thePalette[i][3] = *oldPalette++;
 		}
-
-		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_COLOR_INDEX8_EXT, 256, GL_COLOR_INDEX8_EXT, GL_UNSIGNED_BYTE, thePalette);
+		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
+		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGBA, 256, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *) thePalette);
 		is8bit = true;
 	}
 }
@@ -388,18 +387,17 @@ VID_Init8bitPalette (void)
 
 	if (vid_use8bit->int_val) {
 #ifdef HAVE_TDFXGL
-		3dfx_Init8bitPalette();
-#else
-# ifdef HAVE_PFNGLCOLORTABLEEXTPROC
-		Shared_Init8bitPalette();
-# endif
+		3dfx_Init8bitPalette ();
+#endif
+#ifdef HAVE_PFNGLCOLORTABLEEXTPROC
+		Shared_Init8bitPalette ();
 #endif
 		if (!is8bit) {
 			Con_Printf ("not found.\n");
 		}
-		dlclose (dlhand);
-		dlhand = NULL;
 	}
+	dlclose (dlhand);
+	dlhand = NULL;
 }
 
 void
