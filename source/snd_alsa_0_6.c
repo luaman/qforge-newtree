@@ -157,13 +157,14 @@ SNDDMA_Init (void)
   dev_openned:
 	Con_Printf ("Using card %d, device %d.\n", card, dev);
 	memset (&hwinfo, 0, sizeof (hwinfo));
+	snd_pcm_hw_info_any (&hwinfo);
+	hwinfo.access_mask = SND_PCM_ACCBIT_MMAP_INTERLEAVED;
 	err_msg = "snd_pcm_hw_info";
 	if ((rc = snd_pcm_hw_info (pcm_handle, &hwinfo)) < 0)
 		goto error;
 	Con_Printf ("%08x %08x\n", hwinfo.access_mask, hwinfo.format_mask);
 	rate = 44100;
 	frag_size = 4;
-	format = SND_PCM_FMTBIT_S16_LE;
 #if 0									// XXX
 	if ((rate == -1 || rate == 44100) && hwinfo.rates & SND_PCM_RATE_44100) {
 		rate = 44100;
@@ -180,19 +181,19 @@ SNDDMA_Init (void)
 		Con_Printf ("ALSA: desired rates not supported\n");
 		goto error_2;
 	}
+#endif
 	if ((format == -1 || format == SND_PCM_FMTBIT_S16_LE)
-		&& hwinfo.format_mask & SND_PCM_FMTBIT_S16_LE) {
-		format = SND_PCM_FMTBIT_S16_LE;
-	} else if ((format == -1 || format == SND_PCM_FMTBIT_U8)
-			   && hwinfo.format_mask & SND_PCM_FMTBIT_U8) {
-		format = SND_PCM_FMTBIT_U8;
+		&& hwinfo.format_mask & SND_PCM_FORMAT_S16_LE) {
+		format = SND_PCM_FORMAT_S16_LE;
+	} else if ((format == -1 || format == SND_PCM_FORMAT_U8)
+			   && hwinfo.format_mask & SND_PCM_FORMAT_U8) {
+		format = SND_PCM_FORMAT_U8;
 	} else {
 		Con_Printf ("ALSA: desired formats not supported\n");
 		goto error_2;
 	}
-#endif
 	// XXX can't support non-interleaved stereo
-	if (stereo && (hwinfo.access_mask & SND_PCM_INFO_INTERLEAVED)
+	if (stereo && (hwinfo.access_mask & SND_PCM_ACCBIT_MMAP_INTERLEAVED)
 		&& hwinfo.channels_max >= 2) {
 		stereo = 1;
 	} else {
@@ -208,10 +209,10 @@ SNDDMA_Init (void)
 	hwparams.channels = stereo + 1;
 
 	hwparams.fragment_size = frag_size;
-	hwparams.fragments = (1 << 17) / frag_size;
+	hwparams.fragments = hwinfo.fragments_max;
 
 	while (1) {
-		err_msg = "audio params";
+		err_msg = "snd_pcm_hw_params";
 		if ((rc = snd_pcm_hw_params (pcm_handle, &hwparams)) < 0)
 			goto error;
 
@@ -228,7 +229,7 @@ SNDDMA_Init (void)
 	shm->channels = hwparams.channels;
 	shm->submission_chunk = frag_size;	// don't mix less than this #
 	shm->samplepos = 0;					// in mono samples
-	shm->samplebits = hwparams.format == SND_PCM_FMTBIT_S16_LE ? 16 : 8;
+	shm->samplebits = hwparams.format == SND_PCM_FORMAT_S16_LE ? 16 : 8;
 	shm->samples = hwparams.fragments * shm->channels;	// mono samples in
 														// buffer
 	shm->speed = hwparams.rate;
@@ -246,7 +247,7 @@ SNDDMA_Init (void)
 	return 1;
   error:
 	Con_Printf ("Error: %s: %s\n", err_msg, snd_strerror (rc));
-	// XXXerror_2:
+  error_2:
 	snd_pcm_close (pcm_handle);
 	return 0;
 }
