@@ -70,83 +70,74 @@ client_t   *host_client;				// current client
 // FLOOD_PING, FLOOD_LOG, FLOOD_CONNECT, FLOOD_STATUS, FLOOD_RCON, FLOOD_BAN
 // fixme: these default values need to be tweaked after more testing
 
-double      netdosexpire[DOSFLOODCMDS] = { 1, 1, 2, 0.9, 1, 5 };
-double      netdosvalues[DOSFLOODCMDS] = { 12, 1, 3, 1, 1, 1 };
+double	netdosexpire[DOSFLOODCMDS] = { 1, 1, 2, 0.9, 1, 5 };
+double	netdosvalues[DOSFLOODCMDS] = { 12, 1, 3, 1, 1, 1 };
 
-cvar_t     *sv_netdosprotect;			// tone down DoS from quake servers
+cvar_t	*sv_netdosprotect;			// tone down DoS from quake servers
 
-cvar_t     *sv_allow_status;
-cvar_t     *sv_allow_log;
-cvar_t     *sv_allow_ping;
+cvar_t	*sv_allow_status;
+cvar_t	*sv_allow_log;
+cvar_t	*sv_allow_ping;
 
-cvar_t     *fs_globalcfg;
-cvar_t     *fs_usercfg;
+cvar_t	*fs_globalcfg;
+cvar_t	*fs_usercfg;
 
-cvar_t     *sv_mintic;					// bound the size of the
-cvar_t     *sv_maxtic;					// physics time tic
+cvar_t	*sv_mintic;				// bound the size of the
+cvar_t	*sv_maxtic;				// physics time tic
 
-cvar_t     *developer;					// show extra messages
+cvar_t	*developer;				// show extra messages
 
-cvar_t     *timeout;					// seconds without any message
-cvar_t     *zombietime;					// seconds to sink messages after
+cvar_t	*timeout;				// seconds without any message
+cvar_t	*zombietime;			// seconds to sink messages after disconnect
 
-										// disconnect
+cvar_t	*rcon_password;			// password for remote server commands
 
-cvar_t     *rcon_password;				// password for remote server
+cvar_t	*password;				// password for entering the game
+cvar_t	*spectator_password;	// password for entering as a spectator
 
-										// commands
+cvar_t	*allow_download;
+cvar_t	*allow_download_skins;
+cvar_t	*allow_download_models;
+cvar_t	*allow_download_sounds;
+cvar_t	*allow_download_maps;
 
-cvar_t     *password;					// password for entering the game
-cvar_t     *spectator_password;			// password for entering as a
+cvar_t	*sv_highchars;
 
-										// spectator
+cvar_t	*sv_phs;
 
-cvar_t     *allow_download;
-cvar_t     *allow_download_skins;
-cvar_t     *allow_download_models;
-cvar_t     *allow_download_sounds;
-cvar_t     *allow_download_maps;
+cvar_t	*pausable;
 
-cvar_t     *sv_highchars;
+extern cvar_t	*sv_timekick;
+extern cvar_t	*sv_timekick_fuzz;
+extern cvar_t	*sv_timekick_interval;
 
-cvar_t     *sv_phs;
+cvar_t	*sv_minqfversion;		// Minimum QF version allowed to connect
+cvar_t	*sv_maxrate;			// Maximum allowable rate (silent cap)
 
-cvar_t     *pausable;
-
-extern cvar_t *sv_timekick;
-extern cvar_t *sv_timekick_fuzz;
-extern cvar_t *sv_timekick_interval;
-
-cvar_t     *sv_minqfversion;			// Minimum QF version allowed to
-
-										// connect
-cvar_t     *sv_maxrate;					// Maximum allowable rate (silently
-
-										// capped)
-
-cvar_t     *sv_timestamps;
-cvar_t     *sv_timefmt;
+cvar_t	*sv_extensions; 		// Use the extended protocols
+cvar_t	*sv_timestamps;
+cvar_t	*sv_timefmt;
 
 //
 // game rules mirrored in svs.info
 //
-cvar_t     *fraglimit;
-cvar_t     *timelimit;
-cvar_t     *teamplay;
-cvar_t     *samelevel;
-cvar_t     *maxclients;
-cvar_t     *maxspectators;
-cvar_t     *deathmatch;					// 0, 1, or 2
-cvar_t     *spawn;
-cvar_t     *watervis;
+cvar_t	*fraglimit;
+cvar_t	*timelimit;
+cvar_t	*teamplay;
+cvar_t	*samelevel;
+cvar_t	*maxclients;
+cvar_t	*maxspectators;
+cvar_t	*deathmatch;			// 0, 1, or 2
+cvar_t	*spawn;
+cvar_t	*watervis;
 
-cvar_t     *hostname;
+cvar_t	*hostname;
 
-QFile      *sv_logfile;
-QFile      *sv_fraglogfile;
+QFile	*sv_logfile;
+QFile	*sv_fraglogfile;
 
-void        SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
-void        Master_Shutdown (void);
+void SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
+void Master_Shutdown (void);
 
 //============================================================================
 
@@ -229,8 +220,7 @@ SV_FinalMessage (char *message)
 
 	for (i = 0, cl = svs.clients; i < MAX_CLIENTS; i++, cl++)
 		if (cl->state >= cs_spawned)
-			Netchan_Transmit (&cl->netchan, net_message.cursize,
-							  net_message.data);
+			Netchan_Transmit (&cl->netchan, net_message.cursize, net_message.data);
 }
 
 /*
@@ -546,11 +536,8 @@ SVC_Log (void)
 	else
 		seq = -1;
 
-	if (seq == svs.logsequence - 1 || !sv_fraglogfile) {	// they allready
-		// have this
-		// data, or we
-		// aren't logging 
-		// frags
+	if (seq == svs.logsequence - 1 || !sv_fraglogfile) {
+		// they already have this data, or we aren't logging frags
 		data[0] = A2A_NACK;
 		NET_SendPacket (1, data, net_from);
 		return;
@@ -604,6 +591,7 @@ SVC_GetChallenge (void)
 	int         i;
 	int         oldest;
 	int         oldestTime;
+	char		*extended = "";
 
 	oldest = 0;
 	oldestTime = 0x7fffffff;
@@ -625,9 +613,14 @@ SVC_GetChallenge (void)
 		svs.challenges[oldest].time = realtime;
 		i = oldest;
 	}
-	// send it back
-	Netchan_OutOfBandPrint (net_from, "%c%i QF", S2C_CHALLENGE,
-							svs.challenges[i].challenge);
+
+	if (sv_extensions->int_val) {
+		extended = " QF";
+	}
+
+	// send it to the client
+	Netchan_OutOfBandPrint (net_from, "%c%i%s", S2C_CHALLENGE,
+							svs.challenges[i].challenge, extended);
 }
 
 /*
@@ -1475,15 +1468,16 @@ void
 SV_InitLocal (void)
 {
 	int         i;
-	extern cvar_t *sv_maxvelocity;
-	extern cvar_t *sv_gravity;
-	extern cvar_t *sv_aim;
-	extern cvar_t *sv_stopspeed;
-	extern cvar_t *sv_spectatormaxspeed;
 	extern cvar_t *sv_accelerate;
+	extern cvar_t *sv_aim;
 	extern cvar_t *sv_airaccelerate;
-	extern cvar_t *sv_wateraccelerate;
+	extern cvar_t *sv_extensions;
 	extern cvar_t *sv_friction;
+	extern cvar_t *sv_gravity;
+	extern cvar_t *sv_maxvelocity;
+	extern cvar_t *sv_spectatormaxspeed;
+	extern cvar_t *sv_stopspeed;
+	extern cvar_t *sv_wateraccelerate;
 	extern cvar_t *sv_waterfriction;
 
 	SV_UserInit ();
@@ -1530,46 +1524,34 @@ SV_InitLocal (void)
 	zombietime = Cvar_Get ("zombietime", "2", CVAR_NONE, 
 		"The number of seconds that the server will keep the character of a player on the map who seems to have disconnected");
 
-	sv_maxvelocity = Cvar_Get ("sv_maxvelocity", "2000", CVAR_NONE, "Sets the maximum velocity an object can travel");
-	sv_gravity = Cvar_Get ("sv_gravity", "800", CVAR_NONE, "Sets the global value for the amount of gravity");
-	sv_stopspeed = Cvar_Get ("sv_stopspeed", "100", CVAR_NONE, 
-		"Sets the value that determines how fast the player should come to a complete stop");
-	sv_maxspeed = Cvar_Get ("sv_maxspeed", "320", CVAR_NONE, "Sets the maximum speed a player can move");
-	sv_spectatormaxspeed =
-		Cvar_Get ("sv_spectatormaxspeed", "500", CVAR_NONE, "Sets the maximum speed a spectator can move");
-	sv_accelerate = Cvar_Get ("sv_accelerate", "10", CVAR_NONE, "Sets the acceleration value for the players");
-	sv_airaccelerate = Cvar_Get ("sv_airaccelerate", "0.7", CVAR_NONE, "Sets how quickly the players accelerate in air");
-	sv_wateraccelerate =
-		Cvar_Get ("sv_wateraccelerate", "10", CVAR_NONE, "Sets the water acceleration value");
-	sv_friction = Cvar_Get ("sv_friction", "4", CVAR_NONE, "Sets the friction value for the players");
-	sv_waterfriction = Cvar_Get ("sv_waterfriction", "4", CVAR_NONE, "Sets the water friction value");
-
 	sv_aim = Cvar_Get ("sv_aim", "2", CVAR_NONE, "Sets the value for auto-aiming leniency");
 
-	sv_timekick =
-		Cvar_Get ("sv_timekick", "3", CVAR_SERVERINFO, "Time cheat protection");
-	sv_timekick_fuzz =
-		Cvar_Get ("sv_timekick_fuzz", "15", CVAR_NONE,
-				  "Time cheat \"fuzz factor\"");
-	sv_timekick_interval =
-		Cvar_Get ("sv_timekick_interval", "30", CVAR_NONE,
-				  "Time cheat check interval");
+	sv_accelerate = Cvar_Get ("sv_accelerate", "10", CVAR_NONE, "Sets the acceleration value for the players");
+	sv_airaccelerate = Cvar_Get ("sv_airaccelerate", "0.7", CVAR_NONE, "Sets how quickly the players accelerate in air");
+	sv_wateraccelerate = Cvar_Get ("sv_wateraccelerate", "10", CVAR_NONE, "Sets the water acceleration value");
 
-	sv_minqfversion =
-		Cvar_Get ("sv_minqfversion", "0", CVAR_SERVERINFO,
-				  "Minimum QF version on client");
+	sv_allow_log = Cvar_Get ("sv_allow_log", "1", CVAR_NONE, "Allow remote logging");
+	sv_allow_ping =	Cvar_Get ("sv_allow_pings", "1", CVAR_NONE, "Allow remote pings (qstat etc)");
+	sv_allow_status = Cvar_Get ("sv_allow_status", "1", CVAR_NONE, "Allow remote status queries (qstat etc)");
 
-	sv_maxrate =
-		Cvar_Get ("sv_maxrate", "0", CVAR_SERVERINFO, "Maximum allowable rate");
+	sv_extensions = Cvar_Get ("sv_extensions", "1", CVAR_NONE, "Use protocol extensions for QuakeForge clients");
+	sv_friction = Cvar_Get ("sv_friction", "4", CVAR_NONE, "Sets the friction value for the players");
+	sv_gravity = Cvar_Get ("sv_gravity", "800", CVAR_NONE, "Sets the global value for the amount of gravity");
 
-	sv_allow_log =
-		Cvar_Get ("sv_allow_log", "1", CVAR_NONE, "Allow remote logging");
-	sv_allow_status =
-		Cvar_Get ("sv_allow_status", "1", CVAR_NONE,
-				  "Allow remote status queries (qstat etc)");
-	sv_allow_ping =
-		Cvar_Get ("sv_allow_pings", "1", CVAR_NONE,
-				  "Allow remote pings (qstat etc)");
+	sv_maxrate = Cvar_Get ("sv_maxrate", "0", CVAR_SERVERINFO, "Maximum allowable rate");
+	sv_maxspeed = Cvar_Get ("sv_maxspeed", "320", CVAR_NONE, "Sets the maximum speed a player can move");
+	sv_maxvelocity = Cvar_Get ("sv_maxvelocity", "2000", CVAR_NONE, "Sets the maximum velocity an object can travel");
+
+	sv_minqfversion = Cvar_Get ("sv_minqfversion", "0", CVAR_SERVERINFO, "Minimum QF version on client");
+	sv_spectatormaxspeed = Cvar_Get ("sv_spectatormaxspeed", "500", CVAR_NONE, "Sets the maximum speed a spectator can move");
+	sv_stopspeed = Cvar_Get ("sv_stopspeed", "100", CVAR_NONE, "Sets the value that determines how fast the player should come to a complete stop");
+
+	sv_timekick = Cvar_Get ("sv_timekick", "3", CVAR_SERVERINFO, "Time cheat protection");
+	sv_timekick_fuzz = Cvar_Get ("sv_timekick_fuzz", "15", CVAR_NONE, "Time cheat \"fuzz factor\"");
+	sv_timekick_interval = Cvar_Get ("sv_timekick_interval", "30", CVAR_NONE, "Time cheat check interval");
+
+	sv_waterfriction = Cvar_Get ("sv_waterfriction", "4", CVAR_NONE, "Sets the water friction value");
+
 	sv_netdosprotect =
 		Cvar_Get ("sv_netdosprotect", "0", CVAR_NONE,
 				  "DoS flood attack protection");
@@ -1821,7 +1803,7 @@ SV_ExtractFromUserinfo (client_t *cl)
 		cl->messagelevel = atoi (val);
 	}
 
-	cl->stdver = atoi (Info_ValueForKey (cl->userinfo, "stdver"));
+	cl->stdver = atof (Info_ValueForKey (cl->userinfo, "*qsg_version"));
 }
 
 

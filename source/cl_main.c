@@ -576,19 +576,19 @@ CL_FullServerinfo_f (void)
 
 	if ((p = Info_ValueForKey (cl.serverinfo, "*qf_version")) && *p) {
 		if (server_version == NULL)
-			Con_Printf ("QuakeForge Version %s Server\n", p);
+			Con_Printf ("QuakeForge v%s server\n", p);
 		server_version = strdup (p);
 	} else if ((p = Info_ValueForKey (cl.serverinfo, "*version")) && *p) {
 		if (server_version == NULL)
-			Con_Printf ("Version %s Server\n", p);
+			Con_Printf ("QuakeWorld v%s server\n", p);
 		server_version = strdup (p);
 	}
 
 	if ((p = Info_ValueForKey (cl.serverinfo, "*qsg_version")) && *p) {
-		if ((cl.stdver = atoi (p)))
-			Con_Printf ("QSG Standard version %i\n", cl.stdver);
+		if ((cl.stdver = atof (p)))
+			Con_Printf ("Server supports QSG v%s protocol\n", p);
 		else
-			Con_Printf ("Invalid standards version: %s", p);
+			Con_Printf ("Invalid QSG Protocol number: %s\n", p);
 	}
 	if ((p = Info_ValueForKey (cl.serverinfo, "skybox")) && *p) {
 		if (stricmp (p, "none") == 0) {
@@ -1125,8 +1125,6 @@ CL_Init (void)
 //  snprintf (st, sizeof(st), "%s-%04d", QW_VERSION, build_number());
 	snprintf (st, sizeof (st), "%s", QW_VERSION);
 	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING);
-	Info_SetValueForStarKey (cls.userinfo, "stdver", QSG_VERSION,
-							 MAX_INFO_STRING);
 #ifdef PACKET_LOGGING
         Net_Log_Init();
 #endif
