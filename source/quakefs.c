@@ -308,7 +308,7 @@ maplist_print(struct maplist *maplist)
 	for (i=0; i<maplist->count - 1; i++) {
 		name = maplist->list[i];
 		end = strstr (name, ".bsp");
-		Con_Printf ("%-9.*s%c", end - name, name, ((i + 1) % 4) ? ' ' : '\n');
+		Con_Printf ("%-8.*s%c", end - name, name, ((i + 1) % 4) ? ' ' : '\n');
 	}
 	name = maplist->list[i];
 	end = strstr (name, ".bsp");
