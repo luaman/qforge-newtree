@@ -648,7 +648,7 @@ test -z "$CDTYPE" && AC_MSG_RESULT([no, using null CD audio driver])
 AC_SUBST(CD_LIBS)
 AC_SUBST(CD_CFLAGS)
 AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "LINUX")
-AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "BSD")
+AM_CONDITIONAL(CDTYPE_BSD, test "$CDTYPE" = "BSD")
 AM_CONDITIONAL(CDTYPE_WIN32, test "$CDTYPE" = "WIN32")
 AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "LINUX" -a "$CDTYPE" != "BSD" -a "$CDTYPE" != "WIN32")
 
@@ -888,15 +888,15 @@ AC_SUBST(TARGETS)
 
 dnl Output files
 AC_OUTPUT(
-	include/Makefile
-	source/Makefile
-	doc/Makefile
-	doc/man/Makefile
-	doc/texinfo/Makefile
-	Makefile
-	include/win32/version.h
 	RPM/quakeforge.spec
 	RPM/build_rpm
+	doc/texinfo/Makefile
+	doc/man/Makefile
+	doc/Makefile
+	include/win32/version.h
+	include/Makefile
+	source/Makefile
+	Makefile
 	quakeforge.lsm,
 	chmod +x RPM/build_rpm
 )

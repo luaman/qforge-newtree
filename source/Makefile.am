@@ -55,7 +55,7 @@ endif
 if CDTYPE_NULL
 libqfcd_a_SOURCES = cd_null.c
 endif
-EXTRA_libqfcd_a_SOURCES = cd_win.c cd_linux.c cd_null.c
+EXTRA_libqfcd_a_SOURCES = cd_audio.c cd_win.c cd_linux.c cd_null.c
 
 common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
 		mdfour.c mathlib.c cvar.c crc.c model.c cmd.c \
