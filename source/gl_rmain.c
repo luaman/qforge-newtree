@@ -385,6 +385,13 @@ GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 	if (modelalpha != 1.0)
 		glDepthMask (GL_FALSE);
 
+	if (fb) {	// don't do this in the loop, it doesn't change
+		if (lighthalf)
+			glColor4f (0.5, 0.5, 0.5, modelalpha);
+		else
+			glColor4f (1, 1, 1, modelalpha);
+	}
+
 	while ((count = *order++)) {
 		// get the vertex count and primitive type
 		if (count < 0) {
@@ -399,9 +406,7 @@ GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 			glTexCoord2f (((float *) order)[0], ((float *) order)[1]);
 			order += 2;
 
-			if (fb) {
-				glColor4f (1, 1, 1, modelalpha);
-			} else {
+			if (!fb) {
 				// normals and vertexes come from the frame list
 				l = shadedots[verts->lightnormalindex] * shadelight;
 
@@ -419,6 +424,7 @@ GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 
 	if (modelalpha != 1.0)
 		glDepthMask (GL_TRUE);
+
 	glColor3ubv (lighthalf_v);
 }
 
@@ -430,12 +436,12 @@ GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 void
 GL_DrawAliasBlendedFrame (aliashdr_t *paliashdr, int pose1, int pose2, float blend, qboolean fb)
 {
-	float       l;
-	trivertx_t *verts1;
-	trivertx_t *verts2;
-	int        *order;
-	int         count;
-	vec3_t      d;
+	float		light;
+	float 		lerp;
+	trivertx_t	*verts1;
+	trivertx_t	*verts2;
+	int 		*order;
+	int 		count;
 
 	lastposenum0 = pose1;
 	lastposenum = pose2;
@@ -451,8 +457,15 @@ GL_DrawAliasBlendedFrame (aliashdr_t *paliashdr, int pose1, int pose2, float ble
 	if (modelalpha != 1.0)
 		glDepthMask (GL_FALSE);
 
-	while ((count = *order++)) {
-		// get the vertex count and primitive type
+	if (fb) {	// don't do this in the loop, it doesn't change
+		if (lighthalf)
+			glColor4f (0.5, 0.5, 0.5, modelalpha);
+		else
+			glColor4f (1, 1, 1, modelalpha);
+	}
+
+	lerp = 1 - blend;
+	while ((count = *order++)) {	// get the vertex count and primitive type
 
 		if (count < 0) {
 			count = -count;
@@ -466,23 +479,19 @@ GL_DrawAliasBlendedFrame (aliashdr_t *paliashdr, int pose1, int pose2, float ble
 			glTexCoord2f (((float *) order)[0], ((float *) order)[1]);
 			order += 2;
 
-			if (fb) {
-				glColor4f (1, 1, 1, modelalpha);
-			} else {
+			if (!fb) {
 				// normals and vertexes come from the frame list
 				// blend the light intensity from the two frames together
-				d[0] = shadedots[verts2->lightnormalindex] - shadedots[verts1->lightnormalindex];
-
-				l = shadelight * (shadedots[verts1->lightnormalindex] + (blend * d[0]));
-				glColor4f (shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l, modelalpha);
+				light = shadelight * ((shadedots[verts1->lightnormalindex] * lerp)
+									+ (shadedots[verts2->lightnormalindex] * blend));
+				glColor4f (shadecolor[0] * light, shadecolor[1] * light,
+							shadecolor[2] * light, modelalpha);
 			}
 
-			VectorSubtract (verts2->v, verts1->v, d);
-
 			// blend the vertex positions from each frame together
-			glVertex3f (verts1->v[0] + (blend * d[0]),
-						verts1->v[1] + (blend * d[1]),
-						verts1->v[2] + (blend * d[2]));
+			glVertex3f ((verts1->v[0] * lerp) + (verts2->v[0] * blend),
+						(verts1->v[1] * lerp) + (verts2->v[1] * blend),
+						(verts1->v[2] * lerp) + (verts2->v[2] * blend));
 
 			verts1++;
 			verts2++;
@@ -562,12 +571,14 @@ void
 GL_DrawAliasBlendedShadow (aliashdr_t *paliashdr, int pose1, int pose2, entity_t *e)
 {
 	trivertx_t	*verts1, *verts2;
-	vec3_t		point1, point2, d;
+	float 		lerp;
+	vec3_t		point1, point2;
 	int 		*order, count;
 	float       height, lheight, blend;
 
 	blend = (realtime - e->frame_start_time) / e->frame_interval;
 	blend = min (blend, 1);
+	lerp = 1 - blend;
 
 	lheight = e->origin[2] - lightspot[2];
 	height = -lheight + 1.0;
@@ -606,9 +617,9 @@ GL_DrawAliasBlendedShadow (aliashdr_t *paliashdr, int pose1, int pose2, entity_t
 			point2[0] -= shadevector[0] * (point2[2] + lheight);
 			point2[1] -= shadevector[1] * (point2[2] + lheight);
 
-			VectorSubtract (point2, point1, d);
-
-			glVertex3f (point1[0] + (blend * d[0]),	point1[1] + (blend * d[1]), height);
+			glVertex3f ((point1[0] * lerp) + (point2[0] * blend),
+						(point1[1] * lerp) + (point2[1] * blend),
+						height);
 
 			verts1++;
 			verts2++;
@@ -719,10 +730,10 @@ R_DrawAliasModel (entity_t *e)
 	aliashdr_t	*paliashdr;
 	float		an;
 	int 		anim;
-	qboolean	torch = false;
 	int         texture;
 	int         fb_texture = 0;
 	int         skinnum;
+	qboolean	modelIsFullbright = false;
 
 	clmodel = currententity->model;
 
@@ -772,17 +783,15 @@ R_DrawAliasModel (entity_t *e)
 	// clamp lighting so it doesn't overbright as much
 	shadelight = min (shadelight, 100);
 
-	// ZOID: never allow players to go totally black
+	// never allow players to go totally black
 	if (strequal (clmodel->name, "progs/player.mdl")) {
 		shadelight = max (shadelight, 8);
-
 	}
 	
-	if (strnequal (clmodel->name, "progs/flame", 11)) {
-		torch = true;
-		if (!gl_fb_models->int_val) {	// make torches full brightness anyway
-			shadelight = 256;
-		}
+	if (strnequal (clmodel->name, "progs/flame", 11)
+			|| strnequal (clmodel->name, "progs/bolt", 10)) {
+		modelIsFullbright = true;
+		shadelight = 256;	// make certain models full brightness always
 	}
 
 	shadedots = r_avertexnormal_dots[((int) (e->angles[1] * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
@@ -794,16 +803,12 @@ R_DrawAliasModel (entity_t *e)
 	shadevector[2] = 1;
 	VectorNormalize (shadevector);
 
-	// 
 	// locate the proper data
-	// 
 	paliashdr = (aliashdr_t *) Mod_Extradata (currententity->model);
 
 	c_alias_polys += paliashdr->mdl.numtris;
 
-	// 
 	// draw all the triangles
-	// 
 
 	glPushMatrix ();
 	R_RotateForEntity (e);
@@ -832,7 +837,7 @@ R_DrawAliasModel (entity_t *e)
 	}
 
 	texture = paliashdr->gl_texturenum[skinnum][anim];
-	if (gl_fb_models->int_val)
+	if (gl_fb_models->int_val && !modelIsFullbright)
 		fb_texture = paliashdr->gl_fb_texturenum[skinnum][anim];
 
 	// we can't dynamically colormap textures, so they are cached
@@ -885,11 +890,9 @@ R_DrawAliasModel (entity_t *e)
 
 	if (r_shadows->int_val) {
 		// torches, grenades, and lightning bolts do not have shadows
-		if (torch)
+		if (modelIsFullbright)
 			return;
 		if (strequal (clmodel->name, "progs/grenade.mdl"))
-			return;
-		if (strnequal (clmodel->name, "progs/bolt", 10))
 			return;
 
 		glPushMatrix ();
@@ -913,38 +916,40 @@ R_DrawAliasModel (entity_t *e)
 //==================================================================================
 
 /*
-=============
-R_ShowNearestLoc
-=============
+	R_ShowNearestLoc
+
+	Display the nearest symbolic location (.loc files)
 */
 static void
 R_ShowNearestLoc (void)
 {
-	location_t *nearloc;
-	vec3_t trueloc;
-	dlight_t   *dl;
-	
+	location_t	*nearloc;
+	vec3_t		trueloc;
+	dlight_t	*dl;
+
 	if (r_drawentities->int_val)
 		return;
+
 	nearloc = locs_find (cl.simorg);
+
 	if (nearloc) {
 		dl = CL_AllocDlight (4096);
 		VectorCopy (nearloc->loc, dl->origin);
 		dl->radius = 200;
 		dl->die = cl.time + 0.1;
-		dl->color[0]=0;
-		dl->color[1]=1;
-		dl->color[2]=0;
-									
-		VectorCopy(nearloc->loc,trueloc);
-		R_RunSpikeEffect(trueloc,7);
+		dl->color[0] = 0;
+		dl->color[1] = 1;
+		dl->color[2] = 0;
+
+		VectorCopy (nearloc->loc, trueloc);
+		R_RunSpikeEffect (trueloc, 7);
 	}
 }
 
 /*
-=============
-R_DrawEntitiesOnList
-=============
+	R_DrawEntitiesOnList
+
+	Draw all the entities we have information on.
 */
 static void
 R_DrawEntitiesOnList (void)
@@ -1125,9 +1130,7 @@ R_SetupGL (void)
 	extern int  glwidth, glheight;
 	int         x, x2, y2, y, w, h;
 
-	// 
 	// set up viewpoint
-	// 
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
 	x = r_refdef.vrect.x * glwidth / vid.width;
