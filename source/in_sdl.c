@@ -32,6 +32,8 @@
 #include <SDL.h>
 
 #include "client.h"
+#include "cl_input.h"
+#include "cl_main.h"
 #include "console.h"
 #include "cvar.h"
 #include "draw.h"
@@ -44,6 +46,7 @@
 #include "qendian.h"
 #include "quakedef.h"
 #include "vid.h"
+#include "view.h"
 
 #ifdef WIN32
 // fixme: this is evil...

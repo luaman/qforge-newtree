@@ -66,7 +66,8 @@
 #include "compat.h"
 #include "d_local.h"
 #include "input.h"
-
+#include "cl_input.h"
+#include "view.h"
 #include "joystick.h"
 
 extern viddef_t        vid; // global video state
