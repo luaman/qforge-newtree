@@ -108,6 +108,7 @@ void locs_load(char *mapname)
 		t2[0] = '\0';
 		locs_add(loc, t1);
 	}
+	Qclose(file);
 }
 
 void locs_reset()

@@ -1586,8 +1586,8 @@ void Host_Init (quakeparms_t *parms)
 	Cmd_Exec_File (fs_globalcfg->string);
 	Cbuf_Execute_Sets ();
 
-	Cmd_StuffCmds_f ();
-	Cbuf_Execute_Sets ();
+	//Cmd_StuffCmds_f ();
+	//Cbuf_Execute_Sets ();
 
 	V_Init ();
 	SCR_InitCvars ();

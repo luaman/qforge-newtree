@@ -548,7 +548,7 @@ static void R_DrawAliasModel (entity_t *e)
 
 	// allways give the gun some light
 	if (e == &cl.viewent)
-		shadelight = min(shadelight, 24);
+		shadelight = max(shadelight, 24);
 
 	for (lnum=0 ; lnum<MAX_DLIGHTS ; lnum++)
 	{
