@@ -84,13 +84,13 @@ SNDDMA_Init (void)
 	snd_inited = 0;
 
 	// open /dev/dsp, confirm capability to mmap, and get size of dma buffer
-	audio_fd = open ("/dev/dsp", O_RDWR);
+	audio_fd = open ("/dev/dsp", O_WRONLY);
 	if (audio_fd < 0) {					// Failed open, retry up to 3 times
 										// if it's busy
 		while ((audio_fd < 0) && retries-- &&
 			   ((errno == EAGAIN) || (errno == EBUSY))) {
 			sleep (1);
-			audio_fd = open ("/dev/dsp", O_RDWR);
+			audio_fd = open ("/dev/dsp", O_WRONLY);
 		}
 		if (audio_fd < 0) {
 			perror ("/dev/dsp");
