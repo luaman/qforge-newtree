@@ -813,6 +813,7 @@ SVC_DirectConnect (void)
 	Netchan_Setup (&newcl->netchan, adr, qport);
 
 	newcl->state = cs_connected;
+	svs.num_clients++;
 
 	newcl->datagram.allowoverflow = true;
 	newcl->datagram.data = newcl->datagram_buf;
@@ -1341,11 +1342,13 @@ SV_CheckTimeouts (void)
 				SV_BroadcastPrintf (PRINT_HIGH, "%s timed out\n", cl->name);
 				SV_DropClient (cl);
 				cl->state = cs_free;	// don't bother with zombie state
+				svs.num_clients--;
 			}
 		}
 		if (cl->state == cs_zombie &&
 			realtime - cl->connection_started > zombietime->value) {
 			cl->state = cs_free;		// can now be reused
+			svs.num_clients--;
 		}
 	}
 	if (sv.paused && !nclients) {
