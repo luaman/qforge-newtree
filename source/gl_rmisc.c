@@ -257,7 +257,6 @@ void R_Init (void)
 	gl_flashblend = Cvar_Get("gl_flashblend",  "0", CVAR_NONE, "None");
 	gl_playermip = Cvar_Get("gl_playermip", "0", CVAR_NONE, "None");
 	gl_nocolors = Cvar_Get("gl_nocolors", "0", CVAR_NONE, "None");
-	gl_finish = Cvar_Get("gl_finish", "0", CVAR_NONE, "None");
 
 	gl_keeptjunctions = Cvar_Get("gl_keeptjunctions", "1", CVAR_NONE, "None");
 	gl_reporttjunctions = Cvar_Get("gl_reporttjunctions", "0", CVAR_NONE, "None");

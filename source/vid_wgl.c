@@ -119,8 +119,6 @@ HDC		maindc;
 
 glvert_t glv;
 
-cvar_t	*gl_ztrick;
-
 HWND WINAPI InitializeWindow (HINSTANCE hInstance, int nCmdShow);
 
 extern 	viddef_t	vid;				// global video state
@@ -1589,7 +1587,6 @@ void	VID_Init (unsigned char *palette)
 	vid_config_y = Cvar_Get("vid_config_y", "600", CVAR_ARCHIVE, "None");
 	vid_stretch_by_2 = Cvar_Get("vid_stretch_by_2", "1", CVAR_ARCHIVE, "None");
 	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
-	gl_ztrick = Cvar_Get("gl_ztrick", "1", CVAR_NONE, "None");
 
 	Cmd_AddCommand ("vid_nummodes", VID_NumModes_f);
 	Cmd_AddCommand ("vid_describecurrentmode", VID_DescribeCurrentMode_f);

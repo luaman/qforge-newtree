@@ -116,7 +116,6 @@ cvar_t	*gl_playermip;
 cvar_t	*gl_nocolors;
 cvar_t	*gl_keeptjunctions;
 cvar_t	*gl_reporttjunctions;
-cvar_t	*gl_finish;
 
 cvar_t	*r_skyname;
 

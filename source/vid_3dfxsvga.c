@@ -70,7 +70,6 @@ unsigned char	d_15to8table[65536];
 static cvar_t	*vid_mode;
 static cvar_t	*vid_redrawfull;
 static cvar_t	*vid_waitforrefresh;
-cvar_t	*gl_ztrick;
 extern cvar_t	*gl_triplebuffer;
 
 #ifdef HAVE_DLOPEN
@@ -505,8 +504,7 @@ void VID_Init(unsigned char *palette)
 	vid_mode = Cvar_Get ("vid_mode", "5", 0, "None");
 	vid_redrawfull = Cvar_Get ("vid_redrawfull", "0", 0," None");
 	vid_waitforrefresh = Cvar_Get ("vid_waitforrefresh", "0", CVAR_ARCHIVE,
-								   "None");
-	gl_ztrick = Cvar_Get ("gl_ztrick", "0", CVAR_ARCHIVE, "None");
+			"None");
 
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;

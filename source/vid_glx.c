@@ -132,8 +132,6 @@ int		texture_extension_number = 1;
 
 float		gldepthmin, gldepthmax;
 
-cvar_t	*gl_ztrick;
-
 const char *gl_vendor;
 const char *gl_renderer;
 const char *gl_version;
@@ -479,7 +477,6 @@ void VID_Init(unsigned char *palette)
 	XVisualInfo *visinfo;
 
 	vid_mode = Cvar_Get ("vid_mode","0",0,"None");
-	gl_ztrick = Cvar_Get ("gl_ztrick","0",CVAR_ARCHIVE,"None");
 	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
 #ifdef HAVE_DGA
 	in_dga_mouseaccel = Cvar_Get("vid_dga_mouseaccel","1",CVAR_ARCHIVE,

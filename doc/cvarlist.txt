@@ -524,13 +524,6 @@ Type		:
 Default		: 1	
 Description	:
 
-Cvar		: gl_finish
-Targets		:
-Category	:
-Type		:
-Default		: 0	
-Description	:
-
 Cvar		: gl_flashblend
 Targets		:
 Category	:
@@ -620,20 +613,6 @@ Targets		:
 Category	:
 Type		:
 Default		: 1	
-Description	:
-
-Cvar		: gl_ztrick
-Targets		:
-Category	:
-Type		:
-Default		: 1	
-Description	:
-
-Cvar		: gl_ztrick
-Targets		:
-Category	:
-Type		:
-Default		: 0	
 Description	:
 
 Cvar		: host_speeds

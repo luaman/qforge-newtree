@@ -208,7 +208,6 @@ extern	cvar_t	*gl_keeptjunctions;
 extern	cvar_t	*gl_reporttjunctions;
 extern	cvar_t	*gl_flashblend;
 extern	cvar_t	*gl_nocolors;
-extern	cvar_t	*gl_finish;
 
 extern	int		gl_lightmap_format;
 extern	int		gl_solid_format;
