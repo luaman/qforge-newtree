@@ -5,7 +5,7 @@ INCLUDES=	-I$(top_srcdir)/include $(MGL_CFLAGS) $(GGI_CFLAGS) $(SVGA_CFLAGS) $(X
 bin_PROGRAMS =	@TARGETS@
 
 EXTRA_PROGRAMS= qf-server qf-client-mgl qf-client-ggi qf-client-svga \
-		qf-client-x11 qf-client-glx
+		qf-client-x11 qf-client-glx qf-client-wgl
 
 noinst_LIBRARIES = libqfsys_cl.a libqfsys_sv.a libqfsnd.a libqfcd.a
 
@@ -70,6 +70,7 @@ ggi_SOURCES=	vid_ggi.c
 svga_SOURCES=	vid_svgalib.c
 x11_SOURCES=	vid_x11.c
 glx_SOURCES=	vid_glx.c
+wgl_SOURCES=	vid_wgl.c
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
 qf_client_mgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(mgl_SOURCES)
@@ -77,7 +78,7 @@ qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(ggi
 qf_client_svga_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(svga_SOURCES)
 qf_client_x11_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(x11_SOURCES)
 qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
-
+qf_client_wgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(wgl_SOURCES)
 
 CLIENT_LIBS = -L. -lqfsys_cl -lqfsnd -lqfcd $(SOUND_LIBS) $(NET_LIBS)
 
@@ -87,9 +88,7 @@ qf_client_ggi_LDADD=	$(GGI_LIBS) $(CLIENT_LIBS)
 qf_client_svga_LDADD=	$(SVGA_LIBS) $(CLIENT_LIBS)
 qf_client_x11_LDADD=	$(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB) $(CLIENT_LIBS)
 qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(CLIENT_LIBS)
-
-EXTRA_DIST = makefile.winc makefile.wingl makefile.wins \
-	qw_client.dsp qw_server.dsp
+qf_client_wgl_LDADD=	$(CLIENT_LIBS)
 
 qf_server_DEPENDENCIES=libqfsys_sv.a
 qf_client_mgl_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
@@ -97,3 +96,7 @@ qf_client_ggi_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 qf_client_svga_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 qf_client_x11_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 qf_client_glx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
+qf_client_glx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
+
+EXTRA_DIST = makefile.winc makefile.wingl makefile.wins \
+	qw_client.dsp qw_server.dsp
