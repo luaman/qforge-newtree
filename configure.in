@@ -858,10 +858,10 @@ if test "x$debug" != xyes; then
 				MORE_CFLAGS="-m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2"
 				;;
 			i586-*-*)
-				MORE_CFLAGS="-mpentium -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				MORE_CFLAGS="-march=pentium -malign-loops=2 -malign-jumps=2 -malign-functions=2"
 				;;
 			i686-*-*)
-				MORE_CFLAGS="-mpentiumpro -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				MORE_CFLAGS="-march=pentiumpro -malign-loops=2 -malign-jumps=2 -malign-functions=2"
 				;;
 			*)
 				MORE_CFLAGS=""
