@@ -391,8 +391,8 @@ set_vertex (glpoly_t *p, vec3_t v, int face)
 	find_cube_vertex
 
 	get the coords of the vertex common to the three specified faces of the
-	cube. NOTE: this WILL break if the three faces are do not share a
-	common vertex.
+	cube. NOTE: this WILL break if the three faces do not share a common
+	vertex.
 */
 static void
 find_cube_vertex (int face1, int face2, int face3, vec3_t v)
@@ -402,16 +402,46 @@ find_cube_vertex (int face1, int face2, int face3, vec3_t v)
 	v[face3 % 3] = 1024 * (1 - 2 * (face3 / 3));
 }
 
+struct box_def {
+	int			tex, enter, leave;
+	glpoly_t	poly;
+	float		verts[32][VERTEXSIZE];
+};
+
+static void
+enter_face (struct box_def *box, int prev_face, int face)
+{
+	if (box[face].leave >=0 && box[face].leave != prev_face) {
+		vec3_t t;
+		find_cube_vertex (prev_face, face, box[face].leave, t);
+		set_vertex(&box[face].poly, t, prev_face);
+		box[face].enter = -1;
+	} else {
+		box[face].enter = face;
+	}
+	box[face].leave = -1;
+}
+
+static void
+leave_face (struct box_def *box, int prev_face, int face)
+{
+	if (box[prev_face].enter >=0 && box[prev_face].enter != face) {
+		vec3_t t;
+		find_cube_vertex (prev_face, face, box[prev_face].enter, t);
+		set_vertex(&box[prev_face].poly, t, prev_face);
+		box[prev_face].leave = -1;
+	} else {
+		box[prev_face].leave = face;
+	}
+	box[prev_face].enter = -1;
+}
+
 void
 R_DrawSkyBoxPoly (glpoly_t *poly)
 {
 	static int skytex_offs[] = {3, 0, 4, 1, 2, 5};
 	vec3_t v, last_v;
-	struct {
-		int			tex, enter, leave;
-		glpoly_t	poly;
-		float		verts[32][VERTEXSIZE];
-	} box[6];
+	struct box_def box[6];
 	int i, j;
 	int face, prev_face;
 
@@ -440,24 +470,8 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 				find_intersect (prev_face, last_v, face, v, l);
 
 				set_vertex(&box[prev_face].poly, l, prev_face);
-				if (box[prev_face].enter >=0 && box[prev_face].enter != face) {
-					vec3_t t;
-					find_cube_vertex (prev_face, face, box[face].enter, t);
-					set_vertex(&box[prev_face].poly, t, prev_face);
-					box[prev_face].enter = -1;
-				} else {
-					box[prev_face].enter = -1;
-					box[prev_face].leave = face;
-				}
-				if (box[face].leave >=0 && box[face].leave != prev_face) {
-					vec3_t t;
-					find_cube_vertex (prev_face, face, box[face].leave, t);
-					set_vertex(&box[face].poly, t, face);
-					box[face].leave = -1;
-				} else {
-					box[face].enter = prev_face;
-					box[face].leave = -1;
-				}
+				leave_face (box, prev_face, face);
+				enter_face (box, prev_face, face);
 				set_vertex(&box[face].poly, l, face);
 			}
 		}
