@@ -93,7 +93,7 @@ int         gl_lightmap_format = 4;
 int         gl_solid_format = 3;
 int         gl_alpha_format = 4;
 
-int  gl_filter_min = GL_LINEAR;
+int  gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
 int  gl_filter_max = GL_LINEAR;
 
 
