@@ -39,7 +39,6 @@
 #include "qendian.h"
 #include "server.h"
 #include "checksum.h"
-#include "glquake.h"
 
 extern	model_t	*loadmodel;
 extern	char	loadname[];
@@ -47,6 +46,8 @@ extern	char	loadname[];
 extern	const int	mod_lightmap_bytes;
 
 byte	mod_novis[MAX_MAP_LEAFS/8];
+
+void GL_SubdivideSurface (msurface_t *fa);
 
 /*
 ===============
