@@ -62,8 +62,8 @@ FREE Borland C++ complier 5.5.
 (http://www.borland.com/bcppbuilder/freecompiler/)
 
 5) Borland preprocessor can't process quake .S files. You need to get
-.ASM files or use some other complier to preprocess them. .ASM files
-must be placed on SOURCE dir.
+.ASM files or use some other complier to preprocess them.
+ASM files must be placed on newtree SOURCE dir.
 (http://www.saunalahti.fi/~mipes/qf-asms.zip)
 
 6) You need to have either MASM or TASM to compile ASM files.
@@ -74,18 +74,28 @@ You only need to extract BINS_DDK.EXE and get two files, ML.EXE and ML.ERR
 from it. Then get and run patch to upgrade ML.EXE to version 6.14. Put
 ML.EXE and ML.ERR in some directory which is included in your %path.
 
-7) For GL targets, you'll need to have import library for OPENGL stuffs
+7) Download ZLIB source code from http://www.info-zip.org/pub/infozip/zlib/
+and build a static library named zlib.lib. You have to copy makefile.b32
+from MSDOS directory to zlib main dir and then comment out or delete
+MODEL=-WX line in makefile.b32. Then do:
+
+make -fmakefile.b32 zlib.lib
+
+and it'll make lib and stuff. You can safely ignore any complains
+from zlib makefile as long as it builds working zlib.lib.
+
+8) For GL targets, you'll need to have import library for OPENGL stuffs
 one coming with Borland C++ itself is screwed! 
 
 implib -c -f opengl32.lib c:\windows\system\opengl32.dll
 
-8) If you want to compile SDL/SGL, you HAVE to run: 
+9) If you want to compile SDL/SGL, you HAVE to run: 
 
 implib -a -c sdl.lib sdl.dll (in sdlsdk directory where sdl.dll is located)
 
-9) Check all paths in all makefiles and correct them to suit your system.
+10) Check all paths in all makefiles and correct them to suit your system.
 
-10) When everything else is done, just start making
+11) When everything else is done, just start making
 
 cd source
 make -fqf-client-win

@@ -243,6 +243,9 @@
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
 
+/* Define if you have the zlib library (-lz).  */
+#define HAVE_ZLIB
+
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_
 

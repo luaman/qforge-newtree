@@ -69,7 +69,8 @@ SCITECHROOT=D:\SCITECH
 DIRECTXSDK=D:\project\dx7sdk
 # Path to your SDL SDK
 SDLSDK=D:\project\SDL-1.1.3
-#
+# Path to ZLIB source code
+ZLIB=D:\PROJECT\ZLIB
 
 # end of system dependant stuffs
 
@@ -79,7 +80,7 @@ LIBS=$(SYSLIBS);$(MISCLIBS)
 
 SYSINCLUDE = $(CROOT)\INCLUDE
 QFINCLUDES = $(QFROOT)\INCLUDE\WIN32\BC;$(QFROOT)\INCLUDE\WIN32;$(QFROOT)\INCLUDE
-MISCINCLUDES = $(DIRECTXSDK)\include;$(SCITECHROOT)\include;$(SDLSDK)\include
+MISCINCLUDES = $(DIRECTXSDK)\include;$(SCITECHROOT)\include;$(SDLSDK)\include;$(ZLIB)
 
 INCLUDES = $(QFINCLUDES);$(SYSINCLUDE);$(MISCINCLUDES)
 
@@ -135,6 +136,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(ZLIB)\zlib.lib\
    $(DIRECTXSDK)\lib\borland\dxguid.lib\
    $(OBJS)\model.obj\
    $(OBJS)\model_brush.obj\
@@ -224,6 +226,7 @@ $(EXE)\qf-client-sgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(ZLIB)\zlib.lib+
 $(OBJS)\model.obj+
 $(OBJS)\model_brush.obj+
 $(OBJS)\model_alias.obj+
@@ -309,7 +312,7 @@ $(QFROOT)\opengl32.lib+
 $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SDLSDK)\lib\sdl.lib+
 $(CROOT)\LIB\import32.lib+
-$(CROOT)\LIB\cw32mt.lib
+$(CROOT)\LIB\cw32.lib
 
 |
 $(OBJS)\model.obj :  $(QFROOT)\source\model.c

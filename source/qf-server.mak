@@ -63,6 +63,8 @@ EXE = $(QFROOT)
 SCITECHROOT=D:\SCITECH
 # Path to your Direct-X libraries and includes
 DIRECTXSDK=D:\project\dx7sdk
+# Path to ZLIB source code
+ZLIB=D:\PROJECT\ZLIB
 
 # end of system dependant stuffs
 
@@ -72,7 +74,7 @@ LIBS=$(SYSLIBS);$(MISCLIBS)
 
 SYSINCLUDE = $(CROOT)\INCLUDE
 QFINCLUDES = $(QFROOT)\INCLUDE\WIN32\BC;$(QFROOT)\INCLUDE\WIN32;$(QFROOT)\INCLUDE
-MISCINCLUDES = $(SCITECHROOT)\include;$(DIRECTXSDK)\include
+MISCINCLUDES = $(SCITECHROOT)\include;$(DIRECTXSDK)\include;$(ZLIB)
 
 INCLUDES = $(QFINCLUDES);$(SYSINCLUDE);$(MISCINCLUDES)
 
@@ -117,6 +119,7 @@ EXT2=.obj
 # Dependency List
 #
 DEPEND = \
+   $(ZLIB)\zlib.lib\
    $(OBJS)\model.obj\
    $(OBJS)\model_brush.obj\
    $(OBJS)\pr_offs.obj\
@@ -168,6 +171,7 @@ $(EXE)\qf-server.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0x32.obj+
+$(ZLIB)\zlib.lib+
 $(OBJS)\model.obj+
 $(OBJS)\model_brush.obj+
 $(OBJS)\pr_offs.obj+
