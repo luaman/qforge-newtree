@@ -1175,7 +1175,7 @@ void SCR_UpdateScreen (void)
 // do 3D refresh drawing, and then update the screen
 //
 	SCR_SetUpToDrawConsole ();
-	
+
 	V_RenderView ();
 
 	GL_Set2D ();
@@ -1224,6 +1224,20 @@ void SCR_UpdateScreen (void)
 		SCR_DrawConsole ();     
 		M_Draw ();
 	}
+
+	// LordHavoc's lighting fix
+	glDisable (GL_TEXTURE_2D);
+	glColor3f (1.0, 1.0, 1.0);
+	glBlendFunc (GL_DST_COLOR, GL_ONE);
+	glBegin (GL_QUADS);
+	glVertex2f (0,0);
+	glVertex2f (vid.width, 0);
+	glVertex2f (vid.width, vid.height);
+	glVertex2f (0, vid.height);
+	glEnd ();
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
+
 
 	V_UpdatePalette ();
 

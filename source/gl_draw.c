@@ -477,6 +477,7 @@ void Draw_Character (int x, int y, int num)
 
 	GL_Bind (char_texture);
 
+	glColor3f (0.5, 0.5, 0.5);
 	glBegin (GL_QUADS);
 	glTexCoord2f (fcol, frow);
 	glVertex2f (x, y);
@@ -529,7 +530,6 @@ void Draw_Crosshair(void)
 		x = scr_vrect.x + scr_vrect.width/2 - 3 + cl_crossx->value; 
 		y = scr_vrect.y + scr_vrect.height/2 - 3 + cl_crossy->value;
 
-		glTexEnvf ( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
 		pColor = (unsigned char *) &d_8to24table[(byte) crosshaircolor->value];
 		glColor4ubv ( pColor );
 		GL_Bind (cs_texture);
@@ -545,7 +545,6 @@ void Draw_Crosshair(void)
 		glVertex2f (x - 4, y+12);
 		glEnd ();
 		
-		glTexEnvf ( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
 	} else if (crosshair->value)
 		Draw_Character (scr_vrect.x + scr_vrect.width/2-4 + cl_crossx->value, 
 			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy->value, '+');
@@ -577,7 +576,7 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 	if (scrap_dirty)
 		Scrap_Upload ();
 	gl = (glpic_t *)pic->data;
-	glColor4f (1,1,1,1);
+	glColor3f (0.4, 0.4, 0.4);
 	GL_Bind (gl->texnum);
 	glBegin (GL_QUADS);
 	glTexCoord2f (gl->sl, gl->tl);
@@ -603,12 +602,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	if (scrap_dirty)
 		Scrap_Upload ();
 	gl = (glpic_t *)pic->data;
-	glDisable(GL_ALPHA_TEST);
-	glEnable (GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glCullFace(GL_FRONT);
-//	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);	// FIXME deek: these cause problems with text. Looking for the real problem
-	glColor4f (1,1,1,alpha);
+	glColor4f (0.4, 0.4, 0.4, alpha);
 	GL_Bind (gl->texnum);
 	glBegin (GL_QUADS);
 	glTexCoord2f (gl->sl, gl->tl);
@@ -620,10 +614,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	glTexCoord2f (gl->sl, gl->th);
 	glVertex2f (x, y+pic->height);
 	glEnd ();
-	glColor4f (1,1,1,1);
-//	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); // FIXME
-	glEnable(GL_ALPHA_TEST);
-	glDisable (GL_BLEND);
+	glColor3f (0.5, 0.5, 0.5);
 }
 
 void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int height)
@@ -645,7 +636,7 @@ void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int h
 	newtl = gl->tl + (srcy*oldglheight)/pic->height;
 	newth = newtl + (height*oldglheight)/pic->height;
 	
-	glColor4f (1,1,1,1);
+	glColor3f (0.4, 0.4, 0.4);
 	GL_Bind (gl->texnum);
 	glBegin (GL_QUADS);
 	glTexCoord2f (newsl, newtl);
@@ -714,7 +705,7 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glColor3f (1,1,1);
+	glColor3f (0.4, 0.4, 0.4);
 	glBegin (GL_QUADS);
 	glTexCoord2f (0, 0);
 	glVertex2f (x, y);
@@ -772,21 +763,16 @@ Draw_ConsoleBackground ( int lines )
 	else
 		ofs = (vid.conheight - lines)/(float)vid.conheight;
 
-	y = (vid.height * 3) >> 2;
+	y = vid.height >> 1;
 	if (lines > y)
 	{
 		alpha = 1.0;
 	} else {
 		// set up to draw alpha console
-		alpha = (float)(gl_conalpha->value * 2 * lines)/y;
-		glDisable(GL_ALPHA_TEST);
-		glEnable (GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glCullFace(GL_FRONT);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		alpha = (float)(gl_conalpha->value * lines)/y;
 	}
 
-	glColor4f (1.0, 1.0, 1.0, alpha);
+	glColor4f (0.5, 0.5, 0.5, alpha);
 
 	// draw the console texture
 	GL_Bind (gl->texnum);
@@ -804,10 +790,7 @@ Draw_ConsoleBackground ( int lines )
 	// turn off alpha blending
 	if (alpha < 1.0)
 	{
-		glColor4f (1.0, 1.0, 1.0, 1.0);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		glEnable(GL_ALPHA_TEST);
-		glDisable (GL_BLEND);
+		glColor3f (0.5, 0.5, 0.5);
 	}
 
 	if (gl_conspin->value)
@@ -834,7 +817,7 @@ refresh window.
 */
 void Draw_TileClear (int x, int y, int w, int h)
 {
-	glColor3f (1,1,1);
+	glColor3f (0.5, 0.5, 0.5);
 	GL_Bind (*(int *)draw_backtile->data);
 	glBegin (GL_QUADS);
 	glTexCoord2f (x/64.0, y/64.0);
@@ -859,9 +842,9 @@ Fills a box of pixels with a single color
 void Draw_Fill (int x, int y, int w, int h, int c)
 {
 	glDisable (GL_TEXTURE_2D);
-	glColor3f (host_basepal[c*3]/255.0,
-		host_basepal[c*3+1]/255.0,
-		host_basepal[c*3+2]/255.0);
+	glColor3f (host_basepal[c*3]/510.0,
+		host_basepal[c*3+1]/510.0,
+		host_basepal[c*3+2]/510.0);
 
 	glBegin (GL_QUADS);
 
@@ -871,7 +854,7 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	glVertex2f (x, y+h);
 
 	glEnd ();
-	glColor3f (1,1,1);
+	glColor3f (0.5, 0.5, 0.5);
 	glEnable (GL_TEXTURE_2D);
 }
 //=============================================================================
@@ -884,9 +867,8 @@ Draw_FadeScreen
 */
 void Draw_FadeScreen (void)
 {
-	glEnable (GL_BLEND);
 	glDisable (GL_TEXTURE_2D);
-	glColor4f (0, 0, 0, 0.8);
+	glColor4f (0, 0, 0, 0.7);
 	glBegin (GL_QUADS);
 
 	glVertex2f (0,0);
@@ -895,9 +877,8 @@ void Draw_FadeScreen (void)
 	glVertex2f (0, vid.height);
 
 	glEnd ();
-	glColor4f (1,1,1,1);
+	glColor3f (0.5, 0.5, 0.5);
 	glEnable (GL_TEXTURE_2D);
-	glDisable (GL_BLEND);
 
 	Sbar_Changed();
 }
@@ -952,13 +933,16 @@ void GL_Set2D (void)
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity ();
 
+	GL_DisableMultitexture ();
+
+	glEnable (GL_BLEND);
 	glDisable (GL_DEPTH_TEST);
 	glDisable (GL_CULL_FACE);
-	glDisable (GL_BLEND);
-	glEnable (GL_ALPHA_TEST);
-//	glDisable (GL_ALPHA_TEST);
 
-	glColor4f (1,1,1,1);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glColor3f (0.5, 0.5, 0.5);
 }
 
 //====================================================================

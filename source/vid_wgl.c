@@ -663,8 +663,7 @@ void GL_Init (void)
 
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 #if 0
 	CheckArrayExtensions ();
@@ -817,6 +816,11 @@ void	VID_Shutdown (void)
     	hDC = wglGetCurrentDC();
 
     	wglMakeCurrent(NULL, NULL);
+
+	// LordHavoc: free textures before closing (may help NVIDIA)
+	for (i = 0;i < 8192;i++)
+		temp[i] = i;
+	glDeleteTextures(8192, temp);	
 
     	if (hRC)
     	    wglDeleteContext(hRC);

@@ -160,7 +160,7 @@ void R_NetGraph (void)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	x = 8;
-	glColor3f (1,1,1);
+	glColor3f (0.5, 0.5, 0.5);
 	glBegin (GL_QUADS);
 	glTexCoord2f (0, 0);
 	glVertex2f (x, y);

@@ -125,13 +125,18 @@ cvar_t	*r_skyname;
 extern	cvar_t	*gl_ztrick;
 extern	cvar_t	*scr_fov;
 
+byte gammatable[256];
 static float vid_gamma = 1.0;
 
+/*
+	GL_CheckGamma
+
+	More or less redesigned by LordHavoc
+*/
 void
 GL_CheckGamma (unsigned char *pal)
 {
-	float	f, inf;
-	unsigned char	palette[768];
+	float		inf;
 	int		i;
 
 	if ((i = COM_CheckParm("-gamma")) == 0) {
@@ -143,18 +148,24 @@ GL_CheckGamma (unsigned char *pal)
 	} else
 		vid_gamma = atof(com_argv[i+1]);
 
-	for (i=0 ; i<768 ; i++)
+	// build the gamma table
+	if (vid_gamma == 1)
 	{
-		f = pow ( (pal[i]+1)/256.0 , vid_gamma );
-		inf = f*255 + 0.5;
-		if (inf < 0)
-			inf = 0;
-		if (inf > 255)
-			inf = 255;
-		palette[i] = inf;
+		// screw the math
+		for (i = 0; i < 256; i++)
+			gammatable[i] = i;
+	} else {
+		for (i = 0; i < 256; i++)
+		{
+			inf = pow((i+1)/256.0, vid_gamma)*255 + 0.5;
+			inf = bound(0, inf, 255);
+			gammatable[i] = inf;
+		}
 	}
 
-	memcpy (pal, palette, sizeof(palette));
+	// correct the palette
+	for (i = 0; i < 768; i++)
+		pal[i] = gammatable[pal[i]];
 }
 
 
@@ -277,7 +288,7 @@ void R_DrawSpriteModel (entity_t *e)
 		right = vright;
 	}
 
-	glColor3f (1,1,1);
+	glColor3f (0.5, 0.5, 0.5);
 
 	GL_DisableMultitexture();
 
@@ -612,14 +623,11 @@ void R_DrawAliasModel (entity_t *e)
 
 	if (gl_smoothmodels->value)
 		glShadeModel (GL_SMOOTH);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	if (gl_affinemodels->value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
 	R_SetupAliasFrame (currententity->frame, paliashdr);
-
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	glShadeModel (GL_FLAT);
 	if (gl_affinemodels->value)
@@ -632,12 +640,10 @@ void R_DrawAliasModel (entity_t *e)
 		glPushMatrix ();
 		R_RotateForEntity (e);
 		glDisable (GL_TEXTURE_2D);
-		glEnable (GL_BLEND);
 		glColor4f (0,0,0,0.5);
 		GL_DrawAliasShadow (paliashdr, lastposenum);
 		glEnable (GL_TEXTURE_2D);
-		glDisable (GL_BLEND);
-		glColor4f (1,1,1,1);
+		glColor3f (0.5, 0.5, 0.5);
 		glPopMatrix ();
 	}
 
@@ -777,29 +783,27 @@ void R_PolyBlend (void)
 
  	GL_DisableMultitexture();
 
-	glDisable (GL_ALPHA_TEST);
-	glEnable (GL_BLEND);
 	glDisable (GL_DEPTH_TEST);
 	glDisable (GL_TEXTURE_2D);
 
-    glLoadIdentity ();
+	glLoadIdentity ();
 
-    glRotatef (-90,  1, 0, 0);	    // put Z going up
-    glRotatef (90,  0, 0, 1);	    // put Z going up
+	glRotatef (-90,  1, 0, 0);	    // put Z going up
+	glRotatef (90,  0, 0, 1);	    // put Z going up
 
+	// software alpha is about GL alpha squared  --KB
+	v_blend[3] = sqrt(v_blend[3]);
+	
 	glColor4fv (v_blend);
 
 	glBegin (GL_QUADS);
-
 	glVertex3f (10, 100, 100);
 	glVertex3f (10, -100, 100);
 	glVertex3f (10, -100, -100);
 	glVertex3f (10, 100, -100);
 	glEnd ();
 
-	glDisable (GL_BLEND);
 	glEnable (GL_TEXTURE_2D);
-	glEnable (GL_ALPHA_TEST);
 }
 
 
@@ -987,9 +991,11 @@ void R_SetupGL (void)
 	else
 		glDisable(GL_CULL_FACE);
 
-	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.5);
 	glEnable(GL_DEPTH_TEST);
+	glShadeModel(GL_SMOOTH);
 }
 
 /*
@@ -1129,7 +1135,6 @@ void R_Mirror (void)
 	glDepthFunc (GL_LEQUAL);
 
 	// blend on top
-	glEnable (GL_BLEND);
 	glMatrixMode(GL_PROJECTION);
 	if (mirror_plane->normal[2])
 		glScalef (1,-1,1);
@@ -1147,7 +1152,6 @@ void R_Mirror (void)
 	for ( ; s ; s=s->texturechain)
 		R_RenderBrushPoly (s);
 	cl.worldmodel->textures[mirrortexturenum]->texturechain = NULL;
-	glDisable (GL_BLEND);
 	glColor4f (1,1,1,1);
 }
 #endif

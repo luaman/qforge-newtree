@@ -309,14 +309,11 @@ void EmitBothSkyLayers (msurface_t *fa)
 
 	EmitSkyPolys (fa);
 
-	glEnable (GL_BLEND);
 	GL_Bind (alphaskytexture);
 	speedscale = realtime*16;
 	speedscale -= (int)speedscale & ~127 ;
 
 	EmitSkyPolys (fa);
-
-	glDisable (GL_BLEND);
 }
 
 /*
@@ -901,15 +898,12 @@ void R_DrawSkyChain (msurface_t *s)
 		for (fa=s ; fa ; fa=fa->texturechain)
 			EmitSkyPolys (fa);
 
-		glEnable (GL_BLEND);
 		GL_Bind (alphaskytexture);
 		speedscale = realtime*16;
 		speedscale -= (int)speedscale & ~127 ;
 
 		for (fa=s ; fa ; fa=fa->texturechain)
 			EmitSkyPolys (fa);
-
-		glDisable (GL_BLEND);
 	}
 }
 

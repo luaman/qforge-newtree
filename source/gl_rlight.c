@@ -101,7 +101,7 @@ void AddLightBlend (float r, float g, float b, float a2)
 
 	a2 = a2/a;
 
-	v_blend[0] = v_blend[1]*(1-a2) + r*a2;
+	v_blend[0] = v_blend[0]*(1-a2) + r*a2;
 	v_blend[1] = v_blend[1]*(1-a2) + g*a2;
 	v_blend[2] = v_blend[2]*(1-a2) + b*a2;
 //Con_Printf("AddLightBlend(): %4.2f %4.2f %4.2f %4.6f\n", v_blend[0], v_blend[1], v_blend[2], v_blend[3]);
@@ -183,7 +183,6 @@ void R_RenderDlights (void)
 	glDepthMask (0);
 	glDisable (GL_TEXTURE_2D);
 	glShadeModel (GL_SMOOTH);
-	glEnable (GL_BLEND);
 	glBlendFunc (GL_ONE, GL_ONE);
 
 	l = cl_dlights;
@@ -195,7 +194,6 @@ void R_RenderDlights (void)
 	}
 
 	glColor3f (1,1,1);
-	glDisable (GL_BLEND);
 	glEnable (GL_TEXTURE_2D);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask (1);

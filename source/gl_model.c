@@ -492,13 +492,32 @@ Mod_LoadLighting
 */
 void Mod_LoadLighting (lump_t *l)
 {
+	int		i;
+	byte		*in, *out;
+	byte		d;
+	char		litfilename[1024];
+		
 	if (!l->filelen)
 	{
 		loadmodel->lightdata = NULL;
 		return;
 	}
-	loadmodel->lightdata = Hunk_AllocName ( l->filelen, loadname);	
-	memcpy (loadmodel->lightdata, mod_base + l->fileofs, l->filelen);
+
+	strcpy(litfilename, loadmodel->name);
+	COM_StripExtension(litfilename, litfilename);
+	strcat(litfilename, ".lit");
+
+	loadmodel->lightdata = Hunk_AllocName ( l->filelen*3, litfilename);
+	in = loadmodel->lightdata + l->filelen*2; // place the file at the end, so it will not be overwritten until the very last write
+	out = loadmodel->lightdata;
+	memcpy (in, mod_base + l->fileofs, l->filelen);
+	for (i = 0;i < l->filelen;i++)
+	{
+		d = *in++;
+		*out++ = d;
+		*out++ = d;
+		*out++ = d;
+	}
 }
 
 
@@ -790,7 +809,7 @@ void Mod_LoadFaces (lump_t *l)
 		if (i == -1)
 			out->samples = NULL;
 		else
-			out->samples = loadmodel->lightdata + i;
+			out->samples = loadmodel->lightdata + (i * 3);
 		
 	// set the drawing flags flag
 		

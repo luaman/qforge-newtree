@@ -67,50 +67,54 @@ void V_CalcPowerupCshift (void);
 qboolean V_CheckGamma (void);
 
 /*
-=============
-V_CalcBlend
-=============
+	V_CalcBlend
+
+	LordHavoc made this a real, (messy,) true alpha blend.  Cleaned it up
+	 a bit, but otherwise this is his code.  --KB
 */
-void V_CalcBlend (void)
+void
+V_CalcBlend (void)
 {
-        float   r, g, b, a, a2;
-        int             j;
+	float		r, g, b, a, a2, a3;
+	int		j;
 
-        r = 0;
-        g = 0;
-        b = 0;
-        a = 0;
+	r = 0;
+	g = 0;
+	b = 0;
+	a = 0;
 
-        for (j=0 ; j<NUM_CSHIFTS ; j++)
-        {
-/*                 if (!gl_cshiftpercent.value)
- CVAR_FIXME */
-                if (!gl_cshiftpercent->value)
-                        continue;
+	for (j=0 ; j<NUM_CSHIFTS ; j++)
+	{
+		if (!gl_cshiftpercent->value)
+			continue;
 
-/*                 a2 = ((cl.cshifts[j].percent * gl_cshiftpercent.value) / 100.0) / 255.0;
- CVAR_FIXME */
-                a2 = ((cl.cshifts[j].percent * gl_cshiftpercent->value) / 100.0) / 255.0;
+		a2 = ((cl.cshifts[j].percent * gl_cshiftpercent->value) / 100.0) / 255.0;
 
-//              a2 = (cl.cshifts[j].percent/2)/255.0;
-                if (!a2)
-                        continue;
-                a = a + a2*(1-a);
-//Con_Printf ("j:%i a:%f\n", j, a);
-                a2 = a2/a;
-                r = r*(1-a2) + cl.cshifts[j].destcolor[0]*a2;
-                g = g*(1-a2) + cl.cshifts[j].destcolor[1]*a2;
-                b = b*(1-a2) + cl.cshifts[j].destcolor[2]*a2;
-        }
+		if (!a2)
+			continue;
 
-        v_blend[0] = r/255.0;
-        v_blend[1] = g/255.0;
-        v_blend[2] = b/255.0;
-        v_blend[3] = a;
-        if (v_blend[3] > 1)
-                v_blend[3] = 1;
-        if (v_blend[3] < 0)
-                v_blend[3] = 0;
+		a2 = min(a2, 1.0);
+		r += (cl.cshifts[j].destcolor[0]-r) * a2;
+		g += (cl.cshifts[j].destcolor[1]-g) * a2;
+		b += (cl.cshifts[j].destcolor[2]-b) * a2;
+		
+		a3 = (1.0 - a) * (1.0 - a2);
+		a = 1.0 - a3;
+	}
+
+	if (a > 1.0)
+	{
+		a2 = 1.0 / a;
+		r *= a2;
+		g *= a2;
+		b *= a2;
+		a = 1.0;
+	}
+
+	v_blend[0] = min(r, 255.0)/255.0;
+	v_blend[1] = min(g, 255.0)/255.0;
+	v_blend[2] = min(b, 255.0)/255.0;
+	v_blend[3] = bound (0.0, a, 1.0);
 }
 
 /*
@@ -174,15 +178,9 @@ void V_UpdatePalette (void)
 	a = 1-a;
 	for (i=0 ; i<256 ; i++)
 	{
-		ir = i*a + r;
-		ig = i*a + g;
-		ib = i*a + b;
-		if (ir > 255)
-			ir = 255;
-		if (ig > 255)
-			ig = 255;
-		if (ib > 255)
-			ib = 255;
+		ir = min(i*a + r, 255);
+		ig = min(i*a + g, 255);
+		ib = min(i*a + b, 255);
 
 		ramps[0][i] = gammatable[ir];
 		ramps[1][i] = gammatable[ig];
@@ -207,3 +205,4 @@ void V_UpdatePalette (void)
 
 	VID_ShiftPalette (pal);	
 }
+

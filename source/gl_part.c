@@ -499,8 +499,6 @@ void R_DrawParticles (void)
 	
 	if (alphaTestEnabled)
 		glDisable(GL_ALPHA_TEST);
-	glEnable (GL_BLEND);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBegin (GL_TRIANGLES);
 
 	VectorScale (vup, 1.5, up);
@@ -625,9 +623,7 @@ void R_DrawParticles (void)
 	}
 
 	glEnd ();
-	glDisable (GL_BLEND);
 	if (alphaTestEnabled)
 		glEnable(GL_ALPHA_TEST);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
 
