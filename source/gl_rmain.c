@@ -668,7 +668,8 @@ static void R_DrawAliasModel (entity_t *e)
 	R_SetupAliasFrame (currententity->frame, paliashdr, false);
 
 	// This block is GL fullbright support for objects...
-	if (clmodel->hasfullbrights && gl_fb_models->value) {
+	if (clmodel->hasfullbrights && gl_fb_models->value &&
+			paliashdr->gl_fb_texturenum[currententity->skinnum][anim]) {
 		/*
 		glEnable (GL_BLEND);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
