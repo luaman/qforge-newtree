@@ -34,6 +34,7 @@
 #endif
 
 #include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
@@ -779,12 +780,19 @@ Should NOT be called during an interrupt!
 ===================
 */
 void
-Key_Event ( int key, qboolean down )
+Key_Event ( int key, int alt_key, qboolean down )
 {
 	char	*kb;
 	char	cmd[1024];
 
 //	Con_Printf ("%i : %i\n", key, down);	//@@@
+
+	// They don't prove it, fall back to interal MESS.
+	if (alt_key == -1) {
+		if (keydown[K_SHIFT]) {
+			alt_key = keyshift[key];
+		}
+	}
 
 	keydown[key] = down;
 
@@ -849,16 +857,13 @@ Key_Event ( int key, qboolean down )
 	if (!down)
 	{
 		kb = keybindings[key];
-		if (kb && kb[0] == '+')
-		{
+		if (kb && kb[0] == '+') {
 			snprintf (cmd, sizeof(cmd), "-%s %i\n", kb+1, key);
 			Cbuf_AddText (cmd);
 		}
-		if (keyshift[key] != key)
-		{
-			kb = keybindings[keyshift[key]];
-			if (kb && kb[0] == '+')
-			{
+		if (islower(key)) {
+			kb = keybindings[toupper(key)];
+			if (kb && kb[0] == '+') {
 				snprintf (cmd, sizeof(cmd), "-%s %i\n", kb+1, key);
 				Cbuf_AddText (cmd);
 			}
@@ -903,8 +908,8 @@ Key_Event ( int key, qboolean down )
 	if (!down)
 		return;		// other systems only care about key down events
 
-	if (keydown[K_SHIFT])
-		key = keyshift[key];
+	if (alt_key > 0)
+		key = alt_key;
 
 	switch (key_dest)
 	{

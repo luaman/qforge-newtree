@@ -242,16 +242,8 @@ x11_create_null_cursor (void)
 void
 x11_set_vidmode(int width, int height)
 {
-	int i;
-	int best_mode = 0, best_x = INT_MAX, best_y = INT_MAX;
-
-	XGetScreenSaver (x_disp, &xss_timeout, &xss_interval, &xss_blanking,
-					&xss_exposures);
-	XSetScreenSaver (x_disp, 0, xss_interval, xss_blanking,
-					xss_exposures);
-
-#ifdef XMESA
 	const char *str = getenv("MESA_GLX_FX");
+
 	if (str != NULL && *str != 'd') {
 		if (tolower(*str) == 'w') {
 			Cvar_Set (vid_fullscreen, "0");
@@ -259,7 +251,11 @@ x11_set_vidmode(int width, int height)
 			Cvar_Set (vid_fullscreen, "1");
 		}
 	}
-#endif
+
+	XGetScreenSaver (x_disp, &xss_timeout, &xss_interval, &xss_blanking,
+					&xss_exposures);
+	XSetScreenSaver (x_disp, 0, xss_interval, xss_blanking,
+					xss_exposures);
 
 #ifdef HAVE_VIDMODE
 	if (!(hasvidmode = VID_CheckVMode(x_disp, NULL, NULL))) {
@@ -270,6 +266,9 @@ x11_set_vidmode(int width, int height)
 	XF86VidModeGetAllModeLines(x_disp, x_screen, &nummodes, &vidmodes);
 
 	if (vid_fullscreen->int_val) {
+		int i;
+		int best_mode = 0, best_x = INT_MAX, best_y = INT_MAX;
+
 		for (i = 0; i < nummodes; i++) {
 			if ((best_x > vidmodes[i]->hdisplay) || 
 					(best_y > vidmodes[i]->vdisplay)) {

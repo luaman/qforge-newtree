@@ -98,10 +98,10 @@ JOY_Command (void)
 			joy_buttons[event.number].current = event.value;
 			
 			if (joy_buttons[event.number].current >	joy_buttons[event.number].old) {
-				Key_Event(K_AUX1 + event.number, true);
+				Key_Event(K_AUX1 + event.number, 0, true);
 			} else {
 				if (joy_buttons[event.number].current <	joy_buttons[event.number].old) {
-					Key_Event(K_AUX1 + event.number, false);
+					Key_Event(K_AUX1 + event.number, 0, false);
 				}
 			}
 			joy_buttons[event.number].old =	joy_buttons[event.number].current;

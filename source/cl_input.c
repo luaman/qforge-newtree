@@ -590,6 +590,6 @@ void CL_ClearStates (void)
 	for (i=0 ; i<256 ; i++)
 	{
 		if (keydown[i])
-			Key_Event (i, false);
+			Key_Event (i, 0, false);
 	}
 }

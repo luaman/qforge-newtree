@@ -93,12 +93,17 @@ static int		p_mouse_x, p_mouse_y;
 #define INPUT_MASK (KEY_MASK | MOUSE_MASK)
 
 static int
-XLateKey(XKeyEvent *ev)
+XLateKey(XKeyEvent *ev, qboolean modified)
 {
+	char tmp[2];
 	int key = 0;
 	KeySym keysym;
 
-	keysym = XLookupKeysym(ev, 0);
+	if (!modified) {
+		keysym = XLookupKeysym(ev, 0);
+	} else {
+		XLookupString(ev, tmp, 1, &keysym, NULL);
+	}
 
 	switch(keysym) {
 		case XK_KP_Page_Up:	key = KP_PGUP; break;
@@ -182,33 +187,11 @@ XLateKey(XKeyEvent *ev)
 		case XK_F33:		key = K_END; break;
 		case XK_F35:		key = K_PGDN; break;
 
-#if 0
-		case 0x021: key = '1';break;/* [!] */
-		case 0x040: key = '2';break;/* [@] */
-		case 0x023: key = '3';break;/* [#] */
-		case 0x024: key = '4';break;/* [$] */
-		case 0x025: key = '5';break;/* [%] */
-		case 0x05e: key = '6';break;/* [^] */
-		case 0x026: key = '7';break;/* [&] */
-		case 0x02a: key = '8';break;/* [*] */
-		case 0x028: key = '9';;break;/* [(] */
-		case 0x029: key = '0';break;/* [)] */
-		case 0x05f: key = '-';break;/* [_] */
-		case 0x02b: key = '=';break;/* [+] */
-		case 0x07c: key = '\'';break;/* [|] */
-		case 0x07d: key = '[';break;/* [}] */
-		case 0x07b: key = ']';break;/* [{] */
-		case 0x022: key = '\'';break;/* ["] */
-		case 0x03a: key = ';';break;/* [:] */
-		case 0x03f: key = '/';break;/* [?] */
-		case 0x03e: key = '.';break;/* [>] */
-		case 0x03c: key = ',';break;/* [<] */
-#endif
 		default:
 			if (keysym < 128) {
 				/* ASCII keys */
 				key = keysym;
-				if (key >= 'A' && key <= 'Z') {
+				if (!modified && ((key >= 'A') && (key <= 'Z'))) {
 					key = key + ('a' - 'A');
 				}
 			}
@@ -222,7 +205,7 @@ XLateKey(XKeyEvent *ev)
 static void
 event_key (XEvent *event)
 {
-	Key_Event (XLateKey (&event->xkey), event->type == KeyPress);
+	Key_Event (XLateKey (&event->xkey, 0), XLateKey(&event->xkey, 1), event->type == KeyPress);
 }
 
 
@@ -238,13 +221,13 @@ event_button (XEvent *event)
 		case 1:
 		case 2:
 		case 3:
-			Key_Event(K_MOUSE1 + but - 1, event->type == ButtonPress);
+			Key_Event(K_MOUSE1 + but - 1, 0, event->type == ButtonPress);
 			break;
 		case 4:
-			Key_Event(K_MWHEELUP, event->type == ButtonPress);
+			Key_Event(K_MWHEELUP, 0, event->type == ButtonPress);
 			break;
 		case 5:
-			Key_Event(K_MWHEELDOWN, event->type == ButtonPress);
+			Key_Event(K_MWHEELDOWN, 0, event->type == ButtonPress);
 			break;
 	}
 }
