@@ -161,13 +161,13 @@ CL_X11_objects = $(patsubst %.d,%.o,$(CL_X11_dependencies))
 all: $(SV_name) #$(CL_SVGA_name) $(CL_X11_name)
 
 $(SV_name): $(COM_objects) $(SV_objects)
-	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread $(SV_libs)
+	$(CC) $(LDFLAGS) -o $@ $^ -lm $(SV_libs)
 
 $(CL_SVGA_name): $(COM_objects) $(CL_objects) $(CL_SVGA_objects)
-	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread $(CL_SVGA_libs)
+	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_SVGA_libs)
 
 $(CL_X11_name): $(COM_objects) $(CL_objects) $(CL_X11_objects)
-	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread $(CL_X11_libs)
+	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_X11_libs)
 
 clean:
 	-rm -f *.[od] $(SV_name) $(CL_SVGA_name) $(CL_X11_name)
