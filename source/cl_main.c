@@ -1138,10 +1138,15 @@ CL_Download_f (void)
 	strncpy (cls.downloadtempname, cls.downloadname,
 			 sizeof (cls.downloadtempname));
 	cls.download = Qopen (cls.downloadname, "wb");
-	cls.downloadtype = dl_single;
+	if (cls.download) {
+		cls.downloadtype = dl_single;
 
-	MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
-	SZ_Print (&cls.netchan.message, va ("download %s\n", Cmd_Argv (1)));
+		MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
+		SZ_Print (&cls.netchan.message, va ("download %s\n", Cmd_Argv (1)));
+	} else {
+		Con_Printf ("error downloading %s: %s\n", Cmd_Argv (1),
+		            strerror (errno));
+	}
 }
 
 #ifdef _WIN32

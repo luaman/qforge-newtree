@@ -130,7 +130,7 @@ GL_Init (void)
 			dither_select (GR_DITHER_2x2);
 			Con_Printf ("2x2.\n");
 		}
-		if (strequal (com_argv[p+1], "4x4") {
+		if (strequal (com_argv[p+1], "4x4")) {
 			dither_select (GR_DITHER_4x4);
 			Con_Printf ("4x4.\n");
 		}
