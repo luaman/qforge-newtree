@@ -491,7 +491,7 @@ void SCR_DrawTime (void)
 	/* now actually print it to the screen directly below where show_fps is */
 	sprintf(st, "%s", local_time);
 	x = vid.width - strlen(st) * 8 - 8;
-	y = vid.height - sb_lines - 0;
+	y = vid.height - sb_lines - 16;
 	Draw_String8 (x, y, st);
 }
 
