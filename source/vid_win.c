@@ -1876,8 +1876,12 @@ void VID_LockBuffer (void)
 
 /* 	if (lcd_x.value)
  CVAR_FIXME */
-	if (lcd_x->value)
-		screenwidth <<= 1;
+/*
+// disabled until someone fixes, not defined right or anything
+        if (lcd_x->value)
+                screenwidth <<= 1;
+                */
+
 }
 		
 		
