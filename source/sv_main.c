@@ -1811,7 +1811,7 @@ SV_InitNet (void)
 	SV_Init
 */
 void
-SV_Init ()
+SV_Init (void)
 {
 	COM_InitArgv (host_parms.argc, host_parms.argv);
 	// COM_AddParm ("-game");
