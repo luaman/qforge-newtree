@@ -35,18 +35,20 @@ INCLUDES=	-I$(top_srcdir)/include $(GGI_CFLAGS) $(MGL_CFLAGS) $(SDL_CFLAGS) $(SV
 bin_PROGRAMS =	@TARGETS@
 
 EXTRA_PROGRAMS= qf-server \
-		qf-client-mgl qf-client-ggi qf-client-sdl qf-client-svga qf-client-x11 \
-		qf-client-3dfx qf-client-glx qf-client-sgl qf-client-wgl
+		qf-client-3dfx qf-client-ggi qf-client-glx qf-client-mgl \
+		qf-client-sdl qf-client-sgl qf-client-svga qf-client-wgl \
+		qf-client-x11
+		
 
-noinst_LIBRARIES= libqfsys_cl.a libqfsys_sv.a libqfsnd.a libqfcd.a libqfjs.a
+noinst_LIBRARIES= libqfcd.a libqfjs.a libqfsnd.a libqfsys_cl.a libqfsys_sv.a
 
 if ASM_ARCH
 math_ASM = math.S
 endif
-common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
-		mdfour.c mathlib.c cvar.c crc.c cmd.c qargs.c qendian.c \
-		quakefs.c quakeio.c msg.c sizebuf.c info.c checksum.c \
-		link.c buildnum.c va.c com.c model.c model_brush.c locs.c \
+common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c info.c link.c \
+		locs.c mathlib.c mdfour.c model.c model_brush.c msg.c \
+		net_chan.c net_com.c net_udp.c pmove.c pmovetst.c qargs.c \
+		qendian.c quakefs.c quakeio.c sizebuf.c va.c zone.c \
 		$(math_ASM)
 
 #
@@ -55,19 +57,19 @@ common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
 # ... System type
 #
 if SYSTYPE_WIN32
-libqfsys_sv_a_SOURCES=	sys_win.c sv_sys_win.c fnmatch.c
+libqfsys_sv_a_SOURCES=	fnmatch.c dirent.c sv_sys_win.c sys_win.c
 else
-libqfsys_sv_a_SOURCES=	sys_unix.c sv_sys_unix.c
+libqfsys_sv_a_SOURCES=	sv_sys_unix.c sys_unix.c
 endif
-EXTRA_libqfsys_sv_a_SOURCES= sv_sys_unix.c sv_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
+EXTRA_libqfsys_sv_a_SOURCES= fnmatch.c dirent.c sv_sys_unix.c sv_sys_win.c sys_unix.c sys_win.c
 
 if ASM_ARCH
 world_ASM=	worlda.S
 endif
 
-server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c pr_offs.c sv_init.c sv_main.c \
-		sv_misc.c sv_model.c sv_nchan.c sv_ents.c sv_send.c sv_move.c \
-		sv_phys.c sv_user.c sv_ccmds.c world.c sv_cvar.c \
+server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
+		sv_ents.c sv_init.c sv_main.c sv_misc.c sv_model.c \
+		sv_move.c sv_nchan.c sv_phys.c sv_send.c sv_user.c world.c \
 		$(world_ASM)
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
@@ -80,9 +82,9 @@ qf_server_DEPENDENCIES= libqfsys_sv.a
 # ... System type
 #
 if SYSTYPE_WIN32
-libqfsys_cl_a_SOURCES=	sys_win.c cl_sys_win.c fnmatch.c
+libqfsys_cl_a_SOURCES=	cl_sys_win.c fnmatch.c dirent.c sys_win.c
 else
-libqfsys_cl_a_SOURCES=	sys_unix.c cl_sys_unix.c
+libqfsys_cl_a_SOURCES=	cl_sys_unix.c sys_unix.c
 endif
 EXTRA_libqfsys_cl_a_SOURCES= cl_sys_unix.c cl_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
 
