@@ -75,6 +75,13 @@
 #	define BASEGAME "id1"
 #endif
 
+/* Define this to the base directory for the client to download skins to */
+#ifdef NEWSTYLE
+#	define SKINBASE "base"
+#else
+#	define SKINBASE "qw"
+#endif
+
 /* Define if you have the XFree86 DGA extension */
 #undef HAVE_DGA
 
