@@ -168,14 +168,10 @@ main
 int
 main (int argc, char *argv[])
 {
-	static struct timeval _timeout;
 	double      time, oldtime, newtime;
 	fd_set      fdset;
 	extern int  net_socket;
 	int         j;
-
-	_timeout.tv_sec = 1;
-	_timeout.tv_usec = 0;
 
 	memset (&host_parms, 0, sizeof (host_parms));
 
@@ -201,6 +197,7 @@ main (int argc, char *argv[])
 	// 
 	oldtime = Sys_DoubleTime () - 0.1;
 	while (1) {
+		struct timeval _timeout;
 		struct timeval *timeout = 0;
 		// select on the net socket and stdin
 		// the only reason we have a timeout at all is so that if the last
@@ -210,8 +207,12 @@ main (int argc, char *argv[])
 		if (do_stdin)
 			FD_SET (0, &fdset);
 		FD_SET (net_socket, &fdset);
+
+		_timeout.tv_sec = 1;
+		_timeout.tv_usec = 0;
 		if (svs.num_clients)
 			timeout = &_timeout;
+
 		if (select (net_socket + 1, &fdset, NULL, NULL, timeout) == -1)
 			continue;
 		stdin_ready = FD_ISSET (0, &fdset);
