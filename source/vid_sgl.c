@@ -52,12 +52,6 @@ static qboolean	vid_initialized = false;
 
 cvar_t  *vid_fullscreen;
 
-#ifdef WIN32
-/* FIXME: this is evil hack */
-#include <windows.h>
-HWND 		mainwindow;
-#endif
-
 int VID_options_items = 1;
 int modestate;
 
@@ -200,12 +194,6 @@ VID_Init (unsigned char *palette)
 
 	vid_initialized = true;
 
-#ifdef WIN32
-	// FIXME: EVIL thing - but needed for win32 until we get
-	// SDL_sound ready - without this DirectSound fails.
-	// could replace this with SDL_SysWMInfo
-	mainwindow=GetActiveWindow();
-#endif
 	vid.recalc_refdef = 1;	  // force a surface cache flush
 }
 
