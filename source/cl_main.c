@@ -1425,7 +1425,9 @@ void Host_WriteConfiguration (void)
 
 	if (host_initialized)
 	{
-		f = Qopen (va("%s/config.cfg",com_gamedir), "w");
+		char *path = va("%s/config.cfg",com_gamedir);
+		COM_CreatePath (path);
+		f = Qopen (path, "w");
 		if (!f)
 		{
 			Con_Printf ("Couldn't write config.cfg.\n");
