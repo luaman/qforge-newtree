@@ -53,18 +53,18 @@
 #endif
 
 typedef struct _TargaHeader {
-	__unaligned unsigned char id_length __attribute__((packed));
-	__unaligned unsigned char colormap_type __attribute__((packed));
-	__unaligned unsigned char image_type __attribute__((packed));
+	unsigned char id_length __attribute__((packed));
+	unsigned char colormap_type __attribute__((packed));
+	unsigned char image_type __attribute__((packed));
 	__unaligned unsigned short colormap_index __attribute__((packed));
 	__unaligned unsigned short colormap_length __attribute__((packed));
-	__unaligned unsigned char colormap_size __attribute__((packed));
+	unsigned char colormap_size __attribute__((packed));
 	__unaligned unsigned short x_origin __attribute__((packed));
 	__unaligned unsigned short y_origin __attribute__((packed));
 	__unaligned unsigned short width __attribute__((packed));
 	__unaligned unsigned short height __attribute__((packed));
-	__unaligned unsigned char pixel_size __attribute__((packed));
-	__unaligned unsigned char attributes __attribute__((packed));
+	unsigned char pixel_size __attribute__((packed));
+	unsigned char attributes __attribute__((packed));
 } TargaHeader;
 
 #if defined (__BORLANDC__) || defined (_MSC_VER)
