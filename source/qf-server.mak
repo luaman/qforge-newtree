@@ -162,7 +162,7 @@ DEPEND = \
    $(OBJS)\pr_edict.obj\
    $(OBJS)\sv_ccmds.obj
 
-$(EXE)\qf-server-win.exe : $(DEPEND)
+$(EXE)\qf-server.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0x32.obj+
