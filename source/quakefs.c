@@ -49,7 +49,9 @@
 
 #include <dirent.h>
 #ifdef HAVE_FNMATCH_H
+#define model_t sunmodel_t
 #include <fnmatch.h>
+#undef model_t
 #endif
 
 #ifdef WIN32
