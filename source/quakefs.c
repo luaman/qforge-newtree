@@ -1038,8 +1038,19 @@ COM_InitFilesystem ( void )
 	}
 
 	if ((i = COM_CheckParm ("-game")) && i < com_argc - 1) {
-		COM_CreateGameDirectory(com_argv[i+1]);
-	}
+		char *gamedirs = NULL;
+		char *where;
+
+		gamedirs = strdup (com_argv[i+1]);
+		where = strtok (gamedirs, ",");
+		while (where) {
+			where = strtok (NULL, ",");
+			if (where) {
+				COM_CreateGameDirectory (where);
+			}
+		}
+		free (gamedirs);
+	}		
 
 	// any set gamedirs will be freed up to here
 	com_base_searchpaths = com_searchpaths;

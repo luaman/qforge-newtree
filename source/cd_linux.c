@@ -67,8 +67,8 @@ static void CDAudio_Eject(void)
 	if (cdfile == -1 || !enabled)
 		return; // no cd init'd
 
-	if ( ioctl(cdfile, CDROMEJECT) == -1 ) 
-		Con_DPrintf("ioctl cdromeject failed\n");
+	if (ioctl (cdfile, CDROMEJECT) == -1 ) 
+		Con_DPrintf ("ioctl cdromeject failed\n");
 }
 
 
