@@ -298,6 +298,8 @@ VID_AllocBuffers (int width, int height)
 		temp_z = NULL;
 	}
 
+	vid_surfcachesize = tcachesize;
+
 	// Free surface cache, switch to the new one
 	vid_surfcache = D_SurfaceCacheAddress ();
 	if (vid_surfcache) {
