@@ -64,7 +64,6 @@ void Host_Init (void);
 void Host_Shutdown(void);
 void Host_Error (char *error, ...) __attribute__((format(printf,1,2)));
 void Host_EndGame (char *message, ...) __attribute__((format(printf,1,2)));
-qboolean Host_SimulationTime(float time);
 void Host_Frame (float time);
 void Host_Quit_f (void);
 void Host_ClientCommands (char *fmt, ...) __attribute__((format(printf,1,2)));

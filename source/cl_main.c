@@ -190,6 +190,7 @@ cvar_t     *host_speeds;				// set for running times
 cvar_t     *show_fps;					// set for running times
 cvar_t     *show_time;
 cvar_t     *developer;
+cvar_t     *cl_demospeed;
 
 int         fps_count;
 
@@ -1204,6 +1205,8 @@ CL_Init_Cvars (void)
 							"display host processing times");
 	developer = Cvar_Get ("developer", "0", CVAR_NONE,
 						  "show info interesting to developers");
+	cl_demospeed = Cvar_Get ("cl_demospeed", "1.0", CVAR_NONE,
+							 "adjust demo playback speed. 1.0 = normal, < 1 slow-mo, > 1 timelaps");
 	// Misty: Turn on or off screen filling colors for powerups among other things. 
 	cl_cshift_bonus = Cvar_Get ("cl_cshift_bonus", "1", CVAR_ARCHIVE,
 							"Show bonus flash on item pickup");
@@ -1374,17 +1377,23 @@ Host_WriteConfiguration (void)
 
 //============================================================================
 
-#if 0
 /*
 	Host_SimulationTime
 
 	This determines if enough time has passed to run a simulation frame
 */
-qboolean
+static inline qboolean
 Host_SimulationTime (float time)
 {
 	float       fps;
+	float		timescale = 1.0;
 
+	if (cls.demoplayback) {
+		timescale = bound (0.1, cl_demospeed->value, 5);
+		time *= timescale;
+	}
+
+	realtime += time;
 	if (oldrealtime > realtime)
 		oldrealtime = 0;
 
@@ -1393,12 +1402,10 @@ Host_SimulationTime (float time)
 	else
 		fps = max (30.0, min (rate->value / 80.0, 72.0));
 
-	if (!cls.timedemo && (realtime + time) - oldrealtime < 1.0 / fps)
+	if (!cls.timedemo && realtime - oldrealtime < timescale / fps)
 		return false;					// framerate is too high
 	return true;
 }
-#endif
-
 
 /*
 	Host_Frame
@@ -1413,22 +1420,12 @@ Host_Frame (float time)
 	static double time2 = 0;
 	static double time3 = 0;
 	int         pass1, pass2, pass3;
-	float       fps;
 
 	if (setjmp (host_abort))	// something bad happened, or the server disconnected
 		return;
 
 	// decide the simulation time
-	realtime += time;
-	if (oldrealtime > realtime)
-		oldrealtime = 0;
-
-	if (cl_maxfps->value)
-		fps = max (30.0, min (cl_maxfps->value, 72.0));
-	else
-		fps = max (30.0, min (rate->value / 80.0, 72.0));
-
-	if (!cls.timedemo && realtime - oldrealtime < 1.0 / fps)
+	if (!Host_SimulationTime (time))
 		return;					// framerate is too high
 
 	host_frametime = realtime - oldrealtime;
