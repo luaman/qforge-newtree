@@ -685,7 +685,6 @@ VID_Shutdown(void)
 	if (x_disp) {
 		x11_restore_vidmode();
 		x11_close_display();
-		x_disp = 0;
 	}
 }
 
