@@ -236,16 +236,9 @@ SNDDMA_InitDirect (void)
 			Con_Printf ("DirectSound create failed\n");
 			return SIS_FAILURE;
 		}
-//      if (MessageBox (NULL,
-//                      "The sound hardware is in use by another app.\n\n"
-//                      "Select Retry to try to start sound again or Cancel to run Quake with no sound.",
-//                      "Sound not available",
-//                      MB_RETRYCANCEL | MB_SETFOREGROUND | MB_ICONEXCLAMATION) != IDRETRY)
-//      {
 		Con_Printf ("DirectSoundCreate failure\n"
 					"  hardware already in use\n");
 		return SIS_NOTAVAIL;
-//      }
 	}
 
 	dscaps.dwSize = sizeof (dscaps);
@@ -284,15 +277,7 @@ SNDDMA_InitDirect (void)
 			pformat = format;
 
 			if (DS_OK != pDSPBuf->lpVtbl->SetFormat (pDSPBuf, &pformat)) {
-//              if (snd_firsttime)
-//                  Con_Printf ("Set primary sound buffer format: no\n");
-			} else
-//          {
-//              if (snd_firsttime)
-//                  Con_Printf ("Set primary sound buffer format: yes\n");
-
-				primary_format_set = true;
-//          }
+			} else primary_format_set = true;
 		}
 	}
 
@@ -323,8 +308,6 @@ SNDDMA_InitDirect (void)
 			FreeSound ();
 			return SIS_FAILURE;
 		}
-//      if (snd_firsttime)
-//          Con_Printf ("Using secondary sound buffer\n");
 	} else {
 		if (DS_OK !=
 			pDS->lpVtbl->SetCooperativeLevel (pDS, mainwindow,
@@ -340,17 +323,10 @@ SNDDMA_InitDirect (void)
 		}
 
 		pDSBuf = pDSPBuf;
-//      Con_Printf ("Using primary sound buffer\n");
 	}
 
 	// Make sure mixer is active
 	pDSBuf->lpVtbl->Play (pDSBuf, 0, 0, DSBPLAY_LOOPING);
-
-/*	if (snd_firsttime)
-		Con_Printf("   %d channel(s)\n"
-		               "   %d bits/sample\n"
-					   "   %d bytes/sec\n",
-					   shm->channels, shm->samplebits, shm->speed);*/
 
 	gSndBufSize = dsbcaps.dwBufferBytes;
 
@@ -358,8 +334,7 @@ SNDDMA_InitDirect (void)
 	reps = 0;
 
 	while ((hresult = pDSBuf->lpVtbl->Lock (pDSBuf, 0, gSndBufSize,
-											(LPVOID *) & lpData, &dwSize, NULL,
-											NULL, 0)) != DS_OK) {
+			(LPVOID *) & lpData, &dwSize, NULL,NULL, 0)) != DS_OK) {
 		if (hresult != DSERR_BUFFERLOST) {
 			Con_Printf ("SNDDMA_InitDirect: DS::Lock Sound Buffer Failed\n");
 			FreeSound ();
@@ -442,15 +417,8 @@ SNDDMA_InitWav (void)
 			Con_Printf ("waveOutOpen failed\n");
 			return false;
 		}
-//      if (MessageBox (NULL,
-//                      "The sound hardware is in use by another app.\n\n"
-//                      "Select Retry to try to start sound again or Cancel to run Quake with no sound.",
-//                      "Sound not available",
-//                      MB_RETRYCANCEL | MB_SETFOREGROUND | MB_ICONEXCLAMATION) != IDRETRY)
-//      {
 		Con_Printf ("waveOutOpen failure;\n" "  hardware already in use\n");
 		return false;
-//      }
 	}
 
 	/* 
