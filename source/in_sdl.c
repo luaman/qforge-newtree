@@ -37,6 +37,7 @@
 #include "console.h"
 #include "cvar.h"
 #include "draw.h"
+#include "host.h"
 #include "input.h"
 #include "joystick.h"
 #include "keys.h"

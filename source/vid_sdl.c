@@ -37,6 +37,7 @@
 
 #include "cvar.h"
 #include "d_local.h"
+#include "host.h"
 #include "qendian.h"
 #include "sys.h"
 #include "va.h"

@@ -52,6 +52,7 @@
 #include "net.h"        // needed by: client.h
 #include "protocol.h"   // needed by: client.h
 #include "cmd.h"
+#include "host.h"
 #include "keys.h"
 #include "sbar.h"
 #include "sound.h"

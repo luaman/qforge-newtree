@@ -38,6 +38,7 @@
 #include <SDL.h>
 
 #include "console.h"
+#include "host.h"
 #include "qargs.h"
 #include "qendian.h"
 #include "sys.h"
@@ -54,8 +55,8 @@ cvar_t  *vid_fullscreen;
 int VID_options_items = 1;
 int modestate;
 
-extern void GL_Init_Common(void);
-extern void VID_Init8bitPalette(void);
+extern void GL_Init_Common (void);
+extern void VID_Init8bitPalette (void);
 /*-----------------------------------------------------------------------*/ 
 
 void
