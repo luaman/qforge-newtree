@@ -1250,4 +1250,8 @@ AC_MSG_RESULT([
 	Per-user game data directory: $userpath
 	Global configuration file: $globalconf
 ])
-test -d ./CVS && echo -e "WARNING: Hackers at work, watch for falling bits of code.\n(This is from a development CVS tree. Expect problems)\n"
+if test -d $srcdir/CVS; then
+	echo "WARNING: Hackers at work, watch for falling bits of code."
+	echo "(This is from a development CVS tree. Expect problems)"
+	echo
+fi
