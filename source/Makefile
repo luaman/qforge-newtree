@@ -76,6 +76,7 @@ CL_sources=\
   cl_ents.c \
   cl_input.c \
   cl_main.c \
+  cl_misc.c \
   cl_parse.c \
   cl_pred.c \
   cl_tent.c \
@@ -158,7 +159,7 @@ CL_X11_objects = $(patsubst %.d,%.o,$(CL_X11_dependencies))
 
 #               *Explicit Rules*
 
-all: $(SV_name) #$(CL_SVGA_name) $(CL_X11_name)
+all: $(SV_name) $(CL_SVGA_name) $(CL_X11_name)
 
 $(SV_name): $(COM_objects) $(SV_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(SV_libs)
