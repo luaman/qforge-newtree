@@ -50,6 +50,12 @@ static const int face_loop[6][5] = {
 	{0, 2, 3, 5, 0},
 	{0, 4, 3, 1, 0},
 };
+/* convert axis and face distance into face*/
+static const int faces_table[3][6] = {
+	{-1, 0, 0, -1, 3, 3},
+	{-1, 4, 4, -1, 1, 1},
+	{-1, 2, 2, -1, 5, 5},
+};
 /* axis the cube face cuts (also index into vec3_t for) */
 static const int face_axis[] = {0, 1, 2, 0, 1, 2};
 /* offset on the axis the cube face cuts */
@@ -360,11 +366,13 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 	/* projected vertex and face of the current sky poly vertex */
 	vec3_t v;
 	int face;
-	/* projected vertex and face of the center of the sky poly */
-	vec3_t center = {0, 0, 0};
-	int c_face;
+	/* keep track of which cube faces we visit and in what order */
+	int visited_faces [6];
+	int faces_flags [6];
+	int face_count = 0;
 
 	memset (box, 0, sizeof (box));
+	memset (faces_flags, 0, sizeof faces_flags);
 	for (i = 0; i < 6; i++) {
 		box[i].tex = SKY_TEX + skytex_offs[i];
 		box[i].enter_face = box[i].leave_face = -1;
@@ -379,7 +387,6 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 
 	for (i=0; i< poly->numverts; i++) {
 		VectorSubtract (poly->verts[i], r_refdef.vieworg, v);
-		VectorAdd (v, center, center);
 		face = determine_face (v);
 		if (face != prev_face) {
 			if ((face % 3) == (prev_face % 3)) {
@@ -390,21 +397,41 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 				VectorScale (x, 0.5, x);
 				x_face = determine_face (x);
 
+				if (!faces_flags[x_face]) {
+					faces_flags[x_face] = 1;
+					visited_faces[face_count++] = x_face;
+				}
+
 				cross_cube_edge (box, prev_face, last_v, x_face, x);
 				cross_cube_edge (box, x_face, x, face, v);
 			} else {
 				cross_cube_edge (box, prev_face, last_v, face, v);
 			}
 		}
+		if (!faces_flags[face]) {
+			faces_flags[face] = 1;
+			visited_faces[face_count++] = face;
+		}
 		add_vertex(box, face, v);
 
 		VectorCopy (v, last_v);
 		prev_face = face;
 	}
-	c_face = determine_face (center);
-
-	if (box[c_face].poly.numverts == 0)
-		fixup_center_face (box, c_face);
+	if (face_count == 4
+		&& abs (visited_faces[2] - visited_faces[0]) == 3
+		&& abs (visited_faces[3] - visited_faces[1]) == 3) {
+		int framed_face;
+		int sum, diff;
+		sum = visited_faces[0] + visited_faces[1] + visited_faces[2] + visited_faces[3];
+		diff = visited_faces[1] - visited_faces[0];
+		sum %= 3;
+		diff = (diff + 6) % 6;
+		framed_face = faces_table[sum][diff];
+		if (box[framed_face].poly.numverts == 0)
+			fixup_center_face (box, framed_face);
+		else
+			printf ("email bill@taniwha.org re framed face > 0 verts\n");
+	}
 
 	render_box (box);
 }
