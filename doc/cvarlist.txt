@@ -487,14 +487,14 @@ Targets		: gl clients
 Category	: gl renderer
 Type		: Boolean
 Default		: 1
-Description	: whether or not to use RGBA lightmaps
+Description	: whether or not to use RGB lightmaps
 
 Cvar		: gl_conalpha
 Targets		: gl clients
 Category	: gl console ui
 Type		: number
 Default		: 0.6
-Description	: alpha value for console
+Description	: alpha value for console when fully lowered
 
 Cvar		: gl_conspin
 Targets		: gl clients
@@ -1316,11 +1316,11 @@ Default		: 800
 Description	:
 
 Cvar		: sv_highchars
-Targets		:
+Targets		: Server
 Category	:
-Type		:
+Type		: Boolean
 Default		: 1	
-Description	:
+Description	: Allow high-ASCII characters in serverinfo keys
 
 Cvar		: sv_mapcheck
 Targets		:
@@ -1396,8 +1396,8 @@ Cvar		: sv_timekick_fuzz
 Targets		:
 Category	:
 Type		: float
-Default		: 10
-Description	: Timecheat sensitivity (10 = 1%)
+Default		: 15
+Description	: Timecheat sensitivity (15 = 1.5%)
 
 Cvar		: sv_timekick_interval
 Targets		:
@@ -1440,7 +1440,7 @@ Category	:
 Type		: integer
 Default		: 8 for Win9x, 0 for WinNT
 Description	: Numbers of milliseconds to try to Sleep() every frame.
-            : Needed when running the server on localhost in Win9x.
+		: Needed when running the server on localhost in Win9x.
 
 Cvar		: team
 Targets		:
@@ -1692,5 +1692,5 @@ Targets		:
 Category	:
 Type		:
 Default		: 2	
-Description	:
+Description	: Number of seconds server ignores client after disconnect
 
