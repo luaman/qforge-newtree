@@ -422,8 +422,7 @@ CL_UpdateBeams (void)
 			ent->angles[1] = yaw;
 			ent->angles[2] = rand () % 360;
 
-			for (j = 0; j < 3; j++)
-				org[j] += dist[j] * 30;
+			VectorMA(org, 30, dist, org);
 			d -= 30;
 		}
 	}
