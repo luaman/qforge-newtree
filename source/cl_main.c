@@ -111,6 +111,7 @@ cvar_t     *rcon_password;
 cvar_t     *rcon_address;
 
 cvar_t     *cl_writecfg;
+cvar_t     *cl_allow_cmd_pkt;
 
 cvar_t     *cl_timeout;
 
@@ -121,10 +122,10 @@ cvar_t     *cl_sbar_separator;
 cvar_t     *cl_hudswap;
 cvar_t     *cl_maxfps;
 
-cvar_t		*cl_cshift_bonus;
-cvar_t		*cl_cshift_contents;
-cvar_t		*cl_cshift_damage;
-cvar_t		*cl_cshift_powerup;
+cvar_t     *cl_cshift_bonus;
+cvar_t     *cl_cshift_contents;
+cvar_t     *cl_cshift_damage;
+cvar_t     *cl_cshift_powerup;
 
 cvar_t     *lookspring;
 cvar_t     *lookstrafe;
@@ -881,7 +882,8 @@ CL_ConnectionlessPacket (void)
 
 		Con_Printf ("client command\n");
 
-		if ((*(unsigned int *) net_from.ip != *(unsigned int *) net_local_adr.ip
+		if (!cl_allow_cmd_pkt->int_val
+		     && (*(unsigned int *) net_from.ip != *(unsigned int *) net_local_adr.ip
 			 && *(unsigned int *) net_from.ip != htonl (INADDR_LOOPBACK))) {
 			Con_Printf ("Command packet from remote host.  Ignored.\n");
 			return;
@@ -1199,6 +1201,8 @@ CL_Init_Cvars (void)
 	// LordHavoc: some people like it asking on quit, others don't...
 	confirm_quit =
 		Cvar_Get ("confirm_quit", "1", CVAR_ARCHIVE, "confirm quit command");
+	cl_allow_cmd_pkt = Cvar_Get ("cl_allow_cmd_pkt", "0", CVAR_NONE,
+								 "set to enable packets from the likes of gamespy");
 	show_fps = Cvar_Get ("show_fps", "0", CVAR_NONE,
 						 "display realtime frames per second");
 	// Misty: I like to be able to see the time when I play
