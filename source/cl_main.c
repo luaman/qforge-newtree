@@ -679,8 +679,8 @@ CL_AddQFInfoKeys ()
 	strncat (cap, "z", sizeof (cap) - strlen (cap) - 1);
 #endif
 	Info_SetValueForStarKey (cls.userinfo, "*cap", cap, MAX_INFO_STRING);
-	Info_SetValueForStarKey (cls.userinfo, "*qsg_version", QSG_VERSION,
-			MAX_SERVERINFO_STRING);
+	Info_SetValueForStarKey (cls.userinfo, "*qf_version", VERSION, MAX_INFO_STRING);
+	Info_SetValueForStarKey (cls.userinfo, "*qsg_version", QSG_VERSION, MAX_INFO_STRING);
 	Con_Printf ("QuakeForge server detected\n");
 }
 
@@ -693,6 +693,7 @@ void
 CL_RemoveQFInfoKeys ()
 {
 	Info_RemoveKey (cls.userinfo, "*cap");
+	Info_RemoveKey (cls.userinfo, "*qf_version");
 	Info_RemoveKey (cls.userinfo, "*qsg_version");
 }
 
