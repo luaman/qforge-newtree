@@ -44,6 +44,7 @@
 #ifdef __MINGW32__
 # define INITGUID
 #endif
+
 #include "winquake.h"
 #include <dinput.h>
 #include "client.h"
@@ -54,7 +55,6 @@
 #include "input.h"
 #include "cl_input.h"
 #include "view.h"
-//#include "dosisms.h"
 #include "host.h"
 
 // Joystick variables and structures
@@ -84,46 +84,49 @@ enum _ControlList {
 	AxisNada = 0, AxisForward, AxisLook, AxisSide, AxisTurn
 };
 
-static DWORD dwAxisFlags[JOY_MAX_AXES] = {
+DWORD dwAxisFlags[JOY_MAX_AXES] = {
 	JOY_RETURNX, JOY_RETURNY, JOY_RETURNZ, JOY_RETURNR, JOY_RETURNU, JOY_RETURNV
 };
 
-static DWORD dwAxisMap[JOY_MAX_AXES];
-static DWORD dwControlMap[JOY_MAX_AXES];
-static PDWORD pdwRawValue[JOY_MAX_AXES];
+DWORD dwAxisMap[JOY_MAX_AXES];
+DWORD dwControlMap[JOY_MAX_AXES];
+PDWORD pdwRawValue[JOY_MAX_AXES];
 
-static JOYINFOEX ji;
+JOYINFOEX ji;
+
 // none of these cvars are saved over a session
 // this means that advanced controller configuration needs to be executed
 // each time.  this avoids any problems with getting back to a default usage
 // or when changing from one controller to another.  this way at least something
 // works.
 
-static cvar_t *in_joystick;
-static cvar_t *joy_name;
-static cvar_t *joy_advanced;
-static cvar_t *joy_advaxisx;
-static cvar_t *joy_advaxisy;
-static cvar_t *joy_advaxisz;
-static cvar_t *joy_advaxisr;
-static cvar_t *joy_advaxisu;
-static cvar_t *joy_advaxisv;
-static cvar_t *joy_forwardthreshold;
-static cvar_t *joy_sidethreshold;
-static cvar_t *joy_pitchthreshold;
-static cvar_t *joy_yawthreshold;
-static cvar_t *joy_forwardsensitivity;
-static cvar_t *joy_sidesensitivity;
-static cvar_t *joy_pitchsensitivity;
-static cvar_t *joy_yawsensitivity;
-static cvar_t *joy_wwhack1;
-static cvar_t *joy_wwhack2;
+cvar_t *in_joystick;
+cvar_t *joy_name;
+cvar_t *joy_advanced;
+cvar_t *joy_advaxisx;
+cvar_t *joy_advaxisy;
+cvar_t *joy_advaxisz;
+cvar_t *joy_advaxisr;
+cvar_t *joy_advaxisu;
+cvar_t *joy_advaxisv;
+cvar_t *joy_forwardthreshold;
+cvar_t *joy_sidethreshold;
+cvar_t *joy_pitchthreshold;
+cvar_t *joy_yawthreshold;
+cvar_t *joy_forwardsensitivity;
+cvar_t *joy_sidesensitivity;
+cvar_t *joy_pitchsensitivity;
+cvar_t *joy_yawsensitivity;
+cvar_t *joy_wwhack1;
+cvar_t *joy_wwhack2;
 
-static qboolean joy_avail, joy_advancedinit, joy_haspov;
-static DWORD joy_oldbuttonstate, joy_oldpovstate;
-static int  joy_id;
-static DWORD joy_flags;
-static DWORD joy_numbuttons;
+cvar_t *joy_debug;
+
+qboolean joy_advancedinit, joy_haspov;
+DWORD joy_oldbuttonstate, joy_oldpovstate;
+int  joy_id;
+DWORD joy_flags;
+DWORD joy_numbuttons;
 
 //
 //
@@ -132,9 +135,10 @@ void JOY_AdvancedUpdate_f (void);
 void JOY_StartupJoystick (void);
 void JOY_Move (usercmd_t *cmd);
 void JOY_Init_Cvars(void);
+
 PDWORD RawValuePointer (int axis);
 
-static qboolean
+qboolean
 JOY_Read (void)
 {
 	memset (&ji, 0, sizeof (ji));
@@ -149,6 +153,15 @@ JOY_Read (void)
 		if (joy_wwhack1->int_val) {
 			ji.dwUpos += 100;
 		}
+		if (joy_debug->int_val) {
+                        if (ji.dwXpos) Con_Printf("X: %ld\n",ji.dwXpos);
+                        if (ji.dwYpos) Con_Printf("Y: %ld\n",ji.dwYpos);
+                        if (ji.dwZpos) Con_Printf("Z: %ld\n",ji.dwZpos);
+                        if (ji.dwRpos) Con_Printf("R: %ld\n",ji.dwRpos);
+                        if (ji.dwUpos) Con_Printf("U: %ld\n",ji.dwUpos);
+                        if (ji.dwVpos) Con_Printf("V: %ld\n",ji.dwVpos);
+                        if (ji.dwButtons) Con_Printf("B: %ld\n",ji.dwButtons);
+		}
 		return true;
 	} else {							// read error
 		return false;
@@ -161,7 +174,7 @@ JOY_Command (void)
 	int         i, key_index;
 	DWORD       buttonstate, povstate;
 
-	if (!joy_avail) {
+        if (!joy_found) {
 		return;
 	}
 	// loop through the joystick buttons
@@ -217,12 +230,14 @@ JOY_Move (usercmd_t *cmd)
 	float       speed, aspeed;
 	float       fAxisValue, fTemp;
 	int         i;
+        static int lastjoy=0;
 
 	// complete initialization if first time in
 	// this is needed as cvars are not available at initialization time
-	if (!joy_advancedinit) {
+        if (!joy_advancedinit || lastjoy!=joy_advanced->int_val) {
 		JOY_AdvancedUpdate_f ();
 		joy_advancedinit = true;
+                lastjoy=joy_advanced->int_val;
 	}
 	// verify joystick is available and that the user wants to use it
 	if (!joy_active || !joy_enable->int_val) {
@@ -376,10 +391,10 @@ JOY_Move (usercmd_t *cmd)
 void
 JOY_Init (void)
 {
+        JOY_StartupJoystick();
 	Cmd_AddCommand ("joyadvancedupdate", JOY_AdvancedUpdate_f);
-	JOY_Init_Cvars();
 
-	Con_DPrintf ("This system does not have joystick support.\n");
+//        Con_DPrintf ("This system does not have joystick support.\n");
 }
 
 void
@@ -467,7 +482,7 @@ JOY_StartupJoystick (void)
 	MMRESULT    mmr = !JOYERR_NOERROR;
 
 	// assume no joystick
-	joy_avail = false;
+        joy_found = false;
 
 	// abort startup if user requests no joystick
 	if (COM_CheckParm ("-nojoy"))
@@ -513,9 +528,10 @@ JOY_StartupJoystick (void)
 	// completed
 	// this is needed as cvars are not available during initialization
 
-	joy_avail = true;
 	joy_advancedinit = false;
-
+        joy_found = true;
+        // fixme: do this right
+        joy_active = true;
 	Con_Printf ("\njoystick detected\n\n");
 }
 
@@ -545,7 +561,8 @@ RawValuePointer (int axis)
 }
 
 
-void JOY_Init_Cvars(void)
+void
+JOY_Init_Cvars(void)
 {
 	joy_device =
 		Cvar_Get ("joy_device", "none", CVAR_NONE | CVAR_ROM,
@@ -593,6 +610,8 @@ void JOY_Init_Cvars(void)
 		Cvar_Get ("joyyawsensitivity", "-1.0", CVAR_NONE, "None");
 	joy_wwhack1 = Cvar_Get ("joywwhack1", "0.0", CVAR_NONE, "None");
 	joy_wwhack2 = Cvar_Get ("joywwhack2", "0.0", CVAR_NONE, "None");
+
+        joy_debug = Cvar_Get ("joy_debug", "0.0", CVAR_NONE, "None");
 
 	return;
 }
