@@ -105,6 +105,7 @@ qboolean    noclip_anglehack;			// remnant from old quake
 
 
 cvar_t     *fs_globalcfg;
+cvar_t     *fs_usercfg;
 cvar_t     *rcon_password;
 
 cvar_t     *rcon_address;
@@ -1555,6 +1556,15 @@ Host_Init (void)
 	fs_globalcfg = Cvar_Get ("fs_globalcfg", FS_GLOBALCFG,
 							 CVAR_ROM, "global configuration file");
 	Cmd_Exec_File (fs_globalcfg->string);
+	Cbuf_Execute_Sets ();
+
+	// execute +set again to override the config file
+	Cmd_StuffCmds_f ();
+	Cbuf_Execute_Sets ();
+
+	fs_usercfg = Cvar_Get ("fs_usercfg", FS_USERCFG,
+						   CVAR_ROM, "user configuration file");
+	Cmd_Exec_File (fs_usercfg->string);
 	Cbuf_Execute_Sets ();
 
 	// execute +set again to override the config file

@@ -303,24 +303,18 @@ void
 Cmd_Exec_File (char *path)
 {
 	char       *f;
-	int         mark;
 	int         len;
-	char        base[32];
 	QFile      *file;
 
 	if ((file = Qopen (path, "r")) != NULL) {
-		// extract the filename base name for hunk tag
-		COM_FileBase (path, base);
 		len = COM_filelength (file);
-		mark = Hunk_LowMark ();
-		f = (char *) Hunk_AllocName (len + 1, base);
+		f = (char *) Hunk_TempAlloc (len + 1);
 		if (f) {
 			f[len] = 0;
 			Qread (file, f, len);
 			Qclose (file);
 			Cbuf_InsertText (f);
 		}
-		Hunk_FreeToLowMark (mark);
 	}
 }
 

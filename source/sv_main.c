@@ -80,6 +80,7 @@ cvar_t     *sv_allow_log;
 cvar_t     *sv_allow_ping;
 
 cvar_t     *fs_globalcfg;
+cvar_t     *fs_usercfg;
 
 cvar_t     *sv_mintic;					// bound the size of the
 cvar_t     *sv_maxtic;					// physics time tic
@@ -1899,6 +1900,16 @@ SV_Init (void)
 	// execute +set again to override the config file
 	Cmd_StuffCmds_f ();
 	Cbuf_Execute_Sets ();
+
+	fs_usercfg = Cvar_Get ("fs_usercfg", FS_USERCFG,
+						   CVAR_ROM, "user configuration file");
+	Cmd_Exec_File (fs_usercfg->string);
+	Cbuf_Execute_Sets ();
+
+	// execute +set again to override the config file
+	Cmd_StuffCmds_f ();
+	Cbuf_Execute_Sets ();
+
 
 	COM_Filesystem_Init_Cvars ();
 	COM_Init_Cvars ();

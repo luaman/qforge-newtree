@@ -1038,6 +1038,7 @@ if test "x$newstyle" = xyes -o "x$newstyle" = "x"; then
 	AC_DEFINE(BASEGAME, "base")
 	AC_DEFINE(SKINBASE, "base")
 	default_globalconf="/etc/$PACKAGE.conf"
+	default_userconf="~/.${PACKAGE}rc"
 	eval foo="$datadir"
 	default_sharepath="$foo/games/$PACKAGE"
 	default_userpath="~/.$PACKAGE"
@@ -1047,8 +1048,10 @@ else
 	AC_DEFINE(SKINBASE, "qw")
 	if test "x$SYSTYPE" = xWIN32; then
 		default_globalconf="%WINDIR%/$PACKAGE.conf"
+		default_userconf=""
 	else
 		default_globalconf="/etc/$PACKAGE.conf"
+		default_userconf=""
 	fi
 	default_sharepath="."
 	default_userpath="."
@@ -1064,6 +1067,17 @@ if test "x$globalconf" = "xauto" || test "x$globalconf" = "xyes" || \
 	globalconf="$default_globalconf"
 fi
 AC_DEFINE_UNQUOTED(FS_GLOBALCFG, "$globalconf")
+
+AC_ARG_WITH(user-cfg,
+[  --with-user-cfg=FILE    If set will change the name and location of the
+                          global config file used by QuakeForge.  Defaults to
+                          /etc/quakeforge.conf.],
+globalconf="$withval", userconf="auto")
+if test "x$userconf" = "xauto" || test "x$userconf" = "xyes" || \
+	test "x$userconf" = "xno"; then  dnl yes/no sanity checks
+	userconf="$default_userconf"
+fi
+AC_DEFINE_UNQUOTED(FS_USERCFG, "$userconf")
 
 AC_ARG_WITH(sharepath,
 [  --with-sharepath=DIR    Use DIR for shared game data, defaults to
@@ -1416,6 +1430,7 @@ AC_MSG_RESULT([
 	Shared game data directory: $sharepath
 	Per-user game data directory: $userpath
 	Global configuration file: $globalconf
+	User configuration file: $userconf
 ])
 if test -d $srcdir/CVS; then
 	echo "WARNING: Hackers at work, watch for falling bits of code."
