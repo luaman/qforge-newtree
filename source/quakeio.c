@@ -339,3 +339,37 @@ Qeof(QFile *file)
 	return -1;
 #endif
 }
+
+/*
+
+	Qgetline
+
+	Dynamic lenght version of Qgets. DO NOT free the buffer.
+
+*/
+char *
+Qgetline(QFile *file)
+{
+	static int size = 256;
+	static char *buf = 0;
+	int len;
+
+	if (!buf)
+		buf = malloc (size);
+
+	if (!Qgets(file, buf, size))
+		return 0;
+
+	len = strlen (buf);
+	while (buf[len - 1] != '\n') {
+		char *t = realloc (buf, size + 256);
+		if (!t)
+			return 0;
+		buf = t;
+		size += 256;
+		if (!Qgets(file, buf+len, size - len))
+			break;
+		len = strlen (buf);
+	}
+	return buf;
+}
