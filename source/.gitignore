@@ -6,6 +6,8 @@ Makefile.in
 client.exe
 qf-client-ggi
 qf-client-glx
+qf-client-sdl
+qf-client-sgl
 qf-client-svga
 qf-client-x11
 qf-client-3dfx
