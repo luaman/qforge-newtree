@@ -33,15 +33,19 @@
 #include "qtypes.h"
 
 #ifndef __GNUC__
-# if defined (__BORLANDC__) || defined (_MSC_VER)
-#  if (defined(__BORLANDC__) && (__BORLANDC__ < 0x550))
-#   pragma option -a1
-#  else
-#   pragma pack(push, tgainclude)
-#   pragma pack(1)
-#  endif
+# if defined (__DECC) && defined (__ALPHA)
+#  pragma nomember_alignment
 # else
-#  error do some data packing magic here (#pragma pack?)
+#  if defined (__BORLANDC__) || defined (_MSC_VER)
+#   if (defined(__BORLANDC__) && (__BORLANDC__ < 0x550))
+#    pragma option -a1
+#   else
+#    pragma pack(push, tgainclude)
+#    pragma pack(1)
+#   endif
+#  else
+#   error do some data packing magic here (#pragma pack?)
+#  endif
 # endif
 #endif
 
@@ -65,6 +69,10 @@ typedef struct _TargaHeader {
 #  pragma option -a4
 # else
 #  pragma pack(pop, tgainclude)
+# endif
+#else
+# if defined (__DECC) && defined (__ALPHA)
+#  pragma member_alignment
 # endif
 #endif
 

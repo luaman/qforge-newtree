@@ -143,7 +143,7 @@ SNDDMA_InitWav ( void )
 
 	if ((format = (LPPCMWAVEFORMAT)
 		mmeAllocMem(sizeof(*format))) == NULL) {
-		Con_SafePrintf("Failed to allocate PCMWAVEFORMAT struct\n");
+		Con_Printf("Failed to allocate PCMWAVEFORMAT struct\n");
 		return false;
 	}
 
@@ -175,10 +175,10 @@ SNDDMA_InitWav ( void )
 	{
 		if (hr != MMSYSERR_ALLOCATED) {
 			mmeFreeMem(format);
-			Con_SafePrintf ("waveOutOpen failed: %d\n", hr);
+			Con_Printf ("waveOutOpen failed: %d\n", hr);
 			return false;
 		} else {
-			Con_SafePrintf ("waveOutOpen failed 2222\n");
+			Con_Printf ("waveOutOpen failed 2222\n");
 		}
 	}
 	mmeFreeMem(format);
@@ -192,7 +192,7 @@ SNDDMA_InitWav ( void )
 	gSndBufSize = WAV_BUFFERS*WAV_BUFFER_SIZE;
 	lpData = mmeAllocBuffer(gSndBufSize);
 	if (!lpData) {
-		Con_SafePrintf ("Sound: Out of memory.\n");
+		Con_Printf ("Sound: Out of memory.\n");
 		FreeSound ();
 		return false;
 	}
@@ -207,7 +207,7 @@ SNDDMA_InitWav ( void )
 
 	if (lpWaveHdr == NULL)
 	{
-		Con_SafePrintf ("Sound: Failed to Alloc header.\n");
+		Con_Printf ("Sound: Failed to Alloc header.\n");
 		FreeSound ();
 		return false;
 	}
@@ -253,9 +253,9 @@ SNDDMA_Init ( void )
 
 		if (snd_iswave) {
 			if (snd_firsttime)
-				Con_SafePrintf ("Wave sound initialized\n");
+				Con_Printf ("Wave sound initialized\n");
 		} else {
-			Con_SafePrintf ("Wave sound failed to init\n");
+			Con_Printf ("Wave sound failed to init\n");
 		}
 	}
 
@@ -263,7 +263,7 @@ SNDDMA_Init ( void )
 
 	if (!wav_init) {
 		if (snd_firsttime)
-			Con_SafePrintf ("No sound device initialized\n");
+			Con_Printf ("No sound device initialized\n");
 
 		return 0;
 	}
@@ -339,7 +339,7 @@ SNDDMA_Submit ( void )
 
 		if (wResult != MMSYSERR_NOERROR)
 		{
-			Con_SafePrintf ("Failed to write block to device\n");
+			Con_Printf ("Failed to write block to device\n");
 			FreeSound ();
 			return;
 		}
