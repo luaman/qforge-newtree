@@ -1710,6 +1710,9 @@ void Host_Init (quakeparms_t *parms)
 	Cmd_Exec_File (fs_globalcfg->string);
 	Cbuf_Execute_Sets ();
 
+	Cmd_StuffCmds_f ();
+	Cbuf_Execute ();
+
 	V_Init ();
 	CL_InitCvars ();
 	SCR_InitCvars ();
@@ -1720,12 +1723,6 @@ void Host_Init (quakeparms_t *parms)
 	// (sets still done, but it doesn't matter)
 	Cmd_StuffCmds_f ();
 	Cbuf_Execute ();
-
-	// make these read-only
-	fs_basepath = Cvar_Get ("fs_basepath", fs_basepath->string, CVAR_ROM,
-							"the location of your game directories");
-	fs_sharepath = Cvar_Get ("fs_sharepath", fs_sharepath->string,
-							 CVAR_ROM, "read-only game directories");
 
 	Host_FixupModelNames();
 	
