@@ -32,9 +32,6 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#ifdef __MINGW32__
-# define INITGUID
-#endif
 
 #define byte __byte
 #include <dinput.h>

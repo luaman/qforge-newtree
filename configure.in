@@ -1264,7 +1264,7 @@ if test "x$GCC" = xyes; then
 fi
 
 AS="$CC"
-ASFLAGS="\$(DEFS) \$(INCLUDES)"
+ASFLAGS="\$(DEFS) \$(DEFAULT_INCLUDES) \$(INCLUDES)"
 AC_SUBST(AS)
 AC_SUBST(ASFLAGS)
 
