@@ -134,6 +134,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\quakeforge.res\
    $(OBJS)\tga.obj\
    $(OBJS)\fractalnoise.obj\
    $(OBJS)\gl_dyn_textures.obj\
@@ -318,6 +319,13 @@ $(QFROOT)\opengl32.lib+
 $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
+
+quakeforge.res
+
+|
+$(OBJS)\quakeforge.res :  $(QFROOT)\include\win32\resources\quakeforge.rc
+  $(BRC32) -R @&&|
+ -FO$@ $(QFROOT)\include\win32\resources\quakeforge.rc
 
 |
 $(OBJS)\tga.obj :  $(QFROOT)\source\tga.c
