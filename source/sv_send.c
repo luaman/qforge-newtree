@@ -142,9 +142,9 @@ void Con_Printf (char *fmt, ...)
 	vsnprintf (msg, sizeof(msg), fmt, argptr);
 	va_end (argptr);
 
-	if (sv_timestamps && sv_timestamps->value && sv_timefmt && sv_timefmt->string)
+	if (sv_timestamps && sv_timefmt && sv_timefmt->string && sv_timestamps->value)
 		timestamps = true;
-	
+
 	if (timestamps) {
 		mytime = time (NULL);
 		local = localtime (&mytime);
