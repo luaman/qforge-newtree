@@ -260,7 +260,7 @@ Qprintf (QFile *file, const char *fmt, ...)
 		ret = strlen (buf);				/* some *snprintf don't return the nb 
 										   of bytes written */
 		if (ret > 0)
-			ret = gzwrite (file, buf, (unsigned) ret);
+			ret = gzwrite (file->gzfile, buf, (unsigned) ret);
 	}
 #endif
 	va_end (args);
