@@ -166,6 +166,13 @@ void Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
 Sys_Init
 ================
 */
+
+void
+Sys_Init_Cvars (void)
+{
+	sys_nostdout = Cvar_Get("sys_nostdout", "1", CVAR_NONE, "None");
+}
+
 void Sys_Init (void)
 {
 	OSVERSIONINFO	vinfo;
@@ -520,7 +527,6 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	if (!tevent)
 		Sys_Error ("Couldn't create event");
 
-        sys_nostdout = Cvar_Get("sys_nostdout", "1", CVAR_NONE, "None");
 // because sound is off until we become active
 	S_BlockSound ();
 

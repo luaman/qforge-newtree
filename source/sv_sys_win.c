@@ -150,12 +150,17 @@ Quake calls this so the system can register variables before host_hunklevel
 is marked
 =============
 */
+
+void
+Sys_Init_Cvars (void)
+{
+	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
+	sys_sleep = Cvar_Get("sys_sleep", "8", CVAR_NONE, "None");
+}
+
 void Sys_Init (void)
 {
 	OSVERSIONINFO	vinfo;
-
-	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
-	sys_sleep = Cvar_Get("sys_sleep", "8", CVAR_NONE, "None");
 
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution

@@ -82,6 +82,7 @@ void Sys_Printf (char *fmt, ...) __attribute__((format(printf,1,2)));
 // send text to the console
 
 void Sys_Init (void);
+void Sys_Init_Cvars (void);
 
 #endif // _SYS_H
 

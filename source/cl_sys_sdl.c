@@ -1,5 +1,5 @@
 /*
-        cl_sys_sdl.c
+	cl_sys_sdl.c
 
 	(description)
 
@@ -243,6 +243,19 @@ void Sys_Sleep (void)
 {
 }
 
+void
+Sys_Init (void)
+{
+}
+
+void
+Sys_Init_Cvars (void)
+{
+	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
+	if (COM_CheckParm("-nostdout"))
+		Cvar_Set(sys_nostdout, "1");
+}
+
 C_LINKAGE int SDL_main(int c, char **v)
 {
 
@@ -285,14 +298,12 @@ C_LINKAGE int SDL_main(int c, char **v)
 */
         parms.basedir = BASEDIR;
 
-        sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
 
 #ifndef WIN32
 	noconinput = COM_CheckParm("-noconinput");
 	if (!noconinput)
 		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | O_NONBLOCK);
 #endif
-        if (COM_CheckParm("-nostdout")) Cvar_Set(sys_nostdout, "1");
 
 	Host_Init(&parms);
 

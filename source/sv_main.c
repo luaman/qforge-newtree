@@ -1888,6 +1888,12 @@ void SV_Init (quakeparms_t *parms)
 	Cbuf_Execute_Sets ();
 
 	COM_Filesystem_Init_Cvars ();
+	COM_Init_Cvars ();
+	Mod_Init_Cvars ();
+	Netchan_Init_Cvars ();
+	Pmove_Init_Cvars ();
+	PR_Init_Cvars ();
+	Sys_Init_Cvars ();
 
 	// and now reprocess the cmdline's sets for overrides
 	Cmd_StuffCmds_f ();
@@ -1895,7 +1901,6 @@ void SV_Init (quakeparms_t *parms)
 
 	COM_Init ();
 	
-	PR_Init_Cvars ();
 	PR_Init ();
 	Mod_Init ();
 

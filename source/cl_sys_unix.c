@@ -113,16 +113,23 @@ void Sys_Printf (char *fmt, ...)
 }
 */
 
-void Sys_Quit (void)
+void
+Sys_Quit (void)
 {
 	Host_Shutdown();
     fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~O_NONBLOCK);
 	exit(0);
 }
 
-void Sys_Init(void)
+void
+Sys_Init_Cvars (void)
 {
 	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
+	if (COM_CheckParm("-nostdout")) Cvar_Set(sys_nostdout, "1");
+}
+
+void Sys_Init(void)
+{
 #ifdef USE_INTEL_ASM
 	Sys_SetFPCW();
 #endif
@@ -242,7 +249,6 @@ int main (int c, char **v)
 	noconinput = COM_CheckParm("-noconinput");
 	if (!noconinput)
 		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | O_NONBLOCK);
-	if (COM_CheckParm("-nostdout")) Cvar_Set(sys_nostdout, "1");
 
     Host_Init(&parms);
 
