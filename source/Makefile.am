@@ -98,50 +98,57 @@ if SNDTYPE_ALSA_0_6
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_6.c
 endif
 if SNDTYPE_MME
-libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_mme.c
+libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_mme.c
 endif
 if SNDTYPE_OSS
-libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_oss.c
+libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_oss.c
+endif
+if SNDTYPE_SGI
+libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_sgi.c
 endif
 if SNDTYPE_SUN
-libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_sun.c
+libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_sun.c
 endif
 if SNDTYPE_WIN32
-libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_win.c
+libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_win.c
 endif
 if SNDTYPE_NULL
-libqfsnd_a_SOURCES = snd_null.c
+libqfsnd_a_SOURCES=	snd_null.c
 endif
 EXTRA_libqfsnd_a_SOURCES= snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_5.c \
-			snd_alsa_0_6.c snd_oss.c snd_sun.c snd_win.c snd_null.c
+			snd_alsa_0_6.c snd_oss.c snd_sdl.c snd_sgi.c \
+			snd_sun.c snd_win.c snd_null.c
 
 #
 # ... CD audio
 #
-if CDTYPE_WIN32
-libqfcd_a_SOURCES = cd_win.c
-endif
 if CDTYPE_LINUX
-libqfcd_a_SOURCES = cd_linux.c
+libqfcd_a_SOURCES=	cd_linux.c
+endif
+if CDTYPE_SGI
+libqfcd_a_SOURCES=	cd_sgi.c
+endif
+if CDTYPE_WIN32
+libqfcd_a_SOURCES=	cd_win.c
 endif
 if CDTYPE_NULL
-libqfcd_a_SOURCES = cd_null.c
+libqfcd_a_SOURCES=	cd_null.c
 endif
-EXTRA_libqfcd_a_SOURCES = cd_audio.c cd_linux.c cd_null.c cd_sdl.c cd_win.c
+EXTRA_libqfcd_a_SOURCES= cd_dos.c cd_linux.c cd_sdl.c cd_sgi.c cd_win.c cd_null.c
 
 #
 # ... Joystick
 #
 if JOYTYPE_LINUX
-libqfjs_a_SOURCES = joy_linux.c
+libqfjs_a_SOURCES=	joy_linux.c
 endif
 if JOYTYPE_NULL
-libqfjs_a_SOURCES = joy_null.c
+libqfjs_a_SOURCES=	joy_null.c
 endif
 libqfjs_a_CFLAGS=	$(JOY_CFLAGS)
-EXTRA_libqfjs_a_SOURCES = joy_linux.c joy_null.c
+EXTRA_libqfjs_a_SOURCES= joy_linux.c joy_null.c
 
-CLIENT_LIBS=	-L. -lqfsys_cl -lqfsnd -lqfcd -lqfjs $(SOUND_LIBS) $(NET_LIBS) $(JOY_LIBS) $(Z_LIBS)
+CLIENT_LIBS=	-L. -lqfsys_cl -lqfsnd -lqfcd -lqfjs $(SOUND_LIBS) $(NET_LIBS) $(CD_LIBS) $(JOY_LIBS) $(Z_LIBS)
 
 if ASM_ARCH
 client_ASM=	snd_mixa.S cl_math.S

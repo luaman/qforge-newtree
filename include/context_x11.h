@@ -28,8 +28,8 @@
 	$Id$
 */
 
-#ifndef __CONTEXT_X11_H__
-#define __CONTEXT_X11_H__
+#ifndef __context_x11_h_
+#define __context_x11_h_
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -57,7 +57,7 @@ void x11_process_events (void);
 void x11_open_display (void);
 void x11_close_display (void);
 void x11_create_null_cursor (void);
-void x11_update_vidmode (int, int);
+void x11_set_vidmode (int, int);
 void x11_restore_vidmode (void);
 void x11_create_window (int, int);
 void x11_grab_keyboard (void);
@@ -65,4 +65,4 @@ void x11_set_caption (char *);
 void x11_force_view_port (void);
 void x11_Init_Cvars (void);
 
-#endif	// __CONTEXT_X11_H__
+#endif	// __context_x11_h_

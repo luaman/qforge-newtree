@@ -31,13 +31,13 @@
 # include "config.h"
 #endif
 
-#ifdef _WIN32
-# include "winquake.h"
-#endif
+#include <string.h>
 
 #include <GL/gl.h>
 
-#include <string.h>
+#ifdef _WIN32
+# include "winquake.h"
+#endif
 
 #include "console.h"
 #include "glquake.h"
@@ -147,9 +147,11 @@ VID_SetPalette (unsigned char *palette)
 		b = pal[2];
 		pal += 3;
 
-//      v = (255<<24) + (r<<16) + (g<<8) + (b<<0);
-//      v = (255<<0) + (r<<8) + (g<<16) + (b<<24);
+#ifdef WORDS_BIGENDIAN
+		v = (255 << 0) + (r << 24) + (g << 16) + (b << 8);
+#else
 		v = (255 << 24) + (r << 0) + (g << 8) + (b << 16);
+#endif
 		*table++ = v;
 	}
 	d_8to24table[255] = 0;				// 255 is transparent
@@ -275,9 +277,7 @@ Tdfx_Init8bitPalette (void)
 		GLubyte     table[256][4];
 		QF_gl3DfxSetPaletteEXT qgl3DfxSetPaletteEXT = NULL;
 
-		if (!
-			(qgl3DfxSetPaletteEXT =
-			 QFGL_ExtensionAddress ("gl3DfxSetPaletteEXT"))) {
+		if (!(qgl3DfxSetPaletteEXT = QFGL_ExtensionAddress ("gl3DfxSetPaletteEXT"))) {
 			return;
 		}
 
@@ -363,7 +363,7 @@ VID_UnlockBuffer (void)
 }
 
 void
-D_BeginDirectRect (int x, int y, byte * pbitmap, int width, int height)
+D_BeginDirectRect (int x, int y, byte *pbitmap, int width, int height)
 {
 }
 

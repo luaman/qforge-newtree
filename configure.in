@@ -61,8 +61,8 @@ AC_CHECK_HEADERS(
 	sys/param.h sys/stat.h sys/time.h sys/timeb.h sys/types.h \
 	sys/socket.h netinet/in.h netdb.h arpa/inet.h sys/filio.h \
 	sys/soundcard.h linux/soundcard.h machine/soundcard.h sys/audioio.h \
-	dsound.h mmsystem.h initguid.h mme/mmsystem.h mme/mme_public.h \
-	sys/asoundlib.h string.h strings.h memory.h malloc.h \
+	dmedia/audio.h dsound.h mmsystem.h initguid.h mme/mmsystem.h \
+	mme/mme_public.h sys/asoundlib.h string.h strings.h memory.h malloc.h \
 	errno.h sys/dir.h fnmatch.h \
 	mgraph.h linux/joystick.h
 )
@@ -629,28 +629,40 @@ fi
 
 dnl OSS
 if test -z "$SNDTYPE" -a "x$ac_cv_header_sys_soundcard_h" = "xyes"; then
-   AC_EGREP_CPP([QF_maGiC_VALUE],[
+	AC_EGREP_CPP([QF_maGiC_VALUE],[
 #include <sys/soundcard.h>
 #ifdef SNDCTL_DSP_SETTRIGGER
 QF_maGiC_VALUE
 #endif
-    ], SNDTYPE="OSS")
+	], SNDTYPE="OSS")
 fi
 if test -z "$SNDTYPE" -a "x$ac_cv_header_linux_soundcard_h" = "xyes"; then
-   AC_EGREP_CPP([QF_maGiC_VALUE],[
+	AC_EGREP_CPP([QF_maGiC_VALUE],[
 #include <linux/soundcard.h>
 #ifdef SNDCTL_DSP_SETTRIGGER
 QF_maGiC_VALUE
 #endif
-    ], SNDTYPE="OSS")
+	], SNDTYPE="OSS")
 fi
 if test -z "$SNDTYPE" -a "x$ac_cv_header_machine_soundcard_h" = "xyes"; then
-   AC_EGREP_CPP([QF_maGiC_VALUE],[
+	AC_EGREP_CPP([QF_maGiC_VALUE],[
 #include <machine/soundcard.h>
 #ifdef SNDCTL_DSP_SETTRIGGER
 QF_maGiC_VALUE
 #endif
-    ], SNDTYPE="OSS")
+	], SNDTYPE="OSS")
+fi
+
+dnl SGI
+if test -z "$SNDTYPE" -a "x$ac_cv_header_dmedia_audio_h" = "xyes"; then
+   AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <dmedia/audio.h>
+#ifdef AL_SAMPLE_16
+#ifdef AL_RATE
+QF_maGiC_VALUE
+#endif
+#endif
+	], SNDTYPE="SGI" SOUND_LIBS="-laudio")
 fi
 
 dnl Sun
@@ -660,7 +672,7 @@ if test -z "$SNDTYPE" -a "x$ac_cv_header_sys_audioio_h" = "xyes"; then
 #ifdef AUDIO_SETINFO
 QF_maGiC_VALUE
 #endif
-    ], SNDTYPE="SUN")
+	], SNDTYPE="SUN")
 fi
 
 dnl Win32
@@ -685,23 +697,25 @@ else
 fi
 AC_SUBST(SOUND_LIBS)
 AC_SUBST(SOUND_CFLAGS)
+
 AM_CONDITIONAL(SNDTYPE_ALSA_0_5, test "$SNDTYPE" = "ALSA_0_5")
 AM_CONDITIONAL(SNDTYPE_ALSA_0_6, test "$SNDTYPE" = "ALSA_0_6")
 AM_CONDITIONAL(SNDTYPE_MME, test "$SNDTYPE" = "MME")
 AM_CONDITIONAL(SNDTYPE_OSS, test "$SNDTYPE" = "OSS")
+AM_CONDITIONAL(SNDTYPE_SGI, test "$SNDTYPE" = "SGI")
 AM_CONDITIONAL(SNDTYPE_SUN, test "$SNDTYPE" = "SUN")
 AM_CONDITIONAL(SNDTYPE_WIN32, test "$SNDTYPE" = "WIN32")
-AM_CONDITIONAL(SNDTYPE_NULL, test "$SNDTYPE" != "ALSA_0_5" -a "$SNDTYPE" != "ALSA_0_6" -a "$SNDTYPE" != "MME" -a "$SNDTYPE" != "OSS" -a "$SNDTYPE" != "SUN" -a "$SNDTYPE" != "WIN32")
+AM_CONDITIONAL(SNDTYPE_NULL, test "$SNDTYPE" != "ALSA_0_5" -a "$SNDTYPE" != "ALSA_0_6" -a "$SNDTYPE" != "MME" -a "$SNDTYPE" != "OSS" -a "$SNDTYPE" != "SGI" -a "$SNDTYPE" != "SUN" -a "$SNDTYPE" != "WIN32")
 
 dnl Tests for joystick support
 AC_MSG_CHECKING(for joystick support)
 if test -z "$JOYTYPE" -a "x$ac_cv_header_linux_joystick_h" = "xyes"; then
-   AC_EGREP_CPP([QF_maGiC_VALUE],[
+	AC_EGREP_CPP([QF_maGiC_VALUE],[
 #include <linux/joystick.h>
 #ifdef JS_VERSION
 QF_maGiC_VALUE
 #endif
-    ], JOYTYPE="Linux")
+	], JOYTYPE="Linux")
 fi
 
 if test "$JOYTYPE"; then
@@ -736,6 +750,21 @@ QF_maGiC_VALUE
 	)
 fi
 
+dnl SGI
+if test -z "$CDTYPE"; then
+	AC_EGREP_CPP([QF_maGiC_VALUE],
+		[
+#include <dmedia/cdaudio.h>
+#ifdef CD_READY
+QF_maGiC_VALUE
+#endif
+		],
+		AC_MSG_RESULT([yes (SGI)])
+		CDTYPE=SGI
+		CD_LIBS="-lcdaudio -lmediad -lds"
+	)
+fi
+
 if test -z "$CDTYPE"; then
 	AC_EGREP_CPP([QF_maGIC_VALUE],
 		[
@@ -752,23 +781,27 @@ fi
 test -z "$CDTYPE" && AC_MSG_RESULT([no, using null CD audio driver])
 AC_SUBST(CD_LIBS)
 AC_SUBST(CD_CFLAGS)
+
 AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "LINUX")
+AM_CONDITIONAL(CDTYPE_SGI, test "$CDTYPE" = "SGI")
 AM_CONDITIONAL(CDTYPE_WIN32, test "$CDTYPE" = "WIN32")
-AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "LINUX" -a "$CDTYPE" != "WIN32")
+AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "LINUX" -a "$CDTYPE" != "SGI" -a "$CDTYPE" != "WIN32")
 
 dnl ==================================================================
 dnl Checks for networking
 dnl ==================================================================
 
 if test "x$ac_cv_func_connect" != "xyes"; then
-  AC_CHECK_LIB(socket,connect,
-    NET_LIBS="$NET_LIBS -lsocket"
-    ac_cv_func_connect=yes)
+	AC_CHECK_LIB(socket, connect,
+					NET_LIBS="$NET_LIBS -lsocket"
+					ac_cv_func_connect=yes
+				)
 fi
 if test "x$ac_cv_func_gethostbyname" != "xyes"; then
-  AC_CHECK_LIB(nsl,gethostbyname,
-    NET_LIBS="$NET_LIBS -lnsl"
-    ac_cv_func_gethostbyname=yes)
+	AC_CHECK_LIB(nsl, gethostbyname,
+					NET_LIBS="$NET_LIBS -lnsl"
+					ac_cv_func_gethostbyname=yes
+				)
 fi
 
 AC_MSG_CHECKING([for connect in -lwsock32])
@@ -779,36 +812,37 @@ AC_TRY_LINK([
 ],[
 connect(0, NULL, 42);
 ],
-  NET_LIBS="$NET_LIBS -lwsock32 -lwinmm"
-  ac_cv_func_connect=yes
-  ac_cv_func_gethostbyname=yes
-  HAVE_WSOCK=yes
-  AC_MSG_RESULT(yes),
-  AC_MSG_RESULT(no))
+	NET_LIBS="$NET_LIBS -lwsock32 -lwinmm"
+	ac_cv_func_connect=yes
+	ac_cv_func_gethostbyname=yes
+	HAVE_WSOCK=yes
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no)
+)
 LIBS="$SAVELIBS"
 
 AC_MSG_CHECKING(for UDP support)
-if test "x$ac_cv_func_connect" = "xyes" -a \
-	"x$ac_cv_func_gethostbyname" = "xyes"; then
-  HAVE_UDP=yes
-  AC_MSG_RESULT(yes)
+if test "x$ac_cv_func_connect" = "xyes" -a "x$ac_cv_func_gethostbyname" = "xyes"; then
+	HAVE_UDP=yes
+	AC_MSG_RESULT(yes)
 else
-  AC_MSG_RESULT(no)
+	AC_MSG_RESULT(no)
 fi
 
 if test "x$ac_cv_func_connect" != "xyes"; then
-  AC_MSG_CHECKING([for connect in -lwsock32])
-  SAVELIBS="$LIBS"
-  LIBS="$LIBS -lwsock32"
-  AC_TRY_LINK([
+	AC_MSG_CHECKING([for connect in -lwsock32])
+	SAVELIBS="$LIBS"
+	LIBS="$LIBS -lwsock32"
+	AC_TRY_LINK([
 #include <winsock.h>
 ],[
 connect(0, NULL, 42);
 ],
-    NET_LIBS="$NET_LIBS -lwsock32 -lwinmm"
-    AC_MSG_RESULT(yes),
-    AC_MSG_RESULT(no))
-  LIBS="$SAVELIBS"
+	    NET_LIBS="$NET_LIBS -lwsock32 -lwinmm"
+	    AC_MSG_RESULT(yes),
+	    AC_MSG_RESULT(no)
+	)
+	LIBS="$SAVELIBS"
 fi
 AC_SUBST(NET_LIBS)
 
@@ -1009,8 +1043,8 @@ fi
 
 dnl We want warnings, lots of warnings...
 if test "x$GCC" = xyes; then
-   CFLAGS="$CFLAGS -Wall -Werror"
-#   CFLAGS="$CFLAGS -Wall -pedantic"
+	CFLAGS="$CFLAGS -Wall -Werror"
+#	CFLAGS="$CFLAGS -Wall -pedantic"
 fi
 
 dnl ==================================================================
@@ -1020,10 +1054,10 @@ dnl ==================================================================
 AC_MSG_CHECKING(for libz.a in X11)
 need_abs_libz=no
 for d in `echo $X_LIBS | sed -e 's/-L//'`; do
-  if test -f $d/libz.a; then
-	need_abs_libz=yes
-	break
-  fi
+	if test -f $d/libz.a; then
+		need_abs_libz=yes
+		break
+	fi
 done
 AC_MSG_RESULT($need_abs_libz)
 
@@ -1031,22 +1065,22 @@ AC_ARG_WITH(libz,
 [  --with-libz=<path list> specify directories to search for zlib],
 zlib_paths="$withval", zlib_paths="")
 if test "x$need_abs_libz" = "xyes"; then
-  AC_MSG_CHECKING(for location of libz.a or libz.so)
-  zlib_location="unknown"
-  for d in $zlib_paths /usr/local/lib /usr/lib; do
-    for f in libz.so libz.a; do
-      if test -f $d/$f; then
-        zlib_location=$d/$f
-        break
-      fi
-    done
-  done
-  AC_MSG_RESULT($zlib_location)
-  if test "$zlib_location" = unknown; then
-    echo need to specify zlib location with --with-zlib
-    exit 1
-  fi
-  Z_LIBS="$zlib_location"
+	AC_MSG_CHECKING(for location of libz.a or libz.so)
+	zlib_location="unknown"
+	for d in $zlib_paths /usr/local/lib /usr/lib; do
+		for f in libz.so libz.a; do
+			if test -f $d/$f; then
+			zlib_location=$d/$f
+			break
+		fi
+		done
+	done
+	AC_MSG_RESULT($zlib_location)
+	if test "$zlib_location" = unknown; then
+		echo need to specify zlib location with --with-zlib
+		exit 1
+	fi
+	Z_LIBS="$zlib_location"
 fi
 AC_SUBST(Z_LIBS)
 
@@ -1107,8 +1141,9 @@ else
 fi
 
 AC_ARG_WITH(server,
-[  --with-server           compile dedicated server],
-  SV_TARGETS="$withval", SV_TARGETS=yes)
+	[  --with-server           compile dedicated server],
+	SV_TARGETS="$withval", SV_TARGETS=yes
+)
 
 CL_TARGETS=""
 TARGETS=""
