@@ -56,6 +56,10 @@ VID_CheckDGA (Display * dpy, int *maj_ver, int *min_ver, int *hasvideo)
 #ifdef HAVE_DGA
 	int         event_base, error_base, dgafeat, dummy;
 
+	if (!XQueryExtension (dpy, "XFree86-DGA", &dummy, &dummy, &dummy)) {
+		return false;
+	}
+
 	if (!XF86DGAQueryExtension (dpy, &event_base, &error_base)) {
 		return false;
 	}
@@ -96,6 +100,10 @@ VID_CheckVMode (Display * dpy, int *maj_ver, int *min_ver)
 #if defined(HAVE_VIDMODE)
 	int         event_base, error_base;
 	int         dummy;
+
+	if (!XQueryExtension (dpy, "XFree86-VidModeExtension", &dummy, &dummy, &dummy)) {
+		return false;
+	}
 
 	if (!XF86VidModeQueryExtension (dpy, &event_base, &error_base)) {
 		return false;
