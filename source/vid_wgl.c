@@ -1567,35 +1567,6 @@ void VID_Init8bitPalette()
 	is8bit = TRUE;
 }
 
-static void Check_Gamma (unsigned char *pal)
-{
-	float	f, inf;
-	unsigned char	palette[768];
-	int		i;
-
-	if ((i = COM_CheckParm("-gamma")) == 0) {
-		if ((gl_renderer && strstr(gl_renderer, "Voodoo")) ||
-			(gl_vendor && strstr(gl_vendor, "3Dfx")))
-			vid_gamma = 1;
-		else
-			vid_gamma = 0.7; // default to 0.7 on non-3dfx hardware
-	} else
-		vid_gamma = atof(com_argv[i+1]);
-
-	for (i=0 ; i<768 ; i++)
-	{
-		f = pow ( (pal[i]+1)/256.0 , vid_gamma );
-		inf = f*255 + 0.5;
-		if (inf < 0)
-			inf = 0;
-		if (inf > 255)
-			inf = 255;
-		palette[i] = inf;
-	}
-
-	memcpy (pal, palette, sizeof(palette));
-}
-
 /*
 ===================
 VID_Init
@@ -1830,7 +1801,7 @@ void	VID_Init (unsigned char *palette)
 
 	DestroyWindow (hwnd_dialog);
 
-	Check_Gamma(palette);
+	GL_CheckGamma(palette);
 	VID_SetPalette (palette);
 
 	VID_SetMode (vid_default, palette);

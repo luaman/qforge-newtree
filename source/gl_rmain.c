@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "qargs.h"
 #include "bothdefs.h"
 #include "commdef.h"
 #include "console.h"
@@ -123,6 +124,42 @@ cvar_t	*r_skyname;
 
 extern	cvar_t	*gl_ztrick;
 extern	cvar_t	*scr_fov;
+
+//byte gamma[256];
+//byte lightgamma[1024];
+static float vid_gamma = 1.0;
+
+void
+GL_CheckGamma (unsigned char *pal)
+{
+	float	f, inf;
+	unsigned char	palette[768];
+	int		i;
+
+	if ((i = COM_CheckParm("-gamma")) == 0) {
+		if ((gl_renderer && strstr(gl_renderer, "Voodoo")) ||
+			(gl_vendor && strstr(gl_vendor, "3Dfx")))
+			vid_gamma = 1;
+		else
+			vid_gamma = 0.7; // default to 0.7 on non-3dfx hardware
+	} else
+		vid_gamma = atof(com_argv[i+1]);
+
+	for (i=0 ; i<768 ; i++)
+	{
+		f = pow ( (pal[i]+1)/256.0 , vid_gamma );
+		inf = f*255 + 0.5;
+		if (inf < 0)
+			inf = 0;
+		if (inf > 255)
+			inf = 255;
+		palette[i] = inf;
+	}
+
+	memcpy (pal, palette, sizeof(palette));
+}
+
+
 /*
 =================
 R_CullBox

@@ -597,7 +597,8 @@ void VID_Init(unsigned char *palette)
 	snprintf(gldir, sizeof(gldir), "%s/glquake", com_gamedir);
 	Sys_mkdir (gldir);
 
-	VID_SetPalette(palette);
+	GL_CheckGamma (palette);
+	VID_SetPalette (palette);
 
 	// Check for 3DFX Extensions and initialize them.
 	VID_Init8bitPalette();

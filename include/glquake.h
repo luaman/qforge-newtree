@@ -263,6 +263,7 @@ void GL_Set2D (void);
 //
 // gl_rmain.c
 //
+void GL_CheckGamma (unsigned char *pal);
 qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_RotateForEntity (entity_t *e);
 
