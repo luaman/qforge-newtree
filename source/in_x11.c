@@ -29,9 +29,11 @@
 	$Id$
 */
 
-#define _BSD
+#ifdef HAVE_CONFIG_H
 # include "config.h"
+#endif
 
+#define _BSD
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -60,6 +62,7 @@
 #include "client.h"
 #include "console.h"
 #include "context_x11.h"
+#include "cmd.h"
 #include "cvar.h"
 #include "dga_check.h"
 #include "host.h"
@@ -482,6 +485,12 @@ IN_Shutdown (void)
 }
 
 void
+Force_CenterView_f (void)
+{
+	cl.viewangles[PITCH] = 0;
+}
+
+void
 IN_Init (void)
 {
 	// open the display
@@ -527,7 +536,7 @@ IN_Init (void)
 	x11_add_event (ButtonRelease, &event_button);
 	x11_add_event (MotionNotify, &event_motion);
 
-	return;
+	Cmd_AddCommand ("force_centerview", Force_CenterView_f, "No Description");
 }
 
 void

@@ -586,8 +586,7 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 					fn = filename;
 #endif
 				if (fn) {				// found it!
-					if (developer->int_val)
-						Sys_Printf ("PackFile: %s : %s\n", pak->filename, fn);
+					Con_DPrintf ("PackFile: %s : %s\n", pak->filename, fn);
 					// open a new file on the pakfile
 					strncpy (foundname, fn, MAX_OSPATH);
 					*gzfile =
@@ -615,8 +614,7 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 					continue;
 			}
 
-			if (developer->int_val)
-				Sys_Printf ("FindFile: %s\n", netpath);
+			Con_DPrintf ("FindFile: %s\n", netpath);
 
 			*gzfile = COM_OpenRead (netpath, -1, -1, zip);
 			return com_filesize;
@@ -624,8 +622,7 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 
 	}
 
-	if (developer->int_val)
-		Sys_Printf ("FindFile: can't find %s\n", filename);
+	Con_DPrintf ("FindFile: can't find %s\n", filename);
 
 	*gzfile = NULL;
 	com_filesize = -1;
