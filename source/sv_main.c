@@ -837,7 +837,7 @@ SVC_DirectConnect (void)
 	// QuakeForge stuff.
 	newcl->msecs = 0;
 	newcl->msec_cheating = 0;
-	newcl->last_check = realtime;
+	newcl->last_check = -1;
 
 }
 

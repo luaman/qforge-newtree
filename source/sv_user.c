@@ -64,6 +64,8 @@ cvar_t	*sv_timekick;
 cvar_t	*sv_timekick_fuzz;
 cvar_t 	*sv_timekick_interval;
 
+extern cvar_t	*sv_maxrate;
+
 extern	vec3_t	player_mins;
 
 extern int fp_messages, fp_persecond, fp_secondsdead;
@@ -1076,94 +1078,89 @@ void SV_PTrack_f (void)
 
 
 /*
-=================
-SV_Rate_f
+	SV_Rate_f
 
-Change the bandwidth estimate for a client
-=================
+	Change the bandwidth estimate for a client
 */
-void SV_Rate_f (void)
+void
+SV_Rate_f (void)
 {
-	int		rate;
+	int	rate;
 	
-	if (Cmd_Argc() != 2)
-	{
+	if (Cmd_Argc () != 2) {
 		SV_ClientPrintf (host_client, PRINT_HIGH, "Current rate is %i\n",
-			(int)(1.0/host_client->netchan.rate + 0.5));
+			(int) (1.0 / host_client->netchan.rate + 0.5));
 		return;
 	}
 	
-	rate = atoi(Cmd_Argv(1));
-	if (rate < 500)
-		rate = 500;
-	if (rate > 10000)
-		rate = 10000;
+	rate = atoi (Cmd_Argv (1));
+	if ((sv_maxrate->int_val) && (rate > sv_maxrate->int_val)) {
+		rate = bound (500, rate, sv_maxrate->int_val);
+	} else {
+		rate = bound (500, rate, 10000);
+	}
 
 	SV_ClientPrintf (host_client, PRINT_HIGH, "Net rate set to %i\n", rate);
-	host_client->netchan.rate = 1.0/rate;
+	host_client->netchan.rate = 1.0 / rate;
 }
 
 
 /*
-=================
-SV_Msg_f
+	SV_Msg_f
 
-Change the message level for a client
-=================
+	Change the message level for a client
 */
-void SV_Msg_f (void)
+void
+SV_Msg_f (void)
 {	
-	if (Cmd_Argc() != 2)
+	if (Cmd_Argc () != 2)
 	{
 		SV_ClientPrintf (host_client, PRINT_HIGH, "Current msg level is %i\n",
 			host_client->messagelevel);
 		return;
 	}
 	
-	host_client->messagelevel = atoi(Cmd_Argv(1));
+	host_client->messagelevel = atoi (Cmd_Argv (1));
 
 	SV_ClientPrintf (host_client, PRINT_HIGH, "Msg level set to %i\n", host_client->messagelevel);
 }
 
 /*
-==================
-SV_SetInfo_f
+	SV_SetInfo_f
 
-Allow clients to change userinfo
-==================
+	Allow clients to change userinfo
 */
-void SV_SetInfo_f (void)
+void
+SV_SetInfo_f (void)
 {
 	int i;
 	char oldval[MAX_INFO_STRING];
 
 
-	if (Cmd_Argc() == 1)
-	{
+	if (Cmd_Argc () == 1) {
 		Con_Printf ("User info settings:\n");
 		Info_Print (host_client->userinfo);
 		return;
 	}
 
-	if (Cmd_Argc() != 3)
-	{
+	if (Cmd_Argc () != 3) {
 		Con_Printf ("usage: setinfo [ <key> <value> ]\n");
 		return;
 	}
 
-	if (Cmd_Argv(1)[0] == '*')
+	if (Cmd_Argv (1)[0] == '*')
 		return;		// don't set priveledged values
 
-	strcpy(oldval, Info_ValueForKey(host_client->userinfo, Cmd_Argv(1)));
+	strcpy (oldval, Info_ValueForKey (host_client->userinfo, Cmd_Argv (1)));
 
-	Info_SetValueForKey (host_client->userinfo, Cmd_Argv(1), Cmd_Argv(2), MAX_INFO_STRING);
+	Info_SetValueForKey (host_client->userinfo, Cmd_Argv (1), Cmd_Argv (2), MAX_INFO_STRING);
 // name is extracted below in ExtractFromUserInfo
 //	strncpy (host_client->name, Info_ValueForKey (host_client->userinfo, "name")
 //		, sizeof(host_client->name)-1);	
 //	SV_FullClientUpdate (host_client, &sv.reliable_datagram);
 //	host_client->sendinfo = true;
 
-	if (!strcmp(Info_ValueForKey(host_client->userinfo, Cmd_Argv(1)), oldval))
+	if (strequal (Info_ValueForKey (host_client->userinfo, Cmd_Argv (1)), oldval))
 		return; // key hasn't changed
 
 	// process any changed values
@@ -1177,18 +1174,18 @@ void SV_SetInfo_f (void)
 }
 
 /*
-==================
-SV_ShowServerinfo_f
+	SV_ShowServerinfo_f
 
-Dumps the serverinfo info string
-==================
+	Dump serverinfo into a string
 */
-void SV_ShowServerinfo_f (void)
+void
+SV_ShowServerinfo_f (void)
 {
 	Info_Print (svs.info);
 }
 
-void SV_NoSnap_f(void)
+void
+SV_NoSnap_f (void)
 {
 	if (*host_client->uploadfn) {
 		*host_client->uploadfn = 0;
@@ -1196,14 +1193,12 @@ void SV_NoSnap_f(void)
 	}
 }
 
-typedef struct
-{
+typedef struct {
 	char	*name;
 	void	(*func) (void);
 } ucmd_t;
 
-ucmd_t ucmds[] =
-{
+ucmd_t ucmds[] = {
 	{"new", SV_New_f},
 	{"modellist", SV_Modellist_f},
 	{"soundlist", SV_Soundlist_f},
@@ -1238,11 +1233,12 @@ ucmd_t ucmds[] =
 };
 
 /*
-==================
-SV_ExecuteUserCommand
-==================
+	SV_ExecuteUserCommand
+
+	Uhh...execute user command. :)
 */
-void SV_ExecuteUserCommand (char *s)
+void
+SV_ExecuteUserCommand (char *s)
 {
 	ucmd_t	*u;
 	
@@ -1251,15 +1247,15 @@ void SV_ExecuteUserCommand (char *s)
 
 	SV_BeginRedirect (RD_CLIENT);
 
-	for (u=ucmds ; u->name ; u++)
-		if (!strcmp (Cmd_Argv(0), u->name) )
-		{
+	for (u = ucmds; u->name; u++) {
+		if (!strcmp (Cmd_Argv (0), u->name)) {
 			u->func ();
 			break;
 		}
+	}
 
 	if (!u->name)
-		Con_Printf ("Bad user command: %s\n", Cmd_Argv(0));
+		Con_Printf ("Bad user command: %s\n", Cmd_Argv (0));
 
 	SV_EndRedirect ();
 }
@@ -1279,7 +1275,8 @@ SV_CalcRoll
 Used by view and sv_user
 ===============
 */
-float SV_CalcRoll (vec3_t angles, vec3_t velocity)
+float
+SV_CalcRoll (vec3_t angles, vec3_t velocity)
 {
 	vec3_t	forward, right, up;
 	float	sign;
@@ -1353,10 +1350,10 @@ void AddLinksToPmove ( areanode_t *node )
 
 			VectorCopy (check->v.origin, pe->origin);
 			pe->info = NUM_FOR_EDICT(check);
-			if (check->v.solid == SOLID_BSP)
+
+			if (check->v.solid == SOLID_BSP) {
 				pe->model = sv.models[(int)(check->v.modelindex)];
-			else
-			{
+			} else {
 				pe->model = NULL;
 				VectorCopy (check->v.mins, pe->mins);
 				VectorCopy (check->v.maxs, pe->maxs);
@@ -1364,14 +1361,15 @@ void AddLinksToPmove ( areanode_t *node )
 		}
 	}
 	
-// recurse down both sides
+	// recurse down both sides
 	if (node->axis == -1)
 		return;
 
-	if ( pmove_maxs[node->axis] > node->dist )
-		AddLinksToPmove ( node->children[0] );
-	if ( pmove_mins[node->axis] < node->dist )
-		AddLinksToPmove ( node->children[1] );
+	if (pmove_maxs[node->axis] > node->dist)
+		AddLinksToPmove (node->children[0]);
+
+	if (pmove_mins[node->axis] < node->dist)
+		AddLinksToPmove (node->children[1]);
 }
 
 
@@ -1450,7 +1448,8 @@ SV_RunCmd
 */
 extern qboolean		nouse;	// 1999-10-29 +USE fix by Maddes
 
-void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
+void
+SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 {
 	edict_t *ent;
 	int 	i, n, oldmsec;
@@ -1465,13 +1464,16 @@ void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 				&& (tmp_time = realtime - host_client->last_check) >= sv_timekick_interval->value) {
 			
 			tmp_time1 = tmp_time * (1000 + sv_timekick_fuzz->value);
-			tmp_time2 = tmp_time * (1000 - sv_timekick_fuzz->value);
+			// handle underspeeds too, but with double fuzz applied
+			tmp_time2 = tmp_time * (1000 - (sv_timekick_fuzz->value * 2));
 
-			if ((host_client->msecs > (int) tmp_time1) || (host_client->msecs < (int) tmp_time2)) {
+			if ((host_client->last_check != -1) // don't do it if new player
+					&& ((host_client->msecs > (int) tmp_time1)
+						|| (host_client->msecs < (int) tmp_time2))) {
 				host_client->msec_cheating++;
 				SV_BroadcastPrintf (PRINT_HIGH,
-								va("%s thinks %d msecs pass in %f msecs. (Strike %d/%d)\n",
-								host_client->name, host_client->msecs, tmp_time,
+								va ("%s thinks there are %d ms in %d seconds (Strike %d/%d)\n",
+								host_client->name, host_client->msecs, (int) tmp_time,
 								host_client->msec_cheating, sv_timekick->int_val));
 
 				if (host_client->msec_cheating >= sv_timekick->int_val) {
@@ -1540,8 +1542,7 @@ void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 	}
 
 	for (i=0 ; i<3 ; i++)
-		pmove.origin[i] = sv_player->v.origin[i] + (sv_player->v.mins[i]
-- player_mins[i]);
+		pmove.origin[i] = sv_player->v.origin[i] + (sv_player->v.mins[i] - player_mins[i]);
 	VectorCopy (sv_player->v.velocity, pmove.velocity);
 	VectorCopy (sv_player->v.v_angle, pmove.angles);
 
@@ -1562,7 +1563,7 @@ void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 		pmove_maxs[i] = pmove.origin[i] + 256;
 	}
 #if 1
-	AddLinksToPmove ( sv_areanodes );
+	AddLinksToPmove (sv_areanodes);
 #else
 	AddAllEntsToPmove ();
 #endif
