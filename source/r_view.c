@@ -871,6 +871,9 @@ cl.simangles[ROLL] = 0;	// FIXME @@@
 
 	R_PushDlights ();
 	R_RenderView ();
+
+	if (crosshair.value)
+		Draw_Crosshair ();
 }
 
 //============================================================================
