@@ -57,6 +57,7 @@ typedef struct
 	int		oldbuttons;
 	float		waterjumptime;
 	qboolean	dead;
+	qboolean	flying;
 	int		spectator;
 
 	// world state
