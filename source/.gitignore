@@ -1,10 +1,11 @@
 *.d
 *.o
 *.obj
-qf-server
-qf-client-x11
-qf-client-ggi
-qf-client-svga
-qf-client-glx
+Makefile.in
 client.exe
+qf-client-ggi
+qf-client-glx
+qf-client-svga
+qf-client-x11
+qf-server
 server.exe
