@@ -498,8 +498,8 @@ PF_break (progs_t *pr)
 	PF_traceline
 
 	Used for use tracing and shot targeting
-	Traces are blocked by bbox and exact bsp entityes, and also slide box entities
-	if the tryents flag is set.
+	Traces are blocked by bbox and exact bsp entityes, and also slide box
+	entities if the tryents flag is set.
 
 	traceline (vector1, vector2, tryents)
 */
