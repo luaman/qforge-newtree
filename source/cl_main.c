@@ -32,6 +32,9 @@
 #endif
 #include <ctype.h>
 
+#include "sys.h"
+#include "quakedef.h"
+
 #ifdef _WIN32
 #include "winquake.h"
 #include "winsock.h"
@@ -40,9 +43,6 @@
 #include <netinet/in.h>
 #endif
 #include <cl_slist.h>
-
-#include "sys.h"
-#include "quakedef.h"
 
 // we need to declare some mouse variables here, because the menu system
 // references them even when on a unix system.
