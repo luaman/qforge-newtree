@@ -354,6 +354,7 @@ locs_markloc (void)
 	char       *mapname, *t1;
 	QFile      *locfd;
 	char        locfile[MAX_OSPATH];
+	char       *desc = Cmd_Args ();
 
 	if (Cmd_Argc () == 1) {
 		Con_Printf
@@ -361,7 +362,7 @@ locs_markloc (void)
 		return;
 	}
 	VectorCopy (cl.simorg, loc);
-	locs_add (loc, Cmd_Args ());
+	locs_add (loc, desc);
 #ifdef HAVE_ZLIB
 	if(locisgz) {
 		Cmd_ExecuteString ("zdumploc");
@@ -393,9 +394,9 @@ locs_markloc (void)
 		}
 	}
 	Qprintf (locfd, "%.0f %.0f %.0f %s\n", loc[0], loc[1], loc[2],
-			 Cmd_Argv (1));
+			 desc);
 	Qclose (locfd);
-	Con_Printf("Marked Current Location: %s\n",Cmd_Argv(1));
+	Con_Printf("Marked Current Location: %s\n", desc);
 	free (mapname);
 }
 
@@ -523,9 +524,10 @@ locs_editloc (void)
 {
 	vec3_t          loc;
 	int             i;
+	char           *desc = Cmd_Args ();
 	
 	if ((strncasecmp(Cmd_Argv(0),"editloc",7) == 0) && 
-			(Cmd_Argc () != 2)) {
+			(Cmd_Argc () == 1)) {
 		Con_Printf("editloc <description> :changed the description of the nearest location marker\n");
 		return;
 	}
@@ -533,9 +535,9 @@ locs_editloc (void)
 		VectorCopy (cl.simorg, loc);
 		i = locs_search(loc);
 		Con_Printf("Changing location marker from %s to %s\n",
-				locations[i]->name, Cmd_Argv(1));
+				locations[i]->name, desc);
 		free ((void *) locations[i]->name);
-		locations[i]->name = strdup (Cmd_Argv(1));
+		locations[i]->name = strdup (desc);
 #ifdef HAVE_ZLIB
 		if (locisgz)
 			Cmd_ExecuteString ("zdumploc");
