@@ -29,26 +29,29 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "server.h"
-#include "va.h"
-#include "crc.h"
-#include "msg.h"
-#include "world.h"
-#include "commdef.h"
-#include "cmd.h"
-#include "sys.h"
-#include "pmove.h"
-#include "quakefs.h"
-#include "qargs.h"
-#include "bothdefs.h"
-#include "buildnum.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
+#include "bothdefs.h"
+#include "buildnum.h"
+#include "cmd.h"
+#include "commdef.h"
+#include "crc.h"
+#include "msg.h"
+#include "pmove.h"
+#include "qargs.h"
+#include "quakefs.h"
+#include "server.h"
+#include "sys.h"
+#include "va.h"
+#include "ver_check.h"
+#include "world.h"
 
 quakeparms_t	host_parms;
 qboolean		host_initialized;	// true if into command execution
@@ -671,14 +674,13 @@ SVC_DirectConnect (void)
 
 	s = Info_ValueForKey (userinfo, "*qf_version");
 	if ((!s[0]) || sv_minqfversion->value) { // kick old clients?
-		if ((atof (s) + 0.005) < sv_minqfversion->value) {
-			Con_Printf ("%s: QF version %g is less than minimum version %g.\n",
-						NET_AdrToString (net_from),
-						atof (s),
-						sv_minqfversion->value);
+		if (ver_compare (s, sv_minqfversion->string) < 0) {
+			Con_Printf ("%s: Version %s is less than minimum version %s.\n",
+						NET_AdrToString (net_from), s, sv_minqfversion->string);
+
 			Netchan_OutOfBandPrint (net_from,
-									"%c\nserver requires QuakeForge v%g or greater. Get it from http://www.quakeforge.net/\n",
-									A2C_PRINT, sv_minqfversion->value);
+									"%c\nserver requires QuakeForge v%s or greater. Get it from http://www.quakeforge.net/\n",
+									A2C_PRINT, sv_minqfversion->string);
 			return;
 		}
 	}
