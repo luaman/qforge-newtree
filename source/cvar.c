@@ -19,11 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // cvar.c -- dynamic variable tracking
 
-#ifdef SERVERONLY 
-#include "qwsvdef.h"
-#else
 #include "quakedef.h"
-#endif
 
 cvar_t	*cvar_vars;
 char	*cvar_null_string = "";
@@ -104,16 +100,14 @@ char *Cvar_CompleteVariable (char *partial)
 	return NULL;
 }
 
-
-#ifdef SERVERONLY
-void SV_SendServerInfoChange(char *key, char *value);
-#endif
-
 /*
 ============
 Cvar_Set
 ============
 */
+
+void Cvar_Info (cvar_t *var);
+
 void Cvar_Set (char *var_name, char *value)
 {
 	cvar_t	*var;
@@ -124,31 +118,14 @@ void Cvar_Set (char *var_name, char *value)
 		Con_Printf ("Cvar_Set: variable %s not found\n", var_name);
 		return;
 	}
-
-#ifdef SERVERONLY
-	if (var->info)
-	{
-		Info_SetValueForKey (svs.info, var_name, value, MAX_SERVERINFO_STRING);
-		SV_SendServerInfoChange(var_name, value);
-//		SV_BroadcastCommand ("fullserverinfo \"%s\"\n", svs.info);
-	}
-#else
-	if (var->info)
-	{
-		Info_SetValueForKey (cls.userinfo, var_name, value, MAX_INFO_STRING);
-		if (cls.state >= ca_connected)
-		{
-			MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
-			SZ_Print (&cls.netchan.message, va("setinfo \"%s\" \"%s\"\n", var_name, value));
-		}
-	}
-#endif
 	
 	Z_Free (var->string);	// free the old value string
 	
 	var->string = Z_Malloc (Q_strlen(value)+1);
 	Q_strcpy (var->string, value);
 	var->value = Q_atof (var->string);
+
+	Cvar_Info(var);
 }
 
 /*

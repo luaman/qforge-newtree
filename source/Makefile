@@ -43,6 +43,7 @@ EXE_sources=\
   common.c \
   crc.c \
   cvar.c \
+  sv_cvar.c \
   mathlib.c \
   math.S \
   mdfour.c \
