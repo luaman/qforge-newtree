@@ -520,7 +520,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	if (!tevent)
 		Sys_Error ("Couldn't create event");
 
-        sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
+        sys_nostdout = Cvar_Get("sys_nostdout", "1", CVAR_NONE, "None");
 // because sound is off until we become active
 	S_BlockSound ();
 
