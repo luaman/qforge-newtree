@@ -282,10 +282,13 @@ R_DrawSky (void)
 static int
 determine_face (vec3_t v)
 {
-	float a[3] = {fabs (v[0]), fabs (v[1]), fabs (v[2])};
-	float m = a[0];
+	float a[3];
+	float m;
 	int i=0;
 
+	m = a[0] = fabs (v[0]);
+	a[1] = fabs (v[1]);
+	a[2] = fabs (v[2]);
 	if (a[1] > m) {
 		m = a[1];
 		i = 1;
