@@ -442,8 +442,7 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 				OPC->_float = !OPA->_float;
 				break;
 			case OP_NOT_V:
-				OPC->_float = !OPA->vector[0] && !OPA->vector[1]
-					&& !OPA->vector[2];
+				OPC->_float = VectorIsNull(OPA->vector);
 				break;
 			case OP_NOT_S:
 				OPC->_float = !OPA->string || !*PR_GetString (pr, OPA->string);

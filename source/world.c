@@ -477,6 +477,7 @@ SV_ClipToLinks (areanode_t *node, moveclip_t * clip)
 			|| clip->boxmaxs[2] < touch->v.v.absmin[2])
 			continue;
 
+		// LordHavoc: err...  FIXME??  I decided not to touch this weird code...
 		if (clip->passedict != 0 && clip->passedict->v.v.size[0]
 			&& !touch->v.v.size[0]) continue;	// points never interact
 

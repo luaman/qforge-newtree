@@ -48,6 +48,9 @@ extern  int nanmask;
 #define VectorAdd(a,b,c) {c[0]=a[0]+b[0];c[1]=a[1]+b[1];c[2]=a[2]+b[2];}
 #define VectorCopy(a,b) {b[0]=a[0];b[1]=a[1];b[2]=a[2];}
 
+// LordHavoc: makes code more readable
+#define VectorIsNull(a) ((a)[0] == 0 && (a)[1] == 0 && (a)[2] == 0)
+
 /*
  * VectorDistance, the distance between two points.
  * Yes, this is the same as sqrt(VectorSubtract then DotProduct), 

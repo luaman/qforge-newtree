@@ -285,7 +285,7 @@ PM_GroundMove (void)
 	float       downdist, updist;
 
 	pmove.velocity[2] = 0;
-	if (!pmove.velocity[0] && !pmove.velocity[1] && !pmove.velocity[2])
+	if (VectorIsNull(pmove.velocity))
 		return;
 
 	// first try just moving to the destination 

@@ -537,8 +537,7 @@ SV_PushMove (edict_t *pusher, float movetime)
 	int         i;
 	vec3_t      move;
 
-	if (!pusher->v.v.velocity[0] && !pusher->v.v.velocity[1]
-		&& !pusher->v.v.velocity[2]) {
+	if (VectorIsNull(pusher->v.v.velocity)) {
 		pusher->v.v.ltime += movetime;
 		return;
 	}
