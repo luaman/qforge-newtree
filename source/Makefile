@@ -45,11 +45,12 @@ EXE_sources=\
   cvar.c \
   mathlib.c \
   math.S \
-  md4.c \
+  mdfour.c \
   zone.c \
   pmove.c \
   pmovetst.c \
   net_chan.c \
+  net_com.c \
   net_udp.c 
 
 
