@@ -11,8 +11,8 @@ if SYSTYPE_WIN32
 cl_sys = sys_win.c cl_sys_win.c
 sv_sys = sys_win.c sv_sys_win.c
 else
-cl_sys = sys_linux.c
-sv_sys = sys_unix.c
+cl_sys = sys_unix.c cl_sys_unix.c
+sv_sys = sys_unix.c sv_sys_unix.c
 endif
 
 common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
@@ -43,8 +43,9 @@ svga_SOURCES=	vid_svgalib.c
 x11_SOURCES=	vid_x11.c
 glx_SOURCES=	vid_glx.c
 
-EXTRA_qf_server_SOURCES= sys_linux.c sys_unix.c sys_win.c cl_sys_win.c \
-	sv_sys_win.c
+# We just has to list these once, but a plain EXTRA_SOURCES isn't allowed
+EXTRA_qf_server_SOURCES= sys_unix.c cl_sys_unix.c sv_sys_unix.c \
+	sys_win.c cl_sys_win.c sv_sys_win.c
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
 qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(ggi_SOURCES)

@@ -1,9 +1,10 @@
 /*
-	sys_linux.c
+	cl_sys_unix.c
 
 	(description)
 
 	Copyright (C) 1996-1997  Id Software, Inc.
+	Copyright (C) 2000       Marcus Sundberg [mackan@stacken.kth.se]
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -29,85 +30,35 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include <unistd.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdarg.h>
+
 #include <stdio.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/stat.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <unistd.h>
+#include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
-#include <sys/wait.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <limits.h>
+#include <sys/types.h>
 #include <sys/mman.h>
-#include <errno.h>
 
 #include "sys.h"
 #include "quakedef.h"
 
 int noconinput = 0;
-int nostdout = 0;
 
-char *basedir = ".";
-char *cachedir = "/tmp";
-qboolean is_server = false;
+#define BASEDIR	"."
 
 /* cvar_t  sys_linerefresh = {"sys_linerefresh","0"};// set for entity display
  CVAR_FIXME */
 cvar_t  *sys_linerefresh;// set for entity display
 
-// The translation table between the graphical font and plain ASCII  --KB
-char qfont_table[256] =
-{
-	'\0', '#',  '#',  '#',  '#',  '.',  '#',  '#',
-	'#',  9,    10,   '#',  ' ',  13,   '.',  '.',
-	'[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
-	'6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
-	' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
-	'(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
-	'0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
-	'8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
-	'@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
-	'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
-	'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
-	'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
-	'`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
-	'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
-	'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
-	'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<',
-
-	'<',  '=',  '>',  '#',  '#',  '.',  '#',  '#',
-	'#',  '#',  ' ',  '#',  ' ',  '>',  '.',  '.',
-	'[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
-	'6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
-	' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
-	'(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
-	'0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
-	'8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
-	'@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
-	'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
-	'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
-	'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
-	'`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
-	'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o', 
-	'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
-	'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<'
-};
-
 
 // =======================================================================
 // General routines
 // =======================================================================
-
-void Sys_DebugNumber(int y, int val)
-{
-}
 
 /*
 void Sys_Printf (char *fmt, ...)
@@ -156,24 +107,6 @@ void Sys_Printf (char *fmt, ...)
 }
 */
 
-void Sys_Printf (char *fmt, ...)
-{
-	va_list		argptr;
-	char		text[2048];
-	unsigned char		*p;
-
-	va_start (argptr,fmt);
-	vsnprintf (text, sizeof(text), fmt, argptr);
-	va_end (argptr);
-
-	if (nostdout)
-		return;
-
-	// translate to ASCII instead of printing [xx]  --KB
-	for (p = (unsigned char *)text; *p; p++)
-		putc(qfont_table[*p], stdout);
-}
-
 void Sys_Quit (void)
 {
 	Host_Shutdown();
@@ -183,6 +116,7 @@ void Sys_Quit (void)
 
 void Sys_Init(void)
 {
+	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
 #ifdef USE_INTEL_ASM
 	Sys_SetFPCW();
 #endif
@@ -217,29 +151,6 @@ void Sys_Warn (char *warning, ...)
 	fprintf(stderr, "Warning: %s", string);
 } 
 
-/*
-============
-Sys_FileTime
-
-returns -1 if not present
-============
-*/
-int	Sys_FileTime (char *path)
-{
-	struct	stat	buf;
-	
-	if (stat (path,&buf) == -1)
-		return -1;
-	
-	return buf.st_mtime;
-}
-
-
-void Sys_mkdir (char *path)
-{
-    mkdir (path, 0777);
-}
-
 void Sys_DebugLog(char *file, char *fmt, ...)
 {
     va_list argptr; 
@@ -253,34 +164,6 @@ void Sys_DebugLog(char *file, char *fmt, ...)
     fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0666);
     write(fd, data, strlen(data));
     close(fd);
-}
-
-double Sys_DoubleTime (void)
-{
-    struct timeval tp;
-    struct timezone tzp; 
-    static int      secbase; 
-    
-    gettimeofday(&tp, &tzp);  
-
-    if (!secbase)
-    {
-        secbase = tp.tv_sec;
-        return tp.tv_usec/1000000.0;
-    }
-
-    return (tp.tv_sec - secbase) + tp.tv_usec/1000000.0;
-}
-
-// =======================================================================
-// Sleeps for microseconds
-// =======================================================================
-
-static volatile int oktogo;
-
-void alarm_handler(int x)
-{
-	oktogo=1;
 }
 
 void floating_point_exception_handler(int whatever)
@@ -348,18 +231,17 @@ int main (int c, char **v)
 		return 1;
 	}
 
-	parms.basedir = basedir;
+	parms.basedir = BASEDIR;
+
 // caching is disabled by default, use -cachedir to enable
 //	parms.cachedir = cachedir;
+
+	Sys_Init();
 
 	noconinput = COM_CheckParm("-noconinput");
 	if (!noconinput)
 		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
-
-	if (COM_CheckParm("-nostdout"))
-		nostdout = 1;
-
-	Sys_Init();
+	if (COM_CheckParm("-nostdout")) Cvar_Set(sys_nostdout, "1");
 
     Host_Init(&parms);
 
@@ -400,4 +282,3 @@ void Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
     		Sys_Error("Protection change failed\n");
 
 }
-
