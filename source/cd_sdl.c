@@ -160,6 +160,10 @@ int CDAudio_Init()
 	if (COM_CheckParm("-nocdaudio"))
 		return -1;
 
+   if ( SDL_Init(SDL_INIT_CDROM) < 0 ) {
+		Con_Printf("Couldn't initialize SDL CD-AUDIO: %s\n",SDL_GetError());
+      return -1;
+                            }
 	cd_id = SDL_CDOpen(0);
 	if(!cd_id)
 	{
