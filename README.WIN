@@ -20,6 +20,21 @@ To compile under "free" Borland C++, see couple of paragraphs below.
      MGLFX.LIB, and put the appropriate paths into VC++'s options, as
      above.
 
+   also:
+     download the source for zlib from http://www.info-zip.org/pub/infozip/zlib/
+     and build a static library named zlib.lib (also, build a debug version named
+     zlibd.lib if you plan to build the debug targets.). put the lib files in a
+     directory together, and add it to the MSVC libraries path, and add the
+     directory with the zlib source code to the include paths (see above)
+
+   or:
+     open include/vc/config.h and change the line that reads
+        #define HAS_ZLIB
+     to
+        #undef HAS_ZLIB
+     and remove zlib.lib and zlibd.lib from the project settings
+     (not reccommended)
+
 2) Build the gas2masm Debug program first. all the other targets depend
    on this one.
 

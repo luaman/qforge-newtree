@@ -47,7 +47,7 @@
 #undef HAVE_VPRINTF
 
 /* Define as __inline if that's what the C compiler calls it.  */
-#undef inline
+#define inline  __inline
 
 /* Define if you can safely include both <sys/time.h> and <time.h>.  */
 #undef TIME_WITH_SYS_TIME
@@ -242,6 +242,9 @@
 
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
+
+/* Define if you have the zlib library (-lz).  */
+#define HAS_ZLIB
 
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_

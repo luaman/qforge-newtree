@@ -39,7 +39,8 @@
 #include "sys.h"
 #include "pmove.h"
 
-const int mod_lightmap_bytes=1;
+const int	mod_lightmap_bytes=1;
+mplane_t	frustum[4];
 
 void Mod_LoadBrushModel (model_t *mod, void *buffer);
 
