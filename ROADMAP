@@ -2,13 +2,14 @@ o = todo
 X = done
 ? = maybe but not likely
 M = more testing
+I = in progress
 
 X  water textures are seriously screwed in GL
 X  Endy's effects need to be made to work properly (totally broken!)
 X  R_DrawParticles in software hangs
 X  timestamping server (and optionally client) consoles
 M  it seems possible to crash a QF server still - need to fix this!
-M  GL is still way too slow
+I  GL is still way too slow
 M  Scitech MGL used in win32 is screwed - dump it and use SDL
 o  It's possible to stick on some obtuse-angled corners qwsv 2.3x didn't
 X  fullbrights on models (yeah, we have to..)
