@@ -45,6 +45,7 @@
 
 #include <stdio.h>
 #include <vga.h>
+#include <string.h>
 
 #include "cmd.h"
 #include "console.h"
