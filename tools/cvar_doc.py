@@ -15,6 +15,24 @@ cvar_def_re = re.compile(r'Cvar_Get\s*\(\s*(("' +
 						 r'"\s*)+)\)\s*;')
 cvar_get_re = re.compile(r'=\s*Cvar_Get')
 
+class cvar:
+	def __init__(self, name, default, flags, desc, source):
+		self.name = name
+		self.default = default
+		self.flags = string.split (flags, '|')
+		self.desc = desc
+		self.source = source
+	def __repr__(self):
+		return 'cvar(('+`self.name`+','+\
+						`self.default`+','+\
+						`string.join(self.flags,'|')`+','+\
+						`self.desc`+','+\
+						`self.source`+')'
+	def __str__(self):
+		return self.name+'\n\t'+self.default+'\n\t'+`self.flags`+'\n\t'+self.desc+'\n\t'+self.source[0]+':'+`self.source[1]`
+
+cvars = []
+
 def clean(str):
 	str=string.strip(str)
 	if str[0]=='"':
@@ -36,19 +54,18 @@ def get_cvar_defs(fname):
 				j=j+1
 				l = string.join(f[i:i+j],'')
 				m = cvar_def_re.search(l)
-			i=i+j
 			g = m.groups()
 			if g[2]:
 				name = g[2]
 				default = clean(g[4])
 				flags = g[11]
 				desc = clean(g[12])
-				print name
-				print '\t'+default
-				print '\t'+flags
-				print '\t'+desc
+				cvars.append (cvar (name, default, flags, desc, (fname, i+1)))
+			i=i+j
 		else:
 			i=i+1
 
 for f in sys.argv[1:]:
 	get_cvar_defs(f)
+for c in cvars:
+	print c
