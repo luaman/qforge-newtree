@@ -1,4 +1,5 @@
-#include <quakedef.h>
+#include "sys.h"
+#include "quakedef.h"
 
 qboolean ServerPaused (void)
 {
