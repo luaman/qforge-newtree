@@ -1165,10 +1165,10 @@ M_MultiPlayer_Key (key)
 			S_LocalSound ("misc/menu2.wav");
 			if (!slist) {
 				m_multip_cursor = 0;
-				slist = SL_Add (slist, "127.0.0.1", "<BLANK>");
+				slist = SL_Add (slist, cls.state >= ca_connected ? cls.servername : "127.0.0.1", cls.state == ca_connected ? Info_ValueForKey (cl.serverinfo, "hostname") : "<BLANK>");
 			} else {
 				temp = SL_Get_By_Num (slist, m_multip_cursor);
-				slist = SL_InsB (slist, temp, "127.0.0.1", "<BLANK>");
+				slist = SL_InsB (slist, temp, cls.state >= ca_connected ? cls.servername : "127.0.0.1", cls.state >= ca_connected ? Info_ValueForKey (cl.serverinfo, "hostname") : "<BLANK>");
 			}
 			break;
 		case K_DEL:
