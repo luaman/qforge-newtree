@@ -1101,27 +1101,27 @@ void SCR_UpdateScreen (void)
 		M_Draw ();
 	}
 
-// LordHavoc: adjustable brightness and contrast,
-//            also makes polyblend apply to whole screen
-	glDisable(GL_TEXTURE_2D);
-	glEnable (GL_BLEND);
+	// LordHavoc: adjustable brightness and contrast,
+	//            also makes polyblend apply to whole screen
+	glDisable (GL_TEXTURE_2D);
+	
 	Cvar_SetValue (brightness, bound (1, brightness->value, 5));
 	if (lighthalf) // LordHavoc: render was done at half brightness
 		f = brightness->value * 2;
 	else
 		f = brightness->value;
-	if (f >= 1.001) {	// Make sure we don't get bit by roundoff errors
+	if (f >= 1.002) {	// Make sure we don't get bit by roundoff errors
 		glBlendFunc (GL_DST_COLOR, GL_ONE);
 		glBegin (GL_QUADS);
-		while (f >= 1.001) {	// precision
+		while (f >= 1.002) {	// precision
 			if (f >= 2)
 				glColor3f (1, 1, 1);
 			else
 				glColor3f (f-1, f-1, f-1);
-			glVertex2i (0, 0);
-			glVertex2i (vid.width, 0);
-			glVertex2i (vid.width, vid.height);
-			glVertex2i (0, vid.height);
+			glVertex2f (0, 0);
+			glVertex2f (vid.width, 0);
+			glVertex2f (vid.width, vid.height);
+			glVertex2f (0, vid.height);
 			f *= 0.5;
 		}
 		glEnd ();
@@ -1133,29 +1133,28 @@ void SCR_UpdateScreen (void)
 		glBegin (GL_QUADS);
 		if (contrast->value < 0.999) { // precision
 			glColor4f (0.5, 0.5, 0.5, (1 - contrast->value));
-			glVertex2i (0, 0);
-			glVertex2i (vid.width, 0);
-			glVertex2i (vid.width, vid.height);
-			glVertex2i (0, vid.height);
+			glVertex2f (0, 0);
+			glVertex2f (vid.width, 0);
+			glVertex2f (vid.width, vid.height);
+			glVertex2f (0, vid.height);
 		}
 		
 		if (v_blend[3]) {
 			glColor4fv (v_blend);
-			glVertex2i (0, 0);
-			glVertex2i (vid.width, 0);
-			glVertex2i (vid.width, vid.height);
-			glVertex2i (0, vid.height);
+			glVertex2f (0, 0);
+			glVertex2f (vid.width, 0);
+			glVertex2f (vid.width, vid.height);
+			glVertex2f (0, vid.height);
 		}
 		glEnd ();
-		glColor3ubv(lighthalf_v);
+		glColor3ubv (lighthalf_v);
 	}
 
-	glEnable(GL_TEXTURE_2D);
+	glEnable (GL_TEXTURE_2D);
 
 	V_UpdatePalette ();
 
-	if (r_speeds->int_val)
-	{
+	if (r_speeds->int_val) {
 //		glFinish ();
 		time2 = Sys_DoubleTime ();
 		Con_Printf ("%3i ms  %4i wpoly %4i epoly\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys); 
