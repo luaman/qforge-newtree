@@ -148,7 +148,6 @@ VID_ShiftPalette (unsigned char *palette)
 void
 VID_Init (unsigned char *palette)
 {
-	int pnum;
 	//Uint8 video_bpp;
 	//Uint16 video_w, video_h;
 	Uint32 flags;
@@ -163,14 +162,6 @@ VID_Init (unsigned char *palette)
 	VID_GetWindowSize (BASEWIDTH, BASEHEIGHT);
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
-	if ((pnum=COM_CheckParm("-winsize"))) {
-		if (pnum >= com_argc-2)
-			Sys_Error("VID: -winsize <width> <height>\n");
-		vid.width = atoi(com_argv[pnum+1]);
-		vid.height = atoi(com_argv[pnum+2]);
-		if (!vid.width || !vid.height)
-			Sys_Error("VID: Bad window width/height\n");
-	}
 
 	// Set video width, height and flags
 	flags = (SDL_SWSURFACE|SDL_HWPALETTE);
