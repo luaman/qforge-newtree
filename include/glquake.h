@@ -29,6 +29,10 @@
 #ifndef _GLQUAKE_H
 #define _GLQUAKE_H
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #ifdef _WIN32
 // disable data conversion warnings
 // FIXME: move that somewhere else -- yan
@@ -48,15 +52,6 @@
 #include "cvar.h"
 #include "wad.h"
 #include "client.h"
-
-// Ender: HackHackHack
-#ifndef GLAPIENTRY
-# ifdef APIENTRY
-#  define GLAPIENTRY APIENTRY
-# else
-#  define GLAPIENTRY
-# endif
-#endif
 
 void GL_BeginRendering (int *x, int *y, int *width, int *height);
 void GL_EndRendering (void);
@@ -79,7 +74,6 @@ extern	int texture_extension_number;
 extern	int		texture_mode;
 
 extern	float	gldepthmin, gldepthmax;
-extern float v_blend[4];
 
 void GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap, qboolean alpha);
 void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
@@ -181,95 +175,39 @@ extern	int	playertextures;
 
 extern	int	skytexturenum;		// index in cl.loadmodel, not gl texture object
 
-/* extern	cvar_t	r_norefresh;
- CVAR_FIXME */
-extern	cvar_t	*r_norefresh;
-/* extern	cvar_t	r_drawentities;
- CVAR_FIXME */
-extern	cvar_t	*r_drawentities;
-/* extern	cvar_t	r_drawworld;
- CVAR_FIXME */
+extern cvar_t	*r_norefresh;
+extern cvar_t	*r_drawentities;
 extern	cvar_t	*r_drawworld;
-/* extern	cvar_t	r_drawviewmodel;
- CVAR_FIXME */
 extern	cvar_t	*r_drawviewmodel;
-/* extern	cvar_t	r_speeds;
- CVAR_FIXME */
 extern	cvar_t	*r_speeds;
-/* extern	cvar_t	r_waterwarp;
- CVAR_FIXME */
 extern	cvar_t	*r_waterwarp;
-/* extern	cvar_t	r_fullbright;
- CVAR_FIXME */
 extern	cvar_t	*r_fullbright;
-/* extern	cvar_t	r_lightmap;
- CVAR_FIXME */
 extern	cvar_t	*r_lightmap;
-/* extern	cvar_t	r_shadows;
- CVAR_FIXME */
 extern	cvar_t	*r_shadows;
-/* extern	cvar_t	r_mirroralpha;
- CVAR_FIXME */
 extern	cvar_t	*r_mirroralpha;
-/* extern	cvar_t	r_wateralpha;
- CVAR_FIXME */
 extern	cvar_t	*r_wateralpha;
-/* extern	cvar_t	r_dynamic;
- CVAR_FIXME */
 extern	cvar_t	*r_dynamic;
-/* extern	cvar_t	r_novis;
- CVAR_FIXME */
 extern	cvar_t	*r_novis;
-/* extern	cvar_t	r_netgraph;
- CVAR_FIXME */
 extern	cvar_t	*r_netgraph;
 
-/* extern	cvar_t	gl_clear;
- CVAR_FIXME */
 extern	cvar_t	*gl_clear;
-/* extern	cvar_t	gl_cull;
- CVAR_FIXME */
 extern	cvar_t	*gl_cull;
-/* extern	cvar_t	gl_poly;
- CVAR_FIXME */
 extern	cvar_t	*gl_poly;
-/* extern	cvar_t	gl_texsort;
- CVAR_FIXME */
 extern	cvar_t	*gl_texsort;
-/* extern	cvar_t	gl_smoothmodels;
- CVAR_FIXME */
 extern	cvar_t	*gl_smoothmodels;
-/* extern	cvar_t	gl_affinemodels;
- CVAR_FIXME */
 extern	cvar_t	*gl_affinemodels;
-/* extern	cvar_t	gl_polyblend;
- CVAR_FIXME */
 extern	cvar_t	*gl_polyblend;
-/* extern	cvar_t	gl_keeptjunctions;
- CVAR_FIXME */
 extern	cvar_t	*gl_keeptjunctions;
-/* extern	cvar_t	gl_reporttjunctions;
- CVAR_FIXME */
 extern	cvar_t	*gl_reporttjunctions;
-/* extern	cvar_t	gl_flashblend;
- CVAR_FIXME */
 extern	cvar_t	*gl_flashblend;
-/* extern	cvar_t	gl_nocolors;
- CVAR_FIXME */
 extern	cvar_t	*gl_nocolors;
-/* extern	cvar_t	gl_finish;
- CVAR_FIXME */
 extern	cvar_t	*gl_finish;
 
 extern	int		gl_lightmap_format;
 extern	int		gl_solid_format;
 extern	int		gl_alpha_format;
 
-/* extern	cvar_t	gl_max_size;
- CVAR_FIXME */
 extern	cvar_t	*gl_max_size;
-/* extern	cvar_t	gl_playermip;
- CVAR_FIXME */
 extern	cvar_t	*gl_playermip;
 
 extern	cvar_t	*r_skyname;
