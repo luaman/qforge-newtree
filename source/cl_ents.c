@@ -560,7 +560,7 @@ CL_LinkPacketEntities (void)
 		ent->skinnum = s1->skinnum;
 
 		// set frame
-		ent->frame = s1->frame;
+		ent->pose1 = ent->pose2 = ent->frame = s1->frame;
 
 		if (model->flags & EF_ROTATE) { // rotate binary objects locally
 			ent->angles[0] = 0;
@@ -981,7 +981,9 @@ CL_LinkPlayers (void)
 		ent->keynum = 0;
 		ent->model = cl.model_precache[state->modelindex];
 		ent->skinnum = state->skinnum;
-		ent->frame = state->frame;
+		ent->pose1 = ent->pose2 = ent->frame = state->frame;
+		ent->frame_start_time = 0;
+		ent->frame_interval = 0;
 		ent->colormap = info->translations;
 		if (state->modelindex == cl_playerindex)
 			ent->scoreboard = info;		// use custom skin
