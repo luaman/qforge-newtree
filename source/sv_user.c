@@ -289,8 +289,7 @@ void SV_PreSpawn_f (void)
 	}
 	
 	// handle the case of a level changing while a client was connecting
-	if ( atoi(Cmd_Argv(1)) != svs.spawncount )
-	{
+	if (atoi (Cmd_Argv (1)) != svs.spawncount) {
 		Con_Printf ("SV_PreSpawn_f from different level\n");
 		SV_New_f ();
 		return;
@@ -318,8 +317,8 @@ void SV_PreSpawn_f (void)
 		host_client->checksum = check;
 	}
 
-//NOTE:  This doesn't go through ClientReliableWrite since it's before the user
-//spawns.  These functions are written to not overflow
+	// NOTE:  This doesn't go through ClientReliableWrite since it's before the user
+	// spawns.  These functions are written to not overflow
 	if (host_client->num_backbuf) {
 		Con_Printf("WARNING %s: [SV_PreSpawn] Back buffered (%d0, clearing", host_client->name, host_client->netchan.message.cursize); 
 		host_client->num_backbuf = 0;
@@ -331,13 +330,10 @@ void SV_PreSpawn_f (void)
 		sv.signon_buffer_size[buf]);
 
 	buf++;
-	if (buf == sv.num_signon_buffers)
-	{	// all done prespawning
+	if (buf == sv.num_signon_buffers) {	// all done prespawning
 		MSG_WriteByte (&host_client->netchan.message, svc_stufftext);
 		MSG_WriteString (&host_client->netchan.message, va("cmd spawn %i 0\n",svs.spawncount) );
-	}
-	else
-	{	// need to prespawn more
+	} else {	// need to prespawn more
 		MSG_WriteByte (&host_client->netchan.message, svc_stufftext);
 		MSG_WriteString (&host_client->netchan.message, 
 			va("cmd prespawn %i %i\n", svs.spawncount, buf) );
@@ -357,45 +353,39 @@ void SV_Spawn_f (void)
 	eval_t *val;
 	int n;
 
-	if (host_client->state != cs_connected)
-	{
+	if (host_client->state != cs_connected) {
 		Con_Printf ("Spawn not valid -- allready spawned\n");
 		return;
 	}
 
 // handle the case of a level changing while a client was connecting
-	if ( atoi(Cmd_Argv(1)) != svs.spawncount )
-	{
+	if (atoi (Cmd_Argv (1)) != svs.spawncount) {
 		Con_Printf ("SV_Spawn_f from different level\n");
 		SV_New_f ();
 		return;
 	}
 
-	n = atoi(Cmd_Argv(2));
+	n = atoi (Cmd_Argv (2));
 
 	// make sure n is valid
-	if ( n < 0 || n > MAX_CLIENTS )
-	{
+	if (n < 0 || n > MAX_CLIENTS) {
 		Con_Printf ("SV_Spawn_f invalid client start\n");
 		SV_New_f ();
 		return;
 	}
 
-
-	
-// send all current names, colors, and frag counts
+	// send all current names, colors, and frag counts
 	// FIXME: is this a good thing?
 	SZ_Clear (&host_client->netchan.message);
 
-// send current status of all other players
+	// send current status of all other players
 
 	// normally this could overflow, but no need to check due to backbuf
 	for (i=n, client = svs.clients + n ; i<MAX_CLIENTS ; i++, client++)
 		SV_FullClientUpdateToClient (client, host_client);
 	
-// send all current light styles
-	for (i=0 ; i<MAX_LIGHTSTYLES ; i++)
-	{
+	// send all current light styles
+	for (i = 0; i < MAX_LIGHTSTYLES; i++) {
 		ClientReliableWrite_Begin (host_client, svc_lightstyle, 
 			3 + (sv.lightstyles[i] ? strlen(sv.lightstyles[i]) : 1));
 		ClientReliableWrite_Byte (host_client, (char)i);
@@ -444,7 +434,6 @@ void SV_Spawn_f (void)
 	// when that is completed, a begin command will be issued
 	ClientReliableWrite_Begin (host_client, svc_stufftext, 8);
 	ClientReliableWrite_String (host_client, "skins\n" );
-
 }
 
 /*
@@ -490,20 +479,18 @@ void SV_Begin_f (void)
 	host_client->state = cs_spawned;
 	
 	// handle the case of a level changing while a client was connecting
-	if ( atoi(Cmd_Argv(1)) != svs.spawncount )
-	{
+	if (atoi (Cmd_Argv (1)) != svs.spawncount) {
 		Con_Printf ("SV_Begin_f from different level\n");
 		SV_New_f ();
 		return;
 	}
 
-	if (host_client->spectator)
-	{
+	if (host_client->spectator) {
 		SV_SpawnSpectator ();
 
 		if (SpectatorConnect) {
 			// copy spawn parms out of the client_t
-			for (i=0 ; i< NUM_SPAWN_PARMS ; i++)
+			for (i = 0; i < NUM_SPAWN_PARMS; i++)
 				(&pr_global_struct->parm1)[i] = host_client->spawn_parms[i];
 	
 			// call the spawn function
@@ -511,11 +498,9 @@ void SV_Begin_f (void)
 			pr_global_struct->self = EDICT_TO_PROG(sv_player);
 			PR_ExecuteProgram (SpectatorConnect);
 		}
-	}
-	else
-	{
+	} else {
 		// copy spawn parms out of the client_t
-		for (i=0 ; i< NUM_SPAWN_PARMS ; i++)
+		for (i = 0; i < NUM_SPAWN_PARMS; i++)
 			(&pr_global_struct->parm1)[i] = host_client->spawn_parms[i];
 
 		// call the spawn function
@@ -530,18 +515,17 @@ void SV_Begin_f (void)
 	}
 
 	// clear the net statistics, because connecting gives a bogus picture
+	host_client->last_check = -1;
 	host_client->netchan.frame_latency = 0;
 	host_client->netchan.frame_rate = 0;
 	host_client->netchan.drop_count = 0;
 	host_client->netchan.good_count = 0;
 
-	//check he's not cheating
+	// check he's not cheating
+	pmodel = atoi (Info_ValueForKey (host_client->userinfo, "pmodel"));
+	emodel = atoi (Info_ValueForKey (host_client->userinfo, "emodel"));
 
-	pmodel = atoi(Info_ValueForKey (host_client->userinfo, "pmodel"));
-	emodel = atoi(Info_ValueForKey (host_client->userinfo, "emodel"));
-
-	if (pmodel != sv.model_player_checksum ||
-		emodel != sv.eyes_player_checksum)
+	if (pmodel != sv.model_player_checksum || emodel != sv.eyes_player_checksum)
 		SV_BroadcastPrintf (PRINT_HIGH, "%s WARNING: non standard player/eyes model detected\n", host_client->name);
 
 	// if we are paused, tell the client
@@ -1454,22 +1438,18 @@ SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 	edict_t *ent;
 	int 	i, n, oldmsec;
 	double	tmp_time;
-	int 	tmp_time1, tmp_time2;
+	int 	tmp_time1;
 
-	// To prevent a infinite loop
-	if (!inside) {
+	if (!inside) {	// prevent infinite loop
 		host_client->msecs += ucmd->msec;
 
 		if ((sv_timekick->int_val)
-				&& (tmp_time = realtime - host_client->last_check) >= sv_timekick_interval->value) {
+				&& ((tmp_time = realtime - host_client->last_check) >= sv_timekick_interval->value)) {
 			
 			tmp_time1 = tmp_time * (1000 + sv_timekick_fuzz->value);
-			// handle underspeeds too, but with double fuzz applied
-			tmp_time2 = tmp_time * (1000 - (sv_timekick_fuzz->value * 2));
 
 			if ((host_client->last_check != -1) // don't do it if new player
-					&& ((host_client->msecs > (int) tmp_time1)
-						|| (host_client->msecs < (int) tmp_time2))) {
+					&& (host_client->msecs > tmp_time1)) {
 				host_client->msec_cheating++;
 				SV_BroadcastPrintf (PRINT_HIGH,
 								va ("%s thinks there are %d ms in %d seconds (Strike %d/%d)\n",
@@ -1477,11 +1457,10 @@ SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 								host_client->msec_cheating, sv_timekick->int_val));
 
 				if (host_client->msec_cheating >= sv_timekick->int_val) {
-					SV_BroadcastPrintf (PRINT_HIGH, va("Strike %d for %s!!\n",
+					SV_BroadcastPrintf (PRINT_HIGH, va ("Strike %d for %s!!\n",
 								host_client->msec_cheating, host_client->name));
-					SV_BroadcastPrintf (PRINT_HIGH, "Please see http://www.quakeforge.net/speed_cheat.php for infomation on QuakeForge's time cheat protection, and to explain how some may be cheating without knowing it.\n"
-);
-					SV_DropClient(host_client);
+					SV_BroadcastPrintf (PRINT_HIGH, "Please see http://www.quakeforge.net/speed_cheat.php for infomation on QuakeForge's time cheat protection, and to explain how some may be cheating without knowing it.\n");
+					SV_DropClient (host_client);
 				}
 			}
 
