@@ -55,6 +55,7 @@
 #define VID_ROW_SIZE	3
 
 extern void (*vid_menudrawfn)(void);
+extern void (*vid_menukeyfn)(int);
 
 /* Unused */
 int		VGA_width, VGA_height, VGA_rowbytes, VGA_bufferrowbytes, VGA_planar;
