@@ -33,6 +33,9 @@
 
 /* common/config.h.in.  Generated automatically from configure.in by autoheader.  */
 
+#ifndef _CONFIG_H
+#define _CONFIG_H
+
 /* Define to empty if the keyword does not work.  */
 #undef const
 
@@ -69,6 +72,12 @@
 
 /* Define if you want to use QF-style defaults instead of Id-style */
 #undef NEWSTYLE
+
+#ifdef NEWSTYLE
+#define BASEGAME "base"
+#else
+#define BASEGAME "id1"
+#endif
 
 /* Define this to the subdirectory name of the default game */
 #ifdef NEWSTYLE
@@ -250,3 +259,45 @@
 
 /* Define the name of the global config file */
 #define GLOBAL_CFG_FILE ".\\qforge.cfg"
+
+/* Posix, needed for limits.h and Unix stuffs to work right */
+#undef _POSIX_
+
+/* Define if we've scitech MGL library and mgraph.h */
+#define HAVE_MGRAPH_H 1
+
+/* Dir used for shared game data */
+#define FS_SHAREPATH "."
+
+/* Dir used for shared game data */
+#define FS_USERPATH "."
+
+#define FS_GLOBALCFG ".\\qforge.cfg"
+
+#define strcasecmp(s1, s2) stricmp((s1), (s2))
+#define strncasecmp(s1, s2, n) strnicmp((s1), (s2), (n))
+
+#ifdef HAVE_3DNOW_ASM
+        #define atan  _atan
+        #define atan2 _atan2
+        #define acos _acos
+        #define asin _asin
+        #define log _log
+        #define log10 _log10
+        #define pow _pow
+        #define exp _exp
+        #define sqrt _sqrt
+        #define fabs _fabs
+        #define ceil _ceil
+        #define floor  _floor
+        #define frexp _frexp
+        #define ldexp _ldexp
+        #define modf _modf
+        #define fmod _fmod
+        #define sincos _sincos
+        #define sin _sin
+        #define cos _cos
+        #define tan _tan
+#endif
+
+#endif
