@@ -40,25 +40,10 @@
 #include <stdlib.h>
 
 #define	DYNAMIC_SIZE	0x20000
+#define	ZONEID			0x1d4a11
+#define	HUNK_SENTINAL	0x1df001ed
 
-#define	ZONEID	0x1d4a11
 #define MINFRAGMENT	64
-
-typedef struct memblock_s
-{
-	int		size;           // including the header and possibly tiny fragments
-	int     tag;            // a tag of 0 is a free block
-	int     id;        		// should be ZONEID
-	struct memblock_s       *next, *prev;
-	int		pad;			// pad to 64 bit boundary
-} memblock_t;
-
-typedef struct
-{
-	int		size;		// total bytes malloced, including header
-	memblock_t	blocklist;		// start / end cap for linked list
-	memblock_t	*rover;
-} memzone_t;
 
 void Cache_FreeLow (int new_low_hunk);
 void Cache_FreeHigh (int new_high_hunk);
@@ -67,23 +52,12 @@ void Cache_FreeHigh (int new_high_hunk);
 /*
 ==============================================================================
 
-						ZONE MEMORY ALLOCATION
-
-There is never any space between memblocks, and there will never be two
-contiguous free memblocks.
-
-The rover can be left pointing at a non-empty block
-
 The zone calls are pretty much only used for small strings and structures,
 all big things are allocated on the hunk.
 ==============================================================================
 */
 
-memzone_t	*mainzone;
-
 //============================================================================
-
-#define	HUNK_SENTINAL	0x1df001ed
 
 typedef struct
 {
@@ -117,7 +91,7 @@ void Hunk_Check (void)
 	for (h = (hunk_t *)hunk_base ; (byte *)h != hunk_base + hunk_low_used ; )
 	{
 		if (h->sentinal != HUNK_SENTINAL)
-			Sys_Error ("Hunk_Check: trahsed sentinal");
+			Sys_Error ("Hunk_Check: trashed sentinal");
 		if (h->size < 16 || h->size + (byte *)h - hunk_base > hunk_size)
 			Sys_Error ("Hunk_Check: bad size");
 		h = (hunk_t *)((byte *)h+h->size);
@@ -737,23 +711,11 @@ Memory_Init
 */
 void Memory_Init (void *buf, int size)
 {
-	int p;
-	int zonesize = DYNAMIC_SIZE;
-
 	hunk_base = buf;
 	hunk_size = size;
 	hunk_low_used = 0;
 	hunk_high_used = 0;
 	
 	Cache_Init ();
-	p = COM_CheckParm ("-zone");
-	if (p)
-	{
-		if (p < com_argc-1)
-			zonesize = atoi (com_argv[p+1]) * 1024;
-		else
-			Sys_Error ("Memory_Init: you must specify a size in KB after -zone");
-	}
-	mainzone = Hunk_AllocName ( zonesize, "zone" );
 }
 

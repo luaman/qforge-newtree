@@ -1386,9 +1386,9 @@ void SV_InitLocal (void)
 
 	sv_aim = Cvar_Get("sv_aim",  "2", CVAR_NONE, "None");
 
-	sv_timekick = Cvar_Get("sv_timekick",  "3", CVAR_NONE, "None");
-	sv_timekick_fuzz = Cvar_Get("sv_timekick_fuzz",  "10", CVAR_NONE, "None");
-	sv_timekick_interval = Cvar_Get("sv_timekick_interval",  "30", CVAR_NONE, "None");
+	sv_timekick = Cvar_Get("sv_timekick",  "3", CVAR_NONE, "Time cheat protection");
+	sv_timekick_fuzz = Cvar_Get("sv_timekick_fuzz",  "15", CVAR_NONE, "Time cheat \"fuzz factor\"");
+	sv_timekick_interval = Cvar_Get("sv_timekick_interval",  "30", CVAR_NONE, "Time cheat check interval");
 
 	filterban = Cvar_Get("filterban",  "1", CVAR_NONE, "None");
 	
