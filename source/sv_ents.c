@@ -597,12 +597,12 @@ SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 			state->colormod = 255;
 
 			if ((val = GETEDICTFIELDVALUE (ent, eval_alpha))
-				&& val->_float != 0) state->alpha =
-					bound (0, val->_float, 1) * 255.0;
+				&& val->_float != 0)
+				state->alpha = bound (0, val->_float, 1) * 255.0;
 
 			if ((val = GETEDICTFIELDVALUE (ent, eval_scale))
-				&& val->_float != 0) state->scale =
-					bound (0, val->_float, 15.9375) * 16.0;
+				&& val->_float != 0)
+				state->scale = bound (0, val->_float, 15.9375) * 16.0;
 
 			if ((val = GETEDICTFIELDVALUE (ent, eval_glowsize))
 				&& val->_float != 0)
