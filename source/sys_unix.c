@@ -83,12 +83,12 @@ static char qfont_table[256] =
 	'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
 	'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
 	'`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
-	'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o', 
+	'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
 	'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
 	'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<'
 };
 
-
+#define MAXPRINTMSG 4096
 /*
 ================
 Sys_Printf
@@ -97,17 +97,28 @@ Sys_Printf
 void Sys_Printf (char *fmt, ...)
 {
 	va_list		argptr;
-	char		text[2048];
-	unsigned char		*p;
+	char		msg[MAXPRINTMSG];
+	static char	lastmessage[MAXPRINTMSG];
+	static int	msgcount=0;
+	unsigned char	*p;
 
 	if (sys_nostdout->value) return;
 
 	va_start(argptr,fmt);
-	vsnprintf(text, sizeof(text), fmt, argptr);
+	vsnprintf(msg, sizeof(msg), fmt, argptr);
 	va_end(argptr);
 
+        if (strncmp(lastmessage,msg,MAXPRINTMSG)==0) {
+		msgcount+=1;
+		return;
+        } else {
+        	if (msgcount>0) printf("Last message repeated %d times\n",msgcount);
+		strncpy(lastmessage,msg,MAXPRINTMSG);
+	        msgcount=0;
+        }
+
 	/* translate to ASCII instead of printing [xx]  --KB */
-	for (p = (unsigned char *)text; *p; p++)
+	for (p = (unsigned char *)msg; *p; p++)
 		putc(qfont_table[*p], stdout);
 
 	fflush (stdout);
