@@ -3,8 +3,8 @@
 *.obj
 qf-server
 qf-client-x11
+qf-client-ggi
 qf-client-svga
 qf-client-glx
 client.exe
 server.exe
-

@@ -9,6 +9,9 @@ CL_SVGA_libs=-lvga
 CL_X11_name=qf-client-x11
 CL_X11_libs=-lX11 -lXext
 
+CL_GGI_name=qf-client-ggi
+CL_GGI_libs=-lggi
+
 CL_GLX_name=qf-client-glx
 CL_GLX_libs=-lX11 -lXext -lGL
 
@@ -170,6 +173,12 @@ CL_X11_sources=\
 CL_X11_dependencies = $(patsubst %,%.d,$(basename $(CL_X11_sources)))
 CL_X11_objects = $(patsubst %.d,%.o,$(CL_X11_dependencies))
 
+CL_GGI_sources=\
+  vid_ggi.c
+
+CL_GGI_dependencies = $(patsubst %,%.d,$(basename $(CL_GGI_sources)))
+CL_GGI_objects = $(patsubst %.d,%.o,$(CL_GGI_dependencies))
+
 CL_GLX_sources=\
   gl_draw.c \
   gl_mesh.c \
@@ -192,7 +201,7 @@ CL_GLX_objects = $(patsubst %.d,%.o,$(CL_GLX_dependencies))
 
 #               *Explicit Rules*
 
-all: $(SV_name) $(CL_SVGA_name) $(CL_X11_name) $(CL_GLX_name)
+all: $(SV_name) $(CL_SVGA_name) $(CL_X11_name) $(CL_GGI_name) $(CL_GLX_name)
 
 $(SV_name): $(COM_objects) $(SV_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(SV_libs)
@@ -202,6 +211,9 @@ $(CL_SVGA_name): $(COM_objects) $(CL_objects) $(CL_SW_objects) $(CL_SVGA_objects
 
 $(CL_X11_name): $(COM_objects) $(CL_objects) $(CL_SW_objects) $(CL_X11_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_X11_libs)
+
+$(CL_GGI_name): $(COM_objects) $(CL_objects) $(CL_SW_objects) $(CL_GGI_objects)
+	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_GGI_libs)
 
 $(CL_GLX_name): $(COM_objects) $(CL_objects) $(CL_GL_objects) $(CL_GLX_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_GLX_libs)
