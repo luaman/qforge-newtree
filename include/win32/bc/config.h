@@ -70,6 +70,12 @@
 /* Define if you want to use QF-style defaults instead of Id-style */
 #undef NEWSTYLE
 
+#ifdef NEWSTYLE
+#define BASEGAME "base"
+#else
+#define BASEGAME "id1"
+#endif
+
 /* Define this to the subdirectory name of the default game */
 #ifdef NEWSTYLE
 #	define GAMENAME "base"
@@ -256,6 +262,17 @@
 
 /* Define if we've scitech MGL library and mgraph.h */
 #define HAVE_MGRAPH_H 1
+
+/* Dir used for shared game data */
+#define FS_SHAREPATH "."
+
+/* Dir used for shared game data */
+#define FS_USERPATH "."
+
+#define FS_GLOBALCFG ".\\qforge.cfg"
+
+#define strcasecmp(s1, s2) stricmp((s1), (s2))
+#define strncasecmp(s1, s2, n) strnicmp((s1), (s2), (n))
 
 #ifdef HAVE_3DNOW_ASM
         #define atan  _atan
