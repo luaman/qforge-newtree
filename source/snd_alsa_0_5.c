@@ -114,7 +114,7 @@ qboolean SNDDMA_Init(void)
 {
 	int rc=0,i;
 	char *err_msg="";
-	int rate,format,bps,stereo,frag_size;
+	int rate=-1,format=-1,bps,stereo=-1,frag_size;
 	unsigned int mask;
 
 	mask = snd_cards_mask();
@@ -127,6 +127,27 @@ qboolean SNDDMA_Init(void)
 	}
 	if ((i=COM_CheckParm("-snddev"))!=0) {
 		dev=atoi(com_argv[i+1]);
+	}
+	if ((i=COM_CheckParm("-sndbits")) != 0) {
+		i = atoi(com_argv[i+1]);
+		if (i==16) {
+			format = SND_PCM_SFMT_S16_LE;
+		} else if (i==8) {
+			format = SND_PCM_SFMT_U8;
+		} else {
+			Con_Printf("Error: invalid sample bits: %d\n", i);
+			return 0;
+		}
+	}
+	if ((i=COM_CheckParm("-sndspeed")) != 0) {
+		rate = atoi(com_argv[i+1]);
+		if (rate!=44100 && rate!=22050 && rate!=11025) {
+			Con_Printf("Error: invalid sample rate: %d\n", rate);
+			return 0;
+		}
+	}
+	if ((i=COM_CheckParm("-sndmono")) != 0) {
+		stereo=0;
 	}
 	if (card==-1) {
 		for (card=0; card<SND_CARDS; card++) {
@@ -164,31 +185,31 @@ qboolean SNDDMA_Init(void)
 	cinfo.channel = SND_PCM_CHANNEL_PLAYBACK;
 	snd_pcm_channel_info(pcm_handle, &cinfo);
 	Con_Printf("%08x %08x %08x\n",cinfo.flags,cinfo.formats,cinfo.rates);
-	if (cinfo.rates & SND_PCM_RATE_44100) {
+	if ((rate==-1 || rate==44100) && cinfo.rates & SND_PCM_RATE_44100) {
 		rate=44100;
 		frag_size=512;	/* assuming stereo 8 bit */
-	} else if (cinfo.rates & SND_PCM_RATE_22050) {
+	} else if ((rate==-1 || rate==22050) && cinfo.rates & SND_PCM_RATE_22050) {
 		rate=22050;
 		frag_size=256;	/* assuming stereo 8 bit */
-	} else if (cinfo.rates & SND_PCM_RATE_11025) {
+	} else if ((rate==-1 || rate==11025) && cinfo.rates & SND_PCM_RATE_11025) {
 		rate=11025;
 		frag_size=128;	/* assuming stereo 8 bit */
 	} else {
 		Con_Printf("ALSA: desired rates not supported\n");
 		goto error_2;
 	}
-	if (cinfo.formats & SND_PCM_FMT_S16_LE) {
+	if ((format==-1 || format==SND_PCM_SFMT_S16_LE) && cinfo.formats & SND_PCM_FMT_S16_LE) {
 		format=SND_PCM_SFMT_S16_LE;
 		bps=16;
 		frag_size*=2;
-	} else if (cinfo.formats & SND_PCM_FMT_U8) {
+	} else if ((format==-1 || format==SND_PCM_SFMT_U8) && cinfo.formats & SND_PCM_FMT_U8) {
 		format=SND_PCM_SFMT_U8;
 		bps=8;
 	} else {
 		Con_Printf("ALSA: desired formats not supported\n");
 		goto error_2;
 	}
-	if (cinfo.max_voices>=2) {
+	if (stereo && cinfo.max_voices>=2) {
 		stereo=1;
 	} else {
 		stereo=0;
