@@ -51,7 +51,7 @@ particle_t	*active_particles, *free_particles;
 particle_t	*particles;
 int			r_numparticles;
 
-vec3_t			r_pright, r_pup, r_ppn;
+vec3_t		r_pright, r_pup, r_ppn;
 
 
 /*
@@ -482,17 +482,12 @@ void R_DrawParticles (void)
 	grav = frametime * 800 * 0.05;
 	dvel = 4*frametime;
 	
-	for ( ;; ) 
-	{
-		kill = active_particles;
-		if (kill && kill->die < cl.time)
-		{
+	for (kill = active_particles; kill != NULL; kill = kill->next) {
+		if (kill->die < cl.time) {
 			active_particles = kill->next;
 			kill->next = free_particles;
 			free_particles = kill;
-			continue;
 		}
-		break;
 	}
 
 	for (p=active_particles ; p ; p=p->next)
