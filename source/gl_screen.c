@@ -510,7 +510,7 @@ void SCR_DrawTime (void)
 				  localtime(&systime));
 	}
 			
-	/* now actually print it to the screen directly below where show_fps is */
+	/* now actually print it to the screen directly above where show_fps is */
 	snprintf (st, sizeof(st), "%s", local_time);
 	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + 8) : 8;
 	y = vid.height - sb_lines - 16;

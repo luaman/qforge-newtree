@@ -1256,7 +1256,7 @@ void CL_Init_Cvars (void)
 			"display realtime frames per second");
 	// Misty: I like to be able to see the time when I play
 	show_time = Cvar_Get("show_time", "0", CVAR_NONE,
-			"display time in 24 hr:min format");
+			"display the current time");
 	host_speeds = Cvar_Get("host_speeds", "0", CVAR_NONE,
 			"display host processing times");
 	developer = Cvar_Get("developer", "0", CVAR_NONE,
