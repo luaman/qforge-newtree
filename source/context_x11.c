@@ -344,8 +344,8 @@ x11_create_window (int width, int height)
 	if (ClassHint) {
 		resname = strrchr (com_argv[0], '/');
 
-		ClassHint->res_name = (resname ? resname + 1 : resname);
-		ClassHint->res_class = PROGRAM;
+		ClassHint->res_name = (resname ? resname + 1 : com_argv[0]);
+		ClassHint->res_class = PACKAGE;
 		XSetClassHint (x_disp, x_win, ClassHint);
 		XFree (ClassHint);
 	}
