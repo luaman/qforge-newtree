@@ -84,40 +84,20 @@ float   anglemod(float a);
 
 void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, float degrees );
 
-
-<<<<<<< mathlib.h
-#define BOX_ON_PLANE_SIDE(emins, emaxs, p)      \
-	(((p)->type < 3)?					       \
-	(									       \
-		((p)->dist <= (emins)[(p)->type])?      \
-			1							       \
-		:								       \
-		(								       \
-			((p)->dist >= (emaxs)[(p)->type])?\
-				2						       \
-			:							       \
-				3						       \
-		)								       \
-	)									       \
-	:									       \
-		BoxOnPlaneSide( (emins), (emaxs), (p)))
-=======
-#define BOX_ON_PLANE_SIDE(emins, emaxs, p)					\
-	(((p)->type < 3)?										\
-		(													\
-			((p)->dist <= (emins)[(p)->type])?				\
-			1												\
-			:												\
-			(												\
-				((p)->dist >= (emaxs)[(p)->type])?			\
-				2											\
-				:											\
-				3											\
-			)												\
-		)													\
-		:													\
-		BoxOnPlaneSide( (emins), (emaxs), (p))				\
-	)
->>>>>>> 1.7
+#define BOX_ON_PLANE_SIDE(emins, emaxs, p)				\
+	(((p)->type < 3)?									\
+	(													\
+		((p)->dist <= (emins)[(p)->type])?				\
+		1												\
+		:												\
+		(												\
+			((p)->dist >= (emaxs)[(p)->type])?			\
+			2											\
+			:											\
+			3											\
+		)												\
+	)													\
+	:													\
+	BoxOnPlaneSide( (emins), (emaxs), (p)))
 
 #endif // _MATHLIB_H
