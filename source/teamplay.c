@@ -160,8 +160,7 @@ char *Team_ParseSay (char *s)
 						location = locs_find(death_location);
 						if (location) {
 							recorded_location = true;
-							memcpy(last_recorded_location, death_location, 
-									sizeof(last_recorded_location));
+							VectorCopy(death_location, last_recorded_location);
 							t1 = location->name;
 							break;
 						}
@@ -180,11 +179,10 @@ char *Team_ParseSay (char *s)
 				case 'l':
 location:
 					bracket = 0;
-					location = locs_find(r_origin);
+					location = locs_find(cl.simorg);
 					if (location) {
 						recorded_location = true;
-						memcpy(last_recorded_location, r_origin, 
-								sizeof(last_recorded_location));
+						VectorCopy(cl.simorg, last_recorded_location);
 						t1 = location->name;
 					} else
 						snprintf(t2, sizeof(t2), "Unknown!\n");
@@ -276,7 +274,7 @@ location:
 void Team_Dead ()
 {
 	died = true;
-	memcpy(death_location, r_origin, sizeof(death_location));
+	VectorCopy(cl.simorg, death_location);
 }
 
 void Team_NewMap ()

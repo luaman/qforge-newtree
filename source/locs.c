@@ -135,9 +135,9 @@ void locs_reset()
 	}
 
 	free(locations);
-	locations=0;
 	locations_alloced = 0;
 	locations_count = 0;
+	locations = NULL;
 }
 
 void locs_more()

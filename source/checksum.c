@@ -152,5 +152,5 @@ byte	COM_BlockSequenceCRCByte (byte *base, int length, int sequence)
 
 	crc &= 0xff;
 
-	return crc;
+	return (byte) crc;
 }
