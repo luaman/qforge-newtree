@@ -23,6 +23,9 @@ dnl Start TARGETS out at "qf-server"
 TARGETS="qf-server\$(EXEEXT)"
 SV_TARGETS=" yes"
 
+dnl Trust me on this one 
+BUILD_TYPE=" Debug"
+
 ISODATE=`date +%Y-%m-%d`
 AC_SUBST(ISODATE)
 
@@ -684,6 +687,7 @@ AC_ARG_ENABLE(debug,
 if test "x$debug" != xyes; then
 	if test "x$GCC" = xyes; then
 		CFLAGS="-O6 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations"
+		BUILD_TYPE=" Standard"
 		AC_MSG_CHECKING(for special compiler settings)
 		case "${host}" in
 			i?86-*-*)
@@ -783,6 +787,7 @@ AC_OUTPUT(
 AC_MSG_RESULT([
 	QuakeForge has been configured successfully.
 
+	Build type:$BUILD_TYPE
 	Server support:$SV_TARGETS
 	Client support:$CL_TARGETS
 
