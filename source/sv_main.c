@@ -665,6 +665,13 @@ SVC_DirectConnect (void)
 	strncpy (userinfo, Cmd_Argv (4), sizeof (userinfo) - 2);
 	userinfo[sizeof (userinfo) - 2] = 0;
 
+	// Validate the userinfo string.
+	if (!Info_Validate(userinfo)) {
+		Netchan_OutOfBandPrint (net_from, "%c\nInvalid userinfo string.\n",
+								A2C_PRINT);
+		return;
+	}
+
 	// see if the challenge is valid
 	for (i = 0; i < MAX_CHALLENGES; i++) {
 		if (NET_CompareBaseAdr (net_from, svs.challenges[i].adr)) {
@@ -1761,7 +1768,10 @@ SV_ExtractFromUserinfo (client_t *cl)
 
                         // if the new name was not set (due to the info string being too long), drop the client to prevent an infinite loop
                         if(strcmp(val, newname)) {
-                                SV_ClientPrintf (cl, PRINT_HIGH, "Please choose a different name.\n");
+				Netchan_OutOfBandPrint (net_from,
+							"%c\nPlease choose a different name.\n", A2C_PRINT);
+                                SV_ClientPrintf (cl, PRINT_HIGH,
+								"Please choose a different name.\n");
                                 Con_Printf("Client %d kicked for invalid name\n", cl->userid);
                                 SV_DropClient (cl);
                                 return;

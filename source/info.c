@@ -327,3 +327,20 @@ Info_Print (char *s)
 		Con_Printf ("%s\n", value);
 	}
 }
+
+qboolean
+Info_Validate (char *s)
+{
+	int count;
+	char *p;
+
+	if (!s || *s == '\0')
+		return false;
+
+	for (p = s, count = 0; *p != '\0'; p++)
+		if (*p == '\\')
+			count++;
+
+	return (!(count % 2));
+}
+
