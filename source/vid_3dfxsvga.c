@@ -29,14 +29,24 @@
 	$Id$
 */
 
-#include "vid_common.h"
-#include "va.h"
-#include "glquake.h"
-#include "sbar.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <GL/gl.h>
 #include <GL/fxmesa.h>
 #include <glide/sst1vid.h>
+#include <sys/signal.h>
+
+#include "console.h"
+#include "glquake.h"
+#include "qargs.h"
+#include "qendian.h"
+#include "quakedef.h"
+#include "quakefs.h"
+#include "sbar.h"
+#include "sys.h"
+#include "va.h"
 
 #define WARP_WIDTH              320
 #define WARP_HEIGHT             200
@@ -212,7 +222,6 @@ VID_Init(unsigned char *palette)
 {
 	int i;
 	GLint attribs[32];
-	char	gldir[MAX_OSPATH];
 
 	VID_GetWindowSize (640, 480);
 
@@ -270,15 +279,12 @@ VID_Init(unsigned char *palette)
 
 	GL_Init();
 
-	snprintf(gldir, sizeof(gldir), "%s/glquake", com_gamedir);
-	Sys_mkdir (gldir);
-
 	VID_SetPalette(palette);
 
 	// Check for 3DFX Extensions and initialize them.
 	VID_Init8bitPalette();
 
-	Con_Printf ("Video mode %dx%d initialized.\n", width, height);
+	Con_Printf ("Video mode %dx%d initialized.\n", scr_width, scr_height);
 
 	vid.recalc_refdef = 1;				// force a surface cache flush
 }
