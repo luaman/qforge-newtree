@@ -670,7 +670,7 @@ void SCR_ScreenShot_f (void)
 	byte            *buffer;
 	char            pcxname[80]; 
 	char            checkname[MAX_OSPATH];
-	int                     i, c, temp;
+	int                     i;
 // 
 // find a file name to save it to 
 // 
@@ -701,16 +701,7 @@ void SCR_ScreenShot_f (void)
 	buffer[15] = glheight>>8;
 	buffer[16] = 24;        // pixel size
 
-	glReadPixels (glx, gly, glwidth, glheight, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 ); 
-
-	// swap rgb to bgr
-	c = 18+glwidth*glheight*3;
-	for (i=18 ; i<c ; i+=3)
-	{
-		temp = buffer[i];
-		buffer[i] = buffer[i+2];
-		buffer[i+2] = temp;
-	}
+	glReadPixels (glx, gly, glwidth, glheight, GL_BGR, GL_UNSIGNED_BYTE, buffer+18 ); 
 	COM_WriteFile (pcxname, buffer, glwidth*glheight*3 + 18 );
 
 	free (buffer);

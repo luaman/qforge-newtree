@@ -58,10 +58,6 @@
 extern	double	realtime;
 int			skytexturenum;
 
-#ifndef GL_RGBA4
-#define	GL_RGBA4	0
-#endif
-
 extern vec3_t shadecolor; // Ender (Extend) Colormod
 int		lightmap_bytes;		// 1 or 3
 
@@ -952,6 +948,7 @@ void R_DrawWorld (void)
 	R_DrawSky ();
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glDisable(GL_BLEND);
 
 	R_RecursiveWorldNode (cl.worldmodel->nodes);
 
