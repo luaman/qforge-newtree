@@ -494,7 +494,7 @@ void R_DrawParticles (void)
 	float			scale;
 	qboolean		alphaTestEnabled;
     
-	GL_Bind(particletexture);
+	glBindTexture (GL_TEXTURE_2D, particletexture);
 	alphaTestEnabled = glIsEnabled(GL_ALPHA_TEST);
 	
 	if (alphaTestEnabled)

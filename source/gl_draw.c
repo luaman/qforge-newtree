@@ -122,20 +122,6 @@ typedef struct
 gltexture_t	gltextures[MAX_GLTEXTURES];
 int			numgltextures;
 
-void GL_Bind (int texnum)
-{
-	if (gl_nobind->value)
-		texnum = char_texture;
-	if (currenttexture == texnum)
-		return;
-	currenttexture = texnum;
-#ifdef _WIN32
-	bindTexFunc (GL_TEXTURE_2D, texnum);
-#else
-	glBindTexture (GL_TEXTURE_2D, texnum);
-#endif
-}
-
 
 /*
 =============================================================================
@@ -204,7 +190,7 @@ int	scrap_uploads;
 void Scrap_Upload (void)
 {
 	scrap_uploads++;
-	GL_Bind(scrap_texnum);
+	glBindTexture (GL_TEXTURE_2D, scrap_texnum);
 	GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, false, true);
 	scrap_dirty = false;
 }
@@ -376,9 +362,9 @@ void Draw_TextureMode_f (void)
 	{
 		if (glt->mipmap)
 		{
-			GL_Bind (glt->texnum);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+			glBindTexture (GL_TEXTURE_2D, glt->texnum);
+			glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+			glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 		}
 	}
 }
@@ -479,7 +465,7 @@ void Draw_Character8 (int x, int y, int num)
 	fcol = col*0.0625;
 	size = 0.0625;
 
-	GL_Bind (char_texture);
+	glBindTexture (GL_TEXTURE_2D, char_texture);
 
 	glColor3f (0.5, 0.5, 0.5);
 	glBegin (GL_QUADS);
@@ -536,7 +522,7 @@ void Draw_Crosshair(void)
 
 		pColor = (unsigned char *) &d_8to24table[(byte) crosshaircolor->value];
 		glColor4ubv ( pColor );
-		GL_Bind (cs_texture);
+		glBindTexture (GL_TEXTURE_2D, cs_texture);
 
 		glBegin (GL_QUADS);
 		glTexCoord2f (0, 0);
@@ -581,7 +567,7 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 		Scrap_Upload ();
 	gl = (glpic_t *)pic->data;
 	glColor3f (0.4, 0.4, 0.4);
-	GL_Bind (gl->texnum);
+	glBindTexture (GL_TEXTURE_2D, gl->texnum);
 	glBegin (GL_QUADS);
 	glTexCoord2f (gl->sl, gl->tl);
 	glVertex2f (x, y);
@@ -607,7 +593,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 		Scrap_Upload ();
 	gl = (glpic_t *)pic->data;
 	glColor4f (0.4, 0.4, 0.4, alpha);
-	GL_Bind (gl->texnum);
+	glBindTexture (GL_TEXTURE_2D, gl->texnum);
 	glBegin (GL_QUADS);
 	glTexCoord2f (gl->sl, gl->tl);
 	glVertex2f (x, y);
@@ -641,7 +627,7 @@ void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int h
 	newth = newtl + (height*oldglheight)/pic->height;
 	
 	glColor3f (0.4, 0.4, 0.4);
-	GL_Bind (gl->texnum);
+	glBindTexture (GL_TEXTURE_2D, gl->texnum);
 	glBegin (GL_QUADS);
 	glTexCoord2f (newsl, newtl);
 	glVertex2f (x, y);
@@ -686,7 +672,7 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 	byte			*src;
 	int				p;
 
-	GL_Bind (translate_texture);
+	glBindTexture (GL_TEXTURE_2D, translate_texture);
 
 	c = pic->width * pic->height;
 
@@ -779,7 +765,7 @@ Draw_ConsoleBackground ( int lines )
 	glColor4f (0.5, 0.5, 0.5, alpha);
 
 	// draw the console texture
-	GL_Bind (gl->texnum);
+	glBindTexture (GL_TEXTURE_2D, gl->texnum);
 	glBegin (GL_QUADS);
 	glTexCoord2f (gl->sl, gl->tl + ofs);
 	glVertex2f (0, 0);
@@ -822,7 +808,7 @@ refresh window.
 void Draw_TileClear (int x, int y, int w, int h)
 {
 	glColor3f (0.5, 0.5, 0.5);
-	GL_Bind (*(int *)draw_backtile->data);
+	glBindTexture (GL_TEXTURE_2D, *(int *)draw_backtile->data);
 	glBegin (GL_QUADS);
 	glTexCoord2f (x/64.0, y/64.0);
 	glVertex2f (x, y);
@@ -1380,7 +1366,7 @@ SetupTexture:
 	glt->height = height;
 	glt->mipmap = mipmap;
 
-	GL_Bind(glt->texnum);
+	glBindTexture (GL_TEXTURE_2D, glt->texnum);
 
 	GL_Upload8 (data, width, height, mipmap, alpha);
 
@@ -1399,17 +1385,10 @@ int GL_LoadPicTexture (qpic_t *pic)
 
 /****************************************/
 
-static GLenum oldtarget = 0; // TEXTURE0_SGIS;
-
 void GL_SelectTexture (GLenum target) 
 {
 	if (!gl_mtexable)
 		return;
 	qglSelectTexture (target + gl_mtex_enum);
-	if (target == oldtarget) 
-		return;
-	cnttextures[oldtarget] = currenttexture;
-	currenttexture = cnttextures[target];
-	oldtarget = target;
 }
 

@@ -36,6 +36,7 @@
 #include "console.h"
 #include "quakefs.h"
 #include "sound.h"
+#include "client.h"
 
 #include <string.h>
 
@@ -703,8 +704,9 @@ void Draw_ConsoleBackground (int lines)
 		}
 	}
 
-	Draw_AltString8 (vid.conwidth - strlen(cl_verstring->string)*8 - 11,
-			lines-14, cl_verstring->string);
+	if (!cls.download)
+		Draw_AltString8 (vid.conwidth - strlen(cl_verstring->string)
+				* 8 - 11, lines-14, cl_verstring->string);
 	
 }
 

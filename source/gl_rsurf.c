@@ -75,7 +75,7 @@ cvar_t		*gl_colorlights;
 #define	BLOCK_WIDTH		128
 #define	BLOCK_HEIGHT	128
 
-#define	MAX_LIGHTMAPS	256
+#define	MAX_LIGHTMAPS	64
 int			active_lightmaps;
 
 typedef struct glRect_s {
@@ -336,9 +336,6 @@ extern	int		solidskytexture;
 extern	int		alphaskytexture;
 extern	float	speedscale;		// for top sky and bottom sky
 
-void DrawGLWaterPoly (glpoly_t *p);
-void DrawGLWaterPolyLightmap (glpoly_t *p);
-
 lpMTexFUNC qglMTexCoord2f = NULL;
 lpSelTexFUNC qglSelectTexture = NULL;
 
@@ -378,14 +375,13 @@ void R_DrawSequentialPoly (msurface_t *s)
 	float		*v;
 	int			i;
 	texture_t	*t;
-	vec3_t		nv;
 	glRect_t	*theRect;
 
 	//
 	// normal lightmaped poly
 	//
 
-	if (! (s->flags & (SURF_DRAWSKY|SURF_DRAWTURB|SURF_UNDERWATER) ) )
+	if (!(s->flags & (SURF_DRAWSKY|SURF_DRAWTURB)))
 	{
 		R_RenderDynamicLightmaps (s);
 		if (gl_mtexable)
@@ -395,11 +391,11 @@ void R_DrawSequentialPoly (msurface_t *s)
 			t = R_TextureAnimation (s->texinfo->texture);
 			// Binds world to texture env 0
 			GL_SelectTexture(0);
-			GL_Bind (t->gl_texturenum);
+			glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
 //			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			// Binds lightmap to texenv 1
 			GL_EnableMultitexture(); // Same as SelectTexture (TEXTURE1)
-			GL_Bind (lightmap_textures + s->lightmaptexturenum);
+			glBindTexture (GL_TEXTURE_2D, lightmap_textures + s->lightmaptexturenum);
 			i = s->lightmaptexturenum;
 			if (lightmap_modified[i])
 			{
@@ -414,6 +410,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 				theRect->w = 0;
 			}
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
 			glBegin(GL_POLYGON);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -428,22 +425,22 @@ void R_DrawSequentialPoly (msurface_t *s)
 			p = s->polys;
 
 			t = R_TextureAnimation (s->texinfo->texture);
-			GL_Bind (t->gl_texturenum);
+			glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
 			glBegin (GL_POLYGON);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
-				glTexCoord2f (v[3], v[4]);
+				glTexCoord2fv (&v[3]);
 				glVertex3fv (v);
 			}
 			glEnd ();
 
-			GL_Bind (lightmap_textures + s->lightmaptexturenum);
+			glBindTexture (GL_TEXTURE_2D, lightmap_textures + s->lightmaptexturenum);
 			glBegin (GL_POLYGON);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
-				glTexCoord2f (v[5], v[6]);
+				glTexCoord2fv (&v[5]);
 				glVertex3fv (v);
 			}
 			glEnd ();
@@ -457,138 +454,11 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 	if (s->flags & SURF_DRAWTURB)
 	{
-		GL_DisableMultitexture();
-		GL_Bind (s->texinfo->texture->gl_texturenum);
 		EmitWaterPolys (s);
 		return;
 	}
-
-	//
-	// subdivided sky warp
-	//
-	if (s->flags & SURF_DRAWSKY)
-	{
-		GL_DisableMultitexture();
-		GL_Bind (solidskytexture);
-		speedscale = realtime*8;
-		speedscale -= (int)speedscale & ~127;
-
-		EmitSkyPolys (s);
-
-		GL_Bind (alphaskytexture);
-		speedscale = realtime*16;
-		speedscale -= (int)speedscale & ~127;
-		EmitSkyPolys (s);
-
-		return;
-	}
-
-	//
-	// underwater warped with lightmap
-	//
-	R_RenderDynamicLightmaps (s);
-	if (gl_mtexable)
-	{
-		p = s->polys;
-
-		t = R_TextureAnimation (s->texinfo->texture);
-		GL_SelectTexture(0);
-		GL_Bind (t->gl_texturenum);
-		GL_EnableMultitexture();
-		GL_Bind (lightmap_textures + s->lightmaptexturenum);
-		i = s->lightmaptexturenum;
-		if (lightmap_modified[i])
-		{
-			lightmap_modified[i] = false;
-			theRect = &lightmap_rectchange[i];
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, theRect->t, 
-				BLOCK_WIDTH, theRect->h, gl_lightmap_format, GL_UNSIGNED_BYTE,
-				lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes);
-			theRect->l = BLOCK_WIDTH;
-			theRect->t = BLOCK_HEIGHT;
-			theRect->h = 0;
-			theRect->w = 0;
-		}
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glBegin (GL_TRIANGLE_FAN);
-		v = p->verts[0];
-		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
-		{
-			qglMTexCoord2f (gl_mtex_enum + 0, v[3], v[4]);
-			qglMTexCoord2f (gl_mtex_enum + 1, v[5], v[6]);
-
-			nv[0] = v[0] + 8*sin(v[1]*0.05+realtime)*sin(v[2]*0.05+realtime);
-			nv[1] = v[1] + 8*sin(v[0]*0.05+realtime)*sin(v[2]*0.05+realtime);
-			nv[2] = v[2];
-
-			glVertex3fv (nv);
-		}
-		glEnd ();
-	} else {
-		p = s->polys;
-
-		t = R_TextureAnimation (s->texinfo->texture);
-		GL_Bind (t->gl_texturenum);
-		DrawGLWaterPoly (p);
-
-		GL_Bind (lightmap_textures + s->lightmaptexturenum);
-		DrawGLWaterPolyLightmap (p);
-	}
 }
 
-
-/*
-================
-DrawGLWaterPoly
-
-Warp the vertex coordinates
-================
-*/
-void DrawGLWaterPoly (glpoly_t *p)
-{
-	int		i;
-	float	*v;
-	vec3_t	nv;
-
-	GL_DisableMultitexture();
-
-	glBegin (GL_TRIANGLE_FAN);
-	v = p->verts[0];
-	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
-	{
-		glTexCoord2f (v[3], v[4]);
-
-		nv[0] = v[0] + 8*sin(v[1]*0.05+realtime)*sin(v[2]*0.05+realtime);
-		nv[1] = v[1] + 8*sin(v[0]*0.05+realtime)*sin(v[2]*0.05+realtime);
-		nv[2] = v[2];
-
-		glVertex3fv (nv);
-	}
-	glEnd ();
-}
-
-void DrawGLWaterPolyLightmap (glpoly_t *p)
-{
-	int		i;
-	float	*v;
-	vec3_t	nv;
-
-	GL_DisableMultitexture();
-
-	glBegin (GL_TRIANGLE_FAN);
-	v = p->verts[0];
-	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
-	{
-		glTexCoord2f (v[5], v[6]);
-
-		nv[0] = v[0] + 8*sin(v[1]*0.05+realtime)*sin(v[2]*0.05+realtime);
-		nv[1] = v[1] + 8*sin(v[0]*0.05+realtime)*sin(v[2]*0.05+realtime);
-		nv[2] = v[2];
-
-		glVertex3fv (nv);
-	}
-	glEnd ();
-}
 
 /*
 ================
@@ -604,7 +474,7 @@ void DrawGLPoly (glpoly_t *p)
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
-		glTexCoord2f (v[3], v[4]);
+		glTexCoord2fv (&v[3]);
 		glVertex3fv (v);
 	}
 	glEnd ();
@@ -635,21 +505,11 @@ void R_BlendLightmaps (void)
 		p = lightmap_polys[i];
 		if (!p)
 			continue;
-		GL_Bind(lightmap_textures+i);
+		glBindTexture (GL_TEXTURE_2D, lightmap_textures+i);
 		if (lightmap_modified[i])
 		{
 			lightmap_modified[i] = false;
 			theRect = &lightmap_rectchange[i];
-//			theRect->l = 0;
-//			theRect->t = 0;
-//			theRect->w = BLOCK_WIDTH;
-//			theRect->h = BLOCK_HEIGHT;
-//			glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes
-//			, BLOCK_WIDTH, BLOCK_HEIGHT, 0, 
-//			gl_lightmap_format, GL_UNSIGNED_BYTE, lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes);
-//			glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes
-//				, BLOCK_WIDTH, theRect->h, 0, 
-//				gl_lightmap_format, GL_UNSIGNED_BYTE, lightmaps+(i*BLOCK_HEIGHT+theRect->t)*BLOCK_WIDTH*lightmap_bytes);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, theRect->t, 
 				BLOCK_WIDTH, theRect->h, gl_lightmap_format, GL_UNSIGNED_BYTE,
 				lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes);
@@ -660,23 +520,14 @@ void R_BlendLightmaps (void)
 		}
 		for ( ; p ; p=p->chain)
 		{
-//			if (p->flags & SURF_UNDERWATER)
-//				DrawGLWaterPolyLightmap (p);
-			if (((r_viewleaf->contents==CONTENTS_EMPTY && (p->flags & SURF_UNDERWATER)) ||
-				(r_viewleaf->contents!=CONTENTS_EMPTY && !(p->flags & SURF_UNDERWATER)))
-				&& !(p->flags & SURF_DONTWARP))
-				DrawGLWaterPolyLightmap (p);
-			else
+			glBegin (GL_POLYGON);
+			v = p->verts[0];
+			for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
 			{
-				glBegin (GL_POLYGON);
-				v = p->verts[0];
-				for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
-				{
-					glTexCoord2f (v[5], v[6]);
-					glVertex3fv (v);
-				}
-				glEnd ();
+				glTexCoord2fv (&v[5]);
+				glVertex3fv (v);
 			}
+			glEnd ();
 		}
 	}
 
@@ -703,12 +554,12 @@ void R_RenderBrushPoly (msurface_t *fa)
 
 	if (fa->flags & SURF_DRAWSKY)
 	{	// warp texture, no lightmaps
-		EmitBothSkyLayers (fa);
+//		EmitBothSkyLayers (fa);
 		return;
 	}
 		
 	t = R_TextureAnimation (fa->texinfo->texture);
-	GL_Bind (t->gl_texturenum);
+	glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
 
 	if (fa->flags & SURF_DRAWTURB)
 	{	// warp texture, no lightmaps
@@ -716,12 +567,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 		return;
 	}
 
-	if (((r_viewleaf->contents==CONTENTS_EMPTY && (fa->flags & SURF_UNDERWATER)) ||
-		(r_viewleaf->contents!=CONTENTS_EMPTY && !(fa->flags & SURF_UNDERWATER)))
-		&& !(fa->flags & SURF_DONTWARP))
-		DrawGLWaterPoly (fa->polys);
-	else
-		DrawGLPoly (fa->polys);
+	DrawGLPoly (fa->polys);
 
 	// add the poly to the proper lightmap chain
 
@@ -855,7 +701,7 @@ void R_DrawWaterSurfaces (void)
 	// go back to the world matrix
 	//
 
-    glLoadMatrixf (r_world_matrix);
+	glLoadMatrixf (r_world_matrix);
 
 	if (r_wateralpha->value < 1.0) {
 		glColor4f (0.5, 0.5, 0.5, r_wateralpha->value);
@@ -868,7 +714,7 @@ void R_DrawWaterSurfaces (void)
 			return;
 
 		for ( s = waterchain ; s ; s=s->texturechain) {
-			GL_Bind (s->texinfo->texture->gl_texturenum);
+			glBindTexture (GL_TEXTURE_2D, s->texinfo->texture->gl_texturenum);
 			EmitWaterPolys (s);
 		}
 		
@@ -888,7 +734,7 @@ void R_DrawWaterSurfaces (void)
 
 			// set modulate mode explicitly
 			
-			GL_Bind (t->gl_texturenum);
+			glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
 
 			for ( ; s ; s=s->texturechain)
 				EmitWaterPolys (s);
@@ -919,7 +765,6 @@ void DrawTextureChains (void)
 
 		if (skychain)
 		{
-			R_DrawSkyChain(skychain);
 			skychain = NULL;
 		}
 
@@ -934,17 +779,17 @@ void DrawTextureChains (void)
 		s = t->texturechain;
 		if (!s)
 			continue;
-		if (i == skytexturenum)
+/*		if (i == skytexturenum)
 			R_DrawSkyChain (s);
-		else if (i == mirrortexturenum && r_mirroralpha->value != 1.0)
+		else*/ if (i == mirrortexturenum && r_mirroralpha->value != 1.0)
 		{
 			R_MirrorChain (s);
 			continue;
 		}
 		else
 		{
-			if ((s->flags & SURF_DRAWTURB) && r_wateralpha->value != 1.0)
-				continue;	// draw translucent water later
+//			if ((s->flags & SURF_DRAWTURB) && r_wateralpha->value != 1.0)
+//				continue;	// draw translucent water later
 			for ( ; s ; s=s->texturechain)
 				R_RenderBrushPoly (s);
 		}
@@ -970,7 +815,6 @@ void R_DrawBrushModel (entity_t *e)
 	qboolean	rotated;
 
 	currententity = e;
-	currenttexture = -1;
 
 	clmodel = e->model;
 
@@ -1131,10 +975,7 @@ void R_RecursiveWorldNode (mnode_t *node)
 		break;
 	}
 
-	if (dot >= 0)
-		side = 0;
-	else
-		side = 1;
+	side = dot < 0;
 
 	// recurse down the children, front side first
 	R_RecursiveWorldNode (node->children[side]);
@@ -1150,41 +991,33 @@ void R_RecursiveWorldNode (mnode_t *node)
 			side = SURF_PLANEBACK;
 		else if (dot > BACKFACE_EPSILON)
 			side = 0;
+		for ( ; c ; c--, surf++)
 		{
-			for ( ; c ; c--, surf++)
+			if (surf->visframe != r_framecount)
+				continue;
+
+			// don't backface underwater surfaces, because they warp
+			if ((dot < 0) ^ !!(surf->flags & SURF_PLANEBACK))
+				continue;		// wrong side
+
+			// if sorting by texture, just store it out
+			if (gl_texsort->value)
 			{
-				if (surf->visframe != r_framecount)
-					continue;
-
-				// don't backface underwater surfaces, because they warp
-//				if ( !(surf->flags & SURF_UNDERWATER) && ( (dot < 0) ^ !!(surf->flags & SURF_PLANEBACK)) )
-//					continue;		// wrong side
-				if ( !(((r_viewleaf->contents==CONTENTS_EMPTY && (surf->flags & SURF_UNDERWATER)) ||
-					(r_viewleaf->contents!=CONTENTS_EMPTY && !(surf->flags & SURF_UNDERWATER)))
-					&& !(surf->flags & SURF_DONTWARP)) && ( (dot < 0) ^ !!(surf->flags & SURF_PLANEBACK)) )
-					continue;		// wrong side
-
-				// if sorting by texture, just store it out
-				if (gl_texsort->value)
+				if (!mirror
+				|| surf->texinfo->texture != cl.worldmodel->textures[mirrortexturenum])
 				{
-					if (!mirror
-					|| surf->texinfo->texture != cl.worldmodel->textures[mirrortexturenum])
-					{
-						surf->texturechain = surf->texinfo->texture->texturechain;
-						surf->texinfo->texture->texturechain = surf;
-					}
-				} else if (surf->flags & SURF_DRAWSKY) {
-					surf->texturechain = skychain;
-					skychain = surf;
-				} else if (surf->flags & SURF_DRAWTURB) {
-					surf->texturechain = waterchain;
-					waterchain = surf;
-				} else
-					R_DrawSequentialPoly (surf);
-
+					surf->texturechain = surf->texinfo->texture->texturechain;
+					surf->texinfo->texture->texturechain = surf;
+				}
+			} else if (surf->flags & SURF_DRAWSKY) {
+				surf->texturechain = skychain;
+				skychain = surf;
+			} else if (surf->flags & SURF_DRAWTURB) {
+				surf->texturechain = waterchain;
+				waterchain = surf;
+			} else
+				R_DrawSequentialPoly (surf);
 			}
-		}
-
 	}
 
 	// recurse down the back side
@@ -1208,26 +1041,17 @@ void R_DrawWorld (void)
 	VectorCopy (r_refdef.vieworg, modelorg);
 
 	currententity = &ent;
-	currenttexture = -1;
 
 	glColor3f (1.0, 1.0, 1.0);
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 	// Be sure to clear the skybox --KB
-	R_ClearSkyBox ();
+	R_DrawSky ();
 
 	R_RecursiveWorldNode (cl.worldmodel->nodes);
 
 	DrawTextureChains ();
 
 	R_BlendLightmaps ();
-
-	// Adjust the depth range and draw the skybox, ensuring it's behind
-	//  everhting else.  This fixes the problem where some things are
-	//  drawn as sky when something else should be drawn.  --KB
-	glColor3f (0.5, 0.5, 0.5);
-	glDepthRange (gldepthmax, gldepthmax);
-	R_DrawSkyBox ();
-	glDepthRange (gldepthmin, gldepthmax);
 }
 
 
@@ -1543,7 +1367,7 @@ void GL_BuildLightmaps (void)
 		lightmap_rectchange[i].t = BLOCK_HEIGHT;
 		lightmap_rectchange[i].w = 0;
 		lightmap_rectchange[i].h = 0;
-		GL_Bind(lightmap_textures + i);
+		glBindTexture (GL_TEXTURE_2D, lightmap_textures + i);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes, BLOCK_WIDTH,

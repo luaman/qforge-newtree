@@ -114,7 +114,7 @@ void R_InitParticleTexture (void)
 	// particle texture
 	//
 	particletexture = texture_extension_number++;
-    GL_Bind(particletexture);
+    glBindTexture (GL_TEXTURE_2D, particletexture);
 
 	for (x=0 ; x<8 ; x++)
 	{
@@ -238,6 +238,7 @@ void R_Init (void)
 	r_shadows = Cvar_Get("r_shadows", "0", CVAR_NONE, "None");
 	r_mirroralpha = Cvar_Get("r_mirroralpha", "1", CVAR_NONE, "None");
 	r_wateralpha = Cvar_Get("r_wateralpha", "1", CVAR_NONE, "None");
+	r_waterripple = Cvar_Get ("r_waterripple", "0", CVAR_NONE, "None");
 	r_dynamic = Cvar_Get("r_dynamic", "1", CVAR_NONE, "None");
 	r_novis = Cvar_Get("r_novis", "0", CVAR_NONE, "None");
 	r_speeds = Cvar_Get("r_speeds", "0", CVAR_NONE, "None");
@@ -247,7 +248,7 @@ void R_Init (void)
 	gl_texsort = Cvar_Get("gl_texsort", "1", CVAR_NONE, "None");
  
  	if (gl_mtexable)
-		gl_texsort->value = 0.0;
+		Cvar_SetValue(gl_texsort, 0.0);
 
 	gl_cull = Cvar_Get("gl_cull", "1", CVAR_NONE, "None");
 	gl_smoothmodels = Cvar_Get("gl_smoothmodels", "1", CVAR_NONE, "None");
@@ -361,7 +362,7 @@ void R_TranslatePlayerSkin (int playernum)
 
 		// because this happens during gameplay, do it fast
 		// instead of sending it through gl_upload 8
-		GL_Bind(playertextures + playernum);
+		glBindTexture (GL_TEXTURE_2D, playertextures + playernum);
 
 #if 0
 		s = 320*200;

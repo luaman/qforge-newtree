@@ -60,9 +60,6 @@ int			c_brush_polys, c_alias_polys;
 
 qboolean	envmap;				// true during envmap command capture 
 
-int			currenttexture = -1;		// to avoid unnecessary texture sets
-
-int			cnttextures[2] = {-1, -1};     // cached
 
 int			particletexture;	// little dot for particles
 int			playertextures;		// up to 16 color translated skins
@@ -103,6 +100,7 @@ cvar_t	*r_lightmap;
 cvar_t	*r_shadows;
 cvar_t	*r_mirroralpha;
 cvar_t	*r_wateralpha;
+cvar_t	*r_waterripple;
 cvar_t	*r_dynamic;
 cvar_t	*r_novis;
 cvar_t	*r_netgraph;
@@ -292,7 +290,7 @@ void R_DrawSpriteModel (entity_t *e)
 
 	GL_DisableMultitexture();
 
-    GL_Bind(frame->gl_texturenum);
+    glBindTexture (GL_TEXTURE_2D, frame->gl_texturenum);
 
 	glEnable (GL_ALPHA_TEST);
 	glBegin (GL_QUADS);
@@ -364,8 +362,8 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 	trivertx_t	*verts;
 	int		*order;
 	int		count;
-
-lastposenum = posenum;
+	
+	lastposenum = posenum;
 
 	verts = (trivertx_t *)((byte *)paliashdr + paliashdr->posedata);
 	verts += posenum * paliashdr->poseverts;
@@ -593,7 +591,7 @@ void R_DrawAliasModel (entity_t *e)
 
 	GL_DisableMultitexture();
 
-    glPushMatrix ();
+	glPushMatrix ();
 	R_RotateForEntity (e);
 
 	if (!strcmp (clmodel->name, "progs/eyes.mdl") ) {
@@ -606,7 +604,7 @@ void R_DrawAliasModel (entity_t *e)
 	}
 
 	anim = (int)(cl.time*10) & 3;
-    GL_Bind(paliashdr->gl_texturenum[currententity->skinnum][anim]);
+    glBindTexture (GL_TEXTURE_2D, paliashdr->gl_texturenum[currententity->skinnum][anim]);
 
 	// we can't dynamically colormap textures, so they are cached
 	// seperately for the players.  Heads are just uncolored.
@@ -618,7 +616,7 @@ void R_DrawAliasModel (entity_t *e)
 			R_TranslatePlayerSkin(i);
 		}
 		if (i >= 0 && i<MAX_CLIENTS)
-		    GL_Bind(playertextures + i);
+		    glBindTexture (GL_TEXTURE_2D, playertextures + i);
 	}
 
 	if (gl_smoothmodels->value)

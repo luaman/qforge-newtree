@@ -75,7 +75,6 @@ typedef void (GLAPIENTRY *PRIORTEXFUNCPTR)(GLsizei, const GLuint *,
                     const GLclampf *);
 typedef void (GLAPIENTRY *TEXSUBIMAGEPTR)(int, int, int, int, int, int, int, int, void *);
 
-extern	BINDTEXFUNCPTR bindTexFunc;
 extern	DELTEXFUNCPTR delTexFunc;
 extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
 
@@ -176,8 +175,6 @@ extern	texture_t	*r_notexture_mip;
 extern	int		d_lightstylevalue[256];	// 8.8 fraction of base light value
 
 extern	qboolean	envmap;
-extern	int	currenttexture;
-extern	int	cnttextures[2];
 extern	int	particletexture;
 extern	int	netgraphtexture;	// netgraph texture
 extern	int	playertextures;
@@ -195,6 +192,7 @@ extern	cvar_t	*r_lightmap;
 extern	cvar_t	*r_shadows;
 extern	cvar_t	*r_mirroralpha;
 extern	cvar_t	*r_wateralpha;
+extern	cvar_t	*r_waterripple;
 extern	cvar_t	*r_dynamic;
 extern	cvar_t	*r_novis;
 extern	cvar_t	*r_netgraph;
@@ -233,7 +231,6 @@ extern	const char *gl_version;
 extern	const char *gl_extensions;
 
 void R_TranslatePlayerSkin (int playernum);
-void GL_Bind (int texnum);
 
 // Multitexture
 #define TEXTURE0_SGIS		0x835E
@@ -263,8 +260,7 @@ void EmitWaterPolys (msurface_t *fa);
 void EmitSkyPolys (msurface_t *fa);
 void R_DrawSkyChain (msurface_t *s);
 void R_LoadSkys (char *);
-void R_ClearSkyBox (void);
-void R_DrawSkyBox (void);
+void R_DrawSky (void);
 
 //
 // gl_draw.c
