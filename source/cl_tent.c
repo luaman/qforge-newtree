@@ -358,6 +358,11 @@ entity_t *CL_NewTempEntity (void)
 	memset (ent, 0, sizeof(*ent));
 
 	ent->colormap = vid.colormap;
+	// LordHavoc: Endy had neglected to do this as part of the QSG VERSION 2 stuff
+	ent->glowsize    = 0;
+	ent->glowcolor   = 254;
+	ent->alpha       = 1;
+	ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 	return ent;
 }
 
@@ -426,10 +431,6 @@ void CL_UpdateBeams (void)
 			ent->angles[0] = pitch;
 			ent->angles[1] = yaw;
 			ent->angles[2] = rand()%360;
-			// LordHavoc: visible lightning
-			ent->alpha = 1;
-			ent->scale = 1;
-			ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 
 			for (j=0 ; j<3 ; j++)
 				org[j] += dist[j]*30;

@@ -717,6 +717,11 @@ void CL_LinkProjectiles (void)
 		ent->scoreboard = NULL;
 		VectorCopy (pr->origin, ent->origin);
 		VectorCopy (pr->angles, ent->angles);
+		// LordHavoc: Endy had neglected to do this as part of the QSG VERSION 2 stuff
+		ent->glowsize    = 0;
+		ent->glowcolor   = 254;
+		ent->alpha       = 1;
+		ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 	}
 }
 
@@ -938,6 +943,12 @@ void CL_LinkPlayers (void)
 			ent->scoreboard = info;		// use custom skin
 		else
 			ent->scoreboard = NULL;
+
+		// LordHavoc: more QSG VERSION 2 stuff, FIXME: players don't have extend stuff
+		ent->glowsize    = 0;
+		ent->glowcolor   = 254;
+		ent->alpha       = 1;
+		ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 
 		//
 		// angles
