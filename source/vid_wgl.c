@@ -175,11 +175,6 @@ RECT        window_rect;
 // direct draw software compatability stuff
 
 void
-VID_HandlePause (qboolean pause)
-{
-}
-
-void
 VID_ForceLockState (int lk)
 {
 }

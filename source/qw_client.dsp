@@ -1443,6 +1443,10 @@ SOURCE=.\va.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\vid.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\vid_mgl.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
