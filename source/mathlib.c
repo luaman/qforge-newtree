@@ -33,7 +33,7 @@
 #include <math.h>
 #include "qtypes.h"
 #include "mathlib.h"
-
+#include "model.h"
 void Sys_Error (char *error, ...);
 
 vec3_t vec3_origin = {0,0,0};
