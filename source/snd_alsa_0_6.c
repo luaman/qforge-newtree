@@ -53,38 +53,39 @@ int
 check_card (int card)
 {
 	snd_ctl_t  *handle;
-	snd_ctl_hw_info_t info;
 	int         rc;
 
 	if ((rc = snd_ctl_open (&handle, va ("hw:%d", card))) < 0) {
 		Con_Printf ("Error: control open (%i): %s\n", card, snd_strerror (rc));
 		return rc;
 	}
-	if ((rc = snd_ctl_hw_info (handle, &info)) < 0) {
-		Con_Printf ("Error: control hardware info (%i): %s\n", card,
-					snd_strerror (rc));
-		snd_ctl_close (handle);
-		return rc;
-	}
-	snd_ctl_close (handle);
 	if (dev == -1) {
-		for (dev = 0; dev < info.pcmdevs; dev++) {
+		while (1) {
+			 if ((rc = snd_ctl_pcm_next_device (handle, &dev)) < 0) {
+			 	Con_Printf ("Error: next device: %s\n", snd_strerror (rc));
+				return rc;
+			}
+			if (dev < 0)
+				break;
 			if ((rc = snd_pcm_open (&pcm_handle, va ("hw:%d,%d", card, dev),
 									SND_PCM_STREAM_PLAYBACK,
 									SND_PCM_NONBLOCK)) == 0) {
-				return 0;
+				goto exit;
 			}
 		}
 	} else {
-		if (dev >= 0 && dev < info.pcmdevs) {
-			if ((rc = snd_pcm_open (&pcm_handle, va ("hw:%d,%d", card, dev),
-									SND_PCM_STREAM_PLAYBACK,
-									SND_PCM_NONBLOCK)) == 0) {
-				return 0;
-			}
+		if ((rc = snd_pcm_open (&pcm_handle, va ("hw:%d,%d", card, dev),
+								SND_PCM_STREAM_PLAYBACK,
+								SND_PCM_NONBLOCK)) == 0) {
+			goto exit;
 		}
+		Con_Printf ("Error: snd_pcm_open %d: %s\n", dev, snd_strerror (rc));
+		goto exit;
 	}
-	return 1;
+	rc = 1;
+exit:
+	snd_ctl_close(handle);
+	return rc;
 }
 
 qboolean
@@ -93,13 +94,7 @@ SNDDMA_Init (void)
 	int         rc = 0, i;
 	char       *err_msg = "";
 	int         rate = -1, format = -1, stereo = -1, frag_size;
-	unsigned int mask;
 
-	mask = snd_cards_mask ();
-	if (!mask) {
-		Con_Printf ("No sound cards detected\n");
-		return 0;
-	}
 	if ((i = COM_CheckParm ("-sndcard")) != 0) {
 		card = atoi (com_argv[i + 1]);
 	}
@@ -128,9 +123,11 @@ SNDDMA_Init (void)
 		stereo = 0;
 	}
 	if (card == -1) {
-		for (card = 0; card < SND_CARDS; card++) {
-			if (!(mask & (1 << card)))
-				continue;
+		if (snd_card_next(&card) < 0 || card < 0) {
+			Con_Printf ("No sound cards detected\n");
+			return 0;
+		}
+		while (card >= 0) {
 			rc = check_card (card);
 			if (rc < 0)
 				return 0;
