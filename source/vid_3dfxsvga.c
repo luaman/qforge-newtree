@@ -43,13 +43,14 @@
 
 #include "console.h"
 #include "glquake.h"
+#include "host.h"
 #include "qargs.h"
 #include "qendian.h"
+#include "qfgl_ext.h"
 #include "quakefs.h"
 #include "sbar.h"
 #include "sys.h"
 #include "va.h"
-#include "host.h"
 
 #define WARP_WIDTH              320
 #define WARP_HEIGHT             200
