@@ -80,6 +80,15 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_C_BIGENDIAN
 
+AC_MSG_CHECKING(that fnmatch is in fnmatch.h)
+AC_TRY_COMPILE(
+	[#include <fnmatch.h>],
+	[int (*foo)() = fnmatch;],
+	AC_DEFINE(HAVE_FNMATCH_PROTO)
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no)
+)
+
 AC_MSG_CHECKING(for socklen_t in sys/types.h)
 AC_TRY_COMPILE(
 	[#include <sys/types.h>],

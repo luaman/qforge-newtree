@@ -68,6 +68,10 @@
 #endif
 #include <limits.h>
 
+#ifndef HAVE_FNMATCH_PROTO
+fnmatch (__const char *__pattern, __const char *__string, int __flags);
+#endif
+
 
 extern qboolean      is_server;
 

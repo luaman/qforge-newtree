@@ -97,5 +97,8 @@
 /* Define this to something sane if you don't have stricmp */
 #undef stricmp
 
+/* Define this if fnmatch is prototyped in fnmatch.h */
+#undef HAVE_FNMATCH_PROTO
+
 @BOTTOM@
 #endif // _CONFIG_H
