@@ -75,7 +75,7 @@ cvar_t		*gl_colorlights;
 #define	BLOCK_WIDTH		128
 #define	BLOCK_HEIGHT	128
 
-#define	MAX_LIGHTMAPS	256
+#define	MAX_LIGHTMAPS	64
 int			active_lightmaps;
 
 typedef struct glRect_s {
@@ -1342,7 +1342,7 @@ void GL_BuildLightmaps (void)
 		currentmodel = m;
 		for (i=0 ; i<m->numsurfaces ; i++)
 		{
-			GL_CreateSurfaceLightmap (m->surfaces + i);
+			//GL_CreateSurfaceLightmap (m->surfaces + i);
 			if ( m->surfaces[i].flags & SURF_DRAWTURB )
 				continue;
 			if ( m->surfaces[i].flags & SURF_DRAWSKY )
