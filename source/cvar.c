@@ -44,6 +44,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
 cvar_t	*cvar_vars;
 char	*cvar_null_string = "";

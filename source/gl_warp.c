@@ -1077,7 +1077,6 @@ void R_InitSky_32 (byte *src, int bytesperpixel)
 	unsigned	transpix;
         int             r, g, b;
 	unsigned	*rgba;
-        extern  int     skytexturenum;
 
         if (bytesperpixel == 4) {
          for (i = 0;i < 128;i++)
