@@ -203,8 +203,7 @@ Con_Resize (console_t *con)
 	if (width == con_linewidth)
 		return;
 
-	if (width < 1)						// video hasn't been initialized yet
-	{
+	if (width < 1) {	// video hasn't been initialized yet
 		width = 38;
 		con_linewidth = width;
 		con_totallines = CON_TEXTSIZE / con_linewidth;
