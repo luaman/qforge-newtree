@@ -53,6 +53,7 @@ key up events are sent even if in console mode
 
 */
 
+cvar_t	*cl_chatmode;
 
 #define		MAXCMDLINE	256
 char	key_lines[32][MAXCMDLINE];
@@ -264,113 +265,133 @@ Interactive line editing and console scrollback
 */
 void Key_Console (int key)
 {
-#ifdef _WIN32
-//	char	*cmd, *s;
 	int		i;
+#ifdef _WIN32
 	HANDLE	th;
 	char	*clipText, *textCopied;
 #endif
-	
-	if (key == K_ENTER)
-	{	// backslash text are commands, else chat
-		if (key_lines[edit_line][1] == '\\' || key_lines[edit_line][1] == '/')
-			Cbuf_AddText (key_lines[edit_line]+2);	// skip the >
-		else if (CheckForCommand())
-			Cbuf_AddText (key_lines[edit_line]+1);	// valid command
-		else
-		{	// convert to a chat message
-			if (cls.state >= ca_connected)
+
+	switch (key)
+	{
+	    case K_ENTER:
+			// backslash text are commands
+			if (key_lines[edit_line][1] == '/' && key_lines[edit_line][2] == '/')
+				goto no_lf;
+			else if (key_lines[edit_line][1] == '\\' || key_lines[edit_line][1] == '/')
+				Cbuf_AddText (key_lines[edit_line]+2);	// skip the ]/
+			else if (cl_chatmode->value != 2 && CheckForCommand())
+				Cbuf_AddText (key_lines[edit_line]+1);	// valid command
+			else if ((cls.state >= ca_connected && cl_chatmode->value == 1) || cl_chatmode->value == 2)
+			{
+				if (cls.state < ca_connected)	// can happen if cl_constyle == 2
+					goto no_lf;					// drop the whole line
+
+				// convert to a chat message
 				Cbuf_AddText ("say ");
-			Cbuf_AddText (key_lines[edit_line]+1);	// skip the >
-		}
+				Cbuf_AddText (key_lines[edit_line]+1);
+			}
+			else
+				Cbuf_AddText (key_lines[edit_line]+1);	// skip the ]
 
-		Cbuf_AddText ("\n");
-		Con_Printf ("%s\n",key_lines[edit_line]);
-		edit_line = (edit_line + 1) & 31;
-		history_line = edit_line;
-		key_lines[edit_line][0] = ']';
-		key_linepos = 1;
-		if (cls.state == ca_disconnected)
-			SCR_UpdateScreen ();	// force an update, because the command
-									// may take some time
-		return;
-	}
-
-	if (key == K_TAB)
-	{	// command completion
-		CompleteCommand ();
-		return;
-	}
-	
-	if (key == K_BACKSPACE || key == K_LEFTARROW)
-	{
-		if (key_linepos > 1)
-			key_linepos--;
-		return;
-	}
-
-	if (key == K_UPARROW)
-	{
-		do
-		{
-			history_line = (history_line - 1) & 31;
-		} while (history_line != edit_line
-				&& !key_lines[history_line][1]);
-		if (history_line == edit_line)
-			history_line = (edit_line+1)&31;
-		strcpy(key_lines[edit_line], key_lines[history_line]);
-		key_linepos = strlen(key_lines[edit_line]);
-		return;
-	}
-
-	if (key == K_DOWNARROW)
-	{
-		if (history_line == edit_line) return;
-		do
-		{
-			history_line = (history_line + 1) & 31;
-		}
-		while (history_line != edit_line
-			&& !key_lines[history_line][1]);
-		if (history_line == edit_line)
-		{
+			Cbuf_AddText ("\n");
+no_lf:
+			Con_Printf ("%s\n",key_lines[edit_line]);
+			edit_line = (edit_line + 1) & 31;
+			history_line = edit_line;
 			key_lines[edit_line][0] = ']';
+			key_lines[edit_line][1] = 0;
 			key_linepos = 1;
-		}
-		else
-		{
+			if (cls.state == ca_disconnected)
+				SCR_UpdateScreen ();	// force an update, because the command
+										// may take some time
+			return;
+
+		case K_TAB:
+			// command completion
+			CompleteCommand ();
+			return;
+
+		case K_BACKSPACE:
+			if (key_linepos > 1)
+			{
+				strcpy(key_lines[edit_line] + key_linepos - 1, key_lines[edit_line] + key_linepos);
+				key_linepos--;
+			}
+			return;
+
+		case K_DEL:
+			if (key_linepos < strlen(key_lines[edit_line]))
+				strcpy(key_lines[edit_line] + key_linepos, key_lines[edit_line] + key_linepos + 1);
+			return;
+
+		case K_RIGHTARROW:
+			if (key_linepos < strlen(key_lines[edit_line]))
+				key_linepos++;
+			return;
+
+	    case K_LEFTARROW:
+			if (key_linepos > 1)
+				key_linepos--;
+			return;
+
+	    case K_UPARROW:
+			do {
+				history_line = (history_line - 1) & 31;
+			} while (history_line != edit_line
+					&& !key_lines[history_line][1]);
+			if (history_line == edit_line)
+				history_line = (edit_line+1)&31;
 			strcpy(key_lines[edit_line], key_lines[history_line]);
 			key_linepos = strlen(key_lines[edit_line]);
-		}
-		return;
-	}
+			return;
 
-	if (key == K_PGUP || key==K_MWHEELUP)
-	{
-		con->display -= 2;
-		return;
-	}
+	    case K_DOWNARROW:
+			if (history_line == edit_line) return;
+			do {
+				history_line = (history_line + 1) & 31;
+			} while (history_line != edit_line
+				&& !key_lines[history_line][1]);
 
-	if (key == K_PGDN || key==K_MWHEELDOWN)
-	{
-		con->display += 2;
-		if (con->display > con->current)
-			con->display = con->current;
-		return;
-	}
+			if (history_line == edit_line) {
+				key_lines[edit_line][0] = ']';
+				key_lines[edit_line][1] = 0;
+				key_linepos = 1;
+			} else {
+				strcpy(key_lines[edit_line], key_lines[history_line]);
+				key_linepos = strlen(key_lines[edit_line]);
+			}
+			return;
 
-	if (key == K_HOME)
-	{
-		con->display = con->current - con_totallines + 10;
-		return;
-	}
+	    case K_MWHEELUP:
+	    case K_PGUP:
+			if (con->display - con->current + con->numlines > 2)
+				con->display -= 2;
+			return;
 
-	if (key == K_END)
-	{
-		con->display = con->current;
-		return;
+	    case K_MWHEELDOWN:
+	    case K_PGDN:
+			con->display += 2;
+			if (con->display > con->current)
+				con->display = con->current;
+			return;
+
+	    case K_HOME:
+			if (keydown[K_CTRL])
+			{
+				if (con->numlines > 10)
+					con->display = con->current - con->numlines + 10;
+			}
+			else
+				key_linepos = 1;
+			return;
+
+	    case K_END:
+			if (keydown[K_CTRL])
+				con->display = con->current;
+			else
+				key_linepos = strlen(key_lines[edit_line]);
+			return;
 	}
-	
 #ifdef _WIN32
 	if ((key=='V' || key=='v') && GetKeyState(VK_CONTROL)<0) {
 		if (OpenClipboard(NULL)) {
@@ -382,12 +403,14 @@ void Key_Console (int key)
 					strcpy(textCopied, clipText);
 	/* Substitutes a NULL for every token */strtok(textCopied, "\n\r\b");
 					i = strlen(textCopied);
-					if (i+key_linepos>=MAXCMDLINE)
-						i=MAXCMDLINE-key_linepos;
-					if (i>0) {
-						textCopied[i]=0;
-						strcat(key_lines[edit_line], textCopied);
-						key_linepos+=i;;
+					if (i + strlen(key_lines[edit_line]) >= MAXCMDLINE-1)
+						i = MAXCMDLINE-1 - strlen(key_lines[edit_line]);
+					if (i > 0)
+					{	// insert the string
+						memcpy (key_lines[edit_line] + key_linepos + i,
+							key_lines[edit_line] + key_linepos, strlen(key_lines[edit_line]) - key_linepos + 1);
+						memcpy (key_lines[edit_line] + key_linepos, textCopied, i);
+						key_linepos += i;
 					}
 					free(textCopied);
 				}
@@ -401,12 +424,18 @@ void Key_Console (int key)
 
 	if (key < 32 || key > 127)
 		return;	// non printable
-		
+
 	if (key_linepos < MAXCMDLINE-1)
 	{
+		i = strlen(key_lines[edit_line]) - 1;
+		if (i == MAXCMDLINE-2) i--;
+		for (; i >= key_linepos; i--)
+			key_lines[edit_line][i + 1] = key_lines[edit_line][i];
+		i = key_lines[edit_line][key_linepos];
 		key_lines[edit_line][key_linepos] = key;
 		key_linepos++;
-		key_lines[edit_line][key_linepos] = 0;
+		if (!i)	// // only null terminate if at the end
+			key_lines[edit_line][key_linepos] = 0;
 	}
 
 }
@@ -676,6 +705,7 @@ void Key_Init (void)
 	consolekeys[K_UPARROW] = true;
 	consolekeys[K_DOWNARROW] = true;
 	consolekeys[K_BACKSPACE] = true;
+	consolekeys[K_DEL] = true;
 	consolekeys[K_HOME] = true;
 	consolekeys[K_END] = true;
 	consolekeys[K_PGUP] = true;
@@ -723,7 +753,9 @@ void Key_Init (void)
 	Cmd_AddCommand ("unbind",Key_Unbind_f);
 	Cmd_AddCommand ("unbindall",Key_Unbindall_f);
 
-
+	cl_chatmode = Cvar_Get ("cl_chatmode", "1", 0,
+		"Controls when console text will be treated as a chat message"
+		"0 - never, 1 - smart, 2 - always");
 }
 
 /*
@@ -757,17 +789,20 @@ void Key_Event (int key, qboolean down)
 	if (down)
 	{
 		key_repeats[key]++;
-		if (key != K_BACKSPACE 
-			&& key != K_PAUSE 
-			&& key != K_PGUP 
-			&& key != K_PGDN
-			&& key_repeats[key] > 1)
+		if ((key != K_BACKSPACE && key != K_DEL
+			&& key != K_LEFTARROW && key != K_RIGHTARROW
+			&& key != K_PGUP && key != K_PGDN
+			&& key_repeats[key] > 1) ||
+			(key_dest == key_game && cls.state == ca_active))
 			return;	// ignore most autorepeats
 			
 		if (key >= 200 && !keybindings[key])
 			Con_Printf ("%s is unbound, hit F4 to set.\n", Key_KeynumToString (key) );
 	}
 
+// Exit message mode is disconnected
+	if (key_dest == key_message && cls.state != ca_active)
+		key_dest = key_console;
 
 //
 // handle escape specialy, so the user can never unbind it
@@ -806,7 +841,7 @@ void Key_Event (int key, qboolean down)
 		kb = keybindings[key];
 		if (kb && kb[0] == '+')
 		{
-                        snprintf (cmd, sizeof(cmd), "-%s %i\n", kb+1, key);
+			snprintf (cmd, sizeof(cmd), "-%s %i\n", kb+1, key);
 			Cbuf_AddText (cmd);
 		}
 		if (keyshift[key] != key)
@@ -814,7 +849,7 @@ void Key_Event (int key, qboolean down)
 			kb = keybindings[keyshift[key]];
 			if (kb && kb[0] == '+')
 			{
-                                snprintf (cmd, sizeof(cmd), "-%s %i\n", kb+1, key);
+				snprintf (cmd, sizeof(cmd), "-%s %i\n", kb+1, key);
 				Cbuf_AddText (cmd);
 			}
 		}
@@ -824,7 +859,8 @@ void Key_Event (int key, qboolean down)
 //
 // during demo playback, most keys bring up the main menu
 //
-	if (cls.demoplayback && down && consolekeys[key] && key_dest == key_game)
+	if (cls.demoplayback && down && consolekeys[key] && key_dest == key_game
+	  && key != K_CTRL && key != K_DEL && key != K_HOME && key != K_END && key != K_TAB)
 	{
 		M_ToggleMenu_f ();
 		return;

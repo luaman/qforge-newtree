@@ -128,6 +128,8 @@ Con_Clear_f
 */
 void Con_Clear_f (void)
 {
+	con_main.numlines = 0;
+	con_chat.numlines = 0;
 	memset (con_main.text, ' ', CON_TEXTSIZE);
 	memset (con_chat.text, ' ', CON_TEXTSIZE);
 }
@@ -154,6 +156,8 @@ Con_MessageMode_f
 */
 void Con_MessageMode_f (void)
 {
+	if (cls.state != ca_active)
+		return;
 	chat_team = false;
 	key_dest = key_message;
 }
@@ -165,6 +169,8 @@ Con_MessageMode2_f
 */
 void Con_MessageMode2_f (void)
 {
+	if (cls.state != ca_active)
+		return;
 	chat_team = true;
 	key_dest = key_message;
 }
@@ -285,6 +291,8 @@ void Con_Linefeed (void)
 	if (con->display == con->current)
 		con->display++;
 	con->current++;
+	if (con->numlines < con_totallines)
+		con->numlines++;
 	memset (&con->text[(con->current%con_totallines)*con_linewidth]
 	, ' ', con_linewidth);
 }
@@ -457,31 +465,30 @@ void Con_DrawInput (void)
 	int		y;
 	int		i;
 	char	*text;
+	char	temp[MAXCMDLINE];
 
 	if (key_dest != key_console && cls.state == ca_active)
 		return;		// don't draw anything (allways draw if not active)
 
-	text = key_lines[edit_line];
-	
-// add the cursor frame
-	text[key_linepos] = 10+((int)(realtime*con_cursorspeed)&1);
-	
+	text = strcpy (temp, key_lines[edit_line]);
+
 // fill out remainder with spaces
-	for (i=key_linepos+1 ; i< con_linewidth ; i++)
+	for (i=strlen(text) ; i < MAXCMDLINE ; i++)
 		text[i] = ' ';
-		
+
+// add the cursor frame
+	if ( (int)(realtime*con_cursorspeed) & 1 )
+		text[key_linepos] = 11;
+
 //	prestep if horizontally scrolling
 	if (key_linepos >= con_linewidth)
 		text += 1 + key_linepos - con_linewidth;
-		
+
 // draw it
 	y = con_vislines-22;
 
 	for (i=0 ; i<con_linewidth ; i++)
 		Draw_Character ( (i+1)<<3, con_vislines - 22, text[i]);
-
-// remove cursor
-	key_lines[edit_line][key_linepos] = 0;
 }
 
 
