@@ -1389,7 +1389,7 @@ Host_SimulationTime (float time)
 	float		timescale = 1.0;
 
 	if (cls.demoplayback) {
-		timescale = bound (0.1, cl_demospeed->value, 5);
+		timescale = max (0.001, cl_demospeed->value);
 		time *= timescale;
 	}
 
@@ -1398,11 +1398,11 @@ Host_SimulationTime (float time)
 		oldrealtime = 0;
 
 	if (cl_maxfps->int_val)
-		fps = max (30.0, min (cl_maxfps->value, 72.0));
+		fps = bound (1, cl_maxfps->value, 72);
 	else
-		fps = max (30.0, min (rate->value / 80.0, 72.0));
+		fps = bound (30, rate->value / 80.0, 72);
 
-	if (!cls.timedemo && realtime - oldrealtime < timescale / fps)
+	if (!cls.timedemo && ((realtime - oldrealtime) < (timescale / fps)))
 		return false;					// framerate is too high
 	return true;
 }
