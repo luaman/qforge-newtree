@@ -1026,7 +1026,5 @@ void V_Init (void)
 	BuildGammaTable (1.0);	// no gamma yet
 /* 	Cvar_RegisterVariable (&v_gamma);
  CVAR_FIXME */
-	v_gamma = Cvar_Get("gamma",  "1", CVAR_NONE, "None");
+	v_gamma = Cvar_Get("gamma",  "1", CVAR_ARCHIVE, "None");
 }
-
-
