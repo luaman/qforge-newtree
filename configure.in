@@ -1114,7 +1114,7 @@ dnl ==================================================================
 
 AC_ARG_WITH(clients,
 	[  --with-clients=<list>   compile clients in <list>;
-                          3dfx ggi glx mgl sdl sgl svga x11],
+                          3dfx,ggi,glx,mgl,sdl,sgl,svga,x11],
 	clients="$withval",
 	clients="all"
 )
@@ -1136,6 +1136,7 @@ else
 	ENABLE_SGL=no
 	ENABLE_SVGA=no
 	ENABLE_X11=no
+	IFS=","
 	for client in $clients; do
 		case "$client" in
 			3dfx)
@@ -1164,6 +1165,7 @@ else
 				;;
 		esac
 	done
+	IFS=" "
 fi
 
 AC_ARG_WITH(server,
