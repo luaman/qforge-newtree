@@ -560,7 +560,7 @@ void SV_UpdateClientStats (client_t *client)
 
 	// FIXME: this should become a * key!  --KB
 	if (ent->v.movetype == MOVETYPE_FLY && !atoi(Info_ValueForKey
-				(svs.info, "sv_allowflymode")))
+				(svs.info, "playerfly")))
 		ent->v.movetype = MOVETYPE_WALK;
 	
 	stats[STAT_FLYMODE] = (ent->v.movetype == MOVETYPE_FLY);
