@@ -347,7 +347,7 @@ VID_Init (unsigned char *palette)
 	if ((i = COM_CheckParm ("-conwidth")) != 0)
 		vid.conwidth = atoi(com_argv[i+1]);
 	else
-		vid.conwidth = width;
+		vid.conwidth = scr_width;
 
 	vid.conwidth &= 0xfff8; // make it a multiple of eight
 	if (vid.conwidth < 320)
@@ -386,13 +386,13 @@ VID_Init (unsigned char *palette)
 	SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute (SDL_GL_DEPTH_SIZE, 1);
 	
-	if (SDL_SetVideoMode (width, height, 8, flags) == NULL) {
+	if (SDL_SetVideoMode (scr_width, scr_height, 8, flags) == NULL) {
 	   Sys_Error ("Couldn't set video mode: %s\n", SDL_GetError ());
 	   SDL_Quit ();
 	}
 
-	vid.height = vid.conheight = min (vid.conheight, height);
-	vid.width = vid.conwidth = min (vid.conwidth, width);
+	vid.height = vid.conheight = min (vid.conheight, scr_height);
+	vid.width = vid.conwidth = min (vid.conwidth, scr_width);
 
 	vid.aspect = ((float) vid.height / (float) vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
@@ -412,7 +412,7 @@ VID_Init (unsigned char *palette)
 	VID_Init8bitPalette();
 
 	Con_Printf ("Video mode %dx%d initialized.\n",
-			width, height);
+			scr_width, scr_height);
 
 	vid_initialized = true;
 #ifdef WIN32
