@@ -6,7 +6,7 @@ EXE_libs=
 DIRECTORIES=
 vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
 
-CPPFLAGS=-I . -I ../include -MMD
+CPPFLAGS=-I . -I ../include -Did386 -Dstricmp=strcasecmp -MMD -DSERVERONLY
 CFLAGS=-Wall #-Werror
 CXXFLAGS=-Wall #-Werror
 LDFLAGS=
@@ -36,6 +36,7 @@ EXE_sources=\
   sv_user.c \
   sv_ccmds.c \
   world.c \
+  worlda.S \
   sys_unix.c \
   model.c \
   cmd.c \
