@@ -164,12 +164,10 @@ int         scr_erase_lines;
 int         scr_erase_center;
 
 /*
-==============
-SCR_CenterPrint
+	SCR_CenterPrint
 
-Called for important messages that should stay in the center of the screen
-for a few moments
-==============
+	Called for important messages that should stay in the center of the screen
+	for a few moments
 */
 void
 SCR_CenterPrint (char *str)
@@ -178,7 +176,7 @@ SCR_CenterPrint (char *str)
 	scr_centertime_off = scr_centertime->value;
 	scr_centertime_start = cl.time;
 
-// count the number of lines for centering
+	// count the number of lines for centering
 	scr_center_lines = 1;
 	while (*str) {
 		if (*str == '\n')
@@ -216,7 +214,7 @@ SCR_DrawCenterString (void)
 	int         x, y;
 	int         remaining;
 
-// the finale prints the characters one at a time
+	// the finale prints the characters one at a time
 	if (cl.intermission)
 		remaining = scr_printspeed->value * (cl.time - scr_centertime_start);
 	else
@@ -273,9 +271,7 @@ SCR_CheckDrawCenterString (void)
 //=============================================================================
 
 /*
-====================
-CalcFov
-====================
+	CalcFov
 */
 float
 CalcFov (float fov_x, float width, float height)
@@ -296,12 +292,10 @@ CalcFov (float fov_x, float width, float height)
 }
 
 /*
-=================
-SCR_CalcRefdef
+	SCR_CalcRefdef
 
-Must be called whenever vid changes
-Internal use only
-=================
+	Must be called whenever vid changes
+	Internal use only
 */
 static void
 SCR_CalcRefdef (void)
@@ -314,14 +308,14 @@ SCR_CalcRefdef (void)
 	scr_fullupdate = 0;					// force a background redraw
 	vid.recalc_refdef = 0;
 
-// force the status bar to redraw
+	// force the status bar to redraw
 	Sbar_Changed ();
 
 //========================================
 
-// bound viewsize
+	// bound viewsize
 	Cvar_SetValue (scr_viewsize, bound (30, scr_viewsize->int_val, 120));
-// bound field of view
+	// bound field of view
 	Cvar_SetValue (scr_fov, bound (10, scr_fov->value, 170));
 
 	if (scr_viewsize->int_val >= 120)
@@ -374,8 +368,8 @@ SCR_CalcRefdef (void)
 
 	scr_vrect = r_refdef.vrect;
 
-// these calculations mirror those in R_Init() for r_refdef, but take no
-// account of water warping
+	// these calculations mirror those in R_Init() for r_refdef, but take no
+	// account of water warping
 	vrect.x = 0;
 	vrect.y = 0;
 	vrect.width = vid.width;
@@ -383,22 +377,20 @@ SCR_CalcRefdef (void)
 
 	R_SetVrect (&vrect, &scr_vrect, sb_lines);
 
-// guard against going from one mode to another that's less than half the
-// vertical resolution
+	// guard against going from one mode to another that's less than half the
+	// vertical resolution
 	if (scr_con_current > vid.height)
 		scr_con_current = vid.height;
 
-// notify the refresh of the change
+	// notify the refresh of the change
 	R_ViewChanged (&vrect, sb_lines, vid.aspect);
 }
 
 
 /*
-=================
-SCR_SizeUp_f
+	SCR_SizeUp_f
 
-Keybinding command
-=================
+	Keybinding command
 */
 void
 SCR_SizeUp_f (void)
@@ -411,11 +403,9 @@ SCR_SizeUp_f (void)
 
 
 /*
-=================
-SCR_SizeDown_f
+	SCR_SizeDown_f
 
-Keybinding command
-=================
+	Keybinding command
 */
 void
 SCR_SizeDown_f (void)
@@ -427,9 +417,7 @@ SCR_SizeDown_f (void)
 //============================================================================
 
 /*
-==================
-SCR_Init
-==================
+	SCR_Init
 */
 void
 SCR_Init_Cvars (void)
@@ -452,9 +440,9 @@ SCR_Init_Cvars (void)
 void
 SCR_Init (void)
 {
-//
-// register our commands
-//
+	//
+	// register our commands
+	//
 	Cmd_AddCommand ("screenshot", SCR_ScreenShot_f);
 	Cmd_AddCommand ("snap", SCR_RSShot_f);
 	Cmd_AddCommand ("sizeup", SCR_SizeUp_f);
@@ -470,9 +458,7 @@ SCR_Init (void)
 
 
 /*
-==============
-SCR_DrawRam
-==============
+	SCR_DrawRam
 */
 void
 SCR_DrawRam (void)
@@ -487,9 +473,7 @@ SCR_DrawRam (void)
 }
 
 /*
-==============
-SCR_DrawTurtle
-==============
+	SCR_DrawTurtle
 */
 void
 SCR_DrawTurtle (void)
@@ -512,9 +496,7 @@ SCR_DrawTurtle (void)
 }
 
 /*
-==============
-SCR_DrawNet
-==============
+	SCR_DrawNet
 */
 void
 SCR_DrawNet (void)
@@ -594,9 +576,7 @@ SCR_DrawTime (void)
 }
 
 /*
-==============
-DrawPause
-==============
+	DrawPause
 */
 void
 SCR_DrawPause (void)
@@ -619,16 +599,14 @@ SCR_DrawPause (void)
 
 
 /*
-==================
-SCR_SetUpToDrawConsole
-==================
+	SCR_SetUpToDrawConsole
 */
 void
 SCR_SetUpToDrawConsole (void)
 {
 	Con_CheckResize ();
 
-// decide on the height of the console
+	// decide on the height of the console
 	if (cls.state != ca_active) {
 		scr_conlines = vid.height;		// full screen
 		scr_con_current = scr_conlines;
@@ -661,9 +639,7 @@ SCR_SetUpToDrawConsole (void)
 }
 
 /*
-==================
-SCR_DrawConsole
-==================
+	SCR_DrawConsole
 */
 void
 SCR_DrawConsole (void)
@@ -689,9 +665,7 @@ SCR_DrawConsole (void)
 
 
 /* 
-============== 
-WritePCXfile 
-============== 
+	WritePCXfile 
 */
 void
 WritePCXfile (char *filename, byte * data, int width, int height,
@@ -723,7 +697,7 @@ WritePCXfile (char *filename, byte * data, int width, int height,
 	pcx->palette_type = LittleShort (2);	// not a grey scale
 	memset (pcx->filler, 0, sizeof (pcx->filler));
 
-// pack the image
+	// pack the image
 	pack = &pcx->data;
 
 	for (i = 0; i < height; i++) {
@@ -739,12 +713,12 @@ WritePCXfile (char *filename, byte * data, int width, int height,
 		data += rowbytes - width;
 	}
 
-// write the palette
+	// write the palette
 	*pack++ = 0x0c;						// palette ID byte
 	for (i = 0; i < 768; i++)
 		*pack++ = *palette++;
 
-// write output file 
+	// write output file 
 	length = pack - (byte *) pcx;
 	if (upload)
 		CL_StartUpload ((void *) pcx, length);
@@ -755,9 +729,7 @@ WritePCXfile (char *filename, byte * data, int width, int height,
 
 
 /* 
-================== 
-SCR_ScreenShot_f
-================== 
+	SCR_ScreenShot_f
 */
 void
 SCR_ScreenShot_f (void)
@@ -766,9 +738,9 @@ SCR_ScreenShot_f (void)
 	char        pcxname[80];
 	char        checkname[MAX_OSPATH];
 
-// 
-// find a file name to save it to 
-// 
+	// 
+	// find a file name to save it to 
+	// 
 	strcpy (pcxname, "qf000.pcx");
 
 	for (i = 0; i <= 99; i++) {
@@ -783,9 +755,9 @@ SCR_ScreenShot_f (void)
 		Con_Printf ("SCR_ScreenShot_f: Couldn't create a PCX");
 		return;
 	}
-// 
-// save the pcx file 
-// 
+	// 
+	// save the pcx file 
+	// 
 	D_EnableBackBufferAccess ();		// enable direct drawing of console
 	// to back
 	// buffer
@@ -882,9 +854,7 @@ SCR_DrawStringToSnap (const char *s, byte * buf, int x, int y, int width)
 
 
 /* 
-================== 
-SCR_RSShot_f
-================== 
+	SCR_RSShot_f
 */
 void
 SCR_RSShot_f (void)
@@ -910,9 +880,9 @@ SCR_RSShot_f (void)
 	Con_Printf ("Remote screen shot requested.\n");
 
 #if 0
-// 
-// find a file name to save it to 
-// 
+	// 
+	// find a file name to save it to 
+	// 
 	strcpy (pcxname, "mquake00.pcx");
 
 	for (i = 0; i <= 99; i++) {
@@ -928,9 +898,9 @@ SCR_RSShot_f (void)
 	}
 #endif
 
-// 
-// save the pcx file 
-// 
+	// 
+	// save the pcx file 
+	// 
 	D_EnableBackBufferAccess ();		// enable direct drawing of console
 	// to back
 	// buffer
@@ -1042,15 +1012,13 @@ SCR_DrawNotifyString (void)
 //=============================================================================
 
 /*
-==================
-SCR_UpdateScreen
+	SCR_UpdateScreen
 
-This is called every frame, and can also be called explicitly to flush
-text to the screen.
+	This is called every frame, and can also be called explicitly to flush
+	text to the screen.
 
-WARNING: be very careful calling this from elsewhere, because the refresh
-needs almost the entire 256k of stack space!
-==================
+	WARNING: be very careful calling this from elsewhere, because the refresh
+	needs almost the entire 256k of stack space!
 */
 void
 SCR_UpdateScreen (void)
@@ -1083,9 +1051,9 @@ SCR_UpdateScreen (void)
 		oldscr_viewsize = scr_viewsize->int_val;
 		vid.recalc_refdef = 1;
 	}
-//
-// check for vid changes
-//
+	//
+	// check for vid changes
+	//
 	if (oldfov != scr_fov->int_val) {
 		oldfov = scr_fov->int_val;
 		vid.recalc_refdef = true;
@@ -1105,9 +1073,9 @@ SCR_UpdateScreen (void)
 		// something changed, so reorder the screen
 		SCR_CalcRefdef ();
 	}
-//
-// do 3D refresh drawing, and then update the screen
-//
+	//
+	// do 3D refresh drawing, and then update the screen
+	//
 	D_EnableBackBufferAccess ();		// of all overlay stuff if drawing
 	// directly
 
@@ -1165,9 +1133,9 @@ SCR_UpdateScreen (void)
 
 	V_UpdatePalette ();
 
-//
-// update one of three areas
-//
+	//
+	// update one of three areas
+	//
 	if (scr_copyeverything) {
 		vrect.x = 0;
 		vrect.y = 0;
@@ -1196,9 +1164,7 @@ SCR_UpdateScreen (void)
 }
 
 /*
-==================
-SCR_UpdateWholeScreen
-==================
+	SCR_UpdateWholeScreen
 */
 void
 SCR_UpdateWholeScreen (void)

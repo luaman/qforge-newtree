@@ -161,12 +161,10 @@ int         scr_erase_lines;
 int         scr_erase_center;
 
 /*
-==============
-SCR_CenterPrint
+	SCR_CenterPrint
 
-Called for important messages that should stay in the center of the screen
-for a few moments
-==============
+	Called for important messages that should stay in the center of the screen
+	for a few moments
 */
 void
 SCR_CenterPrint (char *str)
@@ -208,7 +206,8 @@ SCR_DrawCenterString (void)
 	else
 		y = 48;
 
-	do {								// scan the width of the line
+	do {
+		// scan the width of the line
 		for (l = 0; l < 40; l++)
 			if (start[l] == '\n' || !start[l])
 				break;
@@ -250,9 +249,7 @@ SCR_CheckDrawCenterString (void)
 //=============================================================================
 
 /*
-====================
-CalcFov
-====================
+	CalcFov
 */
 float
 CalcFov (float fov_x, float width, float height)
@@ -289,15 +286,15 @@ SCR_CalcRefdef (void)
 	scr_fullupdate = 0;					// force a background redraw
 	vid.recalc_refdef = 0;
 
-// force the status bar to redraw
+	// force the status bar to redraw
 	Sbar_Changed ();
 
 //========================================
 
-// bound viewsize
+	// bound viewsize
 	Cvar_SetValue (scr_viewsize, bound (30, scr_viewsize->int_val, 120));
 
-// bound field of view
+	// bound field of view
 	Cvar_SetValue (scr_fov, bound (10, scr_fov->value, 170));
 
 	if (scr_viewsize->int_val >= 120)
@@ -313,7 +310,7 @@ SCR_CalcRefdef (void)
 	} else {
 		size = scr_viewsize->int_val;
 	}
-	// intermission is always full screen   
+	// intermission is always full screen
 	if (cl.intermission) {
 		full = true;
 		size = 100.0;
@@ -382,9 +379,7 @@ SCR_SizeDown_f (void)
 //============================================================================
 
 /*
-==================
-SCR_Init
-==================
+	SCR_Init
 */
 void
 SCR_Init_Cvars (void)
@@ -408,9 +403,9 @@ SCR_Init_Cvars (void)
 void
 SCR_Init (void)
 {
-//
-// register our commands
-//
+	//
+	// register our commands
+	//
 	Cmd_AddCommand ("screenshot", SCR_ScreenShot_f);
 	Cmd_AddCommand ("snap", SCR_RSShot_f);
 	Cmd_AddCommand ("sizeup", SCR_SizeUp_f);
@@ -423,8 +418,9 @@ SCR_Init (void)
 	scr_initialized = true;
 }
 
- /* 
-    SCR_DrawRam */
+/*
+	SCR_DrawRam
+*/
 void
 SCR_DrawRam (void)
 {
@@ -439,9 +435,7 @@ SCR_DrawRam (void)
 
 
 /*
-==============
-SCR_DrawTurtle
-==============
+	SCR_DrawTurtle
 */
 void
 SCR_DrawTurtle (void)
@@ -464,9 +458,7 @@ SCR_DrawTurtle (void)
 }
 
 /*
-==============
-SCR_DrawNet
-==============
+	SCR_DrawNet
 */
 void
 SCR_DrawNet (void)
@@ -535,7 +527,7 @@ SCR_DrawTime (void)
 		strftime (local_time, sizeof (local_time), "%k:%M",
 				  localtime (&systime));
 	} else if (show_time->int_val >= 2) {
-		/* >= is another abuse protector */
+		/* >= is another cvar abuse protector */
 		strftime (local_time, sizeof (local_time), "%l:%M %P",
 				  localtime (&systime));
 	}
@@ -548,9 +540,7 @@ SCR_DrawTime (void)
 }
 
 /*
-==============
-DrawPause
-==============
+	DrawPause
 */
 void
 SCR_DrawPause (void)
@@ -572,16 +562,14 @@ SCR_DrawPause (void)
 
 
 /*
-==================
-SCR_SetUpToDrawConsole
-==================
+	SCR_SetUpToDrawConsole
 */
 void
 SCR_SetUpToDrawConsole (void)
 {
 	Con_CheckResize ();
 
-// decide on the height of the console
+	// decide on the height of the console
 	if (cls.state != ca_active) {
 		scr_conlines = vid.height;		// full screen
 		scr_con_current = scr_conlines;
@@ -609,9 +597,7 @@ SCR_SetUpToDrawConsole (void)
 }
 
 /*
-==================
-SCR_DrawConsole
-==================
+	SCR_DrawConsole
 */
 void
 SCR_DrawConsole (void)
@@ -645,9 +631,7 @@ typedef struct _TargaHeader {
 
 
 /* 
-================== 
-SCR_ScreenShot_f
-================== 
+	SCR_ScreenShot_f
 */
 void
 SCR_ScreenShot_f (void)
@@ -657,9 +641,9 @@ SCR_ScreenShot_f (void)
 	char        checkname[MAX_OSPATH];
 	int         i;
 
-// 
-// find a file name to save it to 
-// 
+	// 
+	// find a file name to save it to 
+	// 
 	strcpy (pcxname, "qf000.tga");
 
 	for (i = 0; i <= 999; i++) {
@@ -694,9 +678,7 @@ SCR_ScreenShot_f (void)
 }
 
 /* 
-============== 
-WritePCXfile 
-============== 
+	WritePCXfile 
 */
 void
 WritePCXfile (char *filename, byte * data, int width, int height,
@@ -728,7 +710,7 @@ WritePCXfile (char *filename, byte * data, int width, int height,
 	pcx->palette_type = LittleShort (2);	// not a grey scale
 	memset (pcx->filler, 0, sizeof (pcx->filler));
 
-// pack the image
+	// pack the image
 	pack = &pcx->data;
 
 	data += rowbytes * (height - 1);
@@ -747,12 +729,12 @@ WritePCXfile (char *filename, byte * data, int width, int height,
 		data -= rowbytes * 2;
 	}
 
-// write the palette
+	// write the palette
 	*pack++ = 0x0c;						// palette ID byte
 	for (i = 0; i < 768; i++)
 		*pack++ = *palette++;
 
-// write output file 
+	// write output file 
 	length = pack - (byte *) pcx;
 
 	if (upload)
@@ -799,8 +781,8 @@ MipColor (int r, int g, int b)
 	return best;
 }
 
-// from gl_draw.c
-byte       *draw_chars;					// 8*8 graphic characters
+// in gl_draw.c
+extern byte *draw_chars;				// 8*8 graphic characters
 
 void
 SCR_DrawCharToSnap (int num, byte * dest, int width)
@@ -845,9 +827,7 @@ SCR_DrawStringToSnap (const char *s, byte * buf, int x, int y, int width)
 
 
 /* 
-================== 
-SCR_RSShot_f
-================== 
+	SCR_RSShot_f
 */
 void
 SCR_RSShot_f (void)
@@ -873,9 +853,9 @@ SCR_RSShot_f (void)
 	Con_Printf ("Remote screen shot requested.\n");
 
 #if 0
-// 
-// find a file name to save it to 
-// 
+	// 
+	// find a file name to save it to 
+	// 
 	strcpy (pcxname, "mquake00.pcx");
 
 	for (i = 0; i <= 99; i++) {
@@ -891,9 +871,9 @@ SCR_RSShot_f (void)
 	}
 #endif
 
-// 
-// save the pcx file 
-// 
+	// 
+	// save the pcx file 
+	// 
 	newbuf = malloc (glheight * glwidth * 3);
 
 	glReadPixels (glx, gly, glwidth, glheight, GL_RGB, GL_UNSIGNED_BYTE,

@@ -78,7 +78,7 @@ cvar_t     *gl_conspin;
 cvar_t     *cl_verstring;
 cvar_t     *gl_lightmode;				// LordHavoc: lighting mode
 
-extern byte *draw_chars;				// 8*8 graphic characters
+byte *draw_chars;						// 8*8 graphic characters
 qpic_t     *draw_disc;
 qpic_t     *draw_backtile;
 
