@@ -107,6 +107,7 @@ CL_AllocDlight (int key)
 				memset (dl, 0, sizeof (*dl));
 				dl->key = key;
 				dl->color = dl->_color;
+				dl->color[0] = dl->color[1] = dl->color[2] = 1;
 				return dl;
 			}
 		}
@@ -118,6 +119,7 @@ CL_AllocDlight (int key)
 			memset (dl, 0, sizeof (*dl));
 			dl->key = key;
 			dl->color = dl->_color;
+			dl->color[0] = dl->color[1] = dl->color[2] = 1;
 			return dl;
 		}
 	}
@@ -616,7 +618,7 @@ CL_LinkPacketEntities (void)
 			}
 
 		if (model->flags & EF_ROCKET) {
-			dl = CL_AllocDlight (-s1->number);
+			dl = CL_AllocDlight (-(*ent)->keynum);
 			VectorCopy ((*ent)->origin, dl->origin);
 			dl->radius = 200;
 			VectorCopy (r_firecolor->vec, dl->color);
