@@ -46,8 +46,6 @@
  CVAR_FIXME */
 cvar_t	*sys_nostdout;
 
-qboolean	is_server = true;
-
 
 /* The translation table between the graphical font and plain ASCII  --KB */
 static char qfont_table[256] =

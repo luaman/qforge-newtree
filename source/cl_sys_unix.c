@@ -48,6 +48,7 @@
 #include "quakedef.h"
 
 int noconinput = 0;
+qboolean	is_server = false;
 
 #define BASEDIR	"."
 
