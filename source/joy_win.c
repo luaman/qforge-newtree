@@ -575,43 +575,45 @@ JOY_Init_Cvars(void)
 				  "Joystick sensitivity");
 
 	// joystick variables
-	in_joystick = 
-		Cvar_Get ("joystick", "0", CVAR_ARCHIVE, "None");
-	joy_name = 
-		Cvar_Get ("joyname", "joystick", CVAR_NONE, "None");
-	joy_advanced = 
-		Cvar_Get ("joyadvanced", "0", CVAR_NONE, "None");
-	joy_advaxisx = 
-		Cvar_Get ("joyadvaxisx", "0", CVAR_NONE, "None");
-	joy_advaxisy = 
-		Cvar_Get ("joyadvaxisy", "0", CVAR_NONE, "None");
-	joy_advaxisz = 
-		Cvar_Get ("joyadvaxisz", "0", CVAR_NONE, "None");
-	joy_advaxisr = 
-		Cvar_Get ("joyadvaxisr", "0", CVAR_NONE, "None");
-	joy_advaxisu = 
-		Cvar_Get ("joyadvaxisu", "0", CVAR_NONE, "None");
-	joy_advaxisv = 
-		Cvar_Get ("joyadvaxisv", "0", CVAR_NONE, "None");
-	joy_forwardthreshold =
-		Cvar_Get ("joyforwardthreshold", "0.15", CVAR_NONE, "None");
-	joy_sidethreshold =
-		Cvar_Get ("joysidethreshold", "0.15", CVAR_NONE, "None");
-	joy_pitchthreshold =
-		Cvar_Get ("joypitchthreshold", "0.15", CVAR_NONE, "None");
-	joy_yawthreshold = Cvar_Get ("joyyawthreshold", "0.15", CVAR_NONE, "None");
-	joy_forwardsensitivity =
-		Cvar_Get ("joyforwardsensitivity", "-1.0", CVAR_NONE, "None");
-	joy_sidesensitivity =
-		Cvar_Get ("joysidesensitivity", "-1.0", CVAR_NONE, "None");
-	joy_pitchsensitivity =
-		Cvar_Get ("joypitchsensitivity", "1.0", CVAR_NONE, "None");
-	joy_yawsensitivity =
-		Cvar_Get ("joyyawsensitivity", "-1.0", CVAR_NONE, "None");
-	joy_wwhack1 = Cvar_Get ("joywwhack1", "0.0", CVAR_NONE, "None");
-	joy_wwhack2 = Cvar_Get ("joywwhack2", "0.0", CVAR_NONE, "None");
+	/* FIXME: Someone who has windows please document these cvars.*/
 
-        joy_debug = Cvar_Get ("joy_debug", "0.0", CVAR_NONE, "None");
+	in_joystick = 
+		Cvar_Get ("joystick", "0", CVAR_ARCHIVE, "FIXME: Please document");
+	joy_name = 
+		Cvar_Get ("joyname", "joystick", CVAR_NONE, "FIXME: Please document");
+	joy_advanced = 
+		Cvar_Get ("joyadvanced", "0", CVAR_NONE, "FIXME: Please document");
+	joy_advaxisx = 
+		Cvar_Get ("joyadvaxisx", "0", CVAR_NONE, "FIXME: Please document");
+	joy_advaxisy = 
+		Cvar_Get ("joyadvaxisy", "0", CVAR_NONE, "FIXME: Please document");
+	joy_advaxisz = 
+		Cvar_Get ("joyadvaxisz", "0", CVAR_NONE, "FIXME: Please document");
+	joy_advaxisr = 
+		Cvar_Get ("joyadvaxisr", "0", CVAR_NONE, "FIXME: Please document");
+	joy_advaxisu = 
+		Cvar_Get ("joyadvaxisu", "0", CVAR_NONE, "FIXME: Please document");
+	joy_advaxisv = 
+		Cvar_Get ("joyadvaxisv", "0", CVAR_NONE, "FIXME: Please document");
+	joy_forwardthreshold =
+		Cvar_Get ("joyforwardthreshold", "0.15", CVAR_NONE, "FIXME: Please document");
+	joy_sidethreshold =
+		Cvar_Get ("joysidethreshold", "0.15", CVAR_NONE, "FIXME: Please document");
+	joy_pitchthreshold =
+		Cvar_Get ("joypitchthreshold", "0.15", CVAR_NONE, "FIXME: Please document");
+	joy_yawthreshold = Cvar_Get ("joyyawthreshold", "0.15", CVAR_NONE, "FIXME: Please document");
+	joy_forwardsensitivity =
+		Cvar_Get ("joyforwardsensitivity", "-1.0", CVAR_NONE, "FIXME: Please document");
+	joy_sidesensitivity =
+		Cvar_Get ("joysidesensitivity", "-1.0", CVAR_NONE, "FIXME: Please document");
+	joy_pitchsensitivity =
+		Cvar_Get ("joypitchsensitivity", "1.0", CVAR_NONE, "FIXME: Please document");
+	joy_yawsensitivity =
+		Cvar_Get ("joyyawsensitivity", "-1.0", CVAR_NONE, "FIXME: Please document");
+	joy_wwhack1 = Cvar_Get ("joywwhack1", "0.0", CVAR_NONE, "FIXME: Please document");
+	joy_wwhack2 = Cvar_Get ("joywwhack2", "0.0", CVAR_NONE, "FIXME: Please document");
+
+        joy_debug = Cvar_Get ("joy_debug", "0.0", CVAR_NONE, "FIXME: Please document");
 
 	return;
 }

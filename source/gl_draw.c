@@ -505,14 +505,10 @@ Draw_Init_Cvars (void)
 	// LordHavoc: lighting mode
 	gl_lightmode = Cvar_Get ("gl_lightmode", "1", CVAR_ARCHIVE,
 							 "Lighting mode (0 = GLQuake style, 1 = new style)");
-	gl_max_size = Cvar_Get ("gl_max_size", "1024", CVAR_NONE, "None");	// CVAR_FIXME 
-																		// -
-																		// set 
-																		// a
-																		// description
-	gl_picmip = Cvar_Get ("gl_picmip", "0", CVAR_NONE, "None");	// CVAR_FIXME 
-																// - set a
-																// description
+	gl_max_size = Cvar_Get ("gl_max_size", "1024", CVAR_NONE, "Texture dimension"); 
+
+	gl_picmip = Cvar_Get ("gl_picmip", "0", CVAR_NONE, "Dimensions of displayed textures. 0 is normal, 1 is half, 2 is 1/4"); 
+
 	gl_colorlights = Cvar_Get ("gl_colorlights", "1", CVAR_ROM,
 							   "Whether to use RGB lightmaps or not");
 
@@ -525,7 +521,7 @@ Draw_Init_Cvars (void)
 						   "speed at which the console spins");
 
 	cl_verstring = Cvar_Get ("cl_verstring", PROGRAM " " VERSION, CVAR_NONE,
-							 "client version string");
+							 "Client version string");
 }
 
 

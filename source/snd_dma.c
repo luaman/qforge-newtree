@@ -265,21 +265,22 @@ S_Init (void)
 void
 S_Init_Cvars (void)
 {
-	nosound = Cvar_Get ("nosound", "0", CVAR_NONE, "None");
-	volume = Cvar_Get ("volume", "0.7", CVAR_ARCHIVE, "None");
-	precache = Cvar_Get ("precache", "1", CVAR_NONE, "None");
-	loadas8bit = Cvar_Get ("loadas8bit", "0", CVAR_NONE, "None");
-	bgmvolume = Cvar_Get ("bgmvolume", "1", CVAR_ARCHIVE, "None");
-	ambient_level = Cvar_Get ("ambient_level", "0.3", CVAR_NONE, "None");
-	ambient_fade = Cvar_Get ("ambient_fade", "100", CVAR_NONE, "None");
-	snd_noextraupdate = Cvar_Get ("snd_noextraupdate", "0", CVAR_NONE, "None");
-	snd_show = Cvar_Get ("snd_show", "0", CVAR_NONE, "None");
+	nosound = Cvar_Get ("nosound", "0", CVAR_NONE, "Set to turn sound off");
+	volume = Cvar_Get ("volume", "0.7", CVAR_ARCHIVE, "Set the volume for sound playback");
+	precache = Cvar_Get ("precache", "1", CVAR_NONE, "Toggle the use of a precache");
+	loadas8bit = Cvar_Get ("loadas8bit", "0", CVAR_NONE, "Toggles if sounds are loaded as 8-bit samples");
+	bgmvolume = Cvar_Get ("bgmvolume", "1", CVAR_ARCHIVE, "Volume of CD music");
+	ambient_level = Cvar_Get ("ambient_level", "0.3", CVAR_NONE, "Ambient sounds' volume");
+	ambient_fade = Cvar_Get ("ambient_fade", "100", CVAR_NONE, "How quickly ambient sounds fade in or out");
+	snd_noextraupdate = Cvar_Get ("snd_noextraupdate", "0", CVAR_NONE, 
+		"Toggles the correct value display in host_speeds. Usually messes up sound playback when in effect");
+	snd_show = Cvar_Get ("snd_show", "0", CVAR_NONE, "Toggles the display of sounds currently being played");
 	snd_interp =
 		Cvar_Get ("snd_interp", "1", CVAR_ARCHIVE,
 				  "control sample interpolation");
 	snd_phasesep = Cvar_Get ("snd_phasesep", "0.0", CVAR_ARCHIVE, "max stereo phase separation in ms. 0.6 is for 20cm head");
 	snd_volumesep = Cvar_Get("snd_volumesep", "1.0", CVAR_ARCHIVE, "max stereo volume separation in ms. 1.0 is max");
-	_snd_mixahead = Cvar_Get ("_snd_mixahead", "0.1", CVAR_ARCHIVE, "None");
+	_snd_mixahead = Cvar_Get ("_snd_mixahead", "0.1", CVAR_ARCHIVE, "Delay time for sounds");
 }
 
 

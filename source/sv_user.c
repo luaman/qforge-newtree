@@ -1810,8 +1810,9 @@ SV_UserInit
 void
 SV_UserInit (void)
 {
-	cl_rollspeed = Cvar_Get ("cl_rollspeed", "200", CVAR_NONE, "None");
-	cl_rollangle = Cvar_Get ("cl_rollangle", "2", CVAR_NONE, "None");
-	sv_spectalk = Cvar_Get ("sv_spectalk", "1", CVAR_NONE, "None");
-	sv_mapcheck = Cvar_Get ("sv_mapcheck", "1", CVAR_NONE, "None");
+	cl_rollspeed = Cvar_Get ("cl_rollspeed", "200", CVAR_NONE, "How quickly a player straightens out after strafing");
+	cl_rollangle = Cvar_Get ("cl_rollangle", "2", CVAR_NONE, "How much a player's screen tilts when strafing");
+	sv_spectalk = Cvar_Get ("sv_spectalk", "1", CVAR_NONE, "Toggles the ability of spectators to talk to players");
+	sv_mapcheck = Cvar_Get ("sv_mapcheck", "1", CVAR_NONE, 
+		"Toggle the use of map checksumming to check for players who edit maps to cheat");
 }

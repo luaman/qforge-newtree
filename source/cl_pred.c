@@ -250,6 +250,7 @@ CL_Prediction_Init_Cvars
 void
 CL_Prediction_Init_Cvars (void)
 {
-	cl_pushlatency = Cvar_Get ("pushlatency", "-999", CVAR_NONE, "None");
-	cl_nopred = Cvar_Get ("cl_nopred", "0", CVAR_NONE, "None");
+/* I'm not totally sure what cl_pushlatency is for. Or if it is SUPPOSED TO BE SETTABLE. */
+	cl_pushlatency = Cvar_Get ("pushlatency", "-999", CVAR_NONE, "How much prediction should the client make");
+	cl_nopred = Cvar_Get ("cl_nopred", "0", CVAR_NONE, "Set to turn off client prediction");
 }

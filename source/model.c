@@ -78,7 +78,7 @@ void
 Mod_Init_Cvars (void)
 {
 	gl_subdivide_size =
-		Cvar_Get ("gl_subdivide_size", "128", CVAR_ARCHIVE, "None");
+		Cvar_Get ("gl_subdivide_size", "128", CVAR_ARCHIVE, "Sets the division value for the sky brushes.");
 }
 
 /*

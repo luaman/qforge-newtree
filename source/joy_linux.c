@@ -210,7 +210,7 @@ JOY_Init_Cvars (void)
 	for (i = 0; i < JOY_MAX_AXES; i++) {
 		joy_axes[i].axis = Cvar_Get (joy_axes[i].var.name,
 									 joy_axes[i].var.string,
-									 CVAR_ARCHIVE, "None");
+									 CVAR_ARCHIVE, "Set joystick axes");
 	}
 }
 

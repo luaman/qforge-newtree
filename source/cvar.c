@@ -425,7 +425,7 @@ Cvar_CvarList_f (void)
 void
 Cvar_Init (void)
 {
-	developer = Cvar_Get ("developer", "0", 0, "None");
+	developer = Cvar_Get ("developer", "0", 0, "set to enable extra debugging information");
 
 	Cmd_AddCommand ("set", Cvar_Set_f);
 	Cmd_AddCommand ("setrom", Cvar_Setrom_f);

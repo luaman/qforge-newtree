@@ -1297,7 +1297,6 @@ CL_Init_Cvars (void)
 	// LordHavoc: some people like it asking on quit, others don't...
 	confirm_quit =
 		Cvar_Get ("confirm_quit", "1", CVAR_ARCHIVE, "confirm quit command");
-
 	show_fps = Cvar_Get ("show_fps", "0", CVAR_NONE,
 						 "display realtime frames per second");
 	// Misty: I like to be able to see the time when I play
@@ -1307,7 +1306,6 @@ CL_Init_Cvars (void)
 							"display host processing times");
 	developer = Cvar_Get ("developer", "0", CVAR_NONE,
 						  "show info interesting to developers");
-
 	// Misty: Turn on or off screen filling colors for powerups among other things. 
 	cl_cshift_bonus = Cvar_Get ("cl_cshift_bonus", "1", CVAR_ARCHIVE,
 							"Show bonus flash on item pickup");
@@ -1317,7 +1315,6 @@ CL_Init_Cvars (void)
 							"Shift view colors on damage");
 	cl_cshift_powerup = Cvar_Get ("cl_cshift_powerup", "1", CVAR_ARCHIVE,
 							"Shift view colors for powerups");
-
 	cl_autoexec = Cvar_Get ("cl_autoexec", "0", CVAR_ROM,
 							"exec autoexec.cfg on gamedir change");
 	cl_warncmd = Cvar_Get ("cl_warncmd", "0", CVAR_NONE,
@@ -1358,7 +1355,7 @@ CL_Init_Cvars (void)
 	m_pitch = Cvar_Get ("m_pitch", "0.022", CVAR_ARCHIVE,
 						"mouse pitch (up/down) multipier");
 	m_yaw = Cvar_Get ("m_yaw", "0.022", CVAR_NONE,
-					  "mouse yaw (left/right) multipiler");
+					  "mouse yaw (left/right) multiplier");
 	m_forward = Cvar_Get ("m_forward", "1", CVAR_NONE,
 						  "mouse forward/back speed");
 	m_side = Cvar_Get ("m_side", "0.8", CVAR_NONE, "mouse strafe speed");
@@ -1400,13 +1397,9 @@ CL_Init_Cvars (void)
 						 "Players color on top");
 	bottomcolor = Cvar_Get ("bottomcolor", "0", CVAR_ARCHIVE | CVAR_USERINFO,
 							"Players color on bottom");
-	/* Misty: FIXME: Nobody seems to know exactly what this rate *IS* -
-	   bytes/packets/what?? */
 	rate = Cvar_Get ("rate", "2500", CVAR_ARCHIVE | CVAR_USERINFO,
-					 "download rate");
-	/* Misty: FIXME: We need to find out exactly *what* it does
-	   suppress/allow */
-	msg = Cvar_Get ("msg", "1", CVAR_ARCHIVE | CVAR_USERINFO, "Message level");
+					 "Amount of bytes per second server will send/download to you");
+	msg = Cvar_Get ("msg", "1", CVAR_ARCHIVE | CVAR_USERINFO, "Determines the type of messages reported 0 is maximum, 4 is none");
 	noaim = Cvar_Get ("noaim", "0", CVAR_ARCHIVE | CVAR_USERINFO,
 					  "Auto aim off switch. Set to 1 to turn off.");
 }

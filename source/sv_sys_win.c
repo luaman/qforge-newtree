@@ -156,8 +156,9 @@ is marked
 void
 Sys_Init_Cvars (void)
 {
-	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, "None");
-	sys_sleep = Cvar_Get ("sys_sleep", "8", CVAR_NONE, "None");
+	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, "Toggle console output");
+	sys_sleep = Cvar_Get ("sys_sleep", "8", CVAR_NONE, 
+		"Sleep how long in seconds between checking for connections. minimum is 0, maximum is 13");
 }
 
 void

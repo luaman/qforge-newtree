@@ -210,30 +210,32 @@ R_Init (void)
 void
 R_Init_Cvars (void)
 {
-	r_norefresh = Cvar_Get ("r_norefresh", "0", CVAR_NONE, "None");
-	r_drawentities = Cvar_Get ("r_drawentities", "1", CVAR_NONE, "None");
-	r_drawviewmodel = Cvar_Get ("r_drawviewmodel", "1", CVAR_ARCHIVE, "None");
-	r_shadows = Cvar_Get ("r_shadows", "0", CVAR_NONE, "None");
-	r_wateralpha = Cvar_Get ("r_wateralpha", "1", CVAR_NONE, "None");
-	r_waterripple = Cvar_Get ("r_waterripple", "0", CVAR_NONE, "None");
-	r_dynamic = Cvar_Get ("r_dynamic", "1", CVAR_NONE, "None");
-	r_novis = Cvar_Get ("r_novis", "0", CVAR_NONE, "None");
-	r_speeds = Cvar_Get ("r_speeds", "0", CVAR_NONE, "None");
+	r_norefresh = Cvar_Get ("r_norefresh", "0", CVAR_NONE, "Set to 1 to disable display refresh");
+	r_drawentities = Cvar_Get ("r_drawentities", "1", CVAR_NONE, "Set to 0 to disable drawing entities");
+	r_drawviewmodel = Cvar_Get ("r_drawviewmodel", "1", CVAR_ARCHIVE, "Set to 0 to disable drawing your weapon");
+	r_shadows = Cvar_Get ("r_shadows", "0", CVAR_NONE, "Set to 1 to enable shadows for entities");
+	r_wateralpha = Cvar_Get ("r_wateralpha", "1", CVAR_NONE, "Determine opacity of liquids. 1 is solid,
+		.75, .50, and .25 are partially transparent, and 0 is transparent.");
+	/* FIXME what does r_waterripple use for units? */
+	r_waterripple = Cvar_Get ("r_waterripple", "0", CVAR_NONE, "Set to make liquids ripple, a good setting is 5");
+	r_dynamic = Cvar_Get ("r_dynamic", "1", CVAR_NONE, "Set to 0 to disable all dynamic lighting - unless gl_flashblend is set to 1");
+	r_novis = Cvar_Get ("r_novis", "0", CVAR_NONE, "Set to 1 to enable transparency of liquids on unvised maps");
+	r_speeds = Cvar_Get ("r_speeds", "0", CVAR_NONE, "Display drawing time and statistics of what is being viewed");
 
 	r_netgraph = Cvar_Get ("r_netgraph", "0", CVAR_ARCHIVE, "Graph network stats");
 	r_netgraph_alpha = Cvar_Get ("r_netgraph_alpha", "0.5", CVAR_ARCHIVE, "Net graph translucency");
 	r_netgraph_box = Cvar_Get ("r_netgraph_box", "1", CVAR_ARCHIVE, "Draw box around net graph?");
 
-	gl_clear = Cvar_Get ("gl_clear", "0", CVAR_NONE, "None");
-	gl_texsort = Cvar_Get ("gl_texsort", "1", CVAR_NONE, "None");
+	gl_clear = Cvar_Get ("gl_clear", "0", CVAR_NONE, "Set to 1 to make background black. Useful for removing HOM effect");
+	gl_texsort = Cvar_Get ("gl_texsort", "1", CVAR_NONE, "Set to 0 to enable multitexture");
 
-	gl_cull = Cvar_Get ("gl_cull", "1", CVAR_NONE, "None");
-	gl_smooth = Cvar_Get ("gl_smooth", "1", CVAR_NONE, "None");
-	gl_smoothdlights = Cvar_Get ("gl_smoothdlights", "1", CVAR_NONE, "None");
-	gl_affinemodels = Cvar_Get ("gl_affinemodels", "0", CVAR_NONE, "None");
-	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_NONE, "None");
-	gl_playermip = Cvar_Get ("gl_playermip", "0", CVAR_NONE, "None");
-	gl_nocolors = Cvar_Get ("gl_nocolors", "0", CVAR_NONE, "None");
+	gl_cull = Cvar_Get ("gl_cull", "1", CVAR_NONE, "If set to 1, does not render things that do not need to be");
+	gl_smooth = Cvar_Get ("gl_smooth", "1", CVAR_NONE, "Set to 0 to NOT smooth lighted models");
+	gl_smoothdlights = Cvar_Get ("gl_smoothdlights", "1", CVAR_NONE, "Set to 0 to NOT smooth lights");
+	gl_affinemodels = Cvar_Get ("gl_affinemodels", "0", CVAR_NONE, "Makes texture rendering quality better if set to 1");
+	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_NONE, "Set to 1 to use a type of lighting faster on GL");
+	gl_playermip = Cvar_Get ("gl_playermip", "0", CVAR_NONE, "Detail of player skins. 0 best, 2 worst.");
+	gl_nocolors = Cvar_Get ("gl_nocolors", "0", CVAR_NONE, "Set to 1, turns off all player skins");
 
 	gl_fires = Cvar_Get ("gl_fires", "0", CVAR_ARCHIVE,
 						 "Toggles lavaball and rocket fireballs");
@@ -247,7 +249,7 @@ R_Init_Cvars (void)
 	gl_fb_bmodels = Cvar_Get ("gl_fb_bmodels", "1", CVAR_ARCHIVE,
 							  "Toggles fullbright color support for bmodels");
 
-	gl_keeptjunctions = Cvar_Get ("gl_keeptjunctions", "1", CVAR_NONE, "None");
+	gl_keeptjunctions = Cvar_Get ("gl_keeptjunctions", "1", CVAR_NONE, "Set to 1 to turn off colinear vertexes upon level load");
 
 	gl_lerp_anim = Cvar_Get ("gl_lerp_anim", "1", CVAR_ARCHIVE,
 								"Toggles model animation interpolation");

@@ -875,7 +875,7 @@ SV_InitOperatorCommands (void)
 	Cmd_AddCommand ("maplist", COM_Maplist_f);
 
 	cl_warncmd =
-		Cvar_Get ("cl_warncmd", "1", CVAR_NONE, "dunno. equiv to sh -x?");	// FIXME 
+		Cvar_Get ("cl_warncmd", "1", CVAR_NONE, "Toggles the display of error messages for unknown commands"); 
 																			// poor 
 																			// description
 }
