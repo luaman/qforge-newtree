@@ -25,10 +25,10 @@
 
 	$Id$
 */
+#ifndef __bspfile_h_
+#define __bspfile_h_
 
-
-#ifndef _BSPFILE_H
-#define _BSPFILE_H
+#include "qtypes.h"
 
 // upper design bounds
 
@@ -64,9 +64,9 @@
 
 #define BSPVERSION	29
 
-typedef struct
-{
-	int		fileofs, filelen;
+typedef struct {
+	int		fileofs;
+	int 	filelen;
 } lump_t;
 
 #define	LUMP_ENTITIES	0
@@ -87,8 +87,7 @@ typedef struct
 
 #define	HEADER_LUMPS	15
 
-typedef struct
-{
+typedef struct {
 	float		mins[3], maxs[3];
 	float		origin[3];
 	int			headnode[MAX_MAP_HULLS];
@@ -96,29 +95,25 @@ typedef struct
 	int			firstface, numfaces;
 } dmodel_t;
 
-typedef struct
-{
+typedef struct {
 	int			version;	
 	lump_t		lumps[HEADER_LUMPS];
 } dheader_t;
 
-typedef struct
-{
+typedef struct {
 	int			nummiptex;
 	int			dataofs[4];		// [nummiptex]
 } dmiptexlump_t;
 
 #define	MIPLEVELS	4
-typedef struct miptex_s
-{
+typedef struct miptex_s {
 	char		name[16];
 	unsigned int	width, height;
 	unsigned int	offsets[MIPLEVELS];		// four mip maps stored
 } miptex_t;
 
 
-typedef struct
-{
+typedef struct {
 	float	point[3];
 } dvertex_t;
 
@@ -133,14 +128,11 @@ typedef struct
 #define	PLANE_ANYY		4
 #define	PLANE_ANYZ		5
 
-typedef struct
-{
+typedef struct {
 	float	normal[3];
 	float	dist;
 	int		type;		// PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
 } dplane_t;
-
-
 
 #define	CONTENTS_EMPTY		-1
 #define	CONTENTS_SOLID		-2
@@ -150,8 +142,7 @@ typedef struct
 #define	CONTENTS_SKY		-6
 
 // !!! if this is changed, it must be changed in asm_i386.h too !!!
-typedef struct
-{
+typedef struct {
 	int			planenum;
 	short		children[2];	// negative numbers are -(leafs+1), not nodes
 	short		mins[3];		// for sphere culling
@@ -160,15 +151,13 @@ typedef struct
 	unsigned short	numfaces;	// counting both sides
 } dnode_t;
 
-typedef struct
-{
+typedef struct {
 	int			planenum;
 	short		children[2];	// negative numbers are contents
 } dclipnode_t;
 
 
-typedef struct texinfo_s
-{
+typedef struct texinfo_s {
 	float		vecs[2][4];		// [s/t][xyz offset]
 	int			miptex;
 	int			flags;
@@ -177,14 +166,12 @@ typedef struct texinfo_s
 
 // note that edge 0 is never used, because negative edge nums are used for
 // counterclockwise use of the edge in a face
-typedef struct
-{
+typedef struct {
 	unsigned short	v[2];		// vertex numbers
 } dedge_t;
 
 #define	MAXLIGHTMAPS	4
-typedef struct
-{
+typedef struct {
 	short		planenum;
 	short		side;
 
@@ -208,8 +195,7 @@ typedef struct
 
 // leaf 0 is the generic CONTENTS_SOLID leaf, used for all solid areas
 // all other leafs need visibility info
-typedef struct
-{
+typedef struct {
 	int			contents;
 	int			visofs;				// -1 = no visibility info
 
@@ -279,4 +265,4 @@ void	WriteBSPFile (char *filename);
 void	PrintBSPFileSizes (void);
 
 #endif
-#endif	// _BSPFILE_H
+#endif	// __bspfile_h_
