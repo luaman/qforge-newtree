@@ -171,6 +171,15 @@ qf_client_mgl_LDADD=	$(MGL_LIBS) $(CLIENT_LIBS)
 qf_client_mgl_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 
 #
+# ... Sam Lantinga's Simple DirectMedia Layer, version 1.0 and higher
+#
+sdl_SOURCES=		vid_sdl.c
+
+qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(sdl_SOURCES)
+qf_client_ggi_LDADD=	$(SDL_LIBS) $(CLIENT_LIBS)
+qf_client_ggi_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
+
+#
 # ... Linux SVGAlib
 #
 svga_SOURCES=		d_copy.S vid_svgalib.c in_svgalib.c
@@ -217,7 +226,7 @@ qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_L
 qf_client_glx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 
 #
-# ... Sam Lantinga's Simple DirectMedia Layer, version 1.1 and higher
+# ... Sam Lantinga's Simple DirectMedia Layer, version 1.1 and higher, in GL mode
 #
 sgl_SOURCES=	vid_sgl.c
 
