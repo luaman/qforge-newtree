@@ -1264,20 +1264,19 @@ void SCR_UpdateScreen (void)
 		glEnd ();
 	}
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	contrast->value = bound(0.2, contrast->value, 1.0);
+	contrast->value = bound(0.1, contrast->value, 1.0);
 	if ((gl_polyblend->value && v_blend[3]) || contrast->value < 1)
 	{
 		glBegin (GL_QUADS);
-		if (contrast->value < 1)
-		{
-			glColor4f (1, 1, 1, 1-contrast->value);
+		if (contrast->value < 1) {
+			glColor4f (1, 1, 1, (1 - contrast->value));
 			glVertex2f (0,0);
 			glVertex2f (vid.width, 0);
 			glVertex2f (vid.width, vid.height);
 			glVertex2f (0, vid.height);
 		}
-		if (gl_polyblend->value && v_blend[3])
-		{
+		
+		if (gl_polyblend->value && v_blend[3]) {
 			glColor4fv (v_blend);
 			glVertex2f (0,0);
 			glVertex2f (vid.width, 0);

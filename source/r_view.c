@@ -81,8 +81,6 @@ cvar_t  *cl_crossy;
 
 cvar_t  *v_contentblend;
 
-cvar_t *gl_cshiftpercent;
-
 float	v_dmg_time, v_dmg_roll, v_dmg_pitch;
 
 extern	int			in_forward, in_forward2, in_back;
@@ -262,10 +260,6 @@ void V_DriftPitch (void)
 	}
 }
 
-
-
-
-
 /*
 ============================================================================== 
  
@@ -273,31 +267,40 @@ void V_DriftPitch (void)
  
 ============================================================================== 
 */ 
- 
- 
+
+cvar_t *gl_cshiftpercent;
+
 cshift_t	cshift_empty = { {130,80,50}, 0 };
 cshift_t	cshift_water = { {130,80,50}, 128 };
 cshift_t	cshift_slime = { {0,25,5}, 150 };
 cshift_t	cshift_lava = { {255,80,0}, 150 };
 
-cvar_t		*v_gamma;
+cvar_t		*brightness;
+cvar_t		*contrast;
 
 byte		gammatable[256];	// palette is sent through this
 
-void BuildGammaTable (float g)
+void BuildGammaTable (float b, float c)
 {
-	int		i, inf;
+	int		i, j, inf = 0;
 	
-	if (g == 1.0)
-	{
-		for (i=0 ; i<256 ; i++)
+	if ((b == 1.0) && (c == 1.0)) {
+		for (i = 0; i < 256; i++)
 			gammatable[i] = i;
 		return;
 	}
 	
-	for (i=0 ; i<256 ; i++)
-	{
-		inf = 255 * pow ( (i+0.5)/255.5, g) + 0.5;
+	for (i=0 ; i<256 ; i++) {
+		if (!(i == 128)) {
+			if (i < 128) {
+				j = i + (int) ((128 - i) * (1 - c));
+			} else {
+				j = i + (int) ((i - 128) * (1 - c));
+			}
+		} else {
+			j = i;
+		}
+		inf = (j * b);	// gamma is brightness now, and positive
 		inf = bound(0, inf, 255);
 		gammatable[i] = inf;
 	}
@@ -310,13 +313,15 @@ V_CheckGamma
 */
 qboolean V_CheckGamma (void)
 {
-	static float oldgammavalue;
+	static float oldbrightness;
+	static float oldcontrast;
 	
-	if (v_gamma->value == oldgammavalue)
+	if ((brightness->value == oldbrightness) && contrast->value == oldcontrast)
 		return false;
-	oldgammavalue = v_gamma->value;
+	oldbrightness = brightness->value;
+	oldcontrast = contrast->value;
 	
-	BuildGammaTable (v_gamma->value);
+	BuildGammaTable (brightness->value, contrast->value);
 	vid.recalc_refdef = 1;				// force a surface cache flush
 	
 	return true;
@@ -355,20 +360,15 @@ void V_ParseDamage (void)
 	if (cl.cshifts[CSHIFT_DAMAGE].percent > 150)
 		cl.cshifts[CSHIFT_DAMAGE].percent = 150;
 
-	if (armor > blood)		
-	{
+	if (armor > blood) {
 		cl.cshifts[CSHIFT_DAMAGE].destcolor[0] = 200;
 		cl.cshifts[CSHIFT_DAMAGE].destcolor[1] = 100;
 		cl.cshifts[CSHIFT_DAMAGE].destcolor[2] = 100;
-	}
-	else if (armor)
-	{
+	} else if (armor) {
 		cl.cshifts[CSHIFT_DAMAGE].destcolor[0] = 220;
 		cl.cshifts[CSHIFT_DAMAGE].destcolor[1] = 50;
 		cl.cshifts[CSHIFT_DAMAGE].destcolor[2] = 50;
-	}
-	else
-	{
+	} else {
 		cl.cshifts[CSHIFT_DAMAGE].destcolor[0] = 255;
 		cl.cshifts[CSHIFT_DAMAGE].destcolor[1] = 0;
 		cl.cshifts[CSHIFT_DAMAGE].destcolor[2] = 0;
@@ -435,8 +435,7 @@ void V_SetContentsColor (int contents)
 		return;
 	}
 
-	switch (contents)
-	{
+	switch (contents) {
 	case CONTENTS_EMPTY:
 		cl.cshifts[CSHIFT_CONTENTS] = cshift_empty;
 		break;
@@ -459,35 +458,27 @@ V_CalcPowerupCshift
 */
 void V_CalcPowerupCshift (void)
 {
-	if (cl.stats[STAT_ITEMS] & IT_QUAD)
-	{
+	if (cl.stats[STAT_ITEMS] & IT_QUAD)	{
 		cl.cshifts[CSHIFT_POWERUP].destcolor[0] = 0;
 		cl.cshifts[CSHIFT_POWERUP].destcolor[1] = 0;
 		cl.cshifts[CSHIFT_POWERUP].destcolor[2] = 255;
 		cl.cshifts[CSHIFT_POWERUP].percent = 30;
-	}
-	else if (cl.stats[STAT_ITEMS] & IT_SUIT)
-	{
+	} else if (cl.stats[STAT_ITEMS] & IT_SUIT) {
 		cl.cshifts[CSHIFT_POWERUP].destcolor[0] = 0;
 		cl.cshifts[CSHIFT_POWERUP].destcolor[1] = 255;
 		cl.cshifts[CSHIFT_POWERUP].destcolor[2] = 0;
 		cl.cshifts[CSHIFT_POWERUP].percent = 20;
-	}
-	else if (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
-	{
+	} else if (cl.stats[STAT_ITEMS] & IT_INVISIBILITY) {
 		cl.cshifts[CSHIFT_POWERUP].destcolor[0] = 100;
 		cl.cshifts[CSHIFT_POWERUP].destcolor[1] = 100;
 		cl.cshifts[CSHIFT_POWERUP].destcolor[2] = 100;
 		cl.cshifts[CSHIFT_POWERUP].percent = 100;
-	}
-	else if (cl.stats[STAT_ITEMS] & IT_INVULNERABILITY)
-	{
+	} else if (cl.stats[STAT_ITEMS] & IT_INVULNERABILITY) {
 		cl.cshifts[CSHIFT_POWERUP].destcolor[0] = 255;
 		cl.cshifts[CSHIFT_POWERUP].destcolor[1] = 255;
 		cl.cshifts[CSHIFT_POWERUP].destcolor[2] = 0;
 		cl.cshifts[CSHIFT_POWERUP].percent = 30;
-	}
-	else
+	} else
 		cl.cshifts[CSHIFT_POWERUP].percent = 0;
 }
 
@@ -522,15 +513,10 @@ void CalcGunAngle (void)
 	pitch = -r_refdef.viewangles[PITCH];
 
 	yaw = angledelta(yaw - r_refdef.viewangles[YAW]) * 0.4;
-	if (yaw > 10)
-		yaw = 10;
-	if (yaw < -10)
-		yaw = -10;
+	yaw = bound (-10, yaw, 10);
 	pitch = angledelta(-pitch - r_refdef.viewangles[PITCH]) * 0.4;
-	if (pitch > 10)
-		pitch = 10;
-	if (pitch < -10)
-		pitch = -10;
+	pitch = bound (-10, pitch, 10);
+	
 	move = host_frametime*20;
 	if (yaw > oldyaw)
 	{
@@ -861,6 +847,7 @@ void V_Init (void)
 
 	gl_cshiftpercent = Cvar_Get("gl_cshiftpercent", "100", CVAR_NONE, "None");
 
-	BuildGammaTable (1.0);	// no gamma yet
-	v_gamma = Cvar_Get("gamma",  "1", CVAR_ARCHIVE, "None");
+	BuildGammaTable (1.0, 1.0);	// no gamma yet
+	brightness = Cvar_Get("brightness",  "1", CVAR_ARCHIVE, "None");
+	contrast = Cvar_Get("contrast",  "1", CVAR_ARCHIVE, "None");
 }

@@ -33,7 +33,8 @@
 #include "mathlib.h"
 #include "cvar.h"
 
-extern	cvar_t		*v_gamma;
+extern	cvar_t		*brightness;
+extern	cvar_t		*contrast;
 extern	cvar_t		*lcd_x;
 
 void V_Init (void);
