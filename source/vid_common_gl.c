@@ -116,81 +116,77 @@ CheckMultiTextureExtensions (void)
 	}
 }
 
+// LordHavoc: finds closest color match
+byte
+LHFindColor(unsigned char *palette, int first, int last, int r, int g, int b)
+{
+	int bestdistance, bestcolor, distance, color[3];
+	bestdistance = 1000000000;
+	bestcolor = first;
+	color[0] = r;
+	color[1] = g;
+	color[2] = b;
+	palette += first * 3;
+	for (i = first;i < last;i++)
+	{
+		// LordHavoc: distance in color cube from desired color
+		distance = VectorDistance_fast(palette, color);
+		if (distance < bestdist)
+		{
+			bestdistance = distance;
+			bestcolor = i;
+		}
+		palette += 3;
+	}
+	return bestcolor;
+}
+
 void
 VID_SetPalette (unsigned char *palette)
 {
-	byte       *pal;
-	unsigned int r, g, b;
-	unsigned int v;
-	int         r1, g1, b1;
-	int         k;
+	byte       *pal, *out;
 	unsigned short i;
-	unsigned int *table;
 	QFile      *f;
 	char        s[255];
-	float       dist, bestdist;
 	static qboolean palflag = false;
 
-//
-// 8 8 8 encoding
-//
 //  Con_Printf("Converting 8to24\n");
 
+	// LordHavoc: cleaned up stupid endian-specific table building,
+	//            now builds directly as bytes
 	pal = palette;
-	table = d_8to24table;
-	for (i = 0; i < 255; i++) {			// used to be i<256, see d_8to24table 
-										// below
-		r = pal[0];
-		g = pal[1];
-		b = pal[2];
-		pal += 3;
-
-#ifdef WORDS_BIGENDIAN
-		v = (255 << 0) + (r << 24) + (g << 16) + (b << 8);
-#else
-		v = (255 << 24) + (r << 0) + (g << 8) + (b << 16);
-#endif
-		*table++ = v;
+	out = (byte *)&table_8to24table;
+	for (i = 0; i < 255; i++) {
+		*out++ = *pal++;
+		*out++ = *pal++;
+		*out++ = *pal++;
+		*out++ = 255;
 	}
 	d_8to24table[255] = 0;				// 255 is transparent
 
-	// JACK: 3D distance calcs - k is last closest, l is the distance.
-	// FIXME: Precalculate this and cache to disk.
 	if (palflag)
 		return;
 	palflag = true;
 
 	COM_FOpenFile ("glquake/15to8.pal", &f);
 	if (f) {
-		Qread (f, d_15to8table, 1 << 15);
+		Qread (f, d_15to8table, 32768);
 		Qclose (f);
 	} else {
-		for (i = 0; i < (1 << 15); i++) {
-			/* Maps 000000000000000 000000000011111 = Red  = 0x1F
-			   000001111100000 = Blue = 0x03E0 111110000000000 = Grn  =
-			   0x7C00 */
-			r = ((i & 0x1F) << 3) + 4;
-			g = ((i & 0x03E0) >> 2) + 4;
-			b = ((i & 0x7C00) >> 7) + 4;
-
-			pal = (unsigned char *) d_8to24table;
-
-			for (v = 0, k = 0, bestdist = 10000.0; v < 256; v++, pal += 4) {
-				r1 = (int) r - (int) pal[0];
-				g1 = (int) g - (int) pal[1];
-				b1 = (int) b - (int) pal[2];
-				dist = sqrt (((r1 * r1) + (g1 * g1) + (b1 * b1)));
-				if (dist < bestdist) {
-					k = v;
-					bestdist = dist;
-				}
-			}
-			d_15to8table[i] = k;
+		// LordHavoc: cleaned this up
+		Con_Printf("Building 15bit to 8bit color conversion table\n");
+		for (i = 0; i < 32768; i++) {
+			int r, g, b;
+			// split out to 8bit components
+			r = ((i & 0x001F) >>  0) << 3;
+			g = ((i & 0x03E0) >>  5) << 3;
+			b = ((i & 0x7C00) >> 10) << 3;
+			d_15to8table[i] = LHFindColor(palette, 0, 256, r, g, b);
 		}
 		snprintf (s, sizeof (s), "%s/glquake/15to8.pal", com_gamedir);
 		COM_CreatePath (s);
 		if ((f = Qopen (s, "wb")) != NULL) {
-			Qwrite (f, d_15to8table, 1 << 15);
+			Qwrite (f, d_15to8table, 32768);
 			Qclose (f);
 		}
 	}
