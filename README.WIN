@@ -61,12 +61,17 @@ Source Code. If you don't know what SDL means, you don't need this.
 4) If you don't have Borland complier (5.02 or 5.5, or C++ Builder 5),
 get and install FREE Borland C++ complier 5.5.
 (http://www.borland.com/bcppbuilder/freecompiler/)
+or get from alternative location:
+(http://www.saunalahti.fi/~mipes/freecommandlinetools.exe)
 
 Make sure you install latest Borland C++ free complier service packs for
 5.5 to upgrade it to 5.5.1.
 
 http://www.borland.com/devsupport/bcppbuilder/patches/bcc55/bcc55sp1.zip
 http://www.borland.com/devsupport/bcppbuilder/patches/bcc55/bcc55sp2.exe
+or get from alternative location:
+(http://www.saunalahti.fi/~mipes/bcc55sp1.zip)
+(http://www.saunalahti.fi/~mipes/bcc55sp2.exe)
 
 5) Borland preprocessor can't process quake .S files. You need to get
 .ASM files or use some other complier to preprocess them.
