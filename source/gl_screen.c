@@ -305,7 +305,7 @@ float CalcFov (float fov_x, float width, float height)
 
         x = width/tan(fov_x/360*M_PI);
 
-        a = atan (height/x);
+        a = (x == 0) ? 90 : atan(height/x); // 0 shouldn't happen
 
         a = a*360/M_PI;
 
