@@ -433,7 +433,7 @@ void	VID_SetPalette (unsigned char *palette)
 //
 // 8 8 8 encoding
 //
-	Con_Printf("Converting 8to24\n");
+	Con_DPrintf("Converting 8to24\n");
 
 	pal = palette;
 	table = d_8to24table;
@@ -565,7 +565,7 @@ qboolean VID_Is8bit(void)
 	return is8bit;
 }
 
-#if 1 //defined(GL_EXT_SHARED)
+#if 0  //defined(GL_EXT_SHARED)
 void VID_Init8bitPalette() 
 {
 	// Check for 8bit Extensions and initialize them.
