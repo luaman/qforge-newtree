@@ -894,7 +894,7 @@ static void GetEvent(void)
 }
 
 
-void Sys_SendKeyEvents(void)
+void IN_SendKeyEvents(void)
 {
 	/* Get events from LibGGI */
 	if (ggivis) {
