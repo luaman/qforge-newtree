@@ -1,33 +1,22 @@
 /*
-	buildnum.c
+Copyright (C) 1996-1997 Id Software, Inc.
 
-	build number (actually date) calculator
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-	Copyright (C) 1996-1997  Id Software, Inc.
-	Copyright (C) 1999,2000  contributors of the QuakeForge project
-	Please see the file "AUTHORS" for a list of contributors
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+See the GNU General Public License for more details.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-	See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to:
-
-		Free Software Foundation, Inc.
-		59 Temple Place - Suite 330
-		Boston, MA  02111-1307, USA
-
-	$Id$
 */
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -36,22 +25,18 @@
 #include <string.h>
 
 //char *date = "Dec 21 1999";
-//char *time = "00:00:00";
-char *ddate = __DATE__ ;
-char *dtime = __TIME__ ;
-
-char *mon[12] =
+static char *date = __DATE__ ;
+static char *mon[12] = 
 { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-char mond[12] =
+static char mond[12] = 
 { 31,    28,    31,    30,    31,    30,    31,    31,    30,    31,    30,    31 };
 
 // returns days since Dec 21 1999
 int build_number( void )
 {
-	int m = 0;
+	int m = 0; 
 	int d = 0;
 	int y = 0;
-	int hr, min;
 	static int b = 0;
 
 	if (b != 0)
@@ -59,14 +44,14 @@ int build_number( void )
 
 	for (m = 0; m < 11; m++)
 	{
-		if (strncasecmp( &ddate[0], mon[m], 3 ) == 0)
+		if (strncasecmp( &date[0], mon[m], 3 ) == 0)
 			break;
 		d += mond[m];
 	}
 
-	d += atoi( &ddate[4] ) - 1;
+	d += atoi( &date[4] ) - 1;
 
-	y = atoi( &ddate[7] ) - 1900;
+	y = atoi( &date[7] ) - 1900;
 
 	b = d + (int)((y - 1) * 365.25);
 
@@ -77,12 +62,6 @@ int build_number( void )
 
 	b -= 36148; // Dec 21 1999
 
-	hr = (dtime[0] - '0') * 10 + (dtime[1] - '0');
-	min = (dtime[3] - '0') * 10 + (dtime[4] - '0');
-//	sec = (dtime[6] - '0') * 10 + (dtime[7] - '0');
-
-	b *= 60*24;
-	b += hr * 60 + min;
-
 	return b;
 }
+
