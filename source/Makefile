@@ -9,6 +9,9 @@ CL_SVGA_libs=-lvga
 CL_X11_name=qw-client-x11
 CL_X11_libs=-lX11 -lXext
 
+CL_GLX_name=qw-client-glx
+CL_GLX_libs=-lX11 -lXext
+
 DIRECTORIES=
 vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
 
@@ -70,21 +73,7 @@ SV_sources=\
 SV_dependencies = $(patsubst %,%.d,$(basename $(SV_sources)))
 SV_objects = $(patsubst %.d,%.o,$(SV_dependencies))
 
-CL_sources=\
-  cl_cmd.c \
-  cl_cvar.c \
-  cl_demo.c \
-  cl_ents.c \
-  cl_input.c \
-  cl_main.c \
-  cl_math.S \
-  cl_misc.c \
-  cl_model.c \
-  cl_parse.c \
-  cl_pred.c \
-  cl_tent.c \
-  cl_cam.c \
-  console.c \
+CL_SW_sources=\
   d_edge.c \
   d_fill.c \
   d_init.c \
@@ -98,9 +87,6 @@ CL_sources=\
   d_vars.c \
   d_zpoint.c \
   draw.c \
-  keys.c \
-  menu.c \
-  nonintel.c \
   r_aclip.c \
   r_alias.c \
   r_bsp.c \
@@ -110,22 +96,11 @@ CL_sources=\
   r_light.c \
   r_main.c \
   r_misc.c \
-  r_part.c \
   r_sky.c \
   r_sprite.c \
   r_surf.c \
   r_vars.c \
-  sbar.c \
   screen.c \
-  skin.c \
-  snd_dma.c \
-  snd_mem.c \
-  snd_mix.c \
-  view.c \
-  wad.c \
-  cd_linux.c \
-  sys_linux.c \
-  snd_linux.c \
   d_copy.S \
   d_draw.S \
   d_draw16.S \
@@ -144,6 +119,39 @@ CL_sources=\
   surf8.S \
   sys_dosa.S
 
+CL_SW_dependencies = $(patsubst %,%.d,$(basename $(CL_SW_sources)))
+CL_SW_objects = $(patsubst %.d,%.o,$(CL_SW_dependencies))
+
+CL_sources=\
+  cl_cmd.c \
+  cl_cvar.c \
+  cl_demo.c \
+  cl_ents.c \
+  cl_input.c \
+  cl_main.c \
+  cl_math.S \
+  cl_misc.c \
+  cl_model.c \
+  cl_parse.c \
+  cl_pred.c \
+  cl_tent.c \
+  cl_cam.c \
+  snd_linux.c \
+  sys_linux.c \
+  cd_linux.c \
+  wad.c \
+  view.c \
+  snd_dma.c \
+  snd_mem.c \
+  snd_mix.c \
+  skin.c \
+  sbar.c \
+  r_part.c \
+  nonintel.c \
+  menu.c \
+  keys.c \
+  console.c
+
 CL_dependencies = $(patsubst %,%.d,$(basename $(CL_sources)))
 CL_objects = $(patsubst %.d,%.o,$(CL_dependencies))
 
@@ -159,19 +167,38 @@ CL_X11_sources=\
 CL_X11_dependencies = $(patsubst %,%.d,$(basename $(CL_X11_sources)))
 CL_X11_objects = $(patsubst %.d,%.o,$(CL_X11_dependencies))
 
+CL_GLX_sources=\
+  gl_draw.c \
+  gl_mesh.c \
+  gl_model.c \
+  gl_ngraph.c \
+  gl_refrag.c \
+  gl_rlight.c \
+  gl_rmain.c \
+  gl_rmisc.c \
+  gl_rsurf.c \
+  gl_screen.c \
+  gl_warp.c \
+  gl_vidlinuxglx.c
+
+CL_GLX_dependencies = $(patsubst %,%.d,$(basename $(CL_GLX_sources)))
+CL_GLX_objects = $(patsubst %.d,%.o,$(CL_GLX_dependencies))
 
 #               *Explicit Rules*
 
-all: $(SV_name) $(CL_SVGA_name) $(CL_X11_name)
+all: $(SV_name) $(CL_SVGA_name) $(CL_X11_name) $(CL_GLX_name)
 
 $(SV_name): $(COM_objects) $(SV_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(SV_libs)
 
-$(CL_SVGA_name): $(COM_objects) $(CL_objects) $(CL_SVGA_objects)
+$(CL_SVGA_name): $(COM_objects) $(CL_objects) $(CL_SW_objects) $(CL_SVGA_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_SVGA_libs)
 
-$(CL_X11_name): $(COM_objects) $(CL_objects) $(CL_X11_objects)
+$(CL_X11_name): $(COM_objects) $(CL_objects) $(CL_SW_objects) $(CL_X11_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_X11_libs)
+
+$(CL_GLX_name): $(COM_objects) $(CL_objects) $(CL_GL_objects) $(CL_GLX_objects)
+	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_GLX_libs)
 
 clean:
 	-rm -f *.[od] $(SV_name) $(CL_SVGA_name) $(CL_X11_name)
@@ -181,5 +208,7 @@ clean:
 -include $(COM_dependencies)
 -include $(SV_dependencies)
 -include $(CL_dependencies)
+-include $(CL_GL_dependencies)
 -include $(CL_SVGA_dependencies)
 -include $(CL_X11_dependencies)
+-include $(CL_GLX_dependencies)
