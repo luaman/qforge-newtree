@@ -32,7 +32,7 @@
 #include "qtypes.h"
 
 #ifndef M_PI
-#define M_PI            3.14159265358979323846  // matches value in gcc v2 math.h
+#define M_PI	    3.14159265358979323846  // matches value in gcc v2 math.h
 #endif
 
 struct mplane_s;
@@ -64,7 +64,7 @@ void _VectorCopy (vec3_t in, vec3_t out);
 int VectorCompare (vec3_t v1, vec3_t v2);
 vec_t Length (vec3_t v);
 void CrossProduct (vec3_t v1, vec3_t v2, vec3_t cross);
-float VectorNormalize (vec3_t v);               // returns vector length
+float VectorNormalize (vec3_t v);	       // returns vector length
 void VectorInverse (vec3_t v);
 void VectorScale (vec3_t in, vec_t scale, vec3_t out);
 int Q_log2(int val);
@@ -73,7 +73,7 @@ void R_ConcatRotations (float in1[3][3], float in2[3][3], float out[3][3]);
 void R_ConcatTransforms (float in1[3][4], float in2[3][4], float out[3][4]);
 
 void FloorDivMod (double numer, double denom, int *quotient,
-                int *rem);
+		int *rem);
 fixed16_t Invert24To16(fixed16_t val);
 fixed16_t Mul16_30(fixed16_t multiplier, fixed16_t multiplicand);
 int GreatestCommonDivisor (int i1, int i2);
@@ -85,6 +85,23 @@ float   anglemod(float a);
 void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, float degrees );
 
 
+<<<<<<< mathlib.h
+#define BOX_ON_PLANE_SIDE(emins, emaxs, p)      \
+	(((p)->type < 3)?					       \
+	(									       \
+		((p)->dist <= (emins)[(p)->type])?      \
+			1							       \
+		:								       \
+		(								       \
+			((p)->dist >= (emaxs)[(p)->type])?\
+				2						       \
+			:							       \
+				3						       \
+		)								       \
+	)									       \
+	:									       \
+		BoxOnPlaneSide( (emins), (emaxs), (p)))
+=======
 #define BOX_ON_PLANE_SIDE(emins, emaxs, p)					\
 	(((p)->type < 3)?										\
 		(													\
@@ -101,5 +118,6 @@ void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, 
 		:													\
 		BoxOnPlaneSide( (emins), (emaxs), (p))				\
 	)
+>>>>>>> 1.7
 
 #endif // _MATHLIB_H
