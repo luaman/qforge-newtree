@@ -76,7 +76,9 @@ CL_sources=\
   cl_ents.c \
   cl_input.c \
   cl_main.c \
+  cl_math.S \
   cl_misc.c \
+  cl_model.c \
   cl_parse.c \
   cl_pred.c \
   cl_tent.c \
