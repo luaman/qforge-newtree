@@ -34,6 +34,7 @@
 
 #include "console.h"
 #include "glquake.h"
+#include "sys.h"
 
 extern qboolean    skyloaded;
 extern vec5_t      skyvec[6][4];
@@ -96,8 +97,7 @@ determine_face (vec3_t v)
 		i = 2;
 	}
 	if (!m) {
-		Con_Printf ("%s speared by sky poly edge\n", name->string);
-		abort();
+		Sys_Error ("%s speared by sky poly edge\n", name->string);
 	}
 	if (v[i] < 0)
 		i += 3;
@@ -371,8 +371,7 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 	}
 
 	if (poly->numverts>=32) {
-		Con_Printf ("too many verts!");
-		abort();
+		Sys_Error ("too many verts!");
 	}
 
 	VectorSubtract (poly->verts[poly->numverts - 1], r_refdef.vieworg, last_v);
