@@ -44,7 +44,11 @@
 # include <X11/extensions/xf86vmode.h>
 # include <X11/extensions/xf86vmstr.h>
 # ifndef XDGA_MAJOR_VERSION
-#  define XDGA_MAJOR_VERSION XF86DGA_MAJOR_VERSION
+#  ifdef XF86DGA_MAJOR_VERSION
+#   define XDGA_MAJOR_VERSION XF86DGA_MAJOR_VERSION
+#  else
+#   error "Neither XDGA_MAJOR_VERSION nor XF86DGA_MAJOR_VERSION found."
+#  endif
 # endif
 #endif
 
