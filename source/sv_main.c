@@ -725,7 +725,7 @@ void SVC_DirectConnect (void)
 	if (maxspectators->value + maxclients->value > MAX_CLIENTS)
 /* 		Cvar_SetValue ("maxspectators", MAX_CLIENTS - maxspectators.value + maxclients.value);
  CVAR_FIXME */
- 		Cvar_SetValue (maxspectators, MAX_CLIENTS - maxspectators->value + maxclients->value);
+ 		Cvar_SetValue (maxspectators, MAX_CLIENTS - maxclients->value);
 /* 	if ( (spectator && spectators >= (int)maxspectators.value)
  CVAR_FIXME */
 	if ( (spectator && spectators >= (int)maxspectators->value)
