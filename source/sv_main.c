@@ -50,94 +50,89 @@
 #include <strings.h>
 #endif
 
-quakeparms_t host_parms;
+quakeparms_t	host_parms;
+qboolean		host_initialized;	// true if into command execution
 
-qboolean    host_initialized;			// true if into command execution
+double	sv_frametime;
+double	realtime;					// without any filtering or bounding
 
-										// (compatability)
+int 		host_hunklevel;
 
-double      sv_frametime;
-double      realtime;					// without any filtering or bounding
+netadr_t	master_adr[MAX_MASTERS];	// address of group servers
 
-int         host_hunklevel;
-
-netadr_t    master_adr[MAX_MASTERS];	// address of group servers
-
-client_t   *host_client;				// current client
+client_t	*host_client;			// current client
 
 // DoS protection
 // FLOOD_PING, FLOOD_LOG, FLOOD_CONNECT, FLOOD_STATUS, FLOOD_RCON, FLOOD_BAN
 // fixme: these default values need to be tweaked after more testing
 
-double      netdosexpire[DOSFLOODCMDS] = { 1, 1, 2, 0.9, 1, 5 };
-double      netdosvalues[DOSFLOODCMDS] = { 12, 1, 3, 1, 1, 1 };
+double	netdosexpire[DOSFLOODCMDS] = { 1, 1, 2, 0.9, 1, 5 };
+double	netdosvalues[DOSFLOODCMDS] = { 12, 1, 3, 1, 1, 1 };
 
-cvar_t     *sv_netdosprotect;			// tone down DoS from quake servers
+cvar_t	*sv_netdosprotect;		// tone down DoS from quake servers
 
-cvar_t     *sv_allow_status;
-cvar_t     *sv_allow_log;
-cvar_t     *sv_allow_ping;
+cvar_t	*sv_allow_status;
+cvar_t	*sv_allow_log;
+cvar_t	*sv_allow_ping;
 
-cvar_t     *fs_globalcfg;
+cvar_t	*fs_globalcfg;
 
-cvar_t     *sv_mintic;					// bound the size of the
-cvar_t     *sv_maxtic;					// physics time tic
+cvar_t	*sv_mintic;				// bound the size of the
+cvar_t	*sv_maxtic;				// physics time tic
 
-cvar_t     *developer;					// show extra messages
+cvar_t	*developer;				// show extra messages
 
-cvar_t     *timeout;					// seconds without any message
-cvar_t     *zombietime;					// seconds to sink messages
+cvar_t	*timeout;				// seconds without any message
+cvar_t	*zombietime;			// seconds to sink messages after disconnect
 
-											// after disconnect
+cvar_t	*rcon_password; 		// password for remote server commands
 
-cvar_t     *rcon_password;				// password for remote server
+cvar_t	*password;				// password for entering the game
+cvar_t	*spectator_password;	// password for entering as a spectator
 
-										// commands
-cvar_t     *password;					// password for entering the game
-cvar_t     *spectator_password;			// password for entering as a
+cvar_t	*allow_download;
+cvar_t	*allow_download_skins;
+cvar_t	*allow_download_models;
+cvar_t	*allow_download_sounds;
+cvar_t	*allow_download_maps;
 
-										// spectator
+cvar_t	*sv_highchars;
 
-cvar_t     *allow_download;
-cvar_t     *allow_download_skins;
-cvar_t     *allow_download_models;
-cvar_t     *allow_download_sounds;
-cvar_t     *allow_download_maps;
+cvar_t	*sv_phs;
 
-cvar_t     *sv_highchars;
+cvar_t	*pausable;
 
-cvar_t     *sv_phs;
+extern cvar_t	*sv_timekick;
+extern cvar_t	*sv_timekick_fuzz;
+extern cvar_t	*sv_timekick_interval;
 
-cvar_t     *pausable;
+cvar_t	*sv_minqfversion;		// Minimum QF version allowed to connect
+cvar_t	*sv_maxrate;			// Maximum allowable rate (silently capped)
 
-extern cvar_t *sv_timekick;
-extern cvar_t *sv_timekick_fuzz;
-extern cvar_t *sv_timekick_interval;
-
-cvar_t     *sv_timestamps;
-cvar_t     *sv_timefmt;
+cvar_t	*sv_timestamps;
+cvar_t	*sv_timefmt;
 
 //
 // game rules mirrored in svs.info
 //
-cvar_t     *fraglimit;
-cvar_t     *timelimit;
-cvar_t     *teamplay;
-cvar_t     *samelevel;
-cvar_t     *maxclients;
-cvar_t     *maxspectators;
-cvar_t     *deathmatch;					// 0, 1, or 2
-cvar_t     *spawn;
-cvar_t     *watervis;
+cvar_t	*fraglimit;
+cvar_t	*timelimit;
+cvar_t	*teamplay;
+cvar_t	*samelevel;
+cvar_t	*maxclients;
+cvar_t	*maxspectators;
+cvar_t	*deathmatch;			// 0, 1, or 2
+cvar_t	*spawn;
+cvar_t	*watervis;
 
-cvar_t     *hostname;
+cvar_t	*hostname;
 
-QFile      *sv_logfile;
-QFile      *sv_fraglogfile;
+QFile	*sv_logfile;
+QFile	*sv_fraglogfile;
 
-void        SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
-void        Master_Shutdown (void);
-void        PR_Init_Cvars (void);
+void SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
+void Master_Shutdown (void);
+void PR_Init_Cvars (void);
 
 //============================================================================
 
@@ -672,6 +667,20 @@ SVC_DirectConnect (void)
 		Netchan_OutOfBandPrint (net_from, "%c\nNo challenge for address.\n",
 								A2C_PRINT);
 		return;
+	}
+
+	s = Info_ValueForKey (userinfo, "*qf_version");
+	if ((!s[0]) || sv_minqfversion->value) { // kick old clients?
+		if ((atof (s) + 0.005) < sv_minqfversion->value) {
+			Con_Printf ("%s: QF version %g is less than minimum version %g.\n",
+						NET_AdrToString (net_from),
+						atof (s),
+						sv_minqfversion->value);
+			Netchan_OutOfBandPrint (net_from,
+									"%c\nserver requires QuakeForge v%g or greater. Get it from http://www.quakeforge.net/\n",
+									A2C_PRINT, sv_minqfversion->value);
+			return;
+		}
 	}
 	// check for password or spectator_password
 	s = Info_ValueForKey (userinfo, "spectator");
@@ -1498,13 +1507,19 @@ SV_InitLocal (void)
 	sv_aim = Cvar_Get ("sv_aim", "2", CVAR_NONE, "None");
 
 	sv_timekick =
-		Cvar_Get ("sv_timekick", "3", CVAR_NONE, "Time cheat protection");
+		Cvar_Get ("sv_timekick", "3", CVAR_SERVERINFO, "Time cheat protection");
 	sv_timekick_fuzz =
 		Cvar_Get ("sv_timekick_fuzz", "15", CVAR_NONE,
 				  "Time cheat \"fuzz factor\"");
 	sv_timekick_interval =
 		Cvar_Get ("sv_timekick_interval", "30", CVAR_NONE,
 				  "Time cheat check interval");
+
+	sv_minqfversion =
+		Cvar_Get ("sv_minqfversion", "0", CVAR_SERVERINFO, "Minimum QF version on client");
+
+	sv_maxrate =
+		Cvar_Get ("sv_maxrate", "0", CVAR_SERVERINFO, "Maximum allowable rate");
 
 	sv_allow_log =
 		Cvar_Get ("sv_allow_log", "1", CVAR_NONE, "Allow remote logging");
@@ -1746,10 +1761,12 @@ SV_ExtractFromUserinfo (client_t *cl)
 	val = Info_ValueForKey (cl->userinfo, "rate");
 	if (strlen (val)) {
 		i = atoi (val);
-		if (i < 500)
-			i = 500;
-		if (i > 10000)
-			i = 10000;
+
+		if ((sv_maxrate->int_val) && (i > sv_maxrate->int_val)) {
+			i = bound (500, i, sv_maxrate->int_val);
+		} else {
+			i = bound (500, i, 10000);
+		}
 		cl->netchan.rate = 1.0 / i;
 	}
 	// msg command

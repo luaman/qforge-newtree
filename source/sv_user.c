@@ -1453,28 +1453,31 @@ extern qboolean		nouse;	// 1999-10-29 +USE fix by Maddes
 void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 {
 	edict_t *ent;
-	int             i, n, oldmsec;
-	double  tmp_time;
+	int 	i, n, oldmsec;
+	double	tmp_time;
+	int 	tmp_time1, tmp_time2;
 
 	// To prevent a infinite loop
 	if (!inside) {
 		host_client->msecs += ucmd->msec;
 
-		if ((sv_timekick->int_val >= 1) &&
-			(tmp_time = realtime - host_client->last_check) >=
-			 sv_timekick_interval->value) {
-			tmp_time *= (1000 + sv_timekick_fuzz->value);
-			if (host_client->msecs > (int) tmp_time) {
+		if ((sv_timekick->int_val)
+				&& (tmp_time = realtime - host_client->last_check) >= sv_timekick_interval->value) {
+			
+			tmp_time1 = tmp_time * (1000 + sv_timekick_fuzz->value);
+			tmp_time2 = tmp_time * (1000 - sv_timekick_fuzz->value);
+
+			if ((host_client->msecs > (int) tmp_time1) || (host_client->msecs < (int) tmp_time2)) {
 				host_client->msec_cheating++;
-				SV_BroadcastPrintf( PRINT_HIGH,
+				SV_BroadcastPrintf (PRINT_HIGH,
 								va("%s thinks %d msecs pass in %f msecs. (Strike %d/%d)\n",
 								host_client->name, host_client->msecs, tmp_time,
 								host_client->msec_cheating, sv_timekick->int_val));
 
 				if (host_client->msec_cheating >= sv_timekick->int_val) {
-					SV_BroadcastPrintf(PRINT_HIGH, va("Strike %d for %s!!\n",
+					SV_BroadcastPrintf (PRINT_HIGH, va("Strike %d for %s!!\n",
 								host_client->msec_cheating, host_client->name));
-					SV_BroadcastPrintf(PRINT_HIGH, "Please see http://www.quakeforge.net/speed_cheat.php for infomation on QuakeForge's time cheat protection, and to explain how some may be cheating without knowing it.\n"
+					SV_BroadcastPrintf (PRINT_HIGH, "Please see http://www.quakeforge.net/speed_cheat.php for infomation on QuakeForge's time cheat protection, and to explain how some may be cheating without knowing it.\n"
 );
 					SV_DropClient(host_client);
 				}

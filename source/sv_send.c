@@ -135,9 +135,6 @@ void Con_Printf (char *fmt, ...)
 	char		msg2[MAXPRINTMSG];
 	char		msg3[MAXPRINTMSG];
 
-	static char lastmessage[MAXPRINTMSG];
-	static int	msgcount = 0;
-
 	time_t		mytime = 0;
 	struct tm	*local = NULL;
 	qboolean	timestamps = false;
@@ -152,19 +149,6 @@ void Con_Printf (char *fmt, ...)
 		strcat (outputbuf, msg);
 		return;
 	} else {				// We want to output to console and maybe logfile
-		if (strncmp (lastmessage, msg, MAXPRINTMSG) == 0) {
-			msgcount += 1;
-			return;
-		} else {
-			strncpy (lastmessage, msg, MAXPRINTMSG);
-			if (msgcount > 0) {
-				Sys_Printf ("Last message repeated %d times\n", msgcount);
-				if (sv_logfile)
-					Qprintf (sv_logfile, "Last message repeated %d times\n", msgcount);
-				msgcount=0;
-			}
-		}
-
 		if (sv_timestamps && sv_timefmt && sv_timefmt->string && sv_timestamps->int_val)
 			timestamps = true;
 
