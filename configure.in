@@ -476,6 +476,10 @@ dnl ==================================================================
 dnl Checks for sound
 dnl ==================================================================
 
+AC_ARG_ENABLE(alsa,
+[  --disable-alsa          disable alsa support],
+)      
+
 dnl MME
 AC_CHECK_LIB(mme,waveOutOpen,HAVE_LIBMME=yes)
 if test -z "$SNDTYPE" -a "x$ac_cv_header_mme_mmsystem_h" = "xyes" -a \
@@ -487,6 +491,21 @@ QF_maGiC_VALUE
 #endif
     ], SNDTYPE="MME"
        SOUND_LIBS="-lmme")
+fi
+
+SNDTYPE=""
+AC_MSG_CHECKING(for sound support)
+if test "x$enable_alsa" != "xno"; then
+   if test -z "$SNDTYPE" -a "x$ac_cv_header_sys_asoundlib_h" = "xyes"; then
+      AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <sys/asoundlib.h>
+#if defined(SND_LIB_MAJOR) && defined(SND_LIB_MINOR)
+#if SND_LIB_MAJOR>0 || (SND_LIB_MAJOR==0 && SND_LIB_MINOR>=5)
+QF_maGiC_VALUE
+#endif
+#endif
+      ],[ SNDTYPE="ALSA" SOUND_LIBS="-lasound"])
+   fi
 fi
 
 dnl OSS
@@ -533,6 +552,7 @@ fi
 AC_SUBST(SOUND_LIBS)
 AM_CONDITIONAL(SNDTYPE_MME, test "$SNDTYPE" = "MME")
 AM_CONDITIONAL(SNDTYPE_OSS, test "$SNDTYPE" = "OSS")
+AM_CONDITIONAL(SNDTYPE_ALSA, test "$SNDTYPE" = "ALSA")
 AM_CONDITIONAL(SNDTYPE_WIN32, test "$SNDTYPE" = "WIN32")
 
 
