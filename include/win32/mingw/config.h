@@ -34,6 +34,9 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+/* Define if you have string.h */
+#define HAVE_STRING_H 1
+
 /* Define to empty if the keyword does not work.  */
 #undef const
 

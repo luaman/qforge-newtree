@@ -249,6 +249,9 @@
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_
 
+/* Define if you've string.h
+#define HAVE_STRING_H 1
+
 /* Dir used for shared game data */
 #define FS_SHAREPATH "."
 
