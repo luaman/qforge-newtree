@@ -298,6 +298,16 @@ Tdfx_Init8bitPalette (void)
 	}
 }
 
+/*
+ * The GL_EXT_shared_texture_palette seems like an idea which is 
+ * /almost/ a good idea, but seems to be severely broken with many
+ * drivers, as such it is disabled.
+ *
+ * It should be noted, that a palette object extension as suggested by
+ * the GL_EXT_shared_texture_palette spec might be a very good idea in
+ * general.
+ */
+#if 0
 void
 Shared_Init8bitPalette (void)
 {
@@ -332,18 +342,19 @@ Shared_Init8bitPalette (void)
 	}
 }
 #endif
+#endif
 
 void
 VID_Init8bitPalette (void)
 {
 	vid_use8bit =
-		Cvar_Get ("vid_use8bit", "1", CVAR_ROM, "Use 8-bit shared palettes.");
+		Cvar_Get ("vid_use8bit", "0", CVAR_ROM, "Use 8-bit shared palettes.");
 
 	Con_Printf ("Checking for 8-bit extension: ");
 	if (vid_use8bit->int_val) {
 #ifdef GL_SHARED_TEXTURE_PALETTE_EXT
 		Tdfx_Init8bitPalette ();
-		Shared_Init8bitPalette ();
+		//Shared_Init8bitPalette ();
 #endif
 		if (!is8bit) {
 			Con_Printf ("none\n");
