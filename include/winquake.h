@@ -35,13 +35,26 @@
 # pragma warning( disable : 4229 )  /* mgraph gets this */
 #endif
 
+#define byte __hide_byte
+
+#define LPCWAVEFORMATEX __hide_LPCWAVEFORMATEX_
 #include <windows.h>
-#include <ddraw.h>
+#undef LPCWAVEFORMATEX
+#ifdef WINNT
+#undef WINNT
 #include <dsound.h>
+#include <ddraw.h>
+#define WINNT
+#else
+#include <dsound.h>
+#include <ddraw.h>
+#endif
 
 #ifdef HAVE_MGRAPH_H
 # include <mgraph.h>
 #endif
+
+#undef byte
 
 #include "qtypes.h"
 
