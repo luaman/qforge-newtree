@@ -37,6 +37,7 @@
 #include <strings.h>
 #endif
 
+#include "console.h"
 #include "sizebuf.h"
 #include "sys.h"
 
@@ -60,8 +61,7 @@ SZ_GetSpace (sizebuf_t *buf, int length)
 		if (length > buf->maxsize)
 			Sys_Error ("SZ_GetSpace: %i is > full buffer size", length);
 
-		Sys_Printf ("SZ_GetSpace: overflow\n");	// because Con_Printf may be
-												// redirected
+		Con_Printf ("SZ_GetSpace: overflow\n");
 		SZ_Clear (buf);
 		buf->overflowed = true;
 	}

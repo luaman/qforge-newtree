@@ -642,13 +642,13 @@ SV_NextUpload (void)
 	if (!host_client->upload) {
 		host_client->upload = Qopen (host_client->uploadfn, "wb");
 		if (!host_client->upload) {
-			Sys_Printf ("Can't create %s\n", host_client->uploadfn);
+			Con_Printf ("Can't create %s\n", host_client->uploadfn);
 			ClientReliableWrite_Begin (host_client, svc_stufftext, 8);
 			ClientReliableWrite_String (host_client, "stopul");
 			*host_client->uploadfn = 0;
 			return;
 		}
-		Sys_Printf ("Receiving %s from %d...\n", host_client->uploadfn,
+		Con_Printf ("Receiving %s from %d...\n", host_client->uploadfn,
 					host_client->userid);
 		if (host_client->remote_snap)
 			OutofBandPrintf (host_client->snap_from,
@@ -668,7 +668,7 @@ SV_NextUpload (void)
 		Qclose (host_client->upload);
 		host_client->upload = NULL;
 
-		Sys_Printf ("%s upload completed.\n", host_client->uploadfn);
+		Con_Printf ("%s upload completed.\n", host_client->uploadfn);
 
 		if (host_client->remote_snap) {
 			char       *p;
@@ -759,7 +759,7 @@ SV_BeginDownload_f (void)
 			host_client->download = NULL;
 		}
 
-		Sys_Printf ("Couldn't download %s to %s\n", name, host_client->name);
+		Con_Printf ("Couldn't download %s to %s\n", name, host_client->name);
 		ClientReliableWrite_Begin (host_client, svc_download, 4);
 		ClientReliableWrite_Short (host_client, -1);
 		ClientReliableWrite_Byte (host_client, 0);
@@ -767,7 +767,7 @@ SV_BeginDownload_f (void)
 	}
 
 	if (zip && strcmp (realname, name)) {
-		Sys_Printf ("download renamed to %s\n", realname);
+		Con_Printf ("download renamed to %s\n", realname);
 		ClientReliableWrite_Begin (host_client, svc_download,
 								   strlen (realname) + 5);
 		ClientReliableWrite_Short (host_client, -2);
@@ -777,7 +777,7 @@ SV_BeginDownload_f (void)
 	}
 
 	SV_NextDownload_f ();
-	Sys_Printf ("Downloading %s to %s\n", name, host_client->name);
+	Con_Printf ("Downloading %s to %s\n", name, host_client->name);
 }
 
 //=============================================================================
@@ -851,7 +851,7 @@ SV_Say (qboolean team)
 	strncat (text, p, sizeof (text) - strlen (text));
 	strncat (text, "\n", sizeof (text) - strlen (text));
 
-	Sys_Printf ("%s", text);
+	Con_Printf ("%s", text);
 
 	for (j = 0, client = svs.clients; j < MAX_CLIENTS; j++, client++) {
 		if (client->state != cs_spawned)

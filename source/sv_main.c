@@ -328,7 +328,7 @@ SV_FullClientUpdate (client_t *client, sizebuf_t *buf)
 
 	i = client - svs.clients;
 
-//  Sys_Printf("SV_FullClientUpdate:  Updated frags for client %d\n", i);
+//  Con_Printf("SV_FullClientUpdate:  Updated frags for client %d\n", i);
 
 	MSG_WriteByte (buf, svc_updatefrags);
 	MSG_WriteByte (buf, i);

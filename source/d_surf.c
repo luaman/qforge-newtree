@@ -241,7 +241,8 @@ D_SCDump (void)
 	for (test = sc_base; test; test = test->next) {
 		if (test == sc_rover)
 			Sys_Printf ("ROVER:\n");
-		printf ("%p : %i bytes     %i width\n", test, test->size, test->width);
+		Sys_Printf ("%p : %i bytes     %i width\n", test, test->size,
+					test->width);
 	}
 }
 

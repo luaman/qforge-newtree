@@ -417,7 +417,7 @@ COM_WriteBuffers (const char *filename, int count, ...)
 			Sys_Error ("Error opening %s", filename);
 	}
 
-	Sys_Printf ("COM_WriteFile: %s\n", name);
+	Sys_Printf ("COM_WriteBuffers: %s\n", name);
 	while (count--) {
 		void *data = va_arg (args, void*);
 		int   len = va_arg (args, int);

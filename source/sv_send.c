@@ -49,7 +49,7 @@
 /*
 =============================================================================
 
-Con_Printf redirection
+	Con_Printf redirection
 
 =============================================================================
 */
@@ -127,6 +127,7 @@ Handles cursor positioning, line wrapping, etc
 void
 Con_Printf (char *fmt, ...)
 {
+	static int  pending = 0;			// partial line being printed
 	va_list     argptr;
 	char        msg[MAXPRINTMSG];
 	char        msg2[MAXPRINTMSG];
@@ -144,26 +145,30 @@ Con_Printf (char *fmt, ...)
 		if (strlen (msg) + strlen (outputbuf) > sizeof (outputbuf) - 1)
 			SV_FlushRedirect ();
 		strncat (outputbuf, msg, sizeof (outputbuf) - strlen (outputbuf));
-		return;
-	} else {							// We want to output to console and
-										// maybe logfile
-		if (sv_timestamps && sv_timefmt && sv_timefmt->string
-			&& sv_timestamps->int_val) timestamps = true;
-
-		if (timestamps) {
-			mytime = time (NULL);
-			local = localtime (&mytime);
-			strftime (msg3, sizeof (msg3), sv_timefmt->string, local);
-
-			snprintf (msg2, sizeof (msg2), "%s%s", msg3, msg);
-		} else {
-			snprintf (msg2, sizeof (msg2), "%s", msg);
-		}
-
-		Sys_Printf ("%s", msg2);		// also echo to debugging console
-		if (sv_logfile)
-			Qprintf (sv_logfile, "%s", msg2);
 	}
+	// We want to output to console and maybe logfile
+	if (sv_timestamps && sv_timefmt && sv_timefmt->string
+		&& sv_timestamps->int_val && !pending)
+		timestamps = true;
+
+	if (timestamps) {
+		mytime = time (NULL);
+		local = localtime (&mytime);
+		strftime (msg3, sizeof (msg3), sv_timefmt->string, local);
+
+		snprintf (msg2, sizeof (msg2), "%s%s", msg3, msg);
+	} else {
+		snprintf (msg2, sizeof (msg2), "%s", msg);
+	}
+	if (msg2[strlen (msg2) - 1] != '\n') {
+		pending = 1;
+	} else {
+		pending = 0;
+	}
+
+	Sys_Printf ("%s", msg2);		// also echo to debugging console
+	if (sv_logfile)
+		Qprintf (sv_logfile, "%s", msg2);
 }
 
 /*
@@ -248,7 +253,7 @@ SV_BroadcastPrintf (int level, char *fmt, ...)
 	vsnprintf (string, sizeof (string), fmt, argptr);
 	va_end (argptr);
 
-	Sys_Printf ("%s", string);			// print to the console
+	Con_Printf ("%s", string);			// print to the console
 
 	for (i = 0, cl = svs.clients; i < MAX_CLIENTS; i++, cl++) {
 		if (level < cl->messagelevel)

@@ -57,61 +57,6 @@ qboolean    is_server = false;
 // General routines
 // =======================================================================
 
-/*
-void Sys_Printf (char *fmt, ...)
-{
-	va_list		argptr;
-	char		text[1024];
-	
-	va_start (argptr,fmt);
-#ifdef HAVE_VSNPRINTF
-        vsnprintf (text,sizeof(text),fmt,argptr);
-#else
-        vsprintf (text,fmt,argptr);
-#endif
-	va_end (argptr);
-	fprintf(stderr, "%s", text);
-	
-	Con_Print (text);
-}
-
-void Sys_Printf (char *fmt, ...)
-{
-
-    va_list     argptr;
-    char        text[1024], *t_p;
-    int         l, r;
-
-    if (nostdout)
-        return;
-
-    va_start (argptr,fmt);
-#ifdef HAVE_VSNPRINTF
-    vsnprintf (text,sizeof(text),fmt,argptr);
-#else
-    vsprintf (text,fmt,argptr);
-#endif
-    va_end (argptr);
-
-    l = strlen(text);
-    t_p = text;
-
-// make sure everything goes through, even though we are non-blocking
-    while (l)
-    {
-        r = write (1, text, l);
-        if (r != l)
-            sleep (0);
-        if (r > 0)
-        {
-            t_p += r;
-            l -= r;
-        }
-    }
-
-}
-*/
-
 void
 Sys_Quit (void)
 {
