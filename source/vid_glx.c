@@ -4,10 +4,7 @@
 	OpenGL GLX video driver
 
 	Copyright (C) 1996-1997  Id Software, Inc.
-	Copyright (C) 1999-2000  Nelson Rush.
 	Copyright (C) 2000       Marcus Sundberg [mackan@stacken.kth.se]
-	Copyright (C) 1999,2000  contributors of the QuakeForge project
-	Please see the file "AUTHORS" for a list of contributors
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -65,7 +62,7 @@
 #include <X11/keysym.h>
 #include <X11/cursorfont.h>
 
-#ifdef HAS_DGA
+#ifdef HAVE_DGA
 # include <X11/extensions/xf86dga.h>
 #endif
 #ifdef HAVE_VIDMODE
@@ -101,7 +98,7 @@ extern cvar_t *vid_dga_mouseaccel;
 static XF86VidModeModeInfo **vidmodes;
 static int	nummodes, hasvidmode = 0;
 #endif
-#ifdef HAS_DGA
+#ifdef HAVE_DGA
 static int	hasdgavideo = 0;
 static int	hasdga = 0;
 #endif
@@ -115,7 +112,7 @@ static GLboolean (*QF_XMesaSetFXmode)(GLint mode) = NULL;
 
 int scr_width, scr_height;
 
-#if defined(XMESA) || defined(HAS_DGA)
+#if defined(XMESA) || defined(HAVE_DGA)
 int VID_options_items = 2;
 #else
 int VID_options_items = 1;
@@ -255,8 +252,8 @@ void	VID_SetPalette (unsigned char *palette)
 
 	COM_FOpenFile("glquake/15to8.pal", &f);
 	if (f) {
-		Qread(f, d_15to8table, 1<<15);
-		Qclose(f);
+		fread(d_15to8table, 1<<15, 1, f);
+		fclose(f);
 	} else {
 		for (i=0; i < (1<<15); i++) {
 			/* Maps
@@ -284,9 +281,9 @@ void	VID_SetPalette (unsigned char *palette)
 		snprintf(s, sizeof(s), "%s/glquake", com_gamedir);
  		Sys_mkdir (s);
 		snprintf(s, sizeof(s), "%s/glquake/15to8.pal", com_gamedir);
-		if ((f = Qopen(s, "wb")) != NULL) {
-			Qwrite(f, d_15to8table, 1<<15);
-			Qclose(f);
+		if ((f = fopen(s, "wb")) != NULL) {
+			fwrite(d_15to8table, 1<<15, 1, f);
+			fclose(f);
 		}
 	}
 }
@@ -422,7 +419,7 @@ void VID_Init(unsigned char *palette)
 	vid_mode = Cvar_Get ("vid_mode","0",0,"None");
 	gl_ztrick = Cvar_Get ("gl_ztrick","0",CVAR_ARCHIVE,"None");
 	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
-#ifdef HAS_DGA
+#ifdef HAVE_DGA
 	vid_dga_mouseaccel = Cvar_Get("vid_dga_mouseaccel","1",CVAR_ARCHIVE,
 					"None");
 #endif
@@ -469,7 +466,7 @@ void VID_Init(unsigned char *palette)
 		exit(1);
 	}
 
-#ifdef HAS_DGA
+#ifdef HAVE_DGA
 	{
 		int maj_ver;
 
