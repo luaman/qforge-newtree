@@ -681,22 +681,22 @@ R_DrawSkyLayer (float s)
 	float x, y, a1x, a1y, a2x, a2y;
 	vec3_t v;
 	
-	for (a = 0; a < 32; a++)
+	for (a = 0; a < 16; a++)
 	{
-		a1x = bubble_costable[a];
-		a1y = -bubble_sintable[a];
-		a2x = bubble_costable[a+1];
-		a2y = -bubble_sintable[a+1];
+		a1x = bubble_costable[a*2];
+		a1y = -bubble_sintable[a*2];
+		a2x = bubble_costable[(a+1)*2];
+		a2y = -bubble_sintable[(a+1)*2];
 
 		glBegin (GL_TRIANGLE_STRIP);
 		glTexCoord2f(0.5 + s * (1.0 / 128.0), 0.5 + s * (1.0 / 128.0));
 		glVertex3f(r_refdef.vieworg[0],
 			   r_refdef.vieworg[1],
 			   r_refdef.vieworg[2]+domescale[2]);
-		for (b = 1; b < 16; b++)
+		for (b = 1; b < 8; b++)
 		{
-			x = bubble_costable[b+16];
-			y = -bubble_sintable[b+16];
+			x = bubble_costable[b*2+16];
+			y = -bubble_sintable[b*2+16];
 
 			v[0] = a1x*x * domescale[0];
 			v[1] = a1y*x * domescale[1];
