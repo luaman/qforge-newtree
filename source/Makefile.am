@@ -129,9 +129,9 @@ client_ASM=	snd_mixa.S cl_math.S sys_x86.S
 endif
 
 client_SOURCES= cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c cl_main.c \
-		cl_misc.c cl_parse.c cl_pred.c cl_tent.c cl_cam.c \
+		cl_misc.c cl_parse.c cl_pred.c cl_tent.c cl_cam.c teamplay.c \
 		r_view.c wad.c \
-		skin.c sbar.c nonintel.c menu.c keys.c console.c \
+		console.c keys.c menu.c nonintel.c skin.c sbar.c \
                 cl_slist.c $(client_ASM)
 
 #
@@ -247,5 +247,7 @@ qf_client_wgl_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 # Stuff that doesn't get linked into an executable NEEDS to be mentioned here,
 # or it won't be distributed with 'make dist'
 #
-EXTRA_DIST = makefile.winc makefile.wingl makefile.wins \
-	qw_client.dsp qw_server.dsp
+EXTRA_DIST=	makefile.win \
+		qf-server.mak qw_server.dsp \
+		qf-client-sdl.mak qf-client-win.mak qw_client.dsp \
+		qf-client-sgl.mak qf-client-wgl.mak qf-client-win.mak
