@@ -229,6 +229,7 @@ PR_Profile (progs_t *pr)
 void
 PR_Profile_f (void)
 {
+	PR_Profile (&sv_progs);
 }
 
 

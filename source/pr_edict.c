@@ -543,6 +543,7 @@ ED_PrintEdicts (progs_t *pr)
 void
 ED_PrintEdicts_f (void)
 {
+	ED_PrintEdicts (&sv_progs);
 }
 
 /*
@@ -557,7 +558,7 @@ ED_PrintEdict_f (void)
 
 	i = atoi (Cmd_Argv (1));
 	Con_Printf ("\n EDICT %i:\n", i);
-	//FIXMEED_PrintNum (pr, i);
+	ED_PrintNum (&sv_progs, i);
 }
 
 /*
@@ -597,6 +598,7 @@ ED_Count (progs_t *pr)
 void
 ED_Count_f (void)
 {
+	ED_Count (&sv_progs);
 }
 
 /*
