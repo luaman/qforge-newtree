@@ -33,14 +33,18 @@ typedef unsigned short PIXEL;
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#include "sys.h"
+#include "quakedef.h"
+#include "d_local.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <X11/Xlib.h>
@@ -48,10 +52,6 @@ typedef unsigned short PIXEL;
 #include <X11/Xatom.h>
 #include <X11/keysym.h>
 #include <X11/extensions/XShm.h>
-
-#include "sys.h"
-#include "quakedef.h"
-#include "d_local.h"
 
 /* cvar_t		_windowed_mouse = {"_windowed_mouse","0", true};
  CVAR_FIXME */
