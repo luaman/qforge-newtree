@@ -66,6 +66,9 @@ cvar_t sv_phs = {"sv_phs", "1"};
 
 cvar_t pausable	= {"pausable", "1"};
 
+extern cvar_t	sv_timekick;
+extern cvar_t	sv_timekick_fuzz;
+extern cvar_t	sv_timekick_interval;
 
 //
 // game rules mirrored in svs.info
@@ -1351,6 +1354,10 @@ void SV_InitLocal (void)
 	Cvar_RegisterVariable (&sv_waterfriction);
 
 	Cvar_RegisterVariable (&sv_aim);
+
+	Cvar_RegisterVariable (&sv_timekick);
+	Cvar_RegisterVariable (&sv_timekick_fuzz);
+	Cvar_RegisterVariable (&sv_timekick_interval);
 
 	Cvar_RegisterVariable (&filterban);
 	

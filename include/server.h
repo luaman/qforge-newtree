@@ -189,6 +189,8 @@ typedef struct client_s
 	int				chokecount;
 	int				delta_sequence;		// -1 = no compression
 	netchan_t		netchan;
+        int                     msecs, msec_cheating;
+        double                  last_check;
 } client_t;
 
 // a client can leave the server in one of four ways:

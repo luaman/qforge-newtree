@@ -24,7 +24,7 @@ M:      Ender has built these binaries sucessfully with a makefile.
 [ ]	4.   Any structural changes to the tree we agree to make
 [ ]	5a.  Linux targets need to be verified
 [ ]	5b   Win32 targets need to be verified
-[ ]	6a.  Mercury's speed cheat fix
+[X]	6a.  Mercury's speed cheat fix
 < >	M2k. QSG Standards Version 1
 [-]	6b.  Cvar revamp
 [-]	7.   Global config file
