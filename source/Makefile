@@ -7,7 +7,7 @@ CL_SVGA_name=qw-client-svga
 CL_SVGA_libs=-lvga
 
 CL_X11_name=qw-client-x11
-CL_X11_libs=
+CL_X11_libs=-L/usr/X11R6/lib -lX11 -lXext
 
 DIRECTORIES=
 vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
@@ -28,6 +28,25 @@ CXXFLAGS+=-g -O2
 
 #               *List Macros*
 
+COM_sources=\
+  net_chan.c \
+  net_com.c \
+  net_udp.c \
+  pmove.c \
+  pmovetst.c \
+  zone.c \
+  mdfour.c \
+  mathlib.c \
+  math.S \
+  cvar.c \
+  crc.c \
+  common.c \
+  cmd.c \
+  model.c
+
+COM_dependencies = $(patsubst %,%.d,$(basename $(COM_sources)))
+COM_objects = $(patsubst %.d,%.o,$(COM_dependencies))
+
 SV_sources=\
   pr_cmds.c \
   pr_edict.c \
@@ -45,21 +64,7 @@ SV_sources=\
   world.c \
   worlda.S \
   sys_unix.c \
-  model.c \
-  cmd.c \
-  common.c \
-  crc.c \
-  cvar.c \
-  sv_cvar.c \
-  mathlib.c \
-  math.S \
-  mdfour.c \
-  zone.c \
-  pmove.c \
-  pmovetst.c \
-  net_chan.c \
-  net_com.c \
-  net_udp.c
+  sv_cvar.c
 
 SV_dependencies = $(patsubst %,%.d,$(basename $(SV_sources)))
 SV_objects = $(patsubst %.d,%.o,$(SV_dependencies))
@@ -75,11 +80,7 @@ CL_sources=\
   cl_pred.c \
   cl_tent.c \
   cl_cam.c \
-  cmd.c \
-  common.c \
   console.c \
-  crc.c \
-  cvar.c \
   d_edge.c \
   d_fill.c \
   d_init.c \
@@ -94,16 +95,8 @@ CL_sources=\
   d_zpoint.c \
   draw.c \
   keys.c \
-  mathlib.c \
-  mdfour.c \
   menu.c \
-  model.c \
-  net_chan.c \
-  net_com.c \
-  net_udp.c \
   nonintel.c \
-  pmove.c \
-  pmovetst.c \
   r_aclip.c \
   r_alias.c \
   r_bsp.c \
@@ -126,7 +119,6 @@ CL_sources=\
   snd_mix.c \
   view.c \
   wad.c \
-  zone.c \
   cd_linux.c \
   sys_linux.c \
   snd_linux.c \
@@ -138,7 +130,6 @@ CL_sources=\
   d_scana.S \
   d_spr8.S \
   d_varsa.S \
-  math.S \
   r_aclipa.S \
   r_aliasa.S \
   r_drawa.S \
@@ -169,20 +160,21 @@ CL_X11_objects = $(patsubst %.d,%.o,$(CL_X11_dependencies))
 
 all: $(SV_name) #$(CL_SVGA_name) $(CL_X11_name)
 
-$(SV_name): $(SV_objects) $(SV_libs)
+$(SV_name): $(COM_objects) $(SV_objects) $(SV_libs)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread
 
-$(CL_SVGA_name): $(CL_objects) $(CL_SVGA_objects) $(CL_SVGA_libs)
+$(CL_SVGA_name): $(COM_objects) $(CL_objects) $(CL_SVGA_objects) $(CL_SVGA_libs)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread
 
-$(CL_X11_name): $(CL_objects) $(CL_X11_objects) $(CL_X11_libs)
+$(CL_X11_name): $(COM_objects) $(CL_objects) $(CL_X11_objects) $(CL_X11_libs)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread
 
 clean:
-	-rm -f *.[od] $(SV_name)
+	-rm -f *.[od] $(SV_name) $(CL_SVGA_name) $(CL_X11_name)
 
 #               *Individual File Dependencies*
 
+-include $(COM_dependencies)
 -include $(SV_dependencies)
 -include $(CL_dependencies)
 -include $(CL_SVGA_dependencies)
