@@ -112,6 +112,9 @@ void	Cmd_ForwardToServer (void);
 
 void Cmd_StuffCmds_f (void);
 
+void Cbuf_Execute_Sets (void);
+void Cmd_Exec_File (char *path);
+
 extern	char		com_token[1024];
 char *COM_Parse (char *data);
 

@@ -59,6 +59,8 @@ netadr_t	master_adr[MAX_MASTERS];	// address of group servers
 
 client_t	*host_client;			// current client
 
+cvar_t	*fs_globalcfg;
+
 /* cvar_t	sv_mintic = {"sv_mintic","0.03"};	// bound the size of the
  CVAR_FIXME */
 cvar_t	*sv_mintic;	// bound the size of the
@@ -1859,6 +1861,19 @@ void SV_Init (quakeparms_t *parms)
 
 	Cbuf_Init ();
 	Cmd_Init ();	
+
+	// execute +set as early as possible
+	Cmd_StuffCmds_f ();
+	Cbuf_Execute_Sets ();
+
+	// execute the global configuration file if it exists
+	// would have been nice if Cmd_Exec_f could have been used, but it
+	// only reads from within the quake file system, and changing that is
+	// probably Not A Good Thing (tm).
+	fs_globalcfg = Cvar_Get("fs_globalcfg", FS_GLOBALCFG,
+							   CVAR_ROM, "global configuration file");
+	Cmd_Exec_File (fs_globalcfg->string);
+	Cbuf_Execute_Sets ();
 
 	COM_Init ();
 	

@@ -67,12 +67,15 @@
 #endif
 #include "cl_slist.h"
 
+extern cvar_t *fs_basepath;
+extern cvar_t *fs_sharepath;
 // we need to declare some mouse variables here, because the menu system
 // references them even when on a unix system.
 
 qboolean	noclip_anglehack;		// remnant from old quake
 
 
+cvar_t	*fs_globalcfg;
 /* cvar_t	rcon_password = {"rcon_password", "", false};
  CVAR_FIXME */
 cvar_t	*rcon_password;
@@ -1683,7 +1686,8 @@ void Host_Init (quakeparms_t *parms)
 	host_parms = *parms;
 
 	if (parms->memsize < MINIMUM_MEMORY)
-		Sys_Error ("Only %4.1f megs of memory reported, can't execute game", parms->memsize / (float)0x100000);
+		Sys_Error ("Only %4.1f megs of memory reported, can't execute game",
+				   parms->memsize / (float)0x100000);
 
 	Memory_Init (parms->membase, parms->memsize);
 	Cvar_Init ();
@@ -1692,12 +1696,36 @@ void Host_Init (quakeparms_t *parms)
 	Cbuf_Init ();
 	Cmd_Init ();
 	cl_Cmd_Init ();
-	V_Init ();
 
+	// execute +set as early as possible
+	Cmd_StuffCmds_f ();
+	Cbuf_Execute_Sets ();
+
+	// execute the global configuration file if it exists
+	// would have been nice if Cmd_Exec_f could have been used, but it
+	// only reads from within the quake file system, and changing that is
+	// probably Not A Good Thing (tm).
+	fs_globalcfg = Cvar_Get("fs_globalcfg", FS_GLOBALCFG,
+							   CVAR_ROM, "global configuration file");
+	Cmd_Exec_File (fs_globalcfg->string);
+	Cbuf_Execute_Sets ();
+
+	V_Init ();
 	CL_InitCvars ();
 	SCR_InitCvars ();
 	VID_InitCvars ();
 	COM_Init ();
+
+	// reparse the command line for + commands other than set
+	// (sets still done, but it doesn't matter)
+	Cmd_StuffCmds_f ();
+	Cbuf_Execute ();
+
+	// make these read-only
+	fs_basepath = Cvar_Get ("fs_basepath", fs_basepath->string, CVAR_ROM,
+							"the location of your game directories");
+	fs_sharepath = Cvar_Get ("fs_sharepath", fs_sharepath->string,
+							 CVAR_ROM, "read-only game directories");
 
 	Host_FixupModelNames();
 	
