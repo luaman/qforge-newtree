@@ -425,15 +425,18 @@ process_corners (struct box_def *box)
 			find_cube_vertex (visit[i].face, visit[(i + 1) % 5].face, visit[(i + 2) % 5].face, v);
 			insert_cube_vertexen (box, visit[i], 1, v);
 			insert_cube_vertexen (box, visit[(i + 1) % 5], 1, v);
-			insert_cube_vertexen (box, visit[(i + 2) % 5], 1, v);
+			insert_cube_vertexen (box, visit[(i + 4) % 5], 1, v);
 
 		} else {
 			// 3 vertexen
-			unsigned int sel = (((abs (visit[2].face - visit[0].face) == 3) << 2)
-								| ((abs (visit[3].face - visit[1].face) == 3) << 1)
-								| ((abs (visit[5].face - visit[2].face) == 3) << 0));
+			unsigned int sel = (((abs (visit[2].face - visit[0].face) == 3) << 4)
+								| ((abs (visit[3].face - visit[1].face) == 3) << 3)
+								| ((abs (visit[4].face - visit[2].face) == 3) << 2)
+								| ((abs (visit[0].face - visit[3].face) == 3) << 1)
+								| ((abs (visit[1].face - visit[4].face) == 3) << 0));
 			vec3_t v[3];
 			center = ((sel * 3) - 6) % 5;
+			//printf ("%02o %d  %d %d %d %d %d\n", sel, center, visit[0].face, visit[1].face, visit[2].face, visit[3].face, visit[4].face);
 			for (i = 0; i < 3; i++)
 				find_cube_vertex (visit[center].face, visit[(center + 1 + i) % 5].face, visit[(center + 2 + i) % 5].face, v[i]);
 			insert_cube_vertexen (box, visit[center], 3, v[0], v[1], v[2]);
