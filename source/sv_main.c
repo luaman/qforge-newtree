@@ -1381,12 +1381,14 @@ void SV_InitLocal (void)
 	for (i=0 ; i<MAX_MODELS ; i++)
 		sprintf (localmodels[i], "*%i", i);
 
-//	Info_SetValueForStarKey (svs.info, "*qf_version", QF_VERSION,
-//			MAX_SERVERINFO_STRING);
 	Info_SetValueForStarKey (svs.info, "*version", QW_VERSION,
 			MAX_SERVERINFO_STRING);
-//	Info_SetValueForStarKey (svs.info, "*qsg_standard", QSG_STANDARD,
-//			MAX_SERVERINFO_STRING);
+
+	// Brand server as QF, with appropriate QSG standards version  --KB
+	Info_SetValueForStarKey (svs.info, "*qf_version", QF_VERSION,
+			MAX_SERVERINFO_STRING);
+	Info_SetValueForStarKey (svs.info, "*qsg_standard", QSG_STANDARD,
+			MAX_SERVERINFO_STRING);
 
 	// init fraglog stuff
 	svs.logsequence = 1;
