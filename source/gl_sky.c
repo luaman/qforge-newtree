@@ -353,36 +353,42 @@ find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 	VectorSubtract (x, t, y);
 }
 
+struct box_def {
+	int			tex, enter, leave;
+	glpoly_t	poly;
+	float		verts[32][VERTEXSIZE];
+};
+
 static void
-set_vertex (glpoly_t *p, vec3_t v, int face)
+set_vertex (struct box_def *box, vec3_t v, int face)
 {
-	int ind = p->numverts++;
-	VectorCopy (v, p->verts[ind]);
-	VectorAdd (v, r_refdef.vieworg, p->verts[ind]);
+	int ind = box[face].poly.numverts++;
+	VectorCopy (v, box[face].poly.verts[ind]);
+	VectorAdd (v, r_refdef.vieworg, box[face].poly.verts[ind]);
 	switch (face) {
 	case 0:
-		p->verts[ind][3] = (1024 - v[1]) / 2048;
-		p->verts[ind][4] = (1024 - v[2]) / 2048;
+		box[face].poly.verts[ind][3] = (1024 - v[1]) / 2048;
+		box[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
 		break;
 	case 1:
-		p->verts[ind][3] = (1024 + v[0]) / 2048;
-		p->verts[ind][4] = (1024 - v[2]) / 2048;
+		box[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
+		box[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
 		break;
 	case 2:
-		p->verts[ind][3] = (1024 + v[0]) / 2048;
-		p->verts[ind][4] = (1024 + v[1]) / 2048;
+		box[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
+		box[face].poly.verts[ind][4] = (1024 + v[1]) / 2048;
 		break;
 	case 3:
-		p->verts[ind][3] = (1024 + v[1]) / 2048;
-		p->verts[ind][4] = (1024 - v[2]) / 2048;
+		box[face].poly.verts[ind][3] = (1024 + v[1]) / 2048;
+		box[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
 		break;
 	case 4:
-		p->verts[ind][3] = (1024 - v[0]) / 2048;
-		p->verts[ind][4] = (1024 - v[2]) / 2048;
+		box[face].poly.verts[ind][3] = (1024 - v[0]) / 2048;
+		box[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
 		break;
 	case 5:
-		p->verts[ind][3] = (1024 - v[0]) / 2048;
-		p->verts[ind][4] = (1024 - v[1]) / 2048;
+		box[face].poly.verts[ind][3] = (1024 - v[0]) / 2048;
+		box[face].poly.verts[ind][4] = (1024 - v[1]) / 2048;
 		break;
 	}
 }
@@ -402,19 +408,13 @@ find_cube_vertex (int face1, int face2, int face3, vec3_t v)
 	v[face3 % 3] = 1024 * (1 - 2 * (face3 / 3));
 }
 
-struct box_def {
-	int			tex, enter, leave;
-	glpoly_t	poly;
-	float		verts[32][VERTEXSIZE];
-};
-
 static void
 enter_face (struct box_def *box, int prev_face, int face)
 {
 	if (box[face].leave >=0 && (box[face].leave % 3) != (prev_face % 3)) {
 		vec3_t t;
 		find_cube_vertex (prev_face, face, box[face].leave, t);
-		set_vertex(&box[face].poly, t, face);
+		set_vertex(box, t, face);
 		box[face].enter = -1;
 	} else {
 		box[face].enter = prev_face;
@@ -428,7 +428,7 @@ leave_face (struct box_def *box, int prev_face, int face)
 	if (box[prev_face].enter >=0 && (box[prev_face].enter) % 3 != (face % 3)) {
 		vec3_t t;
 		find_cube_vertex (prev_face, face, box[prev_face].enter, t);
-		set_vertex(&box[prev_face].poly, t, prev_face);
+		set_vertex(box, t, prev_face);
 		box[prev_face].leave = -1;
 	} else {
 		box[prev_face].leave = face;
@@ -459,9 +459,10 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 {
 	static int skytex_offs[] = {3, 0, 4, 1, 2, 5};
 	vec3_t v, last_v;
+	vec3_t center = {0, 0, 0};
 	struct box_def box[6];
 	int i;
-	int face, prev_face;
+	int face, prev_face, c_face;
 
 	memset (box, 0, sizeof (box));
 	for (i = 0; i < 6; i++) {
@@ -474,6 +475,13 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		abort();
 	}
 
+	for (i = 0; i < poly->numverts; i++) {
+		VectorAdd (poly->verts[i], center, center);
+		VectorSubtract (center, r_refdef.vieworg, center);
+	}
+	VectorScale (center, 1.0/poly->numverts, center);
+	c_face = determine_face (center);
+
 	VectorSubtract (poly->verts[poly->numverts - 1], r_refdef.vieworg, v);
 	prev_face = determine_face (v);
 	VectorCopy (v, last_v);
@@ -482,41 +490,60 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		VectorSubtract (poly->verts[i], r_refdef.vieworg, v);
 		face = determine_face (v);
 		if (face != prev_face) {
-			if (face % 3 == prev_face % 3) {
+			if ((face % 3) == (prev_face % 3)) {
 				vec3_t l, x;
 				int x_face;
 
-				VectorSubtract (v, last_v, x);
+				VectorAdd (v, last_v, x);
 				VectorScale (x, 0.5, x);
-				VectorAdd (last_v, x, x);
 
 				x_face = determine_face (x);
 
 				find_intersect (prev_face, last_v, x_face, v, l);
 
-				set_vertex(&box[prev_face].poly, l, prev_face);
+				set_vertex(box, l, prev_face);
 				leave_face (box, prev_face, x_face);
-				//enter_face (box, prev_face, x_face);
+				enter_face (box, prev_face, x_face);
 
 				find_intersect (x_face, last_v, face, v, l);
 
-				//leave_face (box, x_face, face);
+				leave_face (box, x_face, face);
 				enter_face (box, x_face, face);
-				set_vertex(&box[face].poly, l, face);
+				set_vertex(box, l, face);
 			} else {
 				vec3_t l;
 				find_intersect (prev_face, last_v, face, v, l);
 
-				set_vertex(&box[prev_face].poly, l, prev_face);
+				set_vertex(box, l, prev_face);
 				leave_face (box, prev_face, face);
 				enter_face (box, prev_face, face);
-				set_vertex(&box[face].poly, l, face);
+				set_vertex(box, l, face);
 			}
 		}
-		set_vertex(&box[face].poly, v, face);
+		set_vertex(box, v, face);
 
 		VectorCopy (v, last_v);
 		prev_face = face;
+	}
+
+	if (box[c_face].poly.numverts == 0) {
+		vec3_t v;
+		find_cube_vertex (c_face, c_face + 1, c_face + 2, v);
+		set_vertex(box, v, c_face);
+		set_vertex(box, v, (c_face + 1) % 6);
+		set_vertex(box, v, (c_face + 2) % 6);
+		find_cube_vertex (c_face, c_face + 2, c_face + 4, v);
+		set_vertex(box, v, c_face);
+		set_vertex(box, v, (c_face + 2) % 6);
+		set_vertex(box, v, (c_face + 4) % 6);
+		find_cube_vertex (c_face, c_face + 4, c_face + 5, v);
+		set_vertex(box, v, c_face);
+		set_vertex(box, v, (c_face + 4) % 6);
+		set_vertex(box, v, (c_face + 5) % 6);
+		find_cube_vertex (c_face, c_face + 5, c_face + 1, v);
+		set_vertex(box, v, c_face);
+		set_vertex(box, v, (c_face + 5) % 6);
+		set_vertex(box, v, (c_face + 1) % 6);
 	}
 
 	render_box (box);
