@@ -674,7 +674,7 @@ void VID_Init8bitPalette(void)
 
 void VID_InitCvars ()
 {
-	// It may not look like it, but this is important
+	m_filter = Cvar_Get("m_filter", "0", CVAR_NONE, "None");
 }
 
 void VID_Init(unsigned char *palette)
