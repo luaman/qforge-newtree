@@ -36,20 +36,20 @@ CXXFLAGS+=-g -O2
 #               *List Macros*
 
 COM_sources=\
+  cmd.c \
+  common.c \
+  crc.c \
+  cvar.c \
+  math.S \
+  mathlib.c \
+  mdfour.c \
+  model.c \
   net_chan.c \
   net_com.c \
   net_udp.c \
   pmove.c \
   pmovetst.c \
-  zone.c \
-  mdfour.c \
-  mathlib.c \
-  math.S \
-  cvar.c \
-  crc.c \
-  common.c \
-  model.c \
-  cmd.c 
+  zone.c 
 
 COM_dependencies = $(patsubst %,%.d,$(basename $(COM_sources)))
 COM_objects = $(patsubst %.d,%.o,$(COM_dependencies))
@@ -58,77 +58,28 @@ SV_sources=\
   pr_cmds.c \
   pr_edict.c \
   pr_exec.c \
+  sv_ccmds.c \
+  sv_cvar.c \
+  sv_ents.c \
   sv_init.c \
   sv_main.c \
   sv_misc.c \
   sv_model.c \
-  sv_nchan.c \
-  sv_ents.c \
-  sv_send.c \
   sv_move.c \
+  sv_nchan.c \
   sv_phys.c \
+  sv_send.c \
   sv_user.c \
-  sv_ccmds.c \
-  world.c \
-  worlda.S \
   sys_unix.c \
-  sv_cvar.c
+  world.c \
+  worlda.S
 
 SV_dependencies = $(patsubst %,%.d,$(basename $(SV_sources)))
 SV_objects = $(patsubst %.d,%.o,$(SV_dependencies))
 
-CL_SW_sources=\
-  cl_model.c \
-  cl_trans.c \
-  d_edge.c \
-  d_fill.c \
-  d_init.c \
-  d_modech.c \
-  d_part.c \
-  d_polyse.c \
-  d_scan.c \
-  d_sky.c \
-  d_sprite.c \
-  d_surf.c \
-  d_vars.c \
-  d_zpoint.c \
-  draw.c \
-  r_aclip.c \
-  r_alias.c \
-  r_bsp.c \
-  r_draw.c \
-  r_edge.c \
-  r_efrag.c \
-  r_light.c \
-  r_main.c \
-  r_misc.c \
-  r_part.c \
-  r_sky.c \
-  r_sprite.c \
-  r_surf.c \
-  r_vars.c \
-  sw_view.c \
-  screen.c \
-  d_copy.S \
-  d_draw.S \
-  d_draw16.S \
-  d_parta.S \
-  d_polysa.S \
-  d_scana.S \
-  d_spr8.S \
-  d_varsa.S \
-  r_aclipa.S \
-  r_aliasa.S \
-  r_drawa.S \
-  r_edgea.S \
-  r_varsa.S \
-  surf16.S \
-  surf8.S
-
-CL_SW_dependencies = $(patsubst %,%.d,$(basename $(CL_SW_sources)))
-CL_SW_objects = $(patsubst %.d,%.o,$(CL_SW_dependencies))
-
 CL_sources=\
+  cd_linux.c \
+  cl_cam.c \
   cl_cmd.c \
   cl_cvar.c \
   cl_demo.c \
@@ -140,26 +91,75 @@ CL_sources=\
   cl_parse.c \
   cl_pred.c \
   cl_tent.c \
-  cl_cam.c \
-  snd_linux.c \
-  sys_linux.c \
-  cd_linux.c \
+  console.c \
+  keys.c \
+  menu.c \
+  nonintel.c \
   r_view.c \
-  wad.c \
+  sbar.c \
+  skin.c \
   snd_dma.c \
+  snd_linux.c \
   snd_mem.c \
   snd_mix.c \
   snd_mixa.S \
-  skin.c \
-  sbar.c \
-  nonintel.c \
-  menu.c \
-  keys.c \
-  console.c \
-  sys_x86.S
+  sys_linux.c \
+  sys_x86.S \
+  wad.c
 
 CL_dependencies = $(patsubst %,%.d,$(basename $(CL_sources)))
 CL_objects = $(patsubst %.d,%.o,$(CL_dependencies))
+
+CL_SW_sources=\
+  cl_model.c \
+  cl_trans.c \
+  d_copy.S \
+  d_draw.S \
+  d_draw16.S \
+  d_edge.c \
+  d_fill.c \
+  d_init.c \
+  d_modech.c \
+  d_part.c \
+  d_parta.S \
+  d_polysa.S \
+  d_polyse.c \
+  d_scan.c \
+  d_scana.S \
+  d_sky.c \
+  d_spr8.S \
+  d_sprite.c \
+  d_surf.c \
+  d_vars.c \
+  d_varsa.S \
+  d_zpoint.c \
+  draw.c \
+  r_aclip.c \
+  r_aclipa.S \
+  r_alias.c \
+  r_aliasa.S \
+  r_bsp.c \
+  r_draw.c \
+  r_drawa.S \
+  r_edge.c \
+  r_edgea.S \
+  r_efrag.c \
+  r_light.c \
+  r_main.c \
+  r_misc.c \
+  r_part.c \
+  r_sky.c \
+  r_sprite.c \
+  r_surf.c \
+  r_vars.c \
+  r_varsa.S \
+  screen.c \
+  surf16.S \
+  surf8.S \
+  sw_view.c
+
+CL_SW_dependencies = $(patsubst %,%.d,$(basename $(CL_SW_sources)))
+CL_SW_objects = $(patsubst %.d,%.o,$(CL_SW_dependencies))
 
 CL_SVGA_sources=\
   vid_svgalib.c
