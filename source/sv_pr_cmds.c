@@ -890,7 +890,7 @@ PF_Find (progs_t *pr)
 		ed = EDICT_NUM (pr, e);
 		if (ed->free)
 			continue;
-		t = E_STRING (ed, f);
+		t = E_STRING (pr, ed, f);
 		if (!t)
 			continue;
 		if (!strcmp (t, s)) {

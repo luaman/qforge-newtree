@@ -105,23 +105,36 @@ int NUM_FOR_EDICT(progs_t *pr, edict_t *e);
 
 #define	NEXT_EDICT(p,e) ((edict_t *)( (byte *)e + (p)->pr_edict_size))
 
-#define	EDICT_TO_PROG(p,e) ((byte *)e - (byte *)*(p)->edicts)
-#define PROG_TO_EDICT(p,e) ((edict_t *)((byte *)*(p)->edicts + e))
+#define PR_edicts(p)		((byte *)*(p)->edicts)
+
+#define	EDICT_TO_PROG(p,e) ((byte *)(e) - PR_edicts (p))
+#define PROG_TO_EDICT(p,e) ((edict_t *)(PR_edicts (p) + (e)))
 
 //============================================================================
 
-#define	G_FLOAT(p,o)	((p)->pr_globals[o])
-#define	G_INT(p,o)		(*(int *)&(p)->pr_globals[o])
-#define	G_EDICT(p,o)	((edict_t *)((byte *)*(p)->edicts+ *(int *)&(p)->pr_globals[o]))
-#define G_EDICTNUM(p,o)	NUM_FOR_EDICT(p,G_EDICT(p, o))
-#define	G_VECTOR(p,o)	(&(p)->pr_globals[o])
-#define	G_STRING(p,o)	(PR_GetString(pr,*(string_t *)&(p)->pr_globals[o]))
-#define	G_FUNCTION(p,o)	(*(func_t *)&(p)->pr_globals[o])
+typedef union pr_type_u {
+	float	float_var;
+	int		int_var;
+	string_t string_t_var;
+	func_t	func_t_var;
+} pr_type_t;
 
-#define	E_FLOAT(e,o)	(((float*)&e->v)[o])
-#define	E_INT(e,o)		(*(int *)&((float*)&e->v)[o])
-#define	E_VECTOR(e,o)	(&((float*)&e->v)[o])
-#define	E_STRING(e,o)	(PR_GetString(pr,*(string_t *)&((float*)&e->v)[o]))
+#define G_var(p,o,t)	((p)->pr_globals[o].t##_var)
+
+#define	G_FLOAT(p,o)	G_var (p, o, float)
+#define	G_INT(p,o)		G_var (p, o, int)
+#define G_EDICT(p,o)	((edict_t *)(PR_edicts (p) + G_INT (p, o)))
+#define G_EDICTNUM(p,o)	NUM_FOR_EDICT(p, G_EDICT(p, o))
+#define	G_VECTOR(p,o)	(&G_FLOAT (p, o))
+#define	G_STRING(p,o)	PR_GetString (p, G_var (p, o, string_t))
+#define	G_FUNCTION(p,o)	G_var (p, o, func_t)
+
+#define E_var(e,o,t)	(((pr_type_t*)&(e)->v)[o].t##_var)
+
+#define	E_FLOAT(e,o)	E_var (e, o, float)
+#define	E_INT(e,o)		E_var (e, o, int)
+#define	E_VECTOR(e,o)	(&E_FLOAT (e, o))
+#define	E_STRING(p,e,o)	(PR_GetString (p, E_var (e, o, string_t)))
 
 extern	int		type_size[8];
 
@@ -181,7 +194,7 @@ struct progs_s {
 	ddef_t			*pr_fielddefs;
 	dstatement_t	*pr_statements;
 	globalvars_t	*pr_global_struct;
-	float			*pr_globals;			// same as pr_global_struct
+	pr_type_t		*pr_globals;			// same as pr_global_struct
 
 	int				pr_edict_size;	// in bytes
 	int				pr_edictareasize; // LordHavoc: for bounds checking

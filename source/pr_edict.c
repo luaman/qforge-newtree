@@ -949,7 +949,7 @@ PR_LoadProgs (progs_t *pr, char *progsname)
 	pr->num_prstr = 0;
 
 	pr->pr_global_struct = (globalvars_t *) ((byte *) pr->progs + pr->progs->ofs_globals);
-	pr->pr_globals = (float *) pr->pr_global_struct;
+	pr->pr_globals = (pr_type_t *) pr->pr_global_struct;
 
 	pr->pr_edict_size =
 
