@@ -1087,16 +1087,12 @@ void M_MultiPlayer_Key (key) {
 	case KP_DOWNARROW:
 	case K_DOWNARROW:
 		S_LocalSound("misc/menu1.wav");
-		if (SL_Get_By_Num(slist,m_multip_cursor+1)) {
-			m_multip_cursor++;
-		}
+		m_multip_cursor++;
 		break;
 	case KP_UPARROW:
 	case K_UPARROW:
 		S_LocalSound("misc/menu1.wav");
-		if (m_multip_cursor > 0) {
-			m_multip_cursor--;
-		}
+		m_multip_cursor--;
 		break;
 	case K_PGUP:
 		S_LocalSound("misc/menu1.wav");
@@ -1169,6 +1165,10 @@ void M_MultiPlayer_Key (key) {
 	default:
 		break;
 	}
+	if (m_multip_cursor < 0)
+		m_multip_cursor = SL_Len(slist) - 1;
+	if (m_multip_cursor >= SL_Len(slist))
+		m_multip_cursor = 0;
 	if (m_multip_cursor < m_multip_mins) {
 		m_multip_maxs -= (m_multip_mins - m_multip_cursor);
 		m_multip_mins = m_multip_cursor;
