@@ -305,7 +305,7 @@ Cmd_Exec_File (char *path)
 	int		mark;
 	int		len;
 	char	base[32];
-	QFile   *file;
+	FILE   *file;
 
 	if ((file = Qopen (path, "r")) != NULL) {
 		// extract the filename base name for hunk tag

@@ -357,7 +357,7 @@ byte	*pcx_rgb;
 LoadPCX
 ============
 */
-void LoadPCX (QFile *f)
+void LoadPCX (FILE *f)
 {
 	pcx_t	*pcx, pcxbuf;
 	byte	palette[768];
@@ -441,7 +441,7 @@ typedef struct _TargaHeader {
 TargaHeader		targa_header;
 byte			*targa_rgba;
 
-int fgetLittleShort (QFile *f)
+int fgetLittleShort (FILE *f)
 {
 	byte	b1, b2;
 
@@ -451,7 +451,7 @@ int fgetLittleShort (QFile *f)
 	return (short)(b1 + b2*256);
 }
 
-int fgetLittleLong (QFile *f)
+int fgetLittleLong (FILE *f)
 {
 	byte	b1, b2, b3, b4;
 
@@ -469,7 +469,7 @@ int fgetLittleLong (QFile *f)
 LoadTGA
 =============
 */
-void LoadTGA (QFile *fin)
+void LoadTGA (FILE *fin)
 {
 	int				columns, rows, numPixels;
 	byte			*pixbuf;
@@ -626,7 +626,7 @@ char	*suf[6] = {"rt", "bk", "lf", "ft", "up", "dn"};
 void R_LoadSkys (char * skyname)
 {
 	int		i;
-	QFile	*f;
+	FILE	*f;
 	char	name[64];
 
 	if (stricmp (skyname, "none") == 0)

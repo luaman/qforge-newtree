@@ -247,7 +247,7 @@ Writes lines containing "set variable value" for all variables
 with the archive flag set to true.
 ============
 */
-void Cvar_WriteVariables (QFile *f)
+void Cvar_WriteVariables (FILE *f)
 {
 	cvar_t	*var;
 

@@ -163,8 +163,8 @@ cvar_t	*watervis;
  CVAR_FIXME */
 cvar_t	*hostname;
 
-QFile	*sv_logfile;
-QFile	*sv_fraglogfile;
+FILE	*sv_logfile;
+FILE	*sv_fraglogfile;
 
 void SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
 void Master_Shutdown (void);
@@ -1110,7 +1110,7 @@ SV_WriteIP_f
 */
 void SV_WriteIP_f (void)
 {
-	QFile	*f;
+	FILE	*f;
 	char	name[MAX_OSPATH];
 	byte	b[4];
 	int		i;

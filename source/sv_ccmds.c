@@ -332,7 +332,7 @@ void SV_Map_f (void)
 {
 	char	level[MAX_QPATH];
 	char	expanded[MAX_QPATH];
-	QFile	*f;
+	FILE	*f;
 
 	if (Cmd_Argc() != 2)
 	{

@@ -121,7 +121,7 @@ typedef struct
 typedef struct pack_s
 {
 	char	filename[MAX_OSPATH];
-	QFile	*handle;
+	FILE	*handle;
 	int		numfiles;
 	packfile_t	*files;
 } pack_t;
@@ -186,7 +186,7 @@ COM_FileBase (char *in, char *out)
 	COM_filelength
 */
 int
-COM_filelength (QFile *f)
+COM_filelength (FILE *f)
 {
 	int		pos;
 	int		end;
@@ -203,9 +203,9 @@ COM_filelength (QFile *f)
 	COM_FileOpenRead
 */
 int
-COM_FileOpenRead (char *path, QFile **hndl)
+COM_FileOpenRead (char *path, FILE **hndl)
 {
-	QFile	*f;
+	FILE	*f;
 
 	f = Qopen(path, "rbz");
 	if (!f)
@@ -285,7 +285,7 @@ COM_Maplist_f ( void )
 void
 COM_WriteFile ( char *filename, void *data, int len )
 {
-	QFile	*f;
+	FILE	*f;
 	char	name[MAX_OSPATH];
 
 	snprintf(name, sizeof(name), "%s/%s", com_gamedir, filename);
@@ -338,7 +338,7 @@ COM_CreatePath ( char *path )
 void
 COM_CopyFile (char *netpath, char *cachepath)
 {
-	QFile	*in, *out;
+	FILE	*in, *out;
 	int		remaining, count;
 	char	buf[4096];
 
@@ -366,7 +366,7 @@ COM_CopyFile (char *netpath, char *cachepath)
 /*
 	COM_OpenRead
 */
-QFile *
+FILE *
 COM_OpenRead (const char *path, int offs, int len)
 {
 	int fd=open(path,O_RDONLY);
@@ -406,7 +406,7 @@ int file_from_pak; // global indicating file came from pack file ZOID
 	Sets com_filesize and one of handle or file
 */
 int
-COM_FOpenFile (char *filename, QFile **gzfile)
+COM_FOpenFile (char *filename, FILE **gzfile)
 {
 	searchpath_t	*search;
 	char		netpath[MAX_OSPATH];
@@ -482,7 +482,7 @@ int		loadsize;
 byte *
 COM_LoadFile (char *path, int usehunk)
 {
-	QFile	*h;
+	FILE	*h;
 	byte	*buf;
 	char	base[32];
 	int		len;
@@ -579,7 +579,7 @@ COM_LoadPackFile (char *packfile)
 	packfile_t		*newfiles;
 	int			numpackfiles;
 	pack_t			*pack;
-	QFile			*packhandle;
+	FILE			*packhandle;
 	dpackfile_t		info[MAX_FILES_IN_PACK];
 
 	if (COM_FileOpenRead (packfile, &packhandle) == -1)

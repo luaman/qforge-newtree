@@ -320,7 +320,7 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 	int			*cmds;
 	trivertx_t	*verts;
 	char	cache[MAX_QPATH], fullpath[MAX_OSPATH];
-	QFile	*f;
+	FILE	*f;
 
 	aliasmodel = m;
 	paliashdr = hdr;	// (aliashdr_t *)Mod_Extradata (m);

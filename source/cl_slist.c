@@ -138,7 +138,7 @@ int Server_List_Len (server_entry_t *start) {
 	return i;
   }
   
-server_entry_t *Server_List_LoadF (QFile *f,server_entry_t *start) { // This could get messy
+server_entry_t *Server_List_LoadF (FILE *f,server_entry_t *start) { // This could get messy
   	char line[256]; /* Long lines get truncated. */
   	int c = ' ';    /* int so it can be compared to EOF properly*/
   	int len;
@@ -175,7 +175,7 @@ server_entry_t *Server_List_LoadF (QFile *f,server_entry_t *start) { // This cou
   	}
 }
 
- void Server_List_SaveF (QFile *f,server_entry_t *start) {
+ void Server_List_SaveF (FILE *f,server_entry_t *start) {
  	do {
  		Qprintf(f,"%s   %s\n",start->server,start->desc);
  		start = start->next;
@@ -184,7 +184,7 @@ server_entry_t *Server_List_LoadF (QFile *f,server_entry_t *start) { // This cou
  }
  
  void Server_List_Shutdown (server_entry_t *start) {
- 	QFile *f;
+ 	FILE *f;
  	if (start) {
  		if ((f = Qopen(va("%s/servers.txt",fs_userpath->string),"w"))) {
  			Server_List_SaveF(f,start);

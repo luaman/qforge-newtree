@@ -62,7 +62,7 @@ being registered.
 */
 void COM_CheckRegistered (void)
 {
-	QFile		*h;
+	FILE		*h;
 	unsigned short	check[128];
 
 	COM_FOpenFile("gfx/pop.lmp", &h);

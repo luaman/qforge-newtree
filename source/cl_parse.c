@@ -178,7 +178,7 @@ to start a download from the server.
 */
 qboolean	CL_CheckOrDownloadFile (char *filename)
 {
-	QFile	*f;
+	FILE	*f;
 
 	if (strstr (filename, ".."))
 	{
@@ -548,7 +548,7 @@ CL_ParseServerData
 void CL_ParseServerData (void)
 {
 	char	*str;
-	QFile	*f;
+	FILE	*f;
 	char	fn[MAX_OSPATH];
 	qboolean	cflag = false;
 	extern	char	gamedirfile[MAX_OSPATH];

@@ -480,7 +480,7 @@ void	VID_SetPalette (unsigned char *palette)
 	int		k;
 	unsigned short i;
 	unsigned	*table;
-	QFile *f;
+	FILE *f;
 	char s[255];
 	float dist, bestdist;
 	static qboolean palflag = false;

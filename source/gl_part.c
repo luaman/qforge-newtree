@@ -120,7 +120,7 @@ void R_ClearParticles (void)
 
 void R_ReadPointFile_f (void)
 {
-	QFile	*f;
+	FILE	*f;
 	vec3_t	org;
 	int		r;
 	int		c;

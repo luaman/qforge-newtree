@@ -1186,8 +1186,8 @@ CL_Init
 */
 void CL_Init (void)
 {
-	QFile *servlist;
-	char st[80];
+	FILE	*servlist;
+	char	st[80];
 
 	cls.state = ca_disconnected;
 
@@ -1484,7 +1484,7 @@ Writes key bindings and archived cvars to config.cfg
 */
 void Host_WriteConfiguration (void)
 {
-	QFile	*f;
+	FILE	*f;
 
 	if (host_initialized)
 	{

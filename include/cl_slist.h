@@ -49,8 +49,8 @@ void Server_List_Swap(server_entry_t *swap1, server_entry_t *swap2);
 server_entry_t *Server_List_Get_By_Num(server_entry_t *start, int n);
 int Server_List_Len(server_entry_t *start);
 
-server_entry_t *Server_List_LoadF(QFile *f, server_entry_t *start);
-void Server_List_SaveF(QFile *f, server_entry_t *start);
+server_entry_t *Server_List_LoadF(FILE *f, server_entry_t *start);
+void Server_List_SaveF(FILE *f, server_entry_t *start);
 
 void Server_List_Del_All(server_entry_t *start);
 void Server_List_Shutdown(server_entry_t *start);
