@@ -694,7 +694,7 @@ void R_DrawEntitiesOnList (void)
 
 	for (i=0 ; i<cl_numvisedicts ; i++)
 	{
-		if (cl_visedicts[i].model->type != mod_brush)
+		if (cl_visedicts[i].model->type != mod_alias)
 			continue;
 		currententity = &cl_visedicts[i];
 		modelalpha    = currententity->alpha;
@@ -707,6 +707,7 @@ void R_DrawEntitiesOnList (void)
 		if (cl_visedicts[i].model->type != mod_sprite)
 			continue;
 		currententity = &cl_visedicts[i];
+		modelalpha    = currententity->alpha;
 
 		R_DrawSpriteModel (currententity);
 	}
