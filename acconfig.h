@@ -85,5 +85,8 @@
 /* If your version of OpenGL uses APIENTRY, define GLAPIENTRY to be APIENTRY */
 #undef GLAPIENTRY
 
+/* Define this to something sane if you don't have stricmp */
+#undef stricmp
+
 @BOTTOM@
 #endif // _CONFIG_H

@@ -31,6 +31,9 @@
 # include <config.h>
 #endif
 #include <sys/types.h>
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include "qargs.h"
 #include "cvar.h"
 #include "server.h"
@@ -46,6 +49,9 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/time.h>
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 
 
 /* cvar_t	sys_extrasleep = {"sys_extrasleep","0"};

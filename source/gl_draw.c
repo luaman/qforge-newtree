@@ -32,6 +32,9 @@
 
 #include <string.h>
 #include <stdio.h>
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
 #include "bothdefs.h"	// needed by: common.h, net.h, client.h
 
@@ -1240,7 +1243,12 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	{
 		if (!mipmap)
 		{
+/* FIXME - what if this extension isn't available? */
+#ifdef HAVE_GL_COLOR_INDEX8_EXT
 			glTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX , GL_UNSIGNED_BYTE, data);
+#else
+                        /* FIXME - should warn that this isn't available */
+#endif
 			goto done;
 		}
 		memcpy (scaled, data, width*height);
@@ -1248,7 +1256,12 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	else
 		GL_Resample8BitTexture (data, width, height, scaled, scaled_width, scaled_height);
 
+// FIXME - what if this extension isn't available?
+#ifdef HAVE_GL_COLOR_INDEX8_EXT
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, scaled);
+#else
+        /* FIXME - should warn that this isn't available */
+#endif
 	if (mipmap)
 	{
 		int		miplevel;
@@ -1264,7 +1277,12 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
+/* FIXME - what if this extension isn't available? */
+#ifdef HAVE_GL_COLOR_INDEX8_EXT
 			glTexImage2D (GL_TEXTURE_2D, miplevel, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, scaled);
+#else
+                        /* FIXME - should warn that this isn't available */
+#endif
 		}
 	}
 done: ;
@@ -1401,7 +1419,7 @@ void GL_SelectTexture (GLenum target)
 {
 	if (!gl_mtexable)
 		return;
-#ifndef __linux__ // no multitexture under Linux yet
+#ifdef _WIN32 // FIXME - only multi-texture under Win32
 	qglSelectTextureSGIS(target);
 #endif
 	if (target == oldtarget) 

@@ -31,6 +31,9 @@
 #endif
 #include <string.h>
 #include <stdio.h>
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
 

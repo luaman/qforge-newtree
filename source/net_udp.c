@@ -82,6 +82,14 @@
 # define MAXHOSTNAMELEN	512
 #endif
 
+#ifndef HAVE_SOCKLEN_T
+# ifdef HAVE_SIZE
+typedef size_t socklen_t;
+# else
+typedef unsigned int socklen_t;
+# endif
+#endif
+
 netadr_t	net_local_adr;
 
 netadr_t	net_from;
@@ -230,13 +238,13 @@ qboolean NET_IsClientLegal(netadr_t *adr)
 
 qboolean NET_GetPacket (void)
 {
-	int 	ret;
-	struct sockaddr_in	from;
-	int		fromlen;
+	int 	            ret;
+	struct sockaddr_in  from;
+	socklen_t           fromlen;
 
 	fromlen = sizeof(from);
-	ret = recvfrom(net_socket, net_message_buffer, sizeof(net_message_buffer),
-				   0, (struct sockaddr *)&from, &fromlen);
+	ret = recvfrom(net_socket, (void*)net_message_buffer, sizeof(net_message_buffer), 0, (struct sockaddr *)&from, &fromlen);
+	SockadrToNetadr (&from, &net_from);
 	SockadrToNetadr(&from, &net_from);
 
 	if (ret == -1) {
@@ -337,7 +345,7 @@ void NET_GetLocalAddress (void)
 {
 	char	buff[MAXHOSTNAMELEN];
 	struct sockaddr_in	address;
-	int		namelen;
+	socklen_t               namelen;
 
 	gethostname(buff, MAXHOSTNAMELEN);
 	buff[MAXHOSTNAMELEN-1] = 0;

@@ -88,7 +88,7 @@ COM_Init
 */
 void COM_Init (void)
 {
-#ifndef WORDS_BIGENDIEN
+#ifndef WORDS_BIGENDIAN
 		bigendien = false;
 		BigShort = ShortSwap;
 		LittleShort = ShortNoSwap;
