@@ -268,8 +268,7 @@ Model_NextDownload (void)
 	}
 
 	cls.downloadtype = dl_model;
-	for (; cl.model_name[cls.downloadnumber][0];
-		 cls.downloadnumber++) {
+	for (; cl.model_name[cls.downloadnumber][0]; cls.downloadnumber++) {
 		s = cl.model_name[cls.downloadnumber];
 		if (s[0] == '*')
 			continue;					// inline brush model
@@ -284,15 +283,22 @@ Model_NextDownload (void)
 		cl.model_precache[i] = Mod_ForName (cl.model_name[i], false);
 
 		if (!cl.model_precache[i]) {
-			Con_Printf
-				("\nThe required model file '%s' could not be found or downloaded.\n\n",
-				 cl.model_name[i]);
+			Con_Printf ("\nThe required model file '%s' could not be found or downloaded.\n\n", cl.model_name[i]);
 			Con_Printf ("You may need to download or purchase a %s client "
 						"pack in order to play on this server.\n\n",
 						gamedirfile);
 			CL_Disconnect ();
 			return;
 		}
+	}
+
+	// Something went wrong (probably in the server, probably a TF server)
+	// We need to disconnect gracefully.
+	if (!cl.model_precache[1]) {
+		Con_Printf ("\nThe server has failed to provide the map name.\n\n");
+		Con_Printf ("Disconnecting to prevent a crash.\n\n");
+		CL_Disconnect ();
+		return;
 	}
 
 	// all done
