@@ -40,6 +40,7 @@
 #include "cvar.h"
 #include "keys.h"
 #include "protocol.h"
+#include "view.h"
 
 #define JOY_MAX_AXES	6
 #define JOY_MAX_BUTTONS 10
@@ -148,10 +149,6 @@ JOY_Move (usercmd_t *cmd)
 void
 JOY_Init (void)
 {
-	joy_device = Cvar_Get ("joy_device", "/dev/js0", CVAR_NONE|CVAR_ROM, "Joystick device");
-	joy_enable = Cvar_Get ("joy_enable", "1", CVAR_NONE|CVAR_ARCHIVE, "Joystick enable flag");
-	joy_sensitivity = Cvar_Get ("joy_sensitivity", "1", CVAR_NONE|CVAR_ARCHIVE, "Joystick sensitivity");
-
 	// Open joystick device
 	joy_handle = open (joy_device->string, O_RDONLY|O_NONBLOCK);
 	if (joy_handle < 0) {
@@ -168,11 +165,6 @@ JOY_Init (void)
 			}
 		} else {
 			// Initialize joystick if found and enabled
-			for (i = 0; i < JOY_MAX_AXES; i++) {
-				joy_axes[i].axis = Cvar_Get (joy_axes[i].var.name,
-											 joy_axes[i].var.string,
-											 CVAR_ARCHIVE, "None");
-			}
 			for (i = 0; i < JOY_MAX_BUTTONS; i++) {
 				joy_buttons[i].old = 0;
 				joy_buttons[i].current = 0;
@@ -180,6 +172,22 @@ JOY_Init (void)
 			joy_active = true;
 			Con_Printf ("JOY: Joystick found and activated.\n");
 		}
+	}
+}
+
+void
+JOY_Init_Cvars (void)
+{
+	int i;
+
+	joy_device = Cvar_Get ("joy_device", "/dev/js0", CVAR_NONE|CVAR_ROM, "Joystick device");
+	joy_enable = Cvar_Get ("joy_enable", "1", CVAR_NONE|CVAR_ARCHIVE, "Joystick enable flag");
+	joy_sensitivity = Cvar_Get ("joy_sensitivity", "1", CVAR_NONE|CVAR_ARCHIVE, "Joystick sensitivity");
+
+	for (i = 0; i < JOY_MAX_AXES; i++) {
+		joy_axes[i].axis = Cvar_Get (joy_axes[i].var.name,
+				joy_axes[i].var.string,
+				CVAR_ARCHIVE, "None");
 	}
 }
 

@@ -505,6 +505,17 @@ IN_Init
 */
 void IN_Init (void)
 {
+	Cmd_AddCommand ("force_centerview", Force_CenterView_f);
+	Cmd_AddCommand ("joyadvancedupdate", Joy_AdvancedUpdate_f);
+
+	uiWheelMessage = RegisterWindowMessage ( "MSWHEEL_ROLLMSG" );
+
+	IN_StartupMouse ();
+	IN_StartupJoystick ();
+}
+
+void IN_Init_Cvars (void)
+{
 	// mouse variables
 	m_filter = Cvar_Get("m_filter", "0", CVAR_NONE, "None");
 
@@ -528,14 +539,6 @@ void IN_Init (void)
 	joy_yawsensitivity = Cvar_Get("joyyawsensitivity",  "-1.0", CVAR_NONE, "None");
 	joy_wwhack1 = Cvar_Get("joywwhack1",  "0.0", CVAR_NONE, "None");
 	joy_wwhack2 = Cvar_Get("joywwhack2",  "0.0", CVAR_NONE, "None");
-
-	Cmd_AddCommand ("force_centerview", Force_CenterView_f);
-	Cmd_AddCommand ("joyadvancedupdate", Joy_AdvancedUpdate_f);
-
-	uiWheelMessage = RegisterWindowMessage ( "MSWHEEL_ROLLMSG" );
-
-	IN_StartupMouse ();
-	IN_StartupJoystick ();
 }
 
 /*

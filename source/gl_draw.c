@@ -61,7 +61,7 @@ static int GL_LoadPicTexture (qpic_t *pic);
 
 extern  byte            *host_basepal;
 extern unsigned char d_15to8table[65536];
-extern cvar_t *crosshair, *cl_crossx, *cl_crossy, *crosshaircolor;
+extern cvar_t *crosshair, *cl_crossx, *cl_crossy, *crosshaircolor, *gl_colorlights;
 
 cvar_t		*gl_max_size;
 cvar_t		*gl_picmip;
@@ -399,25 +399,6 @@ void Draw_Init (void)
 {
 	int		i;
 
-	// LordHavoc: lighting mode
-	gl_lightmode = Cvar_Get("gl_lightmode", "1", CVAR_ARCHIVE,
-			"Lighting mode (0 = GLQuake style, 1 = new style)");
-	gl_max_size = Cvar_Get("gl_max_size",  "1024", CVAR_NONE,
-			"None");  // CVAR_FIXME - set a description
-	gl_picmip = Cvar_Get("gl_picmip",  "0", CVAR_NONE,
-			"None");  // CVAR_FIXME - set a description
-
-	// Console effects  --KB
-	gl_constretch = Cvar_Get ("gl_constretch", "0", CVAR_ARCHIVE,
-			"whether slide the console or stretch it");
-	gl_conalpha = Cvar_Get ("gl_conalpha", "0.6", CVAR_ARCHIVE,
-			"alpha value for the console background");
-	gl_conspin = Cvar_Get ("gl_conspin", "0", CVAR_ARCHIVE,
-			"speed at which the console spins");
-
-	cl_verstring = Cvar_Get("cl_verstring", PROGRAM " " VERSION, CVAR_NONE,
-			"client version string");
-
 	// 3dfx can only handle 256 wide textures
 	if (!strncasecmp ((char *)gl_renderer, "3dfx",4) ||
 		!strncasecmp ((char *)gl_renderer, "Mesa",4))
@@ -470,6 +451,30 @@ void Draw_Init (void)
 	// LordHavoc: call init code for other GL renderer modules;
 	glrmain_init();
 	glrsurf_init();
+}
+
+void Draw_Init_Cvars (void)
+{
+	// LordHavoc: lighting mode
+	gl_lightmode = Cvar_Get("gl_lightmode", "1", CVAR_ARCHIVE,
+			"Lighting mode (0 = GLQuake style, 1 = new style)");
+	gl_max_size = Cvar_Get("gl_max_size",  "1024", CVAR_NONE,
+			"None");  // CVAR_FIXME - set a description
+	gl_picmip = Cvar_Get("gl_picmip",  "0", CVAR_NONE,
+			"None");  // CVAR_FIXME - set a description
+	gl_colorlights = Cvar_Get ("gl_colorlights", "1", CVAR_ROM,
+			"Whether to use RGB lightmaps or not");
+
+	// Console effects  --KB
+	gl_constretch = Cvar_Get ("gl_constretch", "0", CVAR_ARCHIVE,
+			"whether slide the console or stretch it");
+	gl_conalpha = Cvar_Get ("gl_conalpha", "0.6", CVAR_ARCHIVE,
+			"alpha value for the console background");
+	gl_conspin = Cvar_Get ("gl_conspin", "0", CVAR_ARCHIVE,
+			"speed at which the console spins");
+
+	cl_verstring = Cvar_Get("cl_verstring", PROGRAM " " VERSION, CVAR_NONE,
+			"client version string");
 }
 
 

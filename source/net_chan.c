@@ -124,10 +124,14 @@ void Netchan_Init (void)
 	port = ((int)(getpid()+getuid()*1000) * time(NULL)) & 0xffff;
 #endif
 
+	Cvar_SetValue (qport, port);
+}
+
+void Netchan_Init_Cvars (void)
+{
 	showpackets = Cvar_Get("showpackets",  "0", CVAR_NONE, "None");
 	showdrop = Cvar_Get("showdrop",  "0", CVAR_NONE, "None");
 	qport = Cvar_Get("qport",  "0", CVAR_NONE, "None");
-	Cvar_SetValue (qport, port);
 }
 
 /*

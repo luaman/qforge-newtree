@@ -42,6 +42,7 @@
 #include "quakefs.h"
 #include "quakedef.h"
 #include "pmove.h"
+#include "cl_main.h"
 
 void CL_FinishTimeDemo (void);
 

@@ -41,6 +41,7 @@ int COM_CheckParm (char *parm);
 void COM_AddParm (char *parm);
 
 void COM_Init (void);
+void COM_Init_Cvars (void);
 void COM_InitArgv (int argc, char **argv);
 
 #endif // _QARGS_H

@@ -1,7 +1,7 @@
 /*
-	input.h
+	client.h
 
-	External (non-keyboard) input devices
+	Client definitions
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -26,31 +26,35 @@
 	$Id$
 */
 
-#ifndef _INPUT_H
-#define _INPUT_H
+#ifndef _CL_CAM_H
+#define _CL_CAM_H
 
+// since all headers are circular-protected with #ifdef _xxx_H
+// try to get them self-sufficient by including whatever other 
+// headers they might need
+
+#include <stdio.h>
+
+#include "qtypes.h"
 #include "protocol.h"
-#include "cvar.h"
 
-#define freelook (in_mlook.state&1 || cl_freelook->int_val)
+//
+// cl_cam.c
+//
+#define CAM_NONE	0
+#define CAM_TRACK	1
 
-void IN_Init (void);
-void IN_Init_Cvars (void);
+extern	int	autocam;
+extern	int	spec_track; // player# of who we are tracking
 
-void IN_Shutdown (void);
+qboolean Cam_DrawViewModel(void);
+qboolean Cam_DrawPlayer(int playernum);
+void Cam_Track(usercmd_t *cmd);
+void Cam_FinishMove(usercmd_t *cmd);
+void Cam_Reset(void);
+void CL_Cam_Init(void);
+void CL_Cam_Init_Cvars(void);
 
-void IN_Commands (void);
-// oportunity for devices to stick commands on the script buffer
+void CL_ParseEntityLump(char *entdata);
 
-void IN_SendKeyEvents (void);
-// Perform Key_Event () callbacks until the input que is empty
-
-void IN_Move (usercmd_t *cmd);
-// add additional movement on top of the keyboard move cmd
-
-void IN_ModeChanged (void);
-// called whenever screen dimensions change
-
-extern cvar_t		*_windowed_mouse;
-
-#endif // _INPUT_H
+#endif // _CL_CAM_H

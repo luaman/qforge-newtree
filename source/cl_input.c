@@ -47,6 +47,10 @@
 #include "checksum.h"
 #include "keys.h"
 #include "teamplay.h"
+#include "cl_cam.h"
+#include "cl_demo.h"
+#include "cl_parse.h"
+#include "cl_input.h"
 
 cvar_t	*cl_nodelta;
 
@@ -525,7 +529,7 @@ void CL_SendCmd (void)
 CL_InitInput
 ============
 */
-void CL_InitInput (void)
+void CL_Input_Init (void)
 {
 	Cmd_AddCommand ("+moveup",IN_UpDown);
 	Cmd_AddCommand ("-moveup",IN_UpUp);
@@ -562,7 +566,10 @@ void CL_InitInput (void)
 	Cmd_AddCommand ("-klook", IN_KLookUp);
 	Cmd_AddCommand ("+mlook", IN_MLookDown);
 	Cmd_AddCommand ("-mlook", IN_MLookUp);
+}
 
+void CL_Input_Init_Cvars (void)
+{
 	cl_nodelta = Cvar_Get("cl_nodelta", "0", CVAR_NONE, "None");
 }
 

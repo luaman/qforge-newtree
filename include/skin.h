@@ -1,7 +1,7 @@
 /*
-	input.h
+	client.h
 
-	External (non-keyboard) input devices
+	Client definitions
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -26,31 +26,18 @@
 	$Id$
 */
 
-#ifndef _INPUT_H
-#define _INPUT_H
+#ifndef _SKIN_H
+#define _SKIN_H
 
-#include "protocol.h"
-#include "cvar.h"
+#include "client.h"
 
-#define freelook (in_mlook.state&1 || cl_freelook->int_val)
+void	Skin_Find (player_info_t *sc);
+byte	*Skin_Cache (skin_t *skin);
+void	Skin_Skins_f (void);
+void	Skin_AllSkins_f (void);
+void	Skin_NextDownload (void);
 
-void IN_Init (void);
-void IN_Init_Cvars (void);
+#define RSSHOT_WIDTH 320
+#define RSSHOT_HEIGHT 200
 
-void IN_Shutdown (void);
-
-void IN_Commands (void);
-// oportunity for devices to stick commands on the script buffer
-
-void IN_SendKeyEvents (void);
-// Perform Key_Event () callbacks until the input que is empty
-
-void IN_Move (usercmd_t *cmd);
-// add additional movement on top of the keyboard move cmd
-
-void IN_ModeChanged (void);
-// called whenever screen dimensions change
-
-extern cvar_t		*_windowed_mouse;
-
-#endif // _INPUT_H
+#endif

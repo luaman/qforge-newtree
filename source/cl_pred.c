@@ -35,6 +35,7 @@
 #include "bothdefs.h"
 #include "console.h"
 #include "commdef.h"
+#include "cl_ents.h"
 
 #ifdef _WIN32
 #include "winquake.h"
@@ -233,10 +234,10 @@ void CL_PredictMove (void)
 
 /*
 ==============
-CL_InitPrediction
+CL_Prediction_Init_Cvars
 ==============
 */
-void CL_InitPrediction (void)
+void CL_Prediction_Init_Cvars (void)
 {
 	cl_pushlatency = Cvar_Get("pushlatency", "-999", CVAR_NONE, "None");
 	cl_nopred = Cvar_Get("cl_nopred", "0", CVAR_NONE, "None");

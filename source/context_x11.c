@@ -245,8 +245,6 @@ x11_set_vidmode(int width, int height)
 	int i;
 	int best_mode = 0, best_x = INT_MAX, best_y = INT_MAX;
 
-	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"Toggles fullscreen game mode");
-
 	XGetScreenSaver (x_disp, &xss_timeout, &xss_interval, &xss_blanking,
 					&xss_exposures);
 	XSetScreenSaver (x_disp, 0, xss_interval, xss_blanking,
@@ -269,12 +267,6 @@ x11_set_vidmode(int width, int height)
 		return;
 	}
 
-
-	if (vid_fullscreen->int_val)
-		_windowed_mouse = Cvar_Get ("_windowed_mouse","1",CVAR_ARCHIVE|CVAR_ROM,"None");
-	else
-		_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
-
 	XF86VidModeGetAllModeLines(x_disp, x_screen, &nummodes, &vidmodes);
 
 	if (vid_fullscreen->int_val) {
@@ -294,6 +286,13 @@ x11_set_vidmode(int width, int height)
 		x11_force_view_port ();
 	}
 #endif
+}
+
+void
+x11_Init_Cvars ()
+{
+	vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ARCHIVE,
+			"Toggles fullscreen game mode");
 }
 
 void

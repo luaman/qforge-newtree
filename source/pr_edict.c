@@ -882,12 +882,11 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 		//  at least one other map uses it already.  --KB
 		if (stricmp (keyname, "sky") == 0 || // LordHavoc: added "sky" key (Quake2 and DarkPlaces use this)
 			stricmp (keyname, "skyname") == 0 ||
-				stricmp (keyname, "qlsky") == 0)
+			stricmp (keyname, "qlsky") == 0)
 		{
 			Info_SetValueForKey (svs.info, "skybox",
 					"1", MAX_SERVERINFO_STRING);
-			r_skyname = Cvar_Get ("r_skyname", com_token,
-					CVAR_NONE, "name of skybox");
+			Cvar_Set(r_skyname, com_token);
 			continue;
 		}
 
@@ -1115,6 +1114,11 @@ void PR_Init (void)
 	Cmd_AddCommand ("edicts", ED_PrintEdicts);
 	Cmd_AddCommand ("edictcount", ED_Count);
 	Cmd_AddCommand ("profile", PR_Profile_f);
+}
+
+void PR_Init_Cvars (void)
+{
+	r_skyname = Cvar_Get ("r_skyname", com_token, CVAR_NONE, "name of skybox");
 }
 
 

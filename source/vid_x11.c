@@ -619,6 +619,12 @@ void VID_Init (unsigned char *palette)
 	x11_add_event(x_shmeventtype, event_shm);
 }
 
+void
+VID_Init_Cvars ()
+{
+	x11_Init_Cvars();
+}
+
 
 void
 VID_ShiftPalette(unsigned char *p)
@@ -766,12 +772,6 @@ VID_DitherOff (void)
 		vid.recalc_refdef = 1;
 		dither = 0;
 	}
-}
-
-void
-VID_InitCvars (void)
-{
-	// It may not look like it, but this is important
 }
 
 void    

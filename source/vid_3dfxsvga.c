@@ -306,6 +306,11 @@ VID_Init(unsigned char *palette)
 }
 
 void
+VID_Init_Cvars()
+{
+}
+
+void
 VID_ExtraOptionDraw(unsigned int options_draw_cursor)
 {
 /* Port specific Options menu entrys */

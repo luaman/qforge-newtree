@@ -37,8 +37,18 @@ extern	cvar_t		*brightness;
 extern	cvar_t		*contrast;
 
 void V_Init (void);
+void V_Init_Cvars (void);
 void V_RenderView (void);
 float V_CalcRoll (vec3_t angles, vec3_t velocity);
 void V_UpdatePalette (void);
+void V_StartPitchDrift (void);
+void V_StopPitchDrift (void);
+
+void V_RenderView (void);
+void V_UpdatePalette (void);
+void V_Register (void);
+void V_ParseDamage (void);
+void V_SetContentsColor (int contents);
+void V_CalcBlend (void);
 
 #endif // _VIEW_H

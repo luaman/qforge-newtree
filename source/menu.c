@@ -46,6 +46,8 @@
 #include "console.h"
 #include "input.h"
 #include "view.h"
+#include "cl_main.h"
+#include "cl_input.h"
 
 void (*vid_menudrawfn)(void);
 void (*vid_menukeyfn)(int key);

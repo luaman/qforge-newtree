@@ -109,6 +109,7 @@ extern	int		watertype;
 
 void PlayerMove (void);
 void Pmove_Init (void);
+void Pmove_Init_Cvars (void);
 
 int PM_HullPointContents (hull_t *hull, int num, vec3_t p);
 

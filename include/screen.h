@@ -32,7 +32,7 @@
 
 #include "cvar.h"
 
-void SCR_InitCvars (void);
+void SCR_Init_Cvars (void);
 void SCR_Init (void);
 
 void SCR_UpdateScreen (void);

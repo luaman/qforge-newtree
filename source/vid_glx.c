@@ -211,6 +211,12 @@ VID_Init (unsigned char *palette)
 }
 
 void
+VID_Init_Cvars ()
+{
+	x11_Init_Cvars();
+}
+
+void
 VID_SetCaption (char *text)
 {
 	if (text && *text) {

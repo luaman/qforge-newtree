@@ -554,11 +554,6 @@ VID_Init(unsigned char *palette)
 
 		VID_InitModes();
 
-		vid_mode = Cvar_Get ("vid_mode","5",0,"None");
-		vid_redrawfull = Cvar_Get ("vid_redrawfull","0",0,"None");
-		vid_waitforrefresh = Cvar_Get ("vid_waitforrefresh","0",
-						CVAR_ARCHIVE,"None");
-
 		Cmd_AddCommand("vid_nummodes", VID_NumModes_f);
 		Cmd_AddCommand("vid_describemode", VID_DescribeMode_f);
 		Cmd_AddCommand("vid_describemodes", VID_DescribeModes_f);
@@ -597,6 +592,15 @@ VID_Init(unsigned char *palette)
 
 	/* XoXus: Why was input initialised here?!? */
 	/* IN_Init(); */
+}
+
+void
+VID_Init_Cvars ()
+{
+		vid_mode = Cvar_Get ("vid_mode","5",0,"None");
+		vid_redrawfull = Cvar_Get ("vid_redrawfull","0",0,"None");
+		vid_waitforrefresh = Cvar_Get ("vid_waitforrefresh","0",
+						CVAR_ARCHIVE,"None");
 }
 
 
@@ -731,11 +735,6 @@ VID_ExtraOptionCmd(int option_cursor)
 		break;
         }
 #endif
-}
-
-void VID_InitCvars ()
-{
-	// It may not look like it, but this is important
 }
 
 void    

@@ -51,6 +51,7 @@ extern	cvar_t	*hostname;
 extern	int		net_socket;
 
 void		NET_Init (int port);
+void		NET_Init (int port);
 void		NET_Shutdown (void);
 qboolean	NET_GetPacket (void);
 void		NET_SendPacket (int length, void *data, netadr_t to);
@@ -115,6 +116,7 @@ typedef struct
 extern	int	net_drop;		// packets dropped before this one
 
 void Netchan_Init (void);
+void Netchan_Init_Cvars (void);
 void Netchan_Transmit (netchan_t *chan, int length, byte *data);
 void Netchan_OutOfBand (netadr_t adr, int length, byte *data);
 void Netchan_OutOfBandPrint (netadr_t adr, char *format, ...) __attribute__((format(printf,2,3)));

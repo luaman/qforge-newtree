@@ -248,9 +248,6 @@ IN_Init (void)
 {
 	JOY_Init ();
 
-	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
-	//	m_filter = Cvar_Get ("m_filter", "0", CVAR_ARCHIVE, "None");
-
 	if ( COM_CheckParm("-nomouse") && !_windowed_mouse->value)
 		return;
 
@@ -259,6 +256,15 @@ IN_Init (void)
 //	SDL_ShowCursor (0); 
 //	SDL_WM_GrabInput (SDL_GRAB_ON);
 //	FIXME: disable DGA if in_dgamouse says to.
+}
+
+void
+IN_Init_Cvars (void)
+{
+	JOY_Init_Cvars ();
+
+	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
+	//	m_filter = Cvar_Get ("m_filter", "0", CVAR_ARCHIVE, "None");
 }
 
 void

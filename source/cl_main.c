@@ -60,6 +60,15 @@
 #include "qargs.h"
 #include "cdaudio.h"
 #include "teamplay.h"
+#include "cl_cam.h"
+#include "cl_main.h"
+#include "cl_demo.h"
+#include "cl_input.h"
+#include "cl_ents.h"
+#include "skin.h"
+#include "cl_parse.h"
+#include "cl_tent.h"
+#include "cl_pred.h"
 
 #ifdef __sun
 /* Sun's model_t in sys/model.h conflicts w/ Quake's model_t */
@@ -1173,10 +1182,7 @@ void CL_Init (void)
 	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING);
 	Info_SetValueForStarKey (cls.userinfo, "stdver", QSG_VERSION, MAX_INFO_STRING);
 
-	CL_InitInput ();
-	CL_InitTEnts ();
-	CL_InitPrediction ();
-	CL_InitCam ();
+	CL_Input_Init ();
 	Pmove_Init ();
 	
 	Qexpand_squiggle(fs_userpath->string, e_path);
@@ -1243,7 +1249,7 @@ void CL_Init (void)
 }
 
 
-void CL_InitCvars (void)
+void CL_Init_Cvars (void)
 {
 	extern	cvar_t		*baseskin;
 	extern	cvar_t		*noskins;
@@ -1575,8 +1581,6 @@ Host_Init
 */
 void Host_Init (quakeparms_t *parms)
 {
-	COM_InitArgv (parms->argc, parms->argv);
-
 	if (COM_CheckParm ("-minmemory"))
 		parms->memsize = MINIMUM_MEMORY;
 
@@ -1589,11 +1593,9 @@ void Host_Init (quakeparms_t *parms)
 	Memory_Init (parms->membase, parms->memsize);
 	Cvar_Init ();
 	Sys_Init();
-	CL_InitCvars ();
 
 	Cbuf_Init ();
 	Cmd_Init ();
-	cl_Cmd_Init ();
 
 	// execute +set as early as possible
 	Cmd_StuffCmds_f ();
@@ -1608,19 +1610,34 @@ void Host_Init (quakeparms_t *parms)
 	Cmd_Exec_File (fs_globalcfg->string);
 	Cbuf_Execute_Sets ();
 
-	//Cmd_StuffCmds_f ();
-	//Cbuf_Execute_Sets ();
+	CL_Cam_Init_Cvars ();
+	CL_Input_Init_Cvars ();
+	CL_Init_Cvars ();
+	CL_Prediction_Init_Cvars ();
+	COM_Init_Cvars ();
+	Con_Init_Cvars ();
+	Draw_Init_Cvars ();
+	COM_Filesystem_Init_Cvars ();
+	IN_Init_Cvars ();
+	Key_Init_Cvars ();
+	Mod_Init_Cvars ();
+	Netchan_Init_Cvars ();
+	Pmove_Init_Cvars ();
+	R_Init_Cvars ();
+	S_Init_Cvars ();
+	SCR_Init_Cvars ();
+	Team_Init_Cvars ();
+	V_Init_Cvars ();
+	VID_Init_Cvars ();
 
+	// Reparse the command line for + commands.
+	// (Note, no non-base commands exist yet)
+	Cmd_StuffCmds_f ();
+	Cbuf_Execute ();
+
+	cl_Cmd_Init ();
 	V_Init ();
-	SCR_InitCvars ();
-	VID_InitCvars ();
 	COM_Init ();
-	Team_InitTeamplay ();
-
-	// reparse the command line for + commands other than set
-	// (sets still done, but it doesn't matter)
-	//Cmd_StuffCmds_f ();
-	//Cbuf_Execute ();
 
 	NET_Init (PORT_CLIENT);
 	Netchan_Init ();
@@ -1634,7 +1651,7 @@ void Host_Init (quakeparms_t *parms)
 //	Con_Printf ("Exe: "__TIME__" "__DATE__"\n");
 	Con_Printf ("%4.1f megs RAM used.\n",parms->memsize/ (1024*1024.0));
 	
-	R_InitTextures ();
+	R_Textures_Init ();
  
 	host_basepal = (byte *)COM_LoadHunkFile ("gfx/palette.lmp");
 	if (!host_basepal)

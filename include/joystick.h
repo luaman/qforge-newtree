@@ -71,6 +71,7 @@ void JOY_Move (usercmd_t *);
 	you have successfully enabled it.
 */
 void JOY_Init (void);
+void JOY_Init_Cvars (void);
 
 /*
 	JOY_Shutdown ()

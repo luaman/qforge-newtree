@@ -44,7 +44,11 @@
 #include "render.h"
 #include "sys.h"
 #include "r_dynamic.h"
-#include "va.h"
+#include "skin.h"
+#include "cl_main.h"
+#include "cl_cam.h"
+#include "view.h"
+
 
 entity_t	r_worldentity;
 
@@ -114,12 +118,9 @@ cvar_t	*gl_particles;
 
 cvar_t	*r_skyname;
 cvar_t	*gl_skymultipass;
-cvar_t	*gl_sky_clip;
 
 cvar_t *gl_fb_models;
 cvar_t *gl_fb_bmodels;
-
-cvar_t *brighten;
 
 extern	cvar_t	*scr_fov;
 
@@ -143,15 +144,12 @@ GL_CheckBrightness (unsigned char *pal)
 	int 	i, inf;
 	float	brightness;
 
-	brighten = Cvar_Get ("brighten", "1", CVAR_ROM,
-						 "Palette hack equivalent to brightness");
 	if ((i = COM_CheckParm ("-brighten"))) {
 		brightness = atof (com_argv[i + 1]);
+		brightness = bound (1, brightness, 5);
 	} else {
-		brightness = brighten->value;
+		brightness = 1.0;
 	}
-	brightness = bound (1, brightness, 5);
-	Cvar_SetROM (brighten, va("%f", brightness));
 	
 	// Build gamma table
 	if (brightness == 1.0) {	// screw the math
@@ -954,7 +952,7 @@ void R_RenderView (void)
 	R_Clear ();
 
 	// render normal view
-	R_SetupFrame ();
+	R_SetupFrame ();	// Setup stuff for frame.
 
 	R_SetFrustum ();
 

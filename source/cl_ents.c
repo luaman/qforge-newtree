@@ -45,6 +45,11 @@
 #include "view.h"
 #include "teamplay.h"
 #include "r_dynamic.h"
+#include "cl_cam.h"
+#include "cl_pred.h"
+#include "cl_main.h"
+#include "cl_ents.h"
+#include "cl_input.h"
 
 extern	cvar_t	*cl_predict_players;
 extern	cvar_t	*cl_predict_players2;

@@ -1,7 +1,7 @@
 /*
-	input.h
+	client.h
 
-	External (non-keyboard) input devices
+	Client definitions
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -26,31 +26,33 @@
 	$Id$
 */
 
-#ifndef _INPUT_H
-#define _INPUT_H
+#ifndef _CL_MAIN_H
+#define _CL_MAIN_H
 
-#include "protocol.h"
-#include "cvar.h"
+#include "client.h"
+#include "qtypes.h"
+#include "render.h"
 
-#define freelook (in_mlook.state&1 || cl_freelook->int_val)
+dlight_t *CL_AllocDlight (int key);
+void	CL_DecayLights (void);
 
-void IN_Init (void);
-void IN_Init_Cvars (void);
+void CL_Init (void);
+void Host_WriteConfiguration (void);
 
-void IN_Shutdown (void);
+void CL_EstablishConnection (char *host);
 
-void IN_Commands (void);
-// oportunity for devices to stick commands on the script buffer
+void CL_Disconnect (void);
+void CL_Disconnect_f (void);
+void CL_NextDemo (void);
+qboolean CL_DemoBehind(void);
 
-void IN_SendKeyEvents (void);
-// Perform Key_Event () callbacks until the input que is empty
+void CL_BeginServerConnect(void);
 
-void IN_Move (usercmd_t *cmd);
-// add additional movement on top of the keyboard move cmd
+#define			MAX_VISEDICTS	256
+extern	int				cl_numvisedicts, cl_oldnumvisedicts;
+extern	entity_t		*cl_visedicts, *cl_oldvisedicts;
+extern	entity_t		cl_visedicts_list[2][MAX_VISEDICTS];
 
-void IN_ModeChanged (void);
-// called whenever screen dimensions change
+extern char emodel_name[], pmodel_name[], prespawn_name[], modellist_name[], soundlist_name[];
 
-extern cvar_t		*_windowed_mouse;
-
-#endif // _INPUT_H
+#endif // _CL_MAIN_H

@@ -40,6 +40,7 @@
 #include "bothdefs.h"
 #include "va.h"
 #include "msg.h"
+#include "cl_cam.h"
 
 #include <stdlib.h>
 #include <string.h>

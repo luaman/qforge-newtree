@@ -408,7 +408,7 @@ void Cvar_CvarList_f (void)
 
 void Cvar_Init()
 {
-	developer = Cvar_Get ("developer","0",0,"None");
+	developer = Cvar_Get ("developer", "0", 0, "None");
 
 	Cmd_AddCommand ("set", Cvar_Set_f);
 	Cmd_AddCommand ("setrom", Cvar_Setrom_f);

@@ -67,6 +67,10 @@ void	VID_Init (unsigned char *palette)
 	D_InitCaches (surfcache, sizeof(surfcache));
 }
 
+void VID_Init_Cvars ()
+{
+}
+
 void	VID_Shutdown (void)
 {
 }

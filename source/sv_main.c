@@ -1892,6 +1892,7 @@ void SV_Init (quakeparms_t *parms)
 
 	COM_Init ();
 	
+	PR_Init_Cvars ();
 	PR_Init ();
 	Mod_Init ();
 

@@ -1,7 +1,7 @@
 /*
-	input.h
+	client.h
 
-	External (non-keyboard) input devices
+	Client definitions
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -26,31 +26,41 @@
 	$Id$
 */
 
-#ifndef _INPUT_H
-#define _INPUT_H
+#ifndef _CL_INPUT_H
+#define _CL_INPUT_H
 
 #include "protocol.h"
-#include "cvar.h"
 
-#define freelook (in_mlook.state&1 || cl_freelook->int_val)
+typedef struct
+{
+	int		down[2];		// key nums holding it down
+	int		state;			// low bit is down state
+} kbutton_t;
 
-void IN_Init (void);
-void IN_Init_Cvars (void);
+extern	kbutton_t	in_mlook, in_klook;
+extern 	kbutton_t 	in_strafe;
+extern 	kbutton_t 	in_speed;
 
-void IN_Shutdown (void);
+void CL_Input_Init (void);
+void CL_Input_Init_Cvars (void);
+void CL_ClearStates (void);
+void CL_SendCmd (void);
+void CL_SendMove (usercmd_t *cmd);
 
-void IN_Commands (void);
-// oportunity for devices to stick commands on the script buffer
+void CL_ParseTEnt (void);
+void CL_UpdateTEnts (void);
 
-void IN_SendKeyEvents (void);
-// Perform Key_Event () callbacks until the input que is empty
+void CL_ClearState (void);
 
-void IN_Move (usercmd_t *cmd);
-// add additional movement on top of the keyboard move cmd
+void CL_ReadPackets (void);
 
-void IN_ModeChanged (void);
-// called whenever screen dimensions change
+int  CL_ReadFromServer (void);
+void CL_WriteToServer (usercmd_t *cmd);
+void CL_BaseMove (usercmd_t *cmd);
 
-extern cvar_t		*_windowed_mouse;
 
-#endif // _INPUT_H
+float CL_KeyState (kbutton_t *key);
+char *Key_KeynumToString (int keynum);
+
+
+#endif

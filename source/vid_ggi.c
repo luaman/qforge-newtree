@@ -922,13 +922,20 @@ IN_Init(void)
 {
 	JOY_Init ();
 
-	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
 	old_windowed_mouse = -1; /* Force update */
-	m_filter = Cvar_Get("m_filter", "0", CVAR_ARCHIVE, "None");
 	if (COM_CheckParm ("-nomouse")) return;
 
 	mouse_x = mouse_y = 0.0;
 	mouse_avail = 1;
+}
+
+void
+IN_Init_Cvars(void)
+{
+	JOY_Init_Cvars ();
+
+	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
+	m_filter = Cvar_Get("m_filter", "0", CVAR_ARCHIVE, "None");
 }
 
 
@@ -1005,7 +1012,7 @@ IN_Move(usercmd_t *cmd)
 }
 
 
-void VID_InitCvars(void)	{}
+void VID_Init_Cvars(void)	{}
 void VID_LockBuffer(void)	{}
 void VID_UnlockBuffer(void) {}
 

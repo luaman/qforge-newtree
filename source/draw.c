@@ -150,6 +150,9 @@ void Draw_Init (void)
 	cl_verstring = Cvar_Get("cl_verstring",  PROGRAM " " VERSION, CVAR_NONE, "None");
 }
 
+void Draw_Init_Cvars (void)
+{
+}
 
 
 /*

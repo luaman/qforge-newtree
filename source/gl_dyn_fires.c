@@ -32,6 +32,7 @@
 #include "cmd.h"
 #include "console.h"
 #include "glquake.h"
+#include "cl_main.h"
 
 #include <stdlib.h>
 

@@ -34,6 +34,7 @@
 #include "console.h"
 #include "quakefs.h"
 #include "quakedef.h"
+#include "r_dynamic.h"
 
 #include <stdlib.h>
 
@@ -149,6 +150,40 @@ void R_ReadPointFile_f (void)
 	Con_Printf ("%i points read\n", c);
 }
 	
+void R_RunSpikeEffect (vec3_t pos, byte type)
+{
+	switch (type) {
+		case TE_WIZSPIKE:
+			R_RunParticleEffect (pos, 20, 30);
+			break;
+		case TE_KNIGHTSPIKE:
+			R_RunParticleEffect (pos, 226, 20);
+			break;
+		case TE_SPIKE:
+			R_RunParticleEffect (pos, 0, 10);
+			break;
+		case TE_SUPERSPIKE:
+			R_RunParticleEffect (pos, 0, 20);
+			break;
+	}
+}
+
+void R_RunPuffEffect (vec3_t pos, byte type, byte cnt)
+{
+	switch (type)
+	{
+		case TE_GUNSHOT:
+			R_RunParticleEffect (pos, 0, 20*cnt);
+			break;
+		case TE_BLOOD:
+			R_RunParticleEffect (pos, 73, 20*cnt);
+			break;
+		case TE_LIGHTNINGBLOOD:
+			R_RunParticleEffect (pos, 225, 50);
+			break;
+	}
+}
+
 /*
 ===============
 R_ParticleExplosion
@@ -244,7 +279,7 @@ R_RunParticleEffect
 
 ===============
 */
-void R_RunParticleEffect (vec3_t org, vec3_t dir, int color, int count)
+void R_RunParticleEffect (vec3_t org, int color, int count)
 {
 	int			i, j;
 	particle_t	*p;
@@ -272,7 +307,7 @@ void R_RunParticleEffect (vec3_t org, vec3_t dir, int color, int count)
 		for (j=0 ; j<3 ; j++)
 		{
 			p->org[j] = org[j] + scale*((rand()&15)-8);
-			p->vel[j] = dir[j]*15;// + (rand()%300)-150;
+			p->vel[j] = vec3_origin[j];// + (rand()%300)-150;
 		}
 	}
 }

@@ -168,17 +168,6 @@ cvar_t		*_windowed_mouse;
 int			window_center_x, window_center_y, window_x, window_y, window_width, window_height;
 RECT		window_rect;
 
-/*
-================
-VID_InitCvars
-================
-*/
-void
-VID_InitCvars ()
-{
-	// It may not look like it, but this is important
-}
-
 // direct draw software compatability stuff
 
 void VID_HandlePause (qboolean pause)
@@ -1586,8 +1575,6 @@ void	VID_Init (unsigned char *palette)
 
 	memset(&devmode, 0, sizeof(devmode));
 
-	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
-
 	Cmd_AddCommand ("vid_nummodes", VID_NumModes_f);
 	Cmd_AddCommand ("vid_describecurrentmode", VID_DescribeCurrentMode_f);
 	Cmd_AddCommand ("vid_describemode", VID_DescribeMode_f);
@@ -1823,6 +1810,12 @@ void	VID_Init (unsigned char *palette)
 
         if (COM_CheckParm("-nofullsbar"))
                 fullsbardraw = false;
+}
+
+void
+VID_Init_Cvars ()
+{
+	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
 }
 
 

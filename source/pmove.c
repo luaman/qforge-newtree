@@ -69,6 +69,10 @@ void PM_CategorizePosition (void);
 void Pmove_Init (void)
 {
 	PM_InitBoxHull ();
+}
+
+void Pmove_Init_Cvars (void)
+{
 	no_pogo_stick = Cvar_Get ("no_pogo_stick", "0", CVAR_SERVERINFO,
 							  "disable the ability to pogo stick");
 }

@@ -198,17 +198,6 @@ void S_Init (void)
 	Cmd_AddCommand("soundlist", S_SoundList);
 	Cmd_AddCommand("soundinfo", S_SoundInfo_f);
 
-	nosound = Cvar_Get("nosound",  "0", CVAR_NONE, "None");
-	volume = Cvar_Get("volume",  "0.7", CVAR_ARCHIVE, "None");
-	precache = Cvar_Get("precache",  "1", CVAR_NONE, "None");
-	loadas8bit = Cvar_Get("loadas8bit",  "0", CVAR_NONE, "None");
-	bgmvolume = Cvar_Get("bgmvolume",  "1", CVAR_ARCHIVE, "None");
-	ambient_level = Cvar_Get("ambient_level",  "0.3", CVAR_NONE, "None");
-	ambient_fade = Cvar_Get("ambient_fade",  "100", CVAR_NONE, "None");
-	snd_noextraupdate = Cvar_Get("snd_noextraupdate",  "0", CVAR_NONE, "None");
-	snd_show = Cvar_Get("snd_show",  "0", CVAR_NONE, "None");
-	snd_interp = Cvar_Get("snd_interp", "1", CVAR_ARCHIVE, "control sample interpolation");
-	_snd_mixahead = Cvar_Get("_snd_mixahead",  "0.1", CVAR_ARCHIVE, "None");
 
 	if (COM_CheckParm("-nosound"))
 		return;
@@ -264,6 +253,21 @@ void S_Init (void)
 	ambient_sfx[AMBIENT_SKY] = S_PrecacheSound ("ambience/wind2.wav");
 
 	S_StopAllSounds (true);
+}
+
+void S_Init_Cvars (void)
+{
+	nosound = Cvar_Get("nosound",  "0", CVAR_NONE, "None");
+	volume = Cvar_Get("volume",  "0.7", CVAR_ARCHIVE, "None");
+	precache = Cvar_Get("precache",  "1", CVAR_NONE, "None");
+	loadas8bit = Cvar_Get("loadas8bit",  "0", CVAR_NONE, "None");
+	bgmvolume = Cvar_Get("bgmvolume",  "1", CVAR_ARCHIVE, "None");
+	ambient_level = Cvar_Get("ambient_level",  "0.3", CVAR_NONE, "None");
+	ambient_fade = Cvar_Get("ambient_fade",  "100", CVAR_NONE, "None");
+	snd_noextraupdate = Cvar_Get("snd_noextraupdate",  "0", CVAR_NONE, "None");
+	snd_show = Cvar_Get("snd_show",  "0", CVAR_NONE, "None");
+	snd_interp = Cvar_Get("snd_interp", "1", CVAR_ARCHIVE, "control sample interpolation");
+	_snd_mixahead = Cvar_Get("_snd_mixahead",  "0.1", CVAR_ARCHIVE, "None");
 }
 
 

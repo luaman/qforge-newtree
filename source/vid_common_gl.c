@@ -382,11 +382,6 @@ VID_Init8bitPalette(void)
 }
 
 void
-VID_InitCvars()
-{
-}
-
-void
 VID_LockBuffer ( void )
 {
 }

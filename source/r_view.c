@@ -789,6 +789,11 @@ void V_Init (void)
 	Cmd_AddCommand ("bf", V_BonusFlash_f);
 	Cmd_AddCommand ("centerview", V_StartPitchDrift);
 
+	BuildGammaTable (1.0, 1.0);	// no gamma yet
+}
+
+void V_Init_Cvars (void)
+{
 	v_centermove = Cvar_Get("v_centermove",  "0.15", CVAR_NONE, "None");
 	v_centerspeed = Cvar_Get("v_centerspeed", "500", CVAR_NONE, "None");
 
@@ -821,7 +826,6 @@ void V_Init (void)
 
 	gl_cshiftpercent = Cvar_Get("gl_cshiftpercent", "100", CVAR_NONE, "None");
 
-	BuildGammaTable (1.0, 1.0);	// no gamma yet
 	brightness = Cvar_Get("brightness",  "1", CVAR_ARCHIVE, "None");
 	contrast = Cvar_Get("contrast",  "1", CVAR_ARCHIVE, "None");
 }

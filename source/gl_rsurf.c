@@ -1255,9 +1255,6 @@ void GL_BuildLightmaps (void)
 		texture_extension_number += MAX_LIGHTMAPS;
 	}
 
-	gl_colorlights = Cvar_Get ("gl_colorlights", "1", CVAR_ROM,
-			"Whether to use RGB lightmaps or not");
-
 	if (gl_colorlights->int_val)
 	{
 		gl_lightmap_format = GL_RGB;

@@ -38,6 +38,7 @@
 #include "msg.h"
 #include "console.h"
 #include "r_dynamic.h"
+#include "cl_main.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -80,7 +81,7 @@ sfx_t			*cl_sfx_r_exp3;
 CL_ParseTEnts
 =================
 */
-void CL_InitTEnts (void)
+void CL_TEnts_Init (void)
 {
 	cl_sfx_wizhit = S_PrecacheSound ("wizard/hit.wav");
 	cl_sfx_knighthit = S_PrecacheSound ("hknight/hit.wav");

@@ -134,8 +134,6 @@ VID_Init (unsigned char *palette)
     //Uint16 video_w, video_h;
     Uint32 flags;
 
-    vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ROM, "Toggles fullscreen game mode");
-
     // Load the SDL library
     if (SDL_Init(SDL_INIT_VIDEO)<0) //|SDL_INIT_AUDIO|SDL_INIT_CDROM) < 0)
 	    Sys_Error("VID: Couldn't load SDL: %s", SDL_GetError());
@@ -181,6 +179,12 @@ VID_Init (unsigned char *palette)
 	// could replace this with SDL_SysWMInfo
 	mainwindow=GetActiveWindow();
 #endif
+}
+
+void
+VID_Init_Cvars ()
+{
+    vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ROM, "Toggles fullscreen game mode");
 }
 
 void
@@ -249,12 +253,6 @@ D_EndDirectRect (int x, int y, int width, int height)
     if (!screen) return;
     if (x < 0) x = screen->w+x-1;
     SDL_UpdateRect(screen, x, y, width, height);
-}
-
-void
-VID_InitCvars ()
-{
-	// It may not look like it, but this is important
 }
 
 void    

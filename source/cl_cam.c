@@ -50,6 +50,7 @@
 #include "sbar.h"
 #include "console.h"
 #include "commdef.h"
+#include "cl_cam.h"
 
 #define	PM_SPECTATORMAXSPEED	500
 #define	PM_STOPSPEED	100
@@ -586,7 +587,7 @@ void Cam_Reset(void)
 	spec_track = 0;
 }
 
-void CL_InitCam(void)
+void CL_Cam_Init_Cvars(void)
 {
 	cl_hightrack = Cvar_Get("cl_hightrack",  "0", CVAR_NONE, "None");
 	cl_chasecam = Cvar_Get("cl_chasecam",  "0", CVAR_NONE, "None");

@@ -39,6 +39,8 @@
 #include "pcx.h"
 #include "sys.h"
 #include "va.h"
+#include "skin.h"
+#include "cl_parse.h"
 
 cvar_t		*baseskin;
 cvar_t		*noskins;

@@ -283,7 +283,7 @@ R_RunPuffEffect
 
 ===============
 */
-void R_RunPuffEffect (vec3_t org, int type, int count)
+void R_RunPuffEffect (vec3_t org, byte type, byte count)
 {
 	if (!gl_particles->int_val)
 		return;

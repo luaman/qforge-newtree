@@ -402,7 +402,8 @@ void Cmd_Exec_f (void)
 		Con_Printf ("couldn't exec %s\n",Cmd_Argv(1));
 		return;
 	}
-	if (!Cvar_Command () && (cl_warncmd->int_val || developer->int_val))
+	if (!Cvar_Command () && ((cl_warncmd && cl_warncmd->int_val)
+				|| (developer && developer->int_val)))
 		Con_Printf ("execing %s\n",Cmd_Argv(1));
 
 	Cbuf_InsertText (f);

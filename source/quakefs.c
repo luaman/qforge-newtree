@@ -1017,16 +1017,10 @@ COM_CreateGameDirectory (char *gamename)
 	COM_InitFilesystem
 */
 void
-COM_InitFilesystem ( void )
+COM_Filesystem_Init ( void )
 {
 	int i;
 
-	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH, CVAR_ROM,
-			"location of shared (read only) game directories");
-	fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
-			"location of your game directories");
-	fs_basegame = Cvar_Get ("fs_basegame", BASEGAME, CVAR_ROM,
-			"game to use by default");
 	Cmd_AddCommand ("gamedir", COM_Gamedir_f);
 
 /*
@@ -1054,6 +1048,17 @@ COM_InitFilesystem ( void )
 
 	// any set gamedirs will be freed up to here
 	com_base_searchpaths = com_searchpaths;
+}
+
+void
+COM_Filesystem_Init_Cvars ( void )
+{
+	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH, CVAR_ROM,
+			"location of shared (read only) game directories");
+	fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
+			"location of your game directories");
+	fs_basegame = Cvar_Get ("fs_basegame", BASEGAME, CVAR_ROM,
+			"game to use by default");
 }
 
 /*

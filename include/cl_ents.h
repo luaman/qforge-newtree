@@ -1,7 +1,7 @@
 /*
-	input.h
+	client.h
 
-	External (non-keyboard) input devices
+	Client definitions
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -26,31 +26,18 @@
 	$Id$
 */
 
-#ifndef _INPUT_H
-#define _INPUT_H
+#ifndef _CL_ENTS_H
+#define _CL_ENTS_H
 
-#include "protocol.h"
-#include "cvar.h"
+#include "qtypes.h"
 
-#define freelook (in_mlook.state&1 || cl_freelook->int_val)
+void CL_SetSolidPlayers (int playernum);
+void CL_SetUpPlayerPrediction(qboolean dopred);
+void CL_EmitEntities (void);
+void CL_ClearProjectiles (void);
+void CL_ParseProjectiles (void);
+void CL_ParsePacketEntities (qboolean delta);
+void CL_SetSolidEntities (void);
+void CL_ParsePlayerinfo (void);
 
-void IN_Init (void);
-void IN_Init_Cvars (void);
-
-void IN_Shutdown (void);
-
-void IN_Commands (void);
-// oportunity for devices to stick commands on the script buffer
-
-void IN_SendKeyEvents (void);
-// Perform Key_Event () callbacks until the input que is empty
-
-void IN_Move (usercmd_t *cmd);
-// add additional movement on top of the keyboard move cmd
-
-void IN_ModeChanged (void);
-// called whenever screen dimensions change
-
-extern cvar_t		*_windowed_mouse;
-
-#endif // _INPUT_H
+#endif

@@ -70,6 +70,9 @@
 #include "input.h"
 #include "joystick.h"
 #include "qargs.h"
+#include "cl_input.h"
+#include "view.h"
+
 
 cvar_t		*_windowed_mouse;
 cvar_t		*m_filter;
@@ -276,9 +279,7 @@ event_motion (XEvent *event)
 			Con_Printf("event->xmotion.x: %d\n", event->xmotion.x); 
 			Con_Printf("event->xmotion.y: %d\n", event->xmotion.y); 
 		}
-		//printf("_windowed_mouse: %f\n", _windowed_mouse->int_val);
-		//printf("CurrentTime: %ld\n", CurrentTime);
-		if (_windowed_mouse->int_val) {
+		if (vid_fullscreen->int_val || _windowed_mouse->int_val) {
 			if (!event->xmotion.send_event) {
 				mouse_x += (event->xmotion.x - p_mouse_x);
 				mouse_y += (event->xmotion.y - p_mouse_y);
@@ -300,21 +301,18 @@ event_motion (XEvent *event)
 void
 IN_Commands (void)
 {
-	static int	old_windowed_mouse;
-	static int	old_in_dga;
+	static int	old_windowed, windowed;
 
 	JOY_Command ();
 
-	if ((old_windowed_mouse != _windowed_mouse->int_val)
-			|| (old_in_dga != in_dga->int_val)) {
-		old_windowed_mouse = _windowed_mouse->int_val;
+	windowed = _windowed_mouse->int_val || vid_fullscreen->int_val || in_dga->int_val;
 
-		if (_windowed_mouse->int_val) { // grab the pointer
+	if (old_windowed != windowed) {
+		old_windowed = windowed;
+
+		if (windowed) { // grab the pointer
 			XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
 							GrabModeAsync, x_win, None, CurrentTime);
-/*			forcing viewport every frame is a hideous slowdown.
-			x11_force_view_port();
- */
 #ifdef HAVE_DGA
 			if (dga_avail && in_dga->int_val && !dga_active) {
 				XF86DGADirectVideo (x_disp, DefaultScreen (x_disp),
@@ -427,12 +425,6 @@ IN_Init (void)
 
 	JOY_Init ();
 
-	_windowed_mouse = Cvar_Get ("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
-	m_filter = Cvar_Get ("m_filter", "0", CVAR_ARCHIVE, "None");
-	in_dga = Cvar_Get ("in_dga", "1", CVAR_ARCHIVE, "DGA Input support");
-	in_dga_mouseaccel = Cvar_Get ("in_dga_mouseaccel", "1", CVAR_ARCHIVE,
-			"None");
-
 	XAutoRepeatOff (x_disp);
 
 	if (COM_CheckParm("-nomouse"))
@@ -450,4 +442,15 @@ IN_Init (void)
 	x11_add_event(MotionNotify, &event_motion);
 
 	return;
+}
+
+void
+IN_Init_Cvars (void)
+{
+	JOY_Init_Cvars ();
+	_windowed_mouse = Cvar_Get ("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
+	m_filter = Cvar_Get ("m_filter", "0", CVAR_ARCHIVE, "None");
+	in_dga = Cvar_Get ("in_dga", "1", CVAR_ARCHIVE, "DGA Input support");
+	in_dga_mouseaccel = Cvar_Get ("in_dga_mouseaccel", "1", CVAR_ARCHIVE,
+			"None");
 }

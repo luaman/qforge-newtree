@@ -38,6 +38,9 @@
 #include "screen.h"
 #include "console.h"
 #include "r_local.h"
+#include "cl_cam.h"
+#include "cl_main.h"
+#include "view.h"
 
 #include <math.h>
 
@@ -167,10 +170,10 @@ void R_ZGraph (void);
 
 /*
 ==================
-R_InitTextures
+R_Textures_Init
 ==================
 */
-void	R_InitTextures (void)
+void	R_Textures_Init (void)
 {
 	int		x,y, m;
 	byte	*dest;
@@ -220,6 +223,34 @@ void R_Init (void)
 	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);	
 	Cmd_AddCommand ("loadsky", R_LoadSky_f);
 
+	Cvar_SetValue (r_maxedges, (float)NUMSTACKEDGES);
+	Cvar_SetValue (r_maxsurfs, (float)NUMSTACKSURFACES);
+
+	view_clipplanes[0].leftedge = true;
+	view_clipplanes[1].rightedge = true;
+	view_clipplanes[1].leftedge = view_clipplanes[2].leftedge =
+			view_clipplanes[3].leftedge = false;
+	view_clipplanes[0].rightedge = view_clipplanes[2].rightedge =
+			view_clipplanes[3].rightedge = false;
+
+	r_refdef.xOrigin = XCENTERING;
+	r_refdef.yOrigin = YCENTERING;
+
+	R_InitParticles ();
+
+// TODO: collect 386-specific code in one place
+#ifdef USE_INTEL_ASM
+	Sys_MakeCodeWriteable ((long)R_EdgeCodeStart,
+					     (long)R_EdgeCodeEnd - (long)R_EdgeCodeStart);
+#endif	// USE_INTEL_ASM
+
+	D_Init ();
+}
+
+void R_Init_Cvars (void)
+{
+	D_Init_Cvars ();
+
 	r_draworder = Cvar_Get("r_draworder", "0", CVAR_NONE, "None");
 	r_speeds = Cvar_Get("r_speeds", "0", CVAR_NONE, "None");
 	r_timegraph = Cvar_Get("r_timegraph", "0", CVAR_NONE, "None");
@@ -244,28 +275,6 @@ void R_Init (void)
 	r_aliastransadj = Cvar_Get("r_aliastransadj",  "100", CVAR_NONE, "None");
 	gl_flashblend = Cvar_Get("gl_flashblend",  "0", CVAR_NONE, "None");  // FIXME: remove this!  --KB
 
-	Cvar_SetValue (r_maxedges, (float)NUMSTACKEDGES);
-	Cvar_SetValue (r_maxsurfs, (float)NUMSTACKSURFACES);
-
-	view_clipplanes[0].leftedge = true;
-	view_clipplanes[1].rightedge = true;
-	view_clipplanes[1].leftedge = view_clipplanes[2].leftedge =
-			view_clipplanes[3].leftedge = false;
-	view_clipplanes[0].rightedge = view_clipplanes[2].rightedge =
-			view_clipplanes[3].rightedge = false;
-
-	r_refdef.xOrigin = XCENTERING;
-	r_refdef.yOrigin = YCENTERING;
-
-	R_InitParticles ();
-
-// TODO: collect 386-specific code in one place
-#ifdef USE_INTEL_ASM
-	Sys_MakeCodeWriteable ((long)R_EdgeCodeStart,
-					     (long)R_EdgeCodeEnd - (long)R_EdgeCodeStart);
-#endif	// USE_INTEL_ASM
-
-	D_Init ();
 }
 
 /*

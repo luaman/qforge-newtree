@@ -33,8 +33,7 @@ extern cvar_t	*cl_gibfilter;
 extern cvar_t	*cl_parsesay;
 extern cvar_t	*cl_nofake;
 
-// FIXME: prefix these with TP_ or Team_ ?
-void Team_InitTeamplay (void);
+void Team_Init_Cvars (void);
 void Team_BestWeaponImpulse (void);
 void Team_Dead (void);
 void Team_NewMap (void);

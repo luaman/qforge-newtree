@@ -120,6 +120,13 @@ IN_Init (void)
 	return;
 }
 
+void
+IN_Init_Cvars (void)
+{
+	JOY_Init_Cvars();
+	m_filter = Cvar_Get ("m_filter","0",0,"None");
+}
+
 static void
 IN_init_kb (void)
 {
@@ -248,7 +255,6 @@ IN_init_mouse()
 	char *mousedev;
 	int mouserate = MOUSE_DEFAULTSAMPLERATE;
 
-	m_filter = Cvar_Get ("m_filter","0",0,"None");
 	Cmd_AddCommand("force_centerview", Force_CenterView_f);
 
 	mouse_buttons = 3;

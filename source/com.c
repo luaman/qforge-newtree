@@ -46,7 +46,6 @@ int		static_registered = 1;	// only for startup check, then set
 
 qboolean		msg_suppress_1 = 0;
 
-void COM_InitFilesystem (void);
 void COM_Path_f (void);
 
 
@@ -106,9 +105,13 @@ void COM_Init (void)
 		LittleFloat = FloatSwap;
 #endif
 
-	registered = Cvar_Get("registered", "0", CVAR_NONE, "None");
 	Cmd_AddCommand ("path", COM_Path_f);
 
-	COM_InitFilesystem ();
+	COM_Filesystem_Init ();
 	COM_CheckRegistered ();
+}
+
+void COM_Init_Cvars (void)
+{
+	registered = Cvar_Get("registered", "0", CVAR_NONE, "None");
 }

@@ -299,7 +299,7 @@ void Team_NewMap ()
 	free(mapname);
 }
 
-void Team_InitTeamplay (void)
+void Team_Init_Cvars (void)
 {
 	cl_deadbodyfilter = Cvar_Get("cl_deadbodyfilter", "0", CVAR_NONE, "Hide dead player models");
 	cl_gibfilter = Cvar_Get("cl_gibfilter", "0", CVAR_NONE, "Hide gibs");

@@ -52,6 +52,7 @@
 #include "model.h"   // needed by: glquake.h
 #include "console.h"
 #include "glquake.h"
+#include "cl_parse.h"
 
 
 extern byte		*draw_chars;				// 8*8 graphic characters

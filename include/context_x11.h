@@ -46,6 +46,7 @@ extern Window	x_win;
 extern qboolean doShm;
 extern int		x_shmeventtype;
 extern qboolean oktodraw;
+extern cvar_t	*vid_fullscreen;
 
 qboolean x11_add_event (int event, void (*event_handler)(XEvent *));
 qboolean x11_del_event (int event, void (*event_handler)(XEvent *));
@@ -60,5 +61,6 @@ void x11_create_window (int, int);
 void x11_grab_keyboard (void);
 void x11_set_caption (char *);
 void x11_force_view_port (void);
+void x11_Init_Cvars (void);
 
 #endif	// __CONTEXT_X11_H__

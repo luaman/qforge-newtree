@@ -37,6 +37,7 @@
 #include "draw.h"
 #include "menu.h"
 #include "quakedef.h"
+#include "cl_parse.h"
 
 qboolean	allowskybox;	// whether or not to allow skyboxes  --KB
 

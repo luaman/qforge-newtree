@@ -48,6 +48,7 @@
 #include "crc.h"
 #include "server.h"
 #include "msg.h"
+#include "cl_main.h"
 
 extern char loadname[];
 extern model_t *loadmodel;

@@ -760,7 +760,11 @@ Key_Init ( void )
 	Cmd_AddCommand ("bind", Key_Bind_f);
 	Cmd_AddCommand ("unbind", Key_Unbind_f);
 	Cmd_AddCommand ("unbindall", Key_Unbindall_f);
+}
 
+void
+Key_Init_Cvars ( void )
+{
 	cl_chatmode = Cvar_Get ("cl_chatmode", "2", 0,
 		"Controls when console text will be treated as a chat message\n"
 		"0 - never, 1 - always, 2 - smart");

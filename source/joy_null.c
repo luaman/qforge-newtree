@@ -56,11 +56,15 @@ JOY_Move (usercmd_t *cmd)
 void
 JOY_Init (void)
 {
+	Con_DPrintf ("This system does not have joystick support.\n");
+}
+
+void
+JOY_Init_Cvars (void)
+{
 	joy_device = Cvar_Get ("joy_device", "none", CVAR_NONE|CVAR_ROM, "Joystick device");
 	joy_enable = Cvar_Get ("joy_enable", "1", CVAR_NONE|CVAR_ARCHIVE, "Joystick enable flag");
 	joy_sensitivity = Cvar_Get ("joy_sensitivity", "1", CVAR_NONE|CVAR_ARCHIVE, "Joystick sensitivity");
-
-	Con_DPrintf ("This system does not have joystick support.\n");
 }
 
 void

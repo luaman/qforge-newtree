@@ -122,8 +122,6 @@ VID_Init (unsigned char *palette)
 
 	VID_GetWindowSize (640, 480);
 
-	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
-
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.colormap = host_colormap;
@@ -209,6 +207,12 @@ VID_Init (unsigned char *palette)
 	mainwindow=GetActiveWindow();
 #endif
 	vid.recalc_refdef = 1;	  // force a surface cache flush
+}
+
+void
+VID_Init_Cvars ()
+{
+	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
 }
 
 void

@@ -43,6 +43,9 @@
 #include "qendian.h"
 #include "sbar.h"
 #include "sys.h"
+#include "cl_parse.h"
+#include "skin.h"
+#include "view.h"
 
 /*
 
@@ -384,7 +387,7 @@ void SCR_SizeDown_f (void)
 SCR_Init
 ==================
 */
-void SCR_InitCvars (void)
+void SCR_Init_Cvars (void)
 {
 	scr_fov = Cvar_Get("fov", "90", CVAR_NONE, "None");
 	scr_viewsize = Cvar_Get("viewsize", "100", CVAR_ARCHIVE, "None");

@@ -55,6 +55,7 @@
 #include "console.h"
 #include "glquake.h"
 #include "r_dynamic.h"
+#include "skin.h"
 
 qboolean VID_Is8bit(void);
 void R_InitBubble();
@@ -65,10 +66,10 @@ qboolean	allowskybox;		// allow skyboxes?  --KB
 
 /*
 ==================
-R_InitTextures
+R_Textures_Init
 ==================
 */
-void	R_InitTextures (void)
+void	R_Textures_Init (void)
 {
 	int		x,y, m;
 	byte	*dest;
@@ -194,6 +195,19 @@ void R_Init (void)
 
 	Cmd_AddCommand ("r_firecolor", R_FireColor_f);
 
+	R_InitBubble();
+	
+	R_InitParticles ();
+
+	netgraphtexture = texture_extension_number;
+	texture_extension_number++;
+
+	playertextures = texture_extension_number;
+	texture_extension_number += MAX_CLIENTS;
+}
+
+void R_Init_Cvars (void)
+{
 	r_norefresh = Cvar_Get("r_norefresh", "0", CVAR_NONE, "None");
 	r_drawentities = Cvar_Get("r_drawentities", "1", CVAR_NONE, "None");
 	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_NONE, "None");
@@ -208,9 +222,6 @@ void R_Init (void)
 	gl_clear = Cvar_Get("gl_clear", "0", CVAR_NONE, "None");
 	gl_texsort = Cvar_Get("gl_texsort", "1", CVAR_NONE, "None");
  
-//	if (gl_mtexable)
-//		Cvar_SetValue(gl_texsort, 0);
-
 	gl_cull = Cvar_Get("gl_cull", "1", CVAR_NONE, "None");
 	gl_smooth = Cvar_Get("gl_smooth", "1", CVAR_NONE, "None");
 	gl_smoothdlights = Cvar_Get("gl_smoothdlights", "1", CVAR_NONE, "None");
@@ -238,15 +249,6 @@ void R_Init (void)
 	gl_skymultipass = Cvar_Get("gl_skymultipass", "1", CVAR_NONE,
 			"controls wether the skydome is single or double pass");
 
-	R_InitBubble();
-	
-	R_InitParticles ();
-
-	netgraphtexture = texture_extension_number;
-	texture_extension_number++;
-
-	playertextures = texture_extension_number;
-	texture_extension_number += MAX_CLIENTS;
 }
 
 /*

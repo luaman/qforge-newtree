@@ -42,6 +42,13 @@
 #include "pmove.h"
 #include "sbar.h"
 #include "teamplay.h"
+#include "cl_parse.h"
+#include "cl_main.h"
+#include "skin.h"
+#include "cl_ents.h"
+#include "cl_input.h"
+#include "view.h"
+
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
