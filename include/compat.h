@@ -35,7 +35,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef min
 # define min(a,b) ((a) < (b) ? (a) : (b))
 #endif
-
+#ifndef bound
+# define bound(a,b,c) (max(a, min(b, c)))
+#endif
 /* This fixes warnings when compiling with -pedantic */
 #if defined(__GNUC__) && !defined(inline)
 # define inline __inline__

@@ -90,3 +90,10 @@ qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $
 
 EXTRA_DIST = makefile.winc makefile.wingl makefile.wins \
 	qw_client.dsp qw_server.dsp
+
+qf_server_DEPENDENCIES=libqfsys_sv.a
+qf_client_mgl_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
+qf_client_ggi_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
+qf_client_svga_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
+qf_client_x11_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
+qf_client_glx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
