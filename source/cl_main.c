@@ -1566,12 +1566,6 @@ void Host_Frame (float time)
 	fps_count++;
 }
 
-static void simple_crypt(char *buf, int len)
-{
-	while (len--)
-		*buf++ ^= 0xff;
-}
-
 //============================================================================
 
 /*
