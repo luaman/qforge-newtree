@@ -39,6 +39,7 @@
 
 #include "client.h"
 #include "host.h"
+#include "skin.h"
 #include "sys.h"
 #include "vid.h"
 
@@ -83,6 +84,6 @@ Skin_Init_Translation (void)
 }
 
 void
-Skin_Process (skin_t *skin, struct tex_s *)
+Skin_Process (skin_t *skin, struct tex_s *tex)
 {
 }
