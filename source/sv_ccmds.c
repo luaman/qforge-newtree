@@ -886,6 +886,7 @@ void SV_InitOperatorCommands (void)
 	Cmd_AddCommand ("sv_gamedir", SV_Gamedir);
 	Cmd_AddCommand ("floodprot", SV_Floodprot_f);
 	Cmd_AddCommand ("floodprotmsg", SV_Floodprotmsg_f);
+	Cmd_AddCommand ("maplist", COM_Maplist_f);
 
 	cl_warncmd = Cvar_Get ("cl_warncmd", "1", CVAR_NONE, "dunno. equiv to sh -x?");  // FIXME poor description
 }
