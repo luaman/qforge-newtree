@@ -121,7 +121,8 @@ void Cmd_StuffCmds_f (void);
 void Cbuf_Execute_Sets (void);
 void Cmd_Exec_File (char *path);
 
-extern	char		com_token[1024];
+#define		MAX_COM_TOKEN	1024
+extern char		com_token[MAX_COM_TOKEN];
 char *COM_Parse (char *data);
 
 #endif // _CMD_H

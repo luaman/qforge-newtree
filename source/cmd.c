@@ -796,7 +796,7 @@ void Cmd_Init (void)
 }
 
 
-char		com_token[1024];
+char		com_token[MAX_COM_TOKEN];
 
 /*
 ==============
@@ -809,6 +809,9 @@ char *COM_Parse (char *data)
 {
 	int		c;
 	int		len;
+	char	buf[255];
+	int		i;
+	cvar_t	*var, *bestvar;
 	
 	len = 0;
 	com_token[0] = 0;
@@ -854,9 +857,58 @@ skipwhite:
 // parse a regular word
 	do
 	{
-		com_token[len] = c;
-		data++;
-		len++;
+		// FIXME: only check for $'s when parsing
+		// command-line text (not entity data!)
+		if (c == '$')
+		{
+			data++;
+
+			// Copy the text after '$' to a temp buffer
+			i = 0;
+			buf[0] = 0;
+			bestvar = NULL;
+			while ((c = *data) > 32)
+			{
+				if (c == '$')
+					break;
+				data++;
+				buf[i++] = c;
+				buf[i] = 0;
+				if (var = Cvar_FindVar(buf))
+					bestvar = var;
+			}
+
+			if (bestvar)
+			{
+				// check buffer size
+				if (len + strlen(bestvar->string) >= MAX_COM_TOKEN-1)
+					break;
+
+				strcpy(&com_token[len], bestvar->string);
+				len += strlen(bestvar->string);
+				i = strlen(bestvar->name);
+				while (buf[i])
+					com_token[len++] = buf[i++];
+			}
+			else
+			{
+				// no matching cvar name was found
+				com_token[len++] = '$';
+				if (len + strlen(buf) >= MAX_COM_TOKEN-1)
+					break;
+				strcpy (&com_token[len], buf);
+				len += strlen(buf);
+			}
+		}
+		else
+		{
+			com_token[len] = c;
+			data++;
+			len++;
+			if (len >= MAX_COM_TOKEN-1)
+				break;
+		}
+
 		c = *data;
 	} while (c>32);
 	
