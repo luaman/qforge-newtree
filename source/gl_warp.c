@@ -1,7 +1,7 @@
 /*
 	gl_warp.c
 
-	(description)
+	sky and water polygons
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,7 @@
 
 	$Id$
 */
-// gl_warp.c -- sky and water polygons
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif

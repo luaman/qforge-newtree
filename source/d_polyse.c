@@ -1,7 +1,8 @@
 /*
 	d_polyse.c
 
-	(description)
+	routines for drawing sets of polygons sharing the same texture
+	(used for Alias models)
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +26,6 @@
 
 	$Id$
 */
-// d_polyset.c: routines for drawing sets of polygons sharing the same
-// texture (used for Alias models)
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,5 +1,5 @@
 /*
-	cl_parse.c
+	gl_trans.c
 
 	(description)
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// cl_parse.c  -- parse a message received from the server
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

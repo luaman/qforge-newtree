@@ -1,7 +1,7 @@
 /*
 	d_spr8.S
 
-	(description)
+	x86 assembly-language horizontal 8-bpp transparent span-drawing code.
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +25,6 @@
 
 	$Id$
 */
-// d_spr8.s
-// x86 assembly-language horizontal 8-bpp transparent span-drawing code.
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	d_modech.c
 
-	(description)
+	called when mode has just changed
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// d_modech.c: called when mode has just changed
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

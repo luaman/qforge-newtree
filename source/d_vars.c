@@ -1,7 +1,7 @@
 /*
 	d_vars.c
 
-	(description)
+	global refresh variables
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// r_vars.c: global refresh variables
 
 #ifndef USE_INTEL_ASM
 

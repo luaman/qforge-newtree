@@ -1,7 +1,8 @@
 /*
 	d_draw16.S
 
-	(description)
+	x86 assembly-language horizontal 8-bpp span-drawing code, with
+	16-pixel subdivision.
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,9 +26,6 @@
 
 	$Id$
 */
-// d_draw16.s
-// x86 assembly-language horizontal 8-bpp span-drawing code, with 16-pixel
-// subdivision.
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

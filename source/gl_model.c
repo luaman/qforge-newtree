@@ -1,7 +1,7 @@
 /*
 	gl_model.c
 
-	(description)
+	model loading and caching
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,10 +25,10 @@
 
 	$Id$
 */
-// models.c -- model loading and caching
 
 // models are the only shared resource between a client and server running
 // on the same machine.
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif

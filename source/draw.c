@@ -1,7 +1,7 @@
 /*
 	draw.c
 
-	(description)
+	this is the only file outside the refresh that touches the vid buffer
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +25,6 @@
 
 	$Id$
 */
-// draw.c -- this is the only file outside the refresh that touches the
-// vid buffer
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

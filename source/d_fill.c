@@ -1,7 +1,7 @@
 /*
 	d_fill.c
 
-	(description)
+	clears a specified rectangle to the specified color
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// d_clear: clears a specified rectangle to the specified color
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	d_parta.S
 
-	(description)
+	x86 assembly-language 8-bpp particle-drawing code.
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +25,6 @@
 
 	$Id$
 */
-// d_parta.s
-// x86 assembly-language 8-bpp particle-drawing code.
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	d_surf.c
 
-	(description)
+	rasterization driver surface heap manager
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// d_surf.c: rasterization driver surface heap manager
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	d_part.c
 
-	(description)
+	software driver module for drawing particles
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// d_part.c: software driver module for drawing particles
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	d_scana.S
 
-	(description)
+	x86 assembly-language turbulent texture mapping code
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +25,6 @@
 
 	$Id$
 */
-// d_scana.s
-// x86 assembly-language turbulent texture mapping code
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

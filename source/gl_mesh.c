@@ -1,7 +1,7 @@
 /*
 	gl_mesh.c
 
-	(description)
+	gl_mesh.c: triangle model functions
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,7 @@
 
 	$Id$
 */
-// gl_mesh.c: triangle model functions
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif

@@ -1,7 +1,7 @@
 /*
 	d_scan.c
 
-	(description)
+	Portable C scan-level rasterization code, all pixel depths.
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// Portable C scan-level rasterization code, all pixel depths.
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

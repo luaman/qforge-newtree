@@ -1,7 +1,7 @@
 /*
 	gl_screen.c
 
-	(description)
+	master for refresh, status bar, console, chat, notify, etc
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,7 @@
 
 	$Id$
 */
-// screen.c -- master for refresh, status bar, console, chat, notify, etc
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif

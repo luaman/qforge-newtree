@@ -1,5 +1,7 @@
 /*
-	d_copy.S - x86 assembly-language screen copying code.
+	d_copy.S
+	
+	x86 assembly-language screen copying code.
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 

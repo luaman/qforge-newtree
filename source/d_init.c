@@ -1,7 +1,7 @@
 /*
 	d_init.c
 
-	(description)
+	rasterization driver initialization
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// d_init.c: rasterization driver initialization
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

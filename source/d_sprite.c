@@ -1,7 +1,7 @@
 /*
 	d_sprite.c
 
-	(description)
+	software top-level rasterization driver module for drawing sprites
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +25,6 @@
 
 	$Id$
 */
-// d_sprite.c: software top-level rasterization driver module for drawing
-// sprites
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

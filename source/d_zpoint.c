@@ -1,7 +1,7 @@
 /*
 	d_zpoint.c
 
-	(description)
+	software driver module for drawing z-buffered points
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// d_zpoint.c: software driver module for drawing z-buffered points
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	in_null.c
 
-	(description)
+	for systems without a mouse
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// in_null.c -- for systems without a mouse
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

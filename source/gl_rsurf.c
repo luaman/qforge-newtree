@@ -1,7 +1,7 @@
 /*
 	gl_rsurf.c
 
-	(description)
+	surface-related refresh code
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,7 @@
 
 	$Id$
 */
-// r_surf.c: surface-related refresh code
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
