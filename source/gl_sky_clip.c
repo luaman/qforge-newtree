@@ -252,7 +252,7 @@ leave_face (struct box_def *box, int prev_face, int face)
 {
 	if (box[prev_face].enter_face >=0 && (box[prev_face].enter_face) % 3 != (face % 3)) {
 		vec3_t t;
-		box[face].leave_vertex = box[face].poly.numverts;
+		box[prev_face].leave_vertex = box[prev_face].poly.numverts;
 		find_cube_vertex (prev_face, face, box[prev_face].enter_face, t);
 		add_vertex(box, prev_face, t);
 		box[prev_face].leave_face = -1;
@@ -318,6 +318,7 @@ fixup_center_face (struct box_def *box, int c_face)
 			int ins = box[ind].leave_vertex + 1;
 			glpoly_t *p = &box[ind].poly;
 			const int vert_size = sizeof (p->verts[0]);
+			printf ("%d %d %d %d\n", ind, box[ind].poly.numverts, box[ind].enter_vertex, box[ind].leave_vertex);
 
 			memmove (p->verts[ins + 2], p->verts[ins], 2 * vert_size);
 			p->numverts += 2;
