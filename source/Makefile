@@ -202,8 +202,6 @@ $(CL_SVGA_name): $(COM_objects) $(CL_objects) $(CL_SW_objects) $(CL_SVGA_objects
 $(CL_X11_name): $(COM_objects) $(CL_objects) $(CL_SW_objects) $(CL_X11_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_X11_libs)
 
-$(CL_GLX_objects): CPPFLAGS += -I/usr/include/GL
-
 $(CL_GLX_name): $(COM_objects) $(CL_objects) $(CL_GL_objects) $(CL_GLX_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_GLX_libs)
 
