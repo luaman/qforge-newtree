@@ -31,19 +31,23 @@
 #endif
 
 #include <fcntl.h>
+
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+# include <unistd.h>
 #endif
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
 #include <errno.h>
+
 #ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+# include <sys/ioctl.h>
 #endif
+
 #include <linux/cdrom.h>
 #include <time.h>
 
