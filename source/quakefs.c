@@ -104,6 +104,7 @@ char    gamedirfile[MAX_OSPATH];
 
 cvar_t	*fs_userpath;
 cvar_t	*fs_sharepath;
+cvar_t	*fs_basegame;
 
 
 int com_filesize;
@@ -830,9 +831,10 @@ COM_Gamedir (char *dir)
 	//
 	Cache_Flush ();
 
-	if (strcmp (dir, BASEGAME) == 0)
+	if (strcmp (dir, fs_basegame->string) == 0)
 		return;
-	if (strcmp (dir, "qw") == 0)
+	if (strcmp (dir, "qw") == 0 
+			&& strcmp (fs_basegame->string, "id1") == 0)
 		return;
 
 	COM_AddGameDirectory (dir);
@@ -886,27 +888,26 @@ void
 COM_InitFilesystem ( void )
 {
 	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH, CVAR_ROM,
-			"The location of shared game directories");
+			"location of shared (read only) game directories");
 	fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
-			"The location of your game directories");
+			"location of your game directories");
+	fs_basegame = Cvar_Get ("fs_basegame", BASEGAME, CVAR_ROM,
+			"game to use by default");
 	Cmd_AddCommand ("gamedir", COM_Gamedir_f);
 
 /*
-	start up with BASEGAME by default
+	start up with basegame->string by default
 */
-	COM_CreatePath (va("%s/%s/dummy", fs_userpath->string,BASEGAME));
-	COM_AddGameDirectory (BASEGAME);
-	if (hipnotic) {
-		COM_CreatePath (va("%s/%s/dummy", fs_userpath->string,"hipnotic"));
-		COM_AddGameDirectory ("hipnotic");
-	}
-	if (rogue) {
-	  COM_CreatePath (va("%s/%s/dummy", fs_userpath->string,"rogue"));
-		COM_AddGameDirectory ("rogue");
-	}
+	COM_CreatePath (va("%s/%s/dummy", fs_userpath->string,
+				fs_basegame->string));
+	COM_AddGameDirectory(fs_basegame->string);
 
-	COM_CreatePath (va("%s/qw/dummy", fs_userpath->string));
-	COM_AddGameDirectory ("qw");
+	// If we're dealing with id1, use qw too
+	if (stricmp (fs_basegame->string, "id1") == 0)
+	{
+		COM_CreatePath (va("%s/qw/dummy", fs_userpath->string));
+		COM_AddGameDirectory ("qw");
+	}
 
 	// any set gamedirs will be freed up to here
 	com_base_searchpaths = com_searchpaths;

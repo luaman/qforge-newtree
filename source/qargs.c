@@ -60,7 +60,6 @@ int		com_argc;
 char	**com_argv;
 char	*com_cmdline;
 cvar_t	*cmdline;
-qboolean		standard_quake = true, rogue, hipnotic;
 
 /*
 ================
@@ -133,18 +132,6 @@ void COM_InitArgv (int argc, char **argv)
 
 	largv[com_argc] = argvdummy;
 	com_argv = largv;
-
-	if (COM_CheckParm ("-rogue"))
-	{
-		rogue = true;
-		standard_quake = false;
-	}
-
-	if (COM_CheckParm ("-hipnotic"))
-	{
-		hipnotic = true;
-		standard_quake = false;
-	}
 }
 
 /*

@@ -60,7 +60,6 @@ extern	qboolean	host_initialized;	/* True if into command execution. */
 extern	double		host_frametime;
 extern	double		realtime;			/* Not bounded in any way, changed at
 										   start of every frame, never reset */
-extern qboolean		standard_quake, rogue, hipnotic;
 
 char	*va(char *format, ...);
 // does a varargs printf into a temp buffer
