@@ -132,6 +132,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\teamplay.obj\
    $(OBJS)\r_view.obj\
    $(OBJS)\gl_view.obj\
    $(OBJS)\vid_wgl.obj\
@@ -210,6 +211,7 @@ $(EXE)\qf-client-wgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\teamplay.obj+
 $(OBJS)\r_view.obj+
 $(OBJS)\gl_view.obj+
 $(OBJS)\vid_wgl.obj+
@@ -286,6 +288,11 @@ $(QFROOT)\opengl32.lib+
 $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
+
+|
+$(OBJS)\teamplay.obj :  $(QFROOT)\source\teamplay.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\teamplay.c
 
 |
 $(OBJS)\r_view.obj :  $(QFROOT)\source\r_view.c

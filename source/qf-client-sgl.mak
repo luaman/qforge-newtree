@@ -136,6 +136,7 @@ EXT2=.obj
 
 DEPEND = \
    $(DIRECTXSDK)\lib\borland\dxguid.lib\
+   $(OBJS)\teamplay.obj\
    $(OBJS)\sdl_main.obj\
    $(OBJS)\r_view.obj\
    $(OBJS)\gl_view.obj\
@@ -216,6 +217,7 @@ $(EXE)\qf-client-sgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\teamplay.obj+
 $(OBJS)\sdl_main.obj+
 $(OBJS)\r_view.obj+
 $(OBJS)\gl_view.obj+
@@ -296,6 +298,11 @@ $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32mt.lib
 
 |
+$(OBJS)\teamplay.obj :  $(QFROOT)\source\teamplay.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\teamplay.c
+|
+
 $(OBJS)\sdl_main.obj :  $(SDLSDK)\src\main\win32\sdl_main.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(SDLSDK)\src\main\win32\sdl_main.c

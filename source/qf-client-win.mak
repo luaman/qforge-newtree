@@ -128,6 +128,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\teamplay.obj\
    $(OBJS)\vid_mgl.obj\
    $(OBJS)\cl_trans.obj\
    $(OBJS)\sw_view.obj\
@@ -238,6 +239,7 @@ $(EXE)\qf-client-win.exe : $(DEPEND)
   $(TLINK32) /v @&&|
  $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\teamplay.obj+
 $(OBJS)\vid_mgl.obj+
 $(OBJS)\cl_trans.obj+
 $(OBJS)\sw_view.obj+
@@ -346,6 +348,11 @@ $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SCITECHROOT)\lib\win32\bc5\mglfx.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32mt.lib
+
+|
+$(OBJS)\teamplay.obj :  $(QFROOT)\source\teamplay.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\teamplay.c
 
 |
 $(OBJS)\vid_mgl.obj :  $(QFROOT)\source\vid_mgl.c
