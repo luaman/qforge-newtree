@@ -452,6 +452,8 @@ void CL_ParseDownload (void)
 			Con_Printf ("%i%%", cls.downloadpercent);
 		}
 #endif
+		if (percent != cls.downloadpercent)
+			VID_SetCaption (va ("Downloading %s %d%%", cls.downloadname, percent));
 		cls.downloadpercent = percent;
 
 		MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
@@ -465,6 +467,7 @@ void CL_ParseDownload (void)
 #endif
 
 		Qclose (cls.download);
+		VID_SetCaption (va ("Connecting to %s", cls.servername));
 
 		// rename the temp file to it's final name
 		if (strcmp(cls.downloadtempname, cls.downloadname)) {
