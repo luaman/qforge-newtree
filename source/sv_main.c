@@ -67,7 +67,7 @@ client_t	*host_client;			// current client
 // fixme: these default values need to be tweaked after more testing
 
 double netdosexpire[DOSFLOODCMDS] = {1,1,2,0.9,1,5};
-double netdosvalues[DOSFLOODCMDS] = {12,1,3,2,1,1};
+double netdosvalues[DOSFLOODCMDS] = {12,1,3,1,1,1};
 
 cvar_t *sv_netdosprotect;	// tone down DoS from quake servers
 
@@ -426,11 +426,11 @@ int CheckForFlood(flood_enum_t cmdtype)
 	}
 
 	if (i < DOSFLOODIP && floodstatus[cmdtype][i].issued) {
-		if ((floodstatus[cmdtype][i].issued + netdosexpire[cmdtype]) 
+		if ((floodstatus[cmdtype][i].issued + netdosexpire[cmdtype])
 				> currenttime) {
 			floodstatus[cmdtype][i].floodcount += 1;
 			if (floodstatus[cmdtype][i].floodcount > netdosvalues[cmdtype]) {
-				if ((lastmessagetime + 5) < currenttime) 
+				if ((lastmessagetime + 5) < currenttime)
 					Con_Printf("Blocking type %d flood from (or to) %s\n",
 								cmdtype, NET_AdrToString(net_from));
 				floodstatus[cmdtype][i].floodcount = 0;
@@ -448,6 +448,8 @@ int CheckForFlood(flood_enum_t cmdtype)
 		i = oldest;
 		floodstatus[cmdtype][i].adr = net_from;
 		floodstatus[cmdtype][i].firstseen = currenttime;
+		floodstatus[cmdtype][i].cmdcount=0;
+		floodstatus[cmdtype][i].floodcount = 0;
 	}
 	floodstatus[cmdtype][i].issued = currenttime;
 	floodstatus[cmdtype][i].cmdcount += 1;
@@ -469,9 +471,8 @@ void SVC_Status (void)
 	int		ping;
 	int		top, bottom;
 
-	if (CheckForFlood(FLOOD_STATUS)) return;
-
 	if (!sv_allow_status->value) return;
+	if (CheckForFlood(FLOOD_STATUS)) return;
 
 	Cmd_TokenizeString ("status");
 	SV_BeginRedirect (RD_PACKET);
@@ -538,7 +539,7 @@ void SVC_Log (void)
 	int		seq;
 	char	data[MAX_DATAGRAM+64];
 
-	if (sv_allow_log->value) return;
+	if (!sv_allow_log->value) return;
 	if (CheckForFlood(FLOOD_LOG)) return;
 
 	if (Cmd_Argc() == 2)
@@ -600,7 +601,6 @@ void SVC_GetChallenge (void)
 	int		oldest;
 	int		oldestTime;
 
-//       	if (CheckForFlood(FLOOD_CHALLENGE)) return;
 	oldest = 0;
 	oldestTime = 0x7fffffff;
 
@@ -626,7 +626,7 @@ void SVC_GetChallenge (void)
 	}
 
 	// send it back
-	Netchan_OutOfBandPrint (net_from, "%c%i", S2C_CHALLENGE, 
+	Netchan_OutOfBandPrint (net_from, "%c%i", S2C_CHALLENGE,
 			svs.challenges[i].challenge);
 }
 
@@ -693,7 +693,7 @@ void SVC_DirectConnect (void)
 	s = Info_ValueForKey (userinfo, "spectator");
 	if (s[0] && strcmp(s, "0"))
 	{
-		if (spectator_password->string[0] && 
+		if (spectator_password->string[0] &&
 			stricmp(spectator_password->string, "none") &&
 			strcmp(spectator_password->string, s) )
 		{	// failed
@@ -732,7 +732,7 @@ void SVC_DirectConnect (void)
 	if (!sv_highchars->value) {
 		byte *p, *q;
 
-		for (p = (byte *)newcl->userinfo, q = (byte *)userinfo; 
+		for (p = (byte *)newcl->userinfo, q = (byte *)userinfo;
 			*q && p < (byte *)newcl->userinfo + sizeof(newcl->userinfo)-1; q++)
 			if (*q > 31 && *q <= 127)
 				*p++ = *q;
@@ -1044,7 +1044,7 @@ qboolean StringToFilter (char *s, ipfilter_t *f)
 			Con_Printf ("Bad filter address: %s\n", s);
 			return false;
 		}
-		
+
 		j = 0;
 		while (*s >= '0' && *s <= '9')
 		{
@@ -1330,7 +1330,7 @@ void SV_ReadPackets (void)
 			}
 			break;
 		}
-		
+
 		if (i != MAX_CLIENTS)
 			continue;
 	
@@ -1905,7 +1905,7 @@ void SV_Init (quakeparms_t *parms)
 	Con_Printf ("\nQuakeForge Version %s (Build %04d)\n\n", VERSION, build_number());
 
 	Con_Printf ("======== %s Initialized ========\n", PROGRAM);
-	
+
 // process command line arguments
 	Cmd_StuffCmds_f ();
 	Cbuf_Execute ();
