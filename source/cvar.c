@@ -509,37 +509,42 @@ cvar_t *
 Cvar_Get (char *name, char *string, int cvarflags, char *description)
 {
 
-	cvar_t     *v;
+	cvar_t     *var;
 
 	if (Cmd_Exists (name)) {
 		Con_Printf ("Cvar_Get: %s is a command\n", name);
 		return NULL;
 	}
-	v = Cvar_FindVar (name);
-	if (!v) {
-		v = (cvar_t *) calloc (1, sizeof (cvar_t));
+	var = Cvar_FindVar (name);
+	if (!var) {
+		cvar_t    **v;
+		var = (cvar_t *) calloc (1, sizeof (cvar_t));
 
 		// Cvar doesn't exist, so we create it
-		v->next = cvar_vars;
-		cvar_vars = v;
-		v->name = strdup (name);
-		v->string = strdup (string);
-		v->flags = cvarflags;
-		v->description = description;
-		v->value = atof (v->string);
-		v->int_val = atoi (v->string);
-		sscanf (v->string, "%f %f %f",
-				&v->vec[0], &v->vec[1], &v->vec[2]);
-		Hash_Add (cvar_hash, v);
+		var->name = strdup (name);
+		var->string = strdup (string);
+		var->flags = cvarflags;
+		var->description = description;
+		var->value = atof (var->string);
+		var->int_val = atoi (var->string);
+		sscanf (var->string, "%f %f %f",
+				&var->vec[0], &var->vec[1], &var->vec[2]);
+		Hash_Add (cvar_hash, var);
+
+		for (v = &cvar_vars; *v; v = &(*v)->next)
+			if (strcmp ((*v)->name, var->name) >= 0)
+				break;
+		var->next = *v;
+		*v = var;
 	} else {
 		// Cvar does exist, so we update the flags and return.
-		v->flags &= ~CVAR_USER_CREATED;
-		v->flags |= cvarflags;
-		v->description = description;
+		var->flags &= ~CVAR_USER_CREATED;
+		var->flags |= cvarflags;
+		var->description = description;
 	}
-	Cvar_Info (v);
+	Cvar_Info (var);
 
-	return v;
+	return var;
 }
 
 /*

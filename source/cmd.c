@@ -618,6 +618,7 @@ void
 Cmd_AddCommand (char *cmd_name, xcommand_t function, char *description)
 {
 	cmd_function_t *cmd;
+	cmd_function_t **c;
 
 	if (host_initialized)				// because hunk allocation would get
 										// stomped
@@ -639,9 +640,12 @@ Cmd_AddCommand (char *cmd_name, xcommand_t function, char *description)
 	cmd->name = cmd_name;
 	cmd->function = function;
 	cmd->description = description;
-	cmd->next = cmd_functions;
-	cmd_functions = cmd;
 	Hash_Add (cmd_hash, cmd);
+	for (c = &cmd_functions; *c; c = &(*c)->next)
+		if (strcmp ((*c)->name, cmd->name) >=0)
+			break;
+	cmd->next = *c;
+	*c = cmd;
 }
 
 /*
