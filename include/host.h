@@ -29,7 +29,9 @@
 #ifndef _QUAKEDEF_H
 #define _QUAKEDEF_H
 
+#include "commdef.h"
 #include "gcc_attr.h"
+#include "qtypes.h"
 
 #define	QUAKE_GAME			// as opposed to utilities
 
@@ -39,26 +41,12 @@
 #pragma warning( disable : 4244 4127 4201 4214 4514 4305 4115 4018)
 #endif
 
-// FIXME: clean those includes -- yan
-
-#include <math.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <setjmp.h>
-#include <time.h>
-
-#include "qtypes.h"
-#include "cvar.h"
-#include "commdef.h"
-
 #define MAX_NUM_ARGVS	50
 
 extern qboolean noclip_anglehack;
 
-extern cvar_t	*sys_ticrate;
-extern cvar_t	*password;
+extern struct cvar_s	*sys_ticrate;
+extern struct cvar_s	*password;
 
 extern double	host_frametime;		// Tonik
 
@@ -66,8 +54,9 @@ extern byte		*host_basepal;
 extern byte		*host_colormap;
 extern int		host_framecount;	// incremented every frame, never reset
 
-extern qboolean	msg_suppress_1;		// Suppresses resolution and cache size console 
-									// output and fullscreen DIB focus gain/loss
+extern qboolean	msg_suppress_1;		// Suppresses resolution and cache size
+									// console output and fullscreen DIB focus
+									// gain/loss
 
 void Host_ServerFrame (void);
 void Host_InitCommands (void);
