@@ -1154,6 +1154,7 @@ dnl Output files
 AC_OUTPUT(
 	RPM/quakeforge.spec
 	RPM/build_rpm
+	debian/Makefile
 	doc/Makefile
 	doc/texinfo/Makefile
 	doc/man/Makefile

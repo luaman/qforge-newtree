@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 AUTOMAKE_OPTIONS= foreign
 
-SUBDIRS=	include source doc
+SUBDIRS=	include source debian doc
 
 EXTRA_DIST=	README.WIN newtree.dsw ChangeLog \
 		RPM/build_rpm.in RPM/quakeforge.spec.in \
