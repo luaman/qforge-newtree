@@ -584,8 +584,9 @@ PR_ExecuteProgram (func_t fnum)
 				}
 				ed = PROG_TO_EDICT (OPA->edict);
 				OPC->_int =
-					(byte *) ((int *) &ed->v + OPB->_int) -
-			(byte *) sv.edicts; break; case OP_LOAD_F:
+					(byte *) ((int *) &ed->v + OPB->_int) - (byte *) sv.edicts;
+				break;
+			case OP_LOAD_F:
 			case OP_LOAD_FLD:
 			case OP_LOAD_ENT:
 			case OP_LOAD_S:
