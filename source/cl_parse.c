@@ -40,6 +40,7 @@
 #include "msg.h"
 #include "pmove.h"
 #include "sbar.h"
+#include "teamplay.h"
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
@@ -1175,12 +1176,20 @@ void CL_ParseServerMessage (void)
 
 		case svc_print:
 			i = MSG_ReadByte ();
+			s = MSG_ReadString ();
 			if (i == PRINT_CHAT)
 			{
-				S_LocalSound ("misc/talk.wav");
+				// TODO: cl_nofake 2 -- accept fake messages from teammates
+				char *p;
+				if (cl_nofake->value) {
+					for (p = s; *p; p++)
+						if (*p == 13)
+							*p = '#';
+				}
 				con_ormask = 128;
+				S_LocalSound ("misc/talk.wav");
 			}
-			Con_Printf ("%s", MSG_ReadString ());
+			Con_Printf ("%s", s);
 			con_ormask = 0;
 			break;
 			

@@ -33,6 +33,7 @@
 #include "console.h"
 #include "cmd.h"
 #include "msg.h"
+#include "teamplay.h"
 
 #include <string.h>
 #ifdef HAVE_STRINGS_H
@@ -59,11 +60,31 @@ void Cmd_ForwardToServer (void)
 	if (cls.demoplayback)
 		return;		// not really connected
 
+
 	MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
 	SZ_Print (&cls.netchan.message, Cmd_Argv(0));
 	if (Cmd_Argc() > 1)
 	{
 		SZ_Print (&cls.netchan.message, " ");
+
+		if (!strcasecmp(Cmd_Argv(0), "say") ||
+			!strcasecmp(Cmd_Argv(0), "say_team"))
+		{
+			char		*s;
+			s = CL_ParseSay(Cmd_Args());
+			if (*s && *s < 32 && *s != 10)
+			{
+				// otherwise the server would eat leading characters
+				// less than 32 or greater than 127
+				SZ_Print (&cls.netchan.message, "\"");
+				SZ_Print (&cls.netchan.message, s);
+				SZ_Print (&cls.netchan.message, "\"");
+			}
+			else
+				SZ_Print (&cls.netchan.message, s);
+			return;
+		}
+
 		SZ_Print (&cls.netchan.message, Cmd_Args());
 	}
 }

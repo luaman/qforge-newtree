@@ -30,7 +30,10 @@
 
 extern cvar_t	*cl_deadbodyfilter;
 extern cvar_t	*cl_gibfilter;
+extern cvar_t	*cl_parsesay;
+extern cvar_t	*cl_nofake;
 
 // FIXME: prefix these with TP_ or Team_ ?
 void CL_InitTeamplay (void);
 void CL_BestWeaponImpulse (void);
+char *CL_ParseSay (char *);

@@ -34,6 +34,8 @@
 
 cvar_t	*cl_deadbodyfilter;
 cvar_t	*cl_gibfilter;
+cvar_t	*cl_parsesay;
+cvar_t	*cl_nofake;
 
 
 void CL_BestWeaponImpulse (void)
@@ -92,8 +94,55 @@ void CL_BestWeaponImpulse (void)
 }
 
 
+char *CL_ParseSay (char *s)
+{
+	static char	buf[1024];
+	int		i;
+	char	c;
+
+	if (!cl_parsesay->value)
+		return s;
+
+	i = 0;
+
+	while (*s && i < sizeof(buf)-1)
+	{
+		if (*s == '$')
+		{
+			c = 0;
+			switch (s[1])
+			{
+			case '\\': c = 13; break;	// fake message
+			case '[': c = 0x90; break;	// colored brackets
+			case ']': c = 0x91; break;
+			case 'G': c = 0x86; break;	// ocrana leds
+			case 'R': c = 0x87; break;
+			case 'Y': c = 0x88; break;
+			case 'B': c = 0x89; break;
+			}
+			
+			if (c)
+			{
+				buf[i++] = c;
+				s += 2;
+				continue;
+			}
+		}
+
+// TODO: parse team messages (%l, %a, %h, etc)
+
+		buf[i++] = *s++;
+	}
+	buf[i] = 0;
+
+	return	buf;
+}
+
+
 void CL_InitTeamplay (void)
 {
-	cl_deadbodyfilter = Cvar_Get("cl_deadbodyfilter", "0", CVAR_NONE, "None");
-	cl_gibfilter = Cvar_Get("cl_gibfilter", "0", CVAR_NONE, "None");
+	cl_deadbodyfilter = Cvar_Get("cl_deadbodyfilter", "0", CVAR_NONE, "Hide dead player models");
+	cl_gibfilter = Cvar_Get("cl_gibfilter", "0", CVAR_NONE, "Hide gibs");
+	cl_parsesay = Cvar_Get("cl_parsesay", "0", CVAR_NONE, "None");
+	cl_nofake = Cvar_Get("cl_nofake", "0", CVAR_NONE, "Unhide fake messages");
 }
