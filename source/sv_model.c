@@ -18,3 +18,13 @@ void
 R_InitSky(struct texture_s *mt)
 {
 }
+
+void
+Mod_LoadMMNearest(miptex_t *mx, texture_t	*tx)
+{
+}
+
+void
+GL_SubdivideSurface (msurface_t *fa)
+{
+}

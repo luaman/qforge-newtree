@@ -32,6 +32,8 @@
 
 #include "qwsvdef.h"
 
+extern int texture_mode;
+
 model_t	*loadmodel;
 char	loadname[32];	// for hunk tags
 
@@ -40,15 +42,18 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer);
 void Mod_LoadAliasModel (model_t *mod, void *buffer);
 model_t *Mod_LoadModel (model_t *mod, qboolean crash);
 void R_InitSky(struct texture_s *mt);
+void GL_SubdivideSurface (msurface_t *fa);
+void Mod_LoadMMNearest(miptex_t *mx, texture_t	*tx);
 
 byte	mod_novis[MAX_MAP_LEAFS/8];
 
-#define	MAX_MOD_KNOWN	256
+#define	MAX_MOD_KNOWN	512
 model_t	mod_known[MAX_MOD_KNOWN];
 int		mod_numknown;
 
 unsigned *model_checksum;
 texture_t *r_notexture_mip;
+cvar_t gl_subdivide_size = {"gl_subdivide_size", "128", true};
 
 /*
 ===============
@@ -57,6 +62,7 @@ Mod_Init
 */
 void Mod_Init (void)
 {
+	Cvar_RegisterVariable (&gl_subdivide_size);
 	memset (mod_novis, 0xff, sizeof(mod_novis));
 }
 
@@ -344,6 +350,10 @@ void Mod_LoadTextures (lump_t *l)
 
 		if (!Q_strncmp(mt->name,"sky",3))	
 			R_InitSky (tx);
+		else
+		{
+			Mod_LoadMMNearest(mt, tx);
+		}
 	}
 
 //
@@ -693,7 +703,7 @@ void CalcSurfaceExtents (msurface_t *s)
 
 		s->texturemins[i] = bmins[i] * 16;
 		s->extents[i] = (bmaxs[i] - bmins[i]) * 16;
-		if ( !(tex->flags & TEX_SPECIAL) && s->extents[i] > 256)
+		if ( !(tex->flags & TEX_SPECIAL) && s->extents[i] > 512 /* 256 */ )
 			SV_Error ("Bad surface extents");
 	}
 }
@@ -752,6 +762,9 @@ void Mod_LoadFaces (lump_t *l)
 		if (!Q_strncmp(out->texinfo->texture->name,"sky",3))	// sky
 		{
 			out->flags |= (SURF_DRAWSKY | SURF_DRAWTILED);
+#ifndef QUAKE2
+			GL_SubdivideSurface (out);	// cut up polygon for warps
+#endif
 			continue;
 		}
 		
@@ -763,6 +776,7 @@ void Mod_LoadFaces (lump_t *l)
 				out->extents[i] = 16384;
 				out->texturemins[i] = -8192;
 			}
+			GL_SubdivideSurface (out);	// cut up polygon for warps
 			continue;
 		}
 	}
@@ -840,6 +854,8 @@ void Mod_LoadLeafs (lump_t *l)
 	dleaf_t 	*in;
 	mleaf_t 	*out;
 	int			i, j, count, p;
+	//char		s[80];
+	qboolean	isnotmap = true;
 
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
@@ -849,7 +865,9 @@ void Mod_LoadLeafs (lump_t *l)
 
 	loadmodel->leafs = out;
 	loadmodel->numleafs = count;
-
+	//sprintf(s, "maps/%s.bsp", Info_ValueForKey(cl.serverinfo,"map"));
+	if (!strncmp("maps/", loadmodel->name,5))
+		isnotmap = false;
 	for ( i=0 ; i<count ; i++, in++, out++)
 	{
 		for (j=0 ; j<3 ; j++)
@@ -874,6 +892,18 @@ void Mod_LoadLeafs (lump_t *l)
 		
 		for (j=0 ; j<4 ; j++)
 			out->ambient_sound_level[j] = in->ambient_level[j];
+
+		// gl underwater warp
+		if (out->contents != CONTENTS_EMPTY)
+		{
+			for (j=0 ; j<out->nummarksurfaces ; j++)
+				out->firstmarksurface[j]->flags |= SURF_UNDERWATER;
+		}
+		if (isnotmap)
+		{
+			for (j=0 ; j<out->nummarksurfaces ; j++)
+				out->firstmarksurface[j]->flags |= SURF_DONTWARP;
+		}
 	}	
 }
 
@@ -1101,10 +1131,10 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 	for (i=0 ; i<sizeof(dheader_t)/4 ; i++)
 		((int *)header)[i] = LittleLong ( ((int *)header)[i]);
 
+	// checksum all of the map, except for entities
 	mod->checksum = 0;
 	mod->checksum2 = 0;
 
-	// checksum all of the map, except for entities
 	for (i = 0; i < HEADER_LUMPS; i++) {
 		if (i == LUMP_ENTITIES)
 			continue;
@@ -1155,11 +1185,12 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 		
 		mod->firstmodelsurface = bm->firstface;
 		mod->nummodelsurfaces = bm->numfaces;
-		mod->radius = RadiusFromBounds (mod->mins, mod->maxs);
-		
+
 		VectorCopy (bm->maxs, mod->maxs);
 		VectorCopy (bm->mins, mod->mins);
-	
+
+		mod->radius = RadiusFromBounds (mod->mins, mod->maxs);
+
 		mod->numleafs = bm->visleafs;
 
 		if (i < mod->numsubmodels-1)

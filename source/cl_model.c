@@ -87,6 +87,16 @@ void Mod_TouchModel (char *name)
 	}
 }
 
+void
+Mod_LoadMMNearest(miptex_t *mx, texture_t	*tx)
+{
+}
+
+void
+GL_SubdivideSurface (msurface_t *fa)
+{
+}
+
 /*
 ==============================================================================
 

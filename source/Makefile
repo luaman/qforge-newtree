@@ -75,6 +75,7 @@ SV_dependencies = $(patsubst %,%.d,$(basename $(SV_sources)))
 SV_objects = $(patsubst %.d,%.o,$(SV_dependencies))
 
 CL_SW_sources=\
+  cl_model.c \
   d_edge.c \
   d_fill.c \
   d_init.c \
@@ -134,7 +135,6 @@ CL_sources=\
   cl_main.c \
   cl_math.S \
   cl_misc.c \
-  cl_model.c \
   cl_parse.c \
   cl_pred.c \
   cl_tent.c \
