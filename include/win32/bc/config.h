@@ -47,7 +47,7 @@
 #define HAVE_VPRINTF
 
 /* Define as __inline if that's what the C compiler calls it.  */
-#undef inline
+#define inline __inline
 
 /* Define if you can safely include both <sys/time.h> and <time.h>.  */
 #undef TIME_WITH_SYS_TIME
