@@ -1,0 +1,23 @@
+Steps to compile standalone on win32 platforms with VC++.
+
+1) either: (reccommended)
+     download and install MGL for VC++. it is available from Scitech at
+     http://www.scitechsoft.com
+   
+     IMPORTANT: make sure you add the mgl include and lib paths to VC++'s
+     options in Tools->Options->Directories
+
+     // Tonik: latest MGL from Scitech seems to have a couple of bugs,
+     like F10 and alt keys not working :(
+
+   or:
+     if you don't feel like downloading the latest version of the MGL,
+     which is very highly recommended, you can get the scitech directory
+     from the q1source.zip file, rename the MGLLT.LIB file in it to
+     MGLFX.LIB, and put the appropriate paths into VC++'s options, as
+     above.
+
+2) Build the gas2masm Debug program first. all the other targets depend
+   on this one.
+
+3) Build the other targets.
