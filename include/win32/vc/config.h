@@ -227,6 +227,8 @@
 /* Define if you have the <sys/timeb.h> header file.  */
 #define HAVE_SYS_TIMEB_H 1
 
+#define HAVE_STRING_H
+
 /* Define if you have the <unistd.h> header file.  */
 #undef HAVE_UNISTD_H
 

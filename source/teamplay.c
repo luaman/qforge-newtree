@@ -301,14 +301,14 @@ Team_ParseSay (char *s)
 }
 
 void
-Team_Dead ()
+Team_Dead (void)
 {
 	died = true;
 	VectorCopy (cl.simorg, death_location);
 }
 
 void
-Team_NewMap ()
+Team_NewMap (void)
 {
 	char       *mapname, *t1, *t2;
 
@@ -348,7 +348,7 @@ Team_Init_Cvars (void)
  */
 
 void
-locs_markloc ()
+locs_markloc (void)
 {
 	vec3_t      loc;
 	char       *mapname, *t1;
@@ -406,7 +406,7 @@ locs_markloc ()
  * supports zgip files via zdumploc
  */
 void 
-locs_dumploc ()
+locs_dumploc (void)
 {
 	char       *mapname, *t1;
 	QFile      *locfd = 0;
@@ -459,7 +459,7 @@ locs_dumploc ()
  * removes a loc mark from memory and file
  */
 void
-locs_delloc ()
+locs_delloc (void)
 {
 	vec3_t      loc;
 	location_t *best = NULL, *cur;
@@ -511,7 +511,7 @@ locs_delloc ()
 }
 
 void
-Locs_Init ()
+Locs_Init (void)
 {
 	Cmd_AddCommand ("markloc", locs_markloc);
 	Cmd_AddCommand ("dumploc", locs_dumploc);

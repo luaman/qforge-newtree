@@ -671,7 +671,8 @@ DSOUND_LockBuffer(qboolean lockit)
 	static DWORD	*pbuf2;
 	HRESULT     	hresult;
 
-	if (!pDSBuf) return;
+	if (!pDSBuf)
+		return NULL;
 
 	if (lockit) {
 		reps = 0;
