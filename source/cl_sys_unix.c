@@ -241,9 +241,6 @@ int main (int c, char **v)
 
 	parms.basedir = BASEDIR;
 
-// caching is disabled by default, use -cachedir to enable
-//	parms.cachedir = cachedir;
-
 	noconinput = COM_CheckParm("-noconinput");
 	if (!noconinput)
 		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
