@@ -179,7 +179,10 @@ void R_ParticleExplosion (vec3_t org)
 {
 	int			i, j;
 	particle_t	*p;
-	
+
+	if (!gl_particles->value)
+		return;
+
 	for (i=0 ; i<1024 ; i++)
 	{
 		if (!free_particles)
@@ -224,6 +227,9 @@ void R_BlobExplosion (vec3_t org)
 	int			i, j;
 	particle_t	*p;
 	
+	if (!gl_particles->value)
+		return;
+
 	for (i=0 ; i<1024 ; i++)
 	{
 		if (!free_particles)
@@ -270,6 +276,9 @@ void R_RunParticleEffect (vec3_t org, vec3_t dir, int color, int count)
 	particle_t	*p;
 	int			scale;
 
+	if (!gl_particles->value)
+		return;
+
 	if (count > 130)
 		scale = 3;
 	else if (count > 20)
@@ -310,6 +319,9 @@ void R_LavaSplash (vec3_t org)
 	particle_t	*p;
 	float		vel;
 	vec3_t		dir;
+
+	if (!gl_particles->value)
+		return;
 
 	for (i=-16 ; i<16 ; i++)
 		for (j=-16 ; j<16 ; j++)
@@ -353,6 +365,9 @@ void R_TeleportSplash (vec3_t org)
 	float		vel;
 	vec3_t		dir;
 
+	if (!gl_particles->value)
+		return;
+
 	for (i=-16 ; i<16 ; i+=4)
 		for (j=-16 ; j<16 ; j+=4)
 			for (k=-24 ; k<32 ; k+=4)
@@ -389,6 +404,12 @@ void R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 	int			j;
 	particle_t	*p;
 
+	if (type == 0)
+		R_AddFire (start, end, ent);
+
+	if (!gl_particles->value)
+		return;
+	
 	VectorSubtract (end, start, vec);
 	len = VectorNormalize (vec);
 	while (len > 0)
@@ -438,7 +459,6 @@ void R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 		}
 		else if (type == 0)
 		{	// rocket trail
-			R_AddFire (start, end, ent);
 			p->ramp = (rand()&3);
 			p->color = ramp3[(int)p->ramp];
 			p->type = pt_fire;
@@ -497,7 +517,7 @@ void R_DrawParticles (void)
 	vec3_t			up, right;
 	float			scale;
 	qboolean		alphaTestEnabled;
-    
+
 	glBindTexture (GL_TEXTURE_2D, particletexture);
 	alphaTestEnabled = glIsEnabled(GL_ALPHA_TEST);
 	
@@ -748,7 +768,7 @@ R_DrawFire (fire_t *f)
 	for (i=0 ; i<3 ; i++)
 		vec[i] = f->origin[i] - vpn[i] * radius;
 	glVertex3fv (vec);
-	glColor3f (0.0, 0.0, 0.0);
+	glColor4f (0.0, 0.0, 0.0, 0.0);
 
 	// don't panic, this just draws a bubble...
 	for (i=16 ; i>=0 ; i--)
@@ -804,7 +824,7 @@ R_UpdateFires (void)
 }
 
 void
-R_FireColor_f(void)
+R_FireColor_f (void)
 {
 	int i;
 
