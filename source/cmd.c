@@ -595,7 +595,7 @@ void Cmd_TokenizeString (char *text)
 	while (1)
 	{
 // skip whitespace up to a /n
-		while (*text && *text <= ' ' && *text != '\n')
+		while (*text && *(unsigned char*)text <= ' ' && *text != '\n')
 		{
 			text++;
 		}
@@ -727,6 +727,86 @@ char *Cmd_CompleteCommand (char *partial)
 
 /*
 ============
+Cmd_ExpandVariables
+
+Expand $fov-like expressions
+FIXME: better handling of buffer overflows?
+============
+*/
+// dest must point to a 1024-byte buffer
+void Cmd_ExpandVariables (char *data, char *dest)
+{
+	unsigned int	c;
+	char	buf[1024];
+	int		i, len;
+	cvar_t	*var, *bestvar;
+	int		quotes = 0;
+
+	len = 0;
+
+// parse a regular word
+	while ( (c = *data) != 0)
+	{
+		if (c == '"')
+			quotes++;
+		if (c == '$' && !(quotes&1))
+		{
+			data++;
+
+			// Copy the text after '$' to a temp buffer
+			i = 0;
+			buf[0] = 0;
+			bestvar = NULL;
+			while ((c = *data) > 32)
+			{
+				if (c == '$')
+					break;
+				data++;
+				buf[i++] = c;
+				buf[i] = 0;
+				if ((var = Cvar_FindVar(buf)) != 0)
+					bestvar = var;
+				if (i >= sizeof(buf)-1)
+					break;
+			}
+
+			if (bestvar)
+			{
+				// check buffer size
+				if (len + strlen(bestvar->string) >= 1024-1)
+					break;
+
+				strcpy(&dest[len], bestvar->string);
+				len += strlen(bestvar->string);
+				i = strlen(bestvar->name);
+				while (buf[i])
+					dest[len++] = buf[i++];
+			}
+			else
+			{
+				// no matching cvar name was found
+				dest[len++] = '$';
+				if (len + strlen(buf) >= 1024-1)
+					break;
+				strcpy (&dest[len], buf);
+				len += strlen(buf);
+			}
+		}
+		else
+		{
+			dest[len] = c;
+			data++;
+			len++;
+			if (len >= 1024-1)
+				break;
+		}
+	};
+
+	dest[len] = 0;
+}
+
+/*
+============
 Cmd_ExecuteString
 
 A complete command line has been parsed, so try to execute it
@@ -737,8 +817,14 @@ void Cmd_ExecuteString (char *text)
 {
 	cmd_function_t	*cmd;
 	cmdalias_t		*a;
+	char			buf[1024];
 
+#if 0
 	Cmd_TokenizeString (text);
+#else
+	Cmd_ExpandVariables (text, buf);
+	Cmd_TokenizeString (buf);
+#endif
 
 // execute the command line
 	if (!Cmd_Argc())
@@ -844,11 +930,8 @@ Parse a token out of a string
 */
 char *COM_Parse (char *data)
 {
-	int		c;
+	unsigned int	c;
 	int		len;
-	char	buf[255];
-	int		i;
-	cvar_t	*var, *bestvar;
 	
 	len = 0;
 	com_token[0] = 0;
@@ -894,57 +977,11 @@ skipwhite:
 // parse a regular word
 	do
 	{
-		// FIXME: only check for $'s when parsing
-		// command-line text (not entity data!)
-		if (c == '$')
-		{
-			data++;
-
-			// Copy the text after '$' to a temp buffer
-			i = 0;
-			buf[0] = 0;
-			bestvar = NULL;
-			while ((c = *data) > 32)
-			{
-				if (c == '$')
-					break;
-				data++;
-				buf[i++] = c;
-				buf[i] = 0;
-				if ((var = Cvar_FindVar(buf)))
-					bestvar = var;
-			}
-
-			if (bestvar)
-			{
-				// check buffer size
-				if (len + strlen(bestvar->string) >= MAX_COM_TOKEN-1)
-					break;
-
-				strcpy(&com_token[len], bestvar->string);
-				len += strlen(bestvar->string);
-				i = strlen(bestvar->name);
-				while (buf[i])
-					com_token[len++] = buf[i++];
-			}
-			else
-			{
-				// no matching cvar name was found
-				com_token[len++] = '$';
-				if (len + strlen(buf) >= MAX_COM_TOKEN-1)
-					break;
-				strcpy (&com_token[len], buf);
-				len += strlen(buf);
-			}
-		}
-		else
-		{
-			com_token[len] = c;
-			data++;
-			len++;
-			if (len >= MAX_COM_TOKEN-1)
-				break;
-		}
+		com_token[len] = c;
+		data++;
+		len++;
+		if (len >= MAX_COM_TOKEN-1)
+			break;
 
 		c = *data;
 	} while (c>32);
