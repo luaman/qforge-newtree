@@ -685,7 +685,7 @@ Draw_ConsoleBackground (int lines)
 		ofs = (vid.conheight - lines) / (float) vid.conheight;
 
 	y = vid.height * scr_consize->value;
-	if (lines > y) {
+	if (cls.state != ca_active || lines > y) {
 		alpha = 1.0;
 	} else {
 		// set up to draw alpha console
