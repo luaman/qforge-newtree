@@ -71,7 +71,7 @@ server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c pr_offs.c sv_init.c sv_main.c \
 		$(world_ASM)
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
-qf_server_LDADD=	-L. -lqfsys_sv $(NET_LIBS) $(DL_LIBS)
+qf_server_LDADD=	-L. -lqfsys_sv $(NET_LIBS) $(Z_LIBS) $(DL_LIBS)
 qf_server_DEPENDENCIES= libqfsys_sv.a
 
 #
@@ -139,7 +139,7 @@ endif
 libqfjs_a_CFLAGS=	$(JOY_CFLAGS)
 EXTRA_libqfjs_a_SOURCES = joy_linux.c joy_null.c
 
-CLIENT_LIBS=	-L. -lqfsys_cl -lqfsnd -lqfcd -lqfjs $(SOUND_LIBS) $(NET_LIBS) $(JOY_LIBS)
+CLIENT_LIBS=	-L. -lqfsys_cl -lqfsnd -lqfcd -lqfjs $(SOUND_LIBS) $(NET_LIBS) $(JOY_LIBS) $(Z_LIBS)
 
 if ASM_ARCH
 client_ASM=	snd_mixa.S cl_math.S sys_x86.S

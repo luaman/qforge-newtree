@@ -195,7 +195,7 @@ if test "x$enable_zlib" != "xno"; then
      if test "x$HAVE_ZLIB" = "xyes"; then
         AC_CHECK_HEADER(zlib.h, HAVE_ZLIB=yes, HAVE_ZLIB=no)
         if test "x$HAVE_ZLIB" = "xyes"; then
-           LIBS="-lz $LIBS"
+           Z_LIBS="-lz"
            AC_DEFINE(HAVE_ZLIB)
         fi
      fi
@@ -982,6 +982,43 @@ if test "x$GCC" = xyes; then
    CFLAGS="$CFLAGS -Wall -Werror"
 #   CFLAGS="$CFLAGS -Wall -pedantic"
 fi
+
+dnl ==================================================================
+dnl Make sure we link against a working zlib
+dnl ==================================================================
+
+AC_MSG_CHECKING(for libz.a in X11)
+need_abs_libz=no
+for d in `echo $X_LIBS | sed -e 's/-L//'`; do
+  if test -f $d/libz.a; then
+	need_abs_libz=yes
+	break
+  fi
+done
+AC_MSG_RESULT($need_abs_libz)
+
+AC_ARG_WITH(libz,
+[  --with-libz=<path list> specify directories to search for zlib],
+zlib_paths="$withval", zlib_paths="")
+if test "x$need_abs_libz" = "xyes"; then
+  AC_MSG_CHECKING(for location of libz.a or libz.so)
+  zlib_location="unknown"
+  for d in $zlib_paths /usr/local/lib /usr/lib; do
+    for f in libz.so libz.a; do
+      if test -f $d/$f; then
+        zlib_location=$d/$f
+        break
+      fi
+    done
+  done
+  AC_MSG_RESULT($zlib_location)
+  if test "$zlib_location" = unknown; then
+    echo need to specify zlib location with --with-zlib
+    exit 1
+  fi
+  Z_LIBS="$zlib_location"
+fi
+AC_SUBST(Z_LIBS)
 
 dnl ==================================================================
 dnl Find out what to build and finish
