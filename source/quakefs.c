@@ -42,10 +42,8 @@
 #include "cvar.h"
 #include "commdef.h"
 #include "qendian.h"
-#if defined(QUAKEWORLD) && defined(SERVERONLY)
-#include "common_protocol.h"
+#include "info.h"
 #include "server.h"
-#endif
 
 #include <stdlib.h>
 #include <string.h>
@@ -56,7 +54,11 @@
 #include <fcntl.h>
 
 #include <dirent.h>
-#include <fnmatch.h>
+#ifdef HAVE_FNMATCH_H
+# include <fnmatch.h>
+#else
+# include "win32/fnmatch.h"
+#endif
 
 #ifdef WIN32
 #include <io.h>
@@ -68,17 +70,31 @@
 #include <limits.h>
 
 
+extern qboolean      is_server;
+
+
 /*
-All of Quake's data access is through a hierchal file system, but the contents of the file system can be transparently merged from several sources.
+All of Quake's data access is through a hierchal file system, but the
+contents of the file system can be transparently merged from several
+sources.
 
-The "base directory" is the path to the directory holding the quake.exe and all game directories.  The sys_* files pass this to host_init in quakeparms_t->basedir.  This can be overridden with the "-basedir" command line parm to allow code debugging in a different directory.  The base directory is
-only used during filesystem initialization.
+The "base directory" is the path to the directory holding the quake.exe
+and all game directories.  The sys_* files pass this to host_init in
+quakeparms_t->basedir.  This can be overridden with the "-basedir"
+command line parm to allow code debugging in a different directory.
+The base directory is only used during filesystem initialization.
 
-The "game directory" is the first tree on the search path and directory that all generated files (savegames, screenshots, demos, config files) will be saved to.  This can be overridden with the "-game" command line parameter.  The game directory can never be changed while quake is executing.  This is a precacution against having a malicious server instruct clients to write files over areas they shouldn't.
+The "game directory" is the first tree on the search path and directory
+that all generated files (savegames, screenshots, demos, config files)
+will be saved to.  This can be overridden with the "-game" command line
+parameter.  The game directory can never be changed while quake is
+executing.  This is a precacution against having a malicious server
+instruct clients to write files over areas they shouldn't.
 
-The "cache directory" is only used during development to save network bandwidth, especially over ISDN / T1 lines.  If there is a cache directory
-specified, when a file is found by the normal search path, it will be mirrored
-into the cache directory, then opened there.
+The "cache directory" is only used during development to save network
+bandwidth, especially over ISDN / T1 lines.  If there is a cache directory
+specified, when a file is found by the normal search path, it will be
+mirrored into the cache directory, then opened there.
 */
 
 /*
@@ -540,14 +556,14 @@ COM_LoadFile (char *path, int usehunk)
 		Sys_Error ("COM_LoadFile: not enough space for %s", path);
 
 	((byte *)buf)[len] = 0;
-#ifndef SERVERONLY
-	Draw_BeginDisc ();
-#endif
+	if (!is_server) {
+		Draw_BeginDisc();
+	}
 	Qread (h, buf, len);
 	Qclose (h);
-#ifndef SERVERONLY
-	Draw_EndDisc ();
-#endif
+	if (!is_server) {
+		Draw_EndDisc();
+	}
 
 	return buf;
 }
@@ -995,10 +1011,8 @@ COM_Gamedir (char *dir)
 
 	if (strcmp (dir, BASEGAME) == 0)
 		return;
-#ifdef QUAKEWORLD
 	if (strcmp (dir, "qw") == 0)
 		return;
-#endif
 
 	COM_AddGameDirectory (dir);
 }
@@ -1037,9 +1051,11 @@ void COM_Gamedir_f (void)
 	}
 
 	COM_Gamedir (dir);
-#if defined(QUAKEWORLD) && defined(SERVERONLY)
-	Info_SetValueForStarKey (svs.info, "*gamedir", dir, MAX_SERVERINFO_STRING);
-#endif
+
+	if (is_server) {
+		Info_SetValueForStarKey (svs.info, "*gamedir", dir,
+								 MAX_SERVERINFO_STRING);
+	}
 }
 
 /*
@@ -1048,10 +1064,6 @@ void COM_Gamedir_f (void)
 void
 COM_InitFilesystem ( void )
 {
-#ifdef UQUAKE
-	int		i;
-#endif
-
 	fs_basepath = Cvar_Get ("fs_basepath", FS_USERPATH, CVAR_ROM,
 			"the location of your game directories");
 	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH,
@@ -1067,13 +1079,7 @@ COM_InitFilesystem ( void )
 	if (rogue)
 		COM_AddGameDirectory ("rogue");
 
-#ifdef QUAKEWORLD
 	COM_AddGameDirectory ("qw");
-#elif UQUAKE
-	i = COM_CheckParm ("-game");
-	if (i && i < com_argc-1)
-		COM_AddGameDirectory (com_argv[i+1]);
-#endif
 
 	// any set gamedirs will be freed up to here
 	com_base_searchpaths = com_searchpaths;
