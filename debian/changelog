@@ -1,3 +1,9 @@
+quakeforge (0.2.99beta6-0) frozen unstable; urgency=low
+
+  * New upstream version
+
+ -- Jeff Teunissen <deek@dusknet.dhs.org>  Tue, 14 Nov 2000 03:28:03 -0500
+
 quakeforge (0.2.99alpha0-1) frozen unstable; urgency=low
 
   * New upstream release
@@ -5,7 +11,7 @@ quakeforge (0.2.99alpha0-1) frozen unstable; urgency=low
   * uquake-* targets dropped upstream, to be re-added in new package
   * New package quakeforge-common contains quakeforge.conf conffile
 
- -- Jeff Teunissen <deek@dusknet.dhs.org>  Fri, 22 Sep 2000 03:22:56 -0400
+ -- Jeff Teunissen <deek@dusknet.dhs.org>  Tue, 14 Nov 2000 03:26:04 -0500
 
 quakeforge (0.2-20000308-1) frozen unstable; urgency=low
 

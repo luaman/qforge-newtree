@@ -340,11 +340,11 @@ Shared_Init8bitPalette()
 	load_texture = (void *) dlsym(dlhand, "glColorTableEXT");
 #endif
 
-	Con_Printf("8-bit GL extensions enabled.\n");
-	glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
+	Con_Printf ("8-bit GL extensions enabled.\n");
+	glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
 	oldPalette = (char *) d_8to24table; //d_8to24table3dfx;
 	newPalette = thePalette;
-	for (i=0;i<256;i++) {
+	for (i = 0; i < 256; i++) {
 		*newPalette++ = *oldPalette++;
 		*newPalette++ = *oldPalette++;
 		*newPalette++ = *oldPalette++;
@@ -352,17 +352,17 @@ Shared_Init8bitPalette()
 	}
 	is8bit = true;
 
-	if (strstr(gl_renderer, "Mesa Glide")) {
+	if (strstr (gl_renderer, "Mesa Glide")) {
 #ifdef HAVE_TDFXGL
-		load_texture(GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
+		load_texture (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
 #endif
 	} else
-		glColorTable(GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
+		glColorTable (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
 }
 #endif
 
 void
-VID_Init8bitPalette(void)
+VID_Init8bitPalette (void)
 {
 	if (COM_CheckParm("-no8bit")) {
 		Con_Printf("disabled.\n");

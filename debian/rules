@@ -19,7 +19,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	[ -d CVS ] && tools/cvs2cl/cvs2cl.pl
+#	[ -d CVS ] && tools/cvs2cl/cvs2cl.pl
 	./bootstrap
 	./configure --prefix=/usr $(RETARGET) --bindir=/usr/games \
 		    --mandir=\$${prefix}/share/man \
@@ -34,6 +34,7 @@ build-stamp:
 
 	# Add here commands to compile the package.
 	$(MAKE)
+	$(MAKE) changelog
 
 	touch build-stamp
 
@@ -85,7 +86,7 @@ binary-arch: build install
 	dh_fixperms
 	# You may want to make some executables suid here.
 	chmod 4755 debian/qf-client-svga/usr/games/qf-client-svga
-#	chmod 4755 debian/qf-client-3dfx/usr/games/qf-client-3dfx
+	-chmod 4755 debian/qf-client-3dfx/usr/games/qf-client-3dfx
 	dh_suidregister
 	dh_installdeb
 	dh_shlibdeps
