@@ -29,8 +29,10 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#include <string.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
 
@@ -59,9 +61,12 @@ extern	model_t	*loadmodel;
 
 extern	int		skytexturenum;
 
-int		solidskytexture;
-int		alphaskytexture;
-float	speedscale;		// for top sky and bottom sky
+int			solidskytexture;
+int			alphaskytexture;
+float		speedscale;		// for top sky and bottom sky
+
+// Set to true if a valid skybox is loaded --KB
+qboolean	skyloaded = false;
 
 msurface_t	*warpface;
 
@@ -328,39 +333,6 @@ void EmitBothSkyLayers (msurface_t *fa)
 	glDisable (GL_BLEND);
 }
 
-#ifndef QUAKE2
-/*
-=================
-R_DrawSkyChain
-=================
-*/
-void R_DrawSkyChain (msurface_t *s)
-{
-	msurface_t	*fa;
-
-	GL_DisableMultitexture();
-
-	// used when gl_texsort is on
-	GL_Bind(solidskytexture);
-	speedscale = realtime*8;
-	speedscale -= (int)speedscale & ~127 ;
-
-	for (fa=s ; fa ; fa=fa->texturechain)
-		EmitSkyPolys (fa);
-
-	glEnable (GL_BLEND);
-	GL_Bind (alphaskytexture);
-	speedscale = realtime*16;
-	speedscale -= (int)speedscale & ~127 ;
-
-	for (fa=s ; fa ; fa=fa->texturechain)
-		EmitSkyPolys (fa);
-
-	glDisable (GL_BLEND);
-}
-
-#endif
-
 /*
 =================================================================
 
@@ -368,9 +340,6 @@ void R_DrawSkyChain (msurface_t *s)
 
 =================================================================
 */
-
-#ifdef QUAKE2
-
 
 #define	SKY_TEX		2000
 
@@ -381,23 +350,6 @@ void R_DrawSkyChain (msurface_t *s)
 
 =================================================================
 */
-
-typedef struct
-{
-    char	manufacturer;
-    char	version;
-    char	encoding;
-    char	bits_per_pixel;
-    unsigned short	xmin,ymin,xmax,ymax;
-    unsigned short	hres,vres;
-    unsigned char	palette[48];
-    char	reserved;
-    char	color_planes;
-    unsigned short	bytes_per_line;
-    unsigned short	palette_type;
-    char	filler[58];
-    unsigned 	data;			// unbounded
-} pcx_t;
 
 byte	*pcx_rgb;
 
@@ -523,6 +475,7 @@ void LoadTGA (FILE *fin)
 	int				columns, rows, numPixels;
 	byte			*pixbuf;
 	int				row, column;
+	unsigned char	red = 0, green = 0, blue = 0, alphabyte = 0;
 
 	targa_header.id_length = fgetc(fin);
 	targa_header.colormap_type = fgetc(fin);
@@ -559,7 +512,6 @@ void LoadTGA (FILE *fin)
 		for(row=rows-1; row>=0; row--) {
 			pixbuf = targa_rgba + row*columns*4;
 			for(column=0; column<columns; column++) {
-				unsigned char red,green,blue,alphabyte;
 				switch (targa_header.pixel_size) {
 					case 24:
 							
@@ -586,7 +538,7 @@ void LoadTGA (FILE *fin)
 		}
 	}
 	else if (targa_header.image_type==10) {   // Runlength encoded RGB images
-		unsigned char red,green,blue,alphabyte,packetHeader,packetSize,j;
+		unsigned char packetHeader, packetSize, j;
 		for(row=rows-1; row>=0; row--) {
 			pixbuf = targa_rgba + row*columns*4;
 			for(column=0; column<columns; ) {
@@ -672,20 +624,28 @@ R_LoadSkys
 ==================
 */
 char	*suf[6] = {"rt", "bk", "lf", "ft", "up", "dn"};
-void R_LoadSkys (void)
+void R_LoadSkys (char * skyname)
 {
 	int		i;
 	FILE	*f;
 	char	name[64];
 
+	if (stricmp (skyname, "none") == 0)
+	{
+		skyloaded = false;
+		return;
+	}
+
+	skyloaded = true;
 	for (i=0 ; i<6 ; i++)
 	{
 		GL_Bind (SKY_TEX + i);
-		sprintf (name, "gfx/env/bkgtst%s.tga", suf[i]);
+		sprintf (name, "env/%s%s.tga", skyname, suf[i]);
 		COM_FOpenFile (name, &f);
 		if (!f)
 		{
-			Con_Printf ("Couldn't load %s\n", name);
+			Con_DPrintf ("Couldn't load %s\n", name);
+			skyloaded = false;
 			continue;
 		}
 		LoadTGA (f);
@@ -700,6 +660,9 @@ void R_LoadSkys (void)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
+	if (!skyloaded)
+		Con_Printf ("Unable to load skybox %s, using normal sky\n",
+				skyname);
 }
 
 
@@ -933,21 +896,44 @@ void R_DrawSkyChain (msurface_t *s)
 	vec3_t	verts[MAX_CLIP_VERTS];
 	glpoly_t	*p;
 
-	c_sky = 0;
-	GL_Bind(solidskytexture);
-
-	// calculate vertex values for sky box
-
-	for (fa=s ; fa ; fa=fa->texturechain)
+	if (skyloaded)
 	{
-		for (p=fa->polys ; p ; p=p->next)
+		c_sky = 0;
+		GL_Bind(solidskytexture);
+
+		// calculate vertex values for sky box
+
+		for (fa=s ; fa ; fa=fa->texturechain)
 		{
-			for (i=0 ; i<p->numverts ; i++)
+			for (p=fa->polys ; p ; p=p->next)
 			{
-				VectorSubtract (p->verts[i], r_origin, verts[i]);
+				for (i=0 ; i<p->numverts ; i++)
+				{
+					VectorSubtract (p->verts[i], r_origin, verts[i]);
+				}
+				ClipSkyPolygon (p->numverts, verts[0], 0);
 			}
-			ClipSkyPolygon (p->numverts, verts[0], 0);
 		}
+	} else {
+		GL_DisableMultitexture();
+
+		// used when gl_texsort is on
+		GL_Bind(solidskytexture);
+		speedscale = realtime*8;
+		speedscale -= (int)speedscale & ~127 ;
+
+		for (fa=s ; fa ; fa=fa->texturechain)
+			EmitSkyPolys (fa);
+
+		glEnable (GL_BLEND);
+		GL_Bind (alphaskytexture);
+		speedscale = realtime*16;
+		speedscale -= (int)speedscale & ~127 ;
+
+		for (fa=s ; fa ; fa=fa->texturechain)
+			EmitSkyPolys (fa);
+
+		glDisable (GL_BLEND);
 	}
 }
 
@@ -1014,9 +1000,7 @@ R_DrawSkyBox
 int	skytexorder[6] = {0,2,1,3,4,5};
 void R_DrawSkyBox (void)
 {
-	int		i, j, k;
-	vec3_t	v;
-	float	s, t;
+	int		i;
 
 #if 0
 glEnable (GL_BLEND);
@@ -1052,8 +1036,6 @@ glEnable (GL_DEPTH_TEST);
 #endif
 }
 
-
-#endif
 
 //===============================================================
 
