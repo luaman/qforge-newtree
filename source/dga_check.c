@@ -39,10 +39,6 @@
 #ifdef HAVE_DGA
 # include <X11/extensions/xf86dga.h>
 # include <X11/extensions/xf86dgastr.h>
-#endif
-#ifdef HAVE_VIDMODE
-# include <X11/extensions/xf86vmode.h>
-# include <X11/extensions/xf86vmstr.h>
 # ifndef XDGA_MAJOR_VERSION
 #  ifdef XF86DGA_MAJOR_VERSION
 #   define XDGA_MAJOR_VERSION XF86DGA_MAJOR_VERSION
@@ -50,6 +46,10 @@
 #   error "Neither XDGA_MAJOR_VERSION nor XF86DGA_MAJOR_VERSION found."
 #  endif
 # endif
+#endif
+#ifdef HAVE_VIDMODE
+# include <X11/extensions/xf86vmode.h>
+# include <X11/extensions/xf86vmstr.h>
 #endif
 
 #include "console.h"
