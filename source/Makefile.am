@@ -177,7 +177,11 @@ endif
 libqfjs_a_CFLAGS=	$(JOY_CFLAGS)
 EXTRA_libqfjs_a_SOURCES= joy_linux.c joy_win.c joy_null.c
 
+if SYSTYPE_WIN32
 CLIENT_LIBS=	-L. -lqfnet -lqfsys_cl -lqfsnd -lqfcd -lqfjs $(SOUND_LIBS) $(NET_LIBS) $(CD_LIBS) $(JOY_LIBS) $(Z_LIBS)
+else
+CLIENT_LIBS=	-L. -lqfnet -lqfsnd -lqfcd -lqfjs $(SOUND_LIBS) $(NET_LIBS) $(CD_LIBS) $(JOY_LIBS) $(Z_LIBS)
+endif
 
 if ASM_ARCH
 client_ASM=	snd_mixa.S cl_math.S
