@@ -73,8 +73,8 @@
 extern    byte            *host_colormap;
 extern qboolean noclip_anglehack;
 
-static Display *dpy = NULL;
-static Window win;
+static Display *x_disp = NULL;
+static Window x_win;
 static GLXContext ctx = NULL;
 
 static float old_windowed_mouse = 0;
@@ -130,6 +130,39 @@ void D_BeginDirectRect (int x, int y, byte *pbitmap, int width, int height)
 
 void D_EndDirectRect (int x, int y, int width, int height)
 {
+}
+
+/*
+========================================================================
+Create an empty cursor
+========================================================================
+*/
+
+static Cursor	nullcursor = None;
+
+static Cursor
+CreateNullCursor(Display *display, Window root)
+{
+    Pixmap cursormask;
+    XGCValues xgc;
+    GC gc;
+    XColor dummycolour;
+
+	if (nullcursor != None) return nullcursor;
+
+	cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
+	xgc.function = GXclear;
+	gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
+	XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
+	dummycolour.pixel = 0;
+	dummycolour.red = 0;
+	dummycolour.flags = 04;
+	nullcursor = XCreatePixmapCursor(display, cursormask, cursormask,
+									 &dummycolour,&dummycolour, 0,0);
+	XFreePixmap(display,cursormask);
+	XFreeGC(display,gc);
+
+	return nullcursor;
 }
 
 static int XLateKey(XKeyEvent *ev)
@@ -264,42 +297,42 @@ static int XLateKey(XKeyEvent *ev)
 
 static void install_grabs(void)
 {
-	XGrabPointer(dpy, win,
+	XGrabPointer(x_disp, x_win,
 				 True,
 				 0,
 				 GrabModeAsync, GrabModeAsync,
-				 win,
+				 x_win,
 				 None,
 				 CurrentTime);
 
 #ifdef USE_DGA
-	XF86DGADirectVideo(dpy, DefaultScreen(dpy), XF86DGADirectMouse);
+	XF86DGADirectVideo(x_disp, DefaultScreen(x_disp), XF86DGADirectMouse);
 	dgamouse = 1;
 #else
-	XWarpPointer(dpy, None, win,
+	XWarpPointer(x_disp, None, x_win,
 				 0, 0, 0, 0,
 				 vid.width / 2, vid.height / 2);
 #endif
 
-	XGrabKeyboard(dpy, win,
+	XGrabKeyboard(x_disp, x_win,
 				  False,
 				  GrabModeAsync, GrabModeAsync,
 				  CurrentTime);
 
-//	XSync(dpy, True);
+//	XSync(x_disp, True);
 }
 
 static void uninstall_grabs(void)
 {
 #ifdef USE_DGA
-	XF86DGADirectVideo(dpy, DefaultScreen(dpy), 0);
+	XF86DGADirectVideo(x_disp, DefaultScreen(x_disp), 0);
 	dgamouse = 0;
 #endif
 
-	XUngrabPointer(dpy, CurrentTime);
-	XUngrabKeyboard(dpy, CurrentTime);
+	XUngrabPointer(x_disp, CurrentTime);
+	XUngrabKeyboard(x_disp, CurrentTime);
 
-//	XSync(dpy, True);
+//	XSync(x_disp, True);
 }
 
 static void GetEvent(void)
@@ -307,10 +340,10 @@ static void GetEvent(void)
 	XEvent event;
 	int b;
 
-	if (!dpy)
+	if (!x_disp)
 		return;
 
-	XNextEvent(dpy, &event);
+	XNextEvent(x_disp, &event);
 
 	switch (event.type) {
 	case KeyPress:
@@ -331,10 +364,10 @@ static void GetEvent(void)
 				mouse_y = (float) ((int)event.xmotion.y - (int)(vid.height/2));
 
 				/* move the mouse to the window center again */
-				XSelectInput(dpy, win, X_MASK & ~PointerMotionMask);
-				XWarpPointer(dpy, None, win, 0, 0, 0, 0, 
+				XSelectInput(x_disp, x_win, X_MASK & ~PointerMotionMask);
+				XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0, 
 					(vid.width/2), (vid.height/2));
-				XSelectInput(dpy, win, X_MASK);
+				XSelectInput(x_disp, x_win, X_MASK);
 			}
 		}
 		break;
@@ -380,10 +413,15 @@ static void GetEvent(void)
 
 void VID_Shutdown(void)
 {
-	if (!ctx)
-		return;
-
-	glXDestroyContext(dpy, ctx);
+	Con_Printf("VID_Shutdown\n");
+	if (ctx) {
+		glXDestroyContext(x_disp, ctx);
+	}
+	if (nullcursor != None) {
+		XFreeCursor(x_disp, nullcursor);
+		nullcursor = None;
+	}
+	XCloseDisplay(x_disp);
 }
 
 void signal_handler(int sig)
@@ -553,7 +591,7 @@ void GL_BeginRendering (int *x, int *y, int *width, int *height)
 void GL_EndRendering (void)
 {
 	glFlush();
-	glXSwapBuffers(dpy, win);
+	glXSwapBuffers(x_disp, x_win);
 }
 
 qboolean VID_Is8bit(void)
@@ -671,15 +709,15 @@ void VID_Init(unsigned char *palette)
 	if (vid.conheight < 200)
 		vid.conheight = 200;
 
-	if (!(dpy = XOpenDisplay(NULL))) {
+	if (!(x_disp = XOpenDisplay(NULL))) {
 		fprintf(stderr, "Error couldn't open the X display\n");
 		exit(1);
 	}
 
-	scrnum = DefaultScreen(dpy);
-	root = RootWindow(dpy, scrnum);
+	scrnum = DefaultScreen(x_disp);
+	root = RootWindow(x_disp, scrnum);
 
-	visinfo = glXChooseVisual(dpy, scrnum, attrib);
+	visinfo = glXChooseVisual(x_disp, scrnum, attrib);
 	if (!visinfo) {
 		fprintf(stderr, "qkHack: Error couldn't get an RGB, Double-buffered, Depth visual\n");
 		exit(1);
@@ -687,22 +725,26 @@ void VID_Init(unsigned char *palette)
 	/* window attributes */
 	attr.background_pixel = 0;
 	attr.border_pixel = 0;
-	attr.colormap = XCreateColormap(dpy, root, visinfo->visual, AllocNone);
+	attr.colormap = XCreateColormap(x_disp, root, visinfo->visual, AllocNone);
 	attr.event_mask = X_MASK;
 	mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
 
-	win = XCreateWindow(dpy, root, 0, 0, width, height,
+	x_win = XCreateWindow(x_disp, root, 0, 0, width, height,
 						0, visinfo->depth, InputOutput,
 						visinfo->visual, mask, &attr);
-	XMapWindow(dpy, win);
+	/* Invisible Cursor */
+	XDefineCursor(x_disp, x_win, CreateNullCursor(x_disp, x_win));
 
-	XMoveWindow(dpy, win, 0, 0);
+	/* Map the window */
+	XMapWindow(x_disp, x_win);
 
-	XFlush(dpy);
+	XMoveWindow(x_disp, x_win, 0, 0);
 
-	ctx = glXCreateContext(dpy, visinfo, NULL, True);
+	XFlush(x_disp);
 
-	glXMakeCurrent(dpy, win, ctx);
+	ctx = glXCreateContext(x_disp, visinfo, NULL, True);
+
+	glXMakeCurrent(x_disp, x_win, ctx);
 
 	scr_width = width;
 	scr_height = height;
@@ -736,8 +778,8 @@ void VID_Init(unsigned char *palette)
 
 void Sys_SendKeyEvents(void)
 {
-	if (dpy) {
-		while (XPending(dpy)) 
+	if (x_disp) {
+		while (XPending(x_disp)) 
 			GetEvent();
 	}
 }
