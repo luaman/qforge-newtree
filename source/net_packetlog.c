@@ -23,6 +23,9 @@
 		59 Temple Place - Suite 330
 		Boston, MA  02111-1307, USA
 
+	$Id$
+
+
 */
 
 // fixme: we did support Quake1 protocol too...
