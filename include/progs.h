@@ -109,18 +109,18 @@ int NUM_FOR_EDICT(progs_t *pr, edict_t *e);
 
 //============================================================================
 
-#define	G_FLOAT(p,o) ((p)->pr_globals[o])
-#define	G_INT(p,o) (*(int *)&(p)->pr_globals[o])
-#define	G_EDICT(p,o) ((edict_t *)((byte *)*(p)->edicts+ *(int *)&(p)->pr_globals[o]))
-#define G_EDICTNUM(p,o) NUM_FOR_EDICT(p,G_EDICT(p, o))
-#define	G_VECTOR(p,o) (&(p)->pr_globals[o])
-#define	G_STRING(p,o) (PR_GetString(pr,*(string_t *)&(p)->pr_globals[o]))
-#define	G_FUNCTION(p,o) (*(func_t *)&(p)->pr_globals[o])
+#define	G_FLOAT(p,o)	((p)->pr_globals[o])
+#define	G_INT(p,o)		(*(int *)&(p)->pr_globals[o])
+#define	G_EDICT(p,o)	((edict_t *)((byte *)*(p)->edicts+ *(int *)&(p)->pr_globals[o]))
+#define G_EDICTNUM(p,o)	NUM_FOR_EDICT(p,G_EDICT(p, o))
+#define	G_VECTOR(p,o)	(&(p)->pr_globals[o])
+#define	G_STRING(p,o)	(PR_GetString(pr,*(string_t *)&(p)->pr_globals[o]))
+#define	G_FUNCTION(p,o)	(*(func_t *)&(p)->pr_globals[o])
 
-#define	E_FLOAT(e,o) (((float*)&e->v)[o])
-#define	E_INT(e,o) (*(int *)&((float*)&e->v)[o])
-#define	E_VECTOR(e,o) (&((float*)&e->v)[o])
-#define	E_STRING(e,o) (PR_GetString(pr,*(string_t *)&((float*)&e->v)[o]))
+#define	E_FLOAT(e,o)	(((float*)&e->v)[o])
+#define	E_INT(e,o)		(*(int *)&((float*)&e->v)[o])
+#define	E_VECTOR(e,o)	(&((float*)&e->v)[o])
+#define	E_STRING(e,o)	(PR_GetString(pr,*(string_t *)&((float*)&e->v)[o]))
 
 extern	int		type_size[8];
 
