@@ -1,8 +1,8 @@
 /*
 	mdfour.c
 
-	an implementation of MD4 designed for use in the SMB authentication
-	protocol
+	An implementation of MD4 designed for use in the samba SMB
+	authentication protocol
 
 	Copyright (C) 1997-1998  Andrew Tridgell
 
@@ -204,79 +204,3 @@ void mdfour(unsigned char *out, unsigned char *in, int n)
 	mdfour_result(&md, out);
 }
 
-#ifdef TEST_MDFOUR
-static void file_checksum1(char *fname)
-{
-	int fd, i;
-	struct mdfour md;
-	unsigned char buf[64*1024], sum[16];
-
-	fd = open(fname,O_RDONLY);
-	if (fd == -1) {
-		perror("fname");
-		exit(1);
-	}
-
-	mdfour_begin(&md);
-
-	while (1) {
-		int n = read(fd, buf, sizeof(buf));
-		if (n <= 0) break;
-		mdfour_update(&md, buf, n);
-	}
-
-	close(fd);
-
-	mdfour_result(&md, sum);
-
-	for (i=0;i<16;i++)
-		printf("%02X", sum[i]);
-	printf("\n");
-}
-
-#if 0
-#include "../md4.h"
-
-static void file_checksum2(char *fname)
-{
-	int fd, i;
-	MDstruct md;
-	unsigned char buf[64], sum[16];
-
-	fd = open(fname,O_RDONLY);
-	if (fd == -1) {
-		perror("fname");
-		exit(1);
-	}
-
-	MDbegin(&md);
-
-	while (1) {
-		int n = read(fd, buf, sizeof(buf));
-		if (n <= 0) break;
-		MDupdate(&md, buf, n*8);
-	}
-
-	if (!md.done) {
-		MDupdate(&md, buf, 0);
-	}
-
-	close(fd);
-
-	memcpy(sum, md.buffer, 16);
-
-	for (i=0;i<16;i++)
-		printf("%02X", sum[i]);
-	printf("\n");
-}
-#endif
-
- int main(int argc, char *argv[])
-{
-	file_checksum1(argv[1]);
-#if 0
-	file_checksum2(argv[1]);
-#endif
-	return 0;
-}
-#endif

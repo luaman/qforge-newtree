@@ -3,8 +3,7 @@
 	
 	MD4-based checksum utility functions
 
-	Copyright (C) 1999,2000  contributors of the QuakeForge project
-	Please see the file "AUTHORS" for a list of contributors
+	Copyright (C) 2000       Jeff Teunissen <d2deek@pmail.net>
 
 	Author: Jeff Teunissen	<d2deek@pmail.net>
 	Date: 01 Jan 2000
@@ -48,3 +47,4 @@ void Com_BlockFullChecksum (void *buffer, int len, unsigned char *outbuf)
 {
 	mdfour ( outbuf, (unsigned char *) buffer, len );
 }
+
