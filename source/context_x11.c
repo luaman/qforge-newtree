@@ -376,7 +376,7 @@ x11_create_window (int width, int height)
 	aWMDelete = XInternAtom (x_disp, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols (x_disp, x_win, &aWMDelete, 1);
 
-	if (vid_fullscreen->int_val) {
+	if (vidmode_active && vid_fullscreen->int_val) {
 		XMoveWindow (x_disp, x_win, 0, 0);
 		XWarpPointer (x_disp, None, x_win, 0, 0, 0, 0,
 					  vid.width + 2, vid.height + 2);
@@ -384,7 +384,7 @@ x11_create_window (int width, int height)
 	}
 
 	XMapWindow (x_disp, x_win);
-	if (vid_fullscreen->int_val) {
+	if (vidmode_active && vid_fullscreen->int_val) {
 		XGrabPointer (x_disp, x_win, True, 0, GrabModeAsync, GrabModeAsync, x_win, None, CurrentTime);
 	}
 	XRaiseWindow (x_disp, x_win);
@@ -428,7 +428,7 @@ x11_force_view_port (void)
 #ifdef HAVE_VIDMODE
 	int         x, y;
 
-	if (vid_fullscreen->int_val) {
+	if (vidmode_active && vid_fullscreen->int_val) {
 		do {
 			XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
 			poll (0, 0, 50);
