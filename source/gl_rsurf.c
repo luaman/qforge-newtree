@@ -947,8 +947,8 @@ void R_DrawWorld (void)
 	// Be sure to clear the skybox --KB
 	R_DrawSky ();
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glDisable(GL_BLEND);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	R_RecursiveWorldNode (cl.worldmodel->nodes);
 
