@@ -541,7 +541,7 @@ void IN_Init (void)
 	// joystick variables
 /* 	Cvar_RegisterVariable (&in_joystick);
  CVAR_FIXME */
-	in_joystick = Cvar_Get("joystick", "0", CVAR_NONE, "None");
+	in_joystick = Cvar_Get("joystick", "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&joy_name);
  CVAR_FIXME */
 	joy_name = Cvar_Get("joyname",  "joystick", CVAR_NONE, "None");

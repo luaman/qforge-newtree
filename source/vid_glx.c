@@ -701,7 +701,7 @@ void VID_Init(unsigned char *palette)
 	gl_ztrick = Cvar_Get("gl_ztrick", "1", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable (&_windowed_mouse);
  CVAR_FIXME */
-	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_NONE, "None");
+	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
 	
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;

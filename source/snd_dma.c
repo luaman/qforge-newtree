@@ -221,7 +221,7 @@ void S_Init (void)
 	nosound = Cvar_Get("nosound",  "0", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable(&volume);
  CVAR_FIXME */
-	volume = Cvar_Get("volume",  "0.7", CVAR_NONE, "None");
+	volume = Cvar_Get("volume",  "0.7", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable(&precache);
  CVAR_FIXME */
 	precache = Cvar_Get("precache",  "1", CVAR_NONE, "None");
@@ -230,7 +230,7 @@ void S_Init (void)
 	loadas8bit = Cvar_Get("loadas8bit",  "0", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable(&bgmvolume);
  CVAR_FIXME */
-	bgmvolume = Cvar_Get("bgmvolume",  "1", CVAR_NONE, "None");
+	bgmvolume = Cvar_Get("bgmvolume",  "1", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable(&bgmbuffer);
  CVAR_FIXME */
 	bgmbuffer = Cvar_Get("bgmbuffer",  "4096", CVAR_NONE, "None");
@@ -248,7 +248,7 @@ void S_Init (void)
 	snd_show = Cvar_Get("snd_show",  "0", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable(&_snd_mixahead);
  CVAR_FIXME */
-	_snd_mixahead = Cvar_Get("_snd_mixahead",  "0.1", CVAR_NONE, "None");
+	_snd_mixahead = Cvar_Get("_snd_mixahead",  "0.1", CVAR_ARCHIVE, "None");
 
 	if (host_parms.memsize < 0x800000)
 	{

@@ -1190,10 +1190,10 @@ void CL_Init (void)
 	cl_upspeed = Cvar_Get("cl_upspeed", "200", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable (&cl_forwardspeed);
  CVAR_FIXME */
-	cl_forwardspeed = Cvar_Get("cl_forwardspeed", "200", CVAR_NONE, "None");
+	cl_forwardspeed = Cvar_Get("cl_forwardspeed", "200", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&cl_backspeed);
  CVAR_FIXME */
-	cl_backspeed = Cvar_Get("cl_backspeed", "200", CVAR_NONE, "None");
+	cl_backspeed = Cvar_Get("cl_backspeed", "200", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&cl_sidespeed);
  CVAR_FIXME */
 	cl_sidespeed = Cvar_Get("cl_sidespeed", "350", CVAR_NONE, "None");
@@ -1214,29 +1214,29 @@ void CL_Init (void)
 	cl_shownet = Cvar_Get("cl_shownet", "0", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable (&cl_sbar);
  CVAR_FIXME */
-	cl_sbar = Cvar_Get("cl_sbar",  "0", CVAR_NONE, "None");
+	cl_sbar = Cvar_Get("cl_sbar",  "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&cl_hudswap);
  CVAR_FIXME */
-	cl_hudswap = Cvar_Get("cl_hudswap",  "0", CVAR_NONE, "None");
+	cl_hudswap = Cvar_Get("cl_hudswap",  "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&cl_maxfps);
  CVAR_FIXME */
-	cl_maxfps = Cvar_Get("cl_maxfps",  "0", CVAR_NONE, "None");
+	cl_maxfps = Cvar_Get("cl_maxfps",  "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&cl_timeout);
  CVAR_FIXME */
-	cl_timeout = Cvar_Get("cl_timeout",  "60", CVAR_NONE, "None");
+	cl_timeout = Cvar_Get("cl_timeout",  "60", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&lookspring);
  CVAR_FIXME */
-	lookspring = Cvar_Get("lookspring", "0", CVAR_NONE, "None");
+	lookspring = Cvar_Get("lookspring", "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&lookstrafe);
  CVAR_FIXME */
-	lookstrafe = Cvar_Get("lookstrafe", "0", CVAR_NONE, "None");
+	lookstrafe = Cvar_Get("lookstrafe", "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&sensitivity);
  CVAR_FIXME */
-	sensitivity = Cvar_Get("sensitivity", "3", CVAR_NONE, "None");
+	sensitivity = Cvar_Get("sensitivity", "3", CVAR_ARCHIVE, "None");
 
 /* 	Cvar_RegisterVariable (&m_pitch);
  CVAR_FIXME */
-	m_pitch = Cvar_Get("m_pitch", "0.022", CVAR_NONE, "None");
+	m_pitch = Cvar_Get("m_pitch", "0.022", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&m_yaw);
  CVAR_FIXME */
 	m_yaw = Cvar_Get("m_yaw", "0.022", CVAR_NONE, "None");
@@ -1283,34 +1283,34 @@ void CL_Init (void)
 	//
 /* 	Cvar_RegisterVariable (&name);
  CVAR_FIXME */
-	name = Cvar_Get("name", "unnamed", CVAR_NONE, "None");
+	name = Cvar_Get("name", "unnamed", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
 /* 	Cvar_RegisterVariable (&password);
  CVAR_FIXME */
-	password = Cvar_Get("password",  "", CVAR_NONE, "None");
+	password = Cvar_Get("password",  "", CVAR_SERVERINFO|CVAR_USERINFO, "None");
 /* 	Cvar_RegisterVariable (&spectator);
  CVAR_FIXME */
-	spectator = Cvar_Get("spectator",  "", CVAR_NONE, "None");
+	spectator = Cvar_Get("spectator",  "", CVAR_SERVERINFO|CVAR_USERINFO, "None");
 /* 	Cvar_RegisterVariable (&skin);
  CVAR_FIXME */
-	skin = Cvar_Get("skin", "", CVAR_NONE, "None");
+	skin = Cvar_Get("skin", "", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
 /* 	Cvar_RegisterVariable (&team);
  CVAR_FIXME */
-	team = Cvar_Get("team", "", CVAR_NONE, "None");
+	team = Cvar_Get("team", "", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
 /* 	Cvar_RegisterVariable (&topcolor);
  CVAR_FIXME */
-	topcolor = Cvar_Get("topcolor", "0", CVAR_NONE, "None");
+	topcolor = Cvar_Get("topcolor", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
 /* 	Cvar_RegisterVariable (&bottomcolor);
  CVAR_FIXME */
-	bottomcolor = Cvar_Get("bottomcolor", "0", CVAR_NONE, "None");
+	bottomcolor = Cvar_Get("bottomcolor", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
 /* 	Cvar_RegisterVariable (&rate);
  CVAR_FIXME */
-	rate = Cvar_Get("rate", "2500", CVAR_NONE, "None");
+	rate = Cvar_Get("rate", "2500", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
 /* 	Cvar_RegisterVariable (&msg);
  CVAR_FIXME */
-	msg = Cvar_Get("msg", "1", CVAR_NONE, "None");
+	msg = Cvar_Get("msg", "1", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
 /* 	Cvar_RegisterVariable (&noaim);
  CVAR_FIXME */
-	noaim = Cvar_Get("noaim", "0", CVAR_NONE, "None");
+	noaim = Cvar_Get("noaim", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
 
 
 	Cmd_AddCommand ("version", CL_Version_f);

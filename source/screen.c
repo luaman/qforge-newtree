@@ -423,7 +423,7 @@ void SCR_InitCvars (void)
 	scr_fov = Cvar_Get("fov", "90", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable (&scr_viewsize);
  CVAR_FIXME */
-	scr_viewsize = Cvar_Get("viewsize", "100", CVAR_NONE, "None");
+	scr_viewsize = Cvar_Get("viewsize", "100", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&scr_conspeed);
  CVAR_FIXME */
 	scr_conspeed = Cvar_Get("scr_conspeed", "300", CVAR_NONE, "None");

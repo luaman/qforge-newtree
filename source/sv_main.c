@@ -1455,28 +1455,28 @@ void SV_InitLocal (void)
 	timelimit = Cvar_Get("timelimit", "0", CVAR_NONE|CVAR_USERINFO|CVAR_SERVERINFO, "None");
 /* 	Cvar_RegisterVariable (&teamplay);
  CVAR_FIXME */
-	teamplay = Cvar_Get("teamplay", "0", CVAR_NONE|CVAR_USERINFO|CVAR_SERVERINFO, "None");
+	teamplay = Cvar_Get("teamplay", "0", CVAR_USERINFO|CVAR_SERVERINFO, "None");
 /* 	Cvar_RegisterVariable (&samelevel);
  CVAR_FIXME */
-	samelevel = Cvar_Get("samelevel", "0", CVAR_NONE, "None");
+	samelevel = Cvar_Get("samelevel", "0", CVAR_USERINFO|CVAR_SERVERINFO, "None");
 /* 	Cvar_RegisterVariable (&maxclients);
  CVAR_FIXME */
-	maxclients = Cvar_Get("maxclients", "8", CVAR_NONE, "None");
+	maxclients = Cvar_Get("maxclients", "8", CVAR_USERINFO|CVAR_SERVERINFO, "None");
 /* 	Cvar_RegisterVariable (&maxspectators);
  CVAR_FIXME */
-	maxspectators = Cvar_Get("maxspectators", "8", CVAR_NONE, "None");
+	maxspectators = Cvar_Get("maxspectators", "8", CVAR_USERINFO|CVAR_SERVERINFO, "None");
 /* 	Cvar_RegisterVariable (&hostname);
  CVAR_FIXME */
-	hostname = Cvar_Get("hostname", "unnamed", CVAR_NONE, "None");
+	hostname = Cvar_Get("hostname", "unnamed", CVAR_USERINFO|CVAR_SERVERINFO, "None");
 /* 	Cvar_RegisterVariable (&deathmatch);
  CVAR_FIXME */
-	deathmatch = Cvar_Get("deathmatch", "1", CVAR_NONE, "None");
+	deathmatch = Cvar_Get("deathmatch", "1", CVAR_USERINFO|CVAR_SERVERINFO, "None");
 /* 	Cvar_RegisterVariable (&spawn);
  CVAR_FIXME */
-	spawn = Cvar_Get("spawn", "0", CVAR_NONE, "None");
+	spawn = Cvar_Get("spawn", "0", CVAR_USERINFO|CVAR_SERVERINFO, "None");
 /* 	Cvar_RegisterVariable (&watervis);
  CVAR_FIXME */
-	watervis = Cvar_Get("watervis",  "0", CVAR_NONE, "None");
+	watervis = Cvar_Get("watervis",  "0", CVAR_USERINFO|CVAR_SERVERINFO, "None");
 
 /* 	Cvar_RegisterVariable (&developer);
  CVAR_FIXME */

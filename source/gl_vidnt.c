@@ -1631,28 +1631,28 @@ void	VID_Init (unsigned char *palette)
 	vid_wait = Cvar_Get("vid_wait", "0", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable (&vid_nopageflip);
  CVAR_FIXME */
-	vid_nopageflip = Cvar_Get("vid_nopageflip", "0", CVAR_NONE, "None");
+	vid_nopageflip = Cvar_Get("vid_nopageflip", "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&_vid_wait_override);
  CVAR_FIXME */
-	_vid_wait_override = Cvar_Get("_vid_wait_override",  "0", CVAR_NONE, "None");
+	_vid_wait_override = Cvar_Get("_vid_wait_override",  "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&_vid_default_mode);
  CVAR_FIXME */
-	_vid_default_mode = Cvar_Get("_vid_default_mode", "0", CVAR_NONE, "None");
+	_vid_default_mode = Cvar_Get("_vid_default_mode", "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&_vid_default_mode_win);
  CVAR_FIXME */
-	_vid_default_mode_win = Cvar_Get("_vid_default_mode_win", "3", CVAR_NONE, "None");
+	_vid_default_mode_win = Cvar_Get("_vid_default_mode_win", "3", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&vid_config_x);
  CVAR_FIXME */
-	vid_config_x = Cvar_Get("vid_config_x", "800", CVAR_NONE, "None");
+	vid_config_x = Cvar_Get("vid_config_x", "800", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&vid_config_y);
  CVAR_FIXME */
-	vid_config_y = Cvar_Get("vid_config_y", "600", CVAR_NONE, "None");
+	vid_config_y = Cvar_Get("vid_config_y", "600", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&vid_stretch_by_2);
  CVAR_FIXME */
-	vid_stretch_by_2 = Cvar_Get("vid_stretch_by_2", "1", CVAR_NONE, "None");
+	vid_stretch_by_2 = Cvar_Get("vid_stretch_by_2", "1", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&_windowed_mouse);
  CVAR_FIXME */
-	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_NONE, "None");
+	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&gl_ztrick);
  CVAR_FIXME */
 	gl_ztrick = Cvar_Get("gl_ztrick", "1", CVAR_NONE, "None");

@@ -822,7 +822,7 @@ void IN_Init(void)
 {
 /* 	Cvar_RegisterVariable (&_windowed_mouse);
  CVAR_FIXME */
-	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_NONE, "None");
+	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&m_filter);
  CVAR_FIXME */
 	m_filter = Cvar_Get("m_filter", "0", CVAR_NONE, "None");

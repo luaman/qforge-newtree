@@ -973,16 +973,16 @@ void V_Init (void)
 	v_idlescale = Cvar_Get("v_idlescale",  "0", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable (&crosshaircolor);
  CVAR_FIXME */
-	crosshaircolor = Cvar_Get("crosshaircolor",  "79", CVAR_NONE, "None");
+	crosshaircolor = Cvar_Get("crosshaircolor",  "79", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&crosshair);
  CVAR_FIXME */
-	crosshair = Cvar_Get("crosshair",  "0", CVAR_NONE, "None");
+	crosshair = Cvar_Get("crosshair",  "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&cl_crossx);
  CVAR_FIXME */
-	cl_crossx = Cvar_Get("cl_crossx",  "0", CVAR_NONE, "None");
+	cl_crossx = Cvar_Get("cl_crossx",  "0", CVAR_ARCHIVE, "None");
 /* 	Cvar_RegisterVariable (&cl_crossy);
  CVAR_FIXME */
-	cl_crossy = Cvar_Get("cl_crossy",  "0", CVAR_NONE, "None");
+	cl_crossy = Cvar_Get("cl_crossy",  "0", CVAR_ARCHIVE, "None");
 
 /* 	Cvar_RegisterVariable (&cl_rollspeed);
  CVAR_FIXME */
