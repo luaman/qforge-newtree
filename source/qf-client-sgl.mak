@@ -173,7 +173,7 @@ DEPEND = \
    $(OBJS)\gl_rmisc.obj\
    $(OBJS)\gl_rmain.obj\
    $(OBJS)\gl_rlight.obj\
-   $(OBJS)\gl_refrag.obj\
+   $(OBJS)\r_efrag.obj\
    $(OBJS)\gl_ngraph.obj\
    $(OBJS)\gl_mesh.obj\
    $(OBJS)\gl_warp.obj\
@@ -272,7 +272,7 @@ $(OBJS)\gl_rsurf.obj+
 $(OBJS)\gl_rmisc.obj+
 $(OBJS)\gl_rmain.obj+
 $(OBJS)\gl_rlight.obj+
-$(OBJS)\gl_refrag.obj+
+$(OBJS)\r_efrag.obj+
 $(OBJS)\gl_ngraph.obj+
 $(OBJS)\gl_mesh.obj+
 $(OBJS)\gl_warp.obj+
@@ -505,9 +505,9 @@ $(OBJS)\gl_rlight.obj :  $(QFROOT)\source\gl_rlight.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_rlight.c
 |
 
-$(OBJS)\gl_refrag.obj :  $(QFROOT)\source\gl_refrag.c
+$(OBJS)\r_efrag.obj :  $(QFROOT)\source\r_efrag.c
   $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_refrag.c
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\r_efrag.c
 |
 
 $(OBJS)\gl_ngraph.obj :  $(QFROOT)\source\gl_ngraph.c
