@@ -6,7 +6,7 @@ if [ $# -eq 0 ]; then
 fi
 
 for pakfile in $*; do
-	[ -f ${pakfile} ] || echo ${pakfile} not found && continue
+	if [ ! -f ${pakfile} ]; then echo ${pakfile} not found; continue; fi
 	[ "${pakfile#/}" = "${pakfile}" ] && pakfile=`pwd`/${pakfile}
 
 	tmp=/var/tmp/zpak.$$
