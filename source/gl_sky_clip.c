@@ -673,6 +673,7 @@ R_DrawSkyChain (msurface_t *sky_chain)
 			sc = sc->texturechain;
 		}
 	}
+	glColor3ubv (lighthalf_v);
 #if 0
 	glDisable (GL_TEXTURE_2D);
 	sc = sky_chain;
