@@ -79,6 +79,8 @@ QF_glColorTableEXT	qglColorTableEXT = NULL;
 qboolean			is8bit = false;
 cvar_t				*vid_use8bit;
 
+extern int gl_filter_min, gl_filter_max;
+
 /*-----------------------------------------------------------------------*/
 
 /*
@@ -223,10 +225,8 @@ GL_Init_Common (void)
 
 	glShadeModel (GL_FLAT);
 
-//	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // DESPAIR: was GL_LINEAR
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 

@@ -93,8 +93,8 @@ int         gl_lightmap_format = 4;
 int         gl_solid_format = 3;
 int         gl_alpha_format = 4;
 
-static int  gl_filter_min = GL_LINEAR_MIPMAP_LINEAR;
-static int  gl_filter_max = GL_LINEAR;
+int  gl_filter_min = GL_LINEAR;
+int  gl_filter_max = GL_LINEAR;
 
 
 typedef struct {
@@ -478,14 +478,9 @@ Draw_Init (void)
 	cs_texture = GL_LoadTexture ("crosshair", 8, 8, cs_data, false, true, 1);
 //  char_texture = GL_LoadTexture ("charset", 128, 128, draw_chars, false, true, 1);    // 1999-12-27 Conwidth/height charset fix by TcT
 
-	if (gl_picmip)
-	{
-		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	} else {
-		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
+		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+
 	// save a texture slot for translated picture
 	translate_texture = texture_extension_number++;
 
@@ -509,7 +504,6 @@ Draw_Init (void)
 void
 Draw_Init_Cvars (void)
 {
-	// LordHavoc: lighting mode
 	gl_lightmode = Cvar_Get ("gl_lightmode", "1", CVAR_ARCHIVE,
 							 "Lighting mode (0 = GLQuake style, 1 = new style)");
 
@@ -520,7 +514,6 @@ Draw_Init_Cvars (void)
 	gl_colorlights = Cvar_Get ("gl_colorlights", "1", CVAR_ROM,
 							   "Whether to use RGB lightmaps or not");
 
-	// Console effects  --KB
 	gl_constretch = Cvar_Get ("gl_constretch", "0", CVAR_ARCHIVE,
 							  "whether slide the console or stretch it");
 	gl_conalpha = Cvar_Get ("gl_conalpha", "0.6", CVAR_ARCHIVE,
@@ -757,8 +750,8 @@ Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte * translation)
 	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 64, 64, 0, GL_RGBA,
 				  GL_UNSIGNED_BYTE, trans);
 
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 
 	if (lighthalf)
 		glColor3f (0.4, 0.4, 0.4);
@@ -1190,10 +1183,13 @@ GL_Upload32 (unsigned int *data, int width, int height, qboolean mipmap,
 		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	} else {
 		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_max);
-		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+		if (gl_picmip->int_val)
+			glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		else
+			glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
 
-	free (scaled);
+		free (scaled);
 }
 
 /*
