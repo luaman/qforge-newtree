@@ -118,6 +118,7 @@ cvar_t	*fs_userpath;
 cvar_t	*fs_sharepath;
 cvar_t	*fs_basegame;
 
+quakeparms_t host_parms;
 
 int com_filesize;
 
