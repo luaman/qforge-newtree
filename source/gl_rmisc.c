@@ -512,28 +512,34 @@ R_TimeRefresh_f
 For program optimization
 ====================
 */
+// LordHavoc: improved appearance and accuracy of timerefresh
 void R_TimeRefresh_f (void)
 {
 	int			i;
-	float		start, stop, time;
+	double		start, stop, time;
 
-	glDrawBuffer  (GL_FRONT);
+//	glDrawBuffer  (GL_FRONT);
 	glFinish ();
+	GL_EndRendering ();
 
 	start = Sys_DoubleTime ();
 	for (i=0 ; i<128 ; i++)
 	{
+		GL_BeginRendering();
 		r_refdef.viewangles[1] = i/128.0*360.0;
 		R_RenderView ();
+		glFinish ();
+		GL_EndRendering ();
 	}
 
-	glFinish ();
+//	glFinish ();
 	stop = Sys_DoubleTime ();
 	time = stop-start;
 	Con_Printf ("%f seconds (%f fps)\n", time, 128/time);
 
-	glDrawBuffer  (GL_BACK);
-	GL_EndRendering ();
+//	glDrawBuffer  (GL_BACK);
+//	GL_EndRendering ();
+	GL_BeginRendering();
 }
 
 void D_FlushCaches (void)

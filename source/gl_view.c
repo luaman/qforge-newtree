@@ -101,13 +101,15 @@ V_CalcBlend (void)
 		a = 1.0 - a3;
 	}
 
-	if (a > 1.0)
+	// LordHavoc: saturate color
+	if (a)
 	{
 		a2 = 1.0 / a;
 		r *= a2;
 		g *= a2;
 		b *= a2;
-		a = 1.0;
+		if (a > 1) // clamp alpha blend too
+			a = 1;
 	}
 
 	v_blend[0] = min(r, 255.0)/255.0;

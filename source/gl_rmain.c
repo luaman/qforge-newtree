@@ -371,13 +371,8 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 	verts += posenum * paliashdr->poseverts;
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
 
-        if (modelalpha != 1.0)
-	{
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	if (modelalpha != 1.0)
 		glEnable(GL_BLEND);
-		glDepthMask(0);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	}
 
 	while (1)
 	{
@@ -401,14 +396,9 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 
 			// normals and vertexes come from the frame list
 			l = shadedots[verts->lightnormalindex] * shadelight;
-                     
-// Ender: Test (Colormod) [QSG Begin]
-                        if (modelalpha) {
-                           glColor4f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l, modelalpha);
-                        } else {
-                           glColor3f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l);
-                        }
-// Ender: Test (Colormod) [QSG End]
+
+			// LordHavoc: cleanup after Endy
+			glColor4f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l, modelalpha);
 
 			glVertex3f (verts->v[0], verts->v[1], verts->v[2]);
 			verts++;
@@ -417,12 +407,8 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 		glEnd ();
 	}
 
-        if (modelalpha != 1.0) {
-         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // normal alpha blend
-         glDisable(GL_BLEND);
-         glDepthMask(1);
-         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-        }
+	if (modelalpha != 1.0)
+		glDepthMask(1);
 }
 
 
@@ -546,6 +532,10 @@ void R_DrawAliasModel (entity_t *e)
 	if (R_CullBox (mins, maxs))
 		return;
 
+	// FIXME: shadecolor is supposed to be the lighting for the model, not just colormod
+	shadecolor[0] = currententity->colormod[0];
+	shadecolor[1] = currententity->colormod[1];
+	shadecolor[2] = currententity->colormod[2];
 
 	VectorCopy (currententity->origin, r_entorigin);
 	VectorSubtract (r_origin, r_entorigin, modelorg);
@@ -569,7 +559,8 @@ void R_DrawAliasModel (entity_t *e)
 							dist);
 			add = (cl_dlights[lnum].radius * cl_dlights[lnum].radius * 8) / (Length(dist) * Length(dist)); // FIXME Deek
 
-			if (add > 0) {
+			if (add > 0)
+			{
 				ambientlight += add;
 				//ZOID models should be affected by dlights as well
 				shadelight += add;
@@ -584,11 +575,12 @@ void R_DrawAliasModel (entity_t *e)
 		shadelight = 192 - ambientlight;
 
 	// ZOID: never allow players to go totally black
-	if (!strcmp(clmodel->name, "progs/player.mdl")) {
+	if (!strcmp(clmodel->name, "progs/player.mdl"))
+	{
 		if (ambientlight < 8)
 			ambientlight = shadelight = 8;
-
-	} else if (!strcmp (clmodel->name, "progs/flame2.mdl")
+	}
+	else if (!strcmp (clmodel->name, "progs/flame2.mdl")
 		|| !strcmp (clmodel->name, "progs/flame.mdl") )
 		// HACK HACK HACK -- no fullbright colors, so make torches full light
 		ambientlight = shadelight = 256;
@@ -618,11 +610,14 @@ void R_DrawAliasModel (entity_t *e)
 	glPushMatrix ();
 	R_RotateForEntity (e);
 
-	if (!strcmp (clmodel->name, "progs/eyes.mdl") ) {
+	if (!strcmp (clmodel->name, "progs/eyes.mdl") )
+	{
 		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2] - (22 + 8));
 	// double size of eyes, since they are really hard to see in gl
 		glScalef (paliashdr->scale[0]*2, paliashdr->scale[1]*2, paliashdr->scale[2]*2);
-	} else {
+	}
+	else
+	{
 		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
 		glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
 	}
@@ -635,7 +630,8 @@ void R_DrawAliasModel (entity_t *e)
 	if (currententity->scoreboard && !gl_nocolors->value)
 	{
 		i = currententity->scoreboard - cl.players;
-		if (!currententity->scoreboard->skin) {
+		if (!currententity->scoreboard->skin)
+		{
 			Skin_Find(currententity->scoreboard);
 			R_TranslatePlayerSkin(i);
 		}
@@ -684,45 +680,35 @@ void R_DrawEntitiesOnList (void)
 
 	if (!r_drawentities->value)
 		return;
-        // Ender (Extend)
-        modelalpha    = currententity->alpha;
-        shadecolor[0] = currententity->colormod[0];
-        shadecolor[1] = currententity->colormod[1];
-        shadecolor[2] = currententity->colormod[2];
 
-	// draw sprites seperately, because of alpha blending
+	// LordHavoc: split into 3 loops to simplify state changes
 	for (i=0 ; i<cl_numvisedicts ; i++)
 	{
+		if (cl_visedicts[i].model->type != mod_brush)
+			continue;
 		currententity = &cl_visedicts[i];
+		modelalpha    = currententity->alpha;
 
-		switch (currententity->model->type)
-		{
-		case mod_alias:
-			R_DrawAliasModel (currententity);
-			break;
-
-		case mod_brush:
-			R_DrawBrushModel (currententity);
-			break;
-
-		default:
-			break;
-		}
+		R_DrawBrushModel (currententity);
 	}
 
 	for (i=0 ; i<cl_numvisedicts ; i++)
 	{
+		if (cl_visedicts[i].model->type != mod_brush)
+			continue;
+		currententity = &cl_visedicts[i];
+		modelalpha    = currententity->alpha;
+
+		R_DrawAliasModel (currententity);
+	}
+
+	for (i=0 ; i<cl_numvisedicts ; i++)
+	{
+		if (cl_visedicts[i].model->type != mod_sprite)
+			continue;
 		currententity = &cl_visedicts[i];
 
-		switch (currententity->model->type)
-		{
-		case mod_sprite:
-			R_DrawSpriteModel (currententity);
-			break;
-
-		default :
-			break;
-		}
+		R_DrawSpriteModel (currententity);
 	}
 }
 
@@ -733,62 +719,17 @@ R_DrawViewModel
 */
 void R_DrawViewModel (void)
 {
-	float		ambient[4], diffuse[4];
-	int			j;
-	int			lnum;
-	vec3_t		dist;
-	float		add;
-	dlight_t	*dl;
-	int			ambientlight, shadelight;
-
-	if (!r_drawviewmodel->value || !Cam_DrawViewModel())
-		return;
-
-	if (envmap)
-		return;
-
-	if (!r_drawentities->value)
-		return;
-
-	if (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
-		return;
-
-	if (cl.stats[STAT_HEALTH] <= 0)
+	if (!r_drawviewmodel->value
+	 || !Cam_DrawViewModel()
+	 || envmap
+	 || !r_drawentities->value
+	 || (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
+	 || cl.stats[STAT_HEALTH] <= 0)
 		return;
 
 	currententity = &cl.viewent;
 	if (!currententity->model)
 		return;
-
-	j = R_LightPoint (currententity->origin);
-
-	if (j < 24)
-		j = 24;		// allways give some light on gun
-	ambientlight = j;
-	shadelight = j;
-
-        shadecolor[0] = shadecolor[1] = shadecolor[2] = 0;
-
-// add dynamic lights		
-	for (lnum=0 ; lnum<MAX_DLIGHTS ; lnum++)
-	{
-		dl = &cl_dlights[lnum];
-		if (!dl->radius)
-			continue;
-		if (!dl->radius)
-			continue;
-		if (dl->die < cl.time)
-			continue;
-
-		VectorSubtract (currententity->origin, dl->origin, dist);
-		add = (dl->radius * dl->radius * 8) / (Length(dist) * Length(dist)); // FIXME Deek
-//		add = dl->radius - Length(dist);
-		if (add > 0)
-			ambientlight += add;
-	}
-
-	ambient[0] = ambient[1] = ambient[2] = ambient[3] = (float)ambientlight / 128;
-	diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = (float)shadelight / 128;
 
 	// hack the depth range to prevent view model from poking into walls
 	glDepthRange (gldepthmin, gldepthmin + 0.3*(gldepthmax-gldepthmin));

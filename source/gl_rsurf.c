@@ -257,7 +257,9 @@ store:
 				t = (int) *bl++ >> 8;
 				*dest++ = bound(0, t, 255);
 			}
-	} else 	{
+	}
+	else
+	{
 		stride -= smax;
 		bl = blocklights;
 		for (i = 0; i < tmax; i++, dest += stride)
@@ -334,7 +336,8 @@ void GL_SelectTexture (GLenum target);
 
 void GL_DisableMultitexture(void) 
 {
-	if (mtexenabled) {
+	if (mtexenabled)
+	{
 		glDisable(GL_TEXTURE_2D);
 		GL_SelectTexture(0);
 		mtexenabled = false;
@@ -343,7 +346,8 @@ void GL_DisableMultitexture(void)
 
 void GL_EnableMultitexture(void) 
 {
-	if (gl_mtexable) {
+	if (gl_mtexable)
+	{
 		GL_SelectTexture(1);
 		glEnable(GL_TEXTURE_2D);
 		mtexenabled = true;
@@ -410,7 +414,9 @@ void R_DrawSequentialPoly (msurface_t *s)
 			}
 			glEnd ();
 			return;
-		} else {
+		}
+		else
+		{
 			p = s->polys;
 
 			t = R_TextureAnimation (s->texinfo->texture);
@@ -692,23 +698,29 @@ void R_DrawWaterSurfaces (void)
 
 	glLoadMatrixf (r_world_matrix);
 
-	if (r_wateralpha->value < 1.0) {
+	if (r_wateralpha->value < 1.0)
+	{
 		glColor4f (0.5, 0.5, 0.5, r_wateralpha->value);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	} else
-                glColor3f (0.5, 0.5, 0.5);
+	}
+	else
+		glColor3f (0.5, 0.5, 0.5);
 
-	if (!gl_texsort->value) {
+	if (!gl_texsort->value)
+	{
 		if (!waterchain)
 			return;
 
-		for ( s = waterchain ; s ; s=s->texturechain) {
+		for ( s = waterchain ; s ; s=s->texturechain)
+		{
 			glBindTexture (GL_TEXTURE_2D, s->texinfo->texture->gl_texturenum);
 			EmitWaterPolys (s);
 		}
 		
 		waterchain = NULL;
-	} else {
+	}
+	else
+	{
 
 		for (i=0 ; i<cl.worldmodel->numtextures ; i++)
 		{
@@ -826,13 +838,7 @@ void R_DrawBrushModel (entity_t *e)
 	if (R_CullBox (mins, maxs))
 		return;
 
-// Ender: Extend (Alpha) [QSG - Begin]
-//        glEnable(GL_BLEND);
-//        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-// Note: glColor4f and gl_texsort->value = 1 for alpha! :)
-         glColor3f (1, 1, 1);
-// Ender: Extend (Alpha) [QSG - End]
+	glColor3f (1, 1, 1);
 
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 
@@ -1316,13 +1322,15 @@ void GL_BuildLightmaps (void)
 	}
 
 	gl_colorlights = Cvar_Get ("gl_colorlights", "1", CVAR_ROM,
-			"Whether to use RGBA lightmaps or not");
+			"Whether to use RGB lightmaps or not");
 
 	if (gl_colorlights->value)
 	{
 		gl_lightmap_format = GL_RGB;
 		lightmap_bytes = 3;
-	} else {
+	}
+	else
+	{
 		gl_lightmap_format = GL_LUMINANCE;
 		lightmap_bytes = 1;
 	}
