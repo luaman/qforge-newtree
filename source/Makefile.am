@@ -32,7 +32,7 @@ AUTOMAKE_OPTIONS=	foreign
 # Stuff that is common to both client and server
 #
 INCLUDES=	-I$(top_srcdir)/include $(GGI_CFLAGS) $(MGL_CFLAGS) $(SVGA_CFLAGS) $(X_CFLAGS) $(GLX_CFLAGS) $(TDFXGL_CFLAGS)
-
+AR=@AR@
 bin_PROGRAMS =	@TARGETS@
 
 EXTRA_PROGRAMS= qf-server \

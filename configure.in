@@ -31,6 +31,9 @@ AC_SUBST(ISODATE)
 
 AC_LANG_C
 
+if test ${AR-unset} = unset; then
+	AR="ar"
+fi
 endian=""
 case "$host_os" in
 	mingw32*)
@@ -38,11 +41,14 @@ case "$host_os" in
 		CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include/win32"
 		CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include/win32/resources"
 		if test $host != $build; then
-			CC=$host_cpu-$host_os-gcc
+			CC="$host_cpu-$host_os-gcc"
+			AR="$host_cpu-$host_os-ar"
+			RANLIB="$host_cpu-$host_os-ranlib"
 			endian="little"
 		fi
 		;;
 esac
+AC_SUBST(AR)
 
 dnl ==================================================================
 dnl Checks for programs.
