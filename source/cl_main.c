@@ -208,9 +208,7 @@ char        soundlist_name[] = "soundlist %i %i";
 cvar_t     *confirm_quit;
 
 /*
-==================
-CL_Quit_f
-==================
+	CL_Quit_f
 */
 void
 CL_Quit_f (void)
@@ -224,9 +222,7 @@ CL_Quit_f (void)
 }
 
 /*
-=======================
-CL_Version_f
-======================
+	CL_Version_f
 */
 void
 CL_Version_f (void)
@@ -237,11 +233,9 @@ CL_Version_f (void)
 
 
 /*
-=======================
-CL_SendConnectPacket
+	CL_SendConnectPacket
 
-called by CL_Connect_f and CL_CheckResend
-======================
+	called by CL_Connect_f and CL_CheckResend
 */
 void
 CL_SendConnectPacket (void)
@@ -294,12 +288,9 @@ CL_SendConnectPacket (void)
 }
 
 /*
-=================
-CL_CheckForResend
+	CL_CheckForResend
 
-Resend a connect message if the last one has timed out
-
-=================
+	Resend a connect message if the last one has timed out
 */
 void
 CL_CheckForResend (void)
@@ -348,10 +339,7 @@ CL_BeginServerConnect (void)
 }
 
 /*
-================
-CL_Connect_f
-
-================
+	CL_Connect_f
 */
 void
 CL_Connect_f (void)
@@ -373,12 +361,10 @@ CL_Connect_f (void)
 
 
 /*
-=====================
-CL_Rcon_f
+	CL_Rcon_f
 
-  Send the rest of the command line over as
-  an unconnected command.
-=====================
+	Send the rest of the command line over as
+	an unconnected command.
 */
 void
 CL_Rcon_f (void)
@@ -417,10 +403,7 @@ CL_Rcon_f (void)
 
 
 /*
-=====================
-CL_ClearState
-
-=====================
+	CL_ClearState
 */
 void
 CL_ClearState (void)
@@ -458,12 +441,10 @@ CL_ClearState (void)
 }
 
 /*
-=====================
-CL_Disconnect
+	CL_Disconnect
 
-Sends a disconnect message to the server
-This is also called on Host_Error, so it shouldn't cause any errors
-=====================
+	Sends a disconnect message to the server
+	This is also called on Host_Error, so it shouldn't cause any errors
 */
 void
 CL_Disconnect (void)
@@ -514,13 +495,11 @@ CL_Disconnect_f (void)
 }
 
 /*
-====================
-CL_User_f
+	CL_User_f
 
-user <name or userid>
+	user <name or userid>
 
-Dump userdata / masterdata for a user
-====================
+	Dump userdata / masterdata for a user
 */
 void
 CL_User_f (void)
@@ -548,11 +527,9 @@ CL_User_f (void)
 }
 
 /*
-====================
-CL_Users_f
+	CL_Users_f
 
-Dump userids for all current players
-====================
+	Dump userids for all current players
 */
 void
 CL_Users_f (void)
@@ -575,11 +552,9 @@ CL_Users_f (void)
 }
 
 /*
-==================
-CL_FullServerinfo_f
+	CL_FullServerinfo_f
 
-Sent by server when serverinfo changes
-==================
+	Sent by server when serverinfo changes
 */
 void
 CL_FullServerinfo_f (void)
@@ -669,12 +644,10 @@ CL_RemoveQFInfoKeys (void)
 }
 
 /*
-==================
-CL_FullInfo_f
+	CL_FullInfo_f
 
-Allow clients to change userinfo
-==================
-Casey was here :)
+	Allow clients to change userinfo
+	Casey was here :)
 */
 void
 CL_FullInfo_f (void)
@@ -720,11 +693,9 @@ CL_FullInfo_f (void)
 }
 
 /*
-==================
-CL_SetInfo_f
+	CL_SetInfo_f
 
-Allow clients to change userinfo
-==================
+	Allow clients to change userinfo
 */
 void
 CL_SetInfo_f (void)
@@ -747,13 +718,11 @@ CL_SetInfo_f (void)
 }
 
 /*
-====================
-CL_Packet_f
+	CL_Packet_f
 
-packet <destination> <contents>
+	packet <destination> <contents>
 
-Contents allows \n escape character
-====================
+	Contents allows \n escape character
 */
 void
 CL_Packet_f (void)
@@ -792,11 +761,9 @@ CL_Packet_f (void)
 
 
 /*
-=====================
-CL_NextDemo
+	CL_NextDemo
 
-Called to play the next demo in the demo loop
-=====================
+	Called to play the next demo in the demo loop
 */
 void
 CL_NextDemo (void)
@@ -822,12 +789,10 @@ CL_NextDemo (void)
 
 
 /*
-=================
-CL_Changing_f
+	CL_Changing_f
 
-Just sent as a hint to the client that they should
-drop to full console
-=================
+	Just sent as a hint to the client that they should
+	drop to full console
 */
 void
 CL_Changing_f (void)
@@ -844,11 +809,9 @@ CL_Changing_f (void)
 
 
 /*
-=================
-CL_Reconnect_f
+	CL_Reconnect_f
 
-The server is changing levels
-=================
+	The server is changing levels
 */
 void
 CL_Reconnect_f (void)
@@ -876,11 +839,9 @@ CL_Reconnect_f (void)
 }
 
 /*
-=================
-CL_ConnectionlessPacket
+	CL_ConnectionlessPacket
 
-Responses to broadcasts, etc
-=================
+	Responses to broadcasts, etc
 */
 void
 CL_ConnectionlessPacket (void)
@@ -1045,9 +1006,7 @@ CL_PingPacket (void)
 }		
 
 /*
-=================
-CL_ReadPackets
-=================
+	CL_ReadPackets
 */
 void
 CL_ReadPackets (void)
@@ -1106,9 +1065,7 @@ CL_ReadPackets (void)
 //=============================================================================
 
 /*
-=====================
-CL_Download_f
-=====================
+	CL_Download_f
 */
 void
 CL_Download_f (void)
@@ -1143,9 +1100,7 @@ CL_Download_f (void)
 }
 
 /*
-=================
-CL_Init
-=================
+	CL_Init
 */
 void
 CL_Init (void)
@@ -1330,11 +1285,9 @@ CL_Init_Cvars (void)
 }
 
 /*
-================
-Host_EndGame
+	Host_EndGame
 
-Call this to drop to a console without exiting the qwcl
-================
+	Call this to drop to a console without exiting the qwcl
 */
 void
 Host_EndGame (char *message, ...)
@@ -1355,11 +1308,9 @@ Host_EndGame (char *message, ...)
 }
 
 /*
-================
-Host_Error
+	Host_Error
 
-This shuts down the client and exits qwcl
-================
+	This shuts down the client and exits qwcl
 */
 void
 Host_Error (char *error, ...)
@@ -1388,11 +1339,9 @@ Host_Error (char *error, ...)
 
 
 /*
-===============
-Host_WriteConfiguration
+	Host_WriteConfiguration
 
-Writes key bindings and archived cvars to config.cfg
-===============
+	Writes key bindings and archived cvars to config.cfg
 */
 void
 Host_WriteConfiguration (void)
@@ -1421,11 +1370,9 @@ Host_WriteConfiguration (void)
 
 #if 0
 /*
-==================
-Host_SimulationTime
+	Host_SimulationTime
 
-This determines if enough time has passed to run a simulation frame
-==================
+	This determines if enough time has passed to run a simulation frame
 */
 qboolean
 Host_SimulationTime (float time)
@@ -1448,11 +1395,9 @@ Host_SimulationTime (float time)
 
 
 /*
-==================
-Host_Frame
+	Host_Frame
 
-Runs all active servers
-==================
+	Runs all active servers
 */
 int         nopacketcount;
 void
@@ -1574,9 +1519,7 @@ check_quakerc (void)
 }
 
 /*
-====================
-Host_Init
-====================
+	Host_Init
 */
 void
 Host_Init (void)
@@ -1716,12 +1659,10 @@ Host_Init (void)
 
 
 /*
-===============
-Host_Shutdown
+	Host_Shutdown
 
-FIXME: this is a callback from Sys_Quit and Sys_Error.  It would be better
-to run quit through here before the final handoff to the sys code.
-===============
+	FIXME: this is a callback from Sys_Quit and Sys_Error.  It would be better
+	to run quit through here before the final handoff to the sys code.
 */
 void
 Host_Shutdown (void)
