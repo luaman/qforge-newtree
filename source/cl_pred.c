@@ -150,6 +150,8 @@ CL_PredictMove (void)
 	if (cl.paused)
 		return;
 
+	cl.onground = 0;	// assume on ground unless prediction says different
+
 	cl.time = realtime - cls.latency - cl_pushlatency->value * 0.001;
 	if (cl.time > realtime)
 		cl.time = realtime;
@@ -193,6 +195,7 @@ CL_PredictMove (void)
 		CL_PredictUsercmd (&from->playerstate[cl.playernum]
 						   , &to->playerstate[cl.playernum], &to->cmd,
 						   cl.spectator);
+		cl.onground = onground;
 		if (to->senttime >= cl.time)
 			break;
 		from = to;

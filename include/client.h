@@ -280,7 +280,7 @@ typedef struct
 	float		driftmove;
 	double		laststop;
 
-
+	int			onground;		// -1 when in air
 	float		crouch;			// local amount for smoothing stepups
 
 	qboolean	paused;			// send over by server

@@ -734,7 +734,7 @@ V_CalcRefdef (void)
 	r_refdef.viewangles[PITCH] += cl.punchangle;
 
 // smooth out stair step ups
-	if ((view_message->onground != -1) && (cl.simorg[2] - oldz > 0)) {
+	if ((cl.onground != -1) && (cl.simorg[2] - oldz > 0)) {
 		float       steptime;
 
 		steptime = host_frametime;
