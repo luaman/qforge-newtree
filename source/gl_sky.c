@@ -29,12 +29,11 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
 
 #include "console.h"
@@ -186,10 +185,10 @@ R_DrawSkyLayer (float s)
 	vec3_t      v;
 
 	for (a = 0; a < 16; a++) {
-		a1x = bubble_costable[a * 2];
-		a1y = -bubble_sintable[a * 2];
-		a2x = bubble_costable[(a + 1) * 2];
-		a2y = -bubble_sintable[(a + 1) * 2];
+		a1x = bubble_costable[a * 2] * domescale[0];
+		a1y = -bubble_sintable[a * 2] * domescale[1];
+		a2x = bubble_costable[(a + 1) * 2] * domescale[0];
+		a2y = -bubble_sintable[(a + 1) * 2] * domescale[1];
 
 		glBegin (GL_TRIANGLE_STRIP);
 		glTexCoord2f (0.5 + s * (1.0 / 128.0), 0.5 + s * (1.0 / 128.0));
@@ -199,16 +198,16 @@ R_DrawSkyLayer (float s)
 			x = bubble_costable[b * 2 + 16];
 			y = -bubble_sintable[b * 2 + 16];
 
-			v[0] = a1x * x * domescale[0];
-			v[1] = a1y * x * domescale[1];
+			v[0] = a1x * x;
+			v[1] = a1y * x;
 			v[2] = y * domescale[2];
 			glTexCoord2f ((v[0] + s) * (1.0 / 128.0),
 						  (v[1] + s) * (1.0 / 128.0));
 			glVertex3f (v[0] + r_refdef.vieworg[0],
 						v[1] + r_refdef.vieworg[1], v[2] + r_refdef.vieworg[2]);
 
-			v[0] = a2x * x * domescale[0];
-			v[1] = a2y * x * domescale[1];
+			v[0] = a2x * x;
+			v[1] = a2y * x;
 			v[2] = y * domescale[2];
 			glTexCoord2f ((v[0] + s) * (1.0 / 128.0),
 						  (v[1] + s) * (1.0 / 128.0));
