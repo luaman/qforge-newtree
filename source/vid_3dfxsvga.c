@@ -290,6 +290,8 @@ CheckMultiTextureExtensions ( void )
 }
 
 
+typedef void (GLAPIENTRY *gl3DfxSetDitherModeEXT_FUNC) (GrDitherMode_t mode);
+
 /*
 ===============
 GL_Init
@@ -327,6 +329,34 @@ void GL_Init (void)
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	Con_Printf ("Dithering: ");
+
+	dlhand = dlopen (NULL, RTLD_LAZY);
+
+	if (dlhand == NULL) {
+		Con_SafePrintf ("unable to set.\n");
+		return;
+	}
+
+	if (strstr(gl_extensions, "3DFX_set_dither_mode")) {
+		gl3DfxSetDitherModeEXT_FUNC dither_select = NULL;
+
+		dither_select = (void *) dlsym(dlhand, "gl3DfxSetDitherModeEXT");
+
+		if (COM_CheckParm ("-dither_2x2")) {
+			dither_select(GR_DITHER_2x2);
+			Con_Printf ("2x2.\n");
+		} else if (COM_CheckParm ("-dither_4x4")) {
+			dither_select(GR_DITHER_4x4);
+			Con_Printf ("4x4.\n");
+		} else {
+			glDisable(GL_DITHER);
+			Con_Printf ("disabled.\n");
+		}
+	}
+	dlclose(dlhand);
+	dlhand = NULL;
 }
 
 /*
@@ -431,68 +461,73 @@ qboolean VID_Is8bit(void)
 	return is8bit;
 }
 
-#ifdef GL_EXT_SHARED
+typedef void (GLAPIENTRY *glColorTableEXT_FUNC) (GLenum, GLenum, GLsizei, 
+		GLenum, GLenum, const GLvoid *);
+typedef void (GLAPIENTRY *gl3DfxSetPaletteEXT_FUNC) (GLuint *pal);
+
 void VID_Init8bitPalette()
 {
 	// Check for 8bit Extensions and initialize them.
 	int i;
-	char thePalette[256*3];
-	char *oldPalette, *newPalette;
 
-	if (strstr(gl_extensions, "GL_EXT_shared_texture_palette") == NULL)
+	dlhand = dlopen (NULL, RTLD_LAZY);
+
+	Con_SafePrintf ("8-bit GL extensions: ");
+
+	if (dlhand == NULL) {
+		Con_SafePrintf ("unable to check.\n");
 		return;
+	}
 
 	if (COM_CheckParm("-no8bit")) {
-		Con_SafePrintf("8-bit GL extensions disabled.\n");
+		Con_SafePrintf("disabled.\n");
 		return;
 	}
 
-	Con_SafePrintf("8-bit GL extensions enabled.\n");
-	glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
-	oldPalette = (char *) d_8to24table; //d_8to24table3dfx;
-	newPalette = thePalette;
-	for (i=0;i<256;i++) {
-		*newPalette++ = *oldPalette++;
-		*newPalette++ = *oldPalette++;
-		*newPalette++ = *oldPalette++;
-		oldPalette++;
+	if (strstr(gl_extensions, "3DFX_set_global_palette")) {
+		char *oldpal;
+		GLubyte table[256][4];
+		gl3DfxSetPaletteEXT_FUNC load_texture = NULL;
+
+		Con_SafePrintf("3DFX_set_global_palette.\n");
+		load_texture = (void *) dlsym(dlhand, "gl3DfxSetPaletteEXT");
+
+		glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
+		oldpal = (char *) d_8to24table; //d_8to24table3dfx;
+		for (i=0;i<256;i++) {
+			table[i][2] = *oldpal++;
+			table[i][1] = *oldpal++;
+			table[i][0] = *oldpal++;
+			table[i][3] = 255;
+			oldpal++;
+		}
+		load_texture((GLuint *)table);
+		is8bit = true;
+	} else if (strstr(gl_extensions, "GL_EXT_shared_texture_palette")) {
+		char thePalette[256*3];
+		char *oldPalette, *newPalette;
+		glColorTableEXT_FUNC load_texture = NULL;
+
+		Con_SafePrintf("GL_EXT_shared.\n");
+		load_texture = (void *) dlsym(dlhand, "glColorTableEXT");
+
+		glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
+		oldPalette = (char *) d_8to24table; //d_8to24table3dfx;
+		newPalette = thePalette;
+		for (i=0;i<256;i++) {
+			*newPalette++ = *oldPalette++;
+			*newPalette++ = *oldPalette++;
+			*newPalette++ = *oldPalette++;
+			oldPalette++;
+		}
+		load_texture(GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
+		is8bit = true;
 	}
-	glColorTableEXT(GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
-	is8bit = true;
+
+	dlclose(dlhand);
+	dlhand = NULL;
+	Con_SafePrintf ("not found.\n");
 }
-
-#else
-extern void gl3DfxSetPaletteEXT(GLuint *pal);
-
-void VID_Init8bitPalette(void)
-{
-	// Check for 8bit Extensions and initialize them.
-	int i;
-	GLubyte table[256][4];
-	char *oldpal;
-
-	if (strstr(gl_extensions, "3DFX_set_global_palette") == NULL)
-		return;
-
-	if (COM_CheckParm("-no8bit")) {
-		Con_SafePrintf("8-bit GL extensions disabled.\n");
-		return;
-	}
-
-	Con_SafePrintf("8-bit GL extensions enabled.\n");
-	glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
-	oldpal = (char *) d_8to24table; //d_8to24table3dfx;
-	for (i=0;i<256;i++) {
-		table[i][2] = *oldpal++;
-		table[i][1] = *oldpal++;
-		table[i][0] = *oldpal++;
-		table[i][3] = 255;
-		oldpal++;
-	}
-	gl3DfxSetPaletteEXT((GLuint *)table);
-	is8bit = true;
-}
-#endif
 
 void VID_Init(unsigned char *palette)
 {

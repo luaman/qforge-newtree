@@ -874,7 +874,7 @@ skipwhite:
 				data++;
 				buf[i++] = c;
 				buf[i] = 0;
-				if ((var = Cvar_FindVar(buf)) != 0)
+				if ((var = Cvar_FindVar(buf)))
 					bestvar = var;
 			}
 
