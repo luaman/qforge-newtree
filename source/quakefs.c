@@ -325,7 +325,6 @@ COM_CreatePath ( char *path )
 			*ofs = '/';
 		}
 	}
-	Sys_mkdir (path);
 }
 
 
