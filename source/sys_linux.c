@@ -55,7 +55,9 @@ char *basedir = ".";
 char *cachedir = "/tmp";
 qboolean is_server = false;
 
-cvar_t  sys_linerefresh = {"sys_linerefresh","0"};// set for entity display
+/* cvar_t  sys_linerefresh = {"sys_linerefresh","0"};// set for entity display
+ CVAR_FIXME */
+cvar_t  *sys_linerefresh;// set for entity display
 
 // The translation table between the graphical font and plain ASCII  --KB
 char qfont_table[256] =

@@ -43,7 +43,9 @@ static char	*argvdummy = " ";
 static char	*safeargvs[NUM_SAFE_ARGVS] =
 	{"-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse"};
 
-cvar_t	registered = {"registered","0"};
+/* cvar_t	registered = {"registered","0"};
+ CVAR_FIXME */
+cvar_t	*registered;
 
 qboolean	com_modified;	// set true if using non-id files
 
@@ -1193,7 +1195,9 @@ void COM_Init (void)
 		LittleFloat = FloatSwap;
 	}
 
-	Cvar_RegisterVariable (&registered);
+/* 	Cvar_RegisterVariable (&registered);
+ CVAR_FIXME */
+	registered = Cvar_Get("registered", "0", CVAR_NONE, "None");
 	Cmd_AddCommand ("path", COM_Path_f);
 
 	COM_InitFilesystem ();
@@ -1468,7 +1472,9 @@ int COM_FOpenFile (char *filename, FILE **file)
 			for (i=0 ; i<pak->numfiles ; i++)
 				if (!strcmp (pak->files[i].name, filename))
 				{	// found it!
-					if(developer.value)
+/* 					if(developer.value)
+ CVAR_FIXME */
+					if(developer->value)
 						Sys_Printf ("PackFile: %s : %s\n",pak->filename, filename);
 				// open a new file on the pakfile
 					*file = fopen (pak->filename, "rb");

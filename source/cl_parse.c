@@ -30,7 +30,9 @@
 #include "sys.h"
 #include "quakedef.h"
 
-extern     cvar_t  gl_flashblend;
+/* extern     cvar_t  gl_flashblend;
+ CVAR_FIXME */
+extern     cvar_t  *gl_flashblend;
 
 char *svc_strings[] =
 {
@@ -1008,7 +1010,9 @@ void CL_MuzzleFlash (void)
 		return;
 
 	// don't draw our own muzzle flash in gl if flashblending
-	if (i-1 == cl.playernum && gl_flashblend.value)
+/* 	if (i-1 == cl.playernum && gl_flashblend.value)
+ CVAR_FIXME */
+	if (i-1 == cl.playernum && gl_flashblend->value)
 		return;
 
 	pl = &cl.frames[parsecountmod].playerstate[i-1];
@@ -1028,7 +1032,9 @@ void CL_MuzzleFlash (void)
 }
 
 
-#define SHOWNET(x) if(cl_shownet.value==2)Con_Printf ("%3i:%s\n", msg_readcount-1, x);
+/* #define SHOWNET(x) if(cl_shownet.value==2)Con_Printf ("%3i:%s\n", msg_readcount-1, x);
+ CVAR_FIXME */
+#define SHOWNET(x) if(cl_shownet->value==2)Con_Printf ("%3i:%s\n", msg_readcount-1, x);
 /*
 =====================
 CL_ParseServerMessage
@@ -1048,9 +1054,13 @@ void CL_ParseServerMessage (void)
 //
 // if recording demos, copy the message out
 //
-	if (cl_shownet.value == 1)
+/* 	if (cl_shownet.value == 1)
+ CVAR_FIXME */
+	if (cl_shownet->value == 1)
 		Con_Printf ("%i ",net_message.cursize);
-	else if (cl_shownet.value == 2)
+/* 	else if (cl_shownet.value == 2)
+ CVAR_FIXME */
+	else if (cl_shownet->value == 2)
 		Con_Printf ("------------------\n");
 
 

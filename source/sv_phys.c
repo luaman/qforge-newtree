@@ -46,17 +46,37 @@ solid_edge items only clip against bsp models.
 
 */
 
-cvar_t	sv_maxvelocity = {"sv_maxvelocity","2000"}; 
+/* cvar_t	sv_maxvelocity = {"sv_maxvelocity","2000"}; 
+ CVAR_FIXME */
+cvar_t	*sv_maxvelocity; 
 
-cvar_t	sv_gravity			 = { "sv_gravity", "800"};    
-cvar_t	sv_stopspeed		 = { "sv_stopspeed", "100"};    
-cvar_t	sv_maxspeed			 = { "sv_maxspeed", "320"};    
-cvar_t	sv_spectatormaxspeed = { "sv_spectatormaxspeed", "500"};
-cvar_t	sv_accelerate		 = { "sv_accelerate", "10"};     
-cvar_t	sv_airaccelerate	 = { "sv_airaccelerate", "0.7"};    
-cvar_t	sv_wateraccelerate	 = { "sv_wateraccelerate", "10"};     
-cvar_t	sv_friction			 = { "sv_friction", "4"};      
-cvar_t	sv_waterfriction	 = { "sv_waterfriction", "4"};      
+/* cvar_t	sv_gravity			 = { "sv_gravity", "800"};    
+ CVAR_FIXME */
+cvar_t	*sv_gravity;    
+/* cvar_t	sv_stopspeed		 = { "sv_stopspeed", "100"};    
+ CVAR_FIXME */
+cvar_t	*sv_stopspeed;    
+/* cvar_t	sv_maxspeed			 = { "sv_maxspeed", "320"};    
+ CVAR_FIXME */
+cvar_t	*sv_maxspeed;    
+/* cvar_t	sv_spectatormaxspeed = { "sv_spectatormaxspeed", "500"};
+ CVAR_FIXME */
+cvar_t	*sv_spectatormaxspeed;
+/* cvar_t	sv_accelerate		 = { "sv_accelerate", "10"};     
+ CVAR_FIXME */
+cvar_t	*sv_accelerate;     
+/* cvar_t	sv_airaccelerate	 = { "sv_airaccelerate", "0.7"};    
+ CVAR_FIXME */
+cvar_t	*sv_airaccelerate;    
+/* cvar_t	sv_wateraccelerate	 = { "sv_wateraccelerate", "10"};     
+ CVAR_FIXME */
+cvar_t	*sv_wateraccelerate;     
+/* cvar_t	sv_friction			 = { "sv_friction", "4"};      
+ CVAR_FIXME */
+cvar_t	*sv_friction;      
+/* cvar_t	sv_waterfriction	 = { "sv_waterfriction", "4"};      
+ CVAR_FIXME */
+cvar_t	*sv_waterfriction;      
 
 
 #define	MOVE_EPSILON	0.01
@@ -113,10 +133,18 @@ void SV_CheckVelocity (edict_t *ent)
 			Con_Printf ("Got a NaN origin on %s\n", PR_GetString(ent->v.classname));
 			ent->v.origin[i] = 0;
 		}
-		if (ent->v.velocity[i] > sv_maxvelocity.value)
-			ent->v.velocity[i] = sv_maxvelocity.value;
-		else if (ent->v.velocity[i] < -sv_maxvelocity.value)
-			ent->v.velocity[i] = -sv_maxvelocity.value;
+/* 		if (ent->v.velocity[i] > sv_maxvelocity.value)
+ CVAR_FIXME */
+		if (ent->v.velocity[i] > sv_maxvelocity->value)
+/* 			ent->v.velocity[i] = sv_maxvelocity.value;
+ CVAR_FIXME */
+			ent->v.velocity[i] = sv_maxvelocity->value;
+/* 		else if (ent->v.velocity[i] < -sv_maxvelocity.value)
+ CVAR_FIXME */
+		else if (ent->v.velocity[i] < -sv_maxvelocity->value)
+/* 			ent->v.velocity[i] = -sv_maxvelocity.value;
+ CVAR_FIXME */
+			ent->v.velocity[i] = -sv_maxvelocity->value;
 	}
 }
 
@@ -905,10 +933,16 @@ void SV_Physics (void)
 
 // don't bother running a frame if sys_ticrate seconds haven't passed
 	host_frametime = realtime - old_time;
-	if (host_frametime < sv_mintic.value)
+/* 	if (host_frametime < sv_mintic.value)
+ CVAR_FIXME */
+	if (host_frametime < sv_mintic->value)
 		return;
-	if (host_frametime > sv_maxtic.value)
-		host_frametime = sv_maxtic.value;
+/* 	if (host_frametime > sv_maxtic.value)
+ CVAR_FIXME */
+	if (host_frametime > sv_maxtic->value)
+/* 		host_frametime = sv_maxtic.value;
+ CVAR_FIXME */
+		host_frametime = sv_maxtic->value;
 	old_time = realtime;
 
 	pr_global_struct->frametime = host_frametime;
@@ -941,14 +975,32 @@ void SV_Physics (void)
 
 void SV_SetMoveVars(void)
 {
-	movevars.gravity			= sv_gravity.value; 
-	movevars.stopspeed		    = sv_stopspeed.value;		 
-	movevars.maxspeed			= sv_maxspeed.value;			 
-	movevars.spectatormaxspeed  = sv_spectatormaxspeed.value; 
-	movevars.accelerate		    = sv_accelerate.value;		 
-	movevars.airaccelerate	    = sv_airaccelerate.value;	 
-	movevars.wateraccelerate	= sv_wateraccelerate.value;	   
-	movevars.friction			= sv_friction.value;			 
-	movevars.waterfriction	    = sv_waterfriction.value;	 
+/* 	movevars.gravity			= sv_gravity.value; 
+ CVAR_FIXME */
+	movevars.gravity			= sv_gravity->value; 
+/* 	movevars.stopspeed		    = sv_stopspeed.value;		 
+ CVAR_FIXME */
+	movevars.stopspeed		    = sv_stopspeed->value;		 
+/* 	movevars.maxspeed			= sv_maxspeed.value;			 
+ CVAR_FIXME */
+	movevars.maxspeed			= sv_maxspeed->value;			 
+/* 	movevars.spectatormaxspeed  = sv_spectatormaxspeed.value; 
+ CVAR_FIXME */
+	movevars.spectatormaxspeed  = sv_spectatormaxspeed->value; 
+/* 	movevars.accelerate		    = sv_accelerate.value;		 
+ CVAR_FIXME */
+	movevars.accelerate		    = sv_accelerate->value;		 
+/* 	movevars.airaccelerate	    = sv_airaccelerate.value;	 
+ CVAR_FIXME */
+	movevars.airaccelerate	    = sv_airaccelerate->value;	 
+/* 	movevars.wateraccelerate	= sv_wateraccelerate.value;	   
+ CVAR_FIXME */
+	movevars.wateraccelerate	= sv_wateraccelerate->value;	   
+/* 	movevars.friction			= sv_friction.value;			 
+ CVAR_FIXME */
+	movevars.friction			= sv_friction->value;			 
+/* 	movevars.waterfriction	    = sv_waterfriction.value;	 
+ CVAR_FIXME */
+	movevars.waterfriction	    = sv_waterfriction->value;	 
 	movevars.entgravity			= 1.0;
 }

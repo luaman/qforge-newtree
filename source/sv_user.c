@@ -33,21 +33,37 @@ edict_t	*sv_player;
 
 usercmd_t	cmd;
 
-cvar_t	cl_rollspeed = {"cl_rollspeed", "200"};
-cvar_t	cl_rollangle = {"cl_rollangle", "2.0"};
-cvar_t	sv_spectalk = {"sv_spectalk", "1"};
+/* cvar_t	cl_rollspeed = {"cl_rollspeed", "200"};
+ CVAR_FIXME */
+cvar_t	*cl_rollspeed;
+/* cvar_t	cl_rollangle = {"cl_rollangle", "2.0"};
+ CVAR_FIXME */
+cvar_t	*cl_rollangle;
+/* cvar_t	sv_spectalk = {"sv_spectalk", "1"};
+ CVAR_FIXME */
+cvar_t	*sv_spectalk;
 
-cvar_t	sv_mapcheck	= {"sv_mapcheck", "1"};
+/* cvar_t	sv_mapcheck	= {"sv_mapcheck", "1"};
+ CVAR_FIXME */
+cvar_t	*sv_mapcheck;
 
-cvar_t	sv_timekick	= {"sv_timekick", "3", false, true};
-cvar_t	sv_timekick_fuzz	= {"sv_timekick_fuzz", "10"};
-cvar_t 	sv_timekick_interval	= {"sv_timekick_interval", "30"};
+/* cvar_t	sv_timekick	= {"sv_timekick", "3", false, true};
+ CVAR_FIXME */
+cvar_t	*sv_timekick;
+/* cvar_t	sv_timekick_fuzz	= {"sv_timekick_fuzz", "10"};
+ CVAR_FIXME */
+cvar_t	*sv_timekick_fuzz;
+/* cvar_t 	sv_timekick_interval	= {"sv_timekick_interval", "30"};
+ CVAR_FIXME */
+cvar_t 	*sv_timekick_interval;
 
 extern	vec3_t	player_mins;
 
 extern int fp_messages, fp_persecond, fp_secondsdead;
 extern char fp_msg[];
-extern cvar_t pausable;
+/* extern cvar_t pausable;
+ CVAR_FIXME */
+extern cvar_t *pausable;
 
 void SV_FullClientUpdateToClient (client_t *client, client_t *cl);
 
@@ -263,7 +279,9 @@ void SV_PreSpawn_f (void)
 
 //		Con_DPrintf("Client check = %d\n", check);
 
-		if (sv_mapcheck.value && check != sv.worldmodel->checksum &&
+/* 		if (sv_mapcheck.value && check != sv.worldmodel->checksum &&
+ CVAR_FIXME */
+		if (sv_mapcheck->value && check != sv.worldmodel->checksum &&
 			check != sv.worldmodel->checksum2) {
 			SV_ClientPrintf (host_client, PRINT_HIGH, 
 				"Map model file does not match (%s), %i != %i/%i.\n"
@@ -371,10 +389,14 @@ void SV_Spawn_f (void)
 	val = GetEdictFieldValue(ent, "gravity");
 	if (val)
 		val->_float = 1.0;
-	host_client->maxspeed = sv_maxspeed.value;
+/* 	host_client->maxspeed = sv_maxspeed.value;
+ CVAR_FIXME */
+	host_client->maxspeed = sv_maxspeed->value;
 	val = GetEdictFieldValue(ent, "maxspeed");
 	if (val)
-		val->_float = sv_maxspeed.value;
+/* 		val->_float = sv_maxspeed.value;
+ CVAR_FIXME */
+		val->_float = sv_maxspeed->value;
 
 //
 // force stats to be updated
@@ -655,29 +677,49 @@ SV_BeginDownload_f
 void SV_BeginDownload_f(void)
 {
 	char	*name;
-	extern	cvar_t	allow_download;
-	extern	cvar_t	allow_download_skins;
-	extern	cvar_t	allow_download_models;
-	extern	cvar_t	allow_download_sounds;
-	extern	cvar_t	allow_download_maps;
+/* 	extern	cvar_t	allow_download;
+ CVAR_FIXME */
+	extern	cvar_t	*allow_download;
+/* 	extern	cvar_t	allow_download_skins;
+ CVAR_FIXME */
+	extern	cvar_t	*allow_download_skins;
+/* 	extern	cvar_t	allow_download_models;
+ CVAR_FIXME */
+	extern	cvar_t	*allow_download_models;
+/* 	extern	cvar_t	allow_download_sounds;
+ CVAR_FIXME */
+	extern	cvar_t	*allow_download_sounds;
+/* 	extern	cvar_t	allow_download_maps;
+ CVAR_FIXME */
+	extern	cvar_t	*allow_download_maps;
 	extern	int		file_from_pak; // ZOID did file come from pak?
 
 	name = Cmd_Argv(1);
 // hacked by zoid to allow more conrol over download
 		// first off, no .. or global allow check
-	if (strstr (name, "..") || !allow_download.value
+/* 	if (strstr (name, "..") || !allow_download.value
+ CVAR_FIXME */
+	if (strstr (name, "..") || !allow_download->value
 		// leading dot is no good
 		|| *name == '.' 
 		// leading slash bad as well, must be in subdir
 		|| *name == '/'
 		// next up, skin check
-		|| (strncmp(name, "skins/", 6) == 0 && !allow_download_skins.value)
+/* 		|| (strncmp(name, "skins/", 6) == 0 && !allow_download_skins.value)
+ CVAR_FIXME */
+		|| (strncmp(name, "skins/", 6) == 0 && !allow_download_skins->value)
 		// now models
-		|| (strncmp(name, "progs/", 6) == 0 && !allow_download_models.value)
+/* 		|| (strncmp(name, "progs/", 6) == 0 && !allow_download_models.value)
+ CVAR_FIXME */
+		|| (strncmp(name, "progs/", 6) == 0 && !allow_download_models->value)
 		// now sounds
-		|| (strncmp(name, "sound/", 6) == 0 && !allow_download_sounds.value)
+/* 		|| (strncmp(name, "sound/", 6) == 0 && !allow_download_sounds.value)
+ CVAR_FIXME */
+		|| (strncmp(name, "sound/", 6) == 0 && !allow_download_sounds->value)
 		// now maps (note special case for maps, must not be in pak)
-		|| (strncmp(name, "maps/", 6) == 0 && !allow_download_maps.value)
+/* 		|| (strncmp(name, "maps/", 6) == 0 && !allow_download_maps.value)
+ CVAR_FIXME */
+		|| (strncmp(name, "maps/", 6) == 0 && !allow_download_maps->value)
 		// MUST be in a subdirectory	
 		|| !strstr (name, "/") )	
 	{	// don't allow anything with .. path
@@ -749,7 +791,9 @@ void SV_Say (qboolean team)
 		t1[31] = 0;
 	}
 
-	if (host_client->spectator && (!sv_spectalk.value || team))
+/* 	if (host_client->spectator && (!sv_spectalk.value || team))
+ CVAR_FIXME */
+	if (host_client->spectator && (!sv_spectalk->value || team))
 		snprintf (text, sizeof(text), "[SPEC] %s: ", host_client->name);
 	else if (team)
 		snprintf (text, sizeof(text), "(%s): ", host_client->name);
@@ -801,7 +845,9 @@ void SV_Say (qboolean team)
 	{
 		if (client->state != cs_spawned)
 			continue;
-		if (host_client->spectator && !sv_spectalk.value)
+/* 		if (host_client->spectator && !sv_spectalk.value)
+ CVAR_FIXME */
+		if (host_client->spectator && !sv_spectalk->value)
 			if (!client->spectator)
 				continue;
 
@@ -927,7 +973,9 @@ void SV_Pause_f (void)
 {
 	char st[sizeof(host_client->name) + 32];
 
-	if (!pausable.value) {
+/* 	if (!pausable.value) {
+ CVAR_FIXME */
+	if (!pausable->value) {
 		SV_ClientPrintf (host_client, PRINT_HIGH, "Pause not allowed.\n");
 		return;
 	}
@@ -1220,10 +1268,16 @@ float V_CalcRoll (vec3_t angles, vec3_t velocity)
 	sign = side < 0 ? -1 : 1;
 	side = fabs(side);
 	
-	value = cl_rollangle.value;
+/* 	value = cl_rollangle.value;
+ CVAR_FIXME */
+	value = cl_rollangle->value;
 
-	if (side < cl_rollspeed.value)
-		side = side * value / cl_rollspeed.value;
+/* 	if (side < cl_rollspeed.value)
+ CVAR_FIXME */
+	if (side < cl_rollspeed->value)
+/* 		side = side * value / cl_rollspeed.value;
+ CVAR_FIXME */
+		side = side * value / cl_rollspeed->value;
 	else
 		side = value;
 	
@@ -1387,17 +1441,27 @@ void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
         if (!inside) {
                 host_client->msecs += ucmd->msec;
 
-                if ((sv_timekick.value >= 1) &&
-                        (tmp_time = realtime - host_client->last_check) >= sv_timekick_interval.value) {
-                        tmp_time *= (1000 + sv_timekick_fuzz.value);
+/*                 if ((sv_timekick.value >= 1) &&
+ CVAR_FIXME */
+                if ((sv_timekick->value >= 1) &&
+/*                         (tmp_time = realtime - host_client->last_check) >= sv_timekick_interval.value) {
+ CVAR_FIXME */
+                        (tmp_time = realtime - host_client->last_check) >= sv_timekick_interval->value) {
+/*                         tmp_time *= (1000 + sv_timekick_fuzz.value);
+ CVAR_FIXME */
+                        tmp_time *= (1000 + sv_timekick_fuzz->value);
                         if (host_client->msecs > (int) tmp_time) {
                                 host_client->msec_cheating++;
                                 SV_BroadcastPrintf( PRINT_HIGH,
                                                 va("%s thinks %d msecs pass in %f msecs. (Strike %d/%d)\n",
                                                 host_client->name, host_client->msecs, tmp_time,
-                                                host_client->msec_cheating, (int)sv_timekick.value));
+/*                                                 host_client->msec_cheating, (int)sv_timekick.value));
+ CVAR_FIXME */
+                                                host_client->msec_cheating, (int)sv_timekick->value));
 
-                                if (host_client->msec_cheating >= sv_timekick.value) {
+/*                                 if (host_client->msec_cheating >= sv_timekick.value) {
+ CVAR_FIXME */
+                                if (host_client->msec_cheating >= sv_timekick->value) {
                                                 SV_BroadcastPrintf(PRINT_HIGH, va("Strike %d for %s!!\n",
                                                 host_client->msec_cheating, host_client->name));
                                         SV_BroadcastPrintf(PRINT_HIGH, "Please see http://www.quakeforge.net/speed_cheat.php for infomation on QuakeForge's time cheat protection, and to explain how some may be cheating without knowing it.\n"
@@ -1726,10 +1790,18 @@ SV_UserInit
 */
 void SV_UserInit (void)
 {
-	Cvar_RegisterVariable (&cl_rollspeed);
-	Cvar_RegisterVariable (&cl_rollangle);
-	Cvar_RegisterVariable (&sv_spectalk);
-	Cvar_RegisterVariable (&sv_mapcheck);
+/* 	Cvar_RegisterVariable (&cl_rollspeed);
+ CVAR_FIXME */
+	cl_rollspeed = Cvar_Get("cl_rollspeed",  "200", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&cl_rollangle);
+ CVAR_FIXME */
+	cl_rollangle = Cvar_Get("cl_rollangle",  "2.0", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&sv_spectalk);
+ CVAR_FIXME */
+	sv_spectalk = Cvar_Get("sv_spectalk",  "1", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&sv_mapcheck);
+ CVAR_FIXME */
+	sv_mapcheck = Cvar_Get("sv_mapcheck",  "1", CVAR_NONE, "None");
 }
 
 

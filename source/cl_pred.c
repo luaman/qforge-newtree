@@ -29,8 +29,12 @@
 #include "quakedef.h"
 #include "winquake.h"
 
-cvar_t	cl_nopred = {"cl_nopred","0"};
-cvar_t	cl_pushlatency = {"pushlatency","-999"};
+/* cvar_t	cl_nopred = {"cl_nopred","0"};
+ CVAR_FIXME */
+cvar_t	*cl_nopred;
+/* cvar_t	cl_pushlatency = {"pushlatency","-999"};
+ CVAR_FIXME */
+cvar_t	*cl_pushlatency;
 
 extern	frame_t		*view_frame;
 
@@ -126,13 +130,17 @@ void CL_PredictMove (void)
 	frame_t		*from, *to = NULL;
 	int			oldphysent;
 
-	if (cl_pushlatency.value > 0)
+/* 	if (cl_pushlatency.value > 0)
+ CVAR_FIXME */
+	if (cl_pushlatency->value > 0)
 		Cvar_Set ("pushlatency", "0");
 
 	if (cl.paused)
 		return;
 
-	cl.time = realtime - cls.latency - cl_pushlatency.value*0.001;
+/* 	cl.time = realtime - cls.latency - cl_pushlatency.value*0.001;
+ CVAR_FIXME */
+	cl.time = realtime - cls.latency - cl_pushlatency->value*0.001;
 	if (cl.time > realtime)
 		cl.time = realtime;
 
@@ -162,7 +170,9 @@ void CL_PredictMove (void)
 #endif
 	}
 
-	if (cl_nopred.value)
+/* 	if (cl_nopred.value)
+ CVAR_FIXME */
+	if (cl_nopred->value)
 	{
 		VectorCopy (from->playerstate[cl.playernum].velocity, cl.simvel);
 		VectorCopy (from->playerstate[cl.playernum].origin, cl.simorg);
@@ -229,7 +239,11 @@ CL_InitPrediction
 */
 void CL_InitPrediction (void)
 {
-	Cvar_RegisterVariable (&cl_pushlatency);
-	Cvar_RegisterVariable (&cl_nopred);
+/* 	Cvar_RegisterVariable (&cl_pushlatency);
+ CVAR_FIXME */
+	cl_pushlatency = Cvar_Get("pushlatency", "-999", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&cl_nopred);
+ CVAR_FIXME */
+	cl_nopred = Cvar_Get("cl_nopred", "0", CVAR_NONE, "None");
 }
 

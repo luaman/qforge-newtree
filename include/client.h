@@ -294,36 +294,80 @@ typedef struct
 //
 // cvars
 //
-extern  cvar_t	cl_warncmd;
-extern	cvar_t	cl_upspeed;
-extern	cvar_t	cl_forwardspeed;
-extern	cvar_t	cl_backspeed;
-extern	cvar_t	cl_sidespeed;
+/* extern  cvar_t	cl_warncmd;
+ CVAR_FIXME */
+extern  cvar_t	*cl_warncmd;
+/* extern	cvar_t	cl_upspeed;
+ CVAR_FIXME */
+extern	cvar_t	*cl_upspeed;
+/* extern	cvar_t	cl_forwardspeed;
+ CVAR_FIXME */
+extern	cvar_t	*cl_forwardspeed;
+/* extern	cvar_t	cl_backspeed;
+ CVAR_FIXME */
+extern	cvar_t	*cl_backspeed;
+/* extern	cvar_t	cl_sidespeed;
+ CVAR_FIXME */
+extern	cvar_t	*cl_sidespeed;
 
-extern	cvar_t	cl_movespeedkey;
+/* extern	cvar_t	cl_movespeedkey;
+ CVAR_FIXME */
+extern	cvar_t	*cl_movespeedkey;
 
-extern	cvar_t	cl_yawspeed;
-extern	cvar_t	cl_pitchspeed;
+/* extern	cvar_t	cl_yawspeed;
+ CVAR_FIXME */
+extern	cvar_t	*cl_yawspeed;
+/* extern	cvar_t	cl_pitchspeed;
+ CVAR_FIXME */
+extern	cvar_t	*cl_pitchspeed;
 
-extern	cvar_t	cl_anglespeedkey;
+/* extern	cvar_t	cl_anglespeedkey;
+ CVAR_FIXME */
+extern	cvar_t	*cl_anglespeedkey;
 
-extern	cvar_t	cl_shownet;
-extern	cvar_t	cl_sbar;
-extern	cvar_t	cl_hudswap;
+/* extern	cvar_t	cl_shownet;
+ CVAR_FIXME */
+extern	cvar_t	*cl_shownet;
+/* extern	cvar_t	cl_sbar;
+ CVAR_FIXME */
+extern	cvar_t	*cl_sbar;
+/* extern	cvar_t	cl_hudswap;
+ CVAR_FIXME */
+extern	cvar_t	*cl_hudswap;
 
-extern	cvar_t	cl_pitchdriftspeed;
-extern	cvar_t	lookspring;
-extern	cvar_t	lookstrafe;
-extern	cvar_t	sensitivity;
+/* extern	cvar_t	cl_pitchdriftspeed;
+ CVAR_FIXME */
+extern	cvar_t	*cl_pitchdriftspeed;
+/* extern	cvar_t	lookspring;
+ CVAR_FIXME */
+extern	cvar_t	*lookspring;
+/* extern	cvar_t	lookstrafe;
+ CVAR_FIXME */
+extern	cvar_t	*lookstrafe;
+/* extern	cvar_t	sensitivity;
+ CVAR_FIXME */
+extern	cvar_t	*sensitivity;
 
-extern	cvar_t	m_pitch;
-extern	cvar_t	m_yaw;
-extern	cvar_t	m_forward;
-extern	cvar_t	m_side;
+/* extern	cvar_t	m_pitch;
+ CVAR_FIXME */
+extern	cvar_t	*m_pitch;
+/* extern	cvar_t	m_yaw;
+ CVAR_FIXME */
+extern	cvar_t	*m_yaw;
+/* extern	cvar_t	m_forward;
+ CVAR_FIXME */
+extern	cvar_t	*m_forward;
+/* extern	cvar_t	m_side;
+ CVAR_FIXME */
+extern	cvar_t	*m_side;
 
-extern cvar_t		_windowed_mouse;
+/* extern cvar_t		_windowed_mouse;
+ CVAR_FIXME */
+extern cvar_t		*_windowed_mouse;
 
-extern	cvar_t	name;
+/* extern	cvar_t	name;
+ CVAR_FIXME */
+extern	cvar_t	*name;
 
 
 #define	MAX_STATIC_ENTITIES	128			// torches, etc

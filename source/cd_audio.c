@@ -30,7 +30,9 @@
 #include "quakedef.h"
 #include "dosisms.h"
 
-extern	cvar_t	bgmvolume;
+/* extern	cvar_t	bgmvolume;
+ CVAR_FIXME */
+extern	cvar_t	*bgmvolume;
 
 #define ADDRESS_MODE_HSG		0
 #define ADDRESS_MODE_RED_BOOK	1
@@ -754,7 +756,9 @@ void CDAudio_Update(void)
 		}
 	}
 
-	newVolume = (int)(bgmvolume.value * 255.0);
+/* 	newVolume = (int)(bgmvolume.value * 255.0);
+ CVAR_FIXME */
+	newVolume = (int)(bgmvolume->value * 255.0);
 	if (newVolume < 0)
 	{
 		Cvar_SetValue ("bgmvolume", 0.0);

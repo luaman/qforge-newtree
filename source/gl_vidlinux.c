@@ -81,11 +81,19 @@ int		UseKeyboard = 1;
 
 int		mouserate = MOUSE_DEFAULTSAMPLERATE;
 
-cvar_t	_windowed_mouse = {"_windowed_mouse","0", true};
+/* cvar_t	_windowed_mouse = {"_windowed_mouse","0", true};
+ CVAR_FIXME */
+cvar_t	*_windowed_mouse;
 
-cvar_t		vid_mode = {"vid_mode","5",false};
-cvar_t		vid_redrawfull = {"vid_redrawfull","0",false};
-cvar_t		vid_waitforrefresh = {"vid_waitforrefresh","0",true};
+/* cvar_t		vid_mode = {"vid_mode","5",false};
+ CVAR_FIXME */
+cvar_t		*vid_mode;
+/* cvar_t		vid_redrawfull = {"vid_redrawfull","0",false};
+ CVAR_FIXME */
+cvar_t		*vid_redrawfull;
+/* cvar_t		vid_waitforrefresh = {"vid_waitforrefresh","0",true};
+ CVAR_FIXME */
+cvar_t		*vid_waitforrefresh;
  
 char	*framebuffer_ptr;
 
@@ -103,7 +111,9 @@ float   mouse_x, mouse_y;
 float	old_mouse_x, old_mouse_y;
 int		mx, my;
 
-cvar_t	m_filter = {"m_filter","1"};
+/* cvar_t	m_filter = {"m_filter","1"};
+ CVAR_FIXME */
+cvar_t	*m_filter;
 
 int scr_width, scr_height;
 
@@ -120,7 +130,9 @@ int		texture_extension_number = 1;
 
 float		gldepthmin, gldepthmax;
 
-cvar_t	gl_ztrick = {"gl_ztrick","1"};
+/* cvar_t	gl_ztrick = {"gl_ztrick","1"};
+ CVAR_FIXME */
+cvar_t	*gl_ztrick;
 
 const char *gl_vendor;
 const char *gl_renderer;
@@ -343,7 +355,9 @@ GL_BeginRendering
 */
 void GL_BeginRendering (int *x, int *y, int *width, int *height)
 {
-	extern cvar_t gl_clear;
+/* 	extern cvar_t gl_clear;
+ CVAR_FIXME */
+	extern cvar_t *gl_clear;
 
 	*x = *y = 0;
 	*width = scr_width;
@@ -572,10 +586,18 @@ void VID_Init(unsigned char *palette)
 
 	Init_KBD();
 
-	Cvar_RegisterVariable (&vid_mode);
-	Cvar_RegisterVariable (&vid_redrawfull);
-	Cvar_RegisterVariable (&vid_waitforrefresh);
-	Cvar_RegisterVariable (&gl_ztrick);
+/* 	Cvar_RegisterVariable (&vid_mode);
+ CVAR_FIXME */
+	vid_mode = Cvar_Get("vid_mode", "0", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&vid_redrawfull);
+ CVAR_FIXME */
+	vid_redrawfull = Cvar_Get("vid_redrawfull", "0", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&vid_waitforrefresh);
+ CVAR_FIXME */
+	vid_waitforrefresh = Cvar_Get("vid_waitforrefresh", "0", CVAR_NONE|CVAR_ARCHIVE, "None");
+/* 	Cvar_RegisterVariable (&gl_ztrick);
+ CVAR_FIXME */
+	gl_ztrick = Cvar_Get("gl_ztrick", "1", CVAR_NONE, "None");
 	
         vid.maxwarpwidth = WARP_WIDTH;
         vid.maxwarpheight = WARP_HEIGHT;
@@ -772,7 +794,9 @@ void IN_MouseMove (usercmd_t *cmd)
 	while (mouse_update())
 		;
 
-	if (m_filter.value)
+/* 	if (m_filter.value)
+ CVAR_FIXME */
+	if (m_filter->value)
 	{
 		mouse_x = (mx + old_mouse_x) * 0.5;
 		mouse_y = (my + old_mouse_y) * 0.5;
@@ -786,21 +810,33 @@ void IN_MouseMove (usercmd_t *cmd)
 	old_mouse_y = my;
 	mx = my = 0; // clear for next update
 
-	mouse_x *= sensitivity.value;
-	mouse_y *= sensitivity.value;
+/* 	mouse_x *= sensitivity.value;
+ CVAR_FIXME */
+	mouse_x *= sensitivity->value;
+/* 	mouse_y *= sensitivity.value;
+ CVAR_FIXME */
+	mouse_y *= sensitivity->value;
 
 // add mouse X/Y movement to cmd
-	if ( (in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1) ))
-		cmd->sidemove += m_side.value * mouse_x;
+/* 	if ( (in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1) ))
+ CVAR_FIXME */
+	if ( (in_strafe.state & 1) || (lookstrafe->value && (in_mlook.state & 1) ))
+/* 		cmd->sidemove += m_side.value * mouse_x;
+ CVAR_FIXME */
+		cmd->sidemove += m_side->value * mouse_x;
 	else
-		cl.viewangles[YAW] -= m_yaw.value * mouse_x;
+/* 		cl.viewangles[YAW] -= m_yaw.value * mouse_x;
+ CVAR_FIXME */
+		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
 	
 	if (in_mlook.state & 1)
 		V_StopPitchDrift ();
 		
 	if ( (in_mlook.state & 1) && !(in_strafe.state & 1))
 	{
-		cl.viewangles[PITCH] += m_pitch.value * mouse_y;
+/* 		cl.viewangles[PITCH] += m_pitch.value * mouse_y;
+ CVAR_FIXME */
+		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
 		if (cl.viewangles[PITCH] > 80)
 			cl.viewangles[PITCH] = 80;
 		if (cl.viewangles[PITCH] < -70)
@@ -809,9 +845,13 @@ void IN_MouseMove (usercmd_t *cmd)
 	else
 	{
 		if ((in_strafe.state & 1) && noclip_anglehack)
-			cmd->upmove -= m_forward.value * mouse_y;
+/* 			cmd->upmove -= m_forward.value * mouse_y;
+ CVAR_FIXME */
+			cmd->upmove -= m_forward->value * mouse_y;
 		else
-			cmd->forwardmove -= m_forward.value * mouse_y;
+/* 			cmd->forwardmove -= m_forward.value * mouse_y;
+ CVAR_FIXME */
+			cmd->forwardmove -= m_forward->value * mouse_y;
 	}
 }
 

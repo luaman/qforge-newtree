@@ -51,8 +51,12 @@ typedef unsigned short PIXEL;
 #include "quakedef.h"
 #include "d_local.h"
 
-cvar_t		_windowed_mouse = {"_windowed_mouse","0", true};
-cvar_t		m_filter = {"m_filter","0", true};
+/* cvar_t		_windowed_mouse = {"_windowed_mouse","0", true};
+ CVAR_FIXME */
+cvar_t		*_windowed_mouse;
+/* cvar_t		m_filter = {"m_filter","0", true};
+ CVAR_FIXME */
+cvar_t		*m_filter;
 float old_windowed_mouse;
 
 // not used
@@ -823,7 +827,9 @@ void GetEvent(void)
 		break;
 
 	case MotionNotify:
-		if (_windowed_mouse.value) {
+/* 		if (_windowed_mouse.value) {
+ CVAR_FIXME */
+		if (_windowed_mouse->value) {
 			mouse_x = (float) ((int)x_event.xmotion.x - (int)(vid.width/2));
 			mouse_y = (float) ((int)x_event.xmotion.y - (int)(vid.height/2));
 //printf("m: x=%d,y=%d, mx=%3.2f,my=%3.2f\n", 
@@ -884,10 +890,16 @@ void GetEvent(void)
 			oktodraw = true;
 	}
    
-	if (old_windowed_mouse != _windowed_mouse.value) {
-		old_windowed_mouse = _windowed_mouse.value;
+/* 	if (old_windowed_mouse != _windowed_mouse.value) {
+ CVAR_FIXME */
+	if (old_windowed_mouse != _windowed_mouse->value) {
+/* 		old_windowed_mouse = _windowed_mouse.value;
+ CVAR_FIXME */
+		old_windowed_mouse = _windowed_mouse->value;
 
-		if (!_windowed_mouse.value) {
+/* 		if (!_windowed_mouse.value) {
+ CVAR_FIXME */
+		if (!_windowed_mouse->value) {
 			/* ungrab the pointer */
 			XUngrabPointer(x_disp,CurrentTime);
 		} else {
@@ -1060,8 +1072,12 @@ void D_EndDirectRect (int x, int y, int width, int height)
 
 void IN_Init (void)
 {
-	Cvar_RegisterVariable (&_windowed_mouse);
-	Cvar_RegisterVariable (&m_filter);
+/* 	Cvar_RegisterVariable (&_windowed_mouse);
+ CVAR_FIXME */
+	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&m_filter);
+ CVAR_FIXME */
+	m_filter = Cvar_Get("m_filter", "0", CVAR_NONE, "None");
    if ( COM_CheckParm ("-nomouse") )
      return;
    mouse_x = mouse_y = 0.0;
@@ -1094,7 +1110,9 @@ void IN_Move (usercmd_t *cmd)
 	if (!mouse_avail)
 		return;
    
-	if (m_filter.value) {
+/* 	if (m_filter.value) {
+ CVAR_FIXME */
+	if (m_filter->value) {
 		mouse_x = (mouse_x + old_mouse_x) * 0.5;
 		mouse_y = (mouse_y + old_mouse_y) * 0.5;
 	}
@@ -1102,27 +1120,43 @@ void IN_Move (usercmd_t *cmd)
 	old_mouse_x = mouse_x;
 	old_mouse_y = mouse_y;
    
-	mouse_x *= sensitivity.value;
-	mouse_y *= sensitivity.value;
+/* 	mouse_x *= sensitivity.value;
+ CVAR_FIXME */
+	mouse_x *= sensitivity->value;
+/* 	mouse_y *= sensitivity.value;
+ CVAR_FIXME */
+	mouse_y *= sensitivity->value;
    
-	if ( (in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1) ))
-		cmd->sidemove += m_side.value * mouse_x;
+/* 	if ( (in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1) ))
+ CVAR_FIXME */
+	if ( (in_strafe.state & 1) || (lookstrafe->value && (in_mlook.state & 1) ))
+/* 		cmd->sidemove += m_side.value * mouse_x;
+ CVAR_FIXME */
+		cmd->sidemove += m_side->value * mouse_x;
 	else
-		cl.viewangles[YAW] -= m_yaw.value * mouse_x;
+/* 		cl.viewangles[YAW] -= m_yaw.value * mouse_x;
+ CVAR_FIXME */
+		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
 	if (in_mlook.state & 1)
 		V_StopPitchDrift ();
    
 	if ( (in_mlook.state & 1) && !(in_strafe.state & 1)) {
-		cl.viewangles[PITCH] += m_pitch.value * mouse_y;
+/* 		cl.viewangles[PITCH] += m_pitch.value * mouse_y;
+ CVAR_FIXME */
+		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
 		if (cl.viewangles[PITCH] > 80)
 			cl.viewangles[PITCH] = 80;
 		if (cl.viewangles[PITCH] < -70)
 			cl.viewangles[PITCH] = -70;
 	} else {
 		if ((in_strafe.state & 1) && noclip_anglehack)
-			cmd->upmove -= m_forward.value * mouse_y;
+/* 			cmd->upmove -= m_forward.value * mouse_y;
+ CVAR_FIXME */
+			cmd->upmove -= m_forward->value * mouse_y;
 		else
-			cmd->forwardmove -= m_forward.value * mouse_y;
+/* 			cmd->forwardmove -= m_forward.value * mouse_y;
+ CVAR_FIXME */
+			cmd->forwardmove -= m_forward->value * mouse_y;
 	}
 	mouse_x = mouse_y = 0.0;
 }

@@ -34,8 +34,12 @@
 qboolean is_server = true;
 qboolean WinNT;
 
-cvar_t	sys_nostdout = {"sys_nostdout","0"};
-cvar_t	sys_sleep = {"sys_sleep","1"};
+/* cvar_t	sys_nostdout = {"sys_nostdout","0"};
+ CVAR_FIXME */
+cvar_t	*sys_nostdout;
+/* cvar_t	sys_sleep = {"sys_sleep","1"};
+ CVAR_FIXME */
+cvar_t	*sys_sleep;
 
 /*
 ================
@@ -132,7 +136,9 @@ void Sys_Printf (char *fmt, ...)
 {
 	va_list		argptr;
 	
-	if (sys_nostdout.value)
+/* 	if (sys_nostdout.value)
+ CVAR_FIXME */
+	if (sys_nostdout->value)
 		return;
 		
 	va_start (argptr,fmt);
@@ -163,8 +169,12 @@ void Sys_Init (void)
 {
 	OSVERSIONINFO	vinfo;
 
-	Cvar_RegisterVariable (&sys_nostdout);
-	Cvar_RegisterVariable (&sys_sleep);
+/* 	Cvar_RegisterVariable (&sys_nostdout);
+ CVAR_FIXME */
+	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&sys_sleep);
+ CVAR_FIXME */
+	sys_sleep = Cvar_Get("sys_sleep", "1", CVAR_NONE, "None");
 
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution
@@ -257,7 +267,9 @@ int main (int argc, char **argv)
 	{
 	// Now we want to give some processing time to other applications,
 	// such as qw_client, running on this machine.
-		sleep_msec = sys_sleep.value;
+/* 		sleep_msec = sys_sleep.value;
+ CVAR_FIXME */
+		sleep_msec = sys_sleep->value;
 		if (sleep_msec > 0)
 		{
 			if (sleep_msec > 13)

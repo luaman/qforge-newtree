@@ -51,7 +51,9 @@ extern      double          host_frametime;
 extern int	onground;
 extern	byte	gammatable[256];
 
-cvar_t  gl_cshiftpercent = {"gl_cshiftpercent", "100", false};
+/* cvar_t  gl_cshiftpercent = {"gl_cshiftpercent", "100", false};
+ CVAR_FIXME */
+cvar_t  *gl_cshiftpercent;
 
 byte ramps[3][256];
 float	v_blend[4];
@@ -76,10 +78,14 @@ void V_CalcBlend (void)
 
         for (j=0 ; j<NUM_CSHIFTS ; j++)
         {
-                if (!gl_cshiftpercent.value)
+/*                 if (!gl_cshiftpercent.value)
+ CVAR_FIXME */
+                if (!gl_cshiftpercent->value)
                         continue;
 
-                a2 = ((cl.cshifts[j].percent * gl_cshiftpercent.value) / 100.0) / 255.0;
+/*                 a2 = ((cl.cshifts[j].percent * gl_cshiftpercent.value) / 100.0) / 255.0;
+ CVAR_FIXME */
+                a2 = ((cl.cshifts[j].percent * gl_cshiftpercent->value) / 100.0) / 255.0;
 
 //              a2 = (cl.cshifts[j].percent/2)/255.0;
                 if (!a2)

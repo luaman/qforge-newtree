@@ -30,7 +30,9 @@
 #include "quakedef.h"
 #include "in_win.h"
 
-cvar_t	cl_nodelta = {"cl_nodelta","0"};
+/* cvar_t	cl_nodelta = {"cl_nodelta","0"};
+ CVAR_FIXME */
+cvar_t	*cl_nodelta;
 
 /*
 ===============================================================================
@@ -127,7 +129,9 @@ void IN_KLookUp (void) {KeyUp(&in_klook);}
 void IN_MLookDown (void) {KeyDown(&in_mlook);}
 void IN_MLookUp (void) {
 KeyUp(&in_mlook);
-if ( !(in_mlook.state&1) &&  lookspring.value)
+/* if ( !(in_mlook.state&1) &&  lookspring.value)
+ CVAR_FIXME */
+if ( !(in_mlook.state&1) &&  lookspring->value)
 	V_StartPitchDrift();
 }
 void IN_UpDown(void) {KeyDown(&in_up);}
@@ -221,17 +225,33 @@ float CL_KeyState (kbutton_t *key)
 
 //==========================================================================
 
-cvar_t	cl_upspeed = {"cl_upspeed","200"};
-cvar_t	cl_forwardspeed = {"cl_forwardspeed","200", true};
-cvar_t	cl_backspeed = {"cl_backspeed","200", true};
-cvar_t	cl_sidespeed = {"cl_sidespeed","350"};
+/* cvar_t	cl_upspeed = {"cl_upspeed","200"};
+ CVAR_FIXME */
+cvar_t	*cl_upspeed;
+/* cvar_t	cl_forwardspeed = {"cl_forwardspeed","200", true};
+ CVAR_FIXME */
+cvar_t	*cl_forwardspeed;
+/* cvar_t	cl_backspeed = {"cl_backspeed","200", true};
+ CVAR_FIXME */
+cvar_t	*cl_backspeed;
+/* cvar_t	cl_sidespeed = {"cl_sidespeed","350"};
+ CVAR_FIXME */
+cvar_t	*cl_sidespeed;
 
-cvar_t	cl_movespeedkey = {"cl_movespeedkey","2.0"};
+/* cvar_t	cl_movespeedkey = {"cl_movespeedkey","2.0"};
+ CVAR_FIXME */
+cvar_t	*cl_movespeedkey;
 
-cvar_t	cl_yawspeed = {"cl_yawspeed","140"};
-cvar_t	cl_pitchspeed = {"cl_pitchspeed","150"};
+/* cvar_t	cl_yawspeed = {"cl_yawspeed","140"};
+ CVAR_FIXME */
+cvar_t	*cl_yawspeed;
+/* cvar_t	cl_pitchspeed = {"cl_pitchspeed","150"};
+ CVAR_FIXME */
+cvar_t	*cl_pitchspeed;
 
-cvar_t	cl_anglespeedkey = {"cl_anglespeedkey","1.5"};
+/* cvar_t	cl_anglespeedkey = {"cl_anglespeedkey","1.5"};
+ CVAR_FIXME */
+cvar_t	*cl_anglespeedkey;
 
 
 /*
@@ -247,28 +267,42 @@ void CL_AdjustAngles (void)
 	float	up, down;
 	
 	if (in_speed.state & 1)
-		speed = host_frametime * cl_anglespeedkey.value;
+/* 		speed = host_frametime * cl_anglespeedkey.value;
+ CVAR_FIXME */
+		speed = host_frametime * cl_anglespeedkey->value;
 	else
 		speed = host_frametime;
 
 	if (!(in_strafe.state & 1))
 	{
-		cl.viewangles[YAW] -= speed*cl_yawspeed.value*CL_KeyState (&in_right);
-		cl.viewangles[YAW] += speed*cl_yawspeed.value*CL_KeyState (&in_left);
+/* 		cl.viewangles[YAW] -= speed*cl_yawspeed.value*CL_KeyState (&in_right);
+ CVAR_FIXME */
+		cl.viewangles[YAW] -= speed*cl_yawspeed->value*CL_KeyState (&in_right);
+/* 		cl.viewangles[YAW] += speed*cl_yawspeed.value*CL_KeyState (&in_left);
+ CVAR_FIXME */
+		cl.viewangles[YAW] += speed*cl_yawspeed->value*CL_KeyState (&in_left);
 		cl.viewangles[YAW] = anglemod(cl.viewangles[YAW]);
 	}
 	if (in_klook.state & 1)
 	{
 		V_StopPitchDrift ();
-		cl.viewangles[PITCH] -= speed*cl_pitchspeed.value * CL_KeyState (&in_forward);
-		cl.viewangles[PITCH] += speed*cl_pitchspeed.value * CL_KeyState (&in_back);
+/* 		cl.viewangles[PITCH] -= speed*cl_pitchspeed.value * CL_KeyState (&in_forward);
+ CVAR_FIXME */
+		cl.viewangles[PITCH] -= speed*cl_pitchspeed->value * CL_KeyState (&in_forward);
+/* 		cl.viewangles[PITCH] += speed*cl_pitchspeed.value * CL_KeyState (&in_back);
+ CVAR_FIXME */
+		cl.viewangles[PITCH] += speed*cl_pitchspeed->value * CL_KeyState (&in_back);
 	}
 	
 	up = CL_KeyState (&in_lookup);
 	down = CL_KeyState(&in_lookdown);
 	
-	cl.viewangles[PITCH] -= speed*cl_pitchspeed.value * up;
-	cl.viewangles[PITCH] += speed*cl_pitchspeed.value * down;
+/* 	cl.viewangles[PITCH] -= speed*cl_pitchspeed.value * up;
+ CVAR_FIXME */
+	cl.viewangles[PITCH] -= speed*cl_pitchspeed->value * up;
+/* 	cl.viewangles[PITCH] += speed*cl_pitchspeed.value * down;
+ CVAR_FIXME */
+	cl.viewangles[PITCH] += speed*cl_pitchspeed->value * down;
 
 	if (up || down)
 		V_StopPitchDrift ();
@@ -301,20 +335,36 @@ void CL_BaseMove (usercmd_t *cmd)
 	VectorCopy (cl.viewangles, cmd->angles);
 	if (in_strafe.state & 1)
 	{
-		cmd->sidemove += cl_sidespeed.value * CL_KeyState (&in_right);
-		cmd->sidemove -= cl_sidespeed.value * CL_KeyState (&in_left);
+/* 		cmd->sidemove += cl_sidespeed.value * CL_KeyState (&in_right);
+ CVAR_FIXME */
+		cmd->sidemove += cl_sidespeed->value * CL_KeyState (&in_right);
+/* 		cmd->sidemove -= cl_sidespeed.value * CL_KeyState (&in_left);
+ CVAR_FIXME */
+		cmd->sidemove -= cl_sidespeed->value * CL_KeyState (&in_left);
 	}
 
-	cmd->sidemove += cl_sidespeed.value * CL_KeyState (&in_moveright);
-	cmd->sidemove -= cl_sidespeed.value * CL_KeyState (&in_moveleft);
+/* 	cmd->sidemove += cl_sidespeed.value * CL_KeyState (&in_moveright);
+ CVAR_FIXME */
+	cmd->sidemove += cl_sidespeed->value * CL_KeyState (&in_moveright);
+/* 	cmd->sidemove -= cl_sidespeed.value * CL_KeyState (&in_moveleft);
+ CVAR_FIXME */
+	cmd->sidemove -= cl_sidespeed->value * CL_KeyState (&in_moveleft);
 
-	cmd->upmove += cl_upspeed.value * CL_KeyState (&in_up);
-	cmd->upmove -= cl_upspeed.value * CL_KeyState (&in_down);
+/* 	cmd->upmove += cl_upspeed.value * CL_KeyState (&in_up);
+ CVAR_FIXME */
+	cmd->upmove += cl_upspeed->value * CL_KeyState (&in_up);
+/* 	cmd->upmove -= cl_upspeed.value * CL_KeyState (&in_down);
+ CVAR_FIXME */
+	cmd->upmove -= cl_upspeed->value * CL_KeyState (&in_down);
 
 	if (! (in_klook.state & 1) )
 	{	
-		cmd->forwardmove += cl_forwardspeed.value * CL_KeyState (&in_forward);
-		cmd->forwardmove -= cl_backspeed.value * CL_KeyState (&in_back);
+/* 		cmd->forwardmove += cl_forwardspeed.value * CL_KeyState (&in_forward);
+ CVAR_FIXME */
+		cmd->forwardmove += cl_forwardspeed->value * CL_KeyState (&in_forward);
+/* 		cmd->forwardmove -= cl_backspeed.value * CL_KeyState (&in_back);
+ CVAR_FIXME */
+		cmd->forwardmove -= cl_backspeed->value * CL_KeyState (&in_back);
 	}	
 
 //
@@ -322,9 +372,15 @@ void CL_BaseMove (usercmd_t *cmd)
 //
 	if (in_speed.state & 1)
 	{
-		cmd->forwardmove *= cl_movespeedkey.value;
-		cmd->sidemove *= cl_movespeedkey.value;
-		cmd->upmove *= cl_movespeedkey.value;
+/* 		cmd->forwardmove *= cl_movespeedkey.value;
+ CVAR_FIXME */
+		cmd->forwardmove *= cl_movespeedkey->value;
+/* 		cmd->sidemove *= cl_movespeedkey.value;
+ CVAR_FIXME */
+		cmd->sidemove *= cl_movespeedkey->value;
+/* 		cmd->upmove *= cl_movespeedkey.value;
+ CVAR_FIXME */
+		cmd->upmove *= cl_movespeedkey->value;
 	}	
 }
 
@@ -468,7 +524,9 @@ void CL_SendCmd (void)
 	if (cls.netchan.outgoing_sequence - cl.validsequence >= UPDATE_BACKUP-1)
 		cl.validsequence = 0;
 
-	if (cl.validsequence && !cl_nodelta.value && cls.state == ca_active &&
+/* 	if (cl.validsequence && !cl_nodelta.value && cls.state == ca_active &&
+ CVAR_FIXME */
+	if (cl.validsequence && !cl_nodelta->value && cls.state == ca_active &&
 		!cls.demorecording)
 	{
 		cl.frames[cls.netchan.outgoing_sequence&UPDATE_MASK].delta_sequence = cl.validsequence;
@@ -532,7 +590,9 @@ void CL_InitInput (void)
 	Cmd_AddCommand ("+mlook", IN_MLookDown);
 	Cmd_AddCommand ("-mlook", IN_MLookUp);
 
-	Cvar_RegisterVariable (&cl_nodelta);
+/* 	Cvar_RegisterVariable (&cl_nodelta);
+ CVAR_FIXME */
+	cl_nodelta = Cvar_Get("cl_nodelta", "0", CVAR_NONE, "None");
 }
 
 /*

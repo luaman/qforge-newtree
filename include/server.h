@@ -195,7 +195,9 @@ typedef struct client_s
 
 // a client can leave the server in one of four ways:
 // dropping properly by quiting or disconnecting
-// timing out if no valid messages are received for timeout.value seconds
+/* // timing out if no valid messages are received for timeout.value seconds
+ CVAR_FIXME */
+// timing out if no valid messages are received for timeout->value seconds
 // getting kicked off by the server operator
 // a program error, like an overflowed reliable buffer
 
@@ -319,16 +321,30 @@ extern client_state_t cls;
 
 //============================================================================
 
-extern	cvar_t	sv_mintic, sv_maxtic;
-extern	cvar_t	sv_maxspeed;
+/* extern	cvar_t	sv_mintic, sv_maxtic;
+ CVAR_FIXME */
+extern	cvar_t	*sv_mintic, *sv_maxtic;
+/* extern	cvar_t	sv_maxspeed;
+ CVAR_FIXME */
+extern	cvar_t	*sv_maxspeed;
 
 extern	netadr_t	master_adr[MAX_MASTERS];	// address of the master server
 
-extern	cvar_t	spawn;
-extern	cvar_t	teamplay;
-extern	cvar_t	deathmatch;
-extern	cvar_t	fraglimit;
-extern	cvar_t	timelimit;
+/* extern	cvar_t	spawn;
+ CVAR_FIXME */
+extern	cvar_t	*spawn;
+/* extern	cvar_t	teamplay;
+ CVAR_FIXME */
+extern	cvar_t	*teamplay;
+/* extern	cvar_t	deathmatch;
+ CVAR_FIXME */
+extern	cvar_t	*deathmatch;
+/* extern	cvar_t	fraglimit;
+ CVAR_FIXME */
+extern	cvar_t	*fraglimit;
+/* extern	cvar_t	timelimit;
+ CVAR_FIXME */
+extern	cvar_t	*timelimit;
 
 extern	server_static_t	svs;				// persistant server info
 extern	server_t		sv;					// local server

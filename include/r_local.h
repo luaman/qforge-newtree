@@ -53,24 +53,60 @@ typedef struct {
 
 //===========================================================================
 
-extern cvar_t	r_draworder;
-extern cvar_t	r_speeds;
-extern cvar_t	r_timegraph;
-extern cvar_t	r_graphheight;
-extern cvar_t	r_clearcolor;
-extern cvar_t	r_waterwarp;
-extern cvar_t	r_fullbright;
-extern cvar_t	r_drawentities;
-extern cvar_t	r_aliasstats;
-extern cvar_t	r_dspeeds;
-extern cvar_t	r_drawflat;
-extern cvar_t	r_ambient;
-extern cvar_t	r_reportsurfout;
-extern cvar_t	r_maxsurfs;
-extern cvar_t	r_numsurfs;
-extern cvar_t	r_reportedgeout;
-extern cvar_t	r_maxedges;
-extern cvar_t	r_numedges;
+/* extern cvar_t	r_draworder;
+ CVAR_FIXME */
+extern cvar_t	*r_draworder;
+/* extern cvar_t	r_speeds;
+ CVAR_FIXME */
+extern cvar_t	*r_speeds;
+/* extern cvar_t	r_timegraph;
+ CVAR_FIXME */
+extern cvar_t	*r_timegraph;
+/* extern cvar_t	r_graphheight;
+ CVAR_FIXME */
+extern cvar_t	*r_graphheight;
+/* extern cvar_t	r_clearcolor;
+ CVAR_FIXME */
+extern cvar_t	*r_clearcolor;
+/* extern cvar_t	r_waterwarp;
+ CVAR_FIXME */
+extern cvar_t	*r_waterwarp;
+/* extern cvar_t	r_fullbright;
+ CVAR_FIXME */
+extern cvar_t	*r_fullbright;
+/* extern cvar_t	r_drawentities;
+ CVAR_FIXME */
+extern cvar_t	*r_drawentities;
+/* extern cvar_t	r_aliasstats;
+ CVAR_FIXME */
+extern cvar_t	*r_aliasstats;
+/* extern cvar_t	r_dspeeds;
+ CVAR_FIXME */
+extern cvar_t	*r_dspeeds;
+/* extern cvar_t	r_drawflat;
+ CVAR_FIXME */
+extern cvar_t	*r_drawflat;
+/* extern cvar_t	r_ambient;
+ CVAR_FIXME */
+extern cvar_t	*r_ambient;
+/* extern cvar_t	r_reportsurfout;
+ CVAR_FIXME */
+extern cvar_t	*r_reportsurfout;
+/* extern cvar_t	r_maxsurfs;
+ CVAR_FIXME */
+extern cvar_t	*r_maxsurfs;
+/* extern cvar_t	r_numsurfs;
+ CVAR_FIXME */
+extern cvar_t	*r_numsurfs;
+/* extern cvar_t	r_reportedgeout;
+ CVAR_FIXME */
+extern cvar_t	*r_reportedgeout;
+/* extern cvar_t	r_maxedges;
+ CVAR_FIXME */
+extern cvar_t	*r_maxedges;
+/* extern cvar_t	r_numedges;
+ CVAR_FIXME */
+extern cvar_t	*r_numedges;
 
 #define XCENTERING	(1.0 / 2.0)
 #define YCENTERING	(1.0 / 2.0)

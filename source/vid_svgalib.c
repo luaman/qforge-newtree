@@ -85,9 +85,15 @@ int		UseKeyboard = 1;
 
 int		mouserate = MOUSE_DEFAULTSAMPLERATE;
 
-cvar_t		vid_mode = {"vid_mode","5",false};
-cvar_t		vid_redrawfull = {"vid_redrawfull","0",false};
-cvar_t		vid_waitforrefresh = {"vid_waitforrefresh","0",true};
+/* cvar_t		vid_mode = {"vid_mode","5",false};
+ CVAR_FIXME */
+cvar_t		*vid_mode;
+/* cvar_t		vid_redrawfull = {"vid_redrawfull","0",false};
+ CVAR_FIXME */
+cvar_t		*vid_redrawfull;
+/* cvar_t		vid_waitforrefresh = {"vid_waitforrefresh","0",true};
+ CVAR_FIXME */
+cvar_t		*vid_waitforrefresh;
  
 char	*framebuffer_ptr;
 
@@ -105,8 +111,12 @@ float   mouse_x, mouse_y;
 float	old_mouse_x, old_mouse_y;
 int		mx, my;
 
-cvar_t _windowed_mouse = {"_windowed_mouse", "1", true};
-cvar_t	m_filter = {"m_filter","0"};
+/* cvar_t _windowed_mouse = {"_windowed_mouse", "1", true};
+ CVAR_FIXME */
+cvar_t *_windowed_mouse;
+/* cvar_t	m_filter = {"m_filter","0"};
+ CVAR_FIXME */
+cvar_t	*m_filter;
 
 static byte     backingbuf[48*24];
 
@@ -487,14 +497,14 @@ int VID_SetMode (int modenum, unsigned char *palette)
 
 	if ((modenum >= num_modes) || (modenum < 0) || !modes[modenum].width)
 	{
-		Cvar_SetValue ("vid_mode", (float)current_mode);
+		vid_mode->value = (float)current_mode;
 		
 		Con_Printf("No such video mode: %d\n",modenum);
 		
 		return 0;
 	}
 
-	Cvar_SetValue ("vid_mode", (float)modenum);
+	vid_mode->value = (float)modenum;
 	
 	current_mode=modenum;
 
@@ -583,9 +593,15 @@ void VID_Init(unsigned char *palette)
 
 		VID_InitModes();
 
-		Cvar_RegisterVariable (&vid_mode);
-		Cvar_RegisterVariable (&vid_redrawfull);
-		Cvar_RegisterVariable (&vid_waitforrefresh);
+/* 		Cvar_RegisterVariable (&vid_mode);
+ CVAR_FIXME */
+		vid_mode = Cvar_Get("vid_mode", "0", CVAR_NONE, "None");
+/* 		Cvar_RegisterVariable (&vid_redrawfull);
+ CVAR_FIXME */
+		vid_redrawfull = Cvar_Get("vid_redrawfull", "0", CVAR_NONE, "None");
+/* 		Cvar_RegisterVariable (&vid_waitforrefresh);
+ CVAR_FIXME */
+		vid_waitforrefresh = Cvar_Get("vid_waitforrefresh", "0", CVAR_NONE|CVAR_ARCHIVE, "None");
 		
 		Cmd_AddCommand("vid_nummodes", VID_NumModes_f);
 		Cmd_AddCommand("vid_describemode", VID_DescribeMode_f);
@@ -751,13 +767,17 @@ void VID_Update(vrect_t *rects)
 	if (!vga_oktowrite())
 		return; // can't update screen if it's not active
 
-	if (vid_waitforrefresh.value)
+/* 	if (vid_waitforrefresh.value)
+ CVAR_FIXME */
+	if (vid_waitforrefresh->value)
 		vga_waitretrace();
 
 	if (VGA_planar)
 		VGA_UpdatePlanarScreen (vid.buffer);
 
-	else if (vid_redrawfull.value) {
+/* 	else if (vid_redrawfull.value) {
+ CVAR_FIXME */
+	else if (vid_redrawfull->value) {
 		int total = vid.rowbytes * vid.height;
 		int offset;
 
@@ -805,8 +825,12 @@ void VID_Update(vrect_t *rects)
 		}
 	}
 	
-	if (vid_mode.value != current_mode)
-		VID_SetMode ((int)vid_mode.value, vid_current_palette);
+/* 	if (vid_mode.value != current_mode)
+ CVAR_FIXME */
+	if (vid_mode->value != current_mode)
+/* 		VID_SetMode ((int)vid_mode.value, vid_current_palette);
+ CVAR_FIXME */
+		VID_SetMode ((int)vid_mode->value, vid_current_palette);
 }
 
 static int dither;
@@ -858,13 +882,15 @@ void IN_Init(void)
 	char *mousedev;
 	int mouserate;
 
-	Cvar_RegisterVariable (&m_filter);
+/* 	Cvar_RegisterVariable (&m_filter);
+ CVAR_FIXME */
+	m_filter = Cvar_Get("m_filter", "0", CVAR_NONE, "None");
 
 	if (UseMouse)
 	{
-		Cvar_RegisterVariable (&mouse_button_commands[0]);
-		Cvar_RegisterVariable (&mouse_button_commands[1]);
-		Cvar_RegisterVariable (&mouse_button_commands[2]);
+//		Cvar_RegisterVariable (&mouse_button_commands[0]);
+//		Cvar_RegisterVariable (&mouse_button_commands[1]);
+//		Cvar_RegisterVariable (&mouse_button_commands[2]);
 		Cmd_AddCommand ("force_centerview", Force_CenterView_f);
 
 		mouse_buttons = 3;
@@ -954,7 +980,9 @@ void IN_MouseMove (usercmd_t *cmd)
 	while (mouse_update())
 		;
 
-	if (m_filter.value)
+/* 	if (m_filter.value)
+ CVAR_FIXME */
+	if (m_filter->value)
 	{
 		mouse_x = (mx + old_mouse_x) * 0.5;
 		mouse_y = (my + old_mouse_y) * 0.5;
@@ -968,21 +996,33 @@ void IN_MouseMove (usercmd_t *cmd)
 	old_mouse_y = my;
 	mx = my = 0; // clear for next update
 
-	mouse_x *= sensitivity.value;
-	mouse_y *= sensitivity.value;
+/* 	mouse_x *= sensitivity.value;
+ CVAR_FIXME */
+	mouse_x *= sensitivity->value;
+/* 	mouse_y *= sensitivity.value;
+ CVAR_FIXME */
+	mouse_y *= sensitivity->value;
 
 // add mouse X/Y movement to cmd
-	if ( (in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1) ))
-		cmd->sidemove += m_side.value * mouse_x;
+/* 	if ( (in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1) ))
+ CVAR_FIXME */
+	if ( (in_strafe.state & 1) || (lookstrafe->value && (in_mlook.state & 1) ))
+/* 		cmd->sidemove += m_side.value * mouse_x;
+ CVAR_FIXME */
+		cmd->sidemove += m_side->value * mouse_x;
 	else
-		cl.viewangles[YAW] -= m_yaw.value * mouse_x;
+/* 		cl.viewangles[YAW] -= m_yaw.value * mouse_x;
+ CVAR_FIXME */
+		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
 	
 	if (in_mlook.state & 1)
 		V_StopPitchDrift ();
 		
 	if ( (in_mlook.state & 1) && !(in_strafe.state & 1))
 	{
-		cl.viewangles[PITCH] += m_pitch.value * mouse_y;
+/* 		cl.viewangles[PITCH] += m_pitch.value * mouse_y;
+ CVAR_FIXME */
+		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
 		if (cl.viewangles[PITCH] > 80)
 			cl.viewangles[PITCH] = 80;
 		if (cl.viewangles[PITCH] < -70)
@@ -991,9 +1031,13 @@ void IN_MouseMove (usercmd_t *cmd)
 	else
 	{
 		if ((in_strafe.state & 1) && noclip_anglehack)
-			cmd->upmove -= m_forward.value * mouse_y;
+/* 			cmd->upmove -= m_forward.value * mouse_y;
+ CVAR_FIXME */
+			cmd->upmove -= m_forward->value * mouse_y;
 		else
-			cmd->forwardmove -= m_forward.value * mouse_y;
+/* 			cmd->forwardmove -= m_forward.value * mouse_y;
+ CVAR_FIXME */
+			cmd->forwardmove -= m_forward->value * mouse_y;
 	}
 }
 

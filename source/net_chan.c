@@ -34,7 +34,6 @@
 
 #include "quakedef.h"
 
-
 #define	PACKET_HEADER	8
 
 /*
@@ -87,9 +86,15 @@ to the new value before sending out any replies.
 */
 
 int		net_drop;
-cvar_t	showpackets = {"showpackets", "0"};
-cvar_t	showdrop = {"showdrop", "0"};
-cvar_t	qport = {"qport", "0"};
+/* cvar_t	showpackets = {"showpackets", "0"};
+ CVAR_FIXME */
+cvar_t	*showpackets;
+/* cvar_t	showdrop = {"showdrop", "0"};
+ CVAR_FIXME */
+cvar_t	*showdrop;
+/* cvar_t	qport = {"qport", "0"};
+ CVAR_FIXME */
+cvar_t	*qport;
 extern qboolean	is_server;
 
 /*
@@ -109,10 +114,16 @@ void Netchan_Init (void)
 	port = ((int)(getpid()+getuid()*1000) * time(NULL)) & 0xffff;
 #endif
 
-	Cvar_RegisterVariable (&showpackets);
-	Cvar_RegisterVariable (&showdrop);
-	Cvar_RegisterVariable (&qport);
-	Cvar_SetValue("qport", port);
+/* 	Cvar_RegisterVariable (&showpackets);
+ CVAR_FIXME */
+	showpackets = Cvar_Get("showpackets",  "0", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&showdrop);
+ CVAR_FIXME */
+	showdrop = Cvar_Get("showdrop",  "0", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&qport);
+ CVAR_FIXME */
+	qport = Cvar_Get("qport",  "0", CVAR_NONE, "None");
+	qport->value = port;
 }
 
 /*
@@ -317,7 +328,9 @@ void Netchan_Transmit (netchan_t *chan, int length, byte *data)
 	if (ServerPaused())
 		chan->cleartime = realtime;
 
-	if (showpackets.value)
+/* 	if (showpackets.value)
+ CVAR_FIXME */
+	if (showpackets->value)
 		Con_Printf ("--> s=%i(%i) a=%i(%i) %i\n"
 			, chan->outgoing_sequence
 			, send_reliable
@@ -368,7 +381,9 @@ qboolean Netchan_Process (netchan_t *chan)
 	sequence &= ~(1<<31);	
 	sequence_ack &= ~(1<<31);	
 
-	if (showpackets.value)
+/* 	if (showpackets.value)
+ CVAR_FIXME */
+	if (showpackets->value)
 		Con_Printf ("<-- s=%i(%i) a=%i(%i) %i\n"
 			, sequence
 			, reliable_message
@@ -411,7 +426,9 @@ qboolean Netchan_Process (netchan_t *chan)
 //
 	if (sequence <= (unsigned)chan->incoming_sequence)
 	{
-		if (showdrop.value)
+/* 		if (showdrop.value)
+ CVAR_FIXME */
+		if (showdrop->value)
 			Con_Printf ("%s:Out of order packet %i at %i\n"
 				, NET_AdrToString (chan->remote_address)
 				,  sequence
@@ -427,7 +444,9 @@ qboolean Netchan_Process (netchan_t *chan)
 	{
 		chan->drop_count += 1;
 
-		if (showdrop.value)
+/* 		if (showdrop.value)
+ CVAR_FIXME */
+		if (showdrop->value)
 			Con_Printf ("%s:Dropped %i packets at %i\n"
 			, NET_AdrToString (chan->remote_address)
 			, sequence-(chan->incoming_sequence+1)

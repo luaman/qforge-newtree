@@ -89,13 +89,19 @@ unsigned short	d_8to16table[256];
 unsigned		d_8to24table[256];
 unsigned char	d_15to8table[65536];
 
-cvar_t	_windowed_mouse = {"_windowed_mouse","0", true};
-cvar_t	vid_mode = {"vid_mode","0",false};
+/* cvar_t	_windowed_mouse = {"_windowed_mouse","0", true};
+ CVAR_FIXME */
+cvar_t	*_windowed_mouse;
+/* cvar_t	vid_mode = {"vid_mode","0",false};
+ CVAR_FIXME */
+cvar_t	*vid_mode;
  
 static float   mouse_x, mouse_y;
 static float	old_mouse_x, old_mouse_y;
 
-cvar_t	m_filter = {"m_filter", "0"};
+/* cvar_t	m_filter = {"m_filter", "0"};
+ CVAR_FIXME */
+cvar_t	*m_filter;
 
 static int scr_width, scr_height;
 
@@ -112,7 +118,9 @@ int		texture_extension_number = 1;
 
 float		gldepthmin, gldepthmax;
 
-cvar_t	gl_ztrick = {"gl_ztrick","1"};
+/* cvar_t	gl_ztrick = {"gl_ztrick","1"};
+ CVAR_FIXME */
+cvar_t	*gl_ztrick;
 
 const char *gl_vendor;
 const char *gl_renderer;
@@ -353,13 +361,17 @@ static void GetEvent(void)
 
 	case MotionNotify:
 #ifdef USE_DGA
-		if (dgamouse && _windowed_mouse.value) {
+/* 		if (dgamouse && _windowed_mouse.value) {
+ CVAR_FIXME */
+		if (dgamouse && _windowed_mouse->value) {
 			mouse_x = event.xmotion.x_root;
 			mouse_y = event.xmotion.y_root;
 		} else
 #endif
 		{
-			if (_windowed_mouse.value) {
+/* 			if (_windowed_mouse.value) {
+ CVAR_FIXME */
+			if (_windowed_mouse->value) {
 				mouse_x = (float) ((int)event.xmotion.x - (int)(vid.width/2));
 				mouse_y = (float) ((int)event.xmotion.y - (int)(vid.height/2));
 
@@ -397,10 +409,16 @@ static void GetEvent(void)
 		break;
 	}
 
-	if (old_windowed_mouse != _windowed_mouse.value) {
-		old_windowed_mouse = _windowed_mouse.value;
+/* 	if (old_windowed_mouse != _windowed_mouse.value) {
+ CVAR_FIXME */
+	if (old_windowed_mouse != _windowed_mouse->value) {
+/* 		old_windowed_mouse = _windowed_mouse.value;
+ CVAR_FIXME */
+		old_windowed_mouse = _windowed_mouse->value;
 
-		if (!_windowed_mouse.value) {
+/* 		if (!_windowed_mouse.value) {
+ CVAR_FIXME */
+		if (!_windowed_mouse->value) {
 			/* ungrab the pointer */
 			uninstall_grabs();
 		} else {
@@ -674,9 +692,15 @@ void VID_Init(unsigned char *palette)
 
 //	S_Init();
 
-	Cvar_RegisterVariable (&vid_mode);
-	Cvar_RegisterVariable (&gl_ztrick);
-	Cvar_RegisterVariable (&_windowed_mouse);
+/* 	Cvar_RegisterVariable (&vid_mode);
+ CVAR_FIXME */
+	vid_mode = Cvar_Get("vid_mode", "0", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&gl_ztrick);
+ CVAR_FIXME */
+	gl_ztrick = Cvar_Get("gl_ztrick", "1", CVAR_NONE, "None");
+/* 	Cvar_RegisterVariable (&_windowed_mouse);
+ CVAR_FIXME */
+	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_NONE, "None");
 	
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
@@ -813,7 +837,9 @@ IN_Move
 */
 void IN_MouseMove (usercmd_t *cmd)
 {
-	if (m_filter.value)
+/* 	if (m_filter.value)
+ CVAR_FIXME */
+	if (m_filter->value)
 	{
 		mouse_x = (mouse_x + old_mouse_x) * 0.5;
 		mouse_y = (mouse_y + old_mouse_y) * 0.5;
@@ -821,21 +847,33 @@ void IN_MouseMove (usercmd_t *cmd)
 	old_mouse_x = mouse_x;
 	old_mouse_y = mouse_y;
 
-	mouse_x *= sensitivity.value;
-	mouse_y *= sensitivity.value;
+/* 	mouse_x *= sensitivity.value;
+ CVAR_FIXME */
+	mouse_x *= sensitivity->value;
+/* 	mouse_y *= sensitivity.value;
+ CVAR_FIXME */
+	mouse_y *= sensitivity->value;
 
 // add mouse X/Y movement to cmd
-	if ( (in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1) ))
-		cmd->sidemove += m_side.value * mouse_x;
+/* 	if ( (in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1) ))
+ CVAR_FIXME */
+	if ( (in_strafe.state & 1) || (lookstrafe->value && (in_mlook.state & 1) ))
+/* 		cmd->sidemove += m_side.value * mouse_x;
+ CVAR_FIXME */
+		cmd->sidemove += m_side->value * mouse_x;
 	else
-		cl.viewangles[YAW] -= m_yaw.value * mouse_x;
+/* 		cl.viewangles[YAW] -= m_yaw.value * mouse_x;
+ CVAR_FIXME */
+		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
 	
 	if (in_mlook.state & 1)
 		V_StopPitchDrift ();
 		
 	if ( (in_mlook.state & 1) && !(in_strafe.state & 1))
 	{
-		cl.viewangles[PITCH] += m_pitch.value * mouse_y;
+/* 		cl.viewangles[PITCH] += m_pitch.value * mouse_y;
+ CVAR_FIXME */
+		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
 		if (cl.viewangles[PITCH] > 80)
 			cl.viewangles[PITCH] = 80;
 		if (cl.viewangles[PITCH] < -70)
@@ -844,9 +882,13 @@ void IN_MouseMove (usercmd_t *cmd)
 	else
 	{
 		if ((in_strafe.state & 1) && noclip_anglehack)
-			cmd->upmove -= m_forward.value * mouse_y;
+/* 			cmd->upmove -= m_forward.value * mouse_y;
+ CVAR_FIXME */
+			cmd->upmove -= m_forward->value * mouse_y;
 		else
-			cmd->forwardmove -= m_forward.value * mouse_y;
+/* 			cmd->forwardmove -= m_forward.value * mouse_y;
+ CVAR_FIXME */
+			cmd->forwardmove -= m_forward->value * mouse_y;
 	}
 	mouse_x = mouse_y = 0.0;
 }
