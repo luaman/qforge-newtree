@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES=	@X_INCLUDES@ @OPENGL_INCLUDES@ -I$(top_srcdir)/include
+INCLUDES=	-I$(top_srcdir)/include @OPENGL_INCLUDES@ $(X_CFLAGS)
 
 bin_PROGRAMS =	@TARGETS@
 
