@@ -842,7 +842,7 @@ CDAudio_Init (void)
 		enabled = false;
 	}
 
-	Cmd_AddCommand ("cd", CD_f);
+	Cmd_AddCommand ("cd", CD_f, "No Description");
 
 	Con_Printf ("CD Audio Initialized\n");
 

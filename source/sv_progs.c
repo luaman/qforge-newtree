@@ -141,10 +141,10 @@ SV_Progs_Init (void)
 	sv_progs.unlink = SV_UnlinkEdict;
 	sv_progs.flush = SV_FlushSignon;
 
-	Cmd_AddCommand ("edict", ED_PrintEdict_f);
-	Cmd_AddCommand ("edicts", ED_PrintEdicts_f);
-	Cmd_AddCommand ("edictcount", ED_Count_f);
-	Cmd_AddCommand ("profile", PR_Profile_f);
+	Cmd_AddCommand ("edict", ED_PrintEdict_f, "No Description");
+	Cmd_AddCommand ("edicts", ED_PrintEdicts_f, "No Description");
+	Cmd_AddCommand ("edictcount", ED_Count_f, "No Description");
+	Cmd_AddCommand ("profile", PR_Profile_f, "No Description");
 }
 
 void

@@ -527,6 +527,7 @@ typedef struct cmd_function_s {
 	struct cmd_function_s *next;
 	char       *name;
 	xcommand_t  function;
+	char       *description;
 } cmd_function_t;
 
 
@@ -641,7 +642,7 @@ Cmd_TokenizeString (char *text)
 	Cmd_AddCommand
 */
 void
-Cmd_AddCommand (char *cmd_name, xcommand_t function)
+Cmd_AddCommand (char *cmd_name, xcommand_t function, char *description)
 {
 	cmd_function_t *cmd;
 
@@ -664,6 +665,7 @@ Cmd_AddCommand (char *cmd_name, xcommand_t function)
 	cmd = Hunk_Alloc (sizeof (cmd_function_t));
 	cmd->name = cmd_name;
 	cmd->function = function;
+	cmd->description = description;
 	cmd->next = cmd_functions;
 	cmd_functions = cmd;
 	Hash_Add (cmd_hash, cmd);
@@ -879,9 +881,16 @@ Cmd_CmdList_f (void)
 {
 	cmd_function_t *cmd;
 	int         i;
+	int         show_description = 0;
 
+	if (Cmd_Argc() > 1)
+		show_description = 1;
 	for (cmd = cmd_functions, i = 0; cmd; cmd = cmd->next, i++) {
-		Con_Printf ("%s\n", cmd->name);
+		if (show_description) {
+			Con_Printf ("%-20s : %s\n", cmd->name, cmd->description);
+		} else {
+			Con_Printf ("%s\n", cmd->name);
+		}
 	}
 
 	Con_Printf ("------------\n%d commands\n", i);
@@ -933,13 +942,13 @@ Cmd_Init (void)
 //
 // register our commands
 //
-	Cmd_AddCommand ("stuffcmds", Cmd_StuffCmds_f);
-	Cmd_AddCommand ("exec", Cmd_Exec_f);
-	Cmd_AddCommand ("echo", Cmd_Echo_f);
-	Cmd_AddCommand ("alias", Cmd_Alias_f);
-	Cmd_AddCommand ("unalias", Cmd_UnAlias_f);
-	Cmd_AddCommand ("wait", Cmd_Wait_f);
-	Cmd_AddCommand ("cmdlist", Cmd_CmdList_f);
+	Cmd_AddCommand ("stuffcmds", Cmd_StuffCmds_f, "No Description");
+	Cmd_AddCommand ("exec", Cmd_Exec_f, "No Description");
+	Cmd_AddCommand ("echo", Cmd_Echo_f, "No Description");
+	Cmd_AddCommand ("alias", Cmd_Alias_f, "No Description");
+	Cmd_AddCommand ("unalias", Cmd_UnAlias_f, "No Description");
+	Cmd_AddCommand ("wait", Cmd_Wait_f, "No Description");
+	Cmd_AddCommand ("cmdlist", Cmd_CmdList_f, "No Description");
 }
 
 

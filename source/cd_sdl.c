@@ -198,7 +198,7 @@ CDAudio_Init (void)
 		Con_Printf ("CDAudio_Init: CD contains no audio tracks.\n");
 		cdValid = false;
 	}
-	Cmd_AddCommand ("cd", CD_f);
+	Cmd_AddCommand ("cd", CD_f, "No Description");
 	Con_Printf ("CD Audio Initialized.\n");
 	return 0;
 }

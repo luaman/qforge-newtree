@@ -203,11 +203,11 @@ S_Init (void)
 
 	Con_Printf("\nSound Initialization\n");
 
-	Cmd_AddCommand ("play", S_Play);
-	Cmd_AddCommand ("playvol", S_PlayVol);
-	Cmd_AddCommand ("stopsound", S_StopAllSoundsC);
-	Cmd_AddCommand ("soundlist", S_SoundList);
-	Cmd_AddCommand ("soundinfo", S_SoundInfo_f);
+	Cmd_AddCommand ("play", S_Play, "No Description");
+	Cmd_AddCommand ("playvol", S_PlayVol, "No Description");
+	Cmd_AddCommand ("stopsound", S_StopAllSoundsC, "No Description");
+	Cmd_AddCommand ("soundlist", S_SoundList, "No Description");
+	Cmd_AddCommand ("soundinfo", S_SoundInfo_f, "No Description");
 
 	if (COM_CheckParm ("-nosound"))
 		return;

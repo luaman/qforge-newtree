@@ -392,7 +392,7 @@ void
 JOY_Init (void)
 {
         JOY_StartupJoystick();
-	Cmd_AddCommand ("joyadvancedupdate", JOY_AdvancedUpdate_f);
+	Cmd_AddCommand ("joyadvancedupdate", JOY_AdvancedUpdate_f, "No Description");
 
 //        Con_DPrintf ("This system does not have joystick support.\n");
 }

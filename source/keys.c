@@ -752,9 +752,9 @@ Key_Init (void)
 //
 // register our functions
 //
-	Cmd_AddCommand ("bind", Key_Bind_f);
-	Cmd_AddCommand ("unbind", Key_Unbind_f);
-	Cmd_AddCommand ("unbindall", Key_Unbindall_f);
+	Cmd_AddCommand ("bind", Key_Bind_f, "No Description");
+	Cmd_AddCommand ("unbind", Key_Unbind_f, "No Description");
+	Cmd_AddCommand ("unbindall", Key_Unbindall_f, "No Description");
 }
 
 void

@@ -849,30 +849,30 @@ SV_InitOperatorCommands (void)
 								 MAX_SERVERINFO_STRING);
 	}
 
-	Cmd_AddCommand ("logfile", SV_Logfile_f);
-	Cmd_AddCommand ("fraglogfile", SV_Fraglogfile_f);
+	Cmd_AddCommand ("logfile", SV_Logfile_f, "No Description");
+	Cmd_AddCommand ("fraglogfile", SV_Fraglogfile_f, "No Description");
 
-	Cmd_AddCommand ("snap", SV_Snap_f);
-	Cmd_AddCommand ("snapall", SV_SnapAll_f);
-	Cmd_AddCommand ("kick", SV_Kick_f);
-	Cmd_AddCommand ("status", SV_Status_f);
+	Cmd_AddCommand ("snap", SV_Snap_f, "No Description");
+	Cmd_AddCommand ("snapall", SV_SnapAll_f, "No Description");
+	Cmd_AddCommand ("kick", SV_Kick_f, "No Description");
+	Cmd_AddCommand ("status", SV_Status_f, "No Description");
 
-	Cmd_AddCommand ("map", SV_Map_f);
-	Cmd_AddCommand ("setmaster", SV_SetMaster_f);
+	Cmd_AddCommand ("map", SV_Map_f, "No Description");
+	Cmd_AddCommand ("setmaster", SV_SetMaster_f, "No Description");
 
-	Cmd_AddCommand ("say", SV_ConSay_f);
-	Cmd_AddCommand ("heartbeat", SV_Heartbeat_f);
-	Cmd_AddCommand ("quit", SV_Quit_f);
-	Cmd_AddCommand ("god", SV_God_f);
-	Cmd_AddCommand ("give", SV_Give_f);
-	Cmd_AddCommand ("noclip", SV_Noclip_f);
-	Cmd_AddCommand ("serverinfo", SV_Serverinfo_f);
-	Cmd_AddCommand ("localinfo", SV_Localinfo_f);
-	Cmd_AddCommand ("user", SV_User_f);
-	Cmd_AddCommand ("sv_gamedir", SV_Gamedir);
-	Cmd_AddCommand ("floodprot", SV_Floodprot_f);
-	Cmd_AddCommand ("floodprotmsg", SV_Floodprotmsg_f);
-	Cmd_AddCommand ("maplist", COM_Maplist_f);
+	Cmd_AddCommand ("say", SV_ConSay_f, "No Description");
+	Cmd_AddCommand ("heartbeat", SV_Heartbeat_f, "No Description");
+	Cmd_AddCommand ("quit", SV_Quit_f, "No Description");
+	Cmd_AddCommand ("god", SV_God_f, "No Description");
+	Cmd_AddCommand ("give", SV_Give_f, "No Description");
+	Cmd_AddCommand ("noclip", SV_Noclip_f, "No Description");
+	Cmd_AddCommand ("serverinfo", SV_Serverinfo_f, "No Description");
+	Cmd_AddCommand ("localinfo", SV_Localinfo_f, "No Description");
+	Cmd_AddCommand ("user", SV_User_f, "No Description");
+	Cmd_AddCommand ("sv_gamedir", SV_Gamedir, "No Description");
+	Cmd_AddCommand ("floodprot", SV_Floodprot_f, "No Description");
+	Cmd_AddCommand ("floodprotmsg", SV_Floodprotmsg_f, "No Description");
+	Cmd_AddCommand ("maplist", COM_Maplist_f, "No Description");
 
 	cl_warncmd =
 		Cvar_Get ("cl_warncmd", "1", CVAR_NONE, "Toggles the display of error messages for unknown commands"); 

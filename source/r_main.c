@@ -236,9 +236,9 @@ R_Init (void)
 
 	R_InitTurb ();
 
-	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);
-	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);
-	Cmd_AddCommand ("loadsky", R_LoadSky_f);
+	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f, "No Description");
+	Cmd_AddCommand ("pointfile", R_ReadPointFile_f, "No Description");
+	Cmd_AddCommand ("loadsky", R_LoadSky_f, "No Description");
 
 	Cvar_SetValue (r_maxedges, (float) NUMSTACKEDGES);
 	Cvar_SetValue (r_maxsurfs, (float) NUMSTACKSURFACES);

@@ -409,10 +409,10 @@ SCR_Init (void)
 	//
 	// register our commands
 	//
-	Cmd_AddCommand ("screenshot", SCR_ScreenShot_f);
-	Cmd_AddCommand ("snap", SCR_RSShot_f);
-	Cmd_AddCommand ("sizeup", SCR_SizeUp_f);
-	Cmd_AddCommand ("sizedown", SCR_SizeDown_f);
+	Cmd_AddCommand ("screenshot", SCR_ScreenShot_f, "No Description");
+	Cmd_AddCommand ("snap", SCR_RSShot_f, "No Description");
+	Cmd_AddCommand ("sizeup", SCR_SizeUp_f, "No Description");
+	Cmd_AddCommand ("sizedown", SCR_SizeDown_f, "No Description");
 
 	scr_ram = Draw_PicFromWad ("ram");
 	scr_net = Draw_PicFromWad ("net");

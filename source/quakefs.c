@@ -1053,7 +1053,7 @@ COM_Filesystem_Init (void)
 {
 	int         i;
 
-	Cmd_AddCommand ("gamedir", COM_Gamedir_f);
+	Cmd_AddCommand ("gamedir", COM_Gamedir_f, "No Description");
 
 	// start up with basegame->string by default
 	COM_CreateGameDirectory (fs_basegame->string);

@@ -1241,55 +1241,55 @@ CL_Init (void)
 // register our commands
 //
 
-	Cmd_AddCommand ("version", CL_Version_f);
+	Cmd_AddCommand ("version", CL_Version_f, "No Description");
 
-	Cmd_AddCommand ("changing", CL_Changing_f);
-	Cmd_AddCommand ("disconnect", CL_Disconnect_f);
-	Cmd_AddCommand ("record", CL_Record_f);
-	Cmd_AddCommand ("rerecord", CL_ReRecord_f);
-	Cmd_AddCommand ("stop", CL_Stop_f);
-	Cmd_AddCommand ("playdemo", CL_PlayDemo_f);
-	Cmd_AddCommand ("timedemo", CL_TimeDemo_f);
+	Cmd_AddCommand ("changing", CL_Changing_f, "No Description");
+	Cmd_AddCommand ("disconnect", CL_Disconnect_f, "No Description");
+	Cmd_AddCommand ("record", CL_Record_f, "No Description");
+	Cmd_AddCommand ("rerecord", CL_ReRecord_f, "No Description");
+	Cmd_AddCommand ("stop", CL_Stop_f, "No Description");
+	Cmd_AddCommand ("playdemo", CL_PlayDemo_f, "No Description");
+	Cmd_AddCommand ("timedemo", CL_TimeDemo_f, "No Description");
 
-	Cmd_AddCommand ("skins", Skin_Skins_f);
-	Cmd_AddCommand ("allskins", Skin_AllSkins_f);
+	Cmd_AddCommand ("skins", Skin_Skins_f, "No Description");
+	Cmd_AddCommand ("allskins", Skin_AllSkins_f, "No Description");
 
-	Cmd_AddCommand ("maplist", COM_Maplist_f);
+	Cmd_AddCommand ("maplist", COM_Maplist_f, "No Description");
 
-	Cmd_AddCommand ("quit", CL_Quit_f);
+	Cmd_AddCommand ("quit", CL_Quit_f, "No Description");
 
-	Cmd_AddCommand ("connect", CL_Connect_f);
-	Cmd_AddCommand ("reconnect", CL_Reconnect_f);
+	Cmd_AddCommand ("connect", CL_Connect_f, "No Description");
+	Cmd_AddCommand ("reconnect", CL_Reconnect_f, "No Description");
 
-	Cmd_AddCommand ("rcon", CL_Rcon_f);
-	Cmd_AddCommand ("packet", CL_Packet_f);
-	Cmd_AddCommand ("user", CL_User_f);
-	Cmd_AddCommand ("users", CL_Users_f);
+	Cmd_AddCommand ("rcon", CL_Rcon_f, "No Description");
+	Cmd_AddCommand ("packet", CL_Packet_f, "No Description");
+	Cmd_AddCommand ("user", CL_User_f, "No Description");
+	Cmd_AddCommand ("users", CL_Users_f, "No Description");
 
-	Cmd_AddCommand ("setinfo", CL_SetInfo_f);
-	Cmd_AddCommand ("fullinfo", CL_FullInfo_f);
-	Cmd_AddCommand ("fullserverinfo", CL_FullServerinfo_f);
+	Cmd_AddCommand ("setinfo", CL_SetInfo_f, "No Description");
+	Cmd_AddCommand ("fullinfo", CL_FullInfo_f, "No Description");
+	Cmd_AddCommand ("fullserverinfo", CL_FullServerinfo_f, "No Description");
 
-	Cmd_AddCommand ("color", CL_Color_f);
-	Cmd_AddCommand ("download", CL_Download_f);
+	Cmd_AddCommand ("color", CL_Color_f, "No Description");
+	Cmd_AddCommand ("download", CL_Download_f, "No Description");
 
-	Cmd_AddCommand ("nextul", CL_NextUpload);
-	Cmd_AddCommand ("stopul", CL_StopUpload);
+	Cmd_AddCommand ("nextul", CL_NextUpload, "No Description");
+	Cmd_AddCommand ("stopul", CL_StopUpload, "No Description");
 
 //
 // forward to server commands
 //
-	Cmd_AddCommand ("kill", NULL);
-	Cmd_AddCommand ("pause", NULL);
-	Cmd_AddCommand ("say", NULL);
-	Cmd_AddCommand ("say_team", NULL);
-	Cmd_AddCommand ("serverinfo", NULL);
+	Cmd_AddCommand ("kill", NULL, "No Description");
+	Cmd_AddCommand ("pause", NULL, "No Description");
+	Cmd_AddCommand ("say", NULL, "No Description");
+	Cmd_AddCommand ("say_team", NULL, "No Description");
+	Cmd_AddCommand ("serverinfo", NULL, "No Description");
 
 //
 //  Windows commands
 //
 #ifdef _WIN32
-	Cmd_AddCommand ("windows", CL_Windows_f);
+	Cmd_AddCommand ("windows", CL_Windows_f, "No Description");
 #endif
 }
 

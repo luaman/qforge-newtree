@@ -108,7 +108,7 @@ COM_Init (void)
 	LittleFloat = FloatSwap;
 #endif
 
-	Cmd_AddCommand ("path", COM_Path_f);
+	Cmd_AddCommand ("path", COM_Path_f, "No Description");
 
 	COM_Filesystem_Init ();
 	COM_CheckRegistered ();

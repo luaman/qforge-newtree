@@ -1604,13 +1604,13 @@ SV_InitLocal (void)
 	pausable = Cvar_Get ("pausable", "1", CVAR_NONE, "Toggle if server can be paused 1 is on, 0 is off");
 
 	// DoS protection
-	Cmd_AddCommand ("netdosexpire", SV_netDoSexpire_f);
-	Cmd_AddCommand ("netdosvalues", SV_netDoSvalues_f);
+	Cmd_AddCommand ("netdosexpire", SV_netDoSexpire_f, "No Description");
+	Cmd_AddCommand ("netdosvalues", SV_netDoSvalues_f, "No Description");
 
-	Cmd_AddCommand ("addip", SV_AddIP_f);
-	Cmd_AddCommand ("removeip", SV_RemoveIP_f);
-	Cmd_AddCommand ("listip", SV_ListIP_f);
-	Cmd_AddCommand ("writeip", SV_WriteIP_f);
+	Cmd_AddCommand ("addip", SV_AddIP_f, "No Description");
+	Cmd_AddCommand ("removeip", SV_RemoveIP_f, "No Description");
+	Cmd_AddCommand ("listip", SV_ListIP_f, "No Description");
+	Cmd_AddCommand ("writeip", SV_WriteIP_f, "No Description");
 
 	for (i = 0; i < MAX_MODELS; i++)
 		snprintf (localmodels[i], sizeof (localmodels[i]), "*%i", i);

@@ -582,12 +582,12 @@ locs_moveloc (void)
 void
 Locs_Init (void)
 {
-	Cmd_AddCommand ("markloc", locs_markloc);
-	Cmd_AddCommand ("dumploc", locs_dumploc);
+	Cmd_AddCommand ("markloc", locs_markloc, "No Description");
+	Cmd_AddCommand ("dumploc", locs_dumploc, "No Description");
 #ifdef HAVE_ZLIB
-	Cmd_AddCommand ("zdumploc", locs_dumploc);
+	Cmd_AddCommand ("zdumploc", locs_dumploc, "No Description");
 #endif
-	Cmd_AddCommand ("delloc",locs_delloc);
-	Cmd_AddCommand ("editloc",locs_editloc);
-	Cmd_AddCommand ("moveloc",locs_moveloc);
+	Cmd_AddCommand ("delloc",locs_delloc, "No Description");
+	Cmd_AddCommand ("editloc",locs_editloc, "No Description");
+	Cmd_AddCommand ("moveloc",locs_moveloc, "No Description");
 }

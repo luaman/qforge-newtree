@@ -460,7 +460,7 @@ Draw_Init (void)
 		lighthalf_v[0] = lighthalf_v[1] = lighthalf_v[2] = 255;
 	}
 
-	Cmd_AddCommand ("gl_texturemode", &Draw_TextureMode_f);
+	Cmd_AddCommand ("gl_texturemode", &Draw_TextureMode_f, "No Description");
 
 	// load the console background and the charset
 	// by hand, because we need to write the version

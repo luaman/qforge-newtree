@@ -123,5 +123,5 @@ cl_Cmd_Init (void)
 //
 // register our commands
 //
-	Cmd_AddCommand ("cmd", Cmd_ForwardToServer_f);
+	Cmd_AddCommand ("cmd", Cmd_ForwardToServer_f, "No Description");
 }

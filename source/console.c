@@ -276,11 +276,11 @@ Con_Init (void)
 //
 // register our commands
 //
-	Cmd_AddCommand ("toggleconsole", Con_ToggleConsole_f);
-	Cmd_AddCommand ("togglechat", Con_ToggleChat_f);
-	Cmd_AddCommand ("messagemode", Con_MessageMode_f);
-	Cmd_AddCommand ("messagemode2", Con_MessageMode2_f);
-	Cmd_AddCommand ("clear", Con_Clear_f);
+	Cmd_AddCommand ("toggleconsole", Con_ToggleConsole_f, "No Description");
+	Cmd_AddCommand ("togglechat", Con_ToggleChat_f, "No Description");
+	Cmd_AddCommand ("messagemode", Con_MessageMode_f, "No Description");
+	Cmd_AddCommand ("messagemode2", Con_MessageMode2_f, "No Description");
+	Cmd_AddCommand ("clear", Con_Clear_f, "No Description");
 	con_initialized = true;
 }
 

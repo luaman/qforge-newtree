@@ -1539,14 +1539,14 @@ M_Quit_Draw (void)
 void
 M_Init (void)
 {
-	Cmd_AddCommand ("togglemenu", M_ToggleMenu_f);
+	Cmd_AddCommand ("togglemenu", M_ToggleMenu_f, "No Description");
 
-	Cmd_AddCommand ("menu_main", M_Menu_Main_f);
-	Cmd_AddCommand ("menu_options", M_Menu_Options_f);
-	Cmd_AddCommand ("menu_keys", M_Menu_Keys_f);
-	Cmd_AddCommand ("menu_video", M_Menu_Video_f);
-	Cmd_AddCommand ("menu_help", M_Menu_Help_f);
-	Cmd_AddCommand ("menu_quit", M_Menu_Quit_f);
+	Cmd_AddCommand ("menu_main", M_Menu_Main_f, "No Description");
+	Cmd_AddCommand ("menu_options", M_Menu_Options_f, "No Description");
+	Cmd_AddCommand ("menu_keys", M_Menu_Keys_f, "No Description");
+	Cmd_AddCommand ("menu_video", M_Menu_Video_f, "No Description");
+	Cmd_AddCommand ("menu_help", M_Menu_Help_f, "No Description");
+	Cmd_AddCommand ("menu_quit", M_Menu_Quit_f, "No Description");
 }
 
 
