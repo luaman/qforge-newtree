@@ -38,9 +38,16 @@ typedef struct
 } location_t;
 
 location_t *locs_find(vec3_t target);
-void locs_load(char *mapname);
+void locs_load(char *filename);
 void locs_reset();
 void locs_add(vec3_t location, char *name);
+void map_to_loc (char *mapname, char *filename);
+void locs_del (char *filename, vec3_t loc);
+void locs_edit (char *filename, vec3_t loc, char *desc);
+void locs_mark (char *filename, vec3_t loc, char *desc);
+void locs_save (char *filename);
+int locs_nearest (vec3_t loc);
+	
 extern location_t **locations;
 extern int locations_count;
 #ifdef HAVE_ZLIB

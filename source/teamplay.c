@@ -44,7 +44,6 @@
 #include "client.h"
 #include "locs.h"
 #include "model.h"
-#include "quakefs.h"
 #include "sys.h"
 #include "teamplay.h"
 
@@ -314,20 +313,19 @@ Team_NewMap (void)
 
 	died = false;
 	recorded_location = false;
-
-	mapname = strdup (cl.worldmodel->name);
-	if (!mapname)
+	mapname = strdup(cl.worldmodel->name);
+	t2 = malloc(sizeof(cl.worldmodel->name));
+	if (!mapname || !t2)
 		Sys_Error ("Can't duplicate mapname!");
-	t1 = strrchr (mapname, '/');
-	t2 = strrchr (mapname, '.');
-	if (!t1 || !t2)
-		Sys_Error ("Can't find / or .!");
+	map_to_loc(mapname,t2);
+	t1 = strrchr (t2, '/');
+	if (!t1)
+		Sys_Error ("Can't find /!");
 	t1++;								// skip over /
-	t2[0] = '\0';
-
 	locs_reset ();
 	locs_load (t1);
 	free (mapname);
+	free (t2);
 }
 
 void
@@ -342,252 +340,83 @@ Team_Init_Cvars (void)
 }
 
 /*
- * locs_markloc
- *
- * Record the current co-ords plus description into a loc file for current map
- */
-
+ locs_loc
+ Location marker manipulation
+*/
 void
-locs_markloc (void)
+locs_loc (void)
 {
-	vec3_t      loc;
-	char       *mapname, *t1;
-	QFile      *locfd;
-	char        locfile[MAX_OSPATH];
-	char       *desc = Cmd_Args ();
-
+	char           *mapname; 
+	char           *desc = NULL;
+	char            locfile[MAX_OSPATH];
+	int i;
+	
+	//FIXME checking needed to make sure you are actually in the game and a live.
 	if (Cmd_Argc () == 1) {
-		Con_Printf
-			("markloc <description> :marks the current location with the description and records the information into a loc file.\n");
+		Con_Printf ("loc <add|delete|rename|move|save|zsave> [<description>] :Modifies location data, add|rename take <description> parameter\n");
 		return;
 	}
-	VectorCopy (cl.simorg, loc);
-	locs_add (loc, desc);
-#ifdef HAVE_ZLIB
-	if(locisgz) {
-		Cmd_ExecuteString ("zdumploc");
-		return;
-	}
-#endif
-	loc[0] *= 8;
-	loc[1] *= 8;
-	loc[2] *= 8;
-	mapname = strdup (cl.worldmodel->name);
+	if (Cmd_Argc () >= 3)
+		desc = Cmd_Args () + strlen(Cmd_Argv(1)) + 1;
+	mapname = malloc(sizeof(cl.worldmodel->name));
 	if (!mapname)
 		Sys_Error ("Can't duplicate mapname!");
-	t1 = strrchr (mapname, '.');
-	if (!t1)
-		Sys_Error ("Can't find .!");
-	t1++;						// skip over .
-	t1[0] = 'l';
-	t1[1] = 'o';
-	t1[2] = 'c';
+	map_to_loc(cl.worldmodel->name,mapname);
 	snprintf (locfile, sizeof (locfile), "%s/%s", com_gamedir, mapname);
-	locfd = Qopen (locfile, "a+");
-	if (locfd == 0) {
-		locfd = Qopen (locfile, "w+");
-		if (locfd == 0) {
-			Con_Printf ("ERROR: Unable to open %s : %s\n", mapname,
-						strerror (errno));
-			free (mapname);
-			return;
-		}
-	}
-	Qprintf (locfd, "%.0f %.0f %.0f %s\n", loc[0], loc[1], loc[2],
-			 desc);
-	Qclose (locfd);
-	Con_Printf("Marked Current Location: %s\n", desc);
-	free (mapname);
-}
-
-/*
- * locs_dumploc
- *
- * copies the entire loc data from memory to disk
- * supports zgip files via zdumploc
- */
-void 
-locs_dumploc (void)
-{
-	char       *mapname, *t1;
-	QFile      *locfd = 0;
-	char        locfile[MAX_OSPATH];
-	int         i;
-	if (Cmd_Argc () != 1) {
-		Con_Printf
-			("markloc <description> :marks the current location with the description and records the information into a loc file.\n");
-		return;
-	}
-	mapname = strdup (cl.worldmodel->name);
-	if (!mapname)
-		Sys_Error ("Can't duplicate mapname!");
-	t1 = strrchr (mapname, '.');
-	if (!t1)
-		Sys_Error ("Can't find .!");
-	t1++;                                                  // skip over .
-	t1[0] = 'l';
-	t1[1] = 'o';
-	t1[2] = 'c';
-	if (strcmp(Cmd_Argv(0),"dumploc") == 0) {
-		snprintf (locfile, sizeof (locfile), "%s/%s", com_gamedir, mapname);
-		locfd = Qopen (locfile, "w+");
-#ifdef HAVE_ZLIB
-	} else {
-		snprintf (locfile, sizeof (locfile), "%s/%s.gz", com_gamedir, mapname);
-		locfd = Qopen (locfile, "z9w+");
-#endif
-	}
-
-	if (locfd == 0) {
-		Con_Printf ("ERROR: Unable to open %s : %s\n", mapname,
-			strerror (errno));
-		free (mapname);
-		return;
-	}
-	for(i=0; i < locations_count ;i++)
-		Qprintf (locfd, "%.0f %.0f %.0f %s\n", 
-				locations[i]->loc[0] * 8,
-				locations[i]->loc[1] * 8,
-				locations[i]->loc[2] * 8,
-				locations[i]->name);
-	Qclose (locfd);
 	free(mapname);
-}
-
-/*
- * locs_search
- *
- * used by locs_delloc, locs_editloc, locs_moveloc
- */
-int
-locs_search (vec3_t target)
-{
-	location_t *best = NULL, *cur;
-	float       best_distance = 9999999, distance;
-	int         i, j = -1;
-
-	for (i = 0; i < locations_count; i++) {
-		cur = locations[i];
-		distance = VectorDistance_fast (target, cur->loc);
-		if ((distance < best_distance) || !best) {
-			best = cur;
-			best_distance = distance;
-			j = i;
-		}
-	}
-	return (j);
-}
-
-/*
- * locs_delloc
- *
- * removes nearest location marker
- */
-void
-locs_delloc (void)
-{
-	vec3_t      loc;
-	int         i, j;
 	
-	if (Cmd_Argc () != 1) {
-		Con_Printf("delloc :removes the nearest location marker\n");
-		return;
+	if (stricmp(Cmd_Argv(1),"save") == 0) {
+		if (Cmd_Argc () == 2) {
+			i = locisgz;
+			locisgz = 0;
+			locs_save(locfile);
+			locisgz = i;
+		} else 
+			Con_Printf("loc save :saves locs from memory into a .loc file\n");
 	}
-	if (locations_count) {
-		VectorCopy (cl.simorg, loc);
-		i = locs_search(loc);
-		Con_Printf("Removing Location Marker for %s\n", locations[i]->name);
-		free ((void *) locations[i]->name);
-        	free ((void *) locations[i]);
-		locations_count--;
-		for (j = i; j < locations_count; j++)
-			locations[j] = locations[j+1];			
-		locations[locations_count] = NULL;
-#ifdef HAVE_ZLIB
-		if (locisgz)
-			Cmd_ExecuteString ("zdumploc");
-		else
-#endif
-			Cmd_ExecuteString ("dumploc");
-	} else {
-		Con_Printf("Error: No Location Markers to Delete\n");
-	}
-}
 
-/*
- * locs_editloc
- * 
- * change the description of nearest location marker
- */
-void
-locs_editloc (void)
-{
-	vec3_t          loc;
-	int             i;
-	char           *desc = Cmd_Args ();
+	if (stricmp(Cmd_Argv(1),"zsave") == 0) {
+		if (Cmd_Argc () == 2) {
+			i = locisgz;
+			locisgz = 1;
+			locs_save(locfile);
+			locisgz = i;
+		} else
+			Con_Printf("loc save :saves locs from memory into a .loc file\n");
+	}
 	
-	if (Cmd_Argc () == 1) {
-		Con_Printf("editloc <description> :changed the description of the nearest location marker\n");
-		return;
-	}
-	if (locations_count) {
-		VectorCopy (cl.simorg, loc);
-		i = locs_search(loc);
-		Con_Printf("Changing location marker from %s to %s\n",
-				locations[i]->name, desc);
-		free ((void *) locations[i]->name);
-		locations[i]->name = strdup (desc);
-#ifdef HAVE_ZLIB
-		if (locisgz)
-			Cmd_ExecuteString ("zdumploc");
+	if (stricmp(Cmd_Argv(1),"add") == 0) {
+		if (Cmd_Argc () >= 3)
+			locs_mark(locfile,cl.simorg,desc);
 		else
-#endif
-			Cmd_ExecuteString ("dumploc");
-	} else {
-		Con_Printf("Error: No Location Markers to Edit\n");
+			Con_Printf("loc add <description> :marks the current location with the description and records the information into a loc file.\n");
 	}
-}	
 
-/*
- * locs_moveloc
- *
- * Move the nearest location marker to current position
- */
-void
-locs_moveloc (void)
-{
-	vec3_t          loc;
-	int             i;
-
-	if (Cmd_Argc () != 1) {
-		Con_Printf("moveloc :Move the nearest location marker to your current location\n");
-		return;
-	}
-	if (locations_count) {
-		VectorCopy (cl.simorg, loc);
-		i = locs_search(loc);
-		Con_Printf("Moving location marker for %s to current location\n", locations[i]->name);
-		VectorCopy (cl.simorg,locations[i]->loc);
-#ifdef HAVE_ZLIB
-		if (locisgz)
-			Cmd_ExecuteString ("zdumploc");
+	if (stricmp(Cmd_Argv(1),"rename") == 0) {
+		if (Cmd_Argc () >= 3)
+			locs_edit(locfile,cl.simorg,desc);
 		else
-#endif
-			Cmd_ExecuteString ("dumploc");
-	} else {
-		Con_Printf("Error: No Location Markers to Move\n");
+			Con_Printf("loc rename <description> :changes the description of the nearest location marker\n");
+	}
+	
+	if (stricmp(Cmd_Argv(1),"delete") == 0) {
+		if (Cmd_Argc () == 2)
+			locs_del(locfile,cl.simorg);
+		else
+			Con_Printf("loc delete :removes nearest location marker\n");
+	}
+	
+	if (stricmp(Cmd_Argv(1),"move") == 0) {
+		if (Cmd_Argc () == 2)
+			locs_edit(locfile,cl.simorg,NULL);
+		else
+			Con_Printf("loc move :moves the nearest location marker to your current location\n");
 	}
 }
 
 void
 Locs_Init (void)
 {
-	Cmd_AddCommand ("markloc", locs_markloc, "No Description");
-	Cmd_AddCommand ("dumploc", locs_dumploc, "No Description");
-#ifdef HAVE_ZLIB
-	Cmd_AddCommand ("zdumploc", locs_dumploc, "No Description");
-#endif
-	Cmd_AddCommand ("delloc",locs_delloc, "No Description");
-	Cmd_AddCommand ("editloc",locs_editloc, "No Description");
-	Cmd_AddCommand ("moveloc",locs_moveloc, "No Description");
+	Cmd_AddCommand ("loc", locs_loc, "Location marker editing commands: 'loc help' for more");
 }
+
