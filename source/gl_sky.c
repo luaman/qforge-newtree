@@ -389,6 +389,7 @@ set_vertex (glpoly_t *p, vec3_t v, int face)
 void
 R_DrawSkyBoxPoly (glpoly_t *poly)
 {
+	static int skytex_offs[] = {3, 0, 4, 1, 2, 5};
 	vec3_t v, last_v;
 	struct {
 		int			tex;
@@ -399,12 +400,9 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 	int face, prev_face;
 
 	memset (box, 0, sizeof (box));
-	box[0].tex = SKY_TEX + 0;
-	box[1].tex = SKY_TEX + 1;
-	box[2].tex = SKY_TEX + 2;
-	box[3].tex = SKY_TEX + 3;
-	box[4].tex = SKY_TEX + 4;
-	box[5].tex = SKY_TEX + 5;
+	for (i = 0; i < 6; i++)
+		box[i].tex = SKY_TEX + skytex_offs[i];
+
 	if (poly->numverts>=32) {
 		Con_Printf ("too many verts!");
 		abort();
