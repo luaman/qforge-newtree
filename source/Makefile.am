@@ -193,11 +193,11 @@ soft_ASM=	d_draw.S d_draw16.S d_parta.S d_polysa.S d_scana.S d_spr8.S \
 		surf16.S surf8.S
 endif
 
-soft_SOURCES=	cl_trans.c d_edge.c d_fill.c d_init.c d_modech.c \
+soft_SOURCES=	d_edge.c d_fill.c d_init.c d_modech.c \
 		d_part.c d_polyse.c d_scan.c d_sky.c d_sprite.c d_surf.c \
 		d_vars.c d_zpoint.c draw.c r_aclip.c r_alias.c r_bsp.c \
 		r_draw.c r_edge.c r_efrag.c r_light.c r_main.c r_misc.c \
-		r_part.c r_sky.c r_sprite.c r_surf.c r_vars.c sw_view.c \
+		r_part.c r_sky.c r_sprite.c r_surf.c r_vars.c sw_skin.c sw_view.c \
 		screen.c $(soft_ASM) sw_model_alias.c sw_model_brush.c \
 		sw_model_sprite.c
 
@@ -255,7 +255,7 @@ qf_client_x11_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs
 ogl_SOURCES=	fractalnoise.c gl_draw.c gl_dyn_fires.c gl_dyn_part.c \
 		gl_dyn_textures.c gl_mesh.c gl_ngraph.c r_efrag.c \
 		gl_rlight.c gl_rmain.c gl_rmisc.c gl_rsurf.c gl_screen.c \
-		gl_sky.c gl_sky_clip.c gl_trans.c gl_view.c gl_warp.c \
+		gl_skin.c gl_sky.c gl_sky_clip.c gl_view.c gl_warp.c \
 		gl_model_alias.c gl_model_brush.c gl_model_fullbright.c \
 		gl_model_sprite.c qfgl_ext.c
 

@@ -218,7 +218,7 @@ SOURCE=.\cl_tent.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\cl_trans.c
+SOURCE=.\sw_skin.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 
@@ -854,7 +854,7 @@ SOURCE=.\gl_sky_clip.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\gl_trans.c
+SOURCE=.\gl_skin.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 

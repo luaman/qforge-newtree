@@ -43,6 +43,7 @@
 #include "bothdefs.h"
 #include "cl_cam.h"
 #include "cl_main.h"
+#include "cl_parse.h" //FIXME CL_NewTranslation
 #include "commdef.h"
 #include "console.h"
 #include "locs.h"
@@ -830,7 +831,7 @@ R_DrawAliasModel (entity_t *e)
 		i = currententity->scoreboard - cl.players;
 		if (!currententity->scoreboard->skin) {
 			Skin_Find (currententity->scoreboard);
-			R_TranslatePlayerSkin (i);
+			CL_NewTranslation (i);
 		}
 		if (i >= 0 && i < MAX_CLIENTS)
 			glBindTexture (GL_TEXTURE_2D, playertextures + i);

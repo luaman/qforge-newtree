@@ -162,7 +162,7 @@ DEPEND = \
    $(OBJS)\vid_wgl.obj\
    $(QFROOT)\opengl32.lib\
    $(OBJS)\gl_draw.obj\
-   $(OBJS)\gl_trans.obj\
+   $(OBJS)\gl_skin.obj\
    $(OBJS)\gl_screen.obj\
    $(OBJS)\gl_rsurf.obj\
    $(OBJS)\gl_rmisc.obj\
@@ -259,7 +259,7 @@ $(OBJS)\r_view.obj+
 $(OBJS)\gl_view.obj+
 $(OBJS)\vid_wgl.obj+
 $(OBJS)\gl_draw.obj+
-$(OBJS)\gl_trans.obj+
+$(OBJS)\gl_skin.obj+
 $(OBJS)\gl_screen.obj+
 $(OBJS)\gl_rsurf.obj+
 $(OBJS)\gl_rmisc.obj+
@@ -464,9 +464,9 @@ $(OBJS)\gl_draw.obj :  $(QFROOT)\source\gl_draw.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_draw.c
 |
 
-$(OBJS)\gl_trans.obj :  $(QFROOT)\source\gl_trans.c
+$(OBJS)\gl_skin.obj :  $(QFROOT)\source\gl_skin.c
   $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_trans.c
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_skin.c
 |
 
 $(OBJS)\gl_screen.obj :  $(QFROOT)\source\gl_screen.c

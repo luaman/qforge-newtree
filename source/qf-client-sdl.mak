@@ -149,7 +149,7 @@ DEPEND = \
    $(OBJS)\teamplay.obj\
    $(SDLSDK)\lib\sdl.lib\
    $(OBJS)\vid_sdl.obj\
-   $(OBJS)\cl_trans.obj\
+   $(OBJS)\sw_skin.obj\
    $(OBJS)\sw_view.obj\
    $(OBJS)\r_view.obj\
    $(OBJS)\r_sprite.obj\
@@ -272,7 +272,7 @@ $(OBJS)\sw_model_brush.obj+
 $(OBJS)\sw_model_sprite.obj+
 $(OBJS)\teamplay.obj+
 $(OBJS)\vid_sdl.obj+
-$(OBJS)\cl_trans.obj+
+$(OBJS)\sw_skin.obj+
 $(OBJS)\sw_view.obj+
 $(OBJS)\r_view.obj+
 $(OBJS)\r_sprite.obj+
@@ -460,9 +460,9 @@ $(OBJS)\sdl_main.obj :  $(SDLSDK)\src\main\win32\sdl_main.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(SDLSDK)\src\main\win32\sdl_main.c
 |
 
-$(OBJS)\cl_trans.obj :  $(QFROOT)\source\cl_trans.c
+$(OBJS)\sw_skin.obj :  $(QFROOT)\source\sw_skin.c
   $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\cl_trans.c
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sw_skin.c
 |
 
 $(OBJS)\sw_view.obj :  $(QFROOT)\source\sw_view.c
