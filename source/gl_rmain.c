@@ -730,6 +730,9 @@ void R_DrawViewModel (void)
 	 || !currententity->model)
 		return;
 
+	// this is a HACK!  --KB
+	modelalpha = currententity->alpha;
+
 	// hack the depth range to prevent view model from poking into walls
 	glDepthRange (gldepthmin, gldepthmin + 0.3*(gldepthmax-gldepthmin));
 	R_DrawAliasModel (currententity);
