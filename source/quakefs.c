@@ -246,6 +246,75 @@ COM_Path_f (void)
 
 	List map files in gamepaths.
 */
+
+struct maplist {
+	char **list;
+	int count;
+	int size;
+};
+
+static struct maplist*
+maplist_new()
+{
+	return calloc(1, sizeof(struct maplist));
+}
+
+static void
+maplist_free(struct maplist *maplist)
+{
+	free (maplist->list);
+	free (maplist);
+}
+
+static void
+maplist_add_map(struct maplist *maplist, char *fname)
+{
+	char **new_list;
+
+	if (maplist->count == maplist->size) {
+		maplist->size += 32;
+		new_list = realloc (maplist->list, maplist->size * sizeof(char*));
+		if (!new_list) {
+			maplist->size -= 32;
+			return;
+		}
+		maplist->list = new_list;
+	}
+	maplist->list[maplist->count++] = fname;
+}
+
+static int
+maplist_cmp(const void *_a, const void *_b)
+{
+	char *a = *(char**)_a;
+	char *b = *(char**)_b;
+	int al = strstr (a, ".bsp") - a;
+	int bl = strstr (b, ".bsp") - b;
+	int cmp = strncmp (a, b, min (al, bl));
+
+	if (cmp == 0)
+		return al - bl;
+	return cmp;
+}
+
+static void
+maplist_print(struct maplist *maplist)
+{
+	int i;
+	char *end;
+	char *name;
+
+	qsort(maplist->list, maplist->count, sizeof(char *), maplist_cmp);
+	for (i=0; i<maplist->count - 1; i++) {
+		name = maplist->list[i];
+		end = strstr (name, ".bsp");
+		Con_Printf ("%-9.*s%c", end - name, name, ((i + 1) % 4) ? ' ' : '\n');
+	}
+	name = maplist->list[i];
+	end = strstr (name, ".bsp");
+	Con_Printf ("%-9.*s\n", end - name, name);
+}
+
 void
 COM_Maplist_f ( void )
 {
@@ -258,14 +327,20 @@ COM_Maplist_f ( void )
 		if (search->pack) {
 			int i;
 			pack_t *pak = search->pack;
+			struct maplist *maplist = maplist_new ();
+
 			Con_Printf ("Looking in %s...\n",search->pack->filename);
 			for (i=0 ; i<pak->numfiles ; i++) {
 				char *name=pak->files[i].name;
 				if (!fnmatch ("maps/*.bsp", name, FNM_PATHNAME)
 					|| !fnmatch ("maps/*.bsp.gz", name, FNM_PATHNAME))
-					Con_Printf ("%s\n", name+5);
+					maplist_add_map (maplist, name+5);
 			}
+			maplist_print (maplist);
+			maplist_free (maplist);
 		} else {
+			struct maplist *maplist = maplist_new ();
+
 			snprintf (buf, sizeof(buf), "%s/maps", search->filename);
 			dir_ptr = opendir(buf);
 			Con_Printf ("Looking in %s...\n",buf);
@@ -274,8 +349,10 @@ COM_Maplist_f ( void )
 			while ((dirent = readdir (dir_ptr)))
 				if (!fnmatch ("*.bsp", dirent->d_name, 0)
 					|| !fnmatch ("*.bsp.gz", dirent->d_name, 0))
-					Con_Printf ("%s\n", dirent->d_name);
+					maplist_add_map (maplist, dirent->d_name);
 			closedir (dir_ptr);
+			maplist_print (maplist);
+			maplist_free (maplist);
 		}
 	}
 }
