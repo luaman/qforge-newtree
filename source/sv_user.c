@@ -1595,7 +1595,7 @@ void SV_ExecuteClientMessage (client_t *cl)
 
 		c = MSG_ReadByte ();
 		if (c == -1)
-			break;
+                        return; // Ender: Patched :)
 				
 		switch (c)
 		{
