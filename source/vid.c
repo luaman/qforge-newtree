@@ -29,52 +29,16 @@
 
 	$Id$
 */
-
 #define _BSD
-#include <config.h>
-
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <ctype.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
 #endif
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
-#include <X11/keysym.h>
-#include <X11/extensions/XShm.h>
 
-#include "qendian.h"
-#include "qargs.h"
-#include "quakedef.h"
-#include "d_local.h"
-#include "keys.h"
 #include "cvar.h"
-#include "menu.h"
+#include "vid.h"
+#include "va.h"
+#include "qargs.h"
 #include "sys.h"
-#include "cmd.h"
-#include "input.h"
-#include "draw.h"
-#include "console.h"
-#include "client.h"
-#include "input.h"
-#include "context_x11.h"
-#ifdef HAVE_VIDMODE
-# include <X11/extensions/xf86vmode.h>
-#endif
-#include "dga_check.h"
-
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
 
 extern viddef_t        vid; // global video state
 
