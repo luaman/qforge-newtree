@@ -983,6 +983,7 @@ static void GL_ResampleTexture (unsigned int *in, int inwidth, int inheight, uns
 GL_Resample8BitTexture -- JACK
 ================
 */
+#if defined(GL_SHARED_TEXTURE_PALETTE_EXT) && defined(HAVE_GL_COLOR_INDEX8_EXT)
 static void GL_Resample8BitTexture (unsigned char *in, int inwidth, int inheight, unsigned char *out,  int outwidth, int outheight)
 {
 	int		i, j;
@@ -1007,6 +1008,7 @@ static void GL_Resample8BitTexture (unsigned char *in, int inwidth, int inheight
 		}
 	}
 }
+#endif
 
 /*
 ================
@@ -1042,6 +1044,7 @@ GL_MipMap8Bit
 Mipping for 8 bit textures
 ================
 */
+#if defined(GL_SHARED_TEXTURE_PALETTE_EXT) && defined(HAVE_GL_COLOR_INDEX8_EXT)
 static void GL_MipMap8Bit (byte *in, int width, int height)
 {
 	int		i, j;
@@ -1066,6 +1069,7 @@ static void GL_MipMap8Bit (byte *in, int width, int height)
 			out[0] = d_15to8table[(r<<0) + (g<<5) + (b<<10)];
 		}
 }
+#endif
 
 /*
 ===============
