@@ -995,7 +995,7 @@ AC_ARG_WITH(server,
 
 CL_TARGETS=""
 TARGETS=""
-if test "x$HAVE_MGL" = xyes a "x$ENABLE_MGL" = xyes; then
+if test "x$HAVE_MGL" = xyes -a "x$ENABLE_MGL" = xyes; then
 	TARGETS="$TARGETS qf-client-mgl\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS MGL"
 fi
