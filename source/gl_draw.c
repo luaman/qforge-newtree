@@ -44,6 +44,7 @@
 #include "draw.h"
 #include "glquake.h"
 #include "sbar.h"
+#include "screen.h"
 #include "sys.h"
 
 static int  GL_LoadPicTexture (qpic_t *pic);
@@ -683,7 +684,7 @@ Draw_ConsoleBackground (int lines)
 	else
 		ofs = (vid.conheight - lines) / (float) vid.conheight;
 
-	y = vid.height >> 1;
+	y = vid.height * scr_consize->value;
 	if (lines > y) {
 		alpha = 1.0;
 	} else {
