@@ -453,7 +453,7 @@ POINT TESTING IN HULLS
 ===============================================================================
 */
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ==================
@@ -488,7 +488,7 @@ int SV_HullPointContents (hull_t *hull, int num, vec3_t p)
 	return num;
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 
 
 /*

@@ -28,11 +28,14 @@
 // d_spr8.s
 // x86 assembly-language horizontal 8-bpp transparent span-drawing code.
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
 
-#if id386
+#if USE_INTEL_ASM
 
 //----------------------------------------------------------------------
 // 8-bpp horizontal span drawing code for polygons, with transparency.
@@ -903,4 +906,4 @@ LNextSpan:
 	popl	%ebp				// restore the caller's stack frame
 	ret
 
-#endif	// id386
+#endif	// USE_INTEL_ASM

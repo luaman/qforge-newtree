@@ -27,7 +27,7 @@
 */
 // r_vars.c: global refresh variables
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -57,5 +57,5 @@ short			*d_pzbuffer;
 unsigned int	d_zrowbytes;
 unsigned int	d_zwidth;
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 

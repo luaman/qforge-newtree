@@ -56,7 +56,7 @@ void D_StartParticles (void)
 }
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ==============
@@ -214,5 +214,5 @@ void D_DrawParticle (particle_t *pparticle)
 	}
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 

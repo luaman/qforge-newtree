@@ -26,12 +26,15 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
 #include "d_ifacea.h"
 
-#if id386
+#if USE_INTEL_ASM
 
 	.data
 
@@ -65,5 +68,5 @@ FloatMinus2ToThe31nd:	.long	0xcf000000
 .globl	C(r_bmodelactive)
 C(r_bmodelactive):	.long	0
 
-#endif	// id386
+#endif	// USE_INTEL_ASM
 

@@ -21,10 +21,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // sys_wina.s
 // x86 assembly-language Win-dependent routines.
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 // #include "quakeasm.h"
 
-//@@@ should be id386-dependent, and have an equivalent C path
+//@@@ should be USE_INTEL_ASM-dependent, and have an equivalent C path
 
 	.data
 
@@ -93,19 +96,19 @@ C(Sys_PopFPCW):
 C(Sys_SetFPCW):
 	fnstcw	cw
 	movl	cw,%eax
-#if	id386
+#if	USE_INTEL_ASM
 	andb	$0xF0,%ah
 	orb		$0x03,%ah	// round mode, 64-bit precision
 #endif
 	movl	%eax,full_cw
 
-#if	id386
+#if	USE_INTEL_ASM
 	andb	$0xF0,%ah
 	orb		$0x0C,%ah	// chop mode, single precision
 #endif
 	movl	%eax,single_cw
 
-#if	id386
+#if	USE_INTEL_ASM
 	andb	$0xF0,%ah
 	orb		$0x08,%ah	// ceil mode, single precision
 #endif

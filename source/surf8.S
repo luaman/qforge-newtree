@@ -28,11 +28,14 @@
 // surf8.s
 // x86 assembly-language 8 bpp surface block drawing code.
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
 
-#if	id386
+#if	USE_INTEL_ASM
 
 	.data
 
@@ -786,4 +789,4 @@ LPatchLoop8:
 
 	ret
 
-#endif	// id386
+#endif	// USE_INTEL_ASM

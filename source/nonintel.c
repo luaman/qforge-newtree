@@ -32,7 +32,7 @@
 #endif
 #include "quakedef.h"
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ================
@@ -67,5 +67,5 @@ void R_SurfacePatch (void)
 }
 
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 

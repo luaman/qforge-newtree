@@ -98,7 +98,7 @@ void D_WarpScreen (void)
 }
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 =============
@@ -119,7 +119,7 @@ void D_DrawTurbulent8Span (void)
 	} while (--r_turb_spancount > 0);
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 
 /*
 =============
@@ -254,7 +254,7 @@ void Turbulent8 (espan_t *pspan)
 }
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 =============
@@ -392,7 +392,7 @@ void D_DrawSpans8 (espan_t *pspan)
 #endif
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 =============

@@ -126,7 +126,7 @@ void D_PolysetSetEdgeTable (void);
 void D_RasterizeAliasPolySmooth (void);
 void D_PolysetScanLeftEdge (int height);
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ================
@@ -397,7 +397,7 @@ nodraw:
 	D_PolysetRecursiveTriangle (lp3, new, lp2);
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 
 
 /*
@@ -422,7 +422,7 @@ void D_PolysetUpdateTables (void)
 }
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ===================
@@ -490,7 +490,7 @@ void D_PolysetScanLeftEdge (int height)
 	} while (--height);
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 
 
 /*
@@ -532,7 +532,7 @@ void D_PolysetSetUpForLineScan(fixed8_t startvertu, fixed8_t startvertv,
 }
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ================
@@ -584,7 +584,7 @@ void D_PolysetCalcGradients (int skinwidth)
 	r_zistepy = (int)((t1 * p00_minus_p20 - t0 * p10_minus_p20) *
 			ystepdenominv);
 
-#if	id386
+#if	USE_INTEL_ASM
 	a_sstepxfrac = r_sstepx << 16;
 	a_tstepxfrac = r_tstepx << 16;
 #else
@@ -595,7 +595,7 @@ void D_PolysetCalcGradients (int skinwidth)
 	a_ststepxwhole = skinwidth * (r_tstepx >> 16) + (r_sstepx >> 16);
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 
 
 byte gelmap[256];
@@ -613,7 +613,7 @@ void InitGel (byte *palette)
 }
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ================
@@ -683,7 +683,7 @@ void D_PolysetDrawSpans8 (spanpackage_t *pspanpackage)
 		pspanpackage++;
 	} while (pspanpackage->count != -999999);
 }
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 
 
 /*
@@ -766,7 +766,7 @@ void D_RasterizeAliasPolySmooth (void)
 
 	d_ptex = (byte *)r_affinetridesc.pskin + (plefttop[2] >> 16) +
 			(plefttop[3] >> 16) * r_affinetridesc.skinwidth;
-#if	id386
+#if	USE_INTEL_ASM
 	d_sfrac = (plefttop[2] & 0xFFFF) << 16;
 	d_tfrac = (plefttop[3] & 0xFFFF) << 16;
 	d_pzbasestep = (d_zwidth + ubasestep) << 1;
@@ -800,7 +800,7 @@ void D_RasterizeAliasPolySmooth (void)
 	d_ptexbasestep = ((r_sstepy + r_sstepx * ubasestep) >> 16) +
 			((r_tstepy + r_tstepx * ubasestep) >> 16) *
 			r_affinetridesc.skinwidth;
-#if	id386
+#if	USE_INTEL_ASM
 	d_sfracbasestep = (r_sstepy + r_sstepx * ubasestep) << 16;
 	d_tfracbasestep = (r_tstepy + r_tstepx * ubasestep) << 16;
 #else
@@ -813,7 +813,7 @@ void D_RasterizeAliasPolySmooth (void)
 	d_ptexextrastep = ((r_sstepy + r_sstepx * d_countextrastep) >> 16) +
 			((r_tstepy + r_tstepx * d_countextrastep) >> 16) *
 			r_affinetridesc.skinwidth;
-#if	id386
+#if	USE_INTEL_ASM
 	d_sfracextrastep = (r_sstepy + r_sstepx*d_countextrastep) << 16;
 	d_tfracextrastep = (r_tstepy + r_tstepx*d_countextrastep) << 16;
 #else
@@ -854,7 +854,7 @@ void D_RasterizeAliasPolySmooth (void)
 		d_pdestbasestep = screenwidth + ubasestep;
 		d_pdestextrastep = d_pdestbasestep + 1;
 		d_pdest = (byte *)d_viewbuffer + ystart * screenwidth + plefttop[0];
-#if	id386
+#if	USE_INTEL_ASM
 		d_pzbasestep = (d_zwidth + ubasestep) << 1;
 		d_pzextrastep = d_pzbasestep + 2;
 #else
@@ -872,7 +872,7 @@ void D_RasterizeAliasPolySmooth (void)
 		d_ptexbasestep = ((r_sstepy + r_sstepx * ubasestep) >> 16) +
 				((r_tstepy + r_tstepx * ubasestep) >> 16) *
 				r_affinetridesc.skinwidth;
-#if	id386
+#if	USE_INTEL_ASM
 		d_sfracbasestep = (r_sstepy + r_sstepx * ubasestep) << 16;
 		d_tfracbasestep = (r_tstepy + r_tstepx * ubasestep) << 16;
 #else
@@ -885,7 +885,7 @@ void D_RasterizeAliasPolySmooth (void)
 		d_ptexextrastep = ((r_sstepy + r_sstepx * d_countextrastep) >> 16) +
 				((r_tstepy + r_tstepx * d_countextrastep) >> 16) *
 				r_affinetridesc.skinwidth;
-#if	id386
+#if	USE_INTEL_ASM
 		d_sfracextrastep = ((r_sstepy+r_sstepx*d_countextrastep) & 0xFFFF)<<16;
 		d_tfracextrastep = ((r_tstepy+r_tstepx*d_countextrastep) & 0xFFFF)<<16;
 #else

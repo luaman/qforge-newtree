@@ -28,12 +28,15 @@
 // d_scana.s
 // x86 assembly-language turbulent texture mapping code
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
 #include "d_ifacea.h"
 
-#if id386
+#if USE_INTEL_ASM
 
 	.data
 
@@ -91,5 +94,5 @@ Llp:
 	popl	%ebp				// restore caller's stack frame pointer
 	ret
 
-#endif	// id386
+#endif	// USE_INTEL_ASM
 

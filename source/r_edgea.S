@@ -28,11 +28,14 @@
 // r_edgea.s
 // x86 assembly-language edge-processing code.
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
 
-#if	id386
+#if	USE_INTEL_ASM
 
 	.data
 Ltemp:					.long	0
@@ -752,5 +755,5 @@ C(R_SurfacePatch):
 
 	ret
 
-#endif	// id386
+#endif	// USE_INTEL_ASM
 

@@ -32,7 +32,7 @@
 #endif
 #include	"quakedef.h"
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 // all global and static refresh variables are collected in a contiguous block
 // to avoid cache conflicts.
@@ -46,5 +46,5 @@
 
 int	r_bmodelactive;
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 

@@ -48,7 +48,7 @@ D_Patch
 */
 void D_Patch (void)
 {
-#if id386
+#if USE_INTEL_ASM
 
 	static qboolean protectset8 = false;
 
@@ -59,7 +59,7 @@ void D_Patch (void)
 		protectset8 = true;
 	}
 
-#endif	// id386
+#endif	// USE_INTEL_ASM
 }
 
 

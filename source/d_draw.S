@@ -28,12 +28,15 @@
 // d_draw.s
 // x86 assembly-language horizontal 8-bpp span-drawing code.
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
 #include "d_ifacea.h"
 
-#if	id386
+#if	USE_INTEL_ASM
 
 //----------------------------------------------------------------------
 // 8-bpp horizontal span drawing code for polygons, with no transparency.
@@ -1040,4 +1043,4 @@ LFDone:
 	popl	%ebp				// restore the caller's stack frame
 	ret
 
-#endif	// id386
+#endif	// USE_INTEL_ASM

@@ -345,10 +345,10 @@ void R_Init (void)
 	R_InitParticles ();
 
 // TODO: collect 386-specific code in one place
-#if	id386
+#if	USE_INTEL_ASM
 	Sys_MakeCodeWriteable ((long)R_EdgeCodeStart,
 					     (long)R_EdgeCodeEnd - (long)R_EdgeCodeStart);
-#endif	// id386
+#endif	// USE_INTEL_ASM
 
 	D_Init ();
 }
@@ -612,7 +612,7 @@ void R_ViewChanged (vrect_t *pvrect, int lineadj, float aspect)
 		r_fov_greater_than_90 = true;
 
 // TODO: collect 386-specific code in one place
-#if id386
+#if USE_INTEL_ASM
 	if (r_pixbytes == 1)
 	{
 		Sys_MakeCodeWriteable ((long)R_Surf8Start,
@@ -627,7 +627,7 @@ void R_ViewChanged (vrect_t *pvrect, int lineadj, float aspect)
 		colormap = vid.colormap16;
 		R_Surf16Patch ();
 	}
-#endif	// id386
+#endif	// USE_INTEL_ASM
 
 	D_ViewChanged ();
 }

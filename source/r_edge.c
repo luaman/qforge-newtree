@@ -170,7 +170,7 @@ void R_BeginEdgeFrame (void)
 }
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ==============
@@ -213,10 +213,10 @@ addedge:
 	} while ((edgestoadd = next_edge) != NULL);
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 	
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ==============
@@ -233,10 +233,10 @@ void R_RemoveEdges (edge_t *pedge)
 	} while ((pedge = pedge->nextremove) != NULL);
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ==============
@@ -303,7 +303,7 @@ pushback:
 	}
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 
 
 /*
@@ -462,7 +462,7 @@ void R_TrailingEdge (surf_t *surf, edge_t *edge)
 }
 
 
-#if	!id386
+#if	!USE_INTEL_ASM
 
 /*
 ==============
@@ -628,7 +628,7 @@ void R_GenerateSpans (void)
 	R_CleanupSpan ();
 }
 
-#endif	// !id386
+#endif	// !USE_INTEL_ASM
 
 
 /*

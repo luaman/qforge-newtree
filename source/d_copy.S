@@ -28,6 +28,9 @@
 // d_copy.s
 // x86 assembly-language screen copying code.
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"

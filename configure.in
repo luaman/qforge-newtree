@@ -83,6 +83,15 @@ AC_TRY_COMPILE(
 	)
 )
 
+AC_MSG_CHECKING(for underscore prefix in names)
+AC_TRY_LINK(
+	[asm(".long _bar");
+	int bar;],
+	[],
+	AC_DEFINE(HAVE_SYM_PREFIX_UNDERSCORE) AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no)
+)
+
 AC_MSG_CHECKING(for size_t in sys/types.h)
 AC_TRY_COMPILE(
 	[#include <sys/types.h>],
@@ -118,19 +127,6 @@ AC_TRY_COMPILE(
 	AC_DEFINE(HAVE_SA_LEN) AC_MSG_RESULT(yes),
 	AC_MSG_RESULT(no)
 )
-
-dnl Check for symbol underscore prefix 
-dnl !!! FIXME !!! Do some real check here...
-AC_MSG_CHECKING(whether C symbols are prefixed by '_')
-case "${target}" in
-  *-*-msdos* | *-*-djgpp* | *-*-mingw* | *-*-cygwin* | *-*-openbsd*)
-	AC_DEFINE(HAVE_SYM_PREFIX_UNDERSCORE)
-        AC_MSG_RESULT(yes)
-	;;
-  *)
-        AC_MSG_RESULT(no)
-	;;
-esac
 
 dnl Checks for library functions.
 AC_FUNC_ALLOCA

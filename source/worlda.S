@@ -28,11 +28,14 @@
 // worlda.s
 // x86 assembly-language server testing stuff
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 //#include "quakeasm.h"
 //include "d_ifacea.h"
 
-#if id386
+#if USE_INTEL_ASM
 
 	.data
 
@@ -145,5 +148,5 @@ Lhquickout:
 
 	ret
 
-#endif	// id386
+#endif	// USE_INTEL_ASM
 

@@ -186,7 +186,7 @@ void BOPS_Error (void)
 	Sys_Error ("BoxOnPlaneSide:  Bad signbits");
 }
 
-#if !id386
+#if !USE_INTEL_ASM
 
 /*
 ==================
@@ -570,7 +570,7 @@ int GreatestCommonDivisor (int i1, int i2)
 }
 
 
-#if !id386
+#if !USE_INTEL_ASM
 
 // TODO: move to nonintel.c
 

@@ -28,12 +28,15 @@
 // d_polysa.s
 // x86 assembly-language polygon model drawing code
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
 #include "d_ifacea.h"
 
-#if	id386
+#if	USE_INTEL_ASM
 
 // !!! if this is changed, it must be changed in d_polyse.c too !!!
 #define DPS_MAXSPANS			MAXHEIGHT+1	
@@ -1746,5 +1749,5 @@ LNextTri:
 	ret
 
 
-#endif	// id386
+#endif	// USE_INTEL_ASM
 
