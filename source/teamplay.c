@@ -355,13 +355,13 @@ locs_markloc (void)
 	QFile      *locfd;
 	char        locfile[MAX_OSPATH];
 
-	if (Cmd_Argc () != 2) {
+	if (Cmd_Argc () == 1) {
 		Con_Printf
 			("markloc <description> :marks the current location with the description and records the information into a loc file.\n");
 		return;
 	}
 	VectorCopy (cl.simorg, loc);
-	locs_add (loc, Cmd_Argv (1));
+	locs_add (loc, Cmd_Args ());
 #ifdef HAVE_ZLIB
 	if(locisgz) {
 		Cmd_ExecuteString ("zdumploc");
