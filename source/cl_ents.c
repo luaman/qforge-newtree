@@ -900,6 +900,7 @@ CL_LinkPlayers (void)
 			continue;					// not present this frame
 
 		// spawn light flashes, even ones coming from invisible objects
+		// but not for the player if using gl_flashblend
 		if (!gl_flashblend->int_val || j != cl.playernum) {
 
 			if (j == cl.playernum) {
