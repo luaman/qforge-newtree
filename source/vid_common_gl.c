@@ -31,6 +31,10 @@
 # include "config.h"
 #endif
 
+#ifdef _WIN32
+# include "winquake.h"
+#endif
+
 #include <GL/gl.h>
 
 #ifdef HAVE_GL_GLEXT_H
@@ -48,11 +52,6 @@
 # else
 #  define RTLD_LAZY     0
 # endif
-#endif
-
-
-#ifdef _WIN32
-# include "winquake.h"
 #endif
 
 #include "console.h"
@@ -379,12 +378,12 @@ VID_Init8bitPalette (void)
 		Con_Printf ("disabled.\n");
 		return;
 	}
-
+#ifdef HAVE_DLOPEN
 	if (!(dlhand = dlopen (NULL, RTLD_LAZY))) {
 		Con_Printf ("unable to check.\n");
 		return;
 	}
-
+#endif
 	if (vid_use8bit->int_val) {
 #ifdef HAVE_TDFXGL
 		3dfx_Init8bitPalette ();
@@ -396,8 +395,10 @@ VID_Init8bitPalette (void)
 			Con_Printf ("not found.\n");
 		}
 	}
+#ifdef HAVE_DLOPEN
 	dlclose (dlhand);
 	dlhand = NULL;
+#endif
 }
 
 void
