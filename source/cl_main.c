@@ -28,7 +28,7 @@
 // cl_main.c  -- client main loop
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include <ctype.h>
 
@@ -42,7 +42,7 @@
 #else
 #include <netinet/in.h>
 #endif
-#include <cl_slist.h>
+#include "cl_slist.h"
 
 // we need to declare some mouse variables here, because the menu system
 // references them even when on a unix system.
@@ -1162,12 +1162,6 @@ CL_Init
 void CL_Init (void)
 {
 	FILE *servlist;
-/* 	extern	cvar_t		baseskin;
- CVAR_FIXME */
-	extern	cvar_t		*baseskin;
-/* 	extern	cvar_t		noskins;
- CVAR_FIXME */
-	extern	cvar_t		*noskins;
 	char st[80];
 
 	cls.state = ca_disconnected;
@@ -1192,11 +1186,73 @@ void CL_Init (void)
 		Server_List_Load(servlist);
 		fclose(servlist);
 	}
-
 	
+
 //
 // register our commands
 //
+
+	Cmd_AddCommand ("version", CL_Version_f);
+
+	Cmd_AddCommand ("changing", CL_Changing_f);
+	Cmd_AddCommand ("disconnect", CL_Disconnect_f);
+	Cmd_AddCommand ("record", CL_Record_f);
+	Cmd_AddCommand ("rerecord", CL_ReRecord_f);
+	Cmd_AddCommand ("stop", CL_Stop_f);
+	Cmd_AddCommand ("playdemo", CL_PlayDemo_f);
+	Cmd_AddCommand ("timedemo", CL_TimeDemo_f);
+
+	Cmd_AddCommand ("skins", Skin_Skins_f);
+	Cmd_AddCommand ("allskins", Skin_AllSkins_f);
+
+	Cmd_AddCommand ("quit", CL_Quit_f);
+
+	Cmd_AddCommand ("connect", CL_Connect_f);
+	Cmd_AddCommand ("reconnect", CL_Reconnect_f);
+
+	Cmd_AddCommand ("rcon", CL_Rcon_f);
+	Cmd_AddCommand ("packet", CL_Packet_f);
+	Cmd_AddCommand ("user", CL_User_f);
+	Cmd_AddCommand ("users", CL_Users_f);
+
+	Cmd_AddCommand ("setinfo", CL_SetInfo_f);
+	Cmd_AddCommand ("fullinfo", CL_FullInfo_f);
+	Cmd_AddCommand ("fullserverinfo", CL_FullServerinfo_f);
+
+	Cmd_AddCommand ("color", CL_Color_f);
+	Cmd_AddCommand ("download", CL_Download_f);
+
+	Cmd_AddCommand ("nextul", CL_NextUpload);
+	Cmd_AddCommand ("stopul", CL_StopUpload);
+
+//
+// forward to server commands
+//
+	Cmd_AddCommand ("kill", NULL);
+	Cmd_AddCommand ("pause", NULL);
+	Cmd_AddCommand ("say", NULL);
+	Cmd_AddCommand ("say_team", NULL);
+	Cmd_AddCommand ("serverinfo", NULL);
+
+//
+//  Windows commands
+//
+#ifdef _WIN32
+	Cmd_AddCommand ("windows", CL_Windows_f);
+#endif
+}
+
+
+void CL_InitCvars (void)
+{
+/* 	extern	cvar_t		baseskin;
+ CVAR_FIXME */
+	extern	cvar_t		*baseskin;
+/* 	extern	cvar_t		noskins;
+ CVAR_FIXME */
+	extern	cvar_t		*noskins;
+
+
 /* 	Cvar_RegisterVariable (&show_fps);
  CVAR_FIXME */
 	show_fps = Cvar_Get("show_fps", "0", CVAR_NONE, "None");
@@ -1336,58 +1392,7 @@ void CL_Init (void)
 /* 	Cvar_RegisterVariable (&noaim);
  CVAR_FIXME */
 	noaim = Cvar_Get("noaim", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-
-
-	Cmd_AddCommand ("version", CL_Version_f);
-
-	Cmd_AddCommand ("changing", CL_Changing_f);
-	Cmd_AddCommand ("disconnect", CL_Disconnect_f);
-	Cmd_AddCommand ("record", CL_Record_f);
-	Cmd_AddCommand ("rerecord", CL_ReRecord_f);
-	Cmd_AddCommand ("stop", CL_Stop_f);
-	Cmd_AddCommand ("playdemo", CL_PlayDemo_f);
-	Cmd_AddCommand ("timedemo", CL_TimeDemo_f);
-
-	Cmd_AddCommand ("skins", Skin_Skins_f);
-	Cmd_AddCommand ("allskins", Skin_AllSkins_f);
-
-	Cmd_AddCommand ("quit", CL_Quit_f);
-
-	Cmd_AddCommand ("connect", CL_Connect_f);
-	Cmd_AddCommand ("reconnect", CL_Reconnect_f);
-
-	Cmd_AddCommand ("rcon", CL_Rcon_f);
-	Cmd_AddCommand ("packet", CL_Packet_f);
-	Cmd_AddCommand ("user", CL_User_f);
-	Cmd_AddCommand ("users", CL_Users_f);
-
-	Cmd_AddCommand ("setinfo", CL_SetInfo_f);
-	Cmd_AddCommand ("fullinfo", CL_FullInfo_f);
-	Cmd_AddCommand ("fullserverinfo", CL_FullServerinfo_f);
-
-	Cmd_AddCommand ("color", CL_Color_f);
-	Cmd_AddCommand ("download", CL_Download_f);
-
-	Cmd_AddCommand ("nextul", CL_NextUpload);
-	Cmd_AddCommand ("stopul", CL_StopUpload);
-
-//
-// forward to server commands
-//
-	Cmd_AddCommand ("kill", NULL);
-	Cmd_AddCommand ("pause", NULL);
-	Cmd_AddCommand ("say", NULL);
-	Cmd_AddCommand ("say_team", NULL);
-	Cmd_AddCommand ("serverinfo", NULL);
-
-//
-//  Windows commands
-//
-#ifdef _WIN32
-	Cmd_AddCommand ("windows", CL_Windows_f);
-#endif
 }
-
 
 /*
 ================
@@ -1665,6 +1670,7 @@ void Host_Init (quakeparms_t *parms)
 	cl_Cmd_Init ();
 	V_Init ();
 
+	CL_InitCvars ();
 	SCR_InitCvars ();
 	VID_InitCvars ();
 	COM_Init ();
