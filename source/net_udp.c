@@ -284,6 +284,9 @@ NET_GetPacket (void)
 		return false;
 	}
 
+#ifdef PACKET_LOGGING
+        Log_Incoming_Packet(net_message_buffer,net_message.cursize);
+#endif
 	return ret;
 }
 
@@ -296,6 +299,10 @@ NET_SendPacket (int length, void *data, netadr_t to)
 	struct sockaddr_in addr;
 
 	NetadrToSockadr (&to, &addr);
+
+#ifdef PACKET_LOGGING
+        Log_Outgoing_Packet(data,length);
+#endif
 
 	ret =
 		sendto (net_socket, data, length, 0, (struct sockaddr *) &addr,

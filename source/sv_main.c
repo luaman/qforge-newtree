@@ -1813,6 +1813,10 @@ SV_InitNet (void)
 
 	Netchan_Init ();
 
+#ifdef PACKET_LOGGING
+        Net_Log_Init();
+#endif
+
 	// heartbeats will allways be sent to the id master
 	svs.last_heartbeat = -99999;		// send immediately
 //  NET_StringToAdr ("192.246.40.70:27000", &idmaster_adr);
