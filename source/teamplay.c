@@ -35,10 +35,13 @@
 #include "locs.h"
 #include "sys.h"
 
+extern cvar_t	*skin;
 cvar_t	*cl_deadbodyfilter;
 cvar_t	*cl_gibfilter;
 cvar_t	*cl_parsesay;
 cvar_t	*cl_nofake;
+static qboolean	died = false, recorded_location = false;
+static vec3_t	death_location, last_recorded_location;
 
 
 void Team_BestWeaponImpulse (void)
@@ -142,10 +145,41 @@ char *Team_ParseSay (char *s)
 				s += 2;
 			}
 			switch (chr) {
+				case 's':
+					bracket = 0;
+					t1 = skin->string;
+					break;
+				case 'd':
+					bracket = 0;
+					if (died) {
+						location = locs_find(death_location);
+						if (location) {
+							recorded_location = true;
+							memcpy(last_recorded_location, death_location, 
+									sizeof(last_recorded_location));
+							t1 = location->name;
+							break;
+						}
+					}
+					goto location;
+				case 'r':
+					bracket = 0;
+					if (recorded_location) {
+						location = locs_find(last_recorded_location);
+						if (location) {
+							t1 = location->name;
+							break;
+						}
+					}
+					goto location;
 				case 'l':
+location:
 					bracket = 0;
 					location = locs_find(r_origin);
 					if (location) {
+						recorded_location = true;
+						memcpy(last_recorded_location, r_origin, 
+								sizeof(last_recorded_location));
 						t1 = location->name;
 					} else
 						snprintf(t2, sizeof(t2), "Unknown!\n");
@@ -236,6 +270,8 @@ char *Team_ParseSay (char *s)
 
 void Team_Dead ()
 {
+	died = true;
+	memcpy(death_location, r_origin, sizeof(death_location));
 }
 
 void Team_NewMap ()
