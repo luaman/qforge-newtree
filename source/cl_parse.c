@@ -29,6 +29,8 @@
 
 #include "quakedef.h"
 
+extern     cvar_t  gl_flashblend;
+
 char *svc_strings[] =
 {
 	"svc_bad",

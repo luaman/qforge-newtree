@@ -33,6 +33,8 @@ extern	cvar_t	cl_predict_players;
 extern	cvar_t	cl_predict_players2;
 extern	cvar_t	cl_solid_players;
 
+extern     cvar_t  gl_flashblend;
+
 static struct predicted_player {
 	int flags;
 	qboolean active;
