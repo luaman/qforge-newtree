@@ -210,7 +210,7 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinind
 			}
 		} else {
 			// animating skin group.  yuck.
-			Con_Printf("Animating Skin Group, if you get this message please notify warp@debian.org\n");
+			// Con_Printf("Animating Skin Group, if you get this message please notify warp@debian.org\n");
 			pskintype++;
 			pinskingroup = (daliasskingroup_t *)pskintype;
 			groupskins = LittleLong (pinskingroup->numskins);
@@ -221,8 +221,7 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinind
 
 			for (j=0 ; j<groupskins ; j++)
 			{
-				skin+=4;
-				skin = Mod_LoadSkin (skin, skinsize, i, j, true);
+				skin = Mod_LoadSkin (skin, skinsize, i, j&3, true);
 			}
 			k = j;
 			for (/* */; j < 4; j++) {

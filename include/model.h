@@ -272,15 +272,16 @@ Alias models are position independent, so the cache manager can move them.
 ==============================================================================
 */
 
+/* NOTE: the first three lines must match maliasgroupframedesc_t */
 typedef struct
 {
+	trivertx_t			bboxmin;
+	trivertx_t			bboxmax;
+	int					frame;
 	aliasframetype_t	type;
 	int					firstpose;
 	int					numposes;
 	float				interval;
-	trivertx_t			bboxmin;
-	trivertx_t			bboxmax;
-	int					frame;
 	char				name[16];
 } maliasframedesc_t;
 
