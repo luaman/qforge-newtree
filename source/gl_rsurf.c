@@ -448,6 +448,20 @@ void GL_EnableMultitexture(void)
 	}
 }
 
+void GL_UploadLightmap(int i)
+{
+	glRect_t	*theRect;
+	lightmap_modified[i] = false;
+	theRect = &lightmap_rectchange[i];
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, theRect->t, 
+		BLOCK_WIDTH, theRect->h, gl_lightmap_format, GL_UNSIGNED_BYTE,
+		lightmaps[i] + (theRect->t * BLOCK_WIDTH) * lightmap_bytes);
+	theRect->l = BLOCK_WIDTH;
+	theRect->t = BLOCK_HEIGHT;
+	theRect->h = 0;
+	theRect->w = 0;
+}
+
 /*
 ================
 R_DrawSequentialPoly
@@ -456,13 +470,70 @@ Systems that have fast state and texture changes can
 just do everything as it passes with no need to sort
 ================
 */
-void R_DrawSequentialPoly (msurface_t *s)
+void R_DrawWorldSequentialPoly (msurface_t *s)
 {
 	glpoly_t	*p;
 	float		*v;
 	int			i;
 	texture_t	*t;
-	glRect_t	*theRect;
+
+	// normal lightmaped poly
+	R_RenderDynamicLightmaps (s);
+	p = s->polys;
+	t = R_TextureAnimation (s->texinfo->texture);
+	if (gl_mtexable)
+	{
+		// Binds world to texture env 0
+		GL_SelectTexture(0);
+		glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
+//			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		// Binds lightmap to texenv 1
+		GL_EnableMultitexture(); // Same as SelectTexture (TEXTURE1)
+		glBindTexture (GL_TEXTURE_2D, lightmap_textures + s->lightmaptexturenum);
+		i = s->lightmaptexturenum;
+		if (lightmap_modified[i])
+			GL_UploadLightmap(i);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+		glBegin(GL_POLYGON);
+		v = p->verts[0];
+		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
+		{
+			qglMTexCoord2f (gl_mtex_enum + 0, v[3], v[4]);
+			qglMTexCoord2f (gl_mtex_enum + 1, v[5], v[6]);
+			glVertex3fv (v);
+		}
+	}
+	else
+	{
+		glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
+		glBegin (GL_POLYGON);
+		v = p->verts[0];
+		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
+		{
+			glTexCoord2fv (&v[3]);
+			glVertex3fv (v);
+		}
+		glEnd ();
+
+		glBindTexture (GL_TEXTURE_2D, lightmap_textures + s->lightmaptexturenum);
+		glBegin (GL_POLYGON);
+		v = p->verts[0];
+		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
+		{
+			glTexCoord2fv (&v[5]);
+			glVertex3fv (v);
+		}
+	}
+	glEnd ();
+}
+
+void R_DrawModelSequentialPoly (msurface_t *s)
+{
+	glpoly_t	*p;
+	float		*v;
+	int			i;
+	texture_t	*t;
 
 	//
 	// normal lightmaped poly
@@ -471,11 +542,10 @@ void R_DrawSequentialPoly (msurface_t *s)
 	if (!(s->flags & (SURF_DRAWSKY|SURF_DRAWTURB)))
 	{
 		R_RenderDynamicLightmaps (s);
+		p = s->polys;
+		t = R_TextureAnimation (s->texinfo->texture);
 		if (gl_mtexable)
 		{
-			p = s->polys;
-
-			t = R_TextureAnimation (s->texinfo->texture);
 			// Binds world to texture env 0
 			GL_SelectTexture(0);
 			glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
@@ -485,17 +555,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			glBindTexture (GL_TEXTURE_2D, lightmap_textures + s->lightmaptexturenum);
 			i = s->lightmaptexturenum;
 			if (lightmap_modified[i])
-			{
-				lightmap_modified[i] = false;
-				theRect = &lightmap_rectchange[i];
-				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, theRect->t, 
-					BLOCK_WIDTH, theRect->h, gl_lightmap_format, GL_UNSIGNED_BYTE,
-					lightmaps[i] + (theRect->t * BLOCK_WIDTH) * lightmap_bytes);
-				theRect->l = BLOCK_WIDTH;
-				theRect->t = BLOCK_HEIGHT;
-				theRect->h = 0;
-				theRect->w = 0;
-			}
+				GL_UploadLightmap(i);
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 			glBegin(GL_POLYGON);
@@ -506,14 +566,9 @@ void R_DrawSequentialPoly (msurface_t *s)
 				qglMTexCoord2f (gl_mtex_enum + 1, v[5], v[6]);
 				glVertex3fv (v);
 			}
-			glEnd ();
-			return;
 		}
 		else
 		{
-			p = s->polys;
-
-			t = R_TextureAnimation (s->texinfo->texture);
 			glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
 			glBegin (GL_POLYGON);
 			v = p->verts[0];
@@ -532,8 +587,8 @@ void R_DrawSequentialPoly (msurface_t *s)
 				glTexCoord2fv (&v[5]);
 				glVertex3fv (v);
 			}
-			glEnd ();
 		}
+		glEnd ();
 		return;
 	}
 
@@ -580,7 +635,6 @@ void R_BlendLightmaps (void)
 	int			i, j;
 	glpoly_t	*p;
 	float		*v;
-	glRect_t	*theRect;
 
 	if (!gl_texsort->value)
 		return;
@@ -596,17 +650,7 @@ void R_BlendLightmaps (void)
 			continue;
 		glBindTexture (GL_TEXTURE_2D, lightmap_textures+i);
 		if (lightmap_modified[i])
-		{
-			lightmap_modified[i] = false;
-			theRect = &lightmap_rectchange[i];
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, theRect->t, 
-				BLOCK_WIDTH, theRect->h, gl_lightmap_format, GL_UNSIGNED_BYTE,
-				lightmaps[i] + (theRect->t * BLOCK_WIDTH) * lightmap_bytes);
-			theRect->l = BLOCK_WIDTH;
-			theRect->t = BLOCK_HEIGHT;
-			theRect->h = 0;
-			theRect->w = 0;
-		}
+			GL_UploadLightmap(i);
 		for ( ; p ; p=p->chain)
 		{
 			glBegin (GL_POLYGON);
@@ -986,7 +1030,7 @@ void R_DrawBrushModel (entity_t *e)
 			if (gl_texsort->value)
 				R_RenderBrushPoly (psurf);
 			else
-				R_DrawSequentialPoly (psurf);
+				R_DrawModelSequentialPoly (psurf);
 		}
 	}
 
@@ -1107,7 +1151,7 @@ void R_RecursiveWorldNode (mnode_t *node)
 				surf->texturechain = waterchain;
 				waterchain = surf;
 			} else
-				R_DrawSequentialPoly (surf);
+				R_DrawWorldSequentialPoly (surf);
 		}
 	}
 
