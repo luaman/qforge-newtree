@@ -163,7 +163,7 @@ SV_New_f (void)
 	r_skyname = Cvar_FindVar ("r_skyname");
 	if (r_skyname != NULL) {
 		MSG_WriteByte (&host_client->netchan.message, svc_stufftext);
-		MSG_WriteString (&host_client->netchan.message, va ("r_skyname %s",
+		MSG_WriteString (&host_client->netchan.message, va ("r_skyname %s\n",
 															r_skyname->string));
 	}
 }
