@@ -55,6 +55,8 @@
 #include "console.h"
 #include "glquake.h"
 
+qboolean r_cache_thrash;
+
 extern	double	realtime;
 int			skytexturenum;
 
@@ -810,18 +812,18 @@ void R_DrawBrushModel (entity_t *e)
 		if (((psurf->flags & SURF_PLANEBACK) && (dot < -BACKFACE_EPSILON)) ||
 			(!(psurf->flags & SURF_PLANEBACK) && (dot > BACKFACE_EPSILON)))
 		{
-			if (psurf->flags & SURF_DRAWSKY) {
+
+			if (psurf->flags & SURF_DRAWTURB) {
+				GL_WaterSurface(psurf);
+			} else if (psurf->flags & SURF_DRAWSKY) {
 				psurf->texturechain = sky_chain;
 				sky_chain = psurf;
 				return;
-			}
-
-			if (psurf->flags & SURF_DRAWTURB)
-				GL_WaterSurface(psurf);
-			else if (gl_texsort->int_val)
+			} else if (gl_texsort->int_val) {
 				R_RenderBrushPoly (psurf);
-			else
+			} else {
 				R_DrawMultitexturePoly (psurf);
+			}
 		}
 	}
 
@@ -934,24 +936,20 @@ void R_RecursiveWorldNode (mnode_t *node)
 			if ((dot < 0) ^ !!(surf->flags & SURF_PLANEBACK))
 				continue;		// wrong side
 
-			if (surf->flags & SURF_DRAWSKY) {
+
+			if (surf->flags & SURF_DRAWTURB) {
+				surf->texturechain = waterchain;
+				waterchain = surf;
+			} else if (surf->flags & SURF_DRAWSKY) {
 				surf->texturechain = sky_chain;
 				sky_chain = surf;
 				continue;
-			}
-
-			if (surf->flags & SURF_DRAWTURB)
-			{
-				surf->texturechain = waterchain;
-				waterchain = surf;
-			}
-			else if (gl_texsort->int_val)
-			{
+			} else if (gl_texsort->int_val) {
 				surf->texturechain = surf->texinfo->texture->texturechain;
 				surf->texinfo->texture->texturechain = surf;
-			}
-			else
+			} else {
 				R_DrawMultitexturePoly (surf);
+			}
 		}
 	}
 
