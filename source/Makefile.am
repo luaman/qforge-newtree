@@ -104,7 +104,7 @@ qf_client_mgl_LDADD=	$(MGL_LIBS) $(CLIENT_LIBS)
 qf_client_ggi_LDADD=	$(GGI_LIBS) $(CLIENT_LIBS)
 qf_client_svga_LDADD=	$(SVGA_LIBS) $(CLIENT_LIBS)
 qf_client_x11_LDADD=	$(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB) $(CLIENT_LIBS)
-qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(CLIENT_LIBS)
+qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
 qf_client_wgl_LDADD=	$(CLIENT_LIBS)
 
 qf_server_DEPENDENCIES=libqfsys_sv.a

@@ -164,6 +164,14 @@ AC_CHECK_FUNCS(
 	getnameinfo
 )
 
+DL_LIBS=""
+if test "x$ac_cv_func_dlopen" != "xyes"; then
+	AC_CHECK_LIB(dl, dlopen,
+		AC_DEFINE(HAVE_DLOPEN) DL_LIBS="-ldl"
+	)
+fi
+AC_SUBST(DL_LIBS)
+
 dnl Checks for stricmp/strcasecmp
 AC_CHECK_FUNC(stricmp,,
 	AC_CHECK_FUNC(strcasecmp, AC_DEFINE(stricmp,strcasecmp)))

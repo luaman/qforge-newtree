@@ -39,6 +39,7 @@
 #include "menu.h"
 #include "sys.h"
 #include "draw.h"
+#include "sbar.h"
 #include "context_x11.h"
 
 #include <stdio.h>
@@ -291,7 +292,27 @@ void	VID_SetPalette (unsigned char *palette)
 void
 CheckMultiTextureExtensions ( void )
 {
+#ifdef HAVE_DLOPEN
+	dlhand = dlopen (NULL, RTLD_LAZY);
+	if (dlhand)
+	{
+		if (strstr(gl_extensions, "GL_SGIS_multitexture ") && !COM_CheckParm("-nomtex"))
+		{
+			Con_Printf("Multitexture extensions found.\n");
+			qglMTexCoord2fSGIS = (void *)dlsym(dlhand, "glMTexCoord2fSGIS");
+			qglSelectTextureSGIS = (void *)dlsym(dlhand, "glSelectTextureSGIS");
+			gl_mtexable = true;
+		} else {
+			Con_Printf ("Not using multitexture extensions.\n");
+		}
+		dlclose(dlhand);
+		dlhand = NULL;		
+	} else {
+	}
+#else
 	gl_mtexable = false;
+	Con_Printf ("No dlopen\n");
+#endif
 }
 
 /*
@@ -363,6 +384,7 @@ void GL_EndRendering (void)
 {
 	glFlush();
 	glXSwapBuffers(x_disp, x_win);
+	Sbar_Changed ();
 }
 
 qboolean VID_Is8bit(void)

@@ -236,8 +236,10 @@ void R_TranslatePlayerSkin (int playernum);
 void GL_Bind (int texnum);
 
 // Multitexture
-#define    TEXTURE0_SGIS				0x835E
-#define    TEXTURE1_SGIS				0x835F
+#define TEXTURE0_SGIS		0x835E
+#define TEXTURE1_SGIS		0x835F
+#define GL_TEXTURE0_ARB		0x84C0
+#define GL_TEXTURE1_ARB		0x84C1
 
 typedef void (GLAPIENTRY *lpMTexFUNC) (GLenum, GLfloat, GLfloat);
 typedef void (GLAPIENTRY *lpSelTexFUNC) (GLenum);
@@ -245,6 +247,8 @@ extern lpMTexFUNC qglMTexCoord2fSGIS;
 extern lpSelTexFUNC qglSelectTextureSGIS;
 
 extern qboolean gl_mtexable;
+extern qboolean gl_arb_mtex;
+extern int gl_mtex_enum;
 
 void GL_DisableMultitexture(void);
 void GL_EnableMultitexture(void);
@@ -308,3 +312,4 @@ void GL_BuildLightmaps (void);
 void R_NetGraph (void);
 
 #endif // _GLQUAKE_H
+
