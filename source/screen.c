@@ -1,4 +1,3 @@
-
 /*
 	screen.c
 
@@ -119,7 +118,6 @@ cvar_t     *crosshair;
 cvar_t     *crosshaircolor;
 cvar_t     *cl_crossx;
 cvar_t     *cl_crossy;
-
 
 qboolean    scr_initialized;			// ready to draw
 
@@ -315,6 +313,7 @@ SCR_CalcRefdef (void)
 
 	// bound viewsize
 	Cvar_SetValue (scr_viewsize, bound (30, scr_viewsize->int_val, 120));
+
 	// bound field of view
 	Cvar_SetValue (scr_fov, bound (10, scr_fov->value, 170));
 
@@ -454,8 +453,6 @@ SCR_Init (void)
 
 	scr_initialized = true;
 }
-
-
 
 /*
 	SCR_DrawRam
@@ -720,6 +717,7 @@ WritePCXfile (char *filename, byte * data, int width, int height,
 
 	// write output file 
 	length = pack - (byte *) pcx;
+
 	if (upload)
 		CL_StartUpload ((void *) pcx, length);
 	else

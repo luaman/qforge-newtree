@@ -282,7 +282,6 @@ SCR_CalcRefdef (void)
 	int         h;
 	qboolean    full = false;
 
-
 	scr_fullupdate = 0;					// force a background redraw
 	vid.recalc_refdef = 0;
 
@@ -433,7 +432,6 @@ SCR_DrawRam (void)
 	Draw_Pic (scr_vrect.x + 32, scr_vrect.y, scr_ram);
 }
 
-
 /*
 	SCR_DrawTurtle
 */
@@ -557,6 +555,7 @@ SCR_DrawPause (void)
 	Draw_Pic ((vid.width - pic->width) / 2,
 			  (vid.height - 48 - pic->height) / 2, pic);
 }
+
 
 //=============================================================================
 
