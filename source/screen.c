@@ -930,7 +930,6 @@ void SCR_RSShot_f (void)
 //=============================================================================
 
 char	*scr_notifystring;
-qboolean	scr_drawdialog;
 
 void SCR_DrawNotifyString (void)
 {
@@ -1064,14 +1063,7 @@ void SCR_UpdateScreen (void)
 
 	D_EnableBackBufferAccess ();	// of all overlay stuff if drawing directly
 
-	if (scr_drawdialog)
-	{
-		Sbar_Draw ();
-		Draw_FadeScreen ();
-		SCR_DrawNotifyString ();
-		scr_copyeverything = true;
-	}
-	else if (cl.intermission == 1 && key_dest == key_game)
+	if (cl.intermission == 1 && key_dest == key_game)
 	{
 		Sbar_IntermissionOverlay ();
 	}

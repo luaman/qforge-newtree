@@ -297,7 +297,7 @@ void R_PushDlights (vec3_t entorigin)
 	dlight_t	*l;
 	vec3_t	lightorigin;
 
-	if (gl_flashblend->value)
+	if (gl_flashblend->int_val)
 		return;
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't

@@ -151,7 +151,6 @@ viddef_t        vid;                            // global video state
 vrect_t         scr_vrect;
 
 qboolean        scr_disabled_for_loading;
-qboolean        scr_drawloading;
 float           scr_disabled_time;
 
 qboolean        block_drawing;
@@ -443,22 +442,6 @@ SCR_Init (void)
 
 /*
 ==============
-SCR_DrawRam
-==============
-*/
-void SCR_DrawRam (void)
-{
-	if (!scr_showram->value)
-		return;
-
-	if (!r_cache_thrash)
-		return;
-
-	Draw_Pic (scr_vrect.x+32, scr_vrect.y, scr_ram);
-}
-
-/*
-==============
 SCR_DrawTurtle
 ==============
 */
@@ -544,27 +527,6 @@ void SCR_DrawPause (void)
 		(vid.height - 48 - pic->height)/2, pic);
 }
 
-
-
-/*
-==============
-SCR_DrawLoading
-==============
-*/
-void SCR_DrawLoading (void)
-{
-	qpic_t  *pic;
-
-	if (!scr_drawloading)
-		return;
-		
-	pic = Draw_CachePic ("gfx/loading.lmp");
-	Draw_Pic ( (vid.width - pic->width)/2, 
-		(vid.height - 48 - pic->height)/2, pic);
-}
-
-
-
 //=============================================================================
 
 
@@ -577,9 +539,6 @@ void SCR_SetUpToDrawConsole (void)
 {
 	Con_CheckResize ();
 	
-	if (scr_drawloading)
-		return;         // never a console with loading plaque
-		
 // decide on the height of the console
 	if (cls.state != ca_active)
 	{
@@ -985,7 +944,6 @@ void SCR_RSShot_f (void)
 //=============================================================================
 
 char    *scr_notifystring;
-qboolean        scr_drawdialog;
 
 void SCR_DrawNotifyString (void)
 {
@@ -1146,33 +1104,15 @@ void SCR_UpdateScreen (void)
 	if (r_netgraph->value)
 		R_NetGraph ();
 
-	if (scr_drawdialog)
-	{
-		Sbar_Draw ();
-		Draw_FadeScreen ();
-		SCR_DrawNotifyString ();
-		scr_copyeverything = true;
-	}
-	else if (scr_drawloading)
-	{
-		SCR_DrawLoading ();
-		Sbar_Draw ();
-	}
-	else if (cl.intermission == 1 && key_dest == key_game)
-	{
+	if (cl.intermission == 1 && key_dest == key_game) {
 		Sbar_IntermissionOverlay ();
-	}
-	else if (cl.intermission == 2 && key_dest == key_game)
-	{
+	} else if (cl.intermission == 2 && key_dest == key_game) {
 		Sbar_FinaleOverlay ();
 		SCR_CheckDrawCenterString ();
-	}
-	else
-	{
-		if (crosshair->value)
+	} else {
+		if (crosshair->int_val)
 			Draw_Crosshair();
 		
-		SCR_DrawRam ();
 		SCR_DrawNet ();
 		SCR_DrawFPS ();
 		SCR_DrawTurtle ();
