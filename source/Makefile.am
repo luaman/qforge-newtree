@@ -25,11 +25,9 @@ libqfsnd_a_SOURCES = snd_win.c
 else
 if SNDTYPE_OSS
 libqfsnd_a_SOURCES = snd_oss.c
-else
-libqfsnd_a_SOURCES = snd_null.c
 endif
 endif
-EXTRA_libqfsnd_a_SOURCES = snd_win.c snd_oss.c snd_null.c 
+EXTRA_libqfsnd_a_SOURCES = snd_win.c snd_oss.c
 
 if CDTYPE_WIN32
 libqfcd_a_SOURCES = cd_win.c
