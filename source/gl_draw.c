@@ -1042,14 +1042,8 @@ GL_ResampleTexture (unsigned int *in, int inwidth, int inheight,
 	for (i = 0; i < outheight; i++, out += outwidth) {
 		inrow = in + inwidth * (i * inheight / outheight);
 		frac = fracstep >> 1;
-		for (j = 0; j < outwidth; j += 4) {
+		for (j = 0; j < outwidth; j ++) {
 			out[j] = inrow[frac >> 16];
-			frac += fracstep;
-			out[j + 1] = inrow[frac >> 16];
-			frac += fracstep;
-			out[j + 2] = inrow[frac >> 16];
-			frac += fracstep;
-			out[j + 3] = inrow[frac >> 16];
 			frac += fracstep;
 		}
 	}
@@ -1069,18 +1063,14 @@ GL_Resample8BitTexture (unsigned char *in, int inwidth, int inheight,
 	unsigned char *inrow;
 	unsigned int frac, fracstep;
 
+	if (!outwidth || !outheight)
+		return;
 	fracstep = inwidth * 0x10000 / outwidth;
 	for (i = 0; i < outheight; i++, out += outwidth) {
 		inrow = in + inwidth * (i * inheight / outheight);
 		frac = fracstep >> 1;
-		for (j = 0; j < outwidth; j += 4) {
+		for (j = 0; j < outwidth; j ++) {
 			out[j] = inrow[frac >> 16];
-			frac += fracstep;
-			out[j + 1] = inrow[frac >> 16];
-			frac += fracstep;
-			out[j + 2] = inrow[frac >> 16];
-			frac += fracstep;
-			out[j + 3] = inrow[frac >> 16];
 			frac += fracstep;
 		}
 	}
