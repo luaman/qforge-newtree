@@ -1289,15 +1289,15 @@ void CL_Init_Cvars (void)
 	cl_sbar_separator = Cvar_Get("cl_sbar_separator",  "0", CVAR_ARCHIVE,
 			"turns on status bar separator");
 	cl_hudswap = Cvar_Get("cl_hudswap",  "0", CVAR_ARCHIVE,
-			"put items on left");
+			"new HUD on left side?");
 	cl_maxfps = Cvar_Get("cl_maxfps",  "0", CVAR_ARCHIVE,
 			"maximum frames rendered in one second. 0 == 32");
 	cl_timeout = Cvar_Get("cl_timeout",  "60", CVAR_ARCHIVE,
 			"server connection timeout (since last packet received)");
 	lookspring = Cvar_Get("lookspring", "0", CVAR_ARCHIVE,
-			"None");
+			"Snap view to center when moving and no mlook/klook");
 	lookstrafe = Cvar_Get("lookstrafe", "0", CVAR_ARCHIVE,
-			"None");
+			"when mlook/klook on player will strafe");
 	sensitivity = Cvar_Get("sensitivity", "3", CVAR_ARCHIVE,
 			"mouse sensitivity multiplier");
 	cl_freelook = Cvar_Get("freelook", "0", CVAR_ARCHIVE,
@@ -1313,48 +1313,51 @@ void CL_Init_Cvars (void)
 			"mouse strafe speed");
 
 	rcon_password = Cvar_Get("rcon_password",  "", CVAR_NONE,
-			"None");
+			"remote control password");
 	rcon_address = Cvar_Get("rcon_address",  "", CVAR_NONE,
-			"None");
+			"server IP address when client not connected - for sending rcon commands");
 
 	cl_predict_players2 = Cvar_Get("cl_predict_players2",  "1", CVAR_NONE,
-			"None");
+			"If this and cl_predict_players is 0, no player prediction is done");
 	cl_predict_players = Cvar_Get("cl_predict_players",  "1", CVAR_NONE,
-			"None");
+			"If this and cl_predict_players2 is 0, no player prediction is done");
 	cl_solid_players = Cvar_Get("cl_solid_players",  "1", CVAR_NONE,
-			"None");
+			"Are players solid? If off, you can walk through them with difficulty");
 
+	/* Misty: FIXME: Nobody knows exactly what this does. Someone has to find out, proboably me. */
 	localid = Cvar_Get("localid",  "", CVAR_NONE,
-			"None");
+			"FIXME: nobody knows what this does.");
 
 	baseskin = Cvar_Get("baseskin",  "base", CVAR_NONE,
-			"None");
+			"default base skin name");
 	noskins = Cvar_Get("noskins",  "0", CVAR_NONE,
-			"None");
+			"set to 1 to not download new skins");
 
 	//
 	// info mirrors
 	//
 	name = Cvar_Get("name", "unnamed", CVAR_ARCHIVE|CVAR_USERINFO,
-			"None");
+			"Player name");
 	password = Cvar_Get("password",  "", CVAR_USERINFO,
-			"None");
+			"Server password");
 	spectator = Cvar_Get("spectator",  "", CVAR_USERINFO,
-			"None");
+			"Set to 1 before connecting to become a spectator");
 	skin = Cvar_Get("skin", "", CVAR_ARCHIVE|CVAR_USERINFO,
-			"None");
+			"Players skin");
 	team = Cvar_Get("team", "", CVAR_ARCHIVE|CVAR_USERINFO,
-			"None");
+			"Team player is on.");
 	topcolor = Cvar_Get("topcolor", "0", CVAR_ARCHIVE|CVAR_USERINFO,
-			"None");
+			"Players color on top");
 	bottomcolor = Cvar_Get("bottomcolor", "0", CVAR_ARCHIVE|CVAR_USERINFO,
-			"None");
+			"Players color on bottom");
+	/* Misty: FIXME: Nobody seems to know exactly what this rate *IS* - bytes/packets/what?? */
 	rate = Cvar_Get("rate", "2500", CVAR_ARCHIVE|CVAR_USERINFO,
-			"None");
+			"download rate");
+	/* Misty: FIXME: We need to find out exactly *what* it does suppress/allow */
 	msg = Cvar_Get("msg", "1", CVAR_ARCHIVE|CVAR_USERINFO,
-			"None");
+			"Message level");
 	noaim = Cvar_Get("noaim", "0", CVAR_ARCHIVE|CVAR_USERINFO,
-			"None");
+			"Auto aim off switch. Set to 1 to turn off.");
 }
 
 /*
