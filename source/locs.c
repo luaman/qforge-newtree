@@ -105,7 +105,8 @@ void locs_load(char *mapname)
 		loc[2] = strtol(t2, &t1, 0) * (1.0/8);
 		t1++;
 		t2 = strrchr(t1, '\n');
-		t2[0] = '\0';
+		if (t2)
+			t2[0] = '\0';
 		locs_add(loc, t1);
 	}
 	Qclose(file);
@@ -122,6 +123,7 @@ void locs_reset()
 	}
 
 	free(locations);
+	locations=0;
 	locations_alloced = 0;
 	locations_count = 0;
 }
