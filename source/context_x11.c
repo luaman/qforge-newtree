@@ -270,13 +270,13 @@ x11_set_vidmode (int width, int height)
 
 	if (vid_fullscreen->int_val && vidmode_avail) {
 
-		int 				i;
+		int 				i, dotclock;
 		int 				best_mode = 0;
 		qboolean			found_mode = false;
 		XF86VidModeModeLine orig_data;
 
 		XF86VidModeGetAllModeLines (x_disp, x_screen, &nummodes, &vidmodes);
-		XF86VidModeGetModeLine (x_disp, x_screen, &orig_data);
+		XF86VidModeGetModeLine (x_disp, x_screen, &dotclock, &orig_data);
 
 		for (i = 0; i < nummodes; i++) {
 			if ((vidmodes[i]->hdisplay == orig_data.hdisplay) &&
