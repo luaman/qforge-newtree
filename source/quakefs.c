@@ -310,15 +310,18 @@ maplist_print(struct maplist *maplist)
 	char *end;
 	char *name;
 
-	qsort(maplist->list, maplist->count, sizeof(char *), maplist_cmp);
-	for (i=0; i<maplist->count - 1; i++) {
+	if (maplist->count) {
+		qsort(maplist->list, maplist->count, sizeof(char *), maplist_cmp);
+		for (i=0; i<maplist->count - 1; i++) {
+			name = maplist->list[i];
+			end = strstr (name, ".bsp");
+			Con_Printf ("%-8.*s%c", end - name, name,
+						((i + 1) % 4) ? ' ' : '\n');
+		}
 		name = maplist->list[i];
 		end = strstr (name, ".bsp");
-		Con_Printf ("%-8.*s%c", end - name, name, ((i + 1) % 4) ? ' ' : '\n');
+		Con_Printf ("%-9.*s\n", end - name, name);
 	}
-	name = maplist->list[i];
-	end = strstr (name, ".bsp");
-	Con_Printf ("%-9.*s\n", end - name, name);
 }
 
 void
