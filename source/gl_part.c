@@ -836,7 +836,7 @@ R_FireColor_f (void)
 	}
 	if (Cmd_Argc() == 5 || Cmd_Argc() == 6) {
 		Con_Printf ("Warning: obsolete 4th and 5th parameters to r_firecolor ignored\n");
-	} else if (Cmd_Argc() !=5) {
+	} else if (Cmd_Argc() !=4) {
 		Con_Printf ("Usage r_firecolor R G B\n");
 		return;
 	}
