@@ -101,4 +101,6 @@ qboolean VID_Is8bit(void);
 void VID_SetCaption(char *text);
 // used to set window caption
 
+void VID_GetWindowSize (int def_w, int def_h);
+
 #endif // _VID_H

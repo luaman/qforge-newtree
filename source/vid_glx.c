@@ -384,11 +384,6 @@ void GL_BeginRendering (int *x, int *y, int *width, int *height)
 	*x = *y = 0;
 	*width = scr_width;
 	*height = scr_height;
-
-//    if (!wglMakeCurrent( maindc, baseRC ))
-//		Sys_Error ("wglMakeCurrent failed");
-
-//	glViewport (*x, *y, *width, *height);
 }
 
 
@@ -440,7 +435,7 @@ void VID_Init8bitPalette(void)
 void VID_Init(unsigned char *palette)
 {
 	int i;
-	int attrib[] = {
+	static int attrib[] = {
 		GLX_RGBA,
 		GLX_RED_SIZE, 1,
 		GLX_GREEN_SIZE, 1,
@@ -450,8 +445,8 @@ void VID_Init(unsigned char *palette)
 		None
 	};
 	char	gldir[MAX_OSPATH];
-	int width = 640, height = 480;
 
+	VID_GetWindowSize (640, 480);
 	vid_mode = Cvar_Get ("vid_mode","0",0,"None");
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
@@ -462,15 +457,11 @@ void VID_Init(unsigned char *palette)
 	 */
 
 	/* Set vid parameters */
-	if ((i = COM_CheckParm("-width")) != 0)
-		width = atoi(com_argv[i+1]);
-	if ((i = COM_CheckParm("-height")) != 0)
-		height = atoi(com_argv[i+1]);
 
 	if ((i = COM_CheckParm("-conwidth")) != 0)
 		vid.conwidth = atoi(com_argv[i+1]);
 	else
-		vid.conwidth = width;
+		vid.conwidth = scr_width;
 
 	vid.conwidth &= 0xfff8; // make it a multiple of eight
 	if (vid.conwidth < 320)
@@ -536,8 +527,8 @@ void VID_Init(unsigned char *palette)
 //		hasdga = 0;
 	}
 
-	x11_set_vidmode(width, height);
-	x11_create_window(width, height);
+	x11_set_vidmode(scr_width, scr_height);
+	x11_create_window(scr_width, scr_height);
 	/* Invisible cursor */
 	x11_create_null_cursor();
 
@@ -552,13 +543,10 @@ void VID_Init(unsigned char *palette)
 
 	glXMakeCurrent(x_disp, x_win, ctx);
 
-	scr_width = width;
-	scr_height = height;
-
-	if (vid.conheight > height)
-		vid.conheight = height;
-	if (vid.conwidth > width)
-		vid.conwidth = width;
+	if (vid.conheight > scr_height)
+		vid.conheight = scr_height;
+	if (vid.conwidth > scr_width)
+		vid.conwidth = scr_width;
 	vid.width = vid.conwidth;
 	vid.height = vid.conheight;
 
@@ -579,7 +567,7 @@ void VID_Init(unsigned char *palette)
 	VID_Init8bitPalette();
 
 	Con_Printf ("Video mode %dx%d initialized.\n",
-			width, height);
+			scr_width, scr_height);
 
 	vid_initialized = true;
 

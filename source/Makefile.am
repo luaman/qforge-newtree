@@ -145,11 +145,10 @@ if ASM_ARCH
 client_ASM=	snd_mixa.S cl_math.S sys_x86.S
 endif
 
-client_SOURCES= cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c cl_main.c \
-		cl_misc.c cl_parse.c cl_pred.c cl_tent.c cl_cam.c teamplay.c \
-		r_view.c wad.c model_alias.c model_sprite.c \
-		console.c keys.c menu.c nonintel.c skin.c sbar.c \
-		cl_slist.c $(client_ASM)
+client_SOURCES= cl_cam.c cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c \
+	cl_main.c cl_misc.c cl_parse.c cl_pred.c cl_slist.c cl_tent.c \
+	console.c keys.c menu.c model_alias.c model_sprite.c nonintel.c \
+	r_view.c sbar.c skin.c teamplay.c wad.c vid.c $(client_ASM)
 
 #
 # Software-rendering clients

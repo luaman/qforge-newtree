@@ -72,7 +72,7 @@ static void	*dlhand = NULL;
 #endif
 
 static fxMesaContext fc = NULL;
-static int	scr_width, scr_height;
+extern int	scr_width, scr_height;
 static qboolean is8bit = 0;
 
 int	VID_options_items = 0;
@@ -367,11 +367,6 @@ void GL_BeginRendering (int *x, int *y, int *width, int *height)
 	*x = *y = 0;
 	*width = scr_width;
 	*height = scr_height;
-
-//    if (!wglMakeCurrent( maindc, baseRC ))
-//		Sys_Error ("wglMakeCurrent failed");
-
-//	glViewport (*x, *y, *width, *height);
 }
 
 
@@ -533,6 +528,8 @@ void VID_Init(unsigned char *palette)
 	char	gldir[MAX_OSPATH];
 	int width = 640, height = 480;
 
+	VID_GetWindowSize (640, 480);
+
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.colormap = host_colormap;
@@ -547,11 +544,6 @@ void VID_Init(unsigned char *palette)
 	attribs[3] = FXMESA_DEPTH_SIZE;
 	attribs[4] = 1;
 	attribs[5] = FXMESA_NONE;
-
-	if ((i = COM_CheckParm("-width")) != 0)
-		width = atoi(com_argv[i+1]);
-	if ((i = COM_CheckParm("-height")) != 0)
-		height = atoi(com_argv[i+1]);
 
 	if ((i = COM_CheckParm("-conwidth")) != 0)
 		vid.conwidth = atoi(com_argv[i+1]);
@@ -575,9 +567,6 @@ void VID_Init(unsigned char *palette)
 		attribs);
 	if (!fc)
 		Sys_Error("Unable to create 3DFX context.\n");
-
-	scr_width = width;
-	scr_height = height;
 
 	fxMesaMakeCurrent(fc);
 

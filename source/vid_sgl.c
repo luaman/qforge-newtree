@@ -71,7 +71,7 @@ unsigned short	d_8to16table[256];
 unsigned int	d_8to24table[256];
 unsigned char   d_15to8table[65536];
 
-int scr_width, scr_height;
+extern int scr_width, scr_height;
 int VID_options_items = 1;
 
 int texture_mode = GL_LINEAR;
@@ -330,7 +330,8 @@ VID_Init (unsigned char *palette)
 	Uint32 flags = SDL_OPENGL;
 	int i;
 	char gldir[MAX_OSPATH];
-	int width = 640, height = 480;
+
+	VID_GetWindowSize (640, 480);
 
 	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
 
@@ -342,11 +343,6 @@ VID_Init (unsigned char *palette)
 	// Interpret command-line params
 
 	// Set vid parameters
-	if ((i = COM_CheckParm ("-width")) != 0)
-		width = atoi (com_argv[i+1]);
-	if ((i = COM_CheckParm ("-height")) != 0)
-		height = atoi (com_argv[i+1]);
-
 	if ((i = COM_CheckParm ("-conwidth")) != 0)
 		vid.conwidth = atoi(com_argv[i+1]);
 	else
@@ -394,9 +390,6 @@ VID_Init (unsigned char *palette)
 	   SDL_Quit ();
 	}
 
-	scr_width = width;
-	scr_height = height;
-
 	vid.height = vid.conheight = min (vid.conheight, height);
 	vid.width = vid.conwidth = min (vid.conwidth, width);
 
@@ -422,9 +415,9 @@ VID_Init (unsigned char *palette)
 
 	vid_initialized = true;
 #ifdef WIN32
-        // fixme: EVIL thing - but needed for win32 until we get
-        // SDL_sound ready - without this DirectSound fails.
-        // could replace this with SDL_SysWMInfo
+	// fixme: EVIL thing - but needed for win32 until we get
+	// SDL_sound ready - without this DirectSound fails.
+	// could replace this with SDL_SysWMInfo
 	mainwindow=GetActiveWindow();
 #endif
 	vid.recalc_refdef = 1;	  // force a surface cache flush

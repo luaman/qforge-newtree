@@ -105,9 +105,8 @@ static int shiftmask_fl=0;
 static long r_shift,g_shift,b_shift;
 static unsigned long r_mask,g_mask,b_mask;
 
-//static long X11_highhunkmark;
-
-int scr_width, scr_height;
+cvar_t	*vid_width;
+cvar_t	*vid_height;
 
 static void
 shiftmask_init( void )
@@ -468,55 +467,32 @@ void VID_Init (unsigned char *palette)
 	int num_visuals;
 	int template_mask;
 
+	VID_GetWindowSize (320, 200);
+
 	//plugin_load("in_x11.so");
 //	Cmd_AddCommand("gamma", VID_Gamma_f);
 	for (i=0; i < 256; i++)	vid_gamma[i] = i;
 
-	vid.width = 320;
-	vid.height = 200;
+	vid.width = vid_width->int_val;
+	vid.height = vid_height->int_val;
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.numpages = 2;
 	vid.colormap = host_colormap;
 	vid.fullbright = 256 - LittleLong (*((int *)vid.colormap + 2048));
-	//vid.cbits = VID_CBITS;
-	//vid.grades = VID_GRADES;
 
 	srandom(getpid());
 
 	verbose=COM_CheckParm("-verbose");
 
-// open the display
+	// open the display
 	x11_open_display();
 
-// check for command-line window size
-	if ((pnum=COM_CheckParm("-winsize")))
-	{
-		if (pnum >= com_argc-2)
-			Sys_Error("VID: -winsize <width> <height>\n");
-		vid.width = atoi(com_argv[pnum+1]);
-		vid.height = atoi(com_argv[pnum+2]);
-		if (!vid.width || !vid.height)
-			Sys_Error("VID: Bad window width/height\n");
-	}
-	if ((pnum=COM_CheckParm("-width"))) {
-		if (pnum >= com_argc-1)
-			Sys_Error("VID: -width <width>\n");
-		vid.width = atoi(com_argv[pnum+1]);
-		if (!vid.width)
-			Sys_Error("VID: Bad window width\n");
-	}
-	if ((pnum=COM_CheckParm("-height"))) {
-		if (pnum >= com_argc-1)
-			Sys_Error("VID: -height <height>\n");
-		vid.height = atoi(com_argv[pnum+1]);
-		if (!vid.height)
-			Sys_Error("VID: Bad window height\n");
-	}
+	// check for command-line window size
 
 	template_mask = 0;
 
-// specify a visual id
+	// specify a visual id
 	if ((pnum=COM_CheckParm("-visualid")))
 	{
 		if (pnum >= com_argc-1)
@@ -524,8 +500,7 @@ void VID_Init (unsigned char *palette)
 		template.visualid = atoi(com_argv[pnum+1]);
 		template_mask = VisualIDMask;
 	}
-
-// If not specified, use default visual
+	// If not specified, use default visual
 	else
 	{
 		template.visualid =
@@ -533,7 +508,7 @@ void VID_Init (unsigned char *palette)
 		template_mask = VisualIDMask;
 	}
 
-// pick a visual- warn if more than one was available
+	// pick a visual- warn if more than one was available
 	x_visinfo = XGetVisualInfo(x_disp, template_mask, &template, &num_visuals);
 	x_vis = x_visinfo->visual;
 
@@ -566,14 +541,11 @@ void VID_Init (unsigned char *palette)
 	/* Setup attributes for main window */
 	x11_set_vidmode(vid.width, vid.height);
 
-		/* Create the main window */
+	/* Create the main window */
 	x11_create_window(vid.width, vid.height);
 
 	/* Invisible cursor */
 	x11_create_null_cursor();
-
-		scr_width = vid.width;
-		scr_height = vid.height;
 
 	if (x_visinfo->depth == 8) {
 		/* Create and upload the palette */
@@ -585,7 +557,7 @@ void VID_Init (unsigned char *palette)
 		}
 	}
 
-// create the GC
+	// create the GC
 	{
 		XGCValues xgcvalues;
 		int valuemask = GCGraphicsExposures;
@@ -593,12 +565,12 @@ void VID_Init (unsigned char *palette)
 		x_gc = XCreateGC(x_disp, x_win, valuemask, &xgcvalues );
 	}
 
-// map the window
+	// map the window
 	XMapWindow(x_disp, x_win);
 	XRaiseWindow(x_disp, x_win);
 	x11_grab_keyboard();
 
-// wait for first exposure event
+	// wait for first exposure event
 	{
 		XEvent event;
 		do
@@ -608,9 +580,9 @@ void VID_Init (unsigned char *palette)
 				oktodraw = true;
 		} while (!oktodraw);
 	}
-// now safe to draw
+	// now safe to draw
 
-// even if MITSHM is available, make sure it's a local connection
+	// even if MITSHM is available, make sure it's a local connection
 	if (XShmQueryExtension(x_disp))
 	//if (0)
 	{

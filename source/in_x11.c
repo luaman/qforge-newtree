@@ -400,8 +400,6 @@ IN_Shutdown (void)
 	x11_close_display();
 }
 
-extern int scr_width, scr_height;
-
 void
 IN_Init (void)
 {
