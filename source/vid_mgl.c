@@ -2999,13 +2999,13 @@ LONG WINAPI MainWndProc (
 		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
 			if (!in_mode_set)
-				Key_Event (MapKey(lParam), true);
+                                Key_Event (MapKey(lParam), -1, true);
 			break;
 
 		case WM_KEYUP:
 		case WM_SYSKEYUP:
 			if (!in_mode_set)
-				Key_Event (MapKey(lParam), false);
+                                Key_Event (MapKey(lParam), -1, false);
 			break;
 
 	// this is complicated because Win32 seems to pack multiple mouse events into
@@ -3038,11 +3038,11 @@ LONG WINAPI MainWndProc (
 		// Event.
 		case WM_MOUSEWHEEL: 
 			if ((short) HIWORD(wParam) > 0) {
-				Key_Event(K_MWHEELUP, true);
-				Key_Event(K_MWHEELUP, false);
+                                Key_Event(K_MWHEELUP, -1, true);
+                                Key_Event(K_MWHEELUP, -1, false);
 			} else {
-				Key_Event(K_MWHEELDOWN, true);
-				Key_Event(K_MWHEELDOWN, false);
+                                Key_Event(K_MWHEELDOWN, -1, true);
+                                Key_Event(K_MWHEELDOWN, -1, false);
 			}
 			break;
 		// KJB: Added these new palette functions

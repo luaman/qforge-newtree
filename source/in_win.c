@@ -585,13 +585,13 @@ void IN_MouseEvent (int mstate)
 			if ( (mstate & (1<<i)) &&
 				!(mouse_oldbuttonstate & (1<<i)) )
 			{
-				Key_Event (K_MOUSE1 + i, true);
+                                Key_Event (K_MOUSE1 + i, -1, true);
 			}
 
 			if ( !(mstate & (1<<i)) &&
 				(mouse_oldbuttonstate & (1<<i)) )
 			{
-					Key_Event (K_MOUSE1 + i, false);
+                                        Key_Event (K_MOUSE1 + i, -1, false);
 			}
 		}	
 			
@@ -683,13 +683,13 @@ void IN_MouseMove (usercmd_t *cmd)
 			if ( (mstate_di & (1<<i)) &&
 				!(mouse_oldbuttonstate & (1<<i)) )
 			{
-				Key_Event (K_MOUSE1 + i, true);
+                                Key_Event (K_MOUSE1 + i, -1, true);
 			}
 
 			if ( !(mstate_di & (1<<i)) &&
 				(mouse_oldbuttonstate & (1<<i)) )
 			{
-				Key_Event (K_MOUSE1 + i, false);
+                                Key_Event (K_MOUSE1 + i, -1, false);
 			}
 		}	
 			
@@ -994,13 +994,13 @@ void IN_Commands (void)
 		if ( (buttonstate & (1<<i)) && !(joy_oldbuttonstate & (1<<i)) )
 		{
 			key_index = (i < 4) ? K_JOY1 : K_AUX1;
-			Key_Event (key_index + i, true);
+                        Key_Event (key_index + i, -1, true);
 		}
 
 		if ( !(buttonstate & (1<<i)) && (joy_oldbuttonstate & (1<<i)) )
 		{
 			key_index = (i < 4) ? K_JOY1 : K_AUX1;
-			Key_Event (key_index + i, false);
+                        Key_Event (key_index + i, -1, false);
 		}
 	}
 	joy_oldbuttonstate = buttonstate;
@@ -1027,12 +1027,12 @@ void IN_Commands (void)
 		{
 			if ( (povstate & (1<<i)) && !(joy_oldpovstate & (1<<i)) )
 			{
-				Key_Event (K_AUX29 + i, true);
+                                Key_Event (K_AUX29 + i, -1, true);
 			}
 
 			if ( !(povstate & (1<<i)) && (joy_oldpovstate & (1<<i)) )
 			{
-				Key_Event (K_AUX29 + i, false);
+                                Key_Event (K_AUX29 + i, -1, false);
 			}
 		}
 		joy_oldpovstate = povstate;
