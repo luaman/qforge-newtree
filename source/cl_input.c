@@ -45,6 +45,7 @@
 #include "pmove.h"
 #include "view.h"
 #include "checksum.h"
+#include "keys.h"
 
 cvar_t	*cl_nodelta;
 
