@@ -249,9 +249,6 @@
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_
 
-/* Define if we've scitech MGL library and mgraph.h */
-#define HAVE_MGRAPH_H 1
-
 /* Dir used for shared game data */
 #define FS_SHAREPATH "."
 
