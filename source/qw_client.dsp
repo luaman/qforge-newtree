@@ -1481,10 +1481,6 @@ SOURCE=.\vid_wgl.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\vid_win.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\wad.c
 # End Source File
 # Begin Source File

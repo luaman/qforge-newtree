@@ -269,6 +269,9 @@
 /* Define if you have a sane fnmatch.h   */
 #define HAVE_FNMATCH_PROTO
 
+/* Define if you have winsock.h in your includes path */
+#define HAVE_WINSOCK_H
+
 /* Define this to something appropriate for declaring 0 length arrays */
 #define ZERO_LENGTH_ARRAY 0
 
