@@ -322,8 +322,8 @@ Draw_CachePic (char *path)
 	pic->dirty = false;
 	numcachepics++;
 
-	// FIXME: 
-	// A really ugly kluge, keep a specific image in memory 
+	// FIXME:
+	// A really ugly kluge, keep a specific image in memory
 	// for the menu system.
 	// 
 	// Some days I really dislike legacy support..
@@ -489,12 +489,7 @@ Draw_Init (void)
 			draw_chars[i] = 255;		// proper transparent color
 
 	// now turn them into textures
-	char_texture = GL_LoadTexture ("charset", 128, 128, draw_chars, false, true, 1);	// 1999-12-27 
-																						// Conwidth/height 
-																						// charset 
-																						// fix 
-																						// by 
-																						// TcT
+	char_texture = GL_LoadTexture ("charset", 128, 128, draw_chars, false, true, 1);	// 1999-12-27 Conwidth/height charset fix by TcT
 	cs_texture = GL_LoadTexture ("crosshair", 8, 8, cs_data, false, true, 1);
 //  char_texture = GL_LoadTexture ("charset", 128, 128, draw_chars, false, true, 1);    // 1999-12-27 Conwidth/height charset fix by TcT
 
@@ -1178,7 +1173,7 @@ GL_Upload32 (unsigned int *data, int width, int height, qboolean mipmap,
 	if (!
 		(scaled =
 		 malloc (scaled_width * scaled_height *
-				 sizeof (GL_4_BYTES)))) Sys_Error ("GL_LoadTexture: too big");
+				 sizeof (GLuint)))) Sys_Error ("GL_LoadTexture: too big");
 
 	samples = alpha ? gl_alpha_format : gl_solid_format;
 
@@ -1400,7 +1395,7 @@ GL_LoadTexture (char *identifier, int width, int height, byte * data,
 			GL_Upload8 (data, width, height, mipmap, alpha);
 			break;
 		case 4:
-			GL_Upload32 ((unsigned int *) data, width, height, mipmap, alpha);
+			GL_Upload32 ((GLuint *) data, width, height, mipmap, alpha);
 			break;
 		default:
 			Sys_Error ("SetupTexture: unknown bytesperpixel %i",
