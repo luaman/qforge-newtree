@@ -41,6 +41,7 @@
 #include "console.h"
 #include "glquake.h"
 #include "sys.h"
+#include "view.h"
 
 extern qboolean skyloaded;
 extern vec5_t skyvec[6][4];
@@ -653,7 +654,6 @@ R_DrawSkyDomePoly (glpoly_t *poly)
 void
 R_DrawSkyChain (msurface_t *sky_chain)
 {
-	extern cvar_t *brightness;
 	msurface_t *sc = sky_chain;
 	float l = 1 / (256 * brightness->value);
 	
