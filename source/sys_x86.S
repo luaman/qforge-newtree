@@ -1,4 +1,6 @@
 /*
+sys_x86.s - x86 assembly-language dependent routines.
+
 Copyright (C) 1996-1997 Id Software, Inc.
 
 This program is free software; you can redistribute it and/or
@@ -17,18 +19,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-//
-// sys_wina.s
-// x86 assembly-language Win-dependent routines.
+
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 #include "asm_i386.h"
-// #include "quakeasm.h"
 
-//@@@ should be USE_INTEL_ASM-dependent, and have an equivalent C path
 
+#ifdef USE_INTEL_ASM
 	.data
 
 	.align	4
@@ -96,23 +95,17 @@ C(Sys_PopFPCW):
 C(Sys_SetFPCW):
 	fnstcw	cw
 	movl	cw,%eax
-#if	USE_INTEL_ASM
 	andb	$0xF0,%ah
 	orb		$0x03,%ah	// round mode, 64-bit precision
-#endif
 	movl	%eax,full_cw
 
-#if	USE_INTEL_ASM
 	andb	$0xF0,%ah
 	orb		$0x0C,%ah	// chop mode, single precision
-#endif
 	movl	%eax,single_cw
 
-#if	USE_INTEL_ASM
 	andb	$0xF0,%ah
 	orb		$0x08,%ah	// ceil mode, single precision
-#endif
 	movl	%eax,ceil_cw
 
 	ret
-
+#endif /* USE_INTEL_ASM */

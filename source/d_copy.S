@@ -1,7 +1,5 @@
 /*
-	d_copy.S
-
-	(description)
+	d_copy.S - x86 assembly-language screen copying code.
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +23,6 @@
 
 	$Id$
 */
-// d_copy.s
-// x86 assembly-language screen copying code.
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -35,6 +31,7 @@
 #include "quakeasm.h"
 #include "asm_draw.h"
 
+#ifdef USE_INTEL_ASM
 	.data
 
 LCopyWidth:		.long	0
@@ -174,4 +171,4 @@ LLRowLoop:
 	popl	%ebp				// restore the caller's stack frame
 
 	ret
-
+#endif /* USE_INTEL_ASM */
