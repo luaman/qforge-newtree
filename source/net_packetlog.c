@@ -3,6 +3,8 @@
 
         packet logging/parsing - for debugging and educational purposes
 
+        **EXPERIMENTAL**
+
         Copyright (C) 2000 Jukka Sorjonen <jukka.sorjonen@asikkala.fi>
        
 	This program is free software; you can redistribute it and/or
@@ -45,8 +47,8 @@
 cvar_t     *netlogger;
 cvar_t     *netloglevel;
 
-extern server_t sv;
-extern qboolean is_server (void);
+//extern server_t sv;
+extern qboolean is_server;
 
 //extern sizebuf_t net_message;
 extern byte net_message_buffer[MAX_MSGLEN * 2];
@@ -303,12 +305,19 @@ Log_Outgoing_Packet (char *p, int len)
 void
 Analyze_Server_Packet (byte * data, int len)
 {
+        byte *safe;
+        int slen;
 	// Fixme: quick-hack
+        safe=net_message.data;
+        slen=net_message.cursize;
+
 	net_message.data = data;
 	net_message.cursize = len;
 	MSG_BeginReading ();
 	Parse_Server_Packet ();
-	net_message.data = net_message_buffer;
+//        net_message.data = net_message_buffer;
+        net_message.data = safe;
+        net_message.cursize = slen;
 }
 
 
@@ -390,8 +399,8 @@ Parse_Server_Packet ()
 					ii = MSG_ReadByte ();
 
 					// fixme: well, cl. for client :-)
-					Net_LogPrintf ("%d (%s) ", ii, sv.sound_precache[ii]);
-
+//                                        Net_LogPrintf ("%d (%s) ", ii, sv.sound_precache[ii]);
+                                        Net_LogPrintf ("%d (%s) ", ii);
 					Net_LogPrintf ("Pos: ");
 					for (ii = 0; ii < 3; ii++)
 						Net_LogPrintf ("%f ", MSG_ReadCoord ());
@@ -713,8 +722,9 @@ Parse_Server_Packet ()
 						Net_LogPrintf ("\n\t*End of sound list*");
 					break;
 				case svc_packetentities:
-					Net_LogPrintf ("Not parsed (parser broken ;-)");
-					return;
+                                        // fixme:
+                                        Net_LogPrintf ("Not parsed (parser broken ;-)");
+                                        return;
 					while ((mask1 = MSG_ReadShort ())) {
 						if (msg_badread)
 							break;
