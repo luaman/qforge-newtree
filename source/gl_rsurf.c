@@ -778,8 +778,8 @@ void DrawTextureChains (void)
 		}
 		else
 		{
-//			if ((s->flags & SURF_DRAWTURB) && r_wateralpha->value != 1.0)
-//				continue;	// draw translucent water later
+			if ((s->flags & SURF_DRAWTURB) && r_wateralpha->value != 1.0)
+				continue;	// draw translucent water later
 			for ( ; s ; s=s->texturechain)
 				R_RenderBrushPoly (s);
 		}
@@ -914,9 +914,18 @@ R_RecursiveWorldNode
 void R_RecursiveWorldNode (mnode_t *node)
 {
 	int			c, side;
+	mplane_t	*plane;
 	msurface_t	*surf, **mark;
 	mleaf_t		*pleaf;
 	double		dot;
+
+	if (node->contents == CONTENTS_SOLID)
+		return;         // solid
+
+	if (node->visframe != r_visframecount)
+		return;
+	if (R_CullBox (node->minmaxs, node->minmaxs+3))
+		return;
 
 // if a leaf node, draw stuff
 	if (node->contents < 0)
@@ -943,19 +952,21 @@ void R_RecursiveWorldNode (mnode_t *node)
 // node is just a decision point, so go down the apropriate sides
 
 // find which side of the node we are on
-	switch (node->plane->type)
+	plane = node->plane;
+
+	switch (plane->type)
 	{
 	case PLANE_X:
-		dot = modelorg[0] - node->plane->dist;
+		dot = modelorg[0] - plane->dist;
 		break;
 	case PLANE_Y:
-		dot = modelorg[1] - node->plane->dist;
+		dot = modelorg[1] - plane->dist;
 		break;
 	case PLANE_Z:
-		dot = modelorg[2] - node->plane->dist;
+		dot = modelorg[2] - plane->dist;
 		break;
 	default:
-		dot = DotProduct (modelorg, node->plane->normal) - node->plane->dist;
+		dot = DotProduct (modelorg, plane->normal) - plane->dist;
 		break;
 	}
 
@@ -985,12 +996,20 @@ void R_RecursiveWorldNode (mnode_t *node)
 				continue;		// wrong side
 
 			// if sorting by texture, just store it out
-			if (gl_texsort->value)
-			{
-				surf->texturechain = surf->texinfo->texture->texturechain;
-				surf->texinfo->texture->texturechain = surf;
-			}
-			else
+			if (gl_texsort->value) {
+				if (!mirror || surf->texinfo->texture != 
+						cl.worldmodel->textures[mirrortexturenum]) {
+
+					surf->texturechain = surf->texinfo->texture->texturechain;
+					surf->texinfo->texture->texturechain = surf;
+				}
+			} else if (surf->flags & SURF_DRAWSKY) {
+				surf->texturechain = skychain;
+				skychain = surf;
+			} else if (surf->flags & SURF_DRAWTURB) {
+				surf->texturechain = waterchain;
+				waterchain = surf;
+			} else
 				R_DrawSequentialPoly (surf);
 		}
 	}

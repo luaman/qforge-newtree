@@ -3,7 +3,7 @@ X = done
 ? = maybe but not likely
 
 o  it seems possible to crash a QF server still - need to fix this!
-o  water textures are seriously screwed in GL
+X  water textures are seriously screwed in GL
 o  GL is still way too slow
 X  R_DrawParticles in software hangs
 o  Draw_Pic and friends need a cleanup in GL at least
