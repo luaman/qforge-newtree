@@ -47,6 +47,8 @@ byte       *wad_base;
 
 void        SwapPic (qpic_t *pic);
 
+extern cvar_t *fs_basegame;
+
 /*
 	W_CleanupName
 
