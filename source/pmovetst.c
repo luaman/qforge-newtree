@@ -203,6 +203,8 @@ qboolean PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec
 	int			side;
 	float		midf;
 
+	// LordHavoc: a goto!  everyone flee in terror... :)
+loc0:
 // check for empty
 	if (num < 0)
 	{
@@ -219,6 +221,7 @@ qboolean PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec
 		return true;		// empty
 	}
 
+	// LordHavoc: this can be eliminated by validating in the loader...  but Mercury told me not to bother
 	if (num < hull->firstclipnode || num > hull->lastclipnode)
 		Sys_Error ("PM_RecursiveHullCheck: bad node number");
 
@@ -238,50 +241,46 @@ qboolean PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec
 		t1 = DotProduct (plane->normal, p1) - plane->dist;
 		t2 = DotProduct (plane->normal, p2) - plane->dist;
 	}
-	
-#if 1
+
+	// LordHavoc: recursion optimization
 	if (t1 >= 0 && t2 >= 0)
-		return PM_RecursiveHullCheck (hull, node->children[0], p1f, p2f, p1, p2, trace);
+//		return PM_RecursiveHullCheck (hull, node->children[0], p1f, p2f, p1, p2, trace);
+	{
+		num = node->children[0];
+		goto loc0;
+	}
 	if (t1 < 0 && t2 < 0)
-		return PM_RecursiveHullCheck (hull, node->children[1], p1f, p2f, p1, p2, trace);
-#else
-	if ( (t1 >= DIST_EPSILON && t2 >= DIST_EPSILON) || (t2 > t1 && t1 >= 0) )
-		return PM_RecursiveHullCheck (hull, node->children[0], p1f, p2f, p1, p2, trace);
-	if ( (t1 <= -DIST_EPSILON && t2 <= -DIST_EPSILON) || (t2 < t1 && t1 <= 0) )
-		return PM_RecursiveHullCheck (hull, node->children[1], p1f, p2f, p1, p2, trace);
-#endif
+//		return PM_RecursiveHullCheck (hull, node->children[1], p1f, p2f, p1, p2, trace);
+	{
+		num = node->children[1];
+		goto loc0;
+	}
 
 // put the crosspoint DIST_EPSILON pixels on the near side
-	if (t1 < 0)
-		frac = (t1 + DIST_EPSILON)/(t1-t2);
+	side = (t1 < 0);
+	if (side)
+		frac = bound(0, (t1 + DIST_EPSILON) / (t1 - t2), 1);
 	else
-		frac = (t1 - DIST_EPSILON)/(t1-t2);
-	if (frac < 0)
-		frac = 0;
-	if (frac > 1)
-		frac = 1;
+		frac = bound(0, (t1 - DIST_EPSILON) / (t1 - t2), 1);
 		
 	midf = p1f + (p2f - p1f)*frac;
 	for (i=0 ; i<3 ; i++)
 		mid[i] = p1[i] + frac*(p2[i] - p1[i]);
-
-	side = (t1 < 0);
 
 // move up to the node
 	if (!PM_RecursiveHullCheck (hull, node->children[side], p1f, midf, p1, mid, trace) )
 		return false;
 
 #ifdef PARANOID
-	if (PM_HullPointContents (pm_hullmodel, mid, node->children[side])
-	== CONTENTS_SOLID)
+	if (PM_HullPointContents (pm_hullmodel, mid, node->children[side]) == CONTENTS_SOLID)
 	{
 		Con_Printf ("mid PointInHullSolid\n");
 		return false;
 	}
 #endif
-	
-	if (PM_HullPointContents (hull, node->children[side^1], mid)
-	!= CONTENTS_SOLID)
+
+	// LordHavoc: warning to the clumsy, this recursion can not be optimized because mid would need to be duplicated on a stack
+	if (PM_HullPointContents (hull, node->children[side^1], mid) != CONTENTS_SOLID)
 // go past the node
 		return PM_RecursiveHullCheck (hull, node->children[side^1], midf, p2f, mid, p2, trace);
 	
@@ -298,12 +297,15 @@ qboolean PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec
 	}
 	else
 	{
-		VectorSubtract (vec3_origin, plane->normal, trace->plane.normal);
+		// LordHavoc: vec3_origin is evil; the compiler can not rely on it being '0 0 0'
+//		VectorSubtract (vec3_origin, plane->normal, trace->plane.normal);
+		trace->plane.normal[0] = -plane->normal[0];
+		trace->plane.normal[1] = -plane->normal[1];
+		trace->plane.normal[2] = -plane->normal[2];
 		trace->plane.dist = -plane->dist;
 	}
 
-	while (PM_HullPointContents (hull, hull->firstclipnode, mid)
-	== CONTENTS_SOLID)
+	while (PM_HullPointContents (hull, hull->firstclipnode, mid) == CONTENTS_SOLID)
 	{ // shouldn't really happen, but does occasionally
 		frac -= 0.1;
 		if (frac < 0)
