@@ -280,6 +280,8 @@
 
 #define ZERO_LENGTH_ARRAY 0
 
+#define HAVE_WINSOCK_H
+
 /* Experimental 3DNOW support */
 #ifdef HAVE_3DNOW_ASM
         #define atan  _atan
