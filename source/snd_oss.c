@@ -80,11 +80,14 @@ SNDDMA_Init (void)
 	struct audio_buf_info info;
 	int         caps;
 	int         retries = 3;
+	int         omode = O_WRONLY;
 
 	snd_inited = 0;
 
 	// open /dev/dsp, confirm capability to mmap, and get size of dma buffer
-	audio_fd = open ("/dev/dsp", O_RDWR);
+	if (COM_CheckParm ("-sndrw"))
+		omode = O_RDWR;
+	audio_fd = open ("/dev/dsp", omode);
 	if (audio_fd < 0) {					// Failed open, retry up to 3 times
 										// if it's busy
 		while ((audio_fd < 0) && retries-- &&
