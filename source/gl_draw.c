@@ -61,7 +61,7 @@ cvar_t		gl_picmip = {"gl_picmip", "0"};
 
 cvar_t		cl_verstring = {"cl_verstring", "QuakeForge " QF_VERSION};
 
-byte		*draw_chars;				// 8*8 graphic characters
+extern byte	*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
 qpic_t		*draw_backtile;
 
