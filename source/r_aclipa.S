@@ -30,12 +30,12 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#ifdef USE_INTEL_ASM
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
 #include "d_ifacea.h"
-
-#ifdef USE_INTEL_ASM
 
 	.data
 Ltemp0:	.long	0
