@@ -78,9 +78,7 @@ sfx_t      *cl_sfx_ric3;
 sfx_t      *cl_sfx_r_exp3;
 
 /*
-=================
-CL_ParseTEnts
-=================
+	CL_TEnts_Init
 */
 void
 CL_TEnts_Init (void)
@@ -95,26 +93,28 @@ CL_TEnts_Init (void)
 }
 
 /*
-=================
-CL_ClearTEnts
-=================
-*/
+	CL_Init_Entity
 
+	Set the fields of the entity to reasonable defaults. Especially
+	the extended fields.
+*/
 void
 CL_Init_Entity (entity_t *ent)
 {
 	memset (ent, 0, sizeof (*ent));
 
 	ent->colormap = vid.colormap;
-	// LordHavoc: Endy had neglected to do this as part of the QSG VERSION 2
-	// stuff
 	ent->glowsize = 0;
 	ent->glowcolor = 254;
 	ent->alpha = 1;
 	ent->scale = 1;
 	ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
+	ent->pose1 = ent->pose2 = -1;
 }
 
+/*
+	CL_ClearTEnts
+*/
 void
 CL_ClearTEnts (void)
 {
@@ -134,9 +134,7 @@ CL_ClearTEnts (void)
 }
 
 /*
-=================
-CL_AllocExplosion
-=================
+	CL_AllocExplosion
 */
 explosion_t *
 CL_AllocExplosion (void)
@@ -148,7 +146,7 @@ CL_AllocExplosion (void)
 	for (i = 0; i < MAX_EXPLOSIONS; i++)
 		if (!cl_explosions[i].ent.model)
 			return &cl_explosions[i];
-// find the oldest explosion
+	// find the oldest explosion
 	time = cl.time;
 	index = 0;
 
@@ -161,9 +159,7 @@ CL_AllocExplosion (void)
 }
 
 /*
-=================
-CL_ParseBeam
-=================
+	CL_ParseBeam
 */
 void
 CL_ParseBeam (model_t *m)
@@ -183,7 +179,7 @@ CL_ParseBeam (model_t *m)
 	end[1] = MSG_ReadCoord ();
 	end[2] = MSG_ReadCoord ();
 
-// override any beam with the same entity
+	// override any beam with the same entity
 	for (i = 0, b = cl_beams; i < MAX_BEAMS; i++, b++)
 		if (b->entity == ent) {
 			b->entity = ent;
@@ -193,7 +189,7 @@ CL_ParseBeam (model_t *m)
 			VectorCopy (end, b->end);
 			return;
 		}
-// find a free beam
+	// find a free beam
 	for (i = 0, b = cl_beams; i < MAX_BEAMS; i++, b++) {
 		if (!b->model || b->endtime < cl.time) {
 			b->entity = ent;
@@ -208,9 +204,7 @@ CL_ParseBeam (model_t *m)
 }
 
 /*
-=================
-CL_ParseTEnt
-=================
+	CL_ParseTEnt
 */
 void
 CL_ParseTEnt (void)
@@ -355,16 +349,13 @@ CL_ParseTEnt (void)
 			break;
 
 		default:
-//      Sys_Error ("CL_ParseTEnt: bad type");
 			Host_EndGame ("CL_ParseTEnt: bad type");
 	}
 }
 
 
 /*
-=================
-CL_NewTempEntity
-=================
+	CL_NewTempEntity
 */
 entity_t   **
 CL_NewTempEntity (void)
@@ -376,9 +367,7 @@ CL_NewTempEntity (void)
 }
 
 /*
-=================
-CL_UpdateBeams
-=================
+	CL_UpdateBeams
 */
 void
 CL_UpdateBeams (void)
@@ -391,16 +380,14 @@ CL_UpdateBeams (void)
 	float       yaw, pitch;
 	float       forward;
 
-// update lightning
+	// update lightning
 	for (i = 0, b = cl_beams; i < MAX_BEAMS; i++, b++) {
 		if (!b->model || b->endtime < cl.time)
 			continue;
 
 		// if coming from the player, update the start position
-		if (b->entity == cl.playernum + 1)	// entity 0 is the world
-		{
+		if (b->entity == cl.playernum + 1) {	// entity 0 is the world
 			VectorCopy (cl.simorg, b->start);
-//          b->start[2] -= 22;  // adjust for view height
 		}
 		// calculate pitch and yaw
 		VectorSubtract (b->end, b->start, dist);
@@ -444,9 +431,7 @@ CL_UpdateBeams (void)
 }
 
 /*
-=================
-CL_UpdateExplosions
-=================
+	CL_UpdateExplosions
 */
 void
 CL_UpdateExplosions (void)
@@ -474,9 +459,7 @@ CL_UpdateExplosions (void)
 }
 
 /*
-=================
-CL_UpdateTEnts
-=================
+	CL_UpdateTEnts
 */
 void
 CL_UpdateTEnts (void)

@@ -47,6 +47,7 @@
 #include "cl_main.h"
 #include "skin.h"
 #include "cl_ents.h"
+#include "cl_tent.h"
 #include "cl_input.h"
 #include "view.h"
 
@@ -852,32 +853,22 @@ void
 CL_ParseStatic (void)
 {
 	entity_t   *ent;
-	int         i;
 	entity_state_t es;
 
 	CL_ParseBaseline (&es);
 
-	i = cl.num_statics;
-	if (i >= MAX_STATIC_ENTITIES)
+	if (cl.num_statics >= MAX_STATIC_ENTITIES)
 		Host_EndGame ("Too many static entities");
-	ent = &cl_static_entities[i];
-	cl.num_statics++;
+	ent = &cl_static_entities[cl.num_statics++];
+	CL_Init_Entity (ent);
 
-// copy it to the current state
+	// copy it to the current state
 	ent->model = cl.model_precache[es.modelindex];
 	ent->frame = es.frame;
-	ent->colormap = vid.colormap;
 	ent->skinnum = es.skinnum;
 
 	VectorCopy (es.origin, ent->origin);
 	VectorCopy (es.angles, ent->angles);
-
-	// LordHavoc: make static entities visible
-	ent->alpha = 1;
-	ent->scale = 1;
-	ent->glowsize = 0;
-	ent->glowcolor = 254;
-	ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 
 	R_AddEfrags (ent);
 }

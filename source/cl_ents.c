@@ -620,7 +620,7 @@ CL_LinkPacketEntities (void)
 
 		if (model->flags & EF_ROCKET) {
 			R_RocketTrail (0, (*ent));
-			dl = CL_AllocDlight (s1->number);
+			dl = CL_AllocDlight (-s1->number);
 			VectorCopy ((*ent)->origin, dl->origin);
 			dl->radius = 200;
 			dl->die = cl.time + 0.1;
