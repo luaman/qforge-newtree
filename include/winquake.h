@@ -25,7 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef _WIN32 
 
-#pragma warning( disable : 4229 )  /* mgraph gets this */
+#ifndef __GNUC__
+# pragma warning( disable : 4229 )  /* mgraph gets this */
+#endif
 
 #include <windows.h>
 #include <ddraw.h>

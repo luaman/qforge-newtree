@@ -713,7 +713,7 @@ void SV_UpdateToReliableMessages (void)
 	SZ_Clear (&sv.datagram);
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 #pragma optimize( "", off )
 #endif
 
@@ -806,7 +806,7 @@ void SV_SendClientMessages (void)
 	}
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 #pragma optimize( "", on )
 #endif
 
@@ -830,4 +830,3 @@ void SV_SendMessagesToAll (void)
 	
 	SV_SendClientMessages ();
 }
-
