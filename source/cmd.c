@@ -294,7 +294,7 @@ void Cmd_StuffCmds_f (void)
 		return;
 
 // pull out the commands
-	build = malloc (s+1);
+	build = malloc (s+21); // LordHavoc: +21 instead of +1 to account for potential basedir expansion
 	build[0] = 0;
 
 	for (i=0 ; i<s-1 ; i++)
@@ -313,6 +313,28 @@ void Cmd_StuffCmds_f (void)
 
 			strcat (build, com_cmdline+i);
 			strcat (build, "\n");
+			com_cmdline[j] = c;
+			i = j-1;
+		}
+		// LordHavoc: added -basedir back, though I don't think this is the best place, or the most ideal way...
+		else if (com_cmdline[i] == '-')
+		{
+			i++;
+
+			for (j=i ; ((com_cmdline[j] != '+')
+						&& (com_cmdline[j] != '-')
+						&& (com_cmdline[j] != 0)) ; j++)
+				;
+
+			c = com_cmdline[j];
+			com_cmdline[j] = 0;
+
+			if (strncmp(com_cmdline+i,"basedir ", 8)==0)
+			{
+				strcat (build, "set fs_userpath ");
+				strcat (build, com_cmdline+i+8);
+				strcat (build, "\n");
+			}
 			com_cmdline[j] = c;
 			i = j-1;
 		}
