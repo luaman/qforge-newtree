@@ -339,8 +339,8 @@ find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 	vec3_t v = {0, 0, 0};		// direction vector of cube edge. always +ve
 	vec_t x_n, v_n;				// x.n and v.n
 
-	x[face1 % 3] = 2 * (face1 / 3) - 1;
-	x[face2 % 3] = 2 * (face2 / 3) - 1;
+	x[face1 % 3] = 1024 * (1 - 2 * (face1 / 3));
+	x[face2 % 3] = 1024 * (1 - 2 * (face2 / 3));
 
 	v[3 - ((face1 % 3) + (face2 % 3))] = 1;
 
@@ -419,7 +419,6 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		face = determine_face (v);
 		if (face != prev_face) {
 			if (face % 3 == prev_face % 3) {
-				// ouch, miss a face
 			} else {
 				vec3_t l;
 				find_intersect (prev_face, last_v, face, v, l);
@@ -437,8 +436,8 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 	for (i = 0; i < 6; i++) {
 		if (box[i].poly.numverts < 2)
 			continue;
-		glBegin (GL_POLYGON);
 		glBindTexture (GL_TEXTURE_2D, box[i].tex);
+		glBegin (GL_POLYGON);
 		for (j=0; j < box[i].poly.numverts; j++) {
 			glTexCoord2fv (box[i].poly.verts[j]+3);
 			glVertex3fv (box[i].poly.verts[j]);
