@@ -94,8 +94,13 @@ S_TransferStereo16 (int endtime)
 	lpaintedtime = paintedtime;
 
 #ifdef _WIN32
-	// fixme: should check for NULL pbuf value
-	if (pDSBuf) pbuf=DSOUND_LockBuffer(true);
+        if (pDSBuf) {
+                pbuf=DSOUND_LockBuffer(true);
+                if(!pbuf) {
+                        Con_Printf("DSOUND_LockBuffer fails!\n");
+                        return;
+                }
+        }
 	else
 #endif
 	{
@@ -151,8 +156,13 @@ S_TransferPaintBuffer (int endtime)
 	snd_vol = volume->value * 256;
 
 #ifdef _WIN32
-	// fixme: should check for NULL pbuf value
-	if (pDSBuf) pbuf=DSOUND_LockBuffer(true);
+        if (pDSBuf) {
+                pbuf=DSOUND_LockBuffer(true);
+                if(!pbuf) {
+                        Con_Printf("DSOUND_LockBuffer fails!\n");
+                        return;
+                }
+        }
 	else
 #endif
 	{
