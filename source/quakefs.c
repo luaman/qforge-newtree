@@ -370,7 +370,7 @@ COM_CopyFile (char *netpath, char *cachepath)
 	COM_OpenRead
 */
 QFile *
-COM_OpenRead (const char *path, int offs, int len)
+COM_OpenRead (const char *path, int offs, int len, int zip)
 {
 	int fd=open(path,O_RDONLY);
 	unsigned char id[2];
@@ -386,14 +386,16 @@ COM_OpenRead (const char *path, int offs, int len)
 		lseek(fd,0,SEEK_SET);
 	}
 	lseek(fd,offs,SEEK_SET);
-	read(fd,id,2);
-	if (id[0]==0x1f && id[1]==0x8b) {
-		lseek(fd,offs+len-4,SEEK_SET);
-		read(fd,len_bytes,4);
-		len=((len_bytes[3]<<24)
-			 |(len_bytes[2]<<16)
-			 |(len_bytes[1]<<8)
-			 |(len_bytes[0]));
+	if (zip) {
+		read(fd,id,2);
+		if (id[0]==0x1f && id[1]==0x8b) {
+			lseek(fd,offs+len-4,SEEK_SET);
+			read(fd,len_bytes,4);
+			len=((len_bytes[3]<<24)
+				 |(len_bytes[2]<<16)
+				 |(len_bytes[1]<<8)
+				 |(len_bytes[0]));
+		}
 	}
 	lseek(fd,offs,SEEK_SET);
 	com_filesize=len;
@@ -401,8 +403,10 @@ COM_OpenRead (const char *path, int offs, int len)
 #ifdef WIN32
 	setmode(fd,O_BINARY);
 #endif
-        return Qdopen(fd,"rbz");
-	return 0;
+	if (zip)
+		return Qdopen(fd,"rbz");
+	else
+		return Qdopen(fd,"rb");
 }
 
 int file_from_pak; // global indicating file came from pack file ZOID
@@ -414,7 +418,7 @@ int file_from_pak; // global indicating file came from pack file ZOID
 	Sets com_filesize and one of handle or file
 */
 int
-COM_FOpenFile (char *filename, QFile **gzfile)
+_COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 {
 	searchpath_t	*search;
 	char		netpath[MAX_OSPATH];
@@ -460,8 +464,9 @@ COM_FOpenFile (char *filename, QFile **gzfile)
 					if (developer->int_val)
 						Sys_Printf ("PackFile: %s : %s\n",pak->filename, fn);
 					// open a new file on the pakfile
-					*gzfile=COM_OpenRead(pak->filename,pak->files[i].filepos,
-										 pak->files[i].filelen);
+					strncpy(foundname, fn, MAX_OSPATH);
+					*gzfile=COM_OpenRead(pak->filename, pak->files[i].filepos,
+										 pak->files[i].filelen, zip);
 					file_from_pak = 1;
 					return com_filesize;
 				}
@@ -473,9 +478,11 @@ COM_FOpenFile (char *filename, QFile **gzfile)
 			snprintf(netpath, sizeof(netpath), "%s/%s",search->filename,
 					 filename);
 
+			strncpy(foundname, filename, MAX_OSPATH);
 			findtime = Sys_FileTime (netpath);
 			if (findtime == -1) {
 #ifdef HAS_ZLIB
+				strncpy(foundname, gzfilename, MAX_OSPATH);
 				snprintf(netpath, sizeof(netpath), "%s/%s",search->filename,
 						 gzfilename);
 				findtime = Sys_FileTime (netpath);
@@ -487,7 +494,7 @@ COM_FOpenFile (char *filename, QFile **gzfile)
 			if(developer->int_val)
 				Sys_Printf ("FindFile: %s\n",netpath);
 
-			*gzfile=COM_OpenRead(netpath,-1,-1);
+			*gzfile=COM_OpenRead(netpath, -1, -1, zip);
 			return com_filesize;
 		}
 
@@ -498,6 +505,13 @@ COM_FOpenFile (char *filename, QFile **gzfile)
 	*gzfile = NULL;
 	com_filesize = -1;
 	return -1;
+}
+
+int
+COM_FOpenFile (char *filename, QFile **gzfile)
+{
+	char foundname[MAX_OSPATH];
+	return _COM_FOpenFile (filename, gzfile, foundname, 1);
 }
 
 cache_user_t *loadcache;

@@ -685,6 +685,11 @@ SV_BeginDownload_f
 void SV_BeginDownload_f(void)
 {
 	char	*name;
+	QFile	*file;
+	int		size;
+	char	realname[MAX_OSPATH];
+	int		zip;
+
 	extern	cvar_t	*allow_download;
 	extern	cvar_t	*allow_download_skins;
 	extern	cvar_t	*allow_download_models;
@@ -730,8 +735,12 @@ void SV_BeginDownload_f(void)
 			*p = tolower((int)*p);
 	}
 
+	zip = strchr(Info_ValueForKey (host_client->userinfo, "*cap"), 'z') != 0;
 
-	host_client->downloadsize = COM_FOpenFile (name, &host_client->download);
+	size = _COM_FOpenFile (name, &file, realname, zip);
+
+	host_client->download = file;
+	host_client->downloadsize = size;
 	host_client->downloadcount = 0;
 
 	if (!host_client->download
@@ -749,6 +758,16 @@ void SV_BeginDownload_f(void)
 		ClientReliableWrite_Short (host_client, -1);
 		ClientReliableWrite_Byte (host_client, 0);
 		return;
+	}
+
+	if (zip && strcmp (realname, name)) {
+		Sys_Printf ("download renamed to %s\n", realname);
+		ClientReliableWrite_Begin (host_client, svc_download,
+									strlen(realname)+5);
+		ClientReliableWrite_Short (host_client, -2);
+		ClientReliableWrite_Byte (host_client, 0);
+		ClientReliableWrite_String (host_client, realname);
+		ClientReliable_FinishWrite (host_client);
 	}
 
 	SV_NextDownload_f ();

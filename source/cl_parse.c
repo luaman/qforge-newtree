@@ -377,11 +377,9 @@ void CL_ParseDownload (void)
 		return; // not in demo playback
 	}
 
-	if (size == -1)
-	{
+	if (size == -1) {
 		Con_Printf ("File not found.\n");
-		if (cls.download)
-		{
+		if (cls.download) {
 			Con_Printf ("cls.download shouldn't have been set\n");
 			Qclose (cls.download);
 			cls.download = NULL;
@@ -390,9 +388,27 @@ void CL_ParseDownload (void)
 		return;
 	}
 
+	if (size == -2) {
+		char *newname = MSG_ReadString();
+		if (strncmp (newname, cls.downloadname, strlen(cls.downloadname))
+			|| strstr(newname, "/../")
+			|| strstr(newname, "/./")) {
+			Con_Printf ("WARNING: server tried to give a strange new name: %s\n",
+						newname);
+			CL_RequestNextDownload ();
+			return;
+		}
+		if (cls.download) {
+			Qclose (cls.download);
+			unlink (cls.downloadname);
+		}
+		strncpy (cls.downloadname, newname, sizeof (cls.downloadname));
+		Con_Printf ("downloading to %s\n", cls.downloadname);
+		return;
+	}
+
 	// open the file if not opened yet
-	if (!cls.download)
-	{
+	if (!cls.download) {
 		if (strncmp(cls.downloadtempname,"skins/",6))
 			snprintf (name, sizeof(name), "%s/%s", com_gamedir, cls.downloadtempname);
 		else
@@ -401,8 +417,7 @@ void CL_ParseDownload (void)
 		COM_CreatePath (name);
 
 		cls.download = Qopen (name, "wb");
-		if (!cls.download)
-		{
+		if (!cls.download) {
 			msg_readcount += size;
 			Con_Printf ("Failed to open %s\n", cls.downloadtempname);
 			CL_RequestNextDownload ();
@@ -413,14 +428,12 @@ void CL_ParseDownload (void)
 	Qwrite (cls.download, net_message.data + msg_readcount, size);
 	msg_readcount += size;
 
-	if (percent != 100)
-	{
+	if (percent != 100) {
 // change display routines by zoid
 		// request next block
 #if 0
 		Con_Printf (".");
-		if (10*(percent/10) != cls.downloadpercent)
-		{
+		if (10*(percent/10) != cls.downloadpercent) {
 			cls.downloadpercent = 10*(percent/10);
 			Con_Printf ("%i%%", cls.downloadpercent);
 		}
@@ -429,9 +442,7 @@ void CL_ParseDownload (void)
 
 		MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
 		SZ_Print (&cls.netchan.message, "nextdl");
-	}
-	else
-	{
+	} else {
 		char	oldn[MAX_OSPATH];
 		char	newn[MAX_OSPATH];
 
