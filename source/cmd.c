@@ -860,7 +860,7 @@ Cmd_CmdList_f (void)
 		show_description = 1;
 	for (cmd = cmd_functions, i = 0; cmd; cmd = cmd->next, i++) {
 		if (show_description) {
-			Con_Printf ("%-20s : %s\n", cmd->name, cmd->description);
+			Con_Printf ("%-20s :\n%s\n", cmd->name, cmd->description);
 		} else {
 			Con_Printf ("%s\n", cmd->name);
 		}
