@@ -42,6 +42,7 @@
 
 cvar_t     *cl_nopred;
 cvar_t     *cl_pushlatency;
+cvar_t     *cl_nostatpred;
 
 extern frame_t *view_frame;
 
@@ -52,6 +53,17 @@ void
 CL_PredictUsercmd (player_state_t * from, player_state_t * to, usercmd_t *u,
 				   qboolean spectator)
 {
+
+// Dabb: if there is no movement to start with, don't predict...
+        if(cl_nostatpred->int_val && !from->velocity[0]
+                && !from->velocity[1]
+                && !from->velocity[2]) {
+                VectorCopy (from->origin, to->origin);
+                VectorCopy (u->angles, to->viewangles);
+                VectorCopy (from->velocity, to->velocity);
+		return;
+        }
+
 	// split up very long moves
 	if (u->msec > 50) {
 		player_state_t temp;
@@ -144,7 +156,18 @@ CL_PredictMove (void)
 		VectorCopy (from->playerstate[cl.playernum].origin, cl.simorg);
 		return;
 	}
-	// predict forward until cl.time <= to->senttime
+
+// Dabb: if there is no movement to start with, don't predict...
+
+        if(cl_nostatpred->int_val && !from->playerstate[cl.playernum].velocity[0]
+                && !from->playerstate[cl.playernum].velocity[1]
+                && !from->playerstate[cl.playernum].velocity[2]) {
+		VectorCopy (from->playerstate[cl.playernum].velocity, cl.simvel);
+		VectorCopy (from->playerstate[cl.playernum].origin, cl.simorg);
+		return;
+        }
+
+        // predict forward until cl.time <= to->senttime
 	oldphysent = pmove.numphysent;
 	CL_SetSolidPlayers (cl.playernum);
 
@@ -211,4 +234,5 @@ CL_Prediction_Init_Cvars (void)
 /* I'm not totally sure what cl_pushlatency is for. Or if it is SUPPOSED TO BE SETTABLE. */
 	cl_pushlatency = Cvar_Get ("pushlatency", "-999", CVAR_NONE, "How much prediction should the client make");
 	cl_nopred = Cvar_Get ("cl_nopred", "0", CVAR_NONE, "Set to turn off client prediction");
+        cl_nostatpred = Cvar_Get ("cl_nostatpred", "0", CVAR_NONE, "Set to turn off static player prediction");
 }
