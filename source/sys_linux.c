@@ -240,58 +240,6 @@ void Sys_mkdir (char *path)
     mkdir (path, 0777);
 }
 
-int Sys_FileOpenRead (char *path, int *handle)
-{
-	int	h;
-	struct stat	fileinfo;
-    
-	
-	h = open (path, O_RDONLY, 0666);
-	*handle = h;
-	if (h == -1)
-		return -1;
-	
-	if (fstat (h,&fileinfo) == -1)
-		Sys_Error ("Error fstating %s", path);
-
-	return fileinfo.st_size;
-}
-
-int Sys_FileOpenWrite (char *path)
-{
-	int     handle;
-
-	umask (0);
-	
-	handle = open(path,O_RDWR | O_CREAT | O_TRUNC
-	, 0666);
-
-	if (handle == -1)
-		Sys_Error ("Error opening %s: %s", path,strerror(errno));
-
-	return handle;
-}
-
-int Sys_FileWrite (int handle, void *src, int count)
-{
-	return write (handle, src, count);
-}
-
-void Sys_FileClose (int handle)
-{
-	close (handle);
-}
-
-void Sys_FileSeek (int handle, int position)
-{
-	lseek (handle, position, SEEK_SET);
-}
-
-int Sys_FileRead (int handle, void *dest, int count)
-{
-    return read (handle, dest, count);
-}
-
 void Sys_DebugLog(char *file, char *fmt, ...)
 {
     va_list argptr; 
@@ -305,29 +253,6 @@ void Sys_DebugLog(char *file, char *fmt, ...)
     fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0666);
     write(fd, data, strlen(data));
     close(fd);
-}
-
-void Sys_EditFile(char *filename)
-{
-
-	char cmd[256];
-	char *term;
-	char *editor;
-
-	term = getenv("TERM");
-	if (term && !strcmp(term, "xterm"))
-	{
-		editor = getenv("VISUAL");
-		if (!editor)
-			editor = getenv("EDITOR");
-		if (!editor)
-			editor = getenv("EDIT");
-		if (!editor)
-			editor = "vi";
-		snprintf (cmd, sizeof(cmd), "xterm -e %s %s", editor, filename);
-		system(cmd);
-	}
-
 }
 
 double Sys_DoubleTime (void)
@@ -356,10 +281,6 @@ static volatile int oktogo;
 void alarm_handler(int x)
 {
 	oktogo=1;
-}
-
-void Sys_LineRefresh(void)
-{
 }
 
 void floating_point_exception_handler(int whatever)
