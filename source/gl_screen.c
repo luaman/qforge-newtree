@@ -114,6 +114,7 @@ int         oldsbar;
 cvar_t     *scr_viewsize;
 cvar_t     *scr_fov;					// 10 - 170
 cvar_t     *scr_conspeed;
+cvar_t     *scr_consize;
 cvar_t     *scr_centertime;
 cvar_t     *scr_showram;
 cvar_t     *scr_showturtle;
@@ -390,6 +391,7 @@ SCR_Init_Cvars (void)
 	scr_fov = Cvar_Get ("fov", "90", CVAR_NONE, "Your point of view in degrees. Smaller than 90 zooms in.");
 	scr_viewsize = Cvar_Get ("viewsize", "100", CVAR_ARCHIVE, "Set the screen size 30 minimum, 120 maximum");
 	scr_conspeed = Cvar_Get ("scr_conspeed", "300", CVAR_NONE, "How quickly console scrolls up or down");
+	scr_consize = Cvar_Get ("scr_consize", "0.5", CVAR_ARCHIVE, "fraction of the screen the console covers when down");
 	scr_showram = Cvar_Get ("showram", "1", CVAR_NONE, "Show RAM icon if game is running low on memory");
 	scr_showturtle = Cvar_Get ("showturtle", "0", CVAR_NONE, "Show a turtle icon if your fps is slower than 10");
 	scr_showpause = Cvar_Get ("showpause", "1", CVAR_NONE, "Toggles display of pause graphic");
@@ -587,7 +589,7 @@ SCR_SetUpToDrawConsole (void)
 		scr_conlines = vid.height;		// full screen
 		scr_con_current = scr_conlines;
 	} else if (key_dest == key_console)
-		scr_conlines = vid.height / 2;	// half screen
+		scr_conlines = vid.height * bound (0.2, scr_consize->value, 1);
 	else
 		scr_conlines = 0;				// none visible
 
