@@ -82,6 +82,8 @@ cvar_t     *in_dga_mouseaccel;
 static qboolean dga_avail;
 static qboolean dga_active;
 
+static keydest_t old_key_dest = key_none;
+
 static qboolean mouse_avail;
 static float mouse_x, mouse_y;
 static float old_mouse_x, old_mouse_y;
@@ -306,6 +308,14 @@ XLateKey (XKeyEvent * ev, qboolean modified)
 static void
 event_key (XEvent * event)
 {
+	if (old_key_dest != key_dest) {
+		old_key_dest = key_dest;
+		if (key_dest == key_game) {
+			XAutoRepeatOff (x_disp);
+		} else {
+			XAutoRepeatOn (x_disp);
+		}
+	}
 	Key_Event (XLateKey (&event->xkey, 0), XLateKey (&event->xkey, 1),
 			   event->type == KeyPress);
 }
