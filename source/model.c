@@ -39,6 +39,7 @@ void Mod_LoadSpriteModel (model_t *mod, void *buffer);
 void Mod_LoadBrushModel (model_t *mod, void *buffer);
 void Mod_LoadAliasModel (model_t *mod, void *buffer);
 model_t *Mod_LoadModel (model_t *mod, qboolean crash);
+void R_InitSky(struct texture_s *mt);
 
 byte	mod_novis[MAX_MAP_LEAFS/8];
 
@@ -244,9 +245,6 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 // call the apropriate loader
 	mod->needload = false;
 	
-#ifdef SERVERONLY
-	Mod_LoadBrushModel (mod, buf);
-#else
 	switch (LittleLong(*(unsigned *)buf))
 	{
 	case IDPOLYHEADER:
@@ -261,7 +259,6 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 		Mod_LoadBrushModel (mod, buf);
 		break;
 	}
-#endif
 
 	return mod;
 }
@@ -344,10 +341,9 @@ void Mod_LoadTextures (lump_t *l)
 			tx->offsets[j] = mt->offsets[j] + sizeof(texture_t) - sizeof(miptex_t);
 		// the pixels immediately follow the structures
 		memcpy ( tx+1, mt+1, pixels);
-#ifndef SERVERONLY		
+
 		if (!Q_strncmp(mt->name,"sky",3))	
 			R_InitSky (tx);
-#endif
 	}
 
 //

@@ -54,6 +54,7 @@ SV_sources=\
   sv_init.c \
   sv_main.c \
   sv_misc.c \
+  sv_model.c \
   sv_nchan.c \
   sv_ents.c \
   sv_send.c \
