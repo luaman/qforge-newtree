@@ -243,15 +243,16 @@ void GL_Bind (int texnum);
 
 typedef void (GLAPIENTRY *lpMTexFUNC) (GLenum, GLfloat, GLfloat);
 typedef void (GLAPIENTRY *lpSelTexFUNC) (GLenum);
-extern lpMTexFUNC qglMTexCoord2fSGIS;
-extern lpSelTexFUNC qglSelectTextureSGIS;
+extern lpMTexFUNC qglMTexCoord2f;
+extern lpSelTexFUNC qglSelectTexture;
 
 extern qboolean gl_mtexable;
 extern qboolean gl_arb_mtex;
 extern int gl_mtex_enum;
 
-void GL_DisableMultitexture(void);
-void GL_EnableMultitexture(void);
+void GL_DisableMultitexture (void);
+void GL_EnableMultitexture (void);
+void GL_SelectTexture (GLenum target);
 
 //
 // gl_warp.c

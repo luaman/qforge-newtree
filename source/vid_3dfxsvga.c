@@ -160,7 +160,6 @@ void	VID_SetPalette (unsigned char *palette)
 	int		k;
 	unsigned short i;
 	unsigned	*table;
-//#ifdef QUAKEWORLD
 	FILE *f;
 	char s[255];
 //#endif
@@ -187,7 +186,6 @@ void	VID_SetPalette (unsigned char *palette)
 	d_8to24table[255] = 0;	// 255 is transparent
 
 	// JACK: 3D distance calcs - k is last closest, l is the distance.
-//#ifdef QUAKEWORLD
 	{
 		static qboolean palflag = false;
 
@@ -202,7 +200,6 @@ void	VID_SetPalette (unsigned char *palette)
 		fread(d_15to8table, 1<<15, 1, f);
 		fclose(f);
 	} else
-//#endif // QUAKEWORLD
 	{
 		for (i=0; i < (1<<15); i++) {
 			/* Maps
@@ -227,7 +224,6 @@ void	VID_SetPalette (unsigned char *palette)
 			}
 			d_15to8table[i]=k;
 		}
-//#ifdef QUAKEWORLD
 		snprintf(s, sizeof(s), "%s/glquake", com_gamedir);
  		Sys_mkdir (s);
 		snprintf(s, sizeof(s), "%s/glquake/15to8.pal", com_gamedir);
@@ -235,50 +231,65 @@ void	VID_SetPalette (unsigned char *palette)
 			fwrite(d_15to8table, 1<<15, 1, f);
 			fclose(f);
 		}
-//#endif // QUAKEWORLD
 	}
 }
 
+
+/*
+	CheckMultiTextureExtensions
+
+	Check for ARB, SGIS, or EXT multitexture support
+*/
 void
 CheckMultiTextureExtensions ( void )
 {
+	Con_Printf ("Checking for multitexture... ");
 	if (COM_CheckParm ("-nomtex"))
 	{
-		Con_Printf ("Not using multitexture.");
+		Con_Printf ("disabled\n");
 		return;
 	}
 #ifdef HAVE_DLOPEN
 	dlhand = dlopen (NULL, RTLD_LAZY);
-	if (dlhand != NULL)
+	if (dlhand == NULL)
 	{
-		Con_Printf("Multitexture enabled ");
-		if (strstr(gl_extensions, "GL_SGIS_multitexture "))
-		{
-			Con_Printf ("(SGIS)\n");
-			qglMTexCoord2fSGIS =
-				(void *)dlsym(dlhand, "glMTexCoord2fSGIS");
-			qglSelectTextureSGIS =
-				(void *)dlsym(dlhand, "glSelectTextureSGIS");
-			gl_mtexable = true;
-		} else if (strstr(gl_extensions, "GL_EXT_multitexture "))
-		{
-			Con_Printf ("(EXT)\n");
-			qglMTexCoord2fSGIS =
-				(void *)dlsym(dlhand, "glMTexCoord2fEXT");
-			qglSelectTextureSGIS =
-				(void *)dlsym(dlhand, "glSelectTextureEXT");
-			gl_mtexable = true;
-		} else {
-			Con_Printf ("(but not found)\n");
-		}
-		dlclose(dlhand);
-		dlhand = NULL;		
-	} else {
+		Con_Printf ("unable to check\n");
+		return;
 	}
+	if (strstr(gl_extensions, "GL_ARB_multitexture "))
+	{
+		Con_Printf ("GL_ARB_multitexture\n");
+		qglMTexCoord2f = (void *)dlsym(dlhand, "glMultiTexCoord2fARB");
+		qglSelectTexture = (void *)dlsym(dlhand, "glActiveTextureARB");
+		gl_mtex_enum = GL_TEXTURE0_ARB;
+		gl_mtexable = true;
+		gl_arb_mtex = true;
+	} else if (strstr(gl_extensions, "GL_SGIS_multitexture "))
+	{
+		Con_Printf ("GL_SGIS_multitexture\n");
+		qglMTexCoord2f = (void *)dlsym(dlhand, "glMTexCoord2fSGIS");
+		qglSelectTexture = (void *)dlsym(dlhand, "glSelectTextureSGIS");
+		gl_mtex_enum = TEXTURE0_SGIS;
+		gl_mtexable = true;
+		gl_arb_mtex = false;
+	} else if (strstr(gl_extensions, "GL_EXT_multitexture "))
+	{
+		Con_Printf ("GL_EXT_multitexture\n");
+		qglMTexCoord2f = (void *)dlsym(dlhand, "glMTexCoord2fEXT");
+		qglSelectTexture = (void *)dlsym(dlhand, "glSelectTextureEXT");
+		gl_mtex_enum = TEXTURE0_SGIS;
+		gl_mtexable = true;
+		gl_arb_mtex = false;
+	} else {
+		Con_Printf ("none found\n");
+	}
+	dlclose(dlhand);
+	dlhand = NULL;		
 #else
 	gl_mtexable = false;
 #endif
 }
+
 
 /*
 ===============
