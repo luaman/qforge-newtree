@@ -32,8 +32,14 @@
 #include "gcc_attr.h"
 #include "qtypes.h"
 
+#if _MSC_VER
+#define __attribute__(x)
+#pragma pack(push, tgainclude)
+#pragma pack(1)
+#else
 #ifndef __GNUC__
 #error do some data packing magic here (#pragma pack?)
+#endif
 #endif
 
 typedef struct _TargaHeader {
@@ -50,6 +56,10 @@ typedef struct _TargaHeader {
 	unsigned char pixel_size __attribute__((packed));
 	unsigned char attributes __attribute__((packed));
 } TargaHeader;
+
+#if _MSC_VER
+#pragma pack(pop, tgainclude)
+#endif
 
 byte *LoadTGA (QFile *fin);
 void WriteTGAfile (const char *tganame, byte *data, int width, int height);
