@@ -943,6 +943,7 @@ if test "x$optimize" = xyes; then
 	fi
 else
 	AC_MSG_RESULT(no)
+	CFLAGS="$CFLAGS -O"
 fi
 
 dnl CFLAGS for release and devel versions
