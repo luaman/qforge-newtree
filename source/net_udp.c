@@ -244,7 +244,7 @@ qboolean NET_GetPacket (void)
 
 	fromlen = sizeof(from);
 	ret = recvfrom(net_socket, (void*)net_message_buffer, sizeof(net_message_buffer), 0, (struct sockaddr *)&from, &fromlen);
-	SockadrToNetadr (&from, &net_from);
+
 	SockadrToNetadr(&from, &net_from);
 
 	if (ret == -1) {
