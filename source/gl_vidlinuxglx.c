@@ -413,7 +413,7 @@ void InitSig(void)
 
 void VID_ShiftPalette(unsigned char *p)
 {
-//	VID_SetPalette(p);
+	VID_SetPalette(p);
 }
 
 void	VID_SetPalette (unsigned char *palette)
@@ -565,7 +565,7 @@ qboolean VID_Is8bit(void)
 	return is8bit;
 }
 
-#ifdef GL_EXT_SHARED
+#if 1 //defined(GL_EXT_SHARED)
 void VID_Init8bitPalette() 
 {
 	// Check for 8bit Extensions and initialize them.
