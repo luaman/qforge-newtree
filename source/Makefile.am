@@ -14,7 +14,7 @@ server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c sv_init.c sv_main.c sv_misc.c \
 		sv_user.c sv_ccmds.c world.c worlda.S sys_unix.c sv_cvar.c
 client_SOURCES= cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c cl_main.c \
 		cl_math.S cl_misc.c cl_parse.c cl_pred.c cl_tent.c cl_cam.c \
-		snd_linux.c sys_linux.c cd_linux.c r_view.c wad.c snd_dma.c \
+		snd_oss.c sys_linux.c cd_linux.c r_view.c wad.c snd_dma.c \
 		snd_mem.c snd_mix.c snd_mixa.S skin.c sbar.c nonintel.c \
 		menu.c keys.c console.c sys_x86.S
 soft_SOURCES=	cl_model.c cl_trans.c d_edge.c d_fill.c d_init.c d_modech.c \

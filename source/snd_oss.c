@@ -1,5 +1,5 @@
 /*
-	snd_linux.c
+	snd_oss.c
 
 	(description)
 
