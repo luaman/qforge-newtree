@@ -236,7 +236,7 @@ R_Init_Cvars (void)
 	gl_multitexture = Cvar_Get ("gl_multitexture", "0", CVAR_ARCHIVE, "Use multitexture when available");
 	gl_nocolors = Cvar_Get ("gl_nocolors", "0", CVAR_NONE, "Set to 1, turns off all player skins");
 	gl_particles = Cvar_Get ("gl_particles", "1", CVAR_ARCHIVE, "whether or not to draw particles");
-	gl_playermip = Cvar_Get ("gl_playermip", "0", CVAR_NONE, "Detail of player skins. 0 best, 2 worst.");
+	gl_playermip = Cvar_Get ("gl_playermip", "0", CVAR_NONE, "Detail of player skins. 0 best, 4 worst.");
 	gl_sky_clip = Cvar_Get ("gl_sky_clip", "0", CVAR_ARCHIVE, "controls whether sky is drawn first (0) or later (1)");
 	gl_sky_divide = Cvar_Get ("gl_sky_divide", "1", CVAR_ARCHIVE, "subdivide sky polys");
 	gl_skymultipass = Cvar_Get ("gl_skymultipass", "1", CVAR_ARCHIVE, "controls whether the skydome is single or double pass");
