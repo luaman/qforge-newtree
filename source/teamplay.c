@@ -278,6 +278,9 @@ void Team_NewMap ()
 {
 	char *mapname, *t1, *t2;
 
+	died = false;
+	recorded_location = false;
+
 	mapname = strdup(cl.worldmodel->name);
 	if (!mapname)
 		Sys_Error("Can't duplicate mapname!");
