@@ -546,14 +546,23 @@ void CL_LinkPacketEntities (void)
 		//             his futile attempts to save bandwidth. :)
 		//
 		ent->glowsize		= s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
+//		if (s1->glowsize != 0)
+//			Con_Printf("glowsize: %d\n", s1->glowsize);
 		ent->glowcolor		= s1->glowcolor;
+//		if (s1->glowcolor != 254)
+//			Con_Printf("glowcolor: %d\n", s1->glowcolor);
 		ent->alpha			= s1->alpha / 255.0;
+//		if (s1->alpha != 255)
+//			Con_Printf("alpha: %d\n", s1->alpha);
 		ent->scale			= s1->scale / 16.0;
+//		if (s1->scale != 16)
+//			Con_Printf("scale: %d\n", s1->scale);
 
 		if (s1->colormod == 255)
 			ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 		else
 		{
+//			Con_Printf("colormod: %d\n", s1->colormod);
 			ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
 			ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
 			ent->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
