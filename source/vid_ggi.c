@@ -105,11 +105,6 @@ static int	stride, drawstride;
 static int	pixelsize;
 static int	usedbuf, havedbuf;
 
-static long GGI_highhunkmark, GGI_buffersize;
-
-static int	vid_surfcachesize;
-static void	*vid_surfcache;
-
 int	VID_options_items = 1;
 
 static void
@@ -228,44 +223,54 @@ do_copy32(int xsize, int ysize, uint32 *dest, uint8 *src)
 }
 
 
-// ========================================================================
-// Tragic death handler
-// ========================================================================
-
-void ResetFrameBuffer(void)
+void
+ResetFrameBuffer(void)
 {
-	if (d_pzbuffer)
-	{
-		D_FlushCaches ();
-		Hunk_FreeToHighMark (GGI_highhunkmark);
+	int 	tbuffersize, tcachesize;
+	void	*vid_surfcache;
+
+	// Calculate the sizes we want first
+	tbuffersize = vid.width * vid.height * sizeof (*d_pzbuffer);
+	tcachesize = D_SurfaceCacheForRes(vid.width, vid.height);
+
+	// Free the old z-buffer
+	if (d_pzbuffer) {
+		free (d_pzbuffer);
 		d_pzbuffer = NULL;
 	}
-	GGI_highhunkmark = Hunk_HighMark ();
+	
+	// Free the old surface cache
+	vid_surfcache = D_SurfaceCacheAddress ();
+	if (vid_surfcache) {
+		D_FlushCaches ();
+		free (vid_surfcache);
+		vid_surfcache = NULL;
+	}
 
-// alloc an extra line in case we want to wrap, and allocate the z-buffer
-	GGI_buffersize = vid.width * vid.height * sizeof (*d_pzbuffer);
-
-	vid_surfcachesize = D_SurfaceCacheForRes (vid.width, vid.height);
-
-	GGI_buffersize += vid_surfcachesize;
-
-	d_pzbuffer = Hunk_HighAllocName (GGI_buffersize, "video");
-	if (d_pzbuffer == NULL)
+	// Allocate the new z-buffer
+	d_pzbuffer = calloc (tbuffersize, 1);
+	if (!d_pzbuffer) {
 		Sys_Error ("Not enough memory for video mode\n");
+	}
 
-	vid_surfcache = (byte *) d_pzbuffer
-		+ vid.width * vid.height * sizeof (*d_pzbuffer);
+	// Allocate the new surface cache; free the z-buffer if we fail
+	vid_surfcache = calloc (tcachesize, 1);
+	if (!vid_surfcache) {
+		free (d_pzbuffer);
+		d_pzbuffer = NULL;
+		Sys_Error ("Not enough memory for video mode\n");
+	}
 
-	D_InitCaches(vid_surfcache, vid_surfcachesize);
+	D_InitCaches (vid_surfcache, tcachesize);
 }
-
 
 
 // Called at startup to set up translation tables, takes 256 8 bit RGB values
 // the palette data will go away after the call, so it must be copied off if
 // the video driver will need it again
 
-void	VID_Init(unsigned char *pal)
+void
+VID_Init (unsigned char *pal)
 {
 	int pnum;
 
@@ -456,14 +461,15 @@ void	VID_Init(unsigned char *pal)
 	vid.fullbright = 256 - LittleLong (*((int *)vid.colormap + 2048));
 }
 
-void VID_ShiftPalette(unsigned char *pal)
+void
+VID_ShiftPalette(unsigned char *pal)
 {
 	VID_SetPalette(pal);
 }
 
 
-
-void VID_SetPalette(unsigned char *pal)
+void
+VID_SetPalette (unsigned char *pal)
 {
 
 	int i;
@@ -483,7 +489,8 @@ void VID_SetPalette(unsigned char *pal)
 
 // Called at shutdown
 
-void	VID_Shutdown (void)
+void
+VID_Shutdown (void)
 {
 	Con_Printf("VID_Shutdown\n");
 
@@ -509,7 +516,8 @@ void	VID_Shutdown (void)
 
 // flushes the given rectangles from the view buffer to the screen
 
-void	VID_Update(vrect_t *rects)
+void
+VID_Update (vrect_t *rects)
 {
 	int height = 0;
 

@@ -266,20 +266,6 @@ VID_CheckAdequateMem
 */
 qboolean VID_CheckAdequateMem (int width, int height)
 {
-	int		tbuffersize;
-
-	tbuffersize = width * height * sizeof (*d_pzbuffer);
-
-	tbuffersize += D_SurfaceCacheForRes (width, height);
-
-// see if there's enough memory, allowing for the normal mode 0x13 pixel,
-// z, and surface buffers
-	if ((host_parms.memsize - tbuffersize + SURFCACHE_SIZE_AT_320X200 +
-		 0x10000 * 3) < MINIMUM_MEMORY)
-	{
-		return false;		// not enough memory for mode
-	}
-
 	return true;
 }
 
@@ -289,41 +275,46 @@ qboolean VID_CheckAdequateMem (int width, int height)
 VID_AllocBuffers
 ================
 */
-qboolean VID_AllocBuffers (int width, int height)
+qboolean
+VID_AllocBuffers (int width, int height)
 {
-	int		tsize, tbuffersize;
+	int		tbuffersize, tcachesize;
+	void	*temp_z, *temp_sc;
 
 	tbuffersize = width * height * sizeof (*d_pzbuffer);
+	tcachesize = D_SurfaceCacheForRes (width, height);
 
-	tsize = D_SurfaceCacheForRes (width, height);
-
-	tbuffersize += tsize;
-
-// see if there's enough memory, allowing for the normal mode 0x13 pixel,
-// z, and surface buffers
-	if ((host_parms.memsize - tbuffersize + SURFCACHE_SIZE_AT_320X200 +
-		 0x10000 * 3) < MINIMUM_MEMORY)
-	{
-		Con_Printf ("Not enough memory for video mode\n");
-		return false;		// not enough memory for mode
+	// Allocate the new z-buffer
+	temp_z = calloc (tbuffersize, 1);
+	if (temp_z == NULL) {
+		Sys_Printf ("Not enough memory for video mode\n");
+		return false;
 	}
 
-	vid_surfcachesize = tsize;
+	// Allocate the new surface cache
+	temp_sc = calloc (tcachesize, 1);
+	if (temp_sc == NULL) {
+		free (temp_z);
+		Sys_Printf ("Not enough memory for video mode\n");
+		return false;
+	}
 
-	if (d_pzbuffer)
-	{
+	// Free the old z-buffer, switch to the new one
+	if (d_pzbuffer) {
+		free (d_pzbuffer);
+		d_pzbuffer = temp_z;
+		temp_z = NULL;
+	}
+
+	// Free surface cache, switch to the new one
+	vid_surfcache = D_SurfaceCacheAddress ();
+	if (vid_surfcache) {
 		D_FlushCaches ();
-		Hunk_FreeToHighMark (VID_highhunkmark);
-		d_pzbuffer = NULL;
+		free (vid_surfcache);
+		vid_surfcache = temp_sc;
+		temp_sc = NULL;
 	}
 
-	VID_highhunkmark = Hunk_HighMark ();
-
-	d_pzbuffer = Hunk_HighAllocName (tbuffersize, "video");
-
-	vid_surfcache = (byte *)d_pzbuffer +
-			width * height * sizeof (*d_pzbuffer);
-	
 	return true;
 }
 

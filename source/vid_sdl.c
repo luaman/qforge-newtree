@@ -82,6 +82,48 @@ static float   mouse_x, mouse_y;
 static int mouse_oldbuttonstate = 0;
 
 void
+VID_InitBuffers (int width, int height)
+{
+	int		tbuffersize, tcachesize;
+	void	*vid_surfcache;
+
+	// Calculate the sizes we want first
+	tbuffersize = vid.width * vid.height * sizeof (*d_pzbuffer);
+	tcachesize = D_SurfaceCacheForRes(width, height);
+
+	// Free the old z-buffer
+	if (d_pzbuffer) {
+		free (d_pzbuffer);
+		d_pzbuffer = NULL;
+	}
+	
+	// Free the old surface cache
+	vid_surfcache = D_SurfaceCacheAddress ();
+	if (vid_surfcache) {
+		D_FlushCaches ();
+		free (vid_surfcache);
+		vid_surfcache = NULL;
+	}
+
+	// Allocate the new z-buffer
+	d_pzbuffer = calloc (tbuffersize, 1);
+	if (!d_pzbuffer) {
+		Sys_Error ("Not enough memory for video mode\n");
+	}
+
+	// Allocate the new surface cache; free the z-buffer if we fail
+	vid_surfcache = calloc (tcachesize, 1);
+	if (!vid_surfcache) {
+		free (d_pzbuffer);
+		d_pzbuffer = NULL;
+		Sys_Error ("Not enough memory for video mode\n");
+	}
+
+	D_InitCaches (vid_surfcache, tcachesize);
+}
+
+
+void
 VID_SetPalette (unsigned char *palette)
 {
 	int i;
@@ -104,9 +146,7 @@ VID_ShiftPalette (unsigned char *palette)
 void
 VID_Init (unsigned char *palette)
 {
-	int pnum, chunk;
-	byte *cache;
-	int cachesize;
+	int pnum;
 	//Uint8 video_bpp;
 	//Uint16 video_w, video_h;
 	Uint32 flags;
@@ -155,16 +195,7 @@ VID_Init (unsigned char *palette)
 	vid.direct = 0;
 
 	// allocate z buffer and surface cache
-	chunk = vid.width * vid.height * sizeof (*d_pzbuffer);
-	cachesize = D_SurfaceCacheForRes (vid.width, vid.height);
-	chunk += cachesize;
-	d_pzbuffer = Hunk_HighAllocName(chunk, "video");
-	if (d_pzbuffer == NULL)
-		Sys_Error ("Not enough memory for video mode\n");
-
-	// initialize the cache memory
-	cache = (byte *) d_pzbuffer	+ vid.width * vid.height * sizeof (*d_pzbuffer);
-	D_InitCaches (cache, cachesize);
+	VID_InitBuffers (vid.width, vid.height);
 
 	// initialize the mouse
 	SDL_ShowCursor(0);

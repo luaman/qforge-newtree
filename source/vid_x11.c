@@ -105,7 +105,7 @@ static int shiftmask_fl=0;
 static long r_shift,g_shift,b_shift;
 static unsigned long r_mask,g_mask,b_mask;
 
-static long X11_highhunkmark;
+//static long X11_highhunkmark;
 
 int scr_width, scr_height;
 
@@ -297,38 +297,48 @@ void VID_Gamma_f (void)
 static void
 ResetFrameBuffer(void)
 {
-	int vid_surfcachesize, buffersize;
-	void *vid_surfcache;
-	int mem, pwidth;
+	int 	tbuffersize, tcachesize;
+	
+	void	*vid_surfcache;
+	int 	mem, pwidth;
+
+	// Calculate the sizes we want first
+	tbuffersize = vid.width * vid.height * sizeof (*d_pzbuffer);
+	tcachesize = D_SurfaceCacheForRes(vid.width, vid.height);
 
 	if (x_framebuffer[0]) {
 		XDestroyImage(x_framebuffer[0]);
 	}
 
+	// Free the old z-buffer
 	if (d_pzbuffer) {
-		D_FlushCaches ();
-		Hunk_FreeToHighMark(X11_highhunkmark);
+		free (d_pzbuffer);
 		d_pzbuffer = NULL;
 	}
-	X11_highhunkmark = Hunk_HighMark ();
+	
+	// Free the old surface cache
+	vid_surfcache = D_SurfaceCacheAddress ();
+	if (vid_surfcache) {
+		D_FlushCaches ();
+		free (vid_surfcache);
+		vid_surfcache = NULL;
+	}
 
-	/* Alloc an extra line in case we want to wrap, and allocate
-	   the z-buffer */
-	buffersize = vid.width * vid.height * sizeof(*d_pzbuffer);
-
-	vid_surfcachesize = D_SurfaceCacheForRes(vid.width, vid.height);
-
-	buffersize += vid_surfcachesize;
-
-	d_pzbuffer = Hunk_HighAllocName(buffersize, "video");
-	if (d_pzbuffer == NULL) {
+	// Allocate the new z-buffer
+	d_pzbuffer = calloc (tbuffersize, 1);
+	if (!d_pzbuffer) {
 		Sys_Error ("Not enough memory for video mode\n");
 	}
 
-	vid_surfcache = (byte *) d_pzbuffer
-		+ vid.width * vid.height * sizeof(*d_pzbuffer);
+	// Allocate the new surface cache; free the z-buffer if we fail
+	vid_surfcache = calloc (tcachesize, 1);
+	if (!vid_surfcache) {
+		free (d_pzbuffer);
+		d_pzbuffer = NULL;
+		Sys_Error ("Not enough memory for video mode\n");
+	}
 
-	D_InitCaches(vid_surfcache, vid_surfcachesize);
+	D_InitCaches (vid_surfcache, tcachesize);
 
 	pwidth = x_visinfo->depth / 8;
 	if (pwidth == 3) pwidth = 4;
@@ -349,53 +359,59 @@ ResetFrameBuffer(void)
 static void
 ResetSharedFrameBuffers(void)
 {
-	int vid_surfcachesize, buffersize;
-	void *vid_surfcache;
+	int 	tbuffersize, tcachesize;
+	void	*vid_surfcache;
+	
 	int size;
 	int key;
 	int minsize = getpagesize();
 	int frm;
 
-	if (d_pzbuffer)	{
-		D_FlushCaches ();
-		Hunk_FreeToHighMark(X11_highhunkmark);
+	// Calculate the sizes we want first
+	tbuffersize = vid.width * vid.height * sizeof (*d_pzbuffer);
+	tcachesize = D_SurfaceCacheForRes(vid.width, vid.height);
+
+	// Free the old z-buffer
+	if (d_pzbuffer) {
+		free (d_pzbuffer);
 		d_pzbuffer = NULL;
 	}
+	
+	// Free the old surface cache
+	vid_surfcache = D_SurfaceCacheAddress ();
+	if (vid_surfcache) {
+		D_FlushCaches ();
+		free (vid_surfcache);
+		vid_surfcache = NULL;
+	}
 
-	X11_highhunkmark = Hunk_HighMark ();
-
-// alloc an extra line in case we want to wrap, and allocate the z-buffer
-	buffersize = vid.width * vid.height * sizeof (*d_pzbuffer);
-
-	vid_surfcachesize = D_SurfaceCacheForRes (vid.width, vid.height);
-
-	buffersize += vid_surfcachesize;
-
-	d_pzbuffer = Hunk_HighAllocName(buffersize, "video");
-	if (d_pzbuffer == NULL) {
+	// Allocate the new z-buffer
+	d_pzbuffer = calloc (tbuffersize, 1);
+	if (!d_pzbuffer) {
 		Sys_Error ("Not enough memory for video mode\n");
 	}
 
-	vid_surfcache = (byte *) d_pzbuffer
-		+ vid.width * vid.height * sizeof (*d_pzbuffer);
+	// Allocate the new surface cache; free the z-buffer if we fail
+	vid_surfcache = calloc (tcachesize, 1);
+	if (!vid_surfcache) {
+		free (d_pzbuffer);
+		d_pzbuffer = NULL;
+		Sys_Error ("Not enough memory for video mode\n");
+	}
 
-	D_InitCaches(vid_surfcache, vid_surfcachesize);
+	D_InitCaches (vid_surfcache, tcachesize);
 
-	for (frm=0 ; frm<2 ; frm++)
-	{
+	for (frm=0 ; frm<2 ; frm++) {
 
-	// free up old frame buffer memory
-
-		if (x_framebuffer[frm])
-		{
+		// free up old frame buffer memory
+		if (x_framebuffer[frm])	{
 			XShmDetach(x_disp, &x_shminfo[frm]);
 			free(x_framebuffer[frm]);
 			shmdt(x_shminfo[frm].shmaddr);
 		}
 
-	// create the image
-
-		x_framebuffer[frm] = XShmCreateImage(	x_disp,
+		// create the image
+		x_framebuffer[frm] = XShmCreateImage (x_disp,
 						x_vis,
 						x_visinfo->depth,
 						ZPixmap,
@@ -404,10 +420,10 @@ ResetSharedFrameBuffers(void)
 						vid.width,
 						vid.height );
 
-	// grab shared memory
-
+		// grab shared memory
 		size = x_framebuffer[frm]->bytes_per_line
 			* x_framebuffer[frm]->height;
+
 		if (size < minsize)
 			Sys_Error("VID: Window must use at least %d bytes\n", minsize);
 
@@ -425,8 +441,7 @@ ResetSharedFrameBuffers(void)
 
 		x_framebuffer[frm]->data = x_shminfo[frm].shmaddr;
 
-	// get the X server to attach to it
-
+		// get the X server to attach to it
 		if (!XShmAttach(x_disp, &x_shminfo[frm]))
 			Sys_Error("VID: XShmAttach() failed\n");
 		XSync(x_disp, 0);

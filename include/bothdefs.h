@@ -40,7 +40,8 @@
 
 #define UNUSED(x)	(x = x)	// for pesky compiler / lint warnings
 
-#define	MINIMUM_MEMORY	0x550000
+							// Error out if we get less than 4MB
+#define	MINIMUM_MEMORY	0x400000
 
 
 

@@ -61,8 +61,6 @@ void VGA_UpdatePlanarScreen (void *srcbuffer);
 
 
 unsigned short	d_8to16table[256];
-static byte	*vid_surfcache;
-static int	VID_highhunkmark;
 
 static int		num_modes, current_mode;
 static vga_modeinfo	*modes;
@@ -360,6 +358,65 @@ get_mode(char *name, int width, int height, int depth)
 
 
 void
+VID_InitBuffers (void)
+{
+	int		buffersize, zbuffersize, cachesize;
+	void	*vid_surfcache;
+
+	// Calculate the sizes we want first
+	buffersize = vid.rowbytes * vid.height;
+	zbuffersize = vid.width * vid.height * sizeof (*d_pzbuffer);
+	cachesize = D_SurfaceCacheForRes(vid.width, vid.height);
+
+	// Free the old screen buffer
+	if (vid.buffer) {
+		free (vid.buffer);
+		vid.conbuffer = vid.buffer = NULL;
+	}
+
+	// Free the old z-buffer
+	if (d_pzbuffer) {
+		free (d_pzbuffer);
+		d_pzbuffer = NULL;
+	}
+	
+	// Free the old surface cache
+	vid_surfcache = D_SurfaceCacheAddress ();
+	if (vid_surfcache) {
+		D_FlushCaches ();
+		free (vid_surfcache);
+		vid_surfcache = NULL;
+	}
+
+	// Allocate the new screen buffer
+	vid.conbuffer = vid.buffer = calloc (buffersize, 1);
+	if (!vid.conbuffer) {
+		Sys_Error ("Not enough memory for video mode\n");
+	}
+
+	// Allocate the new z-buffer
+	d_pzbuffer = calloc (zbuffersize, 1);
+	if (!d_pzbuffer) {
+		free (vid.buffer);
+		vid.conbuffer = vid.buffer = NULL;
+		Sys_Error ("Not enough memory for video mode\n");
+	}
+
+	// Allocate the new surface cache; free the z-buffer if we fail
+	vid_surfcache = calloc (cachesize, 1);
+	if (!vid_surfcache) {
+		free (vid.buffer);
+		free (d_pzbuffer);
+		vid.conbuffer = vid.buffer = NULL;
+		d_pzbuffer = NULL;
+		Sys_Error ("Not enough memory for video mode\n");
+	}
+
+	D_InitCaches (vid_surfcache, cachesize);
+}
+
+
+void
 VID_Shutdown(void)
 {
 	Sys_Printf("VID_Shutdown\n");
@@ -407,7 +464,6 @@ VID_SetPalette(byte *palette)
 int
 VID_SetMode (int modenum, unsigned char *palette)
 {
-	int bsize, zsize, tsize;
 	int err;
 
 	if ((modenum >= num_modes) || (modenum < 0) || !modes[modenum].width) {
@@ -446,27 +502,8 @@ VID_SetMode (int modenum, unsigned char *palette)
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 
-	/* alloc zbuffer and surface cache */
-	if (d_pzbuffer) {
-		D_FlushCaches();
-		Hunk_FreeToHighMark (VID_highhunkmark);
-		d_pzbuffer = NULL;
-		vid_surfcache = NULL;
-	}
-
-	bsize = vid.rowbytes * vid.height;
-	tsize = D_SurfaceCacheForRes (vid.width, vid.height);
-	zsize = vid.width * vid.height * sizeof(*d_pzbuffer);
-
-	VID_highhunkmark = Hunk_HighMark ();
-
-	d_pzbuffer = Hunk_HighAllocName (bsize+tsize+zsize, "video");
-
-	vid_surfcache = ((byte *)d_pzbuffer) + zsize;
-
-	vid.conbuffer = vid.buffer = (pixel_t *)(((byte *)d_pzbuffer) + zsize + tsize);
-
-	D_InitCaches (vid_surfcache, tsize);
+	// alloc screen buffer, z-buffer, and surface cache
+	VID_InitBuffers ();
 
 	/* get goin' */
 	err = vga_setmode(current_mode);

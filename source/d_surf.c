@@ -39,13 +39,19 @@
 float           surfscale;
 qboolean        r_cache_thrash;         // set if surface cache is thrashing
 
-int                                     sc_size;
-surfcache_t                     *sc_rover, *sc_base;
+int 			sc_size;
+surfcache_t 	*sc_rover, *sc_base;
 
 #define GUARDSIZE       4
 
+void *
+D_SurfaceCacheAddress (void)
+{
+	return sc_base;
+}
 
-int     D_SurfaceCacheForRes (int width, int height)
+int
+D_SurfaceCacheForRes (int width, int height)
 {
 	int             size, pix;
 

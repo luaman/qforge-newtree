@@ -226,7 +226,7 @@ int main (int c, char **v)
 	parms.argc = com_argc;
 	parms.argv = com_argv;
 
-	parms.memsize = 16*1024*1024;
+	parms.memsize = 8 * 1024 * 1024;	// 8MB default heap
 
 	j = COM_CheckParm("-mem");
 	if (j)
