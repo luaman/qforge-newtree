@@ -12,7 +12,7 @@ EXTRA_DIST = README.WIN newtree.dsw ChangeLog \
 
 changelog::
 	-touch ChangeLog
-	-tools/cvs2cl/cvs2cl.pl
+	-tools/cvs2cl/cvs2cl.pl -b
 	-rm -f ChangeLog.bak
 
 dist-zip: distdir
