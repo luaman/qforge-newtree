@@ -400,10 +400,33 @@ while (1)
 	s++;	// next statement
 
 	st = &pr_statements[s];
-	a = (eval_t *)&pr_globals[st->a];
+
+    // NUM_GLOBALS in Mega2K qwprogs.dat got too big and crashes the server
+    // offsets are bigger than 32767 but encoded as signed shorts, resulting 
+    // in negative indexs in pr_globals[], specifically with big maps such as 
+    // frontlin.bsp. Since all arrays are static and contiguous in memory
+    // (one single alloc), data gets overwritten:
+    //
+    //    pr_statements[60793].c = -32690
+    //    c = (eval_t *) &pr_globals[-32690];
+    //    c->_int = xxx overwrites the content of pr_functions[87]
+    //
+    // FIXME: this is a dirty crash fix. go 32 bits in progs.dat
+
+    if (st->a & 0x8000) ofsa = (int)st->a + 0xFFFF; else ofsa = st->a;
+    if (st->b & 0x8000) ofsb = (int)st->b + 0xFFFF; else ofsb = st->b;
+    if (st->c & 0x8000) ofsc = (int)st->c + 0xFFFF; else ofsc = st->c;
+
+    a = (eval_t *)&pr_globals[ofsa];
+    b = (eval_t *)&pr_globals[ofsb];
+    c = (eval_t *)&pr_globals[ofsc];
+
+   /*
+   a = (eval_t *)&pr_globals[st->a];
 	b = (eval_t *)&pr_globals[st->b];
 	c = (eval_t *)&pr_globals[st->c];
-	
+	*/
+
 	if (--runaway == 0)
 		PR_RunError ("runaway loop error");
 		
