@@ -46,7 +46,7 @@ static int  snd_inited;
 static snd_pcm_t *pcm_handle;
 static snd_pcm_hw_info_t hwinfo;
 static snd_pcm_hw_params_t hwparams;
-static snd_pcm_channel_area_t mmap_running_areas[2];
+static const snd_pcm_channel_area_t *mmap_running_areas;
 static int  card = -1, dev = -1;
 
 int
@@ -208,13 +208,15 @@ SNDDMA_Init (void)
 	hwparams.rate = rate;
 	hwparams.channels = stereo + 1;
 
-	hwparams.fragment_size = frag_size;
-	hwparams.fragments = hwinfo.fragments_max;
+	hwparams.fragment_size = 512;
+	hwparams.fragments = 32;
 
 	while (1) {
 		err_msg = "snd_pcm_hw_params";
-		if ((rc = snd_pcm_hw_params (pcm_handle, &hwparams)) < 0)
+		if ((rc = snd_pcm_hw_params (pcm_handle, &hwparams)) < 0) {
+			Con_Printf("failed: %08x\n", hwparams.fail_mask);
 			goto error;
+		}
 
 		break;							// XXX
 	}
@@ -223,6 +225,8 @@ SNDDMA_Init (void)
 	if ((rc = snd_pcm_prepare (pcm_handle)) < 0)
 		goto error;
 
+	mmap_running_areas = snd_pcm_mmap_areas (pcm_handle);
+
 	shm = &sn;
 	memset ((dma_t *) shm, 0, sizeof (*shm));
 	shm->splitbuffer = 0;
@@ -230,7 +234,7 @@ SNDDMA_Init (void)
 	shm->submission_chunk = frag_size;	// don't mix less than this #
 	shm->samplepos = 0;					// in mono samples
 	shm->samplebits = hwparams.format == SND_PCM_FORMAT_S16_LE ? 16 : 8;
-	shm->samples = hwparams.fragments * shm->channels;	// mono samples in
+	shm->samples = hwparams.fragment_size * hwparams.fragments * shm->channels;	// mono samples in
 														// buffer
 	shm->speed = hwparams.rate;
 	shm->buffer = (unsigned char *) mmap_running_areas->addr;
