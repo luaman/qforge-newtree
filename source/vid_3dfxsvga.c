@@ -114,7 +114,7 @@ GL_Init (void)
 	Con_Printf ("Dithering: ");
 
 	if (QFGL_ExtensionPresent ("3DFX_set_dither_mode")) {
-		QF_gl3DfxSetDitherModeEXT dither_select = NULL;
+		QF_3DfxSetDitherModeEXT dither_select = NULL;
 
 		dither_select = QFGL_ExtensionAddress ("gl3DfxSetDitherModeEXT");
 
