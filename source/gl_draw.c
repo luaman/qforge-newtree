@@ -111,7 +111,6 @@ static gltexture_t gltextures[MAX_GLTEXTURES];
 static int  numgltextures = 0;
 
 /*
-=============================================================================
 
   scrap allocation
 
@@ -121,7 +120,6 @@ static int  numgltextures = 0;
   Note, this is a kluge, which may slow down sane cards..
   As such its all contained in ifdefs..
 
-=============================================================================
 */
 
 #undef gl_draw_scraps
@@ -255,9 +253,7 @@ Draw_ClearCache (void)
 }
 
 /*
-================
-Draw_CachePic
-================
+	Draw_CachePic
 */
 qpic_t *
 Draw_CachePic (char *path)
@@ -336,9 +332,7 @@ static glmode_t modes[] = {
 };
 
 /*
-===============
-Draw_TextureMode_f
-===============
+	Draw_TextureMode_f
 */
 static void
 Draw_TextureMode_f (void)
@@ -436,9 +430,7 @@ extern void glrmain_init (void);
 extern void glrsurf_init (void);
 
 /*
-===============
-Draw_Init
-===============
+	Draw_Init
 */
 void
 Draw_Init (void)
@@ -528,13 +520,11 @@ Draw_Init_Cvars (void)
 
 
 /*
-================
-Draw_Character8
+	Draw_Character8
 
-Draws one 8*8 graphics character with 0 being transparent.
-It can be clipped to the top of the screen to allow the console to be
-smoothly scrolled off.
-================
+	Draws one 8*8 graphics character with 0 being transparent.
+	It can be clipped to the top of the screen to allow the console to be
+	smoothly scrolled off.
 */
 void
 Draw_Character8 (int x, int y, int num)
@@ -572,9 +562,7 @@ Draw_Character8 (int x, int y, int num)
 }
 
 /*
-================
-Draw_String8
-================
+	Draw_String8
 */
 void
 Draw_String8 (int x, int y, char *str)
@@ -587,9 +575,7 @@ Draw_String8 (int x, int y, char *str)
 }
 
 /*
-================
-Draw_AltString8
-================
+	Draw_AltString8
 */
 void
 Draw_AltString8 (int x, int y, char *str)
@@ -647,9 +633,7 @@ Draw_Crosshair (void)
 }
 
 /*
-=============
-Draw_Pic
-=============
+	Draw_Pic
 */
 void
 Draw_Pic (int x, int y, qpic_t *pic)
@@ -717,11 +701,9 @@ Draw_SubPic (int x, int y, qpic_t *pic, int srcx, int srcy, int width,
 }
 
 /*
-=============
-Draw_TransPicTranslate
+	Draw_TransPicTranslate
 
-Only used for the player color selection menu
-=============
+	Only used for the player color selection menu
 */
 void
 Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte * translation)
@@ -861,12 +843,10 @@ Draw_ConsoleBackground (int lines)
 
 
 /*
-=============
-Draw_TileClear
+	Draw_TileClear
 
-This repeats a 64*64 tile graphic to fill the screen around a sized down
-refresh window.
-=============
+	This repeats a 64*64 tile graphic to fill the screen around a sized down
+	refresh window.
 */
 void
 Draw_TileClear (int x, int y, int w, int h)
@@ -891,11 +871,9 @@ Draw_TileClear (int x, int y, int w, int h)
 
 
 /*
-=============
-Draw_Fill
+	Draw_Fill
 
-Fills a box of pixels with a single color
-=============
+	Fills a box of pixels with a single color
 */
 void
 Draw_Fill (int x, int y, int w, int h, int c)
@@ -923,10 +901,7 @@ Draw_Fill (int x, int y, int w, int h, int c)
 //=============================================================================
 
 /*
-================
-Draw_FadeScreen
-
-================
+	Draw_FadeScreen
 */
 void
 Draw_FadeScreen (void)
@@ -950,12 +925,10 @@ Draw_FadeScreen (void)
 //=============================================================================
 
 /*
-================
-Draw_BeginDisc
+	Draw_BeginDisc
 
-Draws the little blue disc in the corner of the screen.
-Call before beginning any disc IO.
-================
+	Draws the little blue disc in the corner of the screen.
+	Call before beginning any disc IO.
 */
 void
 Draw_BeginDisc (void)
@@ -964,12 +937,10 @@ Draw_BeginDisc (void)
 
 
 /*
-================
-Draw_EndDisc
+	Draw_EndDisc
 
-Erases the disc icon.
-Call after completing any disc IO
-================
+	Erases the disc icon.
+	Call after completing any disc IO
 */
 void
 Draw_EndDisc (void)
@@ -977,11 +948,9 @@ Draw_EndDisc (void)
 }
 
 /*
-================
-GL_Set2D
+	GL_Set2D
 
-Setup as if the screen was 320*200
-================
+	Setup as if the screen was 320*200
 */
 void
 GL_Set2D (void)
@@ -1004,9 +973,7 @@ GL_Set2D (void)
 //====================================================================
 
 /*
-================
-GL_ResampleTexture
-================
+	GL_ResampleTexture
 */
 static void
 GL_ResampleTexture (unsigned int *in, int inwidth, int inheight,
@@ -1030,9 +997,7 @@ GL_ResampleTexture (unsigned int *in, int inwidth, int inheight,
 }
 
 /*
-================
-GL_Resample8BitTexture -- JACK
-================
+	GL_Resample8BitTexture -- JACK
 */
 #if defined(GL_SHARED_TEXTURE_PALETTE_EXT) && defined(HAVE_GL_COLOR_INDEX8_EXT)
 static void
@@ -1058,11 +1023,9 @@ GL_Resample8BitTexture (unsigned char *in, int inwidth, int inheight,
 #endif
 
 /*
-================
-GL_MipMap
+	GL_MipMap
 
-Operates in place, quartering the size of the texture
-================
+	Operates in place, quartering the size of the texture
 */
 static void
 GL_MipMap (byte * in, int width, int height)
@@ -1084,11 +1047,9 @@ GL_MipMap (byte * in, int width, int height)
 }
 
 /*
-================
-GL_MipMap8Bit
+	GL_MipMap8Bit
 
-Mipping for 8 bit textures
-================
+	Mipping for 8 bit textures
 */
 #if defined(GL_SHARED_TEXTURE_PALETTE_EXT) && defined(HAVE_GL_COLOR_INDEX8_EXT)
 static void
@@ -1121,9 +1082,7 @@ GL_MipMap8Bit (byte * in, int width, int height)
 #endif
 
 /*
-===============
-GL_Upload32
-===============
+	GL_Upload32
 */
 static void
 GL_Upload32 (unsigned int *data, int width, int height, qboolean mipmap,
@@ -1264,9 +1223,7 @@ GL_Upload8_EXT (byte * data, int width, int height, qboolean mipmap,
 extern qboolean VID_Is8bit (void);
 
 /*
-===============
-GL_Upload8
-===============
+	GL_Upload8
 */
 void
 GL_Upload8 (byte * data, int width, int height, qboolean mipmap, qboolean alpha)
@@ -1317,9 +1274,7 @@ GL_Upload8 (byte * data, int width, int height, qboolean mipmap, qboolean alpha)
 }
 
 /*
-================
-GL_LoadTexture
-================
+	GL_LoadTexture
 */
 int
 GL_LoadTexture (char *identifier, int width, int height, byte * data,
@@ -1383,9 +1338,7 @@ GL_LoadTexture (char *identifier, int width, int height, byte * data,
 
 
 /*
-================
-GL_LoadPicTexture
-================
+	GL_LoadPicTexture
 */
 static int
 GL_LoadPicTexture (qpic_t *pic)
