@@ -583,11 +583,11 @@ Parses the given string into command line tokens.
 */
 void Cmd_TokenizeString (char *text)
 {
+	static char	argv_buf[1024];
+	int		argv_idx;
 	int		i;
 
-// clear the args from the last string
-	for (i=0 ; i<cmd_argc ; i++)
-		free (cmd_argv[i]);
+	argv_idx = 0;
 
 	cmd_argc = 0;
 	cmd_args = NULL;
@@ -618,8 +618,15 @@ void Cmd_TokenizeString (char *text)
 
 		if (cmd_argc < MAX_ARGS)
 		{
-			cmd_argv[cmd_argc] = malloc (strlen(com_token)+1);
+			if (argv_idx + strlen(com_token) + 1 > 1024)
+			{
+				Con_Printf ("Cmd_TokenizeString: overflow\n");
+				return;
+			}
+			cmd_argv[cmd_argc] = argv_buf + argv_idx;
 			strcpy (cmd_argv[cmd_argc], com_token);
+			argv_idx += strlen(com_token) + 1;
+
 			cmd_argc++;
 		}
 	}
