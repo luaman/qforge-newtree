@@ -268,18 +268,85 @@ R_DrawSky (void)
 		R_DrawSkyDome ();
 }
 
+/*
+	determine_face
+
+	return the face of the cube which v hits first
+	0	+x
+	1	+y
+	2	+z
+	3	-x
+	4	-y
+	5	-z
+*/
+static int
+determine_face (vec3_t v)
+{
+	float a[3] = {fabs (v[0]), fabs (v[1]), fabs (v[2])};
+	float m = a[0];
+	int i=0;
+
+	if (a[1] > m) {
+		m = a[1];
+		i = 1;
+	}
+	if (a[2] > m) {
+		m = a[2];
+		i = 2;
+	}
+	if (!m)
+		abort();
+	if (v[i] < 0)
+		i += 3;
+	VectorScale (v, 1024/m, v);
+	return i;
+}
+
 void
 R_DrawSkyBoxPoly (glpoly_t *poly)
 {
-	vec3_t verts[32];
+	vec3_t v, last_v;
+	struct {
+		glpoly_t	poly;
+		float		verts[32][VERTEXSIZE];
+	} box[6];
+	glpoly_t *p;
 	int i;
+	int face, prev_face;
 
+	memset (box, 0, sizeof (box));
 	if (poly->numverts>=32) {
 		Con_Printf ("too many verts!");
 		abort();
 	}
+
+	VectorSubtract (poly->verts[poly->numverts - 1], r_refdef.vieworg, v);
+	prev_face = determine_face (v);
+	p = &box[prev_face].poly;
+	VectorCopy (v, last_v);
+
 	for (i=0; i< poly->numverts; i++) {
-		VectorSubtract (poly->verts[i], r_refdef.vieworg, verts[i]);
+		VectorSubtract (poly->verts[i], r_refdef.vieworg, v);
+		face = determine_face (v);
+		if (face != prev_face) {
+			if (face % 3 == prev_face % 3) {
+				// ouch, miss a face
+			} else {
+				vec3_t l;
+				VectorSubtract (v, last_v, l);
+				l[prev_face % 3] = 0;
+				VectorAdd (last_v, l, l);
+				p = &box[prev_face].poly;
+				VectorCopy (l, p->verts[p->numverts++]);
+				p = &box[face].poly;
+				VectorCopy (l, p->verts[p->numverts++]);
+			}
+		}
+		p = &box[face].poly;
+		VectorCopy (v, p->verts[p->numverts++]);
+
+		VectorCopy (v, last_v);
+		prev_face = face;
 	}
 }
 
