@@ -108,8 +108,7 @@ R_AddDynamicLights (msurface_t *surf)
 {
 	int			lnum;
 	int			sd, td;
-	float		dist, rada, radb;
-	float		red, green, blue, brightness;
+	float		dist, maxdist, radb, brightness, red, green, blue, f;
 	vec3_t		impact, local;
 	int			s, t;
 	int			i;
@@ -126,57 +125,47 @@ R_AddDynamicLights (msurface_t *surf)
 		if ( !(surf->dlightbits & (1<<lnum) ) )
 			continue;		// not lit by this light
 
-		dist = DotProduct (cl_dlights[lnum].origin, surf->plane->normal)
-			- surf->plane->dist;
+		dist = DotProduct (cl_dlights[lnum].origin, surf->plane->normal) - surf->plane->dist;
 
 		for (i=0 ; i<3 ; i++)
-			impact[i] = cl_dlights[lnum].origin[i] -
-					surf->plane->normal[i]*dist;
+			impact[i] = cl_dlights[lnum].origin[i] - surf->plane->normal[i]*dist;
 
-		local[0] = DotProduct (impact, tex->vecs[0]) + tex->vecs[0][3]
-			- surf->texturemins[0];
-		local[1] = DotProduct (impact, tex->vecs[1]) + tex->vecs[1][3]
-			- surf->texturemins[1];
+		local[0] = DotProduct (impact, tex->vecs[0]) + tex->vecs[0][3] - surf->texturemins[0];
+		local[1] = DotProduct (impact, tex->vecs[1]) + tex->vecs[1][3] - surf->texturemins[1];
 
-		s = bound (0, local[0]+0.5, (smax-1)*16);
-		t = bound (0, local[1]+0.5, (tmax-1)*16);
-
-		sd = local[0] - s;
-		td = local[1] - t;
 		dist *= dist;
-
-		// get brightest color's value
 		red = cl_dlights[lnum].color[0];
 		green = cl_dlights[lnum].color[1];
 		blue = cl_dlights[lnum].color[2];
-		brightness = max(red, max(green, blue));
-		
-		rada = (cl_dlights[lnum].radius * cl_dlights[lnum].radius * 8) / (4.0/16.0); // comparison to min acceptable light
-		if (rada*brightness >= (sd*sd + td*td + dist)) {
-			radb = cl_dlights[lnum].radius 
-				* cl_dlights[lnum].radius * (256.0*4.0);
-			bl = blocklights;
-			for (t = 0; t < tmax; t++)
+
+		maxdist = cl_dlights[lnum].radius*cl_dlights[lnum].radius; // for comparisons to minimum acceptable light
+//		if (cl_dlights[lnum].dark) // negate for darklight
+//			radb = cl_dlights[lnum].radius*cl_dlights[lnum].radius*-256.0*16.0; // negate and multiply by 256 for the code below
+//		else
+			radb = cl_dlights[lnum].radius*cl_dlights[lnum].radius*256.0*16.0; // multiply by 256 for the code below
+		bl = blocklights;
+		for (t = 0 ; t<tmax ; t++)
+		{
+			td = local[1] - t*16;
+			td = td*td + dist;
+			if (td < maxdist) // make sure some part of it is visible on this line
 			{
-				td = local[1] - t*16;
-				td = td*td + dist;
-				if (rada >= td) // any visible this line?
+				for (s=0 ; s<smax ; s++)
 				{
-					for (s = 0; s < smax; s++)
+					sd = local[0] - s*16;
+					if ((f = sd*sd+td) < maxdist)
 					{
-						sd = local[0] - s*16;
-						if (rada >= (sd*sd+td))	// minimum light
-						{
-							brightness = radb / (sd*sd+td);
-							*bl++ += brightness * red;
-							*bl++ += brightness * green;
-							*bl++ += brightness * blue;
-						} else
-							bl+=3; // skip pixel
+						brightness = radb / f;
+						*bl++ += brightness * red;
+						*bl++ += brightness * green;
+						*bl++ += brightness * blue;
 					}
-				} else
-					bl+=smax*3; // skip line
+					else
+						bl += 3; // skip pixel
+				}
 			}
+			else
+				bl+=smax*3; // skip line
 		}
 	}
 }
