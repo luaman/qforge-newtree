@@ -47,7 +47,7 @@ common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
 		mdfour.c mathlib.c cvar.c crc.c cmd.c qargs.c qendian.c \
 		quakefs.c quakeio.c msg.c sizebuf.c info.c checksum.c \
 		link.c buildnum.c va.c com.c model.c model_brush.c locs.c \
-		$(math_ASM)
+		qdl.c $(math_ASM)
 
 #
 # Server builds
@@ -71,7 +71,7 @@ server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c pr_offs.c sv_init.c sv_main.c \
 		$(world_ASM)
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
-qf_server_LDADD=	-L. -lqfsys_sv $(NET_LIBS)
+qf_server_LDADD=	-L. -lqfsys_sv $(NET_LIBS) $(DL_LIBS)
 qf_server_DEPENDENCIES= libqfsys_sv.a
 
 #
@@ -249,7 +249,7 @@ qf_client_glx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 sgl_SOURCES=	vid_sgl.c vid_common_gl.c in_sdl.c
 
 qf_client_sgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(sgl_SOURCES)
-qf_client_sgl_LDADD=	$(SDL_LIBS) $(GLX_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
+qf_client_sgl_LDADD=	$(SDL_LIBS) $(X_LIBS) $(GLX_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
 qf_client_sgl_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
 #
