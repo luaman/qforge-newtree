@@ -312,7 +312,7 @@ qf_client_sgl_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs
 #
 # SGI/Microsoft WGL (Windows OpenGL)
 #
-wgl_sources=	vid_wgl.c in_win.c cl_sys_win.c
+wgl_sources=	vid_wgl.c vid_common_gl.c in_win.c cl_sys_win.c
 
 qf_client_wgl_SOURCES=	$(common_sources) $(client_sources) $(ogl_sources) $(wgl_sources)
 qf_client_wgl_LDADD=	$(CLIENT_LIBS) $(GLX_LIBS) -lgdi32 -lwinmm

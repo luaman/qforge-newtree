@@ -49,6 +49,10 @@
 #include "sys.h"
 #include "va.h"
 
+void GL_Common_Init_Cvars (void);
+void CheckMultiTextureExtensions (void);
+void VID_Init8bitPalette (void);
+
 extern void (*vid_menudrawfn) (void);
 extern void (*vid_menukeyfn) (int);
 
@@ -93,15 +97,6 @@ const char *gl_vendor;
 const char *gl_renderer;
 const char *gl_version;
 const char *gl_extensions;
-
-// ARB Multitexture
-qboolean    gl_mtex_capable = false;
-GLenum		gl_mtex_enum = GL_TEXTURE0_ARB;
-
-// 8-bit and permedia support
-QF_glColorTableEXT	qglColorTableEXT = NULL;
-qboolean			is8bit = false;
-qboolean			isPermedia = false;
 
 // fixme: Only used by MGL ..
 qboolean    DDActive;
@@ -180,32 +175,11 @@ VID_ForceLockState (int lk)
 {
 }
 
-void
-VID_LockBuffer (void)
-{
-}
-
-void
-VID_UnlockBuffer (void)
-{
-}
-
 int
 VID_ForceUnlockedAndReturnState (void)
 {
 	return 0;
 }
-
-void
-D_BeginDirectRect (int x, int y, byte * pbitmap, int width, int height)
-{
-}
-
-void
-D_EndDirectRect (int x, int y, int width, int height)
-{
-}
-
 
 void
 CenterWindow (HWND hWndCenter, int width, int height, BOOL lefttopjustify)
@@ -420,6 +394,9 @@ VID_SetMode (int modenum, unsigned char *palette)
 		Sys_Error ("VID_SetMode: Bad mode type in modelist");
 	}
 
+	scr_width = WindowRect.right - WindowRect.left;
+	scr_height = WindowRect.bottom - WindowRect.top;
+
 	VID_UpdateWindowStatus ();
 
 	CDAudio_Resume ();
@@ -483,36 +460,6 @@ VID_UpdateWindowStatus (void)
 	IN_UpdateClipCursor ();
 }
 
-int         texture_extension_number = 1;
-
-void
-CheckMultiTextureExtensions (void)
-{
-	Con_Printf ("Checking for multitexture... ");
-	if (COM_CheckParm ("-nomtex")) {
-		Con_Printf ("disabled.\n");
-		return;
-	}
-
-	if (QFGL_ExtensionPresent ("GL_ARB_multitexture")) {
-
-		int max_texture_units = 0;
-
-		glGetIntegerv (GL_MAX_TEXTURE_UNITS_ARB, &max_texture_units);
-		if (max_texture_units >= 2) {
-			Con_Printf ("enabled, %d TMUs.\n", max_texture_units);
-			qglMultiTexCoord2f = QFGL_ExtensionAddress ("glMultiTexCoord2fARB");
-			qglActiveTexture = QFGL_ExtensionAddress ("glActiveTextureARB");
-			gl_mtex_enum = GL_TEXTURE0_ARB;
-			gl_mtex_capable = true;
-		} else {
-			Con_Printf ("disabled, not enough TMUs.\n");
-		}
-	} else {
-		Con_Printf ("not found.\n");
-	}
-}
-
 /*
 	GL_Init
 */
@@ -533,9 +480,6 @@ GL_Init (void)
 
 	if (strnicmp (gl_renderer, "PowerVR", 7) == 0)
 		fullsbardraw = true;
-
-	if (strnicmp (gl_renderer, "Permedia", 8) == 0)
-		isPermedia = true;
 
 	CheckMultiTextureExtensions ();
 
@@ -560,17 +504,6 @@ GL_Init (void)
 
 	glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-}
-
-/*
-	GL_BeginRendering
-*/
-void
-GL_BeginRendering (int *x, int *y, int *width, int *height)
-{
-	*x = *y = 0;
-	*width = WindowRect.right - WindowRect.left;
-	*height = WindowRect.bottom - WindowRect.top;
 }
 
 void
@@ -600,81 +533,6 @@ GL_EndRendering (void)
 	}
 	if (fullsbardraw)
 		Sbar_Changed ();
-}
-
-void
-VID_SetPalette (unsigned char *palette)
-{
-	byte       *pal;
-	unsigned int r, g, b;
-	unsigned int v;
-	int         r1, g1, b1;
-	int         k;
-	unsigned short i;
-	unsigned int *table;
-	QFile      *f;
-	char        s[255];
-	float       dist, bestdist;
-	static qboolean palflag = false;
-
-//
-// 8 8 8 encoding
-//
-//      Con_Printf("Converting 8to24\n");
-
-	pal = palette;
-	table = d_8to24table;
-	for (i = 0; i < 256; i++) {
-		r = pal[0];
-		g = pal[1];
-		b = pal[2];
-		pal += 3;
-
-//      v = (255<<24) + (r<<16) + (g<<8) + (b<<0);
-//      v = (255<<0) + (r<<8) + (g<<16) + (b<<24);
-		v = (255 << 24) + (r << 0) + (g << 8) + (b << 16);
-		*table++ = v;
-	}
-	d_8to24table[255] &= 0;				// 255 is transparent
-
-	// JACK: 3D distance calcs - k is last closest, l is the distance.
-
-	if (palflag)
-		return;
-	palflag = true;
-
-	COM_FOpenFile ("glquake/15to8.pal", &f);
-	if (f) {
-		Qread (f, d_15to8table, 1 << 15);
-		Qclose (f);
-	} else {
-		for (i = 0; i < (1 << 15); i++) {
-			/* Maps 000000000000000 000000000011111 = Red  = 0x1F
-			   000001111100000 = Blue = 0x03E0 111110000000000 = Grn  =
-			   0x7C00 */
-			r = ((i & 0x1F) << 3) + 4;
-			g = ((i & 0x03E0) >> 2) + 4;
-			b = ((i & 0x7C00) >> 7) + 4;
-			pal = (unsigned char *) d_8to24table;
-			for (v = 0, k = 0, bestdist = 10000.0; v < 256; v++, pal += 4) {
-				r1 = (int) r - (int) pal[0];
-				g1 = (int) g - (int) pal[1];
-				b1 = (int) b - (int) pal[2];
-				dist = sqrt (((r1 * r1) + (g1 * g1) + (b1 * b1)));
-				if (dist < bestdist) {
-					k = v;
-					bestdist = dist;
-				}
-			}
-			d_15to8table[i] = k;
-		}
-		snprintf (s, sizeof (s), "%s/glquake/15to8.pal", com_gamedir);
-		COM_CreatePath (s);
-		if ((f = Qopen (s, "wb")) != NULL) {
-			Qwrite (f, d_15to8table, 1 << 15);
-			Qclose (f);
-		}
-	}
 }
 
 void
@@ -1371,50 +1229,6 @@ VID_InitFullDIB (HINSTANCE hInstance)
 		Con_Printf ("No fullscreen DIB modes found\n");
 }
 
-qboolean
-VID_Is8bit ()
-{
-	return is8bit;
-}
-
-void
-VID_Init8bitPalette (void)
-{
-	int 		i;
-	GLubyte 	thePalette[256 * 3];
-	GLubyte		*oldPalette, *newPalette;
-
-	vid_use8bit =
-		Cvar_Get ("vid_use8bit", "0", CVAR_ROM, NULL, "Use 8-bit shared palettes.");
-
-        if (!vid_use8bit->int_val) return;
-
-        if (is8bit) {           // already done...
-		return;
-	}
-
-	if (QFGL_ExtensionPresent ("GL_EXT_shared_texture_palette")) {
-		if (!(qglColorTableEXT = QFGL_ExtensionAddress ("glColorTableEXT"))) {
-			return;
-		}
-
-		Con_Printf ("8-bit GL extension enabled.\n");
-
-		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
-		oldPalette = (GLubyte *) d_8to24table;	// d_8to24table3dfx;
-		newPalette = thePalette;
-		for (i = 0; i < 256; i++) {
-			*newPalette++ = *oldPalette++;
-			*newPalette++ = *oldPalette++;
-			*newPalette++ = *oldPalette++;
-			oldPalette++;
-		}
-		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB,
-							GL_UNSIGNED_BYTE, (GLvoid *) thePalette);
-		is8bit = true;
-	}
-}
-
 /*
 	VID_Init
 */
@@ -1604,10 +1418,11 @@ VID_Init (unsigned char *palette)
 	vid.fullbright = 256 - LittleLong (*((int *) vid.colormap + 2048));
 
 #ifdef SPLASH_SCREEN
-        if(hwnd_dialog)
-                DestroyWindow (hwnd_dialog);
+	if(hwnd_dialog)
+			DestroyWindow (hwnd_dialog);
 #endif
 
+	GL_Common_Init_Cvars ();
 	VID_InitGamma (palette);
 	VID_SetPalette (palette);
 
