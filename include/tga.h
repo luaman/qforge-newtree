@@ -32,19 +32,19 @@
 #include "gcc_attr.h"
 #include "qtypes.h"
 
-#if (__BORLANDC__ < 0x550)
-#define __attribute__(x)
-#pragma option -a1
-#else
-#if _MSC_VER || __BORLANDC__
-#define __attribute__(x)
-#pragma pack(push, tgainclude)
-#pragma pack(1)
-#else
 #ifndef __GNUC__
-#error do some data packing magic here (#pragma pack?)
-#endif
-#endif
+# if defined (__BORLANDC__) || defined (_MSC_VER)
+#  if (defined(__BORLANDC__) && (__BORLANDC__ < 0x550))
+#   define __attribute__(x)
+#   pragma option -a1
+#  else
+#   define __attribute__(x)
+#   pragma pack(push, tgainclude)
+#   pragma pack(1)
+#  endif
+# else
+#  error do some data packing magic here (#pragma pack?)
+# endif
 #endif
 
 typedef struct _TargaHeader {
@@ -62,12 +62,12 @@ typedef struct _TargaHeader {
 	unsigned char attributes __attribute__((packed));
 } TargaHeader;
 
-#if (__BORLANDC__ < 0x550)
-#pragma option -a4
-#else
-#if _MSC_VER || __BORLANDC__
-#pragma pack(pop, tgainclude)
-#endif
+#if defined (__BORLANDC__) || defined (_MSC_VER)
+# if (defined(__BORLANDC__) && (__BORLANDC__ < 0x550))
+#  pragma option -a4
+# else
+#  pragma pack(pop, tgainclude)
+# endif
 #endif
 
 byte *LoadTGA (QFile *fin);
