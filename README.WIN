@@ -29,10 +29,7 @@ To compile under "free" Borland C++, see couple of paragraphs below.
 COMPILING QUAKEFORGE TREE (http://quake.sourceforge.net)
 UNDER BORLAND C++ 5.02 and 5.5
 
-For extra information on this subject see:
-http://personal.inet.fi/cool/quake1
-
-0) Get latest Quakeforge CVS snapshot. (if you feel brave)
+0) Get latest Quakeforge CVS snapshot if you don't have it already.
 
 1) Get and install latest SCITECH MGL (http://www.scitechsoft.com), you
 don't need to install sources and demo's, just libraries and includes
@@ -42,9 +39,8 @@ don't need to install sources and demo's, just libraries and includes
 (borland lib: http://www.microsoft.com/downloads/release.asp?ReleaseID=17051)
 
 3) If you don't have Borland complier (5.02 or 5.5), get and install
-FREE Borland C++ complier 5.5. 
+FREE Borland C++ complier 5.5.
 (http://www.borland.com/bcppbuilder/freecompiler/)
-(http://personal.inet.fi/cool/quake1/)
 
 4) For GL targets, you'll need to have import library for OPENGL stuffs
 one coming with Borland C++ itself is screwed! 
@@ -54,7 +50,7 @@ implib -c -f opengl32.lib c:\windows\system\opengl32.dll
 5) Borland preprocessor can't process quake .S files. You need to get
 .ASM files or use some other complier to preprocess them. .ASM files
 must be placed on SOURCE dir.
-(http://personal.inet.fi/cool/quake1/qf-asms.zip)
+(http://www.saunalahti.fi/~mipes/qf-asms.zip)
 
 6) You need to have either MASM or TASM to compile ASM files.
 (For MASM: http://www.microsoft.com/ddk/download/98/BINS_DDK.EXE)
@@ -70,3 +66,12 @@ make -fqf-client-wgl
 ...
 and you should be on your way.
 
+-----------------------------------------------------------------------
+
+For BC 5.5 complier and linker options or for using BC 5.5 under 5.02 IDE:
+http://nextera.sirma.bg/knowledgebase/
+
+For FREE IDE for your BC 5.5:
+http://www.objectcentral.com/vide.htm
+
+-----------------------------------------------------------------------
