@@ -441,7 +441,7 @@ R_TeleportSplash (vec3_t org)
 				VectorNormalize (dir);
 				vel = 50 + (rand () & 63);
 				VectorScale (dir, vel, pvel);
-				particle_new (pt_grav, part_tex_dot, porg, 1.5, pvel,
+				particle_new (pt_grav, part_tex_dot, porg, 0.6, pvel,
 							  (cl.time + 0.2 + (rand () & 7) * 0.02),
 							  (7 + (rand () & 7)), 255);
 			}
