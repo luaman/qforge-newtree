@@ -107,6 +107,7 @@ extern cvar_t	*r_maxedges;
 /* extern cvar_t	r_numedges;
  CVAR_FIXME */
 extern cvar_t	*r_numedges;
+extern cvar_t	*crosshair;
 
 #define XCENTERING	(1.0 / 2.0)
 #define YCENTERING	(1.0 / 2.0)

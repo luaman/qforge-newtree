@@ -921,8 +921,8 @@ cl.simangles[ROLL] = 0;	// FIXME @@@
 
 /* 	if (crosshair.value)
  CVAR_FIXME */
-	if (crosshair->value)
-		Draw_Crosshair ();
+//	if (crosshair->value)
+//		Draw_Crosshair ();
 }
 
 //============================================================================
