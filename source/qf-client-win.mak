@@ -130,6 +130,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\locs.obj\
    $(ZLIB)\zlib.lib\
    $(OBJS)\model.obj\
    $(OBJS)\model_brush.obj\
@@ -247,6 +248,7 @@ $(EXE)\qf-client-win.exe : $(DEPEND)
   $(TLINK32) /v @&&|
  $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\locs.obj+
 $(ZLIB)\zlib.lib+
 $(OBJS)\model.obj+
 $(OBJS)\model_brush.obj+
@@ -362,6 +364,11 @@ $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SCITECHROOT)\lib\win32\bc5\mglfx.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
+
+|
+$(OBJS)\locs.obj :  $(QFROOT)\source\locs.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\locs.c
 
 |
 $(OBJS)\model.obj :  $(QFROOT)\source\model.c
