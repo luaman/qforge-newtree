@@ -39,6 +39,8 @@
 # include <sys/types.h>
 #endif
 
+#include "stdlib.h"
+
 #ifndef max
 # define max(a,b) ((a) > (b) ? (a) : (b))
 #endif
