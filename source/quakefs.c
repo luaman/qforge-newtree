@@ -570,7 +570,6 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 	for (search = com_searchpaths; search; search = search->next) {
 		// is the element a pak file?
 		if (search->pack) {
-#if 1
 			packfile_t *packfile;
 
 			packfile = (packfile_t*)Hash_Find (search->pack->file_hash,
@@ -591,37 +590,6 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 				file_from_pak = 1;
 				return com_filesize;
 			}
-#else
-			// look through all the pak file elements
-			int         i;
-			pack_t     *pak;
-			pak = search->pack;
-			for (i = 0; i < pak->numfiles; i++) {
-				char       *fn = 0;
-
-#ifdef HAVE_ZLIB
-				if (!strncmp (pak->files[i].name, filename, filenamelen)) {
-					if (!pak->files[i].name[filenamelen])
-						fn = filename;
-					else if (!strcmp (pak->files[i].name, gzfilename))
-						fn = gzfilename;
-				}
-#else
-				if (!strcmp (pak->files[i].name, filename))
-					fn = filename;
-#endif
-				if (fn) {				// found it!
-					Con_DPrintf ("PackFile: %s : %s\n", pak->filename, fn);
-					// open a new file on the pakfile
-					strncpy (foundname, fn, MAX_OSPATH);
-					*gzfile =
-						COM_OpenRead (pak->filename, pak->files[i].filepos,
-									  pak->files[i].filelen, zip);
-					file_from_pak = 1;
-					return com_filesize;
-				}
-			}
-#endif
 		} else {
 			// check a file in the directory tree
 			snprintf (netpath, sizeof (netpath), "%s/%s", search->filename,
