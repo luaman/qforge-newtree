@@ -37,7 +37,7 @@
 #include "asm_draw.h"
 #include "d_ifacea.h"
 
-#if	USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 
 //----------------------------------------------------------------------
 // 8-bpp horizontal span drawing code for polygons, with no transparency and

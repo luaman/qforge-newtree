@@ -36,7 +36,7 @@
 #include "asm_draw.h"
 #include "d_ifacea.h"
 
-#if	USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 
 // !!! if this is changed, it must be changed in d_polyse.c too !!!
 #define DPS_MAXSPANS			MAXHEIGHT+1	

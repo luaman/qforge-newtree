@@ -36,7 +36,7 @@
 #include "d_ifacea.h"
 #include "asm_draw.h"
 
-#if	USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 
 //----------------------------------------------------------------------
 // 8-bpp particle drawing code.

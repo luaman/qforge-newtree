@@ -34,7 +34,7 @@
 #include "asm_draw.h"
 #include "d_ifacea.h"
 
-#if	USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 
 	.data
 

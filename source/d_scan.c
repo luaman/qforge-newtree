@@ -98,7 +98,7 @@ void D_WarpScreen (void)
 }
 
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 =============
@@ -254,7 +254,7 @@ void Turbulent8 (espan_t *pspan)
 }
 
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 =============
@@ -392,7 +392,7 @@ void D_DrawSpans8 (espan_t *pspan)
 #endif
 
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 =============

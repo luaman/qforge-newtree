@@ -32,7 +32,7 @@
 #endif
 #include "quakedef.h"
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 ================

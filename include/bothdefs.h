@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // defs common to client and server
 
-#if USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 #define UNALIGNED_OK	1	// set to 0 if unaligned accesses are not supported
 #else
 #define UNALIGNED_OK	0

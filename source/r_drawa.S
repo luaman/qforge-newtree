@@ -36,7 +36,7 @@
 #include "asm_draw.h"
 #include "d_ifacea.h"
 
-#if	USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 
 // !!! if these are changed, they must be changed in r_draw.c too !!!
 #define FULLY_CLIPPED_CACHED	0x80000000

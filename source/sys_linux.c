@@ -183,7 +183,7 @@ void Sys_Quit (void)
 
 void Sys_Init(void)
 {
-#if USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 	Sys_SetFPCW();
 #endif
 }
@@ -386,7 +386,7 @@ char *Sys_ConsoleInput(void)
 	return NULL;
 }
 
-#if !USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 void Sys_HighFPPrecision (void)
 {
 }

@@ -35,7 +35,7 @@
 #include "quakeasm.h"
 #include "asm_draw.h"
 
-#if	USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 
 	.data
 

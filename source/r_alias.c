@@ -461,7 +461,7 @@ void R_AliasTransformFinalVert (finalvert_t *fv, auxvert_t *av,
 }
 
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 ================
@@ -760,7 +760,7 @@ void R_AliasDrawModel (alight_t *plighting)
 	}
 	else
 	{
-#if USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 		D_Aff8Patch (currententity->colormap);
 #endif
 	}

@@ -390,7 +390,7 @@ void R_TransformFrustum (void)
 }
 
 
-#if !USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 ================

@@ -56,7 +56,7 @@ void D_StartParticles (void)
 }
 
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 ==============

@@ -170,7 +170,7 @@ void R_BeginEdgeFrame (void)
 }
 
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 ==============
@@ -216,7 +216,7 @@ addedge:
 #endif	// !USE_INTEL_ASM
 	
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 ==============
@@ -236,7 +236,7 @@ void R_RemoveEdges (edge_t *pedge)
 #endif	// !USE_INTEL_ASM
 
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 ==============
@@ -462,7 +462,7 @@ void R_TrailingEdge (surf_t *surf, edge_t *edge)
 }
 
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 ==============

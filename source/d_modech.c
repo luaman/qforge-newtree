@@ -48,7 +48,7 @@ D_Patch
 */
 void D_Patch (void)
 {
-#if USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 
 	static qboolean protectset8 = false;
 

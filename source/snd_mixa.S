@@ -34,7 +34,7 @@
 #include "asm_i386.h"
 // #include "quakeasm.h"
 
-#if	USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 
 	.text
 

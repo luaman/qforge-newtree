@@ -177,7 +177,7 @@ void R_DrawSurfaceBlock16 (void);
 void R_DrawSurfaceBlock8 (void);
 texture_t *R_TextureAnimation (texture_t *base);
 
-#if	USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 
 void R_DrawSurfaceBlock8_mip0 (void);
 void R_DrawSurfaceBlock8_mip1 (void);

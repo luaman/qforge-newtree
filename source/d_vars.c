@@ -27,7 +27,7 @@
 */
 // r_vars.c: global refresh variables
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

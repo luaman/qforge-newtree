@@ -79,7 +79,7 @@ int				r_ceilv1;
 qboolean	r_lastvertvalid;
 
 
-#if	!USE_INTEL_ASM
+#ifndef USE_INTEL_ASM
 
 /*
 ================

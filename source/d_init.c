@@ -173,7 +173,7 @@ void D_SetupFrame (void)
  CVAR_FIXME */
 		d_scalemip[i] = basemip[i] * d_mipscale->value;
 
-#if	USE_INTEL_ASM
+#ifdef USE_INTEL_ASM
 /* 				if (d_subdiv16.value)
  CVAR_FIXME */
 				if (d_subdiv16->value)
