@@ -42,6 +42,8 @@ volatile dma_t *shm = 0;
 cvar_t     *loadas8bit;
 int         paintedtime;				// sample PAIRS
 
+qboolean    snd_initialized;
+
 
 cvar_t     *bgmvolume;
 cvar_t     *volume;
