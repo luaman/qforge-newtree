@@ -177,19 +177,18 @@ int main(int argc, char *argv[])
 
 	SV_Init (&parms);
 
-// run one frame immediately for first heartbeat
+	// run one frame immediately for first heartbeat
 	SV_Frame (0.1);		
 
-//
-// main loop
-//
+	//
+	// main loop
+	//
 	oldtime = Sys_DoubleTime () - 0.1;
-	while (1)
-	{
-	// select on the net socket and stdin
-	// the only reason we have a timeout at all is so that if the last
-	// connected client times out, the message would not otherwise
-	// be printed until the next event.
+	while (1) {
+		// select on the net socket and stdin
+		// the only reason we have a timeout at all is so that if the last
+		// connected client times out, the message would not otherwise
+		// be printed until the next event.
 		FD_ZERO(&fdset);
 		if (do_stdin)
 			FD_SET(0, &fdset);
@@ -200,14 +199,15 @@ int main(int argc, char *argv[])
 			continue;
 		stdin_ready = FD_ISSET(0, &fdset);
 
-	// find time passed since last cycle
+		// find time passed since last cycle
 		newtime = Sys_DoubleTime ();
 		time = newtime - oldtime;
 		oldtime = newtime;
 		
 		SV_Frame (time);		
 		
-	// extrasleep is just a way to generate a fucked up connection on purpose
+		// extrasleep is just a way to generate a fucked up connection on
+		// purpose
 		if (sys_extrasleep->value)
 			usleep (sys_extrasleep->value);
 	}	
