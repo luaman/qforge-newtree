@@ -62,6 +62,11 @@ Sys_Quit (void)
 {
 	Host_Shutdown ();
 	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~O_NONBLOCK);
+
+#ifdef PACKET_LOGGING
+        Net_LogStop();
+#endif
+
 	exit (0);
 }
 

@@ -258,6 +258,10 @@ Sys_Quit (void)
 	if (qwclsemaphore)
 		CloseHandle (qwclsemaphore);
 
+#ifdef PACKET_LOGGING
+        Net_LogStop();
+#endif
+
 	exit (0);
 }
 
