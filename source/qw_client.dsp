@@ -45,7 +45,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W1 /GX /O2 /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "_WINDOWS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /c
+# ADD CPP /nologo /GX /O2 /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "_WINDOWS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x419 /d "NDEBUG"
@@ -71,7 +71,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W1 /Gm /GX /ZI /Od /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /FR /YX /FD /GZ /c
+# ADD CPP /nologo /Gm /GX /ZI /Od /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /FR /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x419 /d "_DEBUG"
@@ -98,7 +98,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /I "../scitech/include" /I "../include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "USE_INTEL_ASM" /YX /FD /GZ /c
-# ADD CPP /nologo /W1 /Gm /GX /ZI /Od /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /GZ /c
+# ADD CPP /nologo /Gm /GX /ZI /Od /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x419 /d "_DEBUG"
@@ -125,7 +125,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /I "../scitech/include" /I "../include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "USE_INTEL_ASM" /YX /FD /c
-# ADD CPP /nologo /W1 /GX /O2 /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /c
+# ADD CPP /nologo /GX /O2 /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x419 /d "NDEBUG"
@@ -718,25 +718,6 @@ SOURCE=.\gl_rsurf.c
 # Begin Source File
 
 SOURCE=.\gl_screen.c
-
-!IF  "$(CFG)" == "qw_client - Win32 Release"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\gl_test.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 
