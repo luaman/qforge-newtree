@@ -1636,7 +1636,6 @@ void Host_Init (quakeparms_t *parms)
 		Sys_Error ("Only %4.1f megs of memory reported, can't execute game", parms->memsize / (float)0x100000);
 
 	Memory_Init (parms->membase, parms->memsize);
-	Sys_Init ();
 	Cvar_Init ();
 
 	Cbuf_Init ();
