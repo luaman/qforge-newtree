@@ -41,6 +41,7 @@ qf_client_svga_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(sv
 qf_client_x11_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(x11_SOURCES)
 qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
 
+qf_client_ggi_LDADD=	$(GGI_LIBS)
 qf_client_svga_LDADD=	$(SVGA_LIBS)
 qf_client_x11_LDADD=	$(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB)
 qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS)

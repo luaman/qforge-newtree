@@ -156,6 +156,36 @@ fi
 dnl Checks for working -lm
 AC_CHECK_LIB(m, pow,, AC_MSG_ERROR([math library (-lm) appears broken]))
 
+dnl Checks for LibGGI support
+AC_ARG_WITH(ggi,
+[  --with-ggi[=DIR]       use LibGGI found in DIR],
+HAVE_GGI=$withval, HAVE_GGI=auto)
+if test "x$HAVE_GGI" != xno; then
+	if test "x$HAVE_GGI" != xauto; then
+		GGI_CFLAGS="$GGI_CFLAGS= -I$withval/include"
+		GGI_LIBS="$GGI_LIBS -L$withval/lib"
+		dnl The default system location is /usr/include or /usr/local/include
+		dnl and we (obviously) do not need to set CFLAGS for that
+	fi
+	save_CPPFLAGS="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $GGI_CFLAGS"
+	AC_CHECK_HEADER(ggi/ggi.h, HAVE_GGI=yes, HAVE_GGI=no)
+	CPPFLAGS="$save_CPPFLAGS"
+
+	dnl Make sure -lggi works
+	if test "x$HAVE_GGI" = xyes; then
+		AC_CHECK_LIB(ggi, ggiEventsQueued, GGI_LIBS="$GGI_LIBS -lggi"
+			HAVE_GGI=yes, HAVE_GGI=no, [$GGI_LIBS]
+		)
+	fi 
+	if test "x$HAVE_GGI" != xyes; then
+		GGI_CFLAGS="" GGI_LIBS=""
+	fi
+fi
+AC_SUBST(HAVE_GGI)
+AC_SUBST(GGI_CFLAGS)
+AC_SUBST(GGI_LIBS)
+
 dnl Checks for SVGALib support
 AC_ARG_WITH(svga,
 [  --with-svga[=DIR]       use SVGALib found in DIR],
@@ -498,6 +528,9 @@ AC_SUBST(SV_SYS_SRC)
 
 if test "x$HAVE_SVGA" = xyes; then
 	TARGETS="$TARGETS qf-client-svga"
+fi
+if test "x$HAVE_GGI" = xyes; then
+	TARGETS="$TARGETS qf-client-ggi"
 fi
 if test "x$HAVE_X" = xyes; then
 	TARGETS="$TARGETS qf-client-x11"
