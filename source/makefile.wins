@@ -35,7 +35,7 @@ SV_sources=\
   sv_user.obj \
   sv_ccmds.obj \
   world.obj \
-  net_wins.obj \
+  net_udp.obj \
   sv_sys_win.obj \
   sys_win.obj \
   sv_cvar.obj

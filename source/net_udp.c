@@ -4,6 +4,7 @@
 	(description)
 
 	Copyright (C) 1996-1997  Id Software, Inc.
+	Copyright (C) 2000       Marcus Sundberg [mackan@stacken.kth.se]
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -32,40 +33,64 @@
 #include "sys.h"
 #include "quakedef.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <sys/param.h>
-#include <sys/ioctl.h>
-#include <sys/uio.h>
-#include <arpa/inet.h>
+#include <stdio.h>
 #include <errno.h>
 
-#if defined(sun)
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
-#ifdef sun
-#include <sys/filio.h>
+#include <sys/types.h>
+
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h>
+#endif
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
+#ifdef HAVE_SYS_FILIO_H
+# include <sys/filio.h>
+#endif
+
+#ifdef _WIN32
+# include <winquake.h>
+# undef EWOULDBLOCK
+# define EWOULDBLOCK    WSAEWOULDBLOCK
 #endif
 
 #ifdef NeXT
 #include <libc.h>
 #endif
 
+#ifndef MAXHOSTNAMELEN
+# define MAXHOSTNAMELEN	512
+#endif
+
 netadr_t	net_local_adr;
 
 netadr_t	net_from;
 sizebuf_t	net_message;
-int			net_socket;			// non blocking, for receives
-int			net_send_socket;	// blocking, for sends
+int			net_socket;
 
-#define	MAX_UDP_PACKET	8192
+#define	MAX_UDP_PACKET	(MAX_MSGLEN*2)
 byte		net_message_buffer[MAX_UDP_PACKET];
 
-int gethostname (char *, int);
-int close (int);
+#ifdef _WIN32
+extern qboolean is_server;
+WSADATA         winsockdata;
+#endif
 
 //=============================================================================
 
@@ -170,6 +195,9 @@ qboolean	NET_StringToAdr (char *s, netadr_t *a)
 qboolean NET_IsClientLegal(netadr_t *adr)
 {
 #if 0
+	struct sockaddr_in sadr;
+	int newsocket;
+
 	if (adr->ip[0] == 127)
 		return false; // no local connections period
 
@@ -203,18 +231,35 @@ qboolean NET_GetPacket (void)
 	int		fromlen;
 
 	fromlen = sizeof(from);
-	ret = recvfrom (net_socket, net_message_buffer, sizeof(net_message_buffer), 0, (struct sockaddr *)&from, &fromlen);
+	ret = recvfrom(net_socket, net_message_buffer, sizeof(net_message_buffer),
+				   0, (struct sockaddr *)&from, &fromlen);
+	SockadrToNetadr(&from, &net_from);
+
 	if (ret == -1) {
-		if (errno == EWOULDBLOCK)
+#ifdef _WIN32
+		int err = WSAGetLastError();
+
+		if (err == WSAEMSGSIZE) {
+			Con_Printf ("Warning:  Oversize packet from %s\n",
+				NET_AdrToString (net_from));
 			return false;
-		if (errno == ECONNREFUSED)
-			return false;
-		Sys_Printf ("NET_GetPacket: %s\n", strerror(errno));
+		}
+#else /* _WIN32 */
+		int err = errno;
+
+		if (err == ECONNREFUSED) return false;
+#endif /* _WIN32 */
+		if (err == EWOULDBLOCK)	return false;
+		Sys_Printf ("NET_GetPacket: %s\n", strerror(err));
 		return false;
 	}
 
 	net_message.cursize = ret;
-	SockadrToNetadr (&from, &net_from);
+	if (ret == sizeof(net_message_buffer))	{
+		Con_Printf ("Oversize packet from %s\n",
+			    NET_AdrToString (net_from));
+		return false;
+	}
 
 	return ret;
 }
@@ -230,10 +275,20 @@ void NET_SendPacket (int length, void *data, netadr_t to)
 
 	ret = sendto (net_socket, data, length, 0, (struct sockaddr *)&addr, sizeof(addr) );
 	if (ret == -1) {
-		if (errno == EWOULDBLOCK)
-			return;
-		if (errno == ECONNREFUSED)
-			return;
+#ifdef _WIN32
+		int err = WSAGetLastError();
+
+		if (err == WSAEADDRNOTAVAIL) {
+			if (is_server) Con_DPrintf("NET_SendPacket Warning: %i\n", err);
+			else Con_Printf ("NET_SendPacket ERROR: %i\n", err);
+		}
+#else /* _WIN32 */
+		int err = errno;
+
+		if (err == ECONNREFUSED) return;
+#endif /* _WIN32 */
+		if (err == EWOULDBLOCK) return;
+
 		Sys_Printf ("NET_SendPacket: %s\n", strerror(errno));
 	}
 }
@@ -244,12 +299,17 @@ int UDP_OpenSocket (int port)
 {
 	int newsocket;
 	struct sockaddr_in address;
-	qboolean _true = true;
+#ifdef _WIN32
+#define ioctl ioctlsocket
+	unsigned long _true = true;
+#else
+	int _true = 1;
+#endif
 	int i;
 
 	if ((newsocket = socket (PF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
 		Sys_Error ("UDP_OpenSocket: socket:", strerror(errno));
-	if (ioctl (newsocket, FIONBIO, (char *)&_true) == -1)
+	if (ioctl (newsocket, FIONBIO, &_true) == -1)
 		Sys_Error ("UDP_OpenSocket: ioctl FIONBIO:", strerror(errno));
 	address.sin_family = AF_INET;
 //ZOID -- check for interface binding option
@@ -295,6 +355,16 @@ NET_Init
 */
 void NET_Init (int port)
 {
+#ifdef _WIN32
+	WORD	wVersionRequested;
+	int		r;
+
+	wVersionRequested = MAKEWORD(1, 1);
+
+	r = WSAStartup(MAKEWORD(1, 1), &winsockdata);
+	if (r)
+		Sys_Error ("Winsock initialization failed.");
+#endif /* _WIN32 */
 	//
 	// open the single socket to be used for all communications
 	//
@@ -321,6 +391,10 @@ NET_Shutdown
 */
 void	NET_Shutdown (void)
 {
+#ifdef _WIN32
+	closesocket(net_socket);
+	WSACleanup();
+#else
 	close (net_socket);
+#endif
 }
-

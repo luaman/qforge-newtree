@@ -85,7 +85,7 @@ CL_platform=\
   sys_win.obj \
   cl_sys_win.obj \
   cd_win.obj \
-  net_wins.obj
+  net_udp.obj
 
 CL_asm=\
 #  cl_math.asm \

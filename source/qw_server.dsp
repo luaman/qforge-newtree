@@ -123,7 +123,7 @@ SOURCE=.\net_com.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\net_wins.c
+SOURCE=.\net_udp.c
 # End Source File
 # Begin Source File
 
