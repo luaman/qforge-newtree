@@ -1138,10 +1138,6 @@ CL_MuzzleFlash (void)
 	if ((unsigned int) (i - 1) >= MAX_CLIENTS)
 		return;
 
-	// don't draw our own muzzle flash in gl if flashblending
-	if (i - 1 == cl.playernum && gl_flashblend->int_val)
-		return;
-
 	pl = &cl.frames[parsecountmod].playerstate[i - 1];
 
 	dl = CL_AllocDlight (i);
