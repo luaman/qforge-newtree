@@ -1690,6 +1690,7 @@ Host_Init (void)
 	cls.state = ca_disconnected;
 	CDAudio_Init ();
 	Sbar_Init ();
+	Skin_Init ();
 	CL_Init ();
 	IN_Init ();
 #endif
