@@ -256,23 +256,19 @@ VID_SetWindowedMode (int modenum)
 	height = rect.bottom - rect.top;
 
 	// Create the DIB window
-        mainwindow = CreateWindowEx (ExWindowStyle,
-                                                                "QuakeForge",
-                                                                "GLQuakeWorld",
-								WindowStyle,
-								rect.left, rect.top,
-								width,
-								height, NULL, NULL, global_hInstance, NULL);
+    mainwindow = CreateWindowEx (ExWindowStyle, "QuakeForge", "GLQuakeWorld",
+		WindowStyle, rect.left, rect.top, width, height, NULL, NULL,
+		global_hInstance, NULL);
 
-        if (!mainwindow)
+	if (!mainwindow)
 		Sys_Error ("Couldn't create DIB window");
 
-	// Center and show the DIB window
-        CenterWindow (mainwindow, WindowRect.right - WindowRect.left,
-				  WindowRect.bottom - WindowRect.top, false);
+// Center and show the DIB window
+	CenterWindow (mainwindow, WindowRect.right - WindowRect.left,
+	WindowRect.bottom - WindowRect.top, false);
 
-        ShowWindow (mainwindow, SW_SHOWDEFAULT);
-        UpdateWindow (mainwindow);
+	ShowWindow (mainwindow, SW_SHOWDEFAULT);
+	UpdateWindow (mainwindow);
 
 	modestate = MS_WINDOWED;
 
@@ -348,27 +344,23 @@ VID_SetFullDIBMode (int modenum)
 	height = rect.bottom - rect.top;
 
 	// Create the DIB window
-        mainwindow = CreateWindowEx (ExWindowStyle,
-                                                                "QuakeForge",
-                                                                "GLQuakeWorld",
-								WindowStyle,
-								rect.left, rect.top,
-								width,
-								height, NULL, NULL, global_hInstance, NULL);
+	mainwindow = CreateWindowEx (ExWindowStyle, "QuakeForge", "GLQuakeWorld",
+		WindowStyle, rect.left, rect.top, width, height, NULL, NULL,
+		global_hInstance, NULL);
 
-        if (!mainwindow)
+	if (!mainwindow)
 		Sys_Error ("Couldn't create DIB window");
 
-        ShowWindow (mainwindow, SW_SHOWDEFAULT);
-        UpdateWindow (mainwindow);
+	ShowWindow (mainwindow, SW_SHOWDEFAULT);
+	UpdateWindow (mainwindow);
 
 	// Because we have set the background brush for the window to NULL
 	// (to avoid flickering when re-sizing the window on the desktop), we
 	// clear the window to black when created, otherwise it will be
 	// empty while Quake starts up.
-        hdc = GetDC (mainwindow);
+	hdc = GetDC (mainwindow);
 	PatBlt (hdc, 0, 0, WindowRect.right, WindowRect.bottom, BLACKNESS);
-        ReleaseDC (mainwindow, hdc);
+	ReleaseDC (mainwindow, hdc);
 
 	if (vid.conheight > modelist[modenum].height)
 		vid.conheight = modelist[modenum].height;
@@ -897,31 +889,31 @@ AppActivate (BOOL fActive, BOOL minimize)
 		sound_active = true;
 	}
 
-        if (fActive) {
+	if (fActive) {
 		if (modestate == MS_FULLDIB) {
 			IN_ActivateMouse ();
 			IN_HideMouse ();
 			if (vid_canalttab && vid_wassuspended) {
 				vid_wassuspended = false;
 
-                                if (ChangeDisplaySettings (&gdevmode, CDS_FULLSCREEN) !=
-                                        DISP_CHANGE_SUCCESSFUL) {
-                                                IN_ShowMouse ();
-                                                Sys_Error ("Couldn't set fullscreen DIB mode (try upgrading your video drivers)");
-                                }
-                                ShowWindow (mainwindow, SW_SHOWNORMAL);
+				if (ChangeDisplaySettings (&gdevmode, CDS_FULLSCREEN) !=
+					DISP_CHANGE_SUCCESSFUL) {
+					IN_ShowMouse ();
+					Sys_Error ("Couldn't set fullscreen DIB mode (try upgrading your video drivers)");
+				}
+				ShowWindow (mainwindow, SW_SHOWNORMAL);
 
-                                // Fix for alt-tab bug in NVidia drivers
-                                MoveWindow(mainwindow,0,0,gdevmode.dmPelsWidth,gdevmode.dmPelsHeight,false);
+				// Fix for alt-tab bug in NVidia drivers
+				MoveWindow(mainwindow,0,0,gdevmode.dmPelsWidth,gdevmode.dmPelsHeight,false);
 			}
 		}
-			else if ((modestate == MS_WINDOWED) && _windowed_mouse->int_val
-					 && key_dest == key_game) {
+		else if ((modestate == MS_WINDOWED) && _windowed_mouse->int_val
+			&& key_dest == key_game) {
 			IN_ActivateMouse ();
 			IN_HideMouse ();
 		}
 
-        } else {
+	} else {
 		if (modestate == MS_FULLDIB) {
 			IN_DeactivateMouse ();
 			IN_ShowMouse ();
@@ -1040,11 +1032,9 @@ MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_DESTROY:
-			{
-                                if (mainwindow)
-                                        DestroyWindow (mainwindow);
-				PostQuitMessage (0);
-			}
+			if (mainwindow)
+				DestroyWindow (mainwindow);
+			PostQuitMessage (0);
 			break;
 
 		case MM_MCINOTIFY:
@@ -1227,7 +1217,7 @@ VID_InitDIB (HINSTANCE hInstance)
 	wc.hCursor = LoadCursor (NULL, IDC_ARROW);
 	wc.hbrBackground = NULL;
 	wc.lpszMenuName = 0;
-        wc.lpszClassName = "QuakeForge";
+	wc.lpszClassName = "QuakeForge";
 
 	if (!RegisterClass (&wc))
 		Sys_Error ("Couldn't register window class");
@@ -1784,10 +1774,10 @@ void
 VID_SetCaption (char *text)
 {
 	if (text && *text) {
-		char       *temp = strdup (text);
+		char *temp = strdup (text);
 
 		SetWindowText (mainwindow,
-					   (LPSTR) va ("%s %s: %s", PROGRAM, VERSION, temp));
+			(LPSTR) va ("%s %s: %s", PROGRAM, VERSION, temp));
 		free (temp);
 	} else {
 		SetWindowText (mainwindow, (LPSTR) va ("%s %s", PROGRAM, VERSION));
