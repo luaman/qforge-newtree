@@ -506,7 +506,7 @@ Parse_Server_Packet ()
 					break;
 				case svc_print:
 					// fixme i==PRINT_CHAT
-					Net_LogPrintf (" %d", MSG_ReadByte ());
+					Net_LogPrintf (" [%d]", MSG_ReadByte ());
 					Net_LogPrintf (" %s", MSG_ReadString ());
 					break;
 				case svc_stufftext:
