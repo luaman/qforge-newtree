@@ -75,12 +75,20 @@ Qexpand_squiggle (const char *path, char *dest)
 		strcpy (dest, path);
 		return;
 	}
-#ifndef _WIN32
+
+#ifdef _WIN32
+	// LordHavoc: first check HOME to duplicate previous version behavior
+	// (also handy if someone wants it somewhere other than their
+	//  windows directory)
+	home = getenv ("HOME");
+	if (!home || !home[0])
+		home = getenv ("WINDIR");
+#else
 	if ((pwd_ent = getpwuid (getuid ()))) {
 		home = pwd_ent->pw_dir;
 	} else
-#endif
 		home = getenv ("HOME");
+#endif
 
 	if (home) {
 		strcpy (dest, home);
@@ -349,7 +357,7 @@ Qeof (QFile *file)
 
 	Qgetline
 
-	Dynamic lenght version of Qgets. DO NOT free the buffer.
+	Dynamic length version of Qgets. DO NOT free the buffer.
 
 */
 char *

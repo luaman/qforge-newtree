@@ -256,7 +256,7 @@
 #define FS_USERPATH "."
 
 /* Location of QuakeForge's global config file */
-#define FS_GLOBALCFG ".\\global.cfg"
+#define FS_GLOBALCFG "~/quakeforge.conf"
 
 #define strcasecmp(s1, s2) stricmp((s1), (s2))
 #define strncasecmp(s1, s2, n) strnicmp((s1), (s2), (n))
