@@ -1877,10 +1877,10 @@ void SV_Init (quakeparms_t *parms)
 
 	host_initialized = true;
 	
-	Con_Printf ("Exe: "__TIME__" "__DATE__"\n");
+//	Con_Printf ("Exe: "__TIME__" "__DATE__"\n");
 	Con_Printf ("%4.1f megabyte heap\n",parms->memsize/ (1024*1024.0));	
 
-	Con_Printf ("\nServer Version %s (Build %04d)\n\n", QW_VERSION, build_number());
+	Con_Printf ("\nQuakeForge Version %s (Build %04d)\n\n", VERSION, build_number());
 
 	Con_Printf ("======== %s Initialized ========\n", PROGRAM);
 	
@@ -1894,3 +1894,4 @@ void SV_Init (quakeparms_t *parms)
 	if (sv.state == ss_dead)
 		SV_Error ("Couldn't spawn a server");
 }
+

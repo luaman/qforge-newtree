@@ -41,8 +41,32 @@
 #include <string.h>
 #include <ggi/ggi.h>
 
-#include "sys.h"
+#include "bothdefs.h"   // needed by: common.h, net.h, client.h
+
 #include "quakedef.h"
+
+#include "bspfile.h"    // needed by: glquake.h
+#include "vid.h"
+#include "sys.h"
+#include "zone.h"       // needed by: client.h, gl_model.h
+#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
+                        //  modelgen.h, glmodel.h
+#include "wad.h"
+#include "draw.h"
+#include "cvar.h"
+#include "net.h"        // needed by: client.h
+#include "protocol.h"   // needed by: client.h
+#include "cmd.h"
+#include "keys.h"
+#include "sbar.h"
+#include "sound.h"
+#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
+#include "client.h"     // need cls in this file
+#include "model.h"   // needed by: glquake.h
+#include "console.h"
+#include "qendian.h"
+#include "qargs.h"
+#include "compat.h"
 #include "d_local.h"
 
 extern viddef_t        vid; // global video state
@@ -266,22 +290,22 @@ void	VID_Init(unsigned char *pal)
 	{
 		if (pnum >= com_argc-2)
 			Sys_Error("VID: -winsize <width> <height>\n");
-		vid.width = Q_atoi(com_argv[pnum+1]);
-		vid.height = Q_atoi(com_argv[pnum+2]);
+		vid.width = atoi(com_argv[pnum+1]);
+		vid.height = atoi(com_argv[pnum+2]);
 		if (!vid.width || !vid.height)
 			Sys_Error("VID: Bad window width/height\n");
 	}
 	if ((pnum=COM_CheckParm("-width"))) {
 		if (pnum >= com_argc-1)
 			Sys_Error("VID: -width <width>\n");
-		vid.width = Q_atoi(com_argv[pnum+1]);
+		vid.width = atoi(com_argv[pnum+1]);
 		if (!vid.width)
 			Sys_Error("VID: Bad window width\n");
 	}
 	if ((pnum=COM_CheckParm("-height"))) {
 		if (pnum >= com_argc-1)
 			Sys_Error("VID: -height <height>\n");
-		vid.height = Q_atoi(com_argv[pnum+1]);
+		vid.height = atoi(com_argv[pnum+1]);
 		if (!vid.height)
 			Sys_Error("VID: Bad window height\n");
 	}
