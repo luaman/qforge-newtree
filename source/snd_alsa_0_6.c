@@ -157,8 +157,8 @@ SNDDMA_Init (void)
   dev_openned:
 	Con_Printf ("Using card %d, device %d.\n", card, dev);
 	memset (&hwinfo, 0, sizeof (hwinfo));
-	err_msg = "audio info";
-	if (snd_pcm_hw_info (pcm_handle, &hwinfo) < 0)
+	err_msg = "snd_pcm_hw_info";
+	if ((rc = snd_pcm_hw_info (pcm_handle, &hwinfo)) < 0)
 		goto error;
 	Con_Printf ("%08x %08x\n", hwinfo.access_mask, hwinfo.format_mask);
 	rate = 44100;
