@@ -186,6 +186,12 @@ Sys_Init (void)
 */
 char       *newargv[256];
 
+#ifdef main
+# if main == SDL_main
+#  undef main
+# endif
+#endif
+
 int
 main (int argc, char **argv)
 {

@@ -53,8 +53,8 @@
 # include <sys/mman.h>
 #endif
 
-#include <SDL.H>
-#include <SDL_main.H>
+#include <SDL.h>
+#include <SDL_main.h>
 
 #include "sys.h"
 #include "qargs.h"
@@ -98,7 +98,7 @@ int
 Sys_FileTime (char *path)
 {
 	QFile      *f;
-	int         t, retval;
+	int         retval;
 
 	f = Qopen (path, "rb");
 
@@ -242,9 +242,6 @@ SDL_main (int c, char **v)
 	double      time, oldtime, newtime;
 	int         j;
 
-	static char cwd[1024];
-	int         t;
-
 #ifndef WIN32
 	signal (SIGFPE, SIG_IGN);
 #endif
@@ -287,6 +284,7 @@ SDL_main (int c, char **v)
 }
 
 /* fixme: evil stub for directsound crap */
+void
 IN_Accumulate (void)
 {
 }

@@ -235,7 +235,7 @@ qf_client_mgl_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs
 #
 # ... Sam Lantinga's Simple DirectMedia Layer, version 1.0 and higher
 #
-sdl_SOURCES=		vid_sdl.c in_sdl.c
+sdl_SOURCES=		vid_sdl.c in_sdl.c cl_sys_sdl.c
 
 qf_client_sdl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(sdl_SOURCES)
 qf_client_sdl_LDADD=	$(SDL_LIBS) $(CLIENT_LIBS)
@@ -293,7 +293,7 @@ qf_client_glx_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs
 #
 # ... Sam Lantinga's Simple DirectMedia Layer, version 1.1 and higher, in GL mode
 #
-sgl_SOURCES=	vid_sgl.c vid_common_gl.c in_sdl.c
+sgl_SOURCES=	vid_sgl.c vid_common_gl.c in_sdl.c cl_sys_sdl.c
 
 qf_client_sgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(sgl_SOURCES)
 qf_client_sgl_LDADD=	$(SDL_LIBS) $(X_LIBS) $(GLX_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
