@@ -90,6 +90,7 @@ int		d_lightstylevalue[256];	// 8.8 fraction of base light value
 
 
 vec3_t  shadecolor; // Ender (Extend) Colormod
+float   modelalpha; // Ender (EXtend) Alpha
 
 void R_MarkLeaves (void);
 
@@ -370,6 +371,14 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 	verts += posenum * paliashdr->poseverts;
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
 
+        if (modelalpha != 1.0)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		glDepthMask(0);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
+
 	while (1)
 	{
 		// get the vertex count and primitive type
@@ -392,12 +401,12 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 
 			// normals and vertexes come from the frame list
 			l = shadedots[verts->lightnormalindex] * shadelight;
-
+                     
 // Ender: Test (Colormod) [QSG Begin]
-                        if (shadecolor[0] || shadecolor[1] || shadecolor[2]) {
-                           glColor3f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l);
+                        if (modelalpha) {
+                           glColor4f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l, modelalpha);
                         } else {
-                           glColor3f (l, l, l);
+                           glColor3f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l);
                         }
 // Ender: Test (Colormod) [QSG End]
 
@@ -407,6 +416,13 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 
 		glEnd ();
 	}
+
+        if (modelalpha != 1.0) {
+         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // normal alpha blend
+         glDisable(GL_BLEND);
+         glDepthMask(1);
+         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+        }
 }
 
 
@@ -540,11 +556,6 @@ void R_DrawAliasModel (entity_t *e)
 
 	ambientlight = shadelight = R_LightPoint (currententity->origin);
 
-        // Ender (Extend)
-        shadecolor[0] = currententity->colormod[0];
-        shadecolor[1] = currententity->colormod[1];
-        shadecolor[2] = currententity->colormod[2];
-
 	// allways give the gun some light
 	if (e == &cl.viewent && ambientlight < 24)
 		ambientlight = shadelight = 24;
@@ -673,6 +684,11 @@ void R_DrawEntitiesOnList (void)
 
 	if (!r_drawentities->value)
 		return;
+        // Ender (Extend)
+        modelalpha    = currententity->alpha;
+        shadecolor[0] = currententity->colormod[0];
+        shadecolor[1] = currententity->colormod[1];
+        shadecolor[2] = currententity->colormod[2];
 
 	// draw sprites seperately, because of alpha blending
 	for (i=0 ; i<cl_numvisedicts ; i++)
@@ -750,6 +766,8 @@ void R_DrawViewModel (void)
 		j = 24;		// allways give some light on gun
 	ambientlight = j;
 	shadelight = j;
+
+        shadecolor[0] = shadecolor[1] = shadecolor[2] = 0;
 
 // add dynamic lights		
 	for (lnum=0 ; lnum<MAX_DLIGHTS ; lnum++)

@@ -258,10 +258,12 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
         if (bits & U_GLOWCOLOR)
          to->glowcolor = MSG_ReadByte();
 
-        if (bits & U_COLORMOD) {
+        if (bits & U_COLORMOD)
          to->colormod = MSG_ReadByte();
-         Con_DPrintf("CM: %f\n)", (float) to->colormod);
-        }
+
+        if (bits & U_ALPHA)
+         to->alpha = MSG_ReadByte();
+
 
 	if (bits & U_SOLID)
 	{
@@ -524,6 +526,12 @@ void CL_LinkPacketEntities (void)
       //
         ent->glowsize    = s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
         ent->glowcolor   = s1->glowcolor;
+
+        if (ent->alpha != 1)
+         ent->alpha       = s1->alpha / 255;
+        else
+         ent->alpha       = 1;
+
         if (s1->colormod) {
          ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
          ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);

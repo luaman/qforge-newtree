@@ -280,6 +280,7 @@ typedef struct
         byte            glowsize;
         byte            glowcolor;
         byte            colormod;
+        byte            alpha;
 } entity_state_t;
 
 
