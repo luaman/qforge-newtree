@@ -27,6 +27,9 @@
 */
 // r_surf.c: surface-related refresh code
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "sys.h"
 #include "quakedef.h"
 #include "r_local.h"

@@ -27,6 +27,9 @@
 */
 // d_clear: clears a specified rectangle to the specified color
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 
 

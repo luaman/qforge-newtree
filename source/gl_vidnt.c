@@ -27,6 +27,9 @@
 */
 // gl_vidnt.c -- NT GL vid component
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "winquake.h"
 #include "sys.h"

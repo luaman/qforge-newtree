@@ -27,6 +27,9 @@
 */
 // snd_mix.c -- portable code to mix sounds for snd_dma.c
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 
 #ifdef _WIN32

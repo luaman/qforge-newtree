@@ -27,6 +27,9 @@
 */
 // sys_null.h -- null system driver to aid porting efforts
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "errno.h"
 

@@ -27,6 +27,9 @@
 */
 // vid_win.c -- Win32 video driver
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "winquake.h"
 #include "sys.h"

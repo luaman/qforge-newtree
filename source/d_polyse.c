@@ -28,6 +28,9 @@
 // d_polyset.c: routines for drawing sets of polygons sharing the same
 // texture (used for Alias models)
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "r_local.h"
 #include "d_local.h"

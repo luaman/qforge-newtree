@@ -27,6 +27,9 @@
 */
 // r_aclip.c: clip routines for drawing Alias models directly to the screen
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "r_local.h"
 #include "d_local.h"

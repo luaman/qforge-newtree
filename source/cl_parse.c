@@ -27,6 +27,9 @@
 */
 // cl_parse.c  -- parse a message received from the server
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "sys.h"
 #include "quakedef.h"
 

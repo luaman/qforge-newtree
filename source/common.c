@@ -27,6 +27,9 @@
 */
 // common.c -- misc functions used in client and server
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include <ctype.h>
 
 #include "sys.h"

@@ -27,6 +27,9 @@
 */
 // r_vars.c: global refresh variables
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include	"quakedef.h"
 
 #if	!id386

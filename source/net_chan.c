@@ -27,6 +27,9 @@
 */
 
 #ifndef _WIN32
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 # include <unistd.h>
 #else
 # include <windows.h>

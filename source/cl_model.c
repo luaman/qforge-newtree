@@ -30,6 +30,9 @@
 // models are the only shared resource between a client and server running
 // on the same machine.
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "r_local.h"
 

@@ -27,6 +27,9 @@
 */
 // cl_tent.c -- client side temporary entities
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "sys.h"
 #include "quakedef.h"
 

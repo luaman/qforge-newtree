@@ -27,6 +27,9 @@
 */
 // d_surf.c: rasterization driver surface heap manager
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "sys.h"
 #include "quakedef.h"
 #include "d_local.h"

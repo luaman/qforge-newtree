@@ -27,6 +27,9 @@
 */
 // sv_move.c -- monster movement
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "qwsvdef.h"
 
 #define	STEPSIZE	18

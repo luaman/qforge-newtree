@@ -29,6 +29,9 @@
 
 #if	!id386
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include	"quakedef.h"
 
 // all global and static refresh variables are collected in a contiguous block

@@ -27,6 +27,9 @@
 */
 // nonintel.c: code for non-Intel processors only
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 
 #if	!id386

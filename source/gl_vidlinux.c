@@ -26,6 +26,9 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>

@@ -26,6 +26,9 @@
 	$Id$
 */
 // screen.c -- master for refresh, status bar, console, chat, notify, etc
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include <math.h>
 #include <string.h>
 #include <stdio.h>

@@ -29,6 +29,9 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include <mdfour.h>
 
 unsigned Com_BlockChecksum (void *buffer, int length)

@@ -27,6 +27,9 @@
 */
 // sv_edict.c -- entity dictionary
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "qwsvdef.h"
 
 dprograms_t		*progs;

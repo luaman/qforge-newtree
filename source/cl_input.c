@@ -27,6 +27,9 @@
 */
 // cl.input.c  -- builds an intended movement command to send to the server
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "in_win.h"
 

@@ -27,6 +27,9 @@
 */
 // d_part.c: software driver module for drawing particles
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "d_local.h"
 

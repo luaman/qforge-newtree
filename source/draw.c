@@ -28,6 +28,9 @@
 // draw.c -- this is the only file outside the refresh that touches the
 // vid buffer
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "sys.h"
 #include "quakedef.h"
 

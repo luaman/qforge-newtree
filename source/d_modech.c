@@ -27,6 +27,9 @@
 */
 // d_modech.c: called when mode has just changed
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "sys.h"
 #include "quakedef.h"
 #include "d_local.h"

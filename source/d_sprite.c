@@ -28,6 +28,9 @@
 // d_sprite.c: software top-level rasterization driver module for drawing
 // sprites
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "d_local.h"
 

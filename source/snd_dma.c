@@ -27,6 +27,9 @@
 */
 // snd_dma.c -- main control for any streaming sound output device
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "sys.h"
 #include "quakedef.h"
 

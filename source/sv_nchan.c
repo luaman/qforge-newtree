@@ -27,6 +27,9 @@
 */
 // sv_nchan.c, user reliable data stream writes
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "qwsvdef.h"
 
 // check to see if client block will fit, if not, rotate buffers

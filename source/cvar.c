@@ -29,6 +29,9 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 
 #if !defined(HAVE_SNPRINTF) && defined(HAVE__SNPRINTF)

@@ -26,6 +26,9 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include <dpmi.h>
 #include "quakedef.h"
 #include "dosisms.h"

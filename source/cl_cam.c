@@ -34,6 +34,9 @@
  * Player moves as a spectator, but the camera tracks and enemy player
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 #include "winquake.h"
 

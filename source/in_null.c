@@ -27,6 +27,9 @@
 */
 // in_null.c -- for systems without a mouse
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 
 void IN_Init (void)

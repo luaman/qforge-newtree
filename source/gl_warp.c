@@ -26,6 +26,9 @@
 	$Id$
 */
 // gl_warp.c -- sky and water polygons
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include <math.h>
 #include <stdio.h>
 

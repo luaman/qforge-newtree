@@ -26,6 +26,9 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "sys.h"
 #include "quakedef.h"
 #ifdef _WIN32

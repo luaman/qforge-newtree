@@ -28,6 +28,9 @@
 
 // cmd.c -- Quake script command processing module
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "quakedef.h"
 
 /*

@@ -27,6 +27,9 @@
 */
 // cl_main.c  -- client main loop
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include <ctype.h>
 
 #include "sys.h"

@@ -27,6 +27,9 @@
 */
 // screen.c -- master for refresh, status bar, console, chat, notify, etc
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "sys.h"
 #include "quakedef.h"
 #include "r_local.h"

@@ -1,3 +1,6 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "qwsvdef.h"
 
 void Mod_LoadBrushModel (model_t *mod, void *buffer);
