@@ -29,7 +29,6 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "quakedef.h"
 #include "va.h"
 #include "winquake.h"
 #include "sys.h"

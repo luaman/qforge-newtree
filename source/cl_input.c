@@ -29,6 +29,8 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "host.h"
 #include "input.h"
 #include "sys.h"
 #include "sys.h"
@@ -41,7 +43,6 @@
 #include "console.h"
 #include "qendian.h"
 #include "quakefs.h"
-#include "quakedef.h"
 #include "pmove.h"
 #include "view.h"
 #include "checksum.h"

@@ -34,7 +34,6 @@
 #ifdef __MINGW32__
 # define INITGUID
 #endif
-#include "quakedef.h"
 #include "winquake.h"
 #include <dinput.h>
 #include "client.h"

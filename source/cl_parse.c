@@ -29,12 +29,13 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "host.h"
 #include "sys.h"
 #include "client.h"
 #include "cmd.h"
 #include "screen.h"
 #include "cdaudio.h"
-#include "quakedef.h"
 #include "bothdefs.h"
 #include "console.h"
 #include "msg.h"

@@ -30,7 +30,6 @@
 # include <config.h>
 #endif
 #include <dpmi.h>
-#include "quakedef.h"
 #include "dosisms.h"
 
 extern cvar_t	*bgmvolume;

@@ -29,13 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "host.h"
 #include "sys.h"
 #include "sound.h"
 #include "cmd.h"
 #include "console.h"
 #include "client.h"
 #include "qargs.h"
-#include "quakedef.h"
 
 // fixme: Damn crappy complier doesn't allow me to UNDEF _win32 on command line!
 #ifdef WIN32SDL

@@ -56,7 +56,6 @@
 #include "glquake.h"
 #include "qargs.h"
 #include "qendian.h"
-#include "quakedef.h"
 #include "quakefs.h"
 #include "sbar.h"
 #include "sys.h"

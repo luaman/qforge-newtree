@@ -38,7 +38,6 @@
 #include "cvar.h"
 #include "d_local.h"
 #include "qendian.h"
-#include "quakedef.h"
 #include "sys.h"
 #include "va.h"
 #include "vid.h"

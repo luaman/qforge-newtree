@@ -29,6 +29,7 @@
 	$Id$
 */
 
+#include "host.h"
 #include "client.h"
 #include "cl_input.h"
 #include "cmd.h"
@@ -39,7 +40,6 @@
 #include "keys.h"
 #include "qargs.h"
 #include "qtypes.h"
-#include "quakedef.h"
 #include "sys.h"
 #include "view.h"
 

@@ -34,7 +34,8 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+
+#include "host.h"
 #include "d_local.h"
 #include "cvar.h"
 #include "cmd.h"

@@ -30,7 +30,6 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
 #include "d_local.h"
 
 int	d_vrectx, d_vrecty, d_vrectright_particle, d_vrectbottom_particle;

@@ -31,7 +31,8 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include	"quakedef.h"
+
+#include "host.h"
 
 // all global and static refresh variables are collected in a contiguous block
 // to avoid cache conflicts.

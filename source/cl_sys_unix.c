@@ -44,9 +44,9 @@
 #include <sys/types.h>
 #include <sys/mman.h>
 
-#include "sys.h"
+#include "host.h"
 #include "qargs.h"
-#include "quakedef.h"
+#include "sys.h"
 
 int noconinput = 0;
 qboolean	is_server = false;

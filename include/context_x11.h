@@ -31,9 +31,11 @@
 #ifndef __CONTEXT_X11_H__
 #define __CONTEXT_X11_H__
 
-#include <qtypes.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+
+#include "cvar.h"
+#include "qtypes.h"
 
 void GetEvent( void );
 

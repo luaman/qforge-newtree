@@ -30,10 +30,6 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "sys.h"
-#include "qargs.h"
-#include "cvar.h"
-#include "server.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +39,10 @@
 #include <sys/time.h>
 
 #include "sys.h"
-#include "quakedef.h"
+#include "qargs.h"
+#include "host.h"
+#include "cvar.h"
+#include "server.h"
 
 /* This is unused in the client, but we need the symbol there too. */
 server_static_t	svs;

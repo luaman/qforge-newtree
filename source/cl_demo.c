@@ -29,6 +29,8 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "host.h"
 #include "sys.h"
 #include "cvar.h"
 #include "sizebuf.h"
@@ -40,7 +42,6 @@
 #include "qendian.h"
 #include "va.h"
 #include "quakefs.h"
-#include "quakedef.h"
 #include "pmove.h"
 #include "cl_main.h"
 

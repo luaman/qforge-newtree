@@ -30,7 +30,6 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
 #include "r_local.h"
 
 drawsurf_t	r_drawsurf;

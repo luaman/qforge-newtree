@@ -36,7 +36,6 @@
 #include <io.h>
 #include <conio.h>
 
-#include "quakedef.h"
 #include "winquake.h"
 #include "resource.h"
 #include "sys.h"

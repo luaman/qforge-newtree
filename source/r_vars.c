@@ -29,7 +29,6 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include	"quakedef.h"
 
 #ifndef USE_INTEL_ASM
 

@@ -29,15 +29,16 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"   // Host_EndGame
-#include "sys.h"
-#include "vid.h"
-#include "client.h"
 
 #include <string.h>
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
+
+#include "host.h"
+#include "sys.h"
+#include "vid.h"
+#include "client.h"
 
 /*
 =====================

@@ -53,7 +53,6 @@
 #include "console.h"
 #include "glquake.h"
 #include "quakefs.h"
-#include "quakedef.h"
 #include "cl_main.h"
 
 mnode_t	*r_pefragtopnode;

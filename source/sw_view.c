@@ -29,7 +29,8 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+
+#include "host.h"
 #include "r_local.h"
 
 extern byte 	gammatable[256];

@@ -29,11 +29,12 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "host.h"
 #include "qargs.h"
 #include "r_local.h"
 #include "console.h"
 #include "quakefs.h"
-#include "quakedef.h"
 #include "r_dynamic.h"
 
 #include <stdlib.h>

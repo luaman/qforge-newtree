@@ -40,7 +40,6 @@
 #include "console.h"
 #include "qargs.h"
 #include "qendian.h"
-#include "quakedef.h"
 #include "sys.h"
 #include "va.h"
 #include "glquake.h"

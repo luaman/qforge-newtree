@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "host.h"
 #include "view.h"
 #include "bothdefs.h"
 #include "screen.h"
@@ -40,7 +41,6 @@
 #include "r_local.h"
 #include "msg.h"
 #include "commdef.h"
-#include "quakedef.h"
 
 /*
 

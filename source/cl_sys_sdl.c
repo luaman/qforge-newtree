@@ -58,7 +58,6 @@
 
 #include "sys.h"
 #include "qargs.h"
-#include "quakedef.h"
 #include "qargs.h"
 #include "client.h"
 

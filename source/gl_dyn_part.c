@@ -29,8 +29,9 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "host.h"
 #include "glquake.h"
-#include "quakedef.h"
 #include "cmd.h"
 #include "qargs.h"
 #include "console.h"

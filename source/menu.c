@@ -29,8 +29,9 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "host.h"
 #include "sys.h"
-#include "quakedef.h"
 #ifdef _WIN32
 #include "winquake.h"
 #endif

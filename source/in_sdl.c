@@ -44,7 +44,6 @@
 #include "sys.h"
 #include "qargs.h"
 #include "qendian.h"
-#include "quakedef.h"
 #include "vid.h"
 #include "view.h"
 

@@ -29,6 +29,8 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "host.h"
 #include "sys.h"
 #include "console.h"
 #include "cmd.h"
@@ -36,7 +38,6 @@
 #include "r_local.h"
 #include "draw.h"
 #include "menu.h"
-#include "quakedef.h"
 #include "cl_parse.h"
 
 qboolean	allowskybox;	// whether or not to allow skyboxes  --KB

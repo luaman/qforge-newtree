@@ -55,9 +55,9 @@
 #include <X11/extensions/xf86dga.h>
 #endif
 
-#include "quakedef.h"
 #include "dga_check.h"
 #include "d_local.h"
+#include "host.h"
 #include "sound.h"
 #include "keys.h"
 #include "cvar.h"

@@ -30,6 +30,8 @@
 # include "config.h"
 #endif
 #include <ctype.h>
+
+#include "host.h"
 #include "bothdefs.h"
 #include "input.h"
 #include "in_win.h"
@@ -45,7 +47,6 @@
 #include "console.h"
 #include "qendian.h"
 #include "quakefs.h"
-#include "quakedef.h"
 #include "pmove.h"
 #include "view.h"
 #include "checksum.h"
