@@ -91,7 +91,6 @@ unsigned int	d_8to24table[256];
 unsigned char	d_15to8table[65536];
 
 cvar_t	*vid_mode;
-extern cvar_t	*in_dga_mouseaccel;
 
 #ifdef HAVE_DGA
 static int	hasdgavideo = 0;
@@ -455,10 +454,6 @@ void VID_Init(unsigned char *palette)
 	int width = 640, height = 480;
 
 	vid_mode = Cvar_Get ("vid_mode","0",0,"None");
-#ifdef HAVE_DGA
-	in_dga_mouseaccel = Cvar_Get("vid_dga_mouseaccel","1",CVAR_ARCHIVE,
-					"None");
-#endif
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.colormap = host_colormap;
