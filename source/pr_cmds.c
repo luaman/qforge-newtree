@@ -722,7 +722,7 @@ void PF_stuffcmd (void)
 	buf = cl->stufftext_buf;
 	if (strlen(buf) + strlen(str) >= MAX_STUFFTEXT)
 		PR_RunError ("stufftext buffer overflow");
-	strncat (buf,  str, sizeof(buf) - strlen (buf));
+	strncat (buf,  str, MAX_STUFFTEXT - strlen (buf));
 
 	for (i = strlen(buf); i >= 0; i--)
 	{

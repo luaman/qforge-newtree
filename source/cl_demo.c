@@ -745,7 +745,7 @@ play [demoname]
 */
 void CL_PlayDemo_f (void)
 {
-	char	name[256];
+	char	name[MAX_OSPATH];
 
 	if (Cmd_Argc() != 2)
 	{

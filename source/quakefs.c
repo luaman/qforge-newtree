@@ -405,7 +405,7 @@ void
 COM_CreatePath ( char *path )
 {
 	char	*ofs;
-	char	e_path[PATH_MAX];
+	char	e_path[MAX_OSPATH];
 
 	Qexpand_squiggle (path, e_path);
 	path = e_path;
@@ -872,7 +872,7 @@ COM_AddDirectory (char *dir)
 {
 	searchpath_t	*search;
 	char			*p;
-	char			e_dir[PATH_MAX];
+	char			e_dir[MAX_OSPATH];
 
 	Qexpand_squiggle (dir, e_dir);
 	dir = e_dir;
@@ -1145,5 +1145,5 @@ void COM_DefaultExtension (char *path, char *extension)
 		src--;
 	}
 
-	strncat (path,  extension, sizeof(path) - strlen (path));
+	strncat (path,  extension, MAX_OSPATH - strlen (path));
 }

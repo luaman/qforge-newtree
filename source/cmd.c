@@ -317,8 +317,8 @@ void Cmd_StuffCmds_f (void)
 			c = com_cmdline[j];
 			com_cmdline[j] = 0;
 
-			strncat (build,  com_cmdline+i, sizeof(build) - strlen (build));
-			strncat (build,  "\n", sizeof(build) - strlen (build));
+			strncat (build,  com_cmdline+i, s - strlen (build));
+			strncat (build,  "\n", s - strlen (build));
 			com_cmdline[j] = c;
 			i = j-1;
 		}
