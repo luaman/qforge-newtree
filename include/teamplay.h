@@ -31,8 +31,6 @@
 
 #include "cvar.h"
 
-extern cvar_t	*cl_deadbodyfilter;
-extern cvar_t	*cl_gibfilter;
 extern cvar_t	*cl_parsesay;
 extern cvar_t	*cl_nofake;
 

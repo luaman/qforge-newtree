@@ -29,6 +29,7 @@
 #ifndef _CDAUDIO_H
 #define _CDAUDIO_H
 
+#include "qtypes.h"
 
 int CDAudio_Init(void);
 void CDAudio_Play(byte track, qboolean looping);

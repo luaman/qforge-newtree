@@ -34,5 +34,7 @@ void CL_ClearEnts (void);
 void CL_ClearTEnts (void);
 void CL_Init_Entity (struct entity_s *ent);
 struct entity_s **CL_NewTempEntity (void);
+void CL_ParseTEnt (void);
+void CL_UpdateTEnts (void);
 
 #endif

@@ -31,7 +31,8 @@
 
 #include "mathlib.h"
 
-void R_RocketTrail (int type, entity_t *ent);
+struct entity_s;
+void R_RocketTrail (int type, struct entity_s *ent);
 void R_RunParticleEffect (vec3_t org, int color, int count);
 void R_RunPuffEffect (vec3_t org, byte type, byte count);
 void R_RunSpikeEffect (vec3_t org, byte type);
