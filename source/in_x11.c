@@ -459,7 +459,6 @@ IN_Init(void)
 	}
 
 	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
-	Cvar_Alias_Get ("_windowed_mouse", _windowed_mouse);	
 	m_filter = Cvar_Get ("m_filter","0",CVAR_ARCHIVE,"None");
 #ifdef HAS_DGA
 	vid_dga_mouseaccel = Cvar_Get ("vid_dga_mouseaccel","1",CVAR_ARCHIVE,
