@@ -44,7 +44,7 @@
 qboolean is_server = true;
 qboolean WinNT;
 
-cvar_t	*sys_nostdout;
+extern cvar_t	*sys_nostdout;
 cvar_t	*sys_sleep;
 
 /*

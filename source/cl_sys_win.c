@@ -65,6 +65,8 @@ HANDLE		qwclsemaphore;
 
 static HANDLE	tevent;
 
+extern cvar_t	*sys_nostdout;
+
 void Sys_InitFloatTime (void);
 
 void MaskExceptions (void);
@@ -172,7 +174,7 @@ void Sys_Init (void)
 	// front end can tell if it is alive
 
 	// mutex will fail if semephore allready exists
-    qwclsemaphore = CreateMutex(
+	qwclsemaphore = CreateMutex(
         NULL,         /* Security attributes */
         0,            /* owner       */
         "qwcl"); /* Semaphore name      */
@@ -205,7 +207,7 @@ void Sys_Init (void)
 	{
 		Sys_Error ("This version of " PROGRAM " requires at least Win95 or NT 4.0");
 	}
-	
+
 	if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
 		WinNT = true;
 	else
@@ -518,6 +520,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	if (!tevent)
 		Sys_Error ("Couldn't create event");
 
+        sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
 // because sound is off until we become active
 	S_BlockSound ();
 

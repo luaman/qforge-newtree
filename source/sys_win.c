@@ -38,6 +38,8 @@
 /* This is unused in the client, but we need the symbol there too. */
 server_static_t	svs;
 
+cvar_t	*sys_nostdout;
+
 /* The translation table between the graphical font and plain ASCII  --KB */
 static char qfont_table[256] =
 {
