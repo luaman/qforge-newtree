@@ -1422,173 +1422,172 @@ extern qboolean		nouse;	// 1999-10-29 +USE fix by Maddes
 
 void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 {
-        edict_t *ent;
-        int             i, n, oldmsec;
-        double  tmp_time;
+	edict_t *ent;
+	int             i, n, oldmsec;
+	double  tmp_time;
 
-        // To prevent a infinite loop
-        if (!inside) {
-                host_client->msecs += ucmd->msec;
+	// To prevent a infinite loop
+	if (!inside) {
+		host_client->msecs += ucmd->msec;
 
-                if ((sv_timekick->value >= 1) &&
-                        (tmp_time = realtime - host_client->last_check) >= sv_timekick_interval->value) {
-                        tmp_time *= (1000 + sv_timekick_fuzz->value);
-                        if (host_client->msecs > (int) tmp_time) {
-                                host_client->msec_cheating++;
-                                SV_BroadcastPrintf( PRINT_HIGH,
-                                                va("%s thinks %d msecs pass in %f msecs. (Strike %d/%d)\n",
-                                                host_client->name, host_client->msecs, tmp_time,
-                                                host_client->msec_cheating, (int)sv_timekick->value));
+		if ((sv_timekick->value >= 1) &&
+			(tmp_time = realtime - host_client->last_check) >=
+			 sv_timekick_interval->value) {
+			tmp_time *= (1000 + sv_timekick_fuzz->value);
+			if (host_client->msecs > (int) tmp_time) {
+				host_client->msec_cheating++;
+				SV_BroadcastPrintf( PRINT_HIGH,
+								va("%s thinks %d msecs pass in %f msecs. (Strike %d/%d)\n",
+								host_client->name, host_client->msecs, tmp_time,
+								host_client->msec_cheating, (int)sv_timekick->value));
 
-                                if (host_client->msec_cheating >= sv_timekick->value) {
-                                                SV_BroadcastPrintf(PRINT_HIGH, va("Strike %d for %s!!\n",
-                                                host_client->msec_cheating, host_client->name));
-                                        SV_BroadcastPrintf(PRINT_HIGH, "Please see http://www.quakeforge.net/speed_cheat.php for infomation on QuakeForge's time cheat protection, and to explain how some may be cheating without knowing it.\n"
+				if (host_client->msec_cheating >= sv_timekick->value) {
+					SV_BroadcastPrintf(PRINT_HIGH, va("Strike %d for %s!!\n",
+								host_client->msec_cheating, host_client->name));
+					SV_BroadcastPrintf(PRINT_HIGH, "Please see http://www.quakeforge.net/speed_cheat.php for infomation on QuakeForge's time cheat protection, and to explain how some may be cheating without knowing it.\n"
 );
-                                        SV_DropClient(host_client);
-                                }
-                    }
+					SV_DropClient(host_client);
+				}
+			}
 
-                    host_client->msecs = 0;
-                    host_client->last_check = realtime;
-                }
-        }
+			host_client->msecs = 0;
+			host_client->last_check = realtime;
+		}
+	}
 
-        cmd = *ucmd;
+	cmd = *ucmd;
 
-        // chop up very long commands
-        if (cmd.msec > 50) {
-                oldmsec = ucmd->msec;
-                cmd.msec = oldmsec/2;
-                SV_RunCmd (&cmd, 1);
-                cmd.msec = oldmsec/2;
-                cmd.impulse = 0;
-                SV_RunCmd (&cmd, 1);
-                return;
-        }
+	// chop up very long commands
+	if (cmd.msec > 50) {
+		oldmsec = ucmd->msec;
+		cmd.msec = oldmsec/2;
+		SV_RunCmd (&cmd, 1);
+		cmd.msec = oldmsec/2;
+		cmd.impulse = 0;
+		SV_RunCmd (&cmd, 1);
+		return;
+	}
 
-        if (!sv_player->v.fixangle)
-                VectorCopy (ucmd->angles, sv_player->v.v_angle);
+	if (!sv_player->v.fixangle)
+		VectorCopy (ucmd->angles, sv_player->v.v_angle);
 
-        sv_player->v.button0 = ucmd->buttons & 1;
+	sv_player->v.button0 = ucmd->buttons & 1;
 // 1999-10-29 +USE fix by Maddes  start
 	if (!nouse)
 	{
 		sv_player->v.button1 = (ucmd->buttons & 4)>>2;
 	}
 // 1999-10-29 +USE fix by Maddes  end
-        sv_player->v.button2 = (ucmd->buttons & 2)>>1;
-        if (ucmd->impulse)
-                sv_player->v.impulse = ucmd->impulse;
+	sv_player->v.button2 = (ucmd->buttons & 2)>>1;
+	if (ucmd->impulse)
+		sv_player->v.impulse = ucmd->impulse;
 
 //
 // angles
 // show 1/3 the pitch angle and all the roll angle
-        if (sv_player->v.health > 0) {
-                if (!sv_player->v.fixangle) {
-                        sv_player->v.angles[PITCH] = -sv_player->v.v_angle[PITCH]/3;
-                        sv_player->v.angles[YAW] = sv_player->v.v_angle[YAW];
-                }
-                sv_player->v.angles[ROLL] =
-                        SV_CalcRoll (sv_player->v.angles, sv_player->v.velocity)*4;
-        }
+	if (sv_player->v.health > 0) {
+		if (!sv_player->v.fixangle) {
+			sv_player->v.angles[PITCH] = -sv_player->v.v_angle[PITCH]/3;
+			sv_player->v.angles[YAW] = sv_player->v.v_angle[YAW];
+		}
+		sv_player->v.angles[ROLL] =
+			SV_CalcRoll (sv_player->v.angles, sv_player->v.velocity)*4;
+	}
 
-        sv_frametime = min(0.1, ucmd->msec * 0.001);
-        
-        if (!host_client->spectator) {
-                pr_global_struct->frametime = sv_frametime;
+	sv_frametime = min(0.1, ucmd->msec * 0.001);
+	
+	if (!host_client->spectator) {
+		pr_global_struct->frametime = sv_frametime;
 
-                pr_global_struct->time = sv.time;
-                pr_global_struct->self = EDICT_TO_PROG(sv_player);
-                PR_ExecuteProgram (pr_global_struct->PlayerPreThink);
+		pr_global_struct->time = sv.time;
+		pr_global_struct->self = EDICT_TO_PROG(sv_player);
+		PR_ExecuteProgram (pr_global_struct->PlayerPreThink);
 
-                SV_RunThink (sv_player);
-        }
+		SV_RunThink (sv_player);
+	}
 
-        for (i=0 ; i<3 ; i++)
-                pmove.origin[i] = sv_player->v.origin[i] + (sv_player->v.mins[i]
- - player_mins[i]);
-        VectorCopy (sv_player->v.velocity, pmove.velocity);
-        VectorCopy (sv_player->v.v_angle, pmove.angles);
+	for (i=0 ; i<3 ; i++)
+		pmove.origin[i] = sv_player->v.origin[i] + (sv_player->v.mins[i]
+- player_mins[i]);
+	VectorCopy (sv_player->v.velocity, pmove.velocity);
+	VectorCopy (sv_player->v.v_angle, pmove.angles);
 
-        pmove.flying = sv_player->v.movetype == MOVETYPE_FLY;
-        pmove.spectator = host_client->spectator;
-        pmove.waterjumptime = sv_player->v.teleport_time;
-        pmove.numphysent = 1;
-        pmove.physents[0].model = sv.worldmodel;
-        pmove.cmd = *ucmd;
-        pmove.dead = sv_player->v.health <= 0;
-        pmove.oldbuttons = host_client->oldbuttons;
+	pmove.flying = sv_player->v.movetype == MOVETYPE_FLY;
+	pmove.spectator = host_client->spectator;
+	pmove.waterjumptime = sv_player->v.teleport_time;
+	pmove.numphysent = 1;
+	pmove.physents[0].model = sv.worldmodel;
+	pmove.cmd = *ucmd;
+	pmove.dead = sv_player->v.health <= 0;
+	pmove.oldbuttons = host_client->oldbuttons;
 
-        movevars.entgravity = host_client->entgravity;
-        movevars.maxspeed = host_client->maxspeed;
+	movevars.entgravity = host_client->entgravity;
+	movevars.maxspeed = host_client->maxspeed;
 
-        for (i=0 ; i<3 ; i++) {
-                pmove_mins[i] = pmove.origin[i] - 256;
-                pmove_maxs[i] = pmove.origin[i] + 256;
-        }
+	for (i=0 ; i<3 ; i++) {
+		pmove_mins[i] = pmove.origin[i] - 256;
+		pmove_maxs[i] = pmove.origin[i] + 256;
+	}
 #if 1
-        AddLinksToPmove ( sv_areanodes );
+	AddLinksToPmove ( sv_areanodes );
 #else
-        AddAllEntsToPmove ();
+	AddAllEntsToPmove ();
 #endif
 
 #if 0
 {
-        int before, after;
+	int before, after;
 
-before = PM_TestPlayerPosition (pmove.origin);
-        PlayerMove ();
-after = PM_TestPlayerPosition (pmove.origin);
+	before = PM_TestPlayerPosition (pmove.origin);
+	PlayerMove ();
+	after = PM_TestPlayerPosition (pmove.origin);
 
-if (sv_player->v.health > 0 && before && !after )
-        Con_Printf ("player %s got stuck in playermove!!!!\n", host_client->name
-);
+	if (sv_player->v.health > 0 && before && !after )
+		Con_Printf ("player %s got stuck in playermove!!!!\n", host_client->name);
 }
 #else
-        PlayerMove ();
+	PlayerMove ();
 #endif
 
-        host_client->oldbuttons = pmove.oldbuttons;
-        sv_player->v.teleport_time = pmove.waterjumptime;
-        sv_player->v.waterlevel = waterlevel;
-        sv_player->v.watertype = watertype;
-        if (onground != -1) {
-                sv_player->v.flags = (int)sv_player->v.flags | FL_ONGROUND;
-                sv_player->v.groundentity = EDICT_TO_PROG(EDICT_NUM(pmove.physents[onground].info));
-        } else {
-                sv_player->v.flags = (int)sv_player->v.flags & ~FL_ONGROUND;
-        }
-        for (i=0 ; i<3 ; i++)
-                sv_player->v.origin[i] = pmove.origin[i] - (sv_player->v.mins[i]
- - player_mins[i]);
+	host_client->oldbuttons = pmove.oldbuttons;
+	sv_player->v.teleport_time = pmove.waterjumptime;
+	sv_player->v.waterlevel = waterlevel;
+	sv_player->v.watertype = watertype;
+	if (onground != -1) {
+		sv_player->v.flags = (int)sv_player->v.flags | FL_ONGROUND;
+		sv_player->v.groundentity = EDICT_TO_PROG(EDICT_NUM(pmove.physents[onground].info));
+	} else {
+		sv_player->v.flags = (int)sv_player->v.flags & ~FL_ONGROUND;
+	}
+	for (i=0 ; i<3 ; i++)
+		sv_player->v.origin[i] = pmove.origin[i] - (sv_player->v.mins[i] - player_mins[i]);
 
 #if 0
-        // truncate velocity the same way the net protocol will
-        for (i=0 ; i<3 ; i++)
-                sv_player->v.velocity[i] = (int)pmove.velocity[i];
+	// truncate velocity the same way the net protocol will
+	for (i=0 ; i<3 ; i++)
+		sv_player->v.velocity[i] = (int)pmove.velocity[i];
 #else
-        VectorCopy (pmove.velocity, sv_player->v.velocity);
+	VectorCopy (pmove.velocity, sv_player->v.velocity);
 #endif
 
-        VectorCopy (pmove.angles, sv_player->v.v_angle);
+	VectorCopy (pmove.angles, sv_player->v.v_angle);
 
-        if (!host_client->spectator) {
-                // link into place and touch triggers
-                SV_LinkEdict (sv_player, true);
+	if (!host_client->spectator) {
+		// link into place and touch triggers
+		SV_LinkEdict (sv_player, true);
 
-                // touch other objects
-                for (i=0 ; i<pmove.numtouch ; i++) {
-                        n = pmove.physents[pmove.touchindex[i]].info;
-                        ent = EDICT_NUM(n);
-                        if (!ent->v.touch || (playertouch[n/8]&(1<<(n%8))))
-                                continue;
-                        pr_global_struct->self = EDICT_TO_PROG(ent);
-                        pr_global_struct->other = EDICT_TO_PROG(sv_player);
-                        PR_ExecuteProgram (ent->v.touch);
-                        playertouch[n/8] |= 1 << (n%8);
-                }
-        }
+		// touch other objects
+		for (i=0 ; i<pmove.numtouch ; i++) {
+			n = pmove.physents[pmove.touchindex[i]].info;
+			ent = EDICT_NUM(n);
+			if (!ent->v.touch || (playertouch[n/8]&(1<<(n%8))))
+				continue;
+			pr_global_struct->self = EDICT_TO_PROG(ent);
+			pr_global_struct->other = EDICT_TO_PROG(sv_player);
+			PR_ExecuteProgram (ent->v.touch);
+			playertouch[n/8] |= 1 << (n%8);
+		}
+	}
 }
 
 /*
