@@ -14,11 +14,12 @@ till then.
 
 Features which are -'d are not necessary for this quick release.
 -------------------------------------------------------------------------
-
+M:      Ender has built these binaries sucessfully with a makefile.
+-------------------------------------------------------------------------
 [X]	1.   The five conflicting files between client and server need to
 	     have those conflicts removed.
 [ ]	2.   One object per source
-[ ]	3a.  Win32 binaries must be buildable for client and server
+[M]     3a.  Win32 binaries must be buildable for client and server
 [-]	3b.  Linux binaries should become buildable with auto*
 [ ]	4.   Any structural changes to the tree we agree to make
 [ ]	5a.  Linux targets need to be verified
