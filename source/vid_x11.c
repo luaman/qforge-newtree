@@ -191,33 +191,41 @@ void TragicDeath(int signal_num)
 {
 	XAutoRepeatOn(x_disp);
 	XCloseDisplay(x_disp);
-	Sys_Error("This death brought to you by the number %d\n", signal_num);
+	Sys_Error("This death brought to you by signal number %d\n", signal_num);
 }
 
-// ========================================================================
-// makes a null cursor
-// ========================================================================
 
-static Cursor CreateNullCursor(Display *display, Window root)
+/*
+========================================================================
+Create an empty cursor
+========================================================================
+*/
+
+static Cursor	nullcursor = None;
+
+static Cursor
+CreateNullCursor(Display *display, Window root)
 {
-    Pixmap cursormask; 
+    Pixmap cursormask;
     XGCValues xgc;
     GC gc;
     XColor dummycolour;
-    Cursor cursor;
 
-    cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
-    xgc.function = GXclear;
-    gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
-    XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
-    dummycolour.pixel = 0;
-    dummycolour.red = 0;
-    dummycolour.flags = 04;
-    cursor = XCreatePixmapCursor(display, cursormask, cursormask,
-          &dummycolour,&dummycolour, 0,0);
-    XFreePixmap(display,cursormask);
-    XFreeGC(display,gc);
-    return cursor;
+	if (nullcursor != None) return nullcursor;
+
+	cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
+	xgc.function = GXclear;
+	gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
+	XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
+	dummycolour.pixel = 0;
+	dummycolour.red = 0;
+	dummycolour.flags = 04;
+	nullcursor = XCreatePixmapCursor(display, cursormask, cursormask,
+									 &dummycolour,&dummycolour, 0,0);
+	XFreePixmap(display,cursormask);
+	XFreeGC(display,gc);
+
+	return nullcursor;
 }
 
 void ResetFrameBuffer(void)
@@ -542,7 +550,7 @@ void	VID_Init (unsigned char *palette)
 
 	}
 
-// inviso cursor
+	/* Invisible Cursor */
 	XDefineCursor(x_disp, x_win, CreateNullCursor(x_disp, x_win));
 
 // create the GC
@@ -553,7 +561,7 @@ void	VID_Init (unsigned char *palette)
 		x_gc = XCreateGC(x_disp, x_win, valuemask, &xgcvalues );
 	}
 
-// map the window
+	/* Map the window */
 	XMapWindow(x_disp, x_win);
 
 // wait for first exposure event
@@ -646,6 +654,10 @@ void	VID_Shutdown (void)
 {
 	Con_Printf("VID_Shutdown\n");
 	XAutoRepeatOn(x_disp);
+	if (nullcursor != None) {
+		XFreeCursor(x_disp, nullcursor);
+		nullcursor = None;
+	}
 	XCloseDisplay(x_disp);
 }
 
