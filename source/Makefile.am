@@ -86,7 +86,7 @@ libqfsys_cl_a_SOURCES=	cl_sys_win.c fnmatch.c dirent.c sys_win.c
 else
 libqfsys_cl_a_SOURCES=	cl_sys_unix.c sys_unix.c
 endif
-EXTRA_libqfsys_cl_a_SOURCES= cl_sys_unix.c cl_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
+EXTRA_libqfsys_cl_a_SOURCES= cl_sys_sdl.c cl_sys_unix.c cl_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
 
 #
 # ... Digital audio
@@ -127,7 +127,7 @@ endif
 if CDTYPE_NULL
 libqfcd_a_SOURCES = cd_null.c
 endif
-EXTRA_libqfcd_a_SOURCES = cd_audio.c cd_win.c cd_linux.c cd_null.c
+EXTRA_libqfcd_a_SOURCES = cd_audio.c cd_linux.c cd_null.c cd_sdl.c cd_win.c
 
 #
 # ... Joystick
