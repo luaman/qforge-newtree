@@ -62,7 +62,7 @@ extern mtriangle_t triangles[MAXALIASTRIS];
 extern trivertx_t *poseverts[MAXALIASFRAMES];
 extern int  posenum;
 
-void       *
+void *
 Mod_LoadSkin (byte * skin, int skinsize, int *pskinindex, int snum, int gnum)
 {
 	byte       *pskin;
@@ -94,7 +94,7 @@ Mod_LoadSkin (byte * skin, int skinsize, int *pskinindex, int snum, int gnum)
 Mod_LoadAllSkins
 ===============
 */
-void       *
+void *
 Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinindex)
 {
 	int         snum, gnum, t;
@@ -172,9 +172,7 @@ GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 	int         numt = hdr->mdl.numtris;
 
 	pstverts = (stvert_t *) Hunk_AllocName (numv * sizeof (stvert_t), loadname);
-	ptri =
-
-		(mtriangle_t *) Hunk_AllocName (numt * sizeof (mtriangle_t), loadname);
+	ptri = (mtriangle_t *) Hunk_AllocName (numt * sizeof (mtriangle_t), loadname);
 
 	hdr->stverts = (byte *) pstverts - (byte *) hdr;
 	hdr->triangles = (byte *) ptri - (byte *) hdr;
@@ -198,7 +196,7 @@ GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 Mod_LoadAliasFrame
 =================
 */
-void       *
+void *
 Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
 {
 	trivertx_t *pframe, *pinframe;
@@ -209,16 +207,13 @@ Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
 
 	strcpy (frame->name, pdaliasframe->name);
 
-	for (i = 0; i < 3; i++) {
-		// these are byte values, so we don't have to worry about
-		// endianness
+	for (i = 0; i < 3; i++) {	// byte values, don't worry about endianness
 		frame->bboxmin.v[i] = pdaliasframe->bboxmin.v[i];
 		frame->bboxmax.v[i] = pdaliasframe->bboxmax.v[i];
 	}
 
 	pinframe = (trivertx_t *) (pdaliasframe + 1);
-	pframe =
-		Hunk_AllocName (pheader->mdl.numverts * sizeof (*pframe), loadname);
+	pframe = Hunk_AllocName (pheader->mdl.numverts * sizeof (*pframe), loadname);
 
 	frame->frame = (byte *) pframe - (byte *) pheader;
 
@@ -244,7 +239,7 @@ Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
 Mod_LoadAliasGroup
 =================
 */
-void       *
+void *
 Mod_LoadAliasGroup (void *pin, maliasframedesc_t *frame)
 {
 	daliasgroup_t *pingroup;
@@ -258,12 +253,7 @@ Mod_LoadAliasGroup (void *pin, maliasframedesc_t *frame)
 
 	numframes = LittleLong (pingroup->numframes);
 
-	paliasgroup = Hunk_AllocName (sizeof (maliasgroup_t) +
-								  (numframes -
-								   1) * sizeof (paliasgroup->frames[0]),
-
-								  loadname);
-
+	paliasgroup = Hunk_AllocName (sizeof (maliasgroup_t) + (numframes - 1) * sizeof (paliasgroup->frames[0]), loadname);
 	paliasgroup->numframes = numframes;
 
 	for (i = 0; i < 3; i++) {

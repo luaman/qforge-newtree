@@ -47,7 +47,7 @@ cvar_t     *r_skyname;
 cvar_t     *pr_boundscheck;
 
 void        SV_Error (char *error, ...);
-void        FindEdictFieldOffsets ();
+void        FindEdictFieldOffsets (void);
 
 dprograms_t *progs;
 dfunction_t *pr_functions;
@@ -60,9 +60,16 @@ float      *pr_globals;					// same as pr_global_struct
 int         pr_edict_size;				// in bytes
 int         pr_edictareasize;			// LordHavoc: in bytes
 
-int         type_size[8] =
-	{ 1, sizeof (void *) / 4, 1, 3, 1, 1, sizeof (void *) / 4,
-		sizeof (void *) / 4 };
+int type_size[8] = {
+	1,
+	sizeof (void *) / 4,
+	1,
+	3,
+	1,
+	1,
+	sizeof (void *) / 4,
+	sizeof (void *) / 4
+};
 
 ddef_t     *ED_FieldAtOfs (int ofs);
 qboolean    ED_ParseEpair (void *base, ddef_t *key, char *s);
@@ -111,7 +118,7 @@ instead of being removed and recreated, which can cause interpolated
 angles and bad trails.
 =================
 */
-edict_t    *
+edict_t *
 ED_Alloc (void)
 {
 	int         i;
@@ -175,7 +182,7 @@ ED_Free (edict_t *ed)
 ED_GlobalAtOfs
 ============
 */
-ddef_t     *
+ddef_t *
 ED_GlobalAtOfs (int ofs)
 {
 	ddef_t     *def;
@@ -194,7 +201,7 @@ ED_GlobalAtOfs (int ofs)
 ED_FieldAtOfs
 ============
 */
-ddef_t     *
+ddef_t *
 ED_FieldAtOfs (int ofs)
 {
 	ddef_t     *def;
@@ -213,7 +220,7 @@ ED_FieldAtOfs (int ofs)
 ED_FindField
 ============
 */
-ddef_t     *
+ddef_t *
 ED_FindField (char *name)
 {
 	ddef_t     *def;
@@ -233,7 +240,7 @@ ED_FindField (char *name)
 ED_FindGlobal
 ============
 */
-ddef_t     *
+ddef_t *
 ED_FindGlobal (char *name)
 {
 	ddef_t     *def;

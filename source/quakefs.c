@@ -260,7 +260,7 @@ struct maplist {
 };
 
 static struct maplist *
-maplist_new ()
+maplist_new (void)
 {
 	return calloc (1, sizeof (struct maplist));
 }
@@ -492,7 +492,7 @@ COM_CopyFile (char *netpath, char *cachepath)
 /*
 	COM_OpenRead
 */
-QFile      *
+QFile *
 COM_OpenRead (const char *path, int offs, int len, int zip)
 {
 	int         fd = open (path, O_RDONLY);
@@ -650,22 +650,20 @@ int         loadsize;
 	Filename are relative to the quake directory.
 	Allways appends a 0 byte to the loaded data.
 */
-byte       *
+byte *
 COM_LoadFile (char *path, int usehunk)
 {
 	QFile      *h;
-	byte       *buf;
+	byte       *buf = NULL;
 	char        base[32];
 	int         len;
 
-	buf = NULL;							// quiet compiler warning
-
-// look for it in the filesystem or pack files
+	// look for it in the filesystem or pack files
 	len = com_filesize = COM_FOpenFile (path, &h);
 	if (!h)
 		return NULL;
 
-// extract the filename base name for hunk tag
+	// extract the filename base name for hunk tag
 	COM_FileBase (path, base);
 
 	if (usehunk == 1)
@@ -700,13 +698,13 @@ COM_LoadFile (char *path, int usehunk)
 	return buf;
 }
 
-byte       *
+byte *
 COM_LoadHunkFile (char *path)
 {
 	return COM_LoadFile (path, 1);
 }
 
-byte       *
+byte *
 COM_LoadTempFile (char *path)
 {
 	return COM_LoadFile (path, 2);
@@ -720,7 +718,7 @@ COM_LoadCacheFile (char *path, struct cache_user_s *cu)
 }
 
 // uses temp hunk if larger than bufsize
-byte       *
+byte *
 COM_LoadStackFile (char *path, void *buffer, int bufsize)
 {
 	byte       *buf;
@@ -740,7 +738,7 @@ COM_LoadStackFile (char *path, void *buffer, int bufsize)
 	Loads the header and directory, adding the files at the beginning
 	of the list so they override previous pack files.
 */
-pack_t     *
+pack_t *
 COM_LoadPackFile (char *packfile)
 {
 	dpackheader_t header;
@@ -772,7 +770,7 @@ COM_LoadPackFile (char *packfile)
 	Qread (packhandle, info, header.dirlen);
 
 
-// parse the directory
+	// parse the directory
 	for (i = 0; i < numpackfiles; i++) {
 		strcpy (newfiles[i].name, info[i].name);
 		newfiles[i].filepos = LittleLong (info[i].filepos);
@@ -825,7 +823,6 @@ qstrcmp (char **os1, char **os2)
 		}
 	}
 }
-
 
 void
 COM_LoadGameDirectory (char *dir)
@@ -922,18 +919,13 @@ COM_AddDirectory (char *dir)
 		strcpy (com_gamedir, va ("%s/%s", fs_userpath->string, dir));
 	}
 
-//
-// add the directory to the search path
-//
+	// add the directory to the search path
 	search = calloc (1, sizeof (searchpath_t));
 	strcpy (search->filename, dir);
 	search->next = com_searchpaths;
 	com_searchpaths = search;
 
-//
-// add any pak files in the format pak0.pak pak1.pak, ...
-//
-
+	// add any pak files in the format pak0.pak pak1.pak, ...
 	COM_LoadGameDirectory (dir);
 }
 
@@ -1063,9 +1055,7 @@ COM_Filesystem_Init (void)
 
 	Cmd_AddCommand ("gamedir", COM_Gamedir_f);
 
-/*
-	start up with basegame->string by default
-*/
+	// start up with basegame->string by default
 	COM_CreateGameDirectory (fs_basegame->string);
 
 	// If we're dealing with id1, use qw too
@@ -1105,7 +1095,7 @@ COM_Filesystem_Init_Cvars (void)
 COM_SkipPath
 ============
 */
-char       *
+char *
 COM_SkipPath (char *pathname)
 {
 	char       *last;
@@ -1137,7 +1127,7 @@ COM_StripExtension (char *in, char *out)
 COM_FileExtension
 ============
 */
-char       *
+char *
 COM_FileExtension (char *in)
 {
 	static char exten[8];
