@@ -26,16 +26,16 @@
 	$Id$
 */
 
-#include <sys/types.h>
-#include <sys/timeb.h>
 #include "qwsvdef.h"
 #include <winsock.h>
 #include <conio.h>
 
 
 qboolean is_server = true;
+qboolean WinNT;
 
 cvar_t	sys_nostdout = {"sys_nostdout","0"};
+cvar_t	sys_sleep = {"sys_sleep","1"};
 
 /*
 ================
@@ -161,11 +161,30 @@ is marked
 */
 void Sys_Init (void)
 {
+	OSVERSIONINFO	vinfo;
+
 	Cvar_RegisterVariable (&sys_nostdout);
+	Cvar_RegisterVariable (&sys_sleep);
 
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution
 	timeBeginPeriod( 1 );
+
+	vinfo.dwOSVersionInfoSize = sizeof(vinfo);
+
+	if (!GetVersionEx (&vinfo))
+		Sys_Error ("Couldn't get OS info");
+
+	if ((vinfo.dwMajorVersion < 4) ||
+		(vinfo.dwPlatformId == VER_PLATFORM_WIN32s))
+	{
+		Sys_Error ("QuakeForge requires at least Win95 or NT 4.0");
+	}
+
+	if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
+		WinNT = true;
+	else
+		WinNT = false;
 }
 
 /*
@@ -184,6 +203,7 @@ int main (int argc, char **argv)
 	struct timeval	timeout;
 	fd_set			fdset;
 	int				t;
+	int				sleep_msec;
 
 	COM_InitArgv (argc, argv);
 	
@@ -210,6 +230,22 @@ int main (int argc, char **argv)
 
 	SV_Init (&parms);
 
+	if (COM_CheckParm ("-nopriority"))
+	{
+		Cvar_Set ("sys_sleep", "0");
+	}
+	else
+	{
+		if ( ! SetPriorityClass (GetCurrentProcess(), HIGH_PRIORITY_CLASS))
+			Con_Printf ("SetPriorityClass() failed\n");
+		else
+			Con_Printf ("Process priority class set to HIGH\n");
+	}
+
+	// sys_sleep > 0 seems to cause packet loss on WinNT (why?)
+	if (WinNT)
+		Cvar_Set ("sys_sleep", "0");
+
 // run one frame immediately for first heartbeat
 	SV_Frame (0.1);		
 
@@ -219,6 +255,16 @@ int main (int argc, char **argv)
 	oldtime = Sys_DoubleTime () - 0.1;
 	while (1)
 	{
+	// Now we want to give some processing time to other applications,
+	// such as qw_client, running on this machine.
+		sleep_msec = sys_sleep.value;
+		if (sleep_msec > 0)
+		{
+			if (sleep_msec > 13)
+				sleep_msec = 13;
+			Sleep (sleep_msec);
+		}
+
 	// select on the net socket and stdin
 	// the only reason we have a timeout at all is so that if the last
 	// connected client times out, the message would not otherwise
