@@ -1,0 +1,10 @@
+#!/bin/bash --
+
+#this script must be run from within a cvs controlled directory
+#so cvs can get the proper cvsroot
+
+MYCVSOPTS=-z3
+
+COMMITS=`cvs $MYCVSOPTS log 2>/dev/null |grep -e "^date.*author:" |grep $1 |wc -l`
+echo `basename $0`: CVS user $1 has authored $COMMITS log messages.
+
