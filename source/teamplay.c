@@ -288,6 +288,7 @@ void Team_NewMap ()
 	t2 = strrchr(mapname, '.');
 	if (!t1 || !t2)
 		Sys_Error("Can't find / or .!");
+	t1++;	// skip over /
 	t2[0] = '\0';
 
 	locs_reset();
