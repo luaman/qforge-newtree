@@ -923,9 +923,6 @@ CL_ConnectionlessPacket (void)
 			Con_Printf ("Command packet from remote host.  Ignored.\n");
 			return;
 		}
-#ifdef _WIN32
-		VID_RaiseWindow ();
-#endif
 		s = MSG_ReadString ();
 
 		strncpy (cmdtext, s, sizeof (cmdtext) - 1);
@@ -1146,20 +1143,6 @@ CL_Download_f (void)
 	}
 }
 
-#ifdef _WIN32
-#include <windows.h>
-/*
-=================
-CL_Minimize_f
-=================
-*/
-void
-CL_Windows_f (void)
-{
-	VID_MinimiseWindow ();
-}
-#endif
-
 /*
 =================
 CL_Init
@@ -1241,13 +1224,6 @@ CL_Init (void)
 	Cmd_AddCommand ("say", NULL, "No Description");
 	Cmd_AddCommand ("say_team", NULL, "No Description");
 	Cmd_AddCommand ("serverinfo", NULL, "No Description");
-
-//
-//  Windows commands
-//
-#ifdef _WIN32
-	Cmd_AddCommand ("windows", CL_Windows_f, "No Description");
-#endif
 }
 
 
