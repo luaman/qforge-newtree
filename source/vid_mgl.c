@@ -36,7 +36,9 @@
 #include "d_local.h"
 #include "resource.h"
 #include "in_win.h"
-
+#include "keys.h"
+#include "screen.h"
+#include "wad.h"
 #define	MINIMUM_MEMORY	0x550000
 
 #define MAX_MODE_LIST	30
