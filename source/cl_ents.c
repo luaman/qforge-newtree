@@ -184,11 +184,9 @@ PACKET ENTITY PARSING / LINKING
 */
 
 /*
-==================
-CL_ParseDelta
+	CL_ParseDelta
 
-Can go from either a baseline or a previous packet_entity
-==================
+	Can go from either a baseline or a previous packet_entity
 */
 int         bitcounts[32];				// / just for protocol profiling
 void
@@ -322,12 +320,10 @@ FlushEntityPacket (void)
 }
 
 /*
-==================
-CL_ParsePacketEntities
+	CL_ParsePacketEntities
 
-An svc_packetentities has just been parsed, deal with the
-rest of the data stream.
-==================
+	An svc_packetentities has just been parsed, deal with the
+	rest of the data stream.
 */
 void
 CL_ParsePacketEntities (qboolean delta)

@@ -977,7 +977,7 @@ if test "x$optimize" = xyes; then
 				MORE_CFLAGS="-march=pentium -malign-loops=2 -malign-jumps=2 -malign-functions=2"
 				;;
 			i686-*-*)
-				MORE_CFLAGS="-march=pentiumpro -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				MORE_CFLAGS="-mpentiumpro -march=pentiumpro -malign-loops=2 -malign-jumps=2 -malign-functions=2"
 				;;
 			*)
 				MORE_CFLAGS=""
