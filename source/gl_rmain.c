@@ -299,8 +299,6 @@ void R_DrawSpriteModel (entity_t *e)
 	else
 		glColor4f(1,1,1,1);
 
-	GL_DisableMultitexture();
-
     glBindTexture (GL_TEXTURE_2D, frame->gl_texturenum);
 
 	glEnable (GL_ALPHA_TEST);
@@ -619,8 +617,6 @@ void R_DrawAliasModel (entity_t *e)
 	//
 	// draw all the triangles
 	//
-
-	GL_DisableMultitexture();
 
 	glPushMatrix ();
 	R_RotateForEntity (e);
@@ -967,8 +963,6 @@ void R_RenderScene (void)
 	S_ExtraUpdate ();	// don't let sound get messed up if going slow
 
 	R_DrawEntitiesOnList ();
-
-	GL_DisableMultitexture();
 
 	R_RenderDlights ();
 	R_UpdateFires ();

@@ -519,9 +519,8 @@ void R_DrawParticles (void)
 	qboolean		alphaTestEnabled;
 
 	glBindTexture (GL_TEXTURE_2D, particletexture);
-	// LordHavoc: reset to single texture and modulate mode before drawing particles
-	GL_DisableMultitexture();
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	// LordHavoc: particles should not affect zbuffer
+	glDepthMask(0);
 	alphaTestEnabled = glIsEnabled(GL_ALPHA_TEST);
 
 	if (alphaTestEnabled)
@@ -655,6 +654,7 @@ void R_DrawParticles (void)
 	glEnd ();
 	if (alphaTestEnabled)
 		glEnable(GL_ALPHA_TEST);
+	glDepthMask(1);
 }
 
 /*

@@ -998,8 +998,6 @@ void GL_Set2D (void)
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity ();
 
-	GL_DisableMultitexture ();
-
 	glEnable (GL_BLEND);
 	glDisable (GL_DEPTH_TEST);
 	glDisable (GL_CULL_FACE);
@@ -1474,13 +1472,3 @@ int GL_LoadPicTexture (qpic_t *pic)
 {
 	return GL_LoadTexture ("", pic->width, pic->height, pic->data, false, true, 1);
 }
-
-/****************************************/
-
-void GL_SelectTexture (GLenum target) 
-{
-	if (!gl_mtexable)
-		return;
-	qglSelectTexture (target + gl_mtex_enum);
-}
-

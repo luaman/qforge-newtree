@@ -650,7 +650,6 @@ R_DrawSkyBox (void)
 {
 	int			i, j;
 
-	GL_DisableMultitexture ();
 	glEnable (GL_DEPTH_TEST);
 	glDepthFunc (GL_ALWAYS);
 //	glDisable (GL_BLEND);
@@ -732,13 +731,13 @@ R_DrawSkyLayer (float s)
 void
 R_DrawSkyDome (void)
 {
-	GL_DisableMultitexture ();
 	glEnable (GL_DEPTH_TEST);
 	glDepthFunc (GL_ALWAYS);
 //	glDisable (GL_BLEND);
 //	glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthRange (gldepthmax, gldepthmax);
+	glDisable (GL_BLEND);
 	if (lighthalf)
 		glColor3f(0.5,0.5,0.5);
 	else
