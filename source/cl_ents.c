@@ -47,6 +47,7 @@
 #include "msg.h"
 #include "pmove.h"
 #include "r_dynamic.h"
+#include "sys.h"
 #include "view.h"
 
 extern cvar_t *cl_predict_players;
