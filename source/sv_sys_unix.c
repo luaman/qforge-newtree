@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 	if (j)
 		parms.memsize = (int) (atof(com_argv[j+1]) * 1024 * 1024);
 	if ((parms.membase = malloc (parms.memsize)) == NULL)
-		Sys_Error("Can't allocate %ld\n", parms.memsize);
+		Sys_Error("Can't allocate %d\n", parms.memsize);
 
 	parms.basedir = BASEDIR;
 

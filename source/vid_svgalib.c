@@ -55,6 +55,7 @@
 #include "qendian.h"
 #include "console.h"
 #include "qargs.h"
+#include "input.h"
 
 #define stringify(m) { #m, m }
 

@@ -37,6 +37,7 @@
 #include "console.h"
 #include "qargs.h"
 #include "cmd.h"
+#include "commdef.h"
 
 #include <stdio.h>
 #include <stdlib.h>

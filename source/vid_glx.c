@@ -63,6 +63,7 @@
 #include "qendian.h"
 #include "qargs.h"
 #include "compat.h"
+#include "input.h"
 
 #include <GL/glx.h>
 

@@ -44,6 +44,7 @@ typedef unsigned short PIXEL;
 #include "qendian.h"
 #include "console.h"
 #include "qargs.h"
+#include "input.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -504,7 +505,7 @@ void	VID_Init (unsigned char *palette)
 	else if (num_visuals == 0)
 	{
 		if (template_mask == VisualIDMask)
-			Sys_Error("VID: Bad visual id %d\n", template.visualid);
+			Sys_Error("VID: Bad visual id %ld\n", template.visualid);
 		else
 			Sys_Error("VID: No visuals at depth %d\n", template.depth);
 	}
