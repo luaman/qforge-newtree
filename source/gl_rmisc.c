@@ -228,7 +228,7 @@ R_Init_Cvars (void)
 	gl_affinemodels = Cvar_Get ("gl_affinemodels", "0", CVAR_ARCHIVE, "Makes texture rendering quality better if set to 1");
 	gl_clear = Cvar_Get ("gl_clear", "0", CVAR_NONE, "Set to 1 to make background black. Useful for removing HOM effect");
 	gl_cull = Cvar_Get ("gl_cull", "1", CVAR_ARCHIVE, "If set to 1, does not render things that do not need to be");
-	gl_dlight_lightmap = Cvar_Get ("gl_dlight_lightmap", "0", CVAR_ARCHIVE, "Set to 1 for high quality dynamic lighting.");
+	gl_dlight_lightmap = Cvar_Get ("gl_dlight_lightmap", "1", CVAR_ARCHIVE, "Set to 1 for high quality dynamic lighting.");
 	gl_dlight_polyblend = Cvar_Get ("gl_dlight_polyblend", "0", CVAR_ARCHIVE, "Set to 1 to use a dynamic light effect faster on GL");
 	gl_dlight_smooth = Cvar_Get ("gl_dlight_smooth", "1", CVAR_ARCHIVE, "Smooth dynamic vertex lighting");
 	gl_fb_bmodels = Cvar_Get ("gl_fb_bmodels", "1", CVAR_ARCHIVE, "Toggles fullbright color support for bmodels");
