@@ -136,6 +136,14 @@ EXT2=.obj
 
 DEPEND = \
    $(DIRECTXSDK)\lib\borland\dxguid.lib\
+   $(OBJS)\model.obj\
+   $(OBJS)\model_brush.obj\
+   $(OBJS)\model_alias.obj\
+   $(OBJS)\model_sprite.obj\
+   $(OBJS)\gl_model_alias.obj\
+   $(OBJS)\gl_model_fullbright.obj\
+   $(OBJS)\gl_model_brush.obj\
+   $(OBJS)\gl_model_sprite.obj\
    $(OBJS)\teamplay.obj\
    $(OBJS)\sdl_main.obj\
    $(OBJS)\r_view.obj\
@@ -153,7 +161,6 @@ DEPEND = \
    $(OBJS)\gl_refrag.obj\
    $(OBJS)\gl_part.obj\
    $(OBJS)\gl_ngraph.obj\
-   $(OBJS)\gl_model.obj\
    $(OBJS)\gl_mesh.obj\
    $(OBJS)\gl_warp.obj\
    $(OBJS)\worlda.obj\
@@ -217,6 +224,14 @@ $(EXE)\qf-client-sgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\model.obj+
+$(OBJS)\model_brush.obj+
+$(OBJS)\model_alias.obj+
+$(OBJS)\model_sprite.obj+
+$(OBJS)\gl_model_alias.obj+
+$(OBJS)\gl_model_fullbright.obj+
+$(OBJS)\gl_model_brush.obj+
+$(OBJS)\gl_model_sprite.obj+
 $(OBJS)\teamplay.obj+
 $(OBJS)\sdl_main.obj+
 $(OBJS)\r_view.obj+
@@ -232,7 +247,6 @@ $(OBJS)\gl_rlight.obj+
 $(OBJS)\gl_refrag.obj+
 $(OBJS)\gl_part.obj+
 $(OBJS)\gl_ngraph.obj+
-$(OBJS)\gl_model.obj+
 $(OBJS)\gl_mesh.obj+
 $(OBJS)\gl_warp.obj+
 $(OBJS)\worlda.obj+
@@ -296,6 +310,47 @@ $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SDLSDK)\lib\sdl.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32mt.lib
+
+|
+$(OBJS)\model.obj :  $(QFROOT)\source\model.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model.c
+
+|
+$(OBJS)\model_brush.obj :  $(QFROOT)\source\model_brush.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model_brush.c
+
+|
+$(OBJS)\model_alias.obj :  $(QFROOT)\source\model_alias.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model_alias.c
+
+|
+$(OBJS)\model_sprite.obj :  $(QFROOT)\source\model_sprite.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model_sprite.c
+
+|
+$(OBJS)\gl_model_brush.obj :  $(QFROOT)\source\gl_model_brush.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_model_brush.c
+
+|
+$(OBJS)\gl_model_alias.obj :  $(QFROOT)\source\gl_model_alias.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_model_alias.c
+
+|
+$(OBJS)\gl_model_fullbright.obj :  $(QFROOT)\source\gl_model_fullbright.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_model_fullbright.c
+
+|
+$(OBJS)\gl_model_sprite.obj :  $(QFROOT)\source\gl_model_sprite.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_model_sprite.c
+
 
 |
 $(OBJS)\teamplay.obj :  $(QFROOT)\source\teamplay.c
@@ -371,11 +426,6 @@ $(OBJS)\gl_part.obj :  $(QFROOT)\source\gl_part.c
 $(OBJS)\gl_ngraph.obj :  $(QFROOT)\source\gl_ngraph.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_ngraph.c
-|
-
-$(OBJS)\gl_model.obj :  $(QFROOT)\source\gl_model.c
-  $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_model.c
 |
 
 $(OBJS)\gl_mesh.obj :  $(QFROOT)\source\gl_mesh.c

@@ -117,6 +117,8 @@ EXT2=.obj
 # Dependency List
 #
 DEPEND = \
+   $(OBJS)\model.obj\
+   $(OBJS)\model_brush.obj\
    $(OBJS)\pr_offs.obj\
    $(OBJS)\buildnum.obj\
    $(OBJS)\info.obj\
@@ -139,7 +141,6 @@ DEPEND = \
    $(OBJS)\pmove.obj\
    $(OBJS)\net_com.obj\
    $(OBJS)\net_chan.obj\
-   $(OBJS)\model.obj\
    $(OBJS)\mdfour.obj\
    $(OBJS)\mathlib.obj\
    $(OBJS)\cvar.obj\
@@ -167,6 +168,8 @@ $(EXE)\qf-server.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0x32.obj+
+$(OBJS)\model.obj+
+$(OBJS)\model_brush.obj+
 $(OBJS)\pr_offs.obj+
 $(OBJS)\buildnum.obj+
 $(OBJS)\info.obj+
@@ -189,7 +192,6 @@ $(OBJS)\pmovetst.obj+
 $(OBJS)\pmove.obj+
 $(OBJS)\net_com.obj+
 $(OBJS)\net_chan.obj+
-$(OBJS)\model.obj+
 $(OBJS)\mdfour.obj+
 $(OBJS)\mathlib.obj+
 $(OBJS)\cvar.obj+
@@ -217,6 +219,15 @@ $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
 #$(CROOT)\LIB\cw32mt.lib
 
+|
+$(OBJS)\model.obj :  $(QFROOT)\source\model.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model.c
+
+|
+$(OBJS)\model_brush.obj :  $(QFROOT)\source\model_brush.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model_brush.c
 
 |
 $(OBJS)\pr_offs.obj :  $(QFROOT)\source\pr_offs.c
@@ -327,11 +338,6 @@ $(OBJS)\net_com.obj :  $(QFROOT)\source\net_com.c
 $(OBJS)\net_chan.obj :  $(QFROOT)\source\net_chan.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\net_chan.c
-|
-
-$(OBJS)\model.obj :  $(QFROOT)\source\model.c
-  $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model.c
 |
 
 $(OBJS)\mdfour.obj :  $(QFROOT)\source\mdfour.c

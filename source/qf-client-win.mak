@@ -128,6 +128,13 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\model.obj\
+   $(OBJS)\model_brush.obj\
+   $(OBJS)\model_alias.obj\
+   $(OBJS)\model_sprite.obj\
+   $(OBJS)\sw_model_alias.obj\
+   $(OBJS)\sw_model_brush.obj\
+   $(OBJS)\sw_model_sprite.obj\
    $(OBJS)\teamplay.obj\
    $(OBJS)\vid_mgl.obj\
    $(OBJS)\cl_trans.obj\
@@ -203,7 +210,6 @@ DEPEND = \
    $(OBJS)\mdfour.obj\
    $(OBJS)\cvar.obj\
    $(OBJS)\crc.obj\
-   $(OBJS)\model.obj\
    $(OBJS)\fnmatch.obj\
    $(OBJS)\sys_win.obj\
    $(OBJS)\snd_win.obj\
@@ -225,7 +231,6 @@ DEPEND = \
    $(OBJS)\cl_tent.obj\
    $(OBJS)\cl_pred.obj\
    $(OBJS)\cl_parse.obj\
-   $(OBJS)\cl_model.obj\
    $(OBJS)\cl_misc.obj\
    $(OBJS)\cl_main.obj\
    $(OBJS)\cl_input.obj\
@@ -239,6 +244,13 @@ $(EXE)\qf-client-win.exe : $(DEPEND)
   $(TLINK32) /v @&&|
  $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\model.obj+
+$(OBJS)\model_brush.obj+
+$(OBJS)\model_alias.obj+
+$(OBJS)\model_sprite.obj+
+$(OBJS)\sw_model_alias.obj+
+$(OBJS)\sw_model_brush.obj+
+$(OBJS)\sw_model_sprite.obj+
 $(OBJS)\teamplay.obj+
 $(OBJS)\vid_mgl.obj+
 $(OBJS)\cl_trans.obj+
@@ -312,7 +324,6 @@ $(OBJS)\cmd.obj+
 $(OBJS)\mdfour.obj+
 $(OBJS)\cvar.obj+
 $(OBJS)\crc.obj+
-$(OBJS)\model.obj+
 $(OBJS)\fnmatch.obj+
 $(OBJS)\sys_win.obj+
 $(OBJS)\snd_win.obj+
@@ -334,7 +345,6 @@ $(OBJS)\cl_cam.obj+
 $(OBJS)\cl_tent.obj+
 $(OBJS)\cl_pred.obj+
 $(OBJS)\cl_parse.obj+
-$(OBJS)\cl_model.obj+
 $(OBJS)\cl_misc.obj+
 $(OBJS)\cl_main.obj+
 $(OBJS)\cl_input.obj+
@@ -348,6 +358,41 @@ $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SCITECHROOT)\lib\win32\bc5\mglfx.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32mt.lib
+
+|
+$(OBJS)\model.obj :  $(QFROOT)\source\model.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model.c
+
+|
+$(OBJS)\model_brush.obj :  $(QFROOT)\source\model_brush.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model_brush.c
+
+|
+$(OBJS)\model_alias.obj :  $(QFROOT)\source\model_alias.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model_alias.c
+
+|
+$(OBJS)\model_sprite.obj :  $(QFROOT)\source\model_sprite.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model_sprite.c
+
+|
+$(OBJS)\sw_model_brush.obj :  $(QFROOT)\source\sw_model_brush.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sw_model_brush.c
+
+|
+$(OBJS)\sw_model_alias.obj :  $(QFROOT)\source\sw_model_alias.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sw_model_alias.c
+
+|
+$(OBJS)\sw_model_sprite.obj :  $(QFROOT)\source\sw_model_sprite.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sw_model_sprite.c
 
 |
 $(OBJS)\teamplay.obj :  $(QFROOT)\source\teamplay.c
@@ -625,11 +670,6 @@ $(OBJS)\crc.obj :  $(QFROOT)\source\crc.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\crc.c
 |
 
-$(OBJS)\model.obj :  $(QFROOT)\source\model.c
-  $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\model.c
-|
-
 $(OBJS)\fnmatch.obj :  $(QFROOT)\source\fnmatch.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\fnmatch.c
@@ -733,11 +773,6 @@ $(OBJS)\cl_pred.obj :  $(QFROOT)\source\cl_pred.c
 $(OBJS)\cl_parse.obj :  $(QFROOT)\source\cl_parse.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\cl_parse.c
-|
-
-$(OBJS)\cl_model.obj :  $(QFROOT)\source\cl_model.c
-  $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\cl_model.c
 |
 
 $(OBJS)\cl_misc.obj :  $(QFROOT)\source\cl_misc.c
