@@ -1,11 +1,11 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES=	-I$(top_srcdir)/include $(GGI_CFLAGS) $(SVGA_CFLAGS) $(X_CFLAGS) $(GLX_CFLAGS)
+INCLUDES=	-I$(top_srcdir)/include $(MGL_CFLAGS) $(GGI_CFLAGS) $(SVGA_CFLAGS) $(X_CFLAGS) $(GLX_CFLAGS)
 
 bin_PROGRAMS =	@TARGETS@
 
-EXTRA_PROGRAMS= qf-server qf-client-ggi qf-client-svga qf-client-x11 \
-		qf-client-glx
+EXTRA_PROGRAMS= qf-server qf-client-mgl qf-client-ggi qf-client-svga \
+		qf-client-x11 qf-client-glx
 
 if SYSTYPE_WIN32
 cl_sys = sys_win.c cl_sys_win.c
@@ -38,6 +38,7 @@ ogl_SOURCES=	gl_draw.c gl_mesh.c gl_model.c gl_ngraph.c gl_part.c \
 		gl_refrag.c gl_rlight.c gl_rmain.c gl_rmisc.c gl_rsurf.c \
 		gl_screen.c gl_trans.c gl_view.c gl_warp.c
 
+mgl_SOURCES=	vid_mgl.c in_win.c
 ggi_SOURCES=	vid_ggi.c
 svga_SOURCES=	vid_svgalib.c
 x11_SOURCES=	vid_x11.c
@@ -48,16 +49,18 @@ EXTRA_qf_server_SOURCES= sys_unix.c cl_sys_unix.c sv_sys_unix.c \
 	sys_win.c cl_sys_win.c sv_sys_win.c
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
+qf_client_mgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(mgl_SOURCES)
 qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(ggi_SOURCES)
 qf_client_svga_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(svga_SOURCES)
 qf_client_x11_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(x11_SOURCES)
 qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
 
-LDADD = $(NET_LIBS)
-qf_client_ggi_LDADD=	$(GGI_LIBS)
-qf_client_svga_LDADD=	$(SVGA_LIBS)
-qf_client_x11_LDADD=	$(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB)
-qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS)
+qf_server_LDADD=	$(NET_LIBS)
+qf_client_mgl_LDADD=	$(MGL_LIBS) $(NET_LIBS)
+qf_client_ggi_LDADD=	$(GGI_LIBS) $(NET_LIBS)
+qf_client_svga_LDADD=	$(SVGA_LIBS) $(NET_LIBS)
+qf_client_x11_LDADD=	$(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB) $(NET_LIBS)
+qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(NET_LIBS)
 
 EXTRA_DIST = makefile.winc makefile.wingl makefile.wins \
 	qw_client.dsp qw_server.dsp
