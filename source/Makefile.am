@@ -35,7 +35,7 @@ INCLUDES=	-I$(top_srcdir)/include $(MGL_CFLAGS) $(GGI_CFLAGS) $(SVGA_CFLAGS) $(X
 bin_PROGRAMS =	@TARGETS@
 
 EXTRA_PROGRAMS= qf-server \
-		qf-client-mgl qf-client-ggi qf-client-svga qf-client-x11 \
+		qf-client-mgl qf-client-ggi qf-client-sdl qf-client-svga qf-client-x11 \
 		qf-client-3dfx qf-client-glx qf-client-sgl qf-client-wgl
 
 noinst_LIBRARIES= libqfsys_cl.a libqfsys_sv.a libqfsnd.a libqfcd.a
@@ -175,9 +175,9 @@ qf_client_mgl_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 #
 sdl_SOURCES=		vid_sdl.c
 
-qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(sdl_SOURCES)
-qf_client_ggi_LDADD=	$(SDL_LIBS) $(CLIENT_LIBS)
-qf_client_ggi_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
+qf_client_sdl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(sdl_SOURCES)
+qf_client_sdl_LDADD=	$(SDL_LIBS) $(CLIENT_LIBS)
+qf_client_sdl_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 
 #
 # ... Linux SVGAlib
