@@ -310,10 +310,10 @@ static void SCR_CalcRefdef (void)
 //========================================
 	
 // bound viewsize
-	Cvar_SetValue (scr_viewsize, bound (30, scr_viewsize->value, 120);
+	Cvar_SetValue (scr_viewsize, bound (30, scr_viewsize->value, 120));
 
 // bound field of view
-	Cvar_Set (scr_fov, bound (10, scr_fov->value, 170);
+	Cvar_SetValue (scr_fov, bound (10, scr_fov->value, 170));
 
 // intermission is always full screen   
 	if (cl.intermission)
