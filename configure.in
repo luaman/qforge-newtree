@@ -940,14 +940,14 @@ if test "x$HAVE_GGI" = xyes ; then
 	TARGETS="$TARGETS qf-client-ggi\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS GGI"
 fi
-if test "x$HAVE_SDL" = xyes ; then
-	TARGETS="$TARGETS qf-client-sdl\$(EXEEXT)"
-	CL_TARGETS="$CL_TARGETS SDL"
-	if test "x$HAVE_GLX" = xyes; then
-		TARGETS="$TARGETS qf-client-sgl\$(EXEEXT)"
-		CL_TARGETS="$CL_TARGETS SDL-GL"
-	fi
-fi
+#if test "x$HAVE_SDL" = xyes ; then
+#	TARGETS="$TARGETS qf-client-sdl\$(EXEEXT)"
+#	CL_TARGETS="$CL_TARGETS SDL"
+#	if test "x$HAVE_GLX" = xyes; then
+#		TARGETS="$TARGETS qf-client-sgl\$(EXEEXT)"
+#		CL_TARGETS="$CL_TARGETS SDL-GL"
+#	fi
+#fi
 if test "x$HAVE_SVGA" = xyes ; then
 	TARGETS="$TARGETS qf-client-svga\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS SVGAlib"
