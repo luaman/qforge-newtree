@@ -61,6 +61,12 @@ need this.
 FREE Borland C++ complier 5.5.
 (http://www.borland.com/bcppbuilder/freecompiler/)
 
+Make sure you install latest Borland C++ free complier service packs for
+5.5 to upgrade it to 5.5.1.
+
+http://www.borland.com/devsupport/bcppbuilder/patches/bcc55/bcc55sp1.zip
+http://www.borland.com/devsupport/bcppbuilder/patches/bcc55/bcc55sp2.exe
+
 5) Borland preprocessor can't process quake .S files. You need to get
 .ASM files or use some other complier to preprocess them.
 ASM files must be placed on newtree SOURCE dir.
