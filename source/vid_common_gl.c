@@ -295,15 +295,21 @@ void
 	// Check for 8bit Extensions and initialize them.
 	int 	i;
 
+	if (is8bit) {
+		return;
+	}
+
 	if (strstr (gl_extensions, "3DFX_set_global_palette")) {
 
 		char	*oldpal;
 		GLubyte table[256][4];
-		gl3DfxSetPaletteEXT_FUNC load_texture = NULL;
+		gl3DfxSetPaletteEXT_FUNC qgl3DfxSetPaletteEXT = NULL;
+
+		if (!(qgl3DfxSetPaletteEXT = (void *) dlsym (dlhand, "gl3DfxSetPaletteEXT"))) {
+			return;
+		}
 
 		Con_Printf ("3DFX_set_global_palette.\n");
-
-		load_texture = (void *) dlsym (dlhand, "gl3DfxSetPaletteEXT");
 
 		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
 		oldpal = (char *) d_8to24table; //d_8to24table3dfx;
@@ -314,56 +320,50 @@ void
 			table[i][3] = 255;
 			oldpal++;
 		}
-		load_texture ((GLuint *) table);
+		qgl3DfxSetPaletteEXT ((GLuint *) table);
 		is8bit = true;
-# ifdef GL_SHARED_TEXTURE_PALETTE_EXT
-	} else {
-		Shared_Init8bitPalette ();
-# endif
 	}
-
-	Con_Printf ("not found.\n");
 }
 #endif
 
 #ifdef GL_SHARED_TEXTURE_PALETTE_EXT
 
-#ifndef PFNGLCOLORTABLEPROC
-typedef void (APIENTRY * PFNGLCOLORTABLEPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid *table);
-#endif
+//#ifndef PFNGLCOLORTABLEEXTPROC
+//typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid *table);
+//#endif
 
 void
 Shared_Init8bitPalette (void)
 {
 	int 	i;
-	char	thePalette[256*3];
-	char	*oldPalette, *newPalette;
+	GLubyte thePalette[256][3];
+	char	*oldPalette;
 
-	PFNGLCOLORTABLEPROC qglColorTable = NULL;
+	PFNGLCOLORTABLEEXTPROC qglColorTableEXT = NULL;
 
-	if (strstr (gl_extensions, "GL_EXT_shared_texture_palette") == NULL) {
+	if (is8bit) {
 		return;
 	}
 
-	if (!(qglColorTable = (void *) dlsym (dlhand, "glColorTable"))) {
-		if (!(qglColorTable = (void *) dlsym (dlhand, "glColorTableEXT"))) {
+	if (strstr (gl_extensions, "GL_EXT_shared_texture_palette")) {
+		if (!(qglColorTableEXT = (void *) dlsym (dlhand, "glColorTableEXT"))) {
 			return;
 		}
-	}
 
-	Con_Printf ("8-bit GL extensions enabled.\n");
-	glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
-	oldPalette = (char *) d_8to24table; //d_8to24table3dfx;
-	newPalette = thePalette;
-	for (i = 0; i < 256; i++) {
-		*newPalette++ = *oldPalette++;
-		*newPalette++ = *oldPalette++;
-		*newPalette++ = *oldPalette++;
-		oldPalette++;
-	}
-	is8bit = true;
+		Con_Printf ("GL_EXT_shared_texture_palette\n");
 
-	qglColorTable (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
+		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
+		oldPalette = (char *) d_8to24table; //d_8to24table3dfx;
+		for (i = 0; i < 256; i++) {
+			thePalette[i][0] = *oldPalette++;
+			thePalette[i][1] = *oldPalette++;
+			thePalette[i][2] = *oldPalette++;
+			oldPalette++;
+		}
+
+		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
+		is8bit = true;
+	}
 }
 #endif
 
@@ -393,8 +393,11 @@ VID_Init8bitPalette (void)
 		Shared_Init8bitPalette();
 # endif
 #endif
-	dlclose (dlhand);
-	dlhand = NULL;
+		if (!is8bit) {
+			Con_Printf ("not found.\n");
+		}
+		dlclose (dlhand);
+		dlhand = NULL;
 	}
 }
 
