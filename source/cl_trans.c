@@ -63,7 +63,7 @@ CL_NewTranslation (int slot)
 
 	strcpy (s, Info_ValueForKey (player->userinfo, "skin"));
 	COM_StripExtension (s, s);
-	if (player->skin && !stricmp (s, player->skin->name))
+	if (player->skin && !strequal (s, player->skin->name))
 		player->skin = NULL;
 
 	if (player->_topcolor != player->topcolor ||
