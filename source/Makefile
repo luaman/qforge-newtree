@@ -17,9 +17,6 @@ vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
 
 CPPFLAGS=-I . -I ../include -I /usr/X11R6/include -DELF -Did386=1 -MMD -Dstricmp=strcasecmp
 
-gcc -I . -I ../include -DELF -Did386=1 -MMD -Dstricmp=strcasecmp  -c -o gl_draw.o gl_draw.c
-
-
 CFLAGS=-Wall -Werror
 CXXFLAGS=-Wall -Werror
 LDFLAGS=-L/usr/X11R6/lib 
