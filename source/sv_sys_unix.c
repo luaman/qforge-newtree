@@ -59,8 +59,6 @@ cvar_t     *sys_extrasleep;
 qboolean    is_server = true;
 qboolean    stdin_ready;
 
-#define BASEDIR	"."
-
 
 /*
 ===============================================================================
