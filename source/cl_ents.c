@@ -440,6 +440,7 @@ CL_ParsePacketEntities (qboolean delta)
 			if (newindex >= MAX_PACKET_ENTITIES)
 				Host_EndGame ("CL_ParsePacketEntities: newindex == MAX_PACKET_ENTITIES");
 			CL_ParseDelta (&cl_baselines[newnum], &newp->entities[newindex], word);
+			
 			newindex++;
 			continue;
 		}
@@ -449,11 +450,13 @@ CL_ParsePacketEntities (qboolean delta)
 				cl.validsequence = 0;
 				Con_Printf ("WARNING: delta on full update");
 			}
-			if (word & U_REMOVE) {
+			if (word & U_REMOVE) {	// Clear the entity
+				entity_t	*ent = &cl_packet_ents[newnum];
+				memset (ent, 0, sizeof (entity_t));
 				oldindex++;
 				continue;
 			}
-//			Con_Printf ("delta %i\n",newnum);
+//			Con_Printf ("delta %i\n", newnum);
 			CL_ParseDelta (&oldp->entities[oldindex], &newp->entities[newindex], word);
 			newindex++;
 			oldindex++;
@@ -512,6 +515,7 @@ CL_LinkPacketEntities (void)
 		ent = CL_NewTempEntity ();
 		if (!ent)
 			break;						// object list is full
+
 		*ent = &cl_packet_ents[s1->number];
 
 		(*ent)->keynum = s1->number;
@@ -1130,10 +1134,6 @@ CL_EmitEntities (void)
 		return;
 	if (!cl.validsequence)
 		return;
-
-	cl_oldnumvisedicts = cl_numvisedicts;
-	cl_oldvisedicts = cl_visedicts_list[!(cls.netchan.incoming_sequence & 1)];
-	cl_visedicts = cl_visedicts_list[cls.netchan.incoming_sequence & 1];
 
 	cl_numvisedicts = 0;
 

@@ -166,9 +166,8 @@ dlight_t    cl_dlights[MAX_DLIGHTS];
 // refresh list
 // this is double buffered so the last frame
 // can be scanned for oldorigins of trailing objects
-int         cl_numvisedicts, cl_oldnumvisedicts;
-entity_t  **cl_visedicts, **cl_oldvisedicts;
-entity_t   *cl_visedicts_list[2][MAX_VISEDICTS];
+int         cl_numvisedicts;
+entity_t	*cl_visedicts[MAX_VISEDICTS];
 
 double      connect_time = -1;			// for connection retransmits
 
