@@ -49,14 +49,14 @@ ALIAS MODELS
 ==============================================================================
 */
 
-aliashdr_t	*pheader;
+extern aliashdr_t	*pheader;
 
-stvert_t	stverts[MAXALIASVERTS];
-mtriangle_t	triangles[MAXALIASTRIS];
+extern stvert_t	stverts[MAXALIASVERTS];
+extern mtriangle_t	triangles[MAXALIASTRIS];
 
 // a pose is a single set of vertexes.  a frame may be
 // an animating sequence of poses
-trivertx_t	*poseverts[MAXALIASFRAMES];
+extern trivertx_t	*poseverts[MAXALIASFRAMES];
 extern int	posenum;
 
 byte		player_8bit_texels[320*200];
