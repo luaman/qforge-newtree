@@ -169,7 +169,7 @@ SV_Soundlist_f
 void SV_Soundlist_f (void)
 {
 	char		**s;
-	int			n;
+	unsigned	n;
 
 	if (host_client->state != cs_connected)
 	{
@@ -186,6 +186,11 @@ void SV_Soundlist_f (void)
 	}
 
 	n = atoi(Cmd_Argv(2));
+	if (n >= MAX_SOUNDS) {
+		Con_Printf ("SV_Soundlist_f: Invalid soundlist index\n");
+		SV_New_f ();
+		return;
+	}
 	
 //NOTE:  This doesn't go through ClientReliableWrite since it's before the user
 //spawns.  These functions are written to not overflow
@@ -219,7 +224,7 @@ SV_Modellist_f
 void SV_Modellist_f (void)
 {
 	char		**s;
-	int			n;
+	unsigned	n;
 
 	if (host_client->state != cs_connected)
 	{
@@ -236,6 +241,11 @@ void SV_Modellist_f (void)
 	}
 
 	n = atoi(Cmd_Argv(2));
+	if (n >= MAX_MODELS) {
+		Con_Printf ("SV_Modellist_f: Invalid modellist index\n");
+		SV_New_f ();
+		return;
+	}
 
 //NOTE:  This doesn't go through ClientReliableWrite since it's before the user
 //spawns.  These functions are written to not overflow
