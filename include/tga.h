@@ -29,9 +29,29 @@
 #ifndef __tga_h
 #define __tga_h
 
+#include "gcc_attr.h"
 #include "qtypes.h"
 
-byte *
-LoadTGA (QFile *fin);
+#ifndef __GNUC__
+#error do some data packing magic here (#pragma pack?)
+#endif
+
+typedef struct _TargaHeader {
+	unsigned char id_length __attribute__((packed));
+	unsigned char colormap_type __attribute__((packed));
+	unsigned char image_type __attribute__((packed));
+	unsigned short colormap_index __attribute__((packed));
+	unsigned short colormap_length __attribute__((packed));
+	unsigned char colormap_size __attribute__((packed));
+	unsigned short x_origin __attribute__((packed));
+	unsigned short y_origin __attribute__((packed));
+	unsigned short width __attribute__((packed));
+	unsigned short height __attribute__((packed));
+	unsigned char pixel_size __attribute__((packed));
+	unsigned char attributes __attribute__((packed));
+} TargaHeader;
+
+byte *LoadTGA (QFile *fin);
+void WriteTGAfile (const char *tganame, byte *data, int width, int height);
 
 #endif // __tga_h

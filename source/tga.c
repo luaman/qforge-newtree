@@ -30,18 +30,10 @@
 # include "config.h"
 #endif
 
+#include "qendian.h"
 #include "quakefs.h"
 #include "sys.h"
 #include "tga.h"
-
-typedef struct _TargaHeader {
-	unsigned char id_length, colormap_type, image_type;
-	unsigned short colormap_index, colormap_length;
-	unsigned char colormap_size;
-	unsigned short x_origin, y_origin, width, height;
-	unsigned char pixel_size, attributes;
-} TargaHeader;
-
 
 static int
 fgetLittleShort (QFile *f)
@@ -228,4 +220,19 @@ LoadTGA (QFile *fin)
 
 	Qclose (fin);
 	return targa_rgba;
+}
+
+void
+WriteTGAfile (const char *tganame, byte *data, int width, int height)
+{
+	TargaHeader header;
+
+	memset (&header, 0, sizeof (header));
+	header.image_type = 2;				// uncompressed type
+	header.width = LittleShort (width);
+	header.height = LittleShort (height);
+	header.pixel_size = 24;
+
+	COM_WriteBuffers (tganame, 2, &header, sizeof (header), data,
+					  width * height * 3);
 }

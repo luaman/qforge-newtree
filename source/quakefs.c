@@ -29,21 +29,9 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "qtypes.h"
-#include "quakefs.h"
-#include "sys.h"
-#include "console.h"
-#include "draw.h"
-#include "cmd.h"
-#include "cvar.h"
-#include "commdef.h"
-#include "qendian.h"
-#include "info.h"
-#include "server.h"
-#include "va.h"
-#include "qargs.h"
 
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
 #ifdef HAVE_UNISTD_H
@@ -67,6 +55,20 @@
 #define _POSIX_
 #endif
 #include <limits.h>
+#include "qtypes.h"
+
+#include "quakefs.h"
+#include "sys.h"
+#include "console.h"
+#include "draw.h"
+#include "cmd.h"
+#include "cvar.h"
+#include "commdef.h"
+#include "qendian.h"
+#include "info.h"
+#include "server.h"
+#include "va.h"
+#include "qargs.h"
 
 // LordHavoc: win32 would not compile without this
 #ifndef __const
@@ -391,6 +393,40 @@ COM_WriteFile (char *filename, void *data, int len)
 	Sys_Printf ("COM_WriteFile: %s\n", name);
 	Qwrite (f, data, len);
 	Qclose (f);
+}
+
+/*
+	COM_WriteBuffers
+
+	The filename will be prefixed by the current game directory
+*/
+void
+COM_WriteBuffers (const char *filename, int count, ...)
+{
+	QFile      *f;
+	char        name[MAX_OSPATH];
+	va_list     args;
+
+	va_start (args, count);
+
+	snprintf (name, sizeof (name), "%s/%s", com_gamedir, filename);
+
+	f = Qopen (name, "wb");
+	if (!f) {
+		Sys_mkdir (com_gamedir);
+		f = Qopen (name, "wb");
+		if (!f)
+			Sys_Error ("Error opening %s", filename);
+	}
+
+	Sys_Printf ("COM_WriteFile: %s\n", name);
+	while (count--) {
+		void *data = va_arg (args, void*);
+		int   len = va_arg (args, int);
+		Qwrite (f, data, len);
+	}
+	Qclose (f);
+	va_end (args);
 }
 
 

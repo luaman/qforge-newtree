@@ -49,6 +49,8 @@ extern char	com_gamedir[MAX_OSPATH];
 extern char	gamedirfile[MAX_OSPATH];
 
 void COM_WriteFile (char *filename, void *data, int len);
+void COM_WriteBuffers (const char *filename, int count, ...);
+
 int _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip);
 int COM_FOpenFile (char *filename, QFile **gzfile);
 void COM_CloseFile (QFile *h);

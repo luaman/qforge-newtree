@@ -46,6 +46,7 @@
 #include "sbar.h"
 #include "skin.h"
 #include "sys.h"
+#include "tga.h"
 #include "view.h"
 
 /*
@@ -181,7 +182,6 @@ SCR_CenterPrint (char *str)
 		str++;
 	}
 }
-
 
 void
 SCR_DrawCenterString (void)
@@ -490,8 +490,6 @@ SCR_DrawFPS (void)
 		fps_count = 0;
 		lastframetime = t;
 	}
-	/* Misty: I really do need to read about snprintf a bit. This thing keeps 
-	   chewing on my foot! */
 	snprintf (st, sizeof (st), "%-3d FPS", lastfps);
 	/* Misty: New trick! (for me) the ? makes this work like a if then else - 
 	   IE: if cl_hudswap->int_val is not null, do first case, else (else is a 
@@ -620,15 +618,6 @@ SCR_DrawConsole (void)
 ============================================================================== 
 */
 
-typedef struct _TargaHeader {
-	unsigned char id_length, colormap_type, image_type;
-	unsigned short colormap_index, colormap_length;
-	unsigned char colormap_size;
-	unsigned short x_origin, y_origin, width, height;
-	unsigned char pixel_size, attributes;
-} TargaHeader;
-
-
 /* 
 	SCR_ScreenShot_f
 */
@@ -645,21 +634,10 @@ SCR_ScreenShot_f (void)
 		Con_Printf ("SCR_ScreenShot_f: Couldn't create a TGA file\n");
 		return;
 	}
-
-
-	buffer = malloc (glwidth * glheight * 3 + 18);
-	memset (buffer, 0, 18);
-	buffer[2] = 2;						// uncompressed type
-	buffer[12] = glwidth & 255;
-	buffer[13] = glwidth >> 8;
-	buffer[14] = glheight & 255;
-	buffer[15] = glheight >> 8;
-	buffer[16] = 24;					// pixel size
-
+	buffer = malloc (glwidth * glheight * 3);
 	glReadPixels (glx, gly, glwidth, glheight, GL_BGR, GL_UNSIGNED_BYTE,
-				  buffer + 18);
-	COM_WriteFile (pcxname, buffer, glwidth * glheight * 3 + 18);
-
+				  buffer);
+	WriteTGAfile (pcxname, buffer, glwidth, glheight);
 	free (buffer);
 	Con_Printf ("Wrote %s\n", pcxname);
 }
@@ -850,12 +828,8 @@ SCR_RSShot_f (void)
 	free (newbuf);
 
 	Con_Printf ("Wrote %s\n", pcxname);
+	Con_Printf ("Sending shot to server...\n");
 }
-
-
-
-
-//=============================================================================
 
 
 //=============================================================================

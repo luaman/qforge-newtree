@@ -184,26 +184,6 @@ SCR_CenterPrint (char *str)
 }
 
 void
-SCR_EraseCenterString (void)
-{
-	int         y;
-
-	if (scr_erase_center++ > vid.numpages) {
-		scr_erase_lines = 0;
-		return;
-	}
-
-	if (scr_center_lines <= 4)
-		y = vid.height * 0.35;
-	else
-		y = 48;
-
-	scr_copytop = 1;
-	Draw_TileClear (0, y, vid.width,
-					min (8 * scr_erase_lines, vid.height - y - 1));
-}
-
-void
 SCR_DrawCenterString (void)
 {
 	char       *start;
@@ -624,13 +604,8 @@ SCR_SetUpToDrawConsole (void)
 	}
 
 	if (clearconsole++ < vid.numpages) {
-		scr_copytop = 1;
-		Draw_TileClear (0, (int) scr_con_current, vid.width,
-						vid.height - (int) scr_con_current);
 		Sbar_Changed ();
 	} else if (clearnotify++ < vid.numpages) {
-		scr_copytop = 1;
-		Draw_TileClear (0, 0, vid.width, con_notifylines);
 	} else
 		con_notifylines = 0;
 }
@@ -871,7 +846,7 @@ SCR_RSShot_f (void)
 	// mapped in
 	// for linear writes all the time
 
-//  Con_Printf ("Wrote %s\n", pcxname);
+	Con_Printf ("Wrote %s\n", pcxname);
 	Con_Printf ("Sending shot to server...\n");
 }
 
@@ -993,7 +968,6 @@ SCR_UpdateScreen (void)
 
 
 	SCR_SetUpToDrawConsole ();
-	SCR_EraseCenterString ();
 
 	D_DisableBackBufferAccess ();		// for adapters that can't stay
 	// mapped in
