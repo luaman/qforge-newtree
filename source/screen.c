@@ -75,10 +75,10 @@ xblited, but sync draw can just ignore it.
 sync
 draw
 
-CenterPrint ()
-SlowPrint ()
-Screen_Update ();
-Con_Printf ();
+ CenterPrint ()
+ SlowPrint ()
+ Screen_Update ();
+ Con_Printf ();
 
 net 
 turn off messages option
@@ -93,7 +93,6 @@ console is:
 	
 
 */
-
 
 // only the refresh window will be updated unless these variables are flagged 
 int         scr_copytop;
@@ -523,30 +522,38 @@ SCR_DrawFPS (void)
 	Draw_String8 (x, y, st);
 }
 
-/* Misty: I like to see the time */
+/*
+	SCR_DrawTime
+
+	Draw a clock on the screen
+	Written by Misty, rewritten by Deek
+*/
 void
 SCR_DrawTime (void)
 {
-	int         x, y;
-	char        st[80];
-	char        local_time[120];
-	time_t      systime;
+	int 		x, y;
+	char		st[80];
+
+	time_t		utc = 0;
+	struct tm	*local = NULL;
+	char		*timefmt = NULL;
 
 	// any cvar that can take multiple settings must be able to handle abuse. 
 	if (show_time->int_val <= 0)
 		return;
 
-	/* actually find the time and set systime to it */
-	time (&systime);
+	// Get local time
+	utc = time (NULL);
+	local = localtime (&utc);
 
-	if (show_time->int_val == 1) {	// International format
-		strftime (local_time, sizeof (local_time), "%k:%M", localtime (&systime));
-	} else if (show_time->int_val >= 2) {	// AM/PM display
-		strftime (local_time, sizeof (local_time), "%l:%M %P", localtime (&systime));
+	if (show_time->int_val == 1) {	// Use international format
+		timefmt = "%k:%M";
+	} else if (show_time->int_val >= 2) {	// US AM/PM display
+		timefmt = "%l:%M %P";
 	}
 
 	// Print it next to the fps meter
-	snprintf (st, sizeof (st), "%s", local_time);
+	strftime (st, sizeof (st), timefmt, local);
 	x = cl_hudswap->int_val ? (vid.width - ((strlen (st) * 8) + 8)) : 8;
 	y = vid.height - (sb_lines + 8);
 	Draw_String8 (x, y, st);
