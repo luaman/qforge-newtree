@@ -919,6 +919,7 @@ CL_ConnectionlessPacket (void)
 			return;
 		}
 
+		Con_Printf ("%s\n", cmdtext);
 		Cbuf_AddText (cmdtext);
 		allowremotecmd = false;
 		return;
