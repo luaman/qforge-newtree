@@ -296,8 +296,8 @@ IN_SendKeyEvents (void)
 					if ((event.motion.x != (vid.width / 2))
 						|| (event.motion.y != (vid.height / 2))) {
 						// *2 for vid_sdl.c, *10 for vid_sgl.c.
-						mouse_x = event.motion.xrel * 10;
-						mouse_y = event.motion.yrel * 10;
+						mouse_x = event.motion.xrel * 5;
+						mouse_y = event.motion.yrel * 5;
 						if (
 							(event.motion.x <
 							 ((vid.width / 2) - (vid.width / 4)))
@@ -311,8 +311,8 @@ IN_SendKeyEvents (void)
 					}
 				} else {
 					// following are *2 in vid_sdl.c, vid_sgl.c is *10
-					mouse_x = event.motion.xrel * 10;
-					mouse_y = event.motion.yrel * 10;
+					mouse_x = event.motion.xrel * 5;
+					mouse_y = event.motion.yrel * 5;
 				}
 				break;
 

@@ -54,15 +54,17 @@ vec3_t      forward, right, up;
 vec3_t      player_mins = { -16, -16, -24 };
 vec3_t      player_maxs = { 16, 16, 32 };
 
-// #define  PM_GRAVITY          800
-// #define  PM_STOPSPEED        100
-// #define  PM_MAXSPEED         320
-// #define  PM_SPECTATORMAXSPEED    500
-// #define  PM_ACCELERATE       10
-// #define  PM_AIRACCELERATE    0.7
-// #define  PM_WATERACCELERATE  10
-// #define  PM_FRICTION         6
-// #define  PM_WATERFRICTION    1
+/* FIXME: Delete this?
+#define  PM_GRAVITY          800
+#define  PM_STOPSPEED        100
+#define  PM_MAXSPEED         320
+#define  PM_SPECTATORMAXSPEED    500
+#define  PM_ACCELERATE       10
+#define  PM_AIRACCELERATE    0.7
+#define  PM_WATERACCELERATE  10
+#define  PM_FRICTION         6
+#define  PM_WATERFRICTION    1
+ */
 
 void        PM_InitBoxHull (void);
 void        PM_CategorizePosition (void);
@@ -94,7 +96,6 @@ Slide off of the impacting object
 returns the blocked flags (1 = floor, 2 = step / wall)
 ==================
 */
-#define	STOP_EPSILON	0.1
 
 int
 PM_ClipVelocity (vec3_t in, vec3_t normal, vec3_t out, float overbounce)

@@ -29,14 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <math.h>
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
+#include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -1566,10 +1566,11 @@ SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 		pmove_mins[i] = pmove.origin[i] - 256;
 		pmove_maxs[i] = pmove.origin[i] + 256;
 	}
-#if 1
-	AddLinksToPmove (sv_areanodes);
-#else
+
+#if 0
 	AddAllEntsToPmove ();
+#else
+	AddLinksToPmove (sv_areanodes);
 #endif
 
 #if 0

@@ -176,7 +176,6 @@ int         skipframes;
 int
 main (int c, char **v)
 {
-
 	double      time, oldtime, newtime;
 	int         j;
 
@@ -217,7 +216,6 @@ main (int c, char **v)
 		Host_Frame (time);
 		oldtime = newtime;
 	}
-
 }
 
 

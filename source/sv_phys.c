@@ -106,9 +106,7 @@ void
 SV_CheckVelocity (edict_t *ent)
 {
 	int         i;
-	float       wishspeed;				// 1999-10-18 SV_MAXVELOCITY fix by
-
-										// Maddes
+	float       wishspeed;				// 1999-10-18 SV_MAXVELOCITY fix by Maddes
 
 //
 // bound velocity
@@ -144,7 +142,7 @@ function will be called, because it is called before any movement is done
 in a frame.  Not used for pushmove objects, because they must be exact.
 Returns false if the entity removed itself.
 =============
-*/
+ */
 qboolean
 SV_RunThink (edict_t *ent)
 {
@@ -180,7 +178,7 @@ SV_Impact
 
 Two entities have touched, so run their touch functions
 ==================
-*/
+ */
 void
 SV_Impact (edict_t *e1, edict_t *e2)
 {
@@ -214,9 +212,7 @@ ClipVelocity
 Slide off of the impacting object
 returns the blocked flags (1 = floor, 2 = step / wall)
 ==================
-*/
-#define	STOP_EPSILON	0.1
-
+ */
 int
 ClipVelocity (vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 {
@@ -798,7 +794,7 @@ SV_Physics_Step (edict_t *ent)
 {
 	qboolean    hitsound;
 
-// frefall if not onground
+// freefall if not on ground
 	if (!((int) ent->v.flags & (FL_ONGROUND | FL_FLY | FL_SWIM))) {
 		if (ent->v.velocity[2] < movevars.gravity * -0.1)
 			hitsound = true;
