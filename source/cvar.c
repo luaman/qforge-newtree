@@ -156,22 +156,22 @@ char *Cvar_CompleteVariable (char *partial)
 
 	// check exact match
 	for (cvar=cvar_vars ; cvar ; cvar=cvar->next)
-		if (!stricmp (partial,cvar->name))
+		if (!strcasecmp (partial,cvar->name))
 			return cvar->name;
 	
 	// check aliases too :)
 	for (alias=calias_vars ; alias ; alias=alias->next)
-		if (!stricmp (partial, alias->name))
+		if (!strcasecmp (partial, alias->name))
 			return alias->name;
 
 	// check partial match
 	for (cvar=cvar_vars ; cvar ; cvar=cvar->next)
-		if (!strnicmp (partial,cvar->name, len))
+		if (!strncasecmp (partial,cvar->name, len))
 			return cvar->name;
 
 	// check aliases too :)
 	for (alias=calias_vars ; alias ; alias=alias->next)
-		if (!strnicmp (partial, alias->name, len))
+		if (!strncasecmp (partial, alias->name, len))
 			return alias->name;
 
 	return NULL;

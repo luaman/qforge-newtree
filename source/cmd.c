@@ -671,18 +671,18 @@ char *Cmd_CompleteCommand (char *partial)
 
 // check for exact match
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
-		if (!stricmp (partial, cmd->name))
+		if (!strcasecmp (partial, cmd->name))
 			return cmd->name;
 	for (a=cmd_alias ; a ; a=a->next)
-		if (!stricmp (partial, a->name))
+		if (!strcasecmp (partial, a->name))
 			return a->name;
 
 // check for partial match
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
-		if (!strnicmp (partial, cmd->name, len))
+		if (!strncasecmp (partial, cmd->name, len))
 			return cmd->name;
 	for (a=cmd_alias ; a ; a=a->next)
-		if (!strnicmp (partial, a->name, len))
+		if (!strncasecmp (partial, a->name, len))
 			return a->name;
 
 	return NULL;
