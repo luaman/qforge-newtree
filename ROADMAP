@@ -21,4 +21,5 @@ o  Endy's effects need to be made to work properly (totally broken!)
 o  timestamping server (and optionally client) consoles
 o  better control over client console logging
 ?  ban reasons and expire times
+o  fullbrights on models (yeah, we have to..)
 
