@@ -132,6 +132,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\pcx.obj\
    $(OBJS)\vid.obj\
    $(OBJS)\joy_null.obj\
    $(OBJS)\locs.obj\
@@ -253,6 +254,7 @@ $(EXE)\qf-client-sdl.exe : $(DEPEND)
   $(TLINK32) /v @&&|
  $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\pcx.obj+
 $(OBJS)\vid.obj+
 $(OBJS)\joy_null.obj+
 $(OBJS)\locs.obj+
@@ -377,6 +379,11 @@ $(CROOT)\LIB\cw32.lib
 $(OBJS)\snd_dma.obj :  $(QFROOT)\source\snd_dma.c
   $(BCC32) -P- -c  @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_dma.c
+
+|
+$(OBJS)\pcx.obj :  $(QFROOT)\source\pcx.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\pcx.c
 
 |
 $(OBJS)\vid.obj :  $(QFROOT)\source\vid.c
