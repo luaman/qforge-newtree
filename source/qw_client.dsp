@@ -140,6 +140,10 @@ SOURCE=.\cl_pred.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\cl_sys_win.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\cl_tent.c
 # End Source File
 # Begin Source File
