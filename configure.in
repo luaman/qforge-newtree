@@ -70,8 +70,7 @@ AC_STRUCT_TM
 AC_TRY_COMPILE(
 	[#include <sys/types.h>],
 	[ socklen_t x = 0;],
-	AC_DEFINE(HAVE_SOCKLEN_T) AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no)
+	AC_DEFINE(HAVE_SOCKLEN_T)
 	dnl FreeBSD 4.0 has it in sys/socket.h
 	AC_MSG_CHECKING(for socklen_t in sys/socket.h)
 	AC_TRY_COMPILE(
@@ -195,11 +194,7 @@ if test "x$no_x" = x; then
 		[HAVE_X="no"], [ $X_LIBS -lX11 $X_EXTRA_LIBS ]
 	)
 fi
-if test "x$HAVE_X" != "x"; then
-	AC_MSG_RESULT(yes)
-else
-	AC_MSG_RESULT(no)
-fi
+
 AC_SUBST(HAVE_X)
 AC_SUBST(X_INCLUDES)
 AC_SUBST(X_LIBS)
