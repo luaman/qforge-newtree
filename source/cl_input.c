@@ -385,7 +385,7 @@ void CL_FinishMove (usercmd_t *cmd)
 	if ( in_attack.state & 3 )
 		cmd->buttons |= 1;
 	in_attack.state &= ~2;
-	
+
 	if (in_jump.state & 3)
 		cmd->buttons |= 2;
 	in_jump.state &= ~2;
