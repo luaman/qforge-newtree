@@ -54,6 +54,11 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_LN_S
 AC_PROG_RANLIB
+AM_PROG_LEX
+AC_PROG_YACC
+
+AC_CHECK_LIB(l, main, LEXLIB="-ll", AC_CHECK_LIB(fl, main, LEXLIB="-lfl"))
+AC_SUBST(LEXLIB)
 
 set $CC
 if test "$1" = gcc; then
@@ -375,6 +380,17 @@ fi
 AC_SUBST(HAVE_GGI)
 AC_SUBST(GGI_CFLAGS)
 AC_SUBST(GGI_LIBS)
+
+dnl Checks for Linux FBDev support
+AC_ARG_WITH(fbdev,
+[  --with-fbdev            use Linux framebuffer device],
+HAVE_FBDEV=$withval, HAVE_FBDEV=auto)
+if test "x$HAVE_FBDEV" != xno; then
+	dnl We should still be able to compile it even if
+	dnl there is no fbdev support in the running kernel
+	AC_CHECK_HEADER(linux/fb.h, HAVE_FBDEV=yes, HAVE_FBDEV=no)
+fi
+AC_SUBST(HAVE_FBDEV)
 
 dnl Checks for SVGALib support
 AC_ARG_WITH(svga,
@@ -1230,12 +1246,13 @@ dnl ==================================================================
 
 AC_ARG_WITH(clients,
 	[  --with-clients=<list>   compile clients in <list>;
-                          3dfx,ggi,glx,mgl,sdl,sgl,svga,x11],
+                          3dfx,fbdev,ggi,glx,mgl,sdl,sgl,svga,x11],
 	clients="$withval",
 	clients="all"
 )
 if test "$clients" = "all"; then
 	ENABLE_3DFX=yes
+	ENABLE_FBDEV=yes
 	ENABLE_GGI=yes
 	ENABLE_GLX=yes
 	ENABLE_MGL=yes
@@ -1245,6 +1262,7 @@ if test "$clients" = "all"; then
 	ENABLE_X11=yes
 else
 	ENABLE_3DFX=no
+	ENABLE_FBDEV=no
 	ENABLE_GGI=no
 	ENABLE_GLX=no
 	ENABLE_MGL=no
@@ -1257,6 +1275,9 @@ else
 		case "$client" in
 			3dfx)
 				ENABLE_3DFX=yes
+				;;
+			fbdev)
+				ENABLE_FBDEV=yes
 				;;
 			ggi)
 				ENABLE_GGI=yes
@@ -1294,6 +1315,10 @@ TARGETS=""
 if test "x$HAVE_TDFXGL" = xyes -a "x$ENABLE_3DFX" = xyes; then
 	TARGETS="$TARGETS qf-client-3dfx\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS 3dfx"
+fi
+if test "x$HAVE_FBDEV" = xyes -a "x$ENABLE_FBDEV" = xyes; then
+	TARGETS="$TARGETS qf-client-fbdev\$(EXEEXT)"
+	CL_TARGETS="$CL_TARGETS FBDEV"
 fi
 if test "x$HAVE_GGI" = xyes -a "x$ENABLE_GGI" = xyes; then
 	TARGETS="$TARGETS qf-client-ggi\$(EXEEXT)"

@@ -36,9 +36,9 @@ INCLUDES=	-I$(top_srcdir)/include $(GGI_CFLAGS) $(MGL_CFLAGS) $(SDL_CFLAGS) $(SV
 bin_PROGRAMS =	@TARGETS@
 
 EXTRA_PROGRAMS= qf-server \
-		qf-client-3dfx qf-client-ggi qf-client-glx qf-client-mgl \
-		qf-client-sdl qf-client-sgl qf-client-svga qf-client-wgl \
-		qf-client-x11
+		qf-client-3dfx qf-client-fbdev qf-client-ggi qf-client-glx \
+		qf-client-mgl qf-client-sdl qf-client-sgl qf-client-svga \
+		qf-client-wgl qf-client-x11
 
 noinst_LIBRARIES= libqfcd.a libqfjs.a libqfnet.a libqfsnd.a libqfsys_cl.a libqfsys_sv.a
 
@@ -201,6 +201,22 @@ soft_SOURCES=	d_edge.c d_fill.c d_init.c d_modech.c \
 		sw_model_sprite.c
 
 #
+# ... Linux FBDev
+#
+YFLAGS = -d
+fbdev_SOURCES=		fbset.c fbset_modes_y.y fbset_modes_l.l vid_fbdev.c in_fbdev.c
+YACCLEX_CLEANFILES=	fbset_modes_y.c fbset_modes_y.h fbset_modes_y.tab.h fbset_modes_l.c
+
+fbset_modes_y.o: fbset_modes_y.c
+	$(CC) $(INCLUDES) $(CFLAGS) -Wno-error -c fbset_modes_y.c
+fbset_modes_l.o: fbset_modes_l.c
+	$(CC) $(INCLUDES) $(CFLAGS) -Wno-error -c fbset_modes_l.c
+
+qf_client_fbdev_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(fbdev_SOURCES)
+qf_client_fbdev_LDADD= $(CLIENT_LIBS)
+qf_client_fbdev_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
+
+#
 # ... GGI
 #
 ggi_SOURCES=		vid_ggi.c in_ggi.c
@@ -304,4 +320,4 @@ EXTRA_DIST=	makefile.win \
 		qf-client-sgl.mak qf-client-wgl.mak qf-client-win.mak
 
 # Kill the temp files, hopefully.
-CLEANFILES	= *.i *.s
+CLEANFILES	= *.i *.s $(YACCLEX_CLEANFILES)

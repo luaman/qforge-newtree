@@ -41,3 +41,7 @@ qwaq-client-x11
 qwaq-client-x11.exe
 qwaq-server
 qwaq-server.exe
+fbset_modes_y.c
+fbset_modes_y.h
+fbset_modes_l.c
+qf-client-fbdev
