@@ -64,106 +64,48 @@ client_t	*host_client;			// current client
 
 cvar_t	*fs_globalcfg;
 
-/* cvar_t	sv_mintic = {"sv_mintic","0.03"};	// bound the size of the
- CVAR_FIXME */
 cvar_t	*sv_mintic;	// bound the size of the
-/* cvar_t	sv_maxtic = {"sv_maxtic","0.1"};	// physics time tic 
- CVAR_FIXME */
 cvar_t	*sv_maxtic;	// physics time tic 
 
-/* cvar_t	developer = {"developer","0"};		// show extra messages
- CVAR_FIXME */
 cvar_t	*developer;		// show extra messages
 
-/* cvar_t	timeout = {"timeout","65"};		// seconds without any message
- CVAR_FIXME */
 cvar_t	*timeout;		// seconds without any message
-/* cvar_t	zombietime = {"zombietime", "2"};	// seconds to sink messages
- CVAR_FIXME */
 cvar_t	*zombietime;	// seconds to sink messages
 											// after disconnect
 
-/* cvar_t	rcon_password = {"rcon_password", ""};	// password for remote server commands
- CVAR_FIXME */
 cvar_t	*rcon_password;	// password for remote server commands
-/* cvar_t	password = {"password", ""};	// password for entering the game
- CVAR_FIXME */
 cvar_t	*password;	// password for entering the game
-/* cvar_t	spectator_password = {"spectator_password", ""};	// password for entering as a sepctator
- CVAR_FIXME */
 cvar_t	*spectator_password;	// password for entering as a sepctator
 
-/* cvar_t	allow_download = {"allow_download", "1"};
- CVAR_FIXME */
 cvar_t	*allow_download;
-/* cvar_t	allow_download_skins = {"allow_download_skins", "1"};
- CVAR_FIXME */
 cvar_t	*allow_download_skins;
-/* cvar_t	allow_download_models = {"allow_download_models", "1"};
- CVAR_FIXME */
 cvar_t	*allow_download_models;
-/* cvar_t	allow_download_sounds = {"allow_download_sounds", "1"};
- CVAR_FIXME */
 cvar_t	*allow_download_sounds;
-/* cvar_t	allow_download_maps = {"allow_download_maps", "1"};
- CVAR_FIXME */
 cvar_t	*allow_download_maps;
 
-/* cvar_t sv_highchars = {"sv_highchars", "1"};
- CVAR_FIXME */
 cvar_t *sv_highchars;
 
-/* cvar_t sv_phs = {"sv_phs", "1"};
- CVAR_FIXME */
 cvar_t *sv_phs;
 
-/* cvar_t pausable	= {"pausable", "1"};
- CVAR_FIXME */
 cvar_t *pausable;
 
-/* extern cvar_t	sv_timekick;
- CVAR_FIXME */
 extern cvar_t	*sv_timekick;
-/* extern cvar_t	sv_timekick_fuzz;
- CVAR_FIXME */
 extern cvar_t	*sv_timekick_fuzz;
-/* extern cvar_t	sv_timekick_interval;
- CVAR_FIXME */
 extern cvar_t	*sv_timekick_interval;
 
 //
 // game rules mirrored in svs.info
 //
-/* cvar_t	fraglimit = {"fraglimit","0",false,true};
- CVAR_FIXME */
 cvar_t	*fraglimit;
-/* cvar_t	timelimit = {"timelimit","0",false,true};
- CVAR_FIXME */
 cvar_t	*timelimit;
-/* cvar_t	teamplay = {"teamplay","0",false,true};
- CVAR_FIXME */
 cvar_t	*teamplay;
-/* cvar_t	samelevel = {"samelevel","0", false, true};
- CVAR_FIXME */
 cvar_t	*samelevel;
-/* cvar_t	maxclients = {"maxclients","8", false, true};
- CVAR_FIXME */
 cvar_t	*maxclients;
-/* cvar_t	maxspectators = {"maxspectators","8", false, true};
- CVAR_FIXME */
 cvar_t	*maxspectators;
-/* cvar_t	deathmatch = {"deathmatch","1", false, true};			// 0, 1, or 2
- CVAR_FIXME */
 cvar_t	*deathmatch;			// 0, 1, or 2
-/* cvar_t	spawn = {"spawn","0", false, true};
- CVAR_FIXME */
 cvar_t	*spawn;
-/* cvar_t	watervis = {"watervis", "0", false, true};
- CVAR_FIXME */
 cvar_t	*watervis;
 
-/* cvar_t	hostname = {"hostname","unnamed", false, true};
- CVAR_FIXME */
 cvar_t	*hostname;
 
 FILE	*sv_logfile;
@@ -685,8 +627,6 @@ void SVC_DirectConnect (void)
 	newcl->userid = userid;
 
 	// works properly
-/* 	if (!sv_highchars.value) {
- CVAR_FIXME */
 	if (!sv_highchars->value) {
 		byte *p, *q;
 
@@ -732,25 +672,13 @@ void SVC_DirectConnect (void)
 	}
 
 	// if at server limits, refuse connection
-/* 	if ( maxclients.value > MAX_CLIENTS )
- CVAR_FIXME */
 	if ( maxclients->value > MAX_CLIENTS )
 		Cvar_SetValue (maxclients, MAX_CLIENTS);
-/* 	if (maxspectators.value > MAX_CLIENTS)
- CVAR_FIXME */
 	if (maxspectators->value > MAX_CLIENTS)
 		Cvar_SetValue (maxspectators, MAX_CLIENTS);
-/* 	if (maxspectators.value + maxclients.value > MAX_CLIENTS)
- CVAR_FIXME */
 	if (maxspectators->value + maxclients->value > MAX_CLIENTS)
-/* 		Cvar_SetValue ("maxspectators", MAX_CLIENTS - maxspectators.value + maxclients.value);
- CVAR_FIXME */
  		Cvar_SetValue (maxspectators, MAX_CLIENTS - maxclients->value);
-/* 	if ( (spectator && spectators >= (int)maxspectators.value)
- CVAR_FIXME */
 	if ( (spectator && spectators >= (int)maxspectators->value)
-/* 		|| (!spectator && clients >= (int)maxclients.value) )
- CVAR_FIXME */
 		|| (!spectator && clients >= (int)maxclients->value) )
 	{
 		Con_Printf ("%s:full connect\n", NET_AdrToString (adr));
@@ -986,8 +914,6 @@ typedef struct
 ipfilter_t	ipfilters[MAX_IPFILTERS];
 int			numipfilters;
 
-/* cvar_t	filterban = {"filterban", "1"};
- CVAR_FIXME */
 cvar_t	*filterban;
 
 /*
@@ -1169,12 +1095,8 @@ qboolean SV_FilterPacket (void)
 
 	for (i=0 ; i<numipfilters ; i++)
 		if ( (in & ipfilters[i].mask) == ipfilters[i].compare)
-/* 			return filterban.value;
- CVAR_FIXME */
 			return filterban->value;
 
-/* 	return !filterban.value;
- CVAR_FIXME */
 	return !filterban->value;
 }
 
@@ -1268,8 +1190,6 @@ void SV_CheckTimeouts (void)
 	float	droptime;
 	int	nclients;
 	
-/* 	droptime = realtime - timeout.value;
- CVAR_FIXME */
 	droptime = realtime - timeout->value;
 	nclients = 0;
 
@@ -1285,8 +1205,6 @@ void SV_CheckTimeouts (void)
 			}
 		}
 		if (cl->state == cs_zombie && 
-/* 			realtime - cl->connection_started > zombietime.value)
- CVAR_FIXME */
 			realtime - cl->connection_started > zombietime->value)
 		{
 			cl->state = cs_free;	// can now be reused
@@ -1419,173 +1337,71 @@ SV_InitLocal
 void SV_InitLocal (void)
 {
 	int		i;
-/* 	extern	cvar_t	sv_maxvelocity;
- CVAR_FIXME */
 	extern	cvar_t	*sv_maxvelocity;
-/* 	extern	cvar_t	sv_gravity;
- CVAR_FIXME */
 	extern	cvar_t	*sv_gravity;
-/* 	extern	cvar_t	sv_aim;
- CVAR_FIXME */
 	extern	cvar_t	*sv_aim;
-/* 	extern	cvar_t	sv_stopspeed;
- CVAR_FIXME */
 	extern	cvar_t	*sv_stopspeed;
-/* 	extern	cvar_t	sv_spectatormaxspeed;
- CVAR_FIXME */
 	extern	cvar_t	*sv_spectatormaxspeed;
-/* 	extern	cvar_t	sv_accelerate;
- CVAR_FIXME */
 	extern	cvar_t	*sv_accelerate;
-/* 	extern	cvar_t	sv_airaccelerate;
- CVAR_FIXME */
 	extern	cvar_t	*sv_airaccelerate;
-/* 	extern	cvar_t	sv_wateraccelerate;
- CVAR_FIXME */
 	extern	cvar_t	*sv_wateraccelerate;
-/* 	extern	cvar_t	sv_friction;
- CVAR_FIXME */
 	extern	cvar_t	*sv_friction;
-/* 	extern	cvar_t	sv_waterfriction;
- CVAR_FIXME */
 	extern	cvar_t	*sv_waterfriction;
 
 	SV_UserInit ();
 	
-/* 	Cvar_RegisterVariable (&rcon_password);
- CVAR_FIXME */
 	rcon_password = Cvar_Get("rcon_password",  "", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&password);
- CVAR_FIXME */
 	password = Cvar_Get("password",  "", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&spectator_password);
- CVAR_FIXME */
 	spectator_password = Cvar_Get("spectator_password",  "", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&sv_mintic);
- CVAR_FIXME */
 	sv_mintic = Cvar_Get("sv_mintic", "0.03", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_maxtic);
- CVAR_FIXME */
 	sv_maxtic = Cvar_Get("sv_maxtic", "0.1", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&fraglimit);
- CVAR_FIXME */
-	fraglimit = Cvar_Get("fraglimit", "0", CVAR_NONE|CVAR_USERINFO|CVAR_SERVERINFO, "None");
-/* 	Cvar_RegisterVariable (&timelimit);
- CVAR_FIXME */
-	timelimit = Cvar_Get("timelimit", "0", CVAR_NONE|CVAR_USERINFO|CVAR_SERVERINFO, "None");
-/* 	Cvar_RegisterVariable (&teamplay);
- CVAR_FIXME */
-	teamplay = Cvar_Get("teamplay", "0", CVAR_USERINFO|CVAR_SERVERINFO, "None");
-/* 	Cvar_RegisterVariable (&samelevel);
- CVAR_FIXME */
-	samelevel = Cvar_Get("samelevel", "0", CVAR_USERINFO|CVAR_SERVERINFO, "None");
-/* 	Cvar_RegisterVariable (&maxclients);
- CVAR_FIXME */
-	maxclients = Cvar_Get("maxclients", "8", CVAR_USERINFO|CVAR_SERVERINFO, "None");
-/* 	Cvar_RegisterVariable (&maxspectators);
- CVAR_FIXME */
-	maxspectators = Cvar_Get("maxspectators", "8", CVAR_USERINFO|CVAR_SERVERINFO, "None");
-/* 	Cvar_RegisterVariable (&hostname);
- CVAR_FIXME */
-	hostname = Cvar_Get("hostname", "unnamed", CVAR_USERINFO|CVAR_SERVERINFO, "None");
-/* 	Cvar_RegisterVariable (&deathmatch);
- CVAR_FIXME */
-	deathmatch = Cvar_Get("deathmatch", "1", CVAR_USERINFO|CVAR_SERVERINFO, "None");
-/* 	Cvar_RegisterVariable (&spawn);
- CVAR_FIXME */
-	spawn = Cvar_Get("spawn", "0", CVAR_USERINFO|CVAR_SERVERINFO, "None");
-/* 	Cvar_RegisterVariable (&watervis);
- CVAR_FIXME */
-	watervis = Cvar_Get("watervis",  "0", CVAR_USERINFO|CVAR_SERVERINFO, "None");
+	fraglimit = Cvar_Get("fraglimit", "0", CVAR_SERVERINFO, "None");
+	timelimit = Cvar_Get("timelimit", "0", CVAR_SERVERINFO, "None");
+	teamplay = Cvar_Get("teamplay", "0", CVAR_SERVERINFO, "None");
+	samelevel = Cvar_Get("samelevel", "0", CVAR_SERVERINFO, "None");
+	maxclients = Cvar_Get("maxclients", "8", CVAR_SERVERINFO, "None");
+	maxspectators = Cvar_Get("maxspectators", "8", CVAR_SERVERINFO, "None");
+	hostname = Cvar_Get("hostname", "unnamed", CVAR_SERVERINFO, "None");
+	deathmatch = Cvar_Get("deathmatch", "1", CVAR_SERVERINFO, "None");
+	spawn = Cvar_Get("spawn", "0", CVAR_SERVERINFO, "None");
+	watervis = Cvar_Get("watervis",  "0", CVAR_SERVERINFO, "None");
 
-/* 	Cvar_RegisterVariable (&developer);
- CVAR_FIXME */
 	developer = Cvar_Get("developer", "0", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&timeout);
- CVAR_FIXME */
 	timeout = Cvar_Get("timeout", "65", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&zombietime);
- CVAR_FIXME */
 	zombietime = Cvar_Get("zombietime",  "2", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&sv_maxvelocity);
- CVAR_FIXME */
 	sv_maxvelocity = Cvar_Get("sv_maxvelocity", "2000", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_gravity);
- CVAR_FIXME */
 	sv_gravity = Cvar_Get("sv_gravity",  "800", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_stopspeed);
- CVAR_FIXME */
 	sv_stopspeed = Cvar_Get("sv_stopspeed",  "100", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_maxspeed);
- CVAR_FIXME */
 	sv_maxspeed = Cvar_Get("sv_maxspeed",  "320", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_spectatormaxspeed);
- CVAR_FIXME */
 	sv_spectatormaxspeed = Cvar_Get("sv_spectatormaxspeed",  "500", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_accelerate);
- CVAR_FIXME */
 	sv_accelerate = Cvar_Get("sv_accelerate",  "10", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_airaccelerate);
- CVAR_FIXME */
 	sv_airaccelerate = Cvar_Get("sv_airaccelerate",  "0.7", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_wateraccelerate);
- CVAR_FIXME */
 	sv_wateraccelerate = Cvar_Get("sv_wateraccelerate",  "10", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_friction);
- CVAR_FIXME */
 	sv_friction = Cvar_Get("sv_friction",  "4", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_waterfriction);
- CVAR_FIXME */
 	sv_waterfriction = Cvar_Get("sv_waterfriction",  "4", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&sv_aim);
- CVAR_FIXME */
 	sv_aim = Cvar_Get("sv_aim",  "2", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&sv_timekick);
- CVAR_FIXME */
 	sv_timekick = Cvar_Get("sv_timekick",  "3", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_timekick_fuzz);
- CVAR_FIXME */
 	sv_timekick_fuzz = Cvar_Get("sv_timekick_fuzz",  "10", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sv_timekick_interval);
- CVAR_FIXME */
 	sv_timekick_interval = Cvar_Get("sv_timekick_interval",  "30", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&filterban);
- CVAR_FIXME */
 	filterban = Cvar_Get("filterban",  "1", CVAR_NONE, "None");
 	
-/* 	Cvar_RegisterVariable (&allow_download);
- CVAR_FIXME */
 	allow_download = Cvar_Get("allow_download",  "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&allow_download_skins);
- CVAR_FIXME */
 	allow_download_skins = Cvar_Get("allow_download_skins",  "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&allow_download_models);
- CVAR_FIXME */
 	allow_download_models = Cvar_Get("allow_download_models",  "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&allow_download_sounds);
- CVAR_FIXME */
 	allow_download_sounds = Cvar_Get("allow_download_sounds",  "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&allow_download_maps);
- CVAR_FIXME */
 	allow_download_maps = Cvar_Get("allow_download_maps",  "1", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&sv_highchars);
- CVAR_FIXME */
 	sv_highchars = Cvar_Get("sv_highchars",  "1", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&sv_phs);
- CVAR_FIXME */
 	sv_phs = Cvar_Get("sv_phs",  "1", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&pausable);
- CVAR_FIXME */
 	pausable = Cvar_Get("pausable",  "1", CVAR_NONE, "None");
 
 	Cmd_AddCommand ("addip", SV_AddIP_f);
