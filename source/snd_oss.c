@@ -67,7 +67,7 @@
 int         audio_fd;
 int         snd_inited;
 
-static int  tryrates[] = { 11025, 22051, 44100, 8000 };
+static int  tryrates[] = { 11025, 22050, 22051, 44100, 8000 };
 
 qboolean
 SNDDMA_Init (void)
