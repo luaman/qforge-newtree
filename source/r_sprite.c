@@ -33,6 +33,7 @@
 #include "console.h"
 #include "r_local.h"
 
+#include <string.h>
 #include <math.h>
 
 static int				clip_current;

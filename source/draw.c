@@ -37,6 +37,8 @@
 #include "quakefs.h"
 #include "sound.h"
 
+#include <string.h>
+
 typedef struct {
 	vrect_t	rect;
 	int		width;
