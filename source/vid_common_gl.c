@@ -336,8 +336,9 @@ void
 Shared_Init8bitPalette (void)
 {
 	int 	i;
-	GLubyte thePalette[256][3];
-	char	*oldPalette;
+	GLubyte thePalette[256*3];
+	GLubyte	*oldPalette;
+	GLubyte *newPalette;
 
 	PFNGLCOLORTABLEEXTPROC qglColorTableEXT = NULL;
 
@@ -353,15 +354,15 @@ Shared_Init8bitPalette (void)
 		Con_Printf ("GL_EXT_shared_texture_palette\n");
 
 		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
-		oldPalette = (char *) d_8to24table; //d_8to24table3dfx;
-		for (i = 0; i < 256; i++) {
-			thePalette[i][0] = *oldPalette++;
-			thePalette[i][1] = *oldPalette++;
-			thePalette[i][2] = *oldPalette++;
-			oldPalette++;
+		oldPalette = (GLubyte *) d_8to24table; //d_8to24table3dfx;
+		newPalette = thePalette;
+		for (i = 0; i < 256; i++, oldPalette++) {
+			*newPalette++ = *oldPalette++;
+			*newPalette++ = *oldPalette++;
+			*newPalette++ = *oldPalette++;
 		}
 
-		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
+		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_COLOR_INDEX8_EXT, 256, GL_RGB, GL_UNSIGNED_BYTE, thePalette);
 		is8bit = true;
 	}
 }
@@ -385,7 +386,7 @@ VID_Init8bitPalette (void)
 		return;
 	}
 
-	if (vid_use8bit->value) {
+	if (vid_use8bit->int_val) {
 #ifdef HAVE_TDFXGL
 		3dfx_Init8bitPalette();
 #else
