@@ -1263,6 +1263,11 @@ if test "x$GCC" = xyes; then
 	fi
 fi
 
+AS="$CC"
+ASFLAGS="\$(DEFS) \$(INCLUDES)"
+AC_SUBST(AS)
+AC_SUBST(ASFLAGS)
+
 dnl ==================================================================
 dnl Make sure we link against a working zlib
 dnl ==================================================================

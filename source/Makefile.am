@@ -50,7 +50,7 @@ if ASM_ARCH
 math_ASM = math.S sys_x86.S
 world_ASM=	worlda.S
 endif
-common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c hash.c \
+common_sources= buildnum.c checksum.c cmd.c com.c crc.c cvar.c hash.c \
 	info.c link.c mathlib.c mdfour.c model.c model_brush.c \
 	msg.c pmove.c pmovetst.c qargs.c qendian.c quakefs.c quakeio.c \
 	sizebuf.c sys.c va.c zone.c $(math_ASM) $(packetlogger) $(world_ASM)
@@ -77,12 +77,12 @@ libqfsys_sv_a_SOURCES=	sv_sys_unix.c
 endif
 EXTRA_libqfsys_sv_a_SOURCES= fnmatch.c dirent.c sv_sys_unix.c sv_sys_win.c sys.c sys.c
 
-server_SOURCES=	pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
+server_sources=	pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
 		sv_ents.c sv_init.c sv_main.c sv_misc.c sv_model.c \
 		sv_move.c sv_nchan.c sv_phys.c sv_pr_cmds.c sv_progs.c sv_send.c \
 		sv_user.c ver_check.c world.c
 
-qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
+qf_server_SOURCES=	$(common_sources) $(server_sources)
 qf_server_LDADD=	-L. -lqfnet -lqfsys_sv $(NET_LIBS) $(Z_LIBS) $(DL_LIBS)
 qf_server_DEPENDENCIES= libqfnet.a libqfsys_sv.a
 
@@ -103,31 +103,37 @@ EXTRA_libqfsys_cl_a_SOURCES= cl_sys_sdl.c cl_sys_unix.c cl_sys_win.c sys.c sys.c
 #
 if SNDTYPE_ALSA_0_5
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_5.c
-endif
+else
 if SNDTYPE_ALSA_0_9
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_9.c
-endif
+else
 if SNDTYPE_MME
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_mme.c
-endif
+else
 if SNDTYPE_OSS
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_oss.c
-endif
+else
 if SNDTYPE_SDL
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_sdl.c
 libqfsnd_a_INCLUDES= $(SDL_CFLAGS)
-endif
+else
 if SNDTYPE_SGI
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_sgi.c
-endif
+else
 if SNDTYPE_SUN
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_sun.c
-endif
+else
 if SNDTYPE_WIN32
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_win.c
-endif
-if SNDTYPE_NULL
+else
 libqfsnd_a_SOURCES=	snd_null.c
+endif
+endif
+endif
+endif
+endif
+endif
+endif
 endif
 EXTRA_libqfsnd_a_SOURCES= snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_5.c \
 			snd_alsa_0_9.c snd_oss.c snd_sdl.c snd_sgi.c \
@@ -138,19 +144,21 @@ EXTRA_libqfsnd_a_SOURCES= snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_5.c \
 #
 if CDTYPE_LINUX
 libqfcd_a_SOURCES=	cd_linux.c
-endif
+else
 if CDTYPE_SDL
 libqfcd_a_SOURCES=	cd_sdl.c
 libqfcd_a_INCLUDES=$(SDL_CFLAGS)
-endif
+else
 if CDTYPE_SGI
 libqfcd_a_SOURCES=	cd_sgi.c
-endif
+else
 if CDTYPE_WIN32
 libqfcd_a_SOURCES=	cd_win.c
-endif
-if CDTYPE_NULL
+else
 libqfcd_a_SOURCES=	cd_null.c
+endif
+endif
+endif
 endif
 EXTRA_libqfcd_a_SOURCES= cd_dos.c cd_linux.c cd_sdl.c cd_sgi.c cd_win.c cd_null.c
 
@@ -159,12 +167,12 @@ EXTRA_libqfcd_a_SOURCES= cd_dos.c cd_linux.c cd_sdl.c cd_sgi.c cd_win.c cd_null.
 #
 if JOYTYPE_LINUX
 libqfjs_a_SOURCES=	joy_linux.c
-endif
+else
 if JOYTYPE_WIN32
 libqfjs_a_SOURCES=	joy_win.c
-endif
-if JOYTYPE_NULL
+else
 libqfjs_a_SOURCES=	joy_null.c
+endif
 endif
 libqfjs_a_CFLAGS=	$(JOY_CFLAGS)
 EXTRA_libqfjs_a_SOURCES= joy_linux.c joy_win.c joy_null.c
@@ -175,7 +183,7 @@ if ASM_ARCH
 client_ASM=	snd_mixa.S cl_math.S
 endif
 
-client_SOURCES= cl_cam.c cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c \
+client_sources= cl_cam.c cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c \
 	cl_main.c cl_misc.c cl_parse.c cl_pred.c cl_slist.c cl_tent.c \
 	console.c keys.c locs.c menu.c model_alias.c model_sprite.c nonintel.c \
 	pcx.c r_view.c sbar.c skin.c teamplay.c tga.c wad.c vid.c $(client_ASM)
@@ -191,7 +199,7 @@ soft_ASM=	d_draw.S d_draw16.S d_parta.S d_polysa.S d_scana.S d_spr8.S \
 		surf16.S surf8.S
 endif
 
-soft_SOURCES=	d_edge.c d_fill.c d_init.c d_modech.c \
+soft_sources=	d_edge.c d_fill.c d_init.c d_modech.c \
 		d_part.c d_polyse.c d_scan.c d_sky.c d_sprite.c d_surf.c \
 		d_vars.c d_zpoint.c draw.c r_aclip.c r_alias.c r_bsp.c \
 		r_draw.c r_edge.c r_efrag.c r_light.c r_main.c r_misc.c \
@@ -203,7 +211,7 @@ soft_SOURCES=	d_edge.c d_fill.c d_init.c d_modech.c \
 # ... Linux FBDev
 #
 YFLAGS = -d
-fbdev_SOURCES=		fbset.c fbset_modes_y.y fbset_modes_l.l vid_fbdev.c in_fbdev.c cl_sys_unix.c
+fbdev_sources=		fbset.c fbset_modes_y.y fbset_modes_l.l vid_fbdev.c in_fbdev.c cl_sys_unix.c
 YACCLEX_CLEANFILES=	fbset_modes_y.c fbset_modes_y.h fbset_modes_y.tab.h fbset_modes_l.c
 EXTRA_qf_client_fbdev_SOURCES=fbset_modes_y.h
 
@@ -212,52 +220,52 @@ fbset_modes_y.o: fbset_modes_y.c
 fbset_modes_l.o: fbset_modes_l.c
 	$(CC) $(INCLUDES) $(CFLAGS) -Wno-error -c fbset_modes_l.c
 
-qf_client_fbdev_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(fbdev_SOURCES)
+qf_client_fbdev_SOURCES= $(common_sources) $(client_sources) $(soft_sources) $(fbdev_sources)
 qf_client_fbdev_LDADD= $(CLIENT_LIBS)
 qf_client_fbdev_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
 #
 # ... GGI
 #
-ggi_SOURCES=		vid_ggi.c in_ggi.c cl_sys_unix.c
+ggi_sources=		vid_ggi.c in_ggi.c cl_sys_unix.c
 
-qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(ggi_SOURCES)
+qf_client_ggi_SOURCES=	$(common_sources) $(client_sources) $(soft_sources) $(ggi_sources)
 qf_client_ggi_LDADD=	$(GGI_LIBS) $(CLIENT_LIBS)
 qf_client_ggi_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
 #
 # ... SciTech MGL
 #
-mgl_SOURCES=		vid_mgl.c in_win.c cl_sys_win.c
+mgl_sources=		vid_mgl.c in_win.c cl_sys_win.c
 
-qf_client_mgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(mgl_SOURCES)
+qf_client_mgl_SOURCES=	$(common_sources) $(client_sources) $(soft_sources) $(mgl_sources)
 qf_client_mgl_LDADD=	$(MGL_LIBS) $(CLIENT_LIBS)
 qf_client_mgl_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
 #
 # ... Sam Lantinga's Simple DirectMedia Layer, version 1.0 and higher
 #
-sdl_SOURCES=		vid_sdl.c in_sdl.c cl_sys_sdl.c
+sdl_sources=		vid_sdl.c in_sdl.c cl_sys_sdl.c
 
-qf_client_sdl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(sdl_SOURCES)
+qf_client_sdl_SOURCES=	$(common_sources) $(client_sources) $(soft_sources) $(sdl_sources)
 qf_client_sdl_LDADD=	$(SDL_LIBS) $(CLIENT_LIBS)
 qf_client_sdl_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
 #
 # ... Linux SVGAlib
 #
-svga_SOURCES=		d_copy.S vid_svgalib.c in_svgalib.c cl_sys_unix.c
+svga_sources=		d_copy.S vid_svgalib.c in_svgalib.c cl_sys_unix.c
 
-qf_client_svga_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(svga_SOURCES)
+qf_client_svga_SOURCES= $(common_sources) $(client_sources) $(soft_sources) $(svga_sources)
 qf_client_svga_LDADD=	$(SVGA_LIBS) $(CLIENT_LIBS)
 qf_client_svga_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
 #
 # ... X11
 #
-x11_SOURCES=		vid_x11.c in_x11.c context_x11.c dga_check.c cl_sys_unix.c
+x11_sources=		vid_x11.c in_x11.c context_x11.c dga_check.c cl_sys_unix.c
 
-qf_client_x11_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(x11_SOURCES)
+qf_client_x11_SOURCES=	$(common_sources) $(client_sources) $(soft_sources) $(x11_sources)
 qf_client_x11_LDADD=	$(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB) $(CLIENT_LIBS)
 qf_client_x11_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
@@ -267,7 +275,7 @@ qf_client_x11_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs
 #
 # ... Common stuff
 #
-ogl_SOURCES=	fractalnoise.c gl_draw.c gl_dyn_fires.c gl_dyn_part.c \
+ogl_sources=	fractalnoise.c gl_draw.c gl_dyn_fires.c gl_dyn_part.c \
 		gl_dyn_textures.c gl_mesh.c gl_ngraph.c r_efrag.c \
 		gl_rlight.c gl_rmain.c gl_rmisc.c gl_rsurf.c gl_screen.c \
 		gl_skin.c gl_sky.c gl_sky_clip.c gl_view.c gl_warp.c \
@@ -277,36 +285,36 @@ ogl_SOURCES=	fractalnoise.c gl_draw.c gl_dyn_fires.c gl_dyn_part.c \
 #
 # ... 3Dfx Voodoo 1 and 2 SVGAlib-based console GL
 #
-tdfx_SOURCES=	vid_3dfxsvga.c vid_common_gl.c in_svgalib.c cl_sys_unix.c
+tdfx_sources=	vid_3dfxsvga.c vid_common_gl.c in_svgalib.c cl_sys_unix.c
 
-qf_client_3dfx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(tdfx_SOURCES)
+qf_client_3dfx_SOURCES=	$(common_sources) $(client_sources) $(ogl_sources) $(tdfx_sources)
 qf_client_3dfx_LDADD=	$(TDFXGL_LIBS) $(SVGA_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
 qf_client_3dfx_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
 #
 # ... OpenGL in X Window
 #
-glx_SOURCES=	vid_glx.c vid_common_gl.c in_x11.c context_x11.c dga_check.c cl_sys_unix.c
+glx_sources=	vid_glx.c vid_common_gl.c in_x11.c context_x11.c dga_check.c cl_sys_unix.c
 
-qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
+qf_client_glx_SOURCES=	$(common_sources) $(client_sources) $(ogl_sources) $(glx_sources)
 qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
 qf_client_glx_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
 #
 # ... Sam Lantinga's Simple DirectMedia Layer, version 1.1 and higher, in GL mode
 #
-sgl_SOURCES=	vid_sgl.c vid_common_gl.c in_sdl.c cl_sys_sdl.c
+sgl_sources=	vid_sgl.c vid_common_gl.c in_sdl.c cl_sys_sdl.c
 
-qf_client_sgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(sgl_SOURCES)
+qf_client_sgl_SOURCES=	$(common_sources) $(client_sources) $(ogl_sources) $(sgl_sources)
 qf_client_sgl_LDADD=	$(SDL_LIBS) $(X_LIBS) $(GLX_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
 qf_client_sgl_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
 #
 # SGI/Microsoft WGL (Windows OpenGL)
 #
-wgl_SOURCES=	vid_wgl.c in_win.c cl_sys_win.c
+wgl_sources=	vid_wgl.c in_win.c cl_sys_win.c
 
-qf_client_wgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(wgl_SOURCES)
+qf_client_wgl_SOURCES=	$(common_sources) $(client_sources) $(ogl_sources) $(wgl_sources)
 qf_client_wgl_LDADD=	$(CLIENT_LIBS) $(GLX_LIBS) -lgdi32 -lwinmm
 qf_client_wgl_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 
