@@ -1169,6 +1169,70 @@ void SV_WriteIP_f (void)
 
 /*
 =================
+netDoSexpire_f
+=================
+*/
+void SV_netDoSexpire_f (void)
+{
+	int arg1;
+        int i;
+
+	if (Cmd_Argc() == 1)
+	{
+			Con_Printf ("Current DoS prot. expire settings: ");
+                        for (i=0;i<DOSFLOODCMDS;i++) Con_Printf("%d ",netdosexpire[i]);
+			Con_Printf("\n");
+			if (!sv_netdosprotect->value) Con_Printf("(disabled)\n");
+			return;
+	}
+
+	if (Cmd_Argc() != DOSFLOODCMDS+1)
+	{
+		Con_Printf ("Usage: netdosexpire <ping> <log> <connect> <status> <rcon> <ban>\n");
+		return;
+	}
+
+        for (i=0;i<DOSFLOODCMDS;i++) {
+		arg1 = atoi(Cmd_Argv(i+1));
+                if (arg1>0) netdosexpire[i]=arg1;
+        }
+        return;
+}
+
+/*
+=================
+DoSvalues_f
+=================
+*/
+void SV_netDoSvalues_f (void)
+{
+	int arg1;
+        int i;
+
+	if (Cmd_Argc() == 1)
+	{
+			Con_Printf ("Current DoS prot. value settings: ");
+                        for (i=0;i<DOSFLOODCMDS;i++) Con_Printf("%d ",netdosvalues[i]);
+			Con_Printf("\n");
+			if (!sv_netdosprotect->value) Con_Printf("(disabled)\n");
+			return;
+	}
+
+	if (Cmd_Argc() != DOSFLOODCMDS+1)
+	{
+		Con_Printf ("Usage: netdosvalues <ping> <log> <connect> <status> <rcon> <ban>\n");
+		return;
+	}
+
+        for (i=0;i<DOSFLOODCMDS;i++) {
+		arg1 = atoi(Cmd_Argv(i+1));
+                if (arg1>0) netdosvalues[i]=arg1;
+        }
+        return;
+}
+
+/*
+=================
 SV_SendBan
 =================
 */
@@ -1516,6 +1580,10 @@ void SV_InitLocal (void)
 	sv_phs = Cvar_Get("sv_phs",  "1", CVAR_NONE, "None");
 
 	pausable = Cvar_Get("pausable",  "1", CVAR_NONE, "None");
+
+// DoS protection
+	Cmd_AddCommand ("dosexpire", SV_netDoSexpire_f);
+	Cmd_AddCommand ("dosvalues", SV_netDoSvalues_f);
 
 	Cmd_AddCommand ("addip", SV_AddIP_f);
 	Cmd_AddCommand ("removeip", SV_RemoveIP_f);
