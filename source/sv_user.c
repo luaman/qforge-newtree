@@ -854,8 +854,8 @@ void SV_Say (qboolean team)
 		p[strlen(p)-1] = 0;
 	}
 
-	strncat (text,  p, sizeof(text));
-	strncat (text,  "\n", sizeof(text));
+	strncat (text,  p, sizeof(text) - strlen (text));
+	strncat (text,  "\n", sizeof(text) - strlen (text));
 
 	Sys_Printf ("%s", text);
 

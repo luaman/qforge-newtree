@@ -180,7 +180,7 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 //Con_Printf ("S_LoadSound: %x\n", (int)stackbuf);
 // load it in
     strcpy(namebuffer, "sound/");
-    strncat (namebuffer,  s->name, sizeof(namebuffer));
+    strncat (namebuffer,  s->name, sizeof(namebuffer) - strlen (namebuffer));
 
 //	Con_Printf ("loading %s\n",namebuffer);
 

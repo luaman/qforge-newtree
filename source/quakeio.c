@@ -82,7 +82,7 @@ Qexpand_squiggle(const char *path, char *dest)
 
 	if (home) {
 		strcpy (dest, home);
-		strncat (dest,  path+1, sizeof(dest)); // skip leading ~
+		strncat (dest,  path+1, sizeof(dest) - strlen (dest)); // skip leading ~
 	} else
 		strcpy (dest,path);
 }

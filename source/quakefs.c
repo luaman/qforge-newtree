@@ -520,7 +520,7 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 
 	filenamelen = strlen(filename);
 	strncpy(gzfilename,filename,sizeof(gzfilename));
-	strncat(gzfilename,".gz",sizeof(gzfilename));
+	strncat(gzfilename,".gz",sizeof(gzfilename) - strlen (gzfilename));
 #endif
 
 	file_from_pak = 0;
@@ -1145,5 +1145,5 @@ void COM_DefaultExtension (char *path, char *extension)
 		src--;
 	}
 
-	strncat (path,  extension, sizeof(path));
+	strncat (path,  extension, sizeof(path) - strlen (path));
 }

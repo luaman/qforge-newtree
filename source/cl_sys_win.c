@@ -331,7 +331,7 @@ char *Sys_ConsoleInput (void)
 										if (i>0) {
 											textCopied[i]=0;
 											text[len]=0;
-											strncat (text,  textCopied, sizeof(text));
+											strncat (text,  textCopied, sizeof(text) - strlen (text));
 											len+=dummy;
 											WriteFile(houtput, textCopied, i, &dummy, NULL);
 										}

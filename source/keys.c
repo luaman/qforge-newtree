@@ -659,9 +659,9 @@ Key_Bind_f ( void )
 	cmd[0] = 0;		// start out with a null string
 	for (i=2 ; i< c ; i++)
 	{
-		strncat (cmd,  Cmd_Argv(i), sizeof(cmd));
+		strncat (cmd,  Cmd_Argv(i), sizeof(cmd) - strlen (cmd));
 		if (i != (c-1))
-			strncat (cmd,  " ", sizeof(cmd));
+			strncat (cmd,  " ", sizeof(cmd) - strlen (cmd));
 	}
 
 	Key_SetBinding (b, cmd);

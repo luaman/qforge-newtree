@@ -65,7 +65,7 @@ char *PF_VarString (int	first)
 	out[0] = 0;
 	for (i=first ; i<pr_argc ; i++)
 	{
-		strncat (out,  G_STRING((OFS_PARM0+i*3)), sizeof(out));
+		strncat (out,  G_STRING((OFS_PARM0+i*3)), sizeof(out) - strlen (out));
 	}
 	return out;
 }
@@ -722,7 +722,7 @@ void PF_stuffcmd (void)
 	buf = cl->stufftext_buf;
 	if (strlen(buf) + strlen(str) >= MAX_STUFFTEXT)
 		PR_RunError ("stufftext buffer overflow");
-	strncat (buf,  str, sizeof(buf));
+	strncat (buf,  str, sizeof(buf) - strlen (buf));
 
 	for (i = strlen(buf); i >= 0; i--)
 	{

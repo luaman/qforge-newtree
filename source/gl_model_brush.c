@@ -79,7 +79,7 @@ void Mod_LoadLighting (lump_t *l)
 
 	strcpy(litfilename, loadmodel->name);
 	COM_StripExtension(litfilename, litfilename);
-	strncat (litfilename,  ".lit", sizeof(litfilename));
+	strncat (litfilename,  ".lit", sizeof(litfilename) - strlen (litfilename));
 
 	loadmodel->lightdata = (byte*) COM_LoadHunkFile (litfilename);
 	if (!loadmodel->lightdata) // expand the white lighting data

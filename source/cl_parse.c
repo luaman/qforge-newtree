@@ -231,7 +231,8 @@ qboolean	CL_CheckOrDownloadFile (char *filename)
 	// to the real name when done, so if interrupted
 	// a runt file wont be left
 	COM_StripExtension (cls.downloadname, cls.downloadtempname);
-	strncat (cls.downloadtempname,  ".tmp", sizeof(cls.downloadtempname));
+	strncat (cls.downloadtempname,  ".tmp",
+			 sizeof (cls.downloadtempname) - strlen (cls.downloadtempname));
 
 	MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
 	MSG_WriteString (&cls.netchan.message, va("download %s", cls.downloadname));

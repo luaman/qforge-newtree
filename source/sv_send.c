@@ -146,7 +146,7 @@ void Con_Printf (char *fmt, ...)
 	if (sv_redirected) {	// Add to redirected message
 		if (strlen (msg) + strlen (outputbuf) > sizeof (outputbuf) - 1)
 			SV_FlushRedirect ();
-		strncat (outputbuf,  msg, sizeof(outputbuf));
+		strncat (outputbuf,  msg, sizeof(outputbuf) - strlen (outputbuf));
 		return;
 	} else {				// We want to output to console and maybe logfile
 		if (sv_timestamps && sv_timefmt && sv_timefmt->string && sv_timestamps->int_val)

@@ -317,8 +317,8 @@ void Cmd_StuffCmds_f (void)
 			c = com_cmdline[j];
 			com_cmdline[j] = 0;
 
-			strncat (build,  com_cmdline+i, sizeof(build));
-			strncat (build,  "\n", sizeof(build));
+			strncat (build,  com_cmdline+i, sizeof(build) - strlen (build));
+			strncat (build,  "\n", sizeof(build) - strlen (build));
 			com_cmdline[j] = c;
 			i = j-1;
 		}
@@ -473,11 +473,11 @@ void Cmd_Alias_f (void)
 	c = Cmd_Argc();
 	for (i=2 ; i< c ; i++)
 	{
-		strncat (cmd,  Cmd_Argv(i), sizeof(cmd));
+		strncat (cmd,  Cmd_Argv(i), sizeof(cmd) - strlen (cmd));
 		if (i != c)
-			strncat (cmd,  " ", sizeof(cmd));
+			strncat (cmd,  " ", sizeof(cmd) - strlen (cmd));
 	}
-	strncat (cmd,  "\n", sizeof(cmd));
+	strncat (cmd,  "\n", sizeof(cmd) - strlen (cmd));
 
 	a->value = CopyString (cmd);
 }
