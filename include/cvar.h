@@ -77,11 +77,12 @@ typedef struct cvar_alias_s
 
 cvar_t	*Cvar_Get (char *name, char *value, int cvarflags, char *description);
 
+cvar_t	*Cvar_FindAlias (char *alias_name);
+
 void	Cvar_Alias_Get (char *name, cvar_t *cvar);
 
 void 	Cvar_Set (cvar_t *var, char *value);
 // equivelant to "<name> <variable>" typed at the console
-
 void	Cvar_SetValue (cvar_t *var, float value);
 float	Cvar_VariableValue (char *var_name);
 // returns 0 if not defined or non numeric
