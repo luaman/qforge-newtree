@@ -900,7 +900,7 @@ SVC_RemoteCommand (void)
 			len += strlen (Cmd_Argv (i)) + 1;	// +1 for " "
 		}
 
-		Con_Printf ("Rcon from %s:\nrcon (hidden) %s\n",
+		Con_Printf ("Rcon from %s:\n\trcon (hidden) %s\n",
 					NET_AdrToString (net_from), remaining);
 
 		SV_BeginRedirect (RD_PACKET);
