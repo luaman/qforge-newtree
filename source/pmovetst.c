@@ -193,9 +193,8 @@ PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
 	int         side;
 	float       midf;
 
-	// LordHavoc: a goto!  everyone flee in terror... :)
   loc0:
-// check for empty
+	// check for empty
 	if (num < 0) {
 		if (num != CONTENTS_SOLID) {
 			trace->allsolid = false;
@@ -212,9 +211,7 @@ PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
 	if (num < hull->firstclipnode || num > hull->lastclipnode)
 		Sys_Error ("PM_RecursiveHullCheck: bad node number");
 
-//
-// find the point distances
-//
+	// find the point distances
 	node = hull->clipnodes + num;
 	plane = hull->planes + node->planenum;
 
@@ -227,19 +224,16 @@ PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
 	}
 
 	// LordHavoc: recursion optimization
-	if (t1 >= 0 && t2 >= 0)
-//      return PM_RecursiveHullCheck (hull, node->children[0], p1f, p2f, p1, p2, trace);
-	{
+	if (t1 >= 0 && t2 >= 0) {
 		num = node->children[0];
 		goto loc0;
 	}
-	if (t1 < 0 && t2 < 0)
-//      return PM_RecursiveHullCheck (hull, node->children[1], p1f, p2f, p1, p2, trace);
-	{
+	if (t1 < 0 && t2 < 0) {
 		num = node->children[1];
 		goto loc0;
 	}
-// put the crosspoint DIST_EPSILON pixels on the near side
+	// put the crosspoint DIST_EPSILON pixels on the near side so that both
+	// p1 and mid are on the same side of the plane
 	side = (t1 < 0);
 	if (side)
 		frac = bound (0, (t1 + DIST_EPSILON) / (t1 - t2), 1);
@@ -250,9 +244,10 @@ PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
 	for (i = 0; i < 3; i++)
 		mid[i] = p1[i] + frac * (p2[i] - p1[i]);
 
-// move up to the node
-	if (!PM_RecursiveHullCheck
-		(hull, node->children[side], p1f, midf, p1, mid, trace)) return false;
+	// move up to the node
+	if (!PM_RecursiveHullCheck (hull, node->children[side],
+								p1f, midf, p1, mid, trace))
+		return false;
 
 #ifdef PARANOID
 	if (PM_HullPointContents (pm_hullmodel, mid, node->children[side]) ==
@@ -262,39 +257,33 @@ PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
 	}
 #endif
 
-	// LordHavoc: warning to the clumsy, this recursion can not be optimized
-	// because mid would need to be duplicated on a stack
-	if (PM_HullPointContents (hull, node->children[side ^ 1], mid) !=
-		CONTENTS_SOLID)
-// go past the node
+	if (PM_HullPointContents (hull, node->children[side ^ 1],
+							  mid) != CONTENTS_SOLID) {
+		// go past the node
 		return PM_RecursiveHullCheck (hull, node->children[side ^ 1], midf, p2f,
 									  mid, p2, trace);
+	}
 
 	if (trace->allsolid)
 		return false;					// never got out of the solid area
 
-//==================
-// the other side of the node is solid, this is the impact point
-//==================
+	//==================
+	// the other side of the node is solid, this is the impact point
+	//==================
 	if (!side) {
 		VectorCopy (plane->normal, trace->plane.normal);
 		trace->plane.dist = plane->dist;
 	} else {
-		// LordHavoc: vec3_origin is evil; the compiler can not rely on it
-		// being '0 0 0'
-//      VectorSubtract (vec3_origin, plane->normal, trace->plane.normal);
+		// invert plane paramterers
 		trace->plane.normal[0] = -plane->normal[0];
 		trace->plane.normal[1] = -plane->normal[1];
 		trace->plane.normal[2] = -plane->normal[2];
 		trace->plane.dist = -plane->dist;
 	}
 
-	while (PM_HullPointContents (hull, hull->firstclipnode, mid) == CONTENTS_SOLID) {	// shouldn't 
-																						// really 
-																						// happen, 
-																						// but 
-																						// does 
-																						// occasionally
+	while (PM_HullPointContents (hull, hull->firstclipnode,
+								 mid) == CONTENTS_SOLID) {
+		// shouldn't really happen, but does occasionally
 		frac -= 0.1;
 		if (frac < 0) {
 			trace->fraction = midf;
