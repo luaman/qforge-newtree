@@ -53,6 +53,16 @@
 #endif
 #include <limits.h>
 
+#ifdef WIN32
+#ifdef __BORLANDC__
+#	define
+#	define
+#else
+#	define setmode _setmode
+#	define O_BINARY _O_BINARY
+#endif
+#endif
+
 void
 Qexpand_squiggle(const char *path, char *dest)
 {
@@ -170,11 +180,10 @@ Qdopen(int fd, const char *mode)
 		}
 	}
 #ifdef WIN32
-#ifdef __BORLANDC__
-	setmode(_fileno(file->file),O_BINARY);
-#else
-	_setmode(_fileno(file->file),_O_BINARY);
-#endif
+	if (file->file)
+		setmode(_fileno(file->file),O_BINARY);
+	else
+		setmode(_fileno(file->gzfile),O_BINARY);
 #endif
 	return file;
 }
