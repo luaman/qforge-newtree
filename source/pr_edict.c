@@ -1119,7 +1119,7 @@ void PR_Init (void)
 
 void PR_Init_Cvars (void)
 {
-	r_skyname = Cvar_Get ("r_skyname", com_token, CVAR_NONE, "name of skybox");
+	r_skyname = Cvar_Get ("r_skyname", com_token, CVAR_SERVERINFO, "name of skybox");
 }
 
 
