@@ -166,6 +166,8 @@ void        GL_Init (void);
 //====================================
 
 cvar_t     *_windowed_mouse;
+cvar_t     *vid_use8bit;
+
 
 int         window_center_x, window_center_y, window_x, window_y, window_width,
 
@@ -1422,7 +1424,12 @@ VID_Init8bitPalette (void)
 	GLubyte 	thePalette[256 * 3];
 	GLubyte		*oldPalette, *newPalette;
 
-	if (COM_CheckParm ("-no8bit") || is8bit) {
+	vid_use8bit =
+		Cvar_Get ("vid_use8bit", "0", CVAR_ROM, "Use 8-bit shared palettes.");
+
+        if (!vid_use8bit->int_val) return;
+
+        if (is8bit) {           // already done...
 		return;
 	}
 
