@@ -80,6 +80,8 @@ extern int  in_forward, in_forward2, in_back;
 frame_t    *view_frame;
 player_state_t *view_message;
 
+void BuildGammaTable (float, float);
+
 /*
 	V_CalcRoll
 */
@@ -258,10 +260,8 @@ cshift_t    cshift_water = { {130, 80, 50}, 128 };
 cshift_t    cshift_slime = { {0, 25, 5}, 150 };
 cshift_t    cshift_lava = { {255, 80, 0}, 150 };
 
-cvar_t     *brightness;
-cvar_t     *contrast;
-
-byte        gammatable[256];			// palette is sent through this
+extern byte 	gammatable[256];			// palette is sent through this
+extern cvar_t	*vid_gamma;
 
 /*
 	V_CheckGamma
@@ -271,10 +271,13 @@ V_CheckGamma (void)
 {
 	static float oldgamma;
 
-	if (oldgamma == vid_gamma->value)
-		return false;
-	oldgamma = vid_gamma->value;
-	VID_UpdateGamma (vid_gamma);
+	if (vid_gamma) {		// might get called before vid_gamma gets set
+		if (oldgamma == vid_gamma->value)
+			return false;
+
+		oldgamma = vid_gamma->value;
+	}
+
 	vid.recalc_refdef = 1;				// force a surface cache flush
 
 	return true;
@@ -735,26 +738,43 @@ V_Init (void)
 void
 V_Init_Cvars (void)
 {
-	v_centermove = Cvar_Get ("v_centermove", "0.15", CVAR_NONE, "How far the player must move forward before the view re-centers");
-	v_centerspeed = Cvar_Get ("v_centerspeed", "500", CVAR_NONE, "How quickly you return to a center view after a lookup or lookdown");
+	v_centermove = Cvar_Get ("v_centermove", "0.15", CVAR_NONE, NULL,
+			"How far the player must move forward before the view re-centers");
+	v_centerspeed = Cvar_Get ("v_centerspeed", "500", CVAR_NONE, NULL,
+			"How quickly you return to a center view after a lookup or lookdown");
 
-	v_iyaw_cycle = Cvar_Get ("v_iyaw_cycle", "2", CVAR_NONE, "How far you tilt right and left when v_idlescale is enabled");
-	v_iroll_cycle = Cvar_Get ("v_iroll_cycle", "0.5", CVAR_NONE, "How quickly you tilt right and left when v_idlescale is enabled");
-	v_ipitch_cycle = Cvar_Get ("v_ipitch_cycle", "1", CVAR_NONE, "How quickly you lean forwards and backwards when v_idlescale is enabled");
-	v_iyaw_level = Cvar_Get ("v_iyaw_level", "0.3", CVAR_NONE, "How far you tilt right and left when v_idlescale is enabled");
-	v_iroll_level = Cvar_Get ("v_iroll_level", "0.1", CVAR_NONE, "How far you tilt right and left when v_idlescale is enabled");
-	v_ipitch_level = Cvar_Get ("v_ipitch_level", "0.3", CVAR_NONE, "How far you lean forwards and backwards when v_idlescale is enabled");
+	v_iyaw_cycle = Cvar_Get ("v_iyaw_cycle", "2", CVAR_NONE, NULL,
+			"How far you tilt right and left when v_idlescale is enabled");
+	v_iroll_cycle = Cvar_Get ("v_iroll_cycle", "0.5", CVAR_NONE, NULL,
+			"How quickly you tilt right and left when v_idlescale is enabled");
+	v_ipitch_cycle = Cvar_Get ("v_ipitch_cycle", "1", CVAR_NONE, NULL,
+			"How quickly you lean forwards and backwards when v_idlescale is enabled");
+	v_iyaw_level = Cvar_Get ("v_iyaw_level", "0.3", CVAR_NONE, NULL,
+			"How far you tilt right and left when v_idlescale is enabled");
+	v_iroll_level = Cvar_Get ("v_iroll_level", "0.1", CVAR_NONE, NULL,
+			"How far you tilt right and left when v_idlescale is enabled");
+	v_ipitch_level = Cvar_Get ("v_ipitch_level", "0.3", CVAR_NONE, NULL,
+			"How far you lean forwards and backwards when v_idlescale is enabled");
 
-	v_idlescale = Cvar_Get ("v_idlescale", "0", CVAR_NONE, "Toggles whether the view remains idle");
+	v_idlescale = Cvar_Get ("v_idlescale", "0", CVAR_NONE, NULL,
+			"Toggles whether the view remains idle");
 
-	cl_rollspeed = Cvar_Get ("cl_rollspeed", "200", CVAR_NONE, "How quickly you straighten out after strafing");
-	cl_rollangle = Cvar_Get ("cl_rollangle", "2.0", CVAR_NONE, "How much your screen tilts when strafing");
+	cl_rollspeed = Cvar_Get ("cl_rollspeed", "200", CVAR_NONE, NULL,
+			"How quickly you straighten out after strafing");
+	cl_rollangle = Cvar_Get ("cl_rollangle", "2.0", CVAR_NONE, NULL,
+			"How much your screen tilts when strafing");
 
-	cl_bob = Cvar_Get ("cl_bob", "0.02", CVAR_NONE, "How much your weapon moves up and down when walking");
-	cl_bobcycle = Cvar_Get ("cl_bobcycle", "0.6", CVAR_NONE, "How quickly your weapon moves up and down when walking");
-	cl_bobup = Cvar_Get ("cl_bobup", "0.5", CVAR_NONE, "How long your weapon stays up before cycling when walking");
+	cl_bob = Cvar_Get ("cl_bob", "0.02", CVAR_NONE, NULL,
+			"How much your weapon moves up and down when walking");
+	cl_bobcycle = Cvar_Get ("cl_bobcycle", "0.6", CVAR_NONE, NULL,
+			"How quickly your weapon moves up and down when walking");
+	cl_bobup = Cvar_Get ("cl_bobup", "0.5", CVAR_NONE, NULL,
+			"How long your weapon stays up before cycling when walking");
 
-	v_kicktime = Cvar_Get ("v_kicktime", "0.5", CVAR_NONE, "How long the kick from an attack lasts");
-	v_kickroll = Cvar_Get ("v_kickroll", "0.6", CVAR_NONE, "How much you lean when hit");
-	v_kickpitch = Cvar_Get ("v_kickpitch", "0.6", CVAR_NONE, "How much you look up when hit");
+	v_kicktime = Cvar_Get ("v_kicktime", "0.5", CVAR_NONE, NULL,
+			"How long the kick from an attack lasts");
+	v_kickroll = Cvar_Get ("v_kickroll", "0.6", CVAR_NONE, NULL,
+			"How much you lean when hit");
+	v_kickpitch = Cvar_Get ("v_kickpitch", "0.6", CVAR_NONE, NULL,
+			"How much you look up when hit");
 }

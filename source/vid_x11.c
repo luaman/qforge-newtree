@@ -645,9 +645,9 @@ VID_SetPalette (unsigned char *palette)
 		for (i = 0; i < 256; i++) {
 			colors[i].pixel = i;
 			colors[i].flags = DoRed | DoGreen | DoBlue;
-			colors[i].red = gammatable[palette[i * 3]] * 256;
-			colors[i].green = gammatable[palette[i * 3 + 1]] * 256;
-			colors[i].blue = gammatable[palette[i * 3 + 2]] * 256;
+			colors[i].red = palette[(i * 3)] * 256;
+			colors[i].green = palette[(i * 3) + 1] * 256;
+			colors[i].blue = palette[(i * 3) + 2] * 256;
 		}
 		XStoreColors (x_disp, x_cmap, colors, 256);
 	}

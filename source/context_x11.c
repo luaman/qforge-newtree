@@ -321,9 +321,9 @@ X11_SetVidMode (int width, int height)
 void
 X11_Init_Cvars (void)
 {
-	vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ROM,
+	vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ROM, NULL,
 							   "Toggles fullscreen game mode");
-	vid_system_gamma = Cvar_Get ("vid_system_gamma", "1", CVAR_ARCHIVE,
+	vid_system_gamma = Cvar_Get ("vid_system_gamma", "1", CVAR_ARCHIVE, NULL,
 								 "Use system gamma control if available");
 }
 

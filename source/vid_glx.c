@@ -203,7 +203,6 @@ VID_Init (unsigned char *palette)
 
 	GL_Init ();
 
-//	GL_CheckBrightness (palette);
 	VID_InitGamma (palette);
 	VID_SetPalette (palette);
 

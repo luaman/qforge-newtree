@@ -46,7 +46,6 @@
 extern byte *host_basepal;
 extern double host_frametime;
 extern int  onground;
-extern byte gammatable[256];
 
 extern cvar_t   *cl_cshift_powerup;
 extern cvar_t	*contrast;

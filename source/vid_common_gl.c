@@ -89,10 +89,10 @@ extern int gl_filter_min, gl_filter_max;
 void
 GL_Common_Init_Cvars (void)
 {
-	vid_use8bit = Cvar_Get ("vid_use8bit", "0", CVAR_ROM, "Use 8-bit shared palettes.");
-	brightness = Cvar_Get ("brightness", "1", CVAR_ARCHIVE, "Brightness level");
-	contrast = Cvar_Get ("contrast", "1", CVAR_ARCHIVE, "Contrast level");
-	gl_multitexture = Cvar_Get ("gl_multitexture", "0", CVAR_ARCHIVE, "Use multitexture when available");
+	vid_use8bit = Cvar_Get ("vid_use8bit", "0", CVAR_ROM, NULL, "Use 8-bit shared palettes.");
+	brightness = Cvar_Get ("brightness", "1", CVAR_ARCHIVE, NULL, "Brightness level");
+	contrast = Cvar_Get ("contrast", "1", CVAR_ARCHIVE, NULL, "Contrast level");
+	gl_multitexture = Cvar_Get ("gl_multitexture", "0", CVAR_ARCHIVE, NULL, "Use multitexture when available");
 }
 
 /*
@@ -139,12 +139,10 @@ LHFindColor(unsigned char *palette, int first, int last, int r, int g, int b)
 	color[1] = g;
 	color[2] = b;
 	palette += first * 3;
-	for (i = first;i < last;i++)
-	{
+	for (i = first; i < last; i++) {
 		// LordHavoc: distance in color cube from desired color
 		distance = VectorDistance_fast(palette, color);
-		if (distance < bestdistance)
-		{
+		if (distance < bestdistance) {
 			bestdistance = distance;
 			bestcolor = i;
 		}
@@ -182,22 +180,22 @@ VID_SetPalette (unsigned char *palette)
 
 	COM_FOpenFile ("glquake/15to8.pal", &f);
 	if (f) {
-		Qread (f, d_15to8table, 32768);
+		Qread (f, d_15to8table, 1 << 15);
 		Qclose (f);
 	} else {
 		// LordHavoc: cleaned this up
-		Con_Printf("Building 15bit to 8bit color conversion table\n");
-		for (i = 0; i < 32768; i++) {
+		Con_DPrintf("Building 15bit to 8bit color conversion table\n");
+		for (i = 0; i < (1 << 15); i++) {
 			int r, g, b;
 			// split out to 8bit components
 			r = ((i & 0x001F) >>  0) << 3;
 			g = ((i & 0x03E0) >>  5) << 3;
 			b = ((i & 0x7C00) >> 10) << 3;
-			d_15to8table[i] = LHFindColor(palette, 0, 256, r, g, b);
+			d_15to8table[i] = LHFindColor (palette, 0, 256, r, g, b);
 		}
 		snprintf (s, sizeof (s), "%s/glquake/15to8.pal", com_gamedir);
 		COM_CreatePath (s);
-		if ((f = Qopen (s, "wb")) != NULL) {
+		if ((f = Qopen (s, "wb"))) {
 			Qwrite (f, d_15to8table, 32768);
 			Qclose (f);
 		}
@@ -347,9 +345,6 @@ Shared_Init8bitPalette (void)
 void
 VID_Init8bitPalette (void)
 {
-	vid_use8bit =
-		Cvar_Get ("vid_use8bit", "0", CVAR_ROM, "Use 8-bit shared palettes.");
-
 	Con_Printf ("Checking for 8-bit extension: ");
 	if (vid_use8bit->int_val) {
 #ifdef GL_SHARED_TEXTURE_PALETTE_EXT

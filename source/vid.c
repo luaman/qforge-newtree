@@ -62,8 +62,8 @@ VID_GetWindowSize (int def_w, int def_h)
 {
 	int pnum;
 
-	vid_width = Cvar_Get ("vid_width", va ("%d", def_w), CVAR_NONE, "screen width");
-	vid_height = Cvar_Get ("vid_height", va ("%d", def_h), CVAR_NONE, "screen height");
+	vid_width = Cvar_Get ("vid_width", va ("%d", def_w), CVAR_NONE, NULL, "screen width");
+	vid_height = Cvar_Get ("vid_height", va ("%d", def_h), CVAR_NONE, NULL, "screen height");
 
 	if ((pnum = COM_CheckParm ("-width"))) {
 		if (pnum >= com_argc - 1)
@@ -137,9 +137,6 @@ void
 VID_UpdateGamma (cvar_t *vid_gamma)
 {
 	double gamma = bound (0.1, vid_gamma->value, 9.9);
-	
-	if (vid_gamma->flags & CVAR_ROM)	// System gamma unavailable
-		return;
 
 	if (vid_gamma_avail && vid_system_gamma->int_val) {	// Have system, use it
 		Con_DPrintf ("Setting hardware gamma to %g\n", gamma);
@@ -169,7 +166,7 @@ VID_InitGamma (unsigned char *pal)
 	gamma = bound (0.1, gamma, 9.9);
 
 	vid_gamma = Cvar_Get ("vid_gamma", va ("%f", gamma), CVAR_ARCHIVE,
-						  "Gamma correction");
+						  VID_UpdateGamma, "Gamma correction");
 
-	VID_UpdateGamma (vid_gamma);
+	VID_BuildGammaTable (vid_gamma->value);
 }

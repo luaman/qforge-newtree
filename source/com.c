@@ -113,5 +113,5 @@ COM_Init (void)
 void
 COM_Init_Cvars (void)
 {
-	registered = Cvar_Get ("registered", "0", CVAR_NONE, "Is the game the registered version. 1 yes 0 no");
+	registered = Cvar_Get ("registered", "0", CVAR_NONE, NULL, "Is the game the registered version. 1 yes 0 no");
 }

@@ -198,7 +198,7 @@ Draw_Init (void)
 	r_rectdesc.rowbytes = draw_backtile->width;
 
 	cl_verstring =
-		Cvar_Get ("cl_verstring", PROGRAM " " VERSION, CVAR_NONE, "Client version string");
+		Cvar_Get ("cl_verstring", PROGRAM " " VERSION, CVAR_NONE, NULL, "Client version string");
 }
 
 void

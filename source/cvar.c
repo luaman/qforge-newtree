@@ -4,7 +4,6 @@
 	dynamic variable tracking
 
 	Copyright (C) 1996-1997  Id Software, Inc.
-	Copyright (C) 1999,2000  Nelson Rush.
 	Copyright (C) 1999,2000  contributors of the QuakeForge project
 	Please see the file "AUTHORS" for a list of contributors
 
@@ -184,6 +183,8 @@ void Cvar_Info (cvar_t *var);
 void
 Cvar_Set (cvar_t *var, char *value)
 {
+	int 	changed;
+
 	if (!var)
 		return;
 
@@ -192,6 +193,7 @@ Cvar_Set (cvar_t *var, char *value)
 		return;
 	}
 
+	changed = !strequal (var->string, value);
 	free (var->string);					// free the old value string
 
 	var->string = strdup (value);
@@ -200,6 +202,9 @@ Cvar_Set (cvar_t *var, char *value)
 	sscanf (var->string, "%f %f %f", &var->vec[0], &var->vec[1], &var->vec[2]);
 
 	Cvar_Info (var);
+
+	if (changed && var->callback)
+		var->callback (var);
 }
 
 
@@ -211,9 +216,12 @@ Cvar_Set (cvar_t *var, char *value)
 void
 Cvar_SetROM (cvar_t *var, char *value)
 {
+	int     changed;
+
 	if (!var)
 		return;
 
+	changed = !strequal (var->string, value);
 	free (var->string);					// free the old value string
 
 	var->string = strdup (value);
@@ -222,6 +230,9 @@ Cvar_SetROM (cvar_t *var, char *value)
 	sscanf (var->string, "%f %f %f", &var->vec[0], &var->vec[1], &var->vec[2]);
 
 	Cvar_Info (var);
+
+	if (changed && var->callback)
+		var->callback (var);
 }
 
 /*
@@ -310,7 +321,7 @@ Cvar_Set_f (void)
 			Cvar_Set (var, value);
 		}
 	} else {
-		var = Cvar_Get (var_name, value, CVAR_USER_CREATED,
+		var = Cvar_Get (var_name, value, CVAR_USER_CREATED, NULL,
 						"User-created cvar");
 	}
 }
@@ -341,7 +352,7 @@ Cvar_Setrom_f (void)
 			Cvar_SetFlags (var, var->flags | CVAR_ROM);
 		}
 	} else {
-		var = Cvar_Get (var_name, value, CVAR_USER_CREATED | CVAR_ROM,
+		var = Cvar_Get (var_name, value, CVAR_USER_CREATED | CVAR_ROM, NULL,
 						"User-created READ-ONLY Cvar");
 	}
 }
@@ -454,7 +465,8 @@ Cvar_Init_Hash (void)
 void
 Cvar_Init (void)
 {
-	developer = Cvar_Get ("developer", "0", 0, "set to enable extra debugging information");
+	developer = Cvar_Get ("developer", "0", CVAR_NONE, NULL,
+			"set to enable extra debugging information");
 
 	Cmd_AddCommand ("set", Cvar_Set_f, "Set the selected variable, useful on the command line (+set variablename setting)");
 	Cmd_AddCommand ("setrom", Cvar_Setrom_f, "Set the selected variable and make it read only, useful on the command line.\n"
@@ -491,17 +503,16 @@ Cvar_Shutdown (void)
 
 
 cvar_t *
-Cvar_Get (char *name, char *string, int cvarflags, char *description)
+Cvar_Get (char *name, char *string, int cvarflags, void (*callback)(cvar_t*), char *description)
 {
-
 	cvar_t     *var;
 
 	if (Cmd_Exists (name)) {
 		Con_Printf ("Cvar_Get: %s is a command\n", name);
 		return NULL;
 	}
-	var = Cvar_FindVar (name);
-	if (!var) {
+
+	if (!(var = Cvar_FindVar (name))) {
 		cvar_t    **v;
 		var = (cvar_t *) calloc (1, sizeof (cvar_t));
 
@@ -509,6 +520,7 @@ Cvar_Get (char *name, char *string, int cvarflags, char *description)
 		var->name = strdup (name);
 		var->string = strdup (string);
 		var->flags = cvarflags;
+		var->callback = callback;
 		var->description = description;
 		var->value = atof (var->string);
 		var->int_val = atoi (var->string);
@@ -525,9 +537,13 @@ Cvar_Get (char *name, char *string, int cvarflags, char *description)
 		// Cvar does exist, so we update the flags and return.
 		var->flags &= ~CVAR_USER_CREATED;
 		var->flags |= cvarflags;
+		var->callback = callback;
 		var->description = description;
 	}
 	Cvar_Info (var);
+
+	if (var->callback)
+		var->callback (var);
 
 	return var;
 }

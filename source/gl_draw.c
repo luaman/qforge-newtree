@@ -393,24 +393,24 @@ Draw_Init (void)
 void
 Draw_Init_Cvars (void)
 {
-	gl_lightmode = Cvar_Get ("gl_lightmode", "1", CVAR_ARCHIVE,
+	gl_lightmode = Cvar_Get ("gl_lightmode", "1", CVAR_ARCHIVE, NULL,
 							 "Lighting mode (0 = GLQuake style, 1 = new style)");
 
-	gl_max_size = Cvar_Get ("gl_max_size", "1024", CVAR_NONE, "Texture dimension"); 
+	gl_max_size = Cvar_Get ("gl_max_size", "1024", CVAR_NONE, NULL, "Texture dimension"); 
 
-	gl_picmip = Cvar_Get ("gl_picmip", "0", CVAR_NONE, "Dimensions of displayed textures. 0 is normal, 1 is half, 2 is 1/4"); 
+	gl_picmip = Cvar_Get ("gl_picmip", "0", CVAR_NONE, NULL, "Dimensions of displayed textures. 0 is normal, 1 is half, 2 is 1/4"); 
 
-	gl_colorlights = Cvar_Get ("gl_colorlights", "1", CVAR_ROM,
+	gl_colorlights = Cvar_Get ("gl_colorlights", "1", CVAR_ROM, NULL,
 							   "Whether to use RGB lightmaps or not");
 
-	gl_constretch = Cvar_Get ("gl_constretch", "0", CVAR_ARCHIVE,
+	gl_constretch = Cvar_Get ("gl_constretch", "0", CVAR_ARCHIVE, NULL,
 							  "whether slide the console or stretch it");
-	gl_conalpha = Cvar_Get ("gl_conalpha", "0.6", CVAR_ARCHIVE,
+	gl_conalpha = Cvar_Get ("gl_conalpha", "0.6", CVAR_ARCHIVE, NULL,
 							"alpha value for the console background");
-	gl_conspin = Cvar_Get ("gl_conspin", "0", CVAR_ARCHIVE,
+	gl_conspin = Cvar_Get ("gl_conspin", "0", CVAR_ARCHIVE, NULL,
 						   "speed at which the console spins");
 
-	cl_verstring = Cvar_Get ("cl_verstring", PROGRAM " " VERSION, CVAR_NONE,
+	cl_verstring = Cvar_Get ("cl_verstring", PROGRAM " " VERSION, CVAR_NONE, NULL,
 							 "Client version string");
 }
 

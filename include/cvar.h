@@ -26,17 +26,17 @@
 	$Id$
 */
 
-#ifndef _CVAR_H
-#define _CVAR_H
+#ifndef __cvar_h_
+#define __cvar_h_
 
 #include "qtypes.h"
 #include "quakeio.h"
 
-typedef struct cvar_s
-{
+typedef struct cvar_s {
 	char    *name;
 	char    *string;
 	int	flags;
+	void	(*callback)(struct cvar_s *var);
 	char 	*description;	// for "help" command
 	float	value;
 	int		int_val;
@@ -44,8 +44,7 @@ typedef struct cvar_s
 	struct cvar_s *next;
 } cvar_t;
 
-typedef struct cvar_alias_s
-{
+typedef struct cvar_alias_s {
 	char	*name;
 	cvar_t	*cvar;
 	struct cvar_alias_s	*next;
@@ -57,19 +56,11 @@ typedef struct cvar_alias_s
 									// specific configurations
 #define	CVAR_USERINFO		2		// sent to server on connect or change
 #define	CVAR_SERVERINFO		4		// sent in response to front end requests
-#define	CVAR_SYSTEMINFO		8		// these cvars will be duplicated on all clients
-#define	CVAR_INIT			16		// don't allow change from console at all,
-									// but can be set from the command line
 #define	CVAR_NOTIFY			32		// Will notify players when changed.
 #define	CVAR_ROM			64		// display only, cannot be set by user at all
 #define	CVAR_USER_CREATED	128		// created by a set command
-#define	CVAR_HEAP			256		// allocated off the heap, safe to free
-#define CVAR_CHEAT			512		// can not be changed if cheats are disabled
-#define CVAR_NORESTART		1024	// do not clear when a cvar_restart is issued
 #define CVAR_LATCH			2048	// will only change when C code next does
 									// a Cvar_Get(), so it can't be changed
-#define CVAR_TEMP			4096	// can be set even when cheats are
-									// disabled, but is not archived
 
 // Zoid| A good CVAR_ROM example is userpath.  The code should read "cvar_t
 // *fs_userpath = CvarGet("fs_userpath", ".", CVAR_ROM);  The user can
@@ -81,7 +72,8 @@ typedef struct cvar_alias_s
 
 // Returns the Cvar if found, creates it with value if not.  Description and
 // flags are always updated.
-cvar_t	*Cvar_Get (char *name, char *value, int cvarflags, char *description);
+cvar_t	*Cvar_Get (char *name, char *value, int cvarflags, 
+				   void (*callback)(cvar_t*), char *description);
 
 cvar_t	*Cvar_FindAlias (char *alias_name);
 
@@ -120,9 +112,9 @@ void 	Cvar_WriteVariables (QFile *f);
 cvar_t *Cvar_FindVar (char *var_name);
 
 void Cvar_Init_Hash (void);
-void Cvar_Init();
+void Cvar_Init (void);
 
-void Cvar_Shutdown();
+void Cvar_Shutdown (void);
 
 extern cvar_t	*cvar_vars;
 

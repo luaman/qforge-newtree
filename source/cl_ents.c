@@ -1110,6 +1110,6 @@ CL_EmitEntities (void)
 void
 CL_Ents_Init (void)
 {
-	r_firecolor = Cvar_Get ("r_firecolor", "0.9 0.4 0", CVAR_ARCHIVE,
+	r_firecolor = Cvar_Get ("r_firecolor", "0.9 0.4 0", CVAR_ARCHIVE, NULL,
 							"color of rocket and lava ball fires");
 }

@@ -66,7 +66,7 @@ Pmove_Init (void)
 void
 Pmove_Init_Cvars (void)
 {
-	no_pogo_stick = Cvar_Get ("no_pogo_stick", "0", CVAR_SERVERINFO,
+	no_pogo_stick = Cvar_Get ("no_pogo_stick", "0", CVAR_SERVERINFO, NULL,
 							  "disable the ability to pogo stick");
 }
 

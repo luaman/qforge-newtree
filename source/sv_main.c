@@ -1482,108 +1482,108 @@ SV_InitLocal (void)
 
 	SV_UserInit ();
 
-	rcon_password = Cvar_Get ("rcon_password", "", CVAR_NONE, "Set the password for rcon commands");
-	password = Cvar_Get ("password", "", CVAR_NONE, "Set the server password for players");
-	spectator_password = Cvar_Get ("spectator_password", "", CVAR_NONE, "Set the spectator password");
+	rcon_password = Cvar_Get ("rcon_password", "", CVAR_NONE, NULL, "Set the password for rcon commands");
+	password = Cvar_Get ("password", "", CVAR_NONE, NULL, "Set the server password for players");
+	spectator_password = Cvar_Get ("spectator_password", "", CVAR_NONE, NULL, "Set the spectator password");
 
-	sv_mintic = Cvar_Get ("sv_mintic", "0.03", CVAR_NONE, 
+	sv_mintic = Cvar_Get ("sv_mintic", "0.03", CVAR_NONE, NULL, 
 		"The minimum amount of time the server will wait before sending packets to a client. Set to .5 to make modem users happy");
-	sv_maxtic = Cvar_Get ("sv_maxtic", "0.1", CVAR_NONE, 
+	sv_maxtic = Cvar_Get ("sv_maxtic", "0.1", CVAR_NONE, NULL, 
 		"The maximum amount of time in seconds before a client a receives an update from the server");
-	fraglimit = Cvar_Get ("fraglimit", "0", CVAR_SERVERINFO, "Amount of frags a player must attain in order to exit the level");
-	timelimit = Cvar_Get ("timelimit", "0", CVAR_SERVERINFO, 
+	fraglimit = Cvar_Get ("fraglimit", "0", CVAR_SERVERINFO, NULL, "Amount of frags a player must attain in order to exit the level");
+	timelimit = Cvar_Get ("timelimit", "0", CVAR_SERVERINFO, NULL, 
 		"Sets the amount of time in minutes that is needed before advancing to the next level");
-	teamplay = Cvar_Get ("teamplay", "0", CVAR_SERVERINFO, 
+	teamplay = Cvar_Get ("teamplay", "0", CVAR_SERVERINFO, NULL, 
 		"Determines teamplay rules. 0 off, 1 You cannot hurt yourself nor your teammates, "
 		"2 You can hurt yourself, your teammates, and you will lose one frag for killing a teammate"
 		"3 You can hurt yourself but you cannot hurt your teammates");
-	samelevel = Cvar_Get ("samelevel", "0", CVAR_SERVERINFO, 
+	samelevel = Cvar_Get ("samelevel", "0", CVAR_SERVERINFO, NULL, 
 		"Determines the rules for level changing and exiting. 0 Allows advancing to the next level,"
 		"1 The same level will be played until someone exits,"
 		"2 The same level will be played and the exit will kill anybody that tries to exit,"
 		"3 The same level will be played and the exit will kill anybody that tries to exit, except on the Start map.");
-	maxclients = Cvar_Get ("maxclients", "8", CVAR_SERVERINFO, 
+	maxclients = Cvar_Get ("maxclients", "8", CVAR_SERVERINFO, NULL, 
 		"Sets how many clients can connect to your server, this includes spectators and players");
-	maxspectators = Cvar_Get ("maxspectators", "8", CVAR_SERVERINFO, 
+	maxspectators = Cvar_Get ("maxspectators", "8", CVAR_SERVERINFO, NULL, 
 		"Sets how many spectators can connect to your server. The maxclients value takes precidence over this value so this"
 		" value should always be equal-to or less-then the maxclients value");
-	hostname = Cvar_Get ("hostname", "unnamed", CVAR_SERVERINFO, "Report or sets the server name");
-	deathmatch = Cvar_Get ("deathmatch", "1", CVAR_SERVERINFO, 
+	hostname = Cvar_Get ("hostname", "unnamed", CVAR_SERVERINFO, NULL, "Report or sets the server name");
+	deathmatch = Cvar_Get ("deathmatch", "1", CVAR_SERVERINFO, NULL, 
 		"Sets the rules for weapon and item respawning. "
 		"1 Does not leave weapons on the map. You can pickup weapons and items and they will respawn,"
 		"2 Leaves weapons on the map. You can only pick up a weapon once. Picked up items will not respawn,"
 		"3 Leaves weapons on the map. You can only pick up a weapon once. Picked up items will respawn.");
-	spawn = Cvar_Get ("spawn", "0", CVAR_SERVERINFO, "Spawn the player entity");
-	watervis = Cvar_Get ("watervis", "0", CVAR_SERVERINFO, "Toggle the use of r_watervis by OpenGL clients");
+	spawn = Cvar_Get ("spawn", "0", CVAR_SERVERINFO, NULL, "Spawn the player entity");
+	watervis = Cvar_Get ("watervis", "0", CVAR_SERVERINFO, NULL, "Toggle the use of r_watervis by OpenGL clients");
 
-	developer = Cvar_Get ("developer", "0", CVAR_NONE, 
+	developer = Cvar_Get ("developer", "0", CVAR_NONE, NULL, 
 		"Toggle verbose output of server information. Useful for diagnosing problems and learning more about the server");
 
-	timeout = Cvar_Get ("timeout", "65", CVAR_NONE, 
+	timeout = Cvar_Get ("timeout", "65", CVAR_NONE, NULL, 
 		"Sets the amount of time in seconds before a client is considered disconnected if the server does not receive a packet");
-	zombietime = Cvar_Get ("zombietime", "2", CVAR_NONE, 
+	zombietime = Cvar_Get ("zombietime", "2", CVAR_NONE, NULL, 
 		"The number of seconds that the server will keep the character of a player on the map who seems to have disconnected");
 
-	sv_aim = Cvar_Get ("sv_aim", "2", CVAR_NONE, "Sets the value for auto-aiming leniency");
+	sv_aim = Cvar_Get ("sv_aim", "2", CVAR_NONE, NULL, "Sets the value for auto-aiming leniency");
 
-	sv_accelerate = Cvar_Get ("sv_accelerate", "10", CVAR_NONE, "Sets the acceleration value for the players");
-	sv_airaccelerate = Cvar_Get ("sv_airaccelerate", "0.7", CVAR_NONE, "Sets how quickly the players accelerate in air");
-	sv_wateraccelerate = Cvar_Get ("sv_wateraccelerate", "10", CVAR_NONE, "Sets the water acceleration value");
+	sv_accelerate = Cvar_Get ("sv_accelerate", "10", CVAR_NONE, NULL, "Sets the acceleration value for the players");
+	sv_airaccelerate = Cvar_Get ("sv_airaccelerate", "0.7", CVAR_NONE, NULL, "Sets how quickly the players accelerate in air");
+	sv_wateraccelerate = Cvar_Get ("sv_wateraccelerate", "10", CVAR_NONE, NULL, "Sets the water acceleration value");
 
-	sv_allow_log = Cvar_Get ("sv_allow_log", "1", CVAR_NONE, "Allow remote logging");
-	sv_allow_ping =	Cvar_Get ("sv_allow_pings", "1", CVAR_NONE, "Allow remote pings (qstat etc)");
-	sv_allow_status = Cvar_Get ("sv_allow_status", "1", CVAR_NONE, "Allow remote status queries (qstat etc)");
+	sv_allow_log = Cvar_Get ("sv_allow_log", "1", CVAR_NONE, NULL, "Allow remote logging");
+	sv_allow_ping =	Cvar_Get ("sv_allow_pings", "1", CVAR_NONE, NULL, "Allow remote pings (qstat etc)");
+	sv_allow_status = Cvar_Get ("sv_allow_status", "1", CVAR_NONE, NULL, "Allow remote status queries (qstat etc)");
 
-	sv_extensions = Cvar_Get ("sv_extensions", "1", CVAR_NONE, "Use protocol extensions for QuakeForge clients");
-	sv_friction = Cvar_Get ("sv_friction", "4", CVAR_NONE, "Sets the friction value for the players");
-	sv_gravity = Cvar_Get ("sv_gravity", "800", CVAR_NONE, "Sets the global value for the amount of gravity");
+	sv_extensions = Cvar_Get ("sv_extensions", "1", CVAR_NONE, NULL, "Use protocol extensions for QuakeForge clients");
+	sv_friction = Cvar_Get ("sv_friction", "4", CVAR_NONE, NULL, "Sets the friction value for the players");
+	sv_gravity = Cvar_Get ("sv_gravity", "800", CVAR_NONE, NULL, "Sets the global value for the amount of gravity");
 
-	sv_maxrate = Cvar_Get ("sv_maxrate", "0", CVAR_SERVERINFO, "Maximum allowable rate");
-	sv_maxspeed = Cvar_Get ("sv_maxspeed", "320", CVAR_NONE, "Sets the maximum speed a player can move");
-	sv_maxvelocity = Cvar_Get ("sv_maxvelocity", "2000", CVAR_NONE, "Sets the maximum velocity an object can travel");
+	sv_maxrate = Cvar_Get ("sv_maxrate", "0", CVAR_SERVERINFO, NULL, "Maximum allowable rate");
+	sv_maxspeed = Cvar_Get ("sv_maxspeed", "320", CVAR_NONE, NULL, "Sets the maximum speed a player can move");
+	sv_maxvelocity = Cvar_Get ("sv_maxvelocity", "2000", CVAR_NONE, NULL, "Sets the maximum velocity an object can travel");
 
-	sv_minqfversion = Cvar_Get ("sv_minqfversion", "0", CVAR_SERVERINFO, "Minimum QF version on client");
-	sv_spectatormaxspeed = Cvar_Get ("sv_spectatormaxspeed", "500", CVAR_NONE, "Sets the maximum speed a spectator can move");
-	sv_stopspeed = Cvar_Get ("sv_stopspeed", "100", CVAR_NONE, "Sets the value that determines how fast the player should come to a complete stop");
+	sv_minqfversion = Cvar_Get ("sv_minqfversion", "0", CVAR_SERVERINFO, NULL, "Minimum QF version on client");
+	sv_spectatormaxspeed = Cvar_Get ("sv_spectatormaxspeed", "500", CVAR_NONE, NULL, "Sets the maximum speed a spectator can move");
+	sv_stopspeed = Cvar_Get ("sv_stopspeed", "100", CVAR_NONE, NULL, "Sets the value that determines how fast the player should come to a complete stop");
 
-	sv_timekick = Cvar_Get ("sv_timekick", "3", CVAR_SERVERINFO, "Time cheat protection");
-	sv_timekick_fuzz = Cvar_Get ("sv_timekick_fuzz", "15", CVAR_NONE, "Time cheat \"fuzz factor\"");
-	sv_timekick_interval = Cvar_Get ("sv_timekick_interval", "30", CVAR_NONE, "Time cheat check interval");
+	sv_timekick = Cvar_Get ("sv_timekick", "3", CVAR_SERVERINFO, NULL, "Time cheat protection");
+	sv_timekick_fuzz = Cvar_Get ("sv_timekick_fuzz", "15", CVAR_NONE, NULL, "Time cheat \"fuzz factor\"");
+	sv_timekick_interval = Cvar_Get ("sv_timekick_interval", "30", CVAR_NONE, NULL, "Time cheat check interval");
 
-	sv_waterfriction = Cvar_Get ("sv_waterfriction", "4", CVAR_NONE, "Sets the water friction value");
+	sv_waterfriction = Cvar_Get ("sv_waterfriction", "4", CVAR_NONE, NULL, "Sets the water friction value");
 
 	sv_netdosprotect =
-		Cvar_Get ("sv_netdosprotect", "0", CVAR_NONE,
+		Cvar_Get ("sv_netdosprotect", "0", CVAR_NONE, NULL,
 				  "DoS flood attack protection");
 
 	sv_timestamps =
-		Cvar_Get ("sv_timestamps", "0", CVAR_NONE,
+		Cvar_Get ("sv_timestamps", "0", CVAR_NONE, NULL,
 				  "Time/date stamps in log entries");
 	sv_timefmt =
-		Cvar_Get ("sv_timefmt", "[%b %e %X] ", CVAR_NONE,
+		Cvar_Get ("sv_timefmt", "[%b %e %X] ", CVAR_NONE, NULL,
 				  "Time/date format to use");
 
-	filterban = Cvar_Get ("filterban", "1", CVAR_NONE, 
+	filterban = Cvar_Get ("filterban", "1", CVAR_NONE, NULL, 
 		"Determines the rules for the IP list "
 		"0 Only IP addresses on the Ban list will be allowed onto the server, "
 		"1 Only IP addresses NOT on the Ban list will be allowed onto the server");
 
-	allow_download = Cvar_Get ("allow_download", "1", CVAR_NONE, "Toggle if clients can download game data from the server");
+	allow_download = Cvar_Get ("allow_download", "1", CVAR_NONE, NULL, "Toggle if clients can download game data from the server");
 	allow_download_skins =
-		Cvar_Get ("allow_download_skins", "1", CVAR_NONE, "Toggle if clients can download skins from the server");
+		Cvar_Get ("allow_download_skins", "1", CVAR_NONE, NULL, "Toggle if clients can download skins from the server");
 	allow_download_models =
-		Cvar_Get ("allow_download_models", "1", CVAR_NONE, "Toggle if clients can download models from the server");
+		Cvar_Get ("allow_download_models", "1", CVAR_NONE, NULL, "Toggle if clients can download models from the server");
 	allow_download_sounds =
-		Cvar_Get ("allow_download_sounds", "1", CVAR_NONE, "Toggle if clients can download sounds from the server");
+		Cvar_Get ("allow_download_sounds", "1", CVAR_NONE, NULL, "Toggle if clients can download sounds from the server");
 	allow_download_maps =
-		Cvar_Get ("allow_download_maps", "1", CVAR_NONE, "Toggle if clients can download maps from the server");
+		Cvar_Get ("allow_download_maps", "1", CVAR_NONE, NULL, "Toggle if clients can download maps from the server");
 
-	sv_highchars = Cvar_Get ("sv_highchars", "1", CVAR_NONE, "Toggle the use of high character color names for players");
+	sv_highchars = Cvar_Get ("sv_highchars", "1", CVAR_NONE, NULL, "Toggle the use of high character color names for players");
 
-	sv_phs = Cvar_Get ("sv_phs", "1", CVAR_NONE,
+	sv_phs = Cvar_Get ("sv_phs", "1", CVAR_NONE, NULL,
 	"Possibly Hearable Set. If set to zero, the server calculates sound hearability in realtime");
 	 
-	pausable = Cvar_Get ("pausable", "1", CVAR_NONE, "Toggle if server can be paused 1 is on, 0 is off");
+	pausable = Cvar_Get ("pausable", "1", CVAR_NONE, NULL, "Toggle if server can be paused 1 is on, 0 is off");
 
 	// DoS protection
 	Cmd_AddCommand ("netdosexpire", SV_netDoSexpire_f, "FIXME: part of DoS protection obviously, but I don't know what it does. No Description");
@@ -1875,7 +1875,7 @@ SV_Init (void)
 	// only reads from within the quake file system, and changing that is
 	// probably Not A Good Thing (tm).
 	fs_globalcfg = Cvar_Get ("fs_globalcfg", FS_GLOBALCFG,
-							 CVAR_ROM, "global configuration file");
+							 CVAR_ROM, NULL, "global configuration file");
 	Cmd_Exec_File (fs_globalcfg->string);
 	Cbuf_Execute_Sets ();
 
@@ -1884,7 +1884,7 @@ SV_Init (void)
 	Cbuf_Execute_Sets ();
 
 	fs_usercfg = Cvar_Get ("fs_usercfg", FS_USERCFG,
-						   CVAR_ROM, "user configuration file");
+						   CVAR_ROM, NULL, "user configuration file");
 	Cmd_Exec_File (fs_usercfg->string);
 	Cbuf_Execute_Sets ();
 
