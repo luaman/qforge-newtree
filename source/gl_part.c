@@ -818,7 +818,7 @@ R_FireColor_f(void)
 					r_firecolor_flame[3]);
 		return;
 	}
-	if (Cmd_Argc() !=6) {
+	if (Cmd_Argc() !=5) {
 		Con_Printf ("Usage r_firecolor R G B A\n");
 		return;
 	}
