@@ -304,14 +304,14 @@ Log_Outgoing_Packet (char *p, int len)
 void
 Log_Delta(int bits)
 {
-        entity_state_t *to;
+        entity_state_t to;
         int i;
 
         Net_LogPrintf ("\n\t");
 
 	// set everything to the state we are delta'ing from
 
-	to->number = bits & 511;
+	to.number = bits & 511;
 	bits &= ~511;
 
 	if (bits & U_MOREBITS) {			// read in the low order bits
@@ -327,14 +327,14 @@ Log_Delta(int bits)
 			bits |= MSG_ReadByte () << 24;
 	}
 
-	to->flags = bits;
+	to.flags = bits;
 
 	if (bits & U_MODEL)
                 Net_LogPrintf (" MdlIdx: %d", MSG_ReadByte ());
 
         if (bits & U_FRAME) {
-                to->frame = MSG_ReadByte ();
-                Net_LogPrintf (" Frame: %d", to->frame);
+                to.frame = MSG_ReadByte ();
+                Net_LogPrintf (" Frame: %d", to.frame);
         }
 
 	if (bits & U_COLORMAP)
@@ -344,8 +344,8 @@ Log_Delta(int bits)
                 Net_LogPrintf (" Skinnum: %d", MSG_ReadByte ());
 
         if (bits & U_EFFECTS) {
-                to->effects = MSG_ReadByte ();
-                Net_LogPrintf (" Effects: %d", to->effects);
+                to.effects = MSG_ReadByte ();
+                Net_LogPrintf (" Effects: %d", to.effects);
         }
 
 	if (bits & U_ORIGIN1)
@@ -372,7 +372,7 @@ Log_Delta(int bits)
 	if (bits & U_SCALE)
                 Net_LogPrintf(" Scale: %d", MSG_ReadByte ());
 	if (bits & U_EFFECTS2)
-                Net_LogPrintf(" U_EFFECTS2: %d", (to->effects & 0xFF) | (MSG_ReadByte () << 8));
+                Net_LogPrintf(" U_EFFECTS2: %d", (to.effects & 0xFF) | (MSG_ReadByte () << 8));
 	if (bits & U_GLOWSIZE)
                 Net_LogPrintf(" GlowSize: %d", MSG_ReadByte ());
 	if (bits & U_GLOWCOLOR)
@@ -380,7 +380,7 @@ Log_Delta(int bits)
 	if (bits & U_COLORMOD)
                 Net_LogPrintf(" Colormod: %d", MSG_ReadByte ());
 	if (bits & U_FRAME2)
-                Net_LogPrintf(" Uframe2: %d", ((to->frame & 0xFF) | (MSG_ReadByte () << 8)));
+                Net_LogPrintf(" Uframe2: %d", ((to.frame & 0xFF) | (MSG_ReadByte () << 8)));
 // Ender (QSG - End)
 
         return;
