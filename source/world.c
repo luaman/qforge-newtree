@@ -41,7 +41,6 @@
 #include "commdef.h"
 #include "console.h"
 #include "crc.h"
-#include "mathlib.h"
 #include "server.h"
 #include "world.h"
 

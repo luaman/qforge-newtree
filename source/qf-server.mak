@@ -143,6 +143,7 @@ DEPEND = \
    $(OBJS)\net_com.obj\
    $(OBJS)\net_chan.obj\
    $(OBJS)\mdfour.obj\
+   $(OBJS)\math.obj\
    $(OBJS)\mathlib.obj\
    $(OBJS)\cvar.obj\
    $(OBJS)\crc.obj\
@@ -196,6 +197,7 @@ $(OBJS)\pmove.obj+
 $(OBJS)\net_com.obj+
 $(OBJS)\net_chan.obj+
 $(OBJS)\mdfour.obj+
+$(OBJS)\math.obj+
 $(OBJS)\mathlib.obj+
 $(OBJS)\cvar.obj+
 $(OBJS)\crc.obj+
@@ -458,4 +460,8 @@ $(OBJS)\sv_ccmds.obj :  $(QFROOT)\source\sv_ccmds.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sv_ccmds.c
 |
 
+$(OBJS)\math.obj :  $(QFROOT)\source\math.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\math$(EXT2) $(ASMOUT)\math$(EXT1)
+|
 
