@@ -360,9 +360,9 @@ PR_ExecuteProgram
 */
 void PR_ExecuteProgram (func_t fnum)
 {
-	eval_t	*a, *b, *c;
+	eval_t	*a=0, *b=0, *c=0;
 	int			s;
-	dstatement_t	*st;
+	dstatement_t	*st=0;
 	dfunction_t	*f, *newf;
 	int		runaway;
 	int		i;
