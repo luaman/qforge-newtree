@@ -175,6 +175,10 @@ SOURCE=.\pr_exec.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\pr_offs.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\qargs.c
 # End Source File
 # Begin Source File
