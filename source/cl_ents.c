@@ -716,7 +716,6 @@ CL_LinkProjectiles (void)
 		if (!ent)
 			break;						// object list is full
 		*ent = &pr->ent;
-		cl_numvisedicts++;
 		(*ent)->model = cl.model_precache[pr->modelindex];
 		(*ent)->skinnum = 0;
 		(*ent)->frame = 0;
