@@ -198,6 +198,8 @@ char prespawn_name[] = "prespawn %i 0 %i";
 char modellist_name[] = "modellist %i %i";
 char soundlist_name[] = "soundlist %i %i";
 
+cvar_t	*confirm_quit;
+
 /*
 ==================
 CL_Quit_f
@@ -205,7 +207,7 @@ CL_Quit_f
 */
 void CL_Quit_f (void)
 {
-	if (1 /* key_dest != key_console */ /* && cls.state != ca_dedicated */)
+	if (confirm_quit->int_val /* key_dest != key_console */ /* && cls.state != ca_dedicated */)
 	{
 		M_Menu_Quit_f ();
 		return;
@@ -1254,6 +1256,8 @@ void CL_Init_Cvars (void)
 	extern	cvar_t		*baseskin;
 	extern	cvar_t		*noskins;
 
+	// LordHavoc: some people like it asking on quit, others don't...
+	confirm_quit = Cvar_Get("confirm_quit", "1", CVAR_ARCHIVE, "confirm quit command");
 
 	show_fps = Cvar_Get("show_fps", "0", CVAR_NONE,
 			"display realtime frames per second");
