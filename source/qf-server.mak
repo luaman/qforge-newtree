@@ -117,6 +117,7 @@ EXT2=.obj
 # Dependency List
 #
 DEPEND = \
+   $(OBJS)\pr_offs.obj\
    $(OBJS)\buildnum.obj\
    $(OBJS)\info.obj\
    $(OBJS)\link.obj\
@@ -166,6 +167,7 @@ $(EXE)\qf-server.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0x32.obj+
+$(OBJS)\pr_offs.obj+
 $(OBJS)\buildnum.obj+
 $(OBJS)\info.obj+
 $(OBJS)\link.obj+
@@ -215,6 +217,11 @@ $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
 #$(CROOT)\LIB\cw32mt.lib
 
+
+|
+$(OBJS)\pr_offs.obj :  $(QFROOT)\source\pr_offs.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\pr_offs.c
 
 |
 $(OBJS)\buildnum.obj :  $(QFROOT)\source\buildnum.c
