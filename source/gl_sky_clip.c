@@ -178,10 +178,10 @@ find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 	int         axis;
 	vec3_t      t;
 
-	x[face1 % 3] = 1024 * (1 - 2 * (face1 / 3));
-	x[face2 % 3] = 1024 * (1 - 2 * (face2 / 3));
+	x[face_axis[face1]] = face_offset[face1];
+	x[face_axis[face2]] = face_offset[face2];
 
-	axis = 3 - ((face1 % 3) + (face2 % 3));
+	axis = 3 - ((face_axis[face1]) + (face_axis[face2]));
 	v[axis] = 1;
 
 	CrossProduct (x1, x2, n);
@@ -206,9 +206,9 @@ find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 static void
 find_cube_vertex (int face1, int face2, int face3, vec3_t v)
 {
-	v[face1 % 3] = 1024 * (1 - 2 * (face1 / 3));
-	v[face2 % 3] = 1024 * (1 - 2 * (face2 / 3));
-	v[face3 % 3] = 1024 * (1 - 2 * (face3 / 3));
+	v[face_axis[face1]] = face_offset[face1];
+	v[face_axis[face2]] = face_offset[face2];
+	v[face_axis[face3]] = face_offset[face3];
 }
 
 /*
@@ -608,7 +608,7 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		VectorSubtract (poly->verts[i], r_refdef.vieworg, v);
 		face = determine_face (v);
 		if (face != prev_face) {
-			if ((face % 3) == (prev_face % 3)) {
+			if ((face_axis[face]) == (face_axis[prev_face])) {
 				int         x_face;
 				vec3_t      x;
 
