@@ -23,19 +23,18 @@
 		Free Software Foundation, Inc.
 		59 Temple Place - Suite 330
 		Boston, MA  02111-1307, USA
-
+	
+	$Id$
 */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
-#ifdef WIN32
-#include "winquake.h"
-#endif
+
 #include <GL/gl.h>
 
 #ifdef HAVE_GL_GLEXT_H
-#include <GL/glext.h>
+# include <GL/glext.h>
 #endif
 
 #include <string.h>
@@ -49,6 +48,11 @@
 # else
 #  define RTLD_LAZY     0
 # endif
+#endif
+
+
+#ifdef _WIN32
+# include "winquake.h"
 #endif
 
 #include "console.h"
@@ -285,62 +289,67 @@ qboolean VID_Is8bit(void)
 }
 
 #ifdef HAVE_TDFXGL
-void 3dfx_Init8bitPalette()
+void
+3dfx_Init8bitPalette (void)
 {
-// Check for 8bit Extensions and initialize them.
-	int i;
+	// Check for 8bit Extensions and initialize them.
+	int 	i;
 
-	dlhand = dlopen (NULL, RTLD_LAZY);
+	if (strstr (gl_extensions, "3DFX_set_global_palette")) {
 
-	Con_Printf ("8-bit GL extensions: ");
-
-	if (dlhand == NULL) {
-		Con_Printf ("unable to check.\n");
-		return;
-	}
-
-	if (strstr(gl_extensions, "3DFX_set_global_palette")) {
-		char *oldpal;
+		char	*oldpal;
 		GLubyte table[256][4];
 		gl3DfxSetPaletteEXT_FUNC load_texture = NULL;
 
-		Con_Printf("3DFX_set_global_palette.\n");
-		load_texture = (void *) dlsym(dlhand, "gl3DfxSetPaletteEXT");
+		Con_Printf ("3DFX_set_global_palette.\n");
 
-		glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
+		load_texture = (void *) dlsym (dlhand, "gl3DfxSetPaletteEXT");
+
+		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
 		oldpal = (char *) d_8to24table; //d_8to24table3dfx;
-		for (i=0;i<256;i++) {
+		for (i = 0; i < 256; i++) {
 			table[i][2] = *oldpal++;
 			table[i][1] = *oldpal++;
 			table[i][0] = *oldpal++;
 			table[i][3] = 255;
 			oldpal++;
 		}
-		load_texture((GLuint *)table);
+		load_texture ((GLuint *) table);
 		is8bit = true;
-	} else Shared_Init8bitPalette();
+# ifdef GL_SHARED_TEXTURE_PALETTE_EXT
+	} else {
+		Shared_Init8bitPalette ();
+# endif
+	}
 
-	dlclose(dlhand);
-	dlhand = NULL;
 	Con_Printf ("not found.\n");
 }
 #endif
 
 #ifdef GL_SHARED_TEXTURE_PALETTE_EXT
-void
-Shared_Init8bitPalette()
-{
-	int i;
-	char thePalette[256*3];
-	char *oldPalette, *newPalette;
 
-	if (strstr(gl_extensions, "GL_EXT_shared_texture_palette") == NULL)
-		return;
-
-#ifdef HAVE_TDFXGL
-	glColorTableEXT_FUNC load_texture = NULL;
-	load_texture = (void *) dlsym(dlhand, "glColorTableEXT");
+#ifndef PFNGLCOLORTABLEPROC
+typedef void (APIENTRY * PFNGLCOLORTABLEPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid *table);
 #endif
+
+void
+Shared_Init8bitPalette (void)
+{
+	int 	i;
+	char	thePalette[256*3];
+	char	*oldPalette, *newPalette;
+
+	PFNGLCOLORTABLEPROC qglColorTable = NULL;
+
+	if (strstr (gl_extensions, "GL_EXT_shared_texture_palette") == NULL) {
+		return;
+	}
+
+	if (!(qglColorTable = (void *) dlsym (dlhand, "glColorTable"))) {
+		if (!(qglColorTable = (void *) dlsym (dlhand, "glColorTableEXT"))) {
+			return;
+		}
+	}
 
 	Con_Printf ("8-bit GL extensions enabled.\n");
 	glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
@@ -354,42 +363,48 @@ Shared_Init8bitPalette()
 	}
 	is8bit = true;
 
-	if (strstr (gl_renderer, "Mesa Glide")) {
-#ifdef HAVE_TDFXGL
-		load_texture (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
-#endif
-	} else
-		glColorTable (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
+	qglColorTable (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
 }
 #endif
 
 void
 VID_Init8bitPalette (void)
 {
-	if (COM_CheckParm("-no8bit")) {
-		Con_Printf("disabled.\n");
+	vid_use8bit = Cvar_Get ("vid_use8bit", "0", CVAR_ROM,
+				"Whether to use 8-bit shared palettes.");
+
+	Con_Printf ("8-bit OpenGL extension: ");
+
+	if (COM_CheckParm ("-no8bit")) {
+		Con_Printf ("disabled.\n");
 		return;
 	}
-	vid_use8bit = Cvar_Get ("vid_use8bit", "0", CVAR_ROM,
-				"Whether to use Shared Palettes.");
+
+	if (!(dlhand = dlopen (NULL, RTLD_LAZY))) {
+		Con_Printf ("unable to check.\n");
+		return;
+	}
+
 	if (vid_use8bit->value) {
 #ifdef HAVE_TDFXGL
 		3dfx_Init8bitPalette();
 #else
- #ifdef GL_SHARED_TEXTURE_PALETTE_EXT
+# ifdef GL_SHARED_TEXTURE_PALETTE_EXT
 		Shared_Init8bitPalette();
- #endif
+# endif
 #endif
+	dlclose (dlhand);
+	dlhand = NULL;
 	}
 }
 
 void
-VID_LockBuffer ( void )
+VID_LockBuffer (void)
 {
 }
 
 void
-VID_UnlockBuffer ( void )
+VID_UnlockBuffer (void)
 {
 }
 
