@@ -54,6 +54,8 @@ QFROOT = D:\PROJECT\QUAKE1\NEWTREE
 CROOT = D:\BORLAND\BCC55
 # For 5.02
 #CROOT = D:\BC5
+# For C++ Builder
+#CROOT = D:\PROGRA~1\BORLAND\CBUILDER5
 
 # Where you want to place those .obj files
 #OBJS = $(QFROOT)\TARGETS\GLQW_CLIENT
@@ -63,12 +65,10 @@ OBJS = $(QFROOT)\SOURCE
 #EXE = $(QFROOT)\TARGETS
 EXE = $(QFROOT)
 
-# Path to your SCITECH root directory (where you installed MGL)
-SCITECHROOT=D:\SCITECH
 # Path to your Direct-X libraries and includes
 DIRECTXSDK=D:\project\dx7sdk
 # Path to your SDL SDK
-SDLSDK=D:\project\SDL-1.1.3
+SDLSDK=D:\project\SDL-1.1.6
 # Path to ZLIB source code
 ZLIB=D:\PROJECT\ZLIB
 
@@ -80,11 +80,11 @@ LIBS=$(SYSLIBS);$(MISCLIBS)
 
 SYSINCLUDE = $(CROOT)\INCLUDE
 QFINCLUDES = $(QFROOT)\INCLUDE\WIN32\BC;$(QFROOT)\INCLUDE\WIN32;$(QFROOT)\INCLUDE
-MISCINCLUDES = $(DIRECTXSDK)\include;$(SCITECHROOT)\include;$(SDLSDK)\include;$(ZLIB)
+MISCINCLUDES = $(DIRECTXSDK)\include;$(SDLSDK)\include;$(ZLIB)
 
 INCLUDES = $(QFINCLUDES);$(SYSINCLUDE);$(MISCINCLUDES)
 
-DEFINES=_WINDOWS=1;_WIN32=1;WINDOWS=1;WIN32=1;HAVE_CONFIG_H=1;HAVE_FNMATCH_H=1;USE_INTEL_ASM=1
+DEFINES=WIN32SDL=1;_WINDOWS=1;_WIN32=1;WINDOWS=1;WIN32=1;HAVE_CONFIG_H=1;HAVE_FNMATCH_H=1;USE_INTEL_ASM=1
 
 # for releases
 DEBUGOPTS = -k- -vi
@@ -129,13 +129,21 @@ EXT2=.obj
 
 # TASM32
 #ASSEMBLER = $(TASM32)
-#ASMIN = $(QFROOT)\common
-#ASMOUT = ,
+#ASMIN = $(QFROOT)\source
+#ASMOUT = ,$(QFROOT)\source
 #ASMOPTS = /ml
 #EXT1=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\vid_common_gl.obj\
+   $(OBJS)\tga.obj\
+   $(OBJS)\fractalnoise.obj\
+   $(OBJS)\gl_dyn_textures.obj\
+   $(OBJS)\gl_sky.obj\
+   $(OBJS)\gl_sky_clip.obj\
+   $(OBJS)\gl_dyn_fires.obj\
+   $(OBJS)\gl_dyn_part.obj\
    $(OBJS)\vid.obj\
    $(OBJS)\joy_null.obj\
    $(OBJS)\locs.obj\
@@ -164,7 +172,6 @@ DEPEND = \
    $(OBJS)\gl_rmain.obj\
    $(OBJS)\gl_rlight.obj\
    $(OBJS)\gl_refrag.obj\
-   $(OBJS)\gl_part.obj\
    $(OBJS)\gl_ngraph.obj\
    $(OBJS)\gl_mesh.obj\
    $(OBJS)\gl_warp.obj\
@@ -197,7 +204,7 @@ DEPEND = \
    $(OBJS)\crc.obj\
    $(OBJS)\fnmatch.obj\
    $(OBJS)\sys_win.obj\
-   $(OBJS)\snd_win.obj\
+   $(OBJS)\snd_sdl.obj\
    $(OBJS)\cd_sdl.obj\
    $(OBJS)\in_sdl.obj\
    $(OBJS)\cl_sys_sdl.obj\
@@ -229,6 +236,14 @@ $(EXE)\qf-client-sgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\vid_common_gl.obj+
+$(OBJS)\tga.obj+
+$(OBJS)\fractalnoise.obj+
+$(OBJS)\gl_dyn_textures.obj+
+$(OBJS)\gl_sky.obj+
+$(OBJS)\gl_sky_clip.obj+
+$(OBJS)\gl_dyn_fires.obj+
+$(OBJS)\gl_dyn_part.obj+
 $(OBJS)\vid.obj+
 $(OBJS)\joy_null.obj+
 $(OBJS)\locs.obj+
@@ -254,7 +269,6 @@ $(OBJS)\gl_rmisc.obj+
 $(OBJS)\gl_rmain.obj+
 $(OBJS)\gl_rlight.obj+
 $(OBJS)\gl_refrag.obj+
-$(OBJS)\gl_part.obj+
 $(OBJS)\gl_ngraph.obj+
 $(OBJS)\gl_mesh.obj+
 $(OBJS)\gl_warp.obj+
@@ -286,7 +300,7 @@ $(OBJS)\cvar.obj+
 $(OBJS)\crc.obj+
 $(OBJS)\fnmatch.obj+
 $(OBJS)\sys_win.obj+
-$(OBJS)\snd_win.obj+
+$(OBJS)\snd_sdl.obj+
 $(OBJS)\cd_sdl.obj+
 $(OBJS)\in_sdl.obj+
 $(OBJS)\cl_sys_sdl.obj+
@@ -319,6 +333,46 @@ $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SDLSDK)\lib\sdl.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
+
+|
+$(OBJS)\vid_common_gl.obj :  $(QFROOT)\source\vid_common_gl.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\vid_common_gl.c
+
+|
+$(OBJS)\tga.obj :  $(QFROOT)\source\tga.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\tga.c
+
+|
+$(OBJS)\fractalnoise.obj :  $(QFROOT)\source\fractalnoise.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\fractalnoise.c
+
+|
+$(OBJS)\gl_dyn_textures.obj :  $(QFROOT)\source\gl_dyn_textures.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_dyn_textures.c
+
+|
+$(OBJS)\gl_sky.obj :  $(QFROOT)\source\gl_sky.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_sky.c
+
+|
+$(OBJS)\gl_sky_clip.obj :  $(QFROOT)\source\gl_sky_clip.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_sky_clip.c
+
+|
+$(OBJS)\gl_dyn_fires.obj :  $(QFROOT)\source\gl_dyn_fires.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_dyn_fires.c
+
+|
+$(OBJS)\gl_dyn_part.obj :  $(QFROOT)\source\gl_dyn_part.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_dyn_part.c
 
 |
 $(OBJS)\vid.obj :  $(QFROOT)\source\vid.c
@@ -440,11 +494,6 @@ $(OBJS)\gl_rlight.obj :  $(QFROOT)\source\gl_rlight.c
 $(OBJS)\gl_refrag.obj :  $(QFROOT)\source\gl_refrag.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_refrag.c
-|
-
-$(OBJS)\gl_part.obj :  $(QFROOT)\source\gl_part.c
-  $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_part.c
 |
 
 $(OBJS)\gl_ngraph.obj :  $(QFROOT)\source\gl_ngraph.c
@@ -582,9 +631,9 @@ $(OBJS)\sys_win.obj :  $(QFROOT)\source\sys_win.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sys_win.c
 |
 
-$(OBJS)\snd_win.obj :  $(QFROOT)\source\snd_win.c
+$(OBJS)\snd_sdl.obj :  $(QFROOT)\source\snd_sdl.c
   $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_win.c
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_sdl.c
 |
 
 $(OBJS)\cd_sdl.obj :  $(QFROOT)\source\cd_sdl.c

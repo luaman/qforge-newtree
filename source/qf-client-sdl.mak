@@ -50,6 +50,8 @@ QFROOT = D:\PROJECT\QUAKE1\NEWTREE
 CROOT = D:\BORLAND\BCC55
 # For 5.02
 #CROOT = D:\BC5
+# For C++ Builder
+#CROOT = D:\PROGRA~1\BORLAND\CBUILDER5
 
 # Where you want to put those .obj files
 #OBJS = $(QFROOT)\TARGETS\QW_CLIENT
@@ -59,28 +61,26 @@ OBJS = $(QFROOT)\SOURCE
 #EXE = $(QFROOT)\TARGETS
 EXE = $(QFROOT)
 
-# Path to your SCITECH root directory (where you installed MGL)
-SCITECHROOT=D:\SCITECH
 # Path to your Direct-X libraries and includes
 DIRECTXSDK=D:\project\dx7sdk
-# Path to your Direct-X libraries and includes
-SDLSDK=d:\project\SDL-1.1.3
+# Path to your SDL SDK libraries and includes
+SDLSDK=d:\project\SDL-1.1.6
 # Path to ZLIB source code
 ZLIB=D:\PROJECT\ZLIB
 
 # end of system dependant stuffs
 
 SYSLIBS = $(CROOT)\LIB
-MISCLIBS = $(DIRECTXSDK)\lib\borland;$(SCITECHROOT)\lib\win32\bc5
+MISCLIBS = $(DIRECTXSDK)\lib\borland
 LIBS=$(SYSLIBS);$(MISCLIBS)
 
 SYSINCLUDE = $(CROOT)\INCLUDE
 QFINCLUDES = $(QFROOT)\INCLUDE\WIN32\BC;$(QFROOT)\INCLUDE\WIN32;$(QFROOT)\INCLUDE
-MISCINCLUDES = $(SCITECHROOT)\include;$(DIRECTXSDK)\include;$(SDLSDK)\include;$(ZLIB)
+MISCINCLUDES = $(DIRECTXSDK)\include;$(SDLSDK)\include;$(ZLIB)
 
 INCLUDES = $(QFINCLUDES);$(SYSINCLUDE);$(MISCINCLUDES)
 
-DEFINES=WIN32=1;WINDOWS=1;_WINDOWS=1;_WIN32=1;HAVE_CONFIG_H=1;USE_INTEL_ASM=1;HAVE_FNMATCH_H=1
+DEFINES=WIN32SDL=1;WIN32=1;WINDOWS=1;_WINDOWS=1;_WIN32=1;HAVE_CONFIG_H=1;USE_INTEL_ASM=1;HAVE_FNMATCH_H=1
 
 # for releases
 DEBUGOPTS = -k- -vi
@@ -125,8 +125,8 @@ EXT2=.obj
 
 # TASM32
 #ASSEMBLER = $(TASM32)
-#ASMIN = $(QFROOT)\common
-#ASMOUT = ,
+#ASMIN = $(QFROOT)\source
+#ASMOUT = ,$(QFROOT)\source
 #ASMOPTS = /ml
 #EXT1=.obj
 #EXT2=.asm
@@ -221,7 +221,7 @@ DEPEND = \
    $(OBJS)\crc.obj\
    $(OBJS)\fnmatch.obj\
    $(OBJS)\sys_win.obj\
-   $(OBJS)\snd_win.obj\
+   $(OBJS)\snd_sdl.obj\
    $(OBJS)\cd_sdl.obj\
    $(OBJS)\in_sdl.obj\
    $(OBJS)\cl_sys_sdl.obj\
@@ -340,7 +340,7 @@ $(OBJS)\cvar.obj+
 $(OBJS)\crc.obj+
 $(OBJS)\fnmatch.obj+
 $(OBJS)\sys_win.obj+
-$(OBJS)\snd_win.obj+
+$(OBJS)\snd_sdl.obj+
 $(OBJS)\cd_sdl.obj+
 $(OBJS)\in_sdl.obj+
 $(OBJS)\cl_sys_sdl.obj+
@@ -372,6 +372,11 @@ $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SDLSDK)\lib\sdl.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
+
+|
+$(OBJS)\snd_dma.obj :  $(QFROOT)\source\snd_dma.c
+  $(BCC32) -P- -c  @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_dma.c
 
 |
 $(OBJS)\vid.obj :  $(QFROOT)\source\vid.c
@@ -714,9 +719,9 @@ $(OBJS)\sys_win.obj :  $(QFROOT)\source\sys_win.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sys_win.c
 |
 
-$(OBJS)\snd_win.obj :  $(QFROOT)\source\snd_win.c
+$(OBJS)\snd_sdl.obj :  $(QFROOT)\source\snd_sdl.c
   $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_win.c
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_sdl.c
 |
 
 $(OBJS)\cd_sdl.obj :  $(QFROOT)\source\cd_sdl.c
@@ -779,10 +784,6 @@ $(OBJS)\snd_mem.obj :  $(QFROOT)\source\snd_mem.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_mem.c
 |
 
-$(OBJS)\snd_dma.obj :  $(QFROOT)\source\snd_dma.c
-  $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\snd_dma.c
-|
 
 $(OBJS)\skin.obj :  $(QFROOT)\source\skin.c
   $(BCC32) -P- -c @&&|
