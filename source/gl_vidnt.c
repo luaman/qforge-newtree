@@ -30,6 +30,7 @@
 #include "quakedef.h"
 #include "winquake.h"
 #include "resource.h"
+#include "glquake.h"
 #include <commctrl.h>
 
 #define MAX_MODE_LIST	30
