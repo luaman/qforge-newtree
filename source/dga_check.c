@@ -43,6 +43,7 @@
 # include <X11/extensions/xf86vmstr.h>
 #endif
 
+#include "console.h"
 #include "dga_check.h"
 
 
@@ -123,7 +124,7 @@ VID_CheckVMode (Display * dpy, int *maj_ver, int *min_ver)
 	if (!XF86VidModeQueryVersion (dpy, maj_ver, min_ver))
 		return false;
 
-	if ((!maj_ver) || (*maj_ver != XVIDMODE_MAJOR_VERSION)) {
+	if ((!maj_ver) || (*maj_ver != XF86VIDMODE_MAJOR_VERSION)) {
 		Con_Printf ("VID: Incorrect VidMode version: %d.%d, \n", *maj_ver, *min_ver);
 		return false;
 	}
