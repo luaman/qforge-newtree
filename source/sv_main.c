@@ -1524,7 +1524,7 @@ SV_InitLocal (void)
 	timeout = Cvar_Get ("timeout", "65", CVAR_NONE, 
 		"Sets the amount of time in seconds before a client is considered disconnected if the server does not receive a packet");
 	zombietime = Cvar_Get ("zombietime", "2", CVAR_NONE, 
-		"The number of minutes that the server will keep the character of a player on the map who seems to have disconnected");
+		"The number of seconds that the server will keep the character of a player on the map who seems to have disconnected");
 
 	sv_maxvelocity = Cvar_Get ("sv_maxvelocity", "2000", CVAR_NONE, "Sets the maximum velocity an object can travel");
 	sv_gravity = Cvar_Get ("sv_gravity", "800", CVAR_NONE, "Sets the global value for the amount of gravity");
