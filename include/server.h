@@ -272,6 +272,7 @@ extern client_state_t cls;
 #define	MOVETYPE_NOCLIP			8
 #define	MOVETYPE_FLYMISSILE		9		// extra size to monsters
 #define	MOVETYPE_BOUNCE			10
+#define MOVETYPE_PPUSH                  13               // no clip to world, push and crush
 
 // edict->solid values
 #define	SOLID_NOT				0		// no interaction with other objects

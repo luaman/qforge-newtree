@@ -325,7 +325,7 @@ int SV_FlyMove (edict_t *ent, float time, trace_t *steptrace)
 		if (trace.plane.normal[2] > 0.7)
 		{
 			blocked |= 1;		// floor
-			if (trace.ent->v.solid == SOLID_BSP)
+                if ((trace.ent->v.solid == SOLID_BSP) || (trace.ent->v.movetype == MOVETYPE_PPUSH))
 			{
 				ent->v.flags =	(int)ent->v.flags | FL_ONGROUND;
 				ent->v.groundentity = EDICT_TO_PROG(trace.ent);
@@ -496,6 +496,7 @@ qboolean SV_Push (edict_t *pusher, vec3_t move)
 			continue;
 		if (check->v.movetype == MOVETYPE_PUSH
 		|| check->v.movetype == MOVETYPE_NONE
+                || check->v.movetype == MOVETYPE_PPUSH
 		|| check->v.movetype == MOVETYPE_NOCLIP)
 			continue;
 
@@ -859,6 +860,110 @@ void SV_Physics_Step (edict_t *ent)
 	SV_CheckWaterTransition (ent);
 }
 
+void SV_PPushMove (edict_t *pusher, float movetime) // player push
+{
+        int             i, e;
+        edict_t         *check;
+        vec3_t          mins, maxs, move;
+        int             oldsolid;
+        trace_t         trace;
+
+        SV_CheckVelocity(pusher);
+        for (i=0 ; i<3 ; i++)
+	{
+                move[i] = pusher->v.velocity[i] * movetime;
+		mins[i] = pusher->v.absmin[i] + move[i];
+		maxs[i] = pusher->v.absmax[i] + move[i];
+	}
+
+        VectorCopy (pusher->v.origin, pusher->v.oldorigin);         // Backup origin
+        trace = SV_Move (pusher->v.origin, pusher->v.mins, pusher->v.maxs, move, MOVE_NOMONSTERS, pusher);
+
+        if (trace.fraction == 1) {
+         VectorCopy (pusher->v.origin, pusher->v.oldorigin); // Revert
+         return;
+        }
+         
+
+        VectorAdd (pusher->v.origin, move, pusher->v.origin); // Move
+        SV_LinkEdict (pusher, false);
+        pusher->v.ltime += movetime;
+
+        oldsolid = pusher->v.solid;
+
+	check = NEXT_EDICT(sv.edicts);
+	for (e=1 ; e<sv.num_edicts ; e++, check = NEXT_EDICT(check))
+	{
+                if (check->free)                     // What entity?
+			continue;
+
+         // Stage 1: Is it in contact with me?
+                if (!SV_TestEntityPosition (check))          // Nope
+                        continue;
+
+         // Stage 2: Is it a player we can push?             
+                if (check->v.movetype == MOVETYPE_WALK) {
+                 Con_Printf("Pusher encountered a player\n"); // Yes!@#!@
+                 pusher->v.solid = SOLID_NOT;
+                 SV_PushEntity (check, move);
+                 pusher->v.solid = oldsolid;
+                 continue;
+                }
+
+         // Stage 3: No.. Is it something that blocks us?
+               if (check->v.mins[0] == check->v.maxs[0])
+                  continue;
+               if (check->v.solid == SOLID_NOT || check->v.solid == SOLID_TRIGGER)
+                  continue;
+
+         // Stage 4: Yes, it must be. Fail the move.
+               VectorCopy (pusher->v.origin, pusher->v.oldorigin); // Revert
+               if (pusher->v.blocked) {                      // Blocked func?
+                pr_global_struct->self = EDICT_TO_PROG(pusher);
+                pr_global_struct->other = EDICT_TO_PROG(check);
+                PR_ExecuteProgram (pusher->v.blocked);
+               }
+               return;
+        }
+
+}
+
+void SV_Physics_PPusher (edict_t *ent)
+{
+	float	thinktime;
+	float	oldltime;
+        float   movetime;
+//        float   l;
+
+	oldltime = ent->v.ltime;
+	
+	thinktime = ent->v.nextthink;
+	if (thinktime < ent->v.ltime + host_frametime)
+	{
+		movetime = thinktime - ent->v.ltime;
+		if (movetime < 0)
+			movetime = 0;
+	}
+	else
+		movetime = host_frametime;
+
+//        if (movetime)
+//        {
+                SV_PPushMove (ent, 0.0009);    // advances ent->v.ltime if not blocked
+//        }
+		
+	if (thinktime > oldltime && thinktime <= ent->v.ltime)
+	{
+		ent->v.nextthink = 0;
+		pr_global_struct->time = sv.time;
+		pr_global_struct->self = EDICT_TO_PROG(ent);
+		pr_global_struct->other = EDICT_TO_PROG(sv.edicts);
+		PR_ExecuteProgram (ent->v.think);
+		if (ent->free)
+			return;
+	}
+}
+
 //============================================================================
 
 void SV_ProgStartFrame (void)
@@ -886,6 +991,9 @@ void SV_RunEntity (edict_t *ent)
 	{
 	case MOVETYPE_PUSH:
 		SV_Physics_Pusher (ent);
+		break;
+        case MOVETYPE_PPUSH:
+                SV_Physics_PPusher (ent);
 		break;
 	case MOVETYPE_NONE:
 		SV_Physics_None (ent);
