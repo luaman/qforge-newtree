@@ -231,7 +231,6 @@ enter_face (struct box_def *box, int prev_face, int face)
 {
 	if (box[face].leave_face >=0 && (box[face].leave_face % 3) != (prev_face % 3)) {
 		vec3_t t;
-		box[face].enter_vertex = box[face].poly.numverts;
 		find_cube_vertex (prev_face, face, box[face].leave_face, t);
 		add_vertex(box, face, t);
 		box[face].enter_face = -1;
@@ -252,7 +251,6 @@ leave_face (struct box_def *box, int prev_face, int face)
 {
 	if (box[prev_face].enter_face >=0 && (box[prev_face].enter_face) % 3 != (face % 3)) {
 		vec3_t t;
-		box[prev_face].leave_vertex = box[prev_face].poly.numverts;
 		find_cube_vertex (prev_face, face, box[prev_face].enter_face, t);
 		add_vertex(box, prev_face, t);
 		box[prev_face].leave_face = -1;
@@ -315,15 +313,13 @@ fixup_center_face (struct box_def *box, int c_face)
 		} else {
 			// we have to insert the two cube vertexen into the face poly
 			// vertex list
-			int ins = box[ind].leave_vertex + 1;
+			int insert = box[ind].leave_vertex + 1;
 			glpoly_t *p = &box[ind].poly;
 			const int vert_size = sizeof (p->verts[0]);
-			printf ("%d %d %d %d\n", ind, box[ind].poly.numverts, box[ind].enter_vertex, box[ind].leave_vertex);
-
-			memmove (p->verts[ins + 2], p->verts[ins], 2 * vert_size);
+			memmove (p->verts[insert + 2], p->verts[insert], 2 * vert_size);
 			p->numverts += 2;
-			set_vertex (box, ind, ins, v[i]);
-			set_vertex (box, ind, ins + 1, v[(i - 1) & 3]);
+			set_vertex (box, ind, insert, v[i]);
+			set_vertex (box, ind, insert + 1, v[(i - 1) & 3]);
 		}
 	}
 }
@@ -344,9 +340,11 @@ cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
 
 	find_intersect (face1, v1, face2, v2, l);
 
+	box[face1].leave_vertex = box[face1].poly.numverts;
 	add_vertex(box, face1, l);
 	leave_face (box, face1, face2);
 	enter_face (box, face1, face2);
+	box[face2].enter_vertex = box[face2].poly.numverts;
 	add_vertex(box, face2, l);
 }
 
