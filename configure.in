@@ -1009,37 +1009,17 @@ dnl Set $prefix and $exec_prefix to $ac_default_prefix if they are not set
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-AC_ARG_WITH(newstyle,
-[  --with-newstyle         compile with default search directories changed.
-                          id1 and qw become base, and rather than looking in
-                          . QuakeForge will look in ~/.quakeforge/ and
-                          \$datadir/games/quakeforge],
-	newstyle=$withval, newstyle=auto
-)
-AC_MSG_CHECKING([configuration style])
-if test "x$newstyle" = xyes -o "x$newstyle" = "x"; then
-	AC_MSG_RESULT([new style])
-	AC_DEFINE(NEWSTYLE)
-	AC_DEFINE(BASEGAME, "base")
-	AC_DEFINE(SKINBASE, "base")
-	default_globalconf="/etc/$PACKAGE.conf"
+if test "x$SYSTYPE" = xWIN32; then
+	default_globalconf="~/${PACKAGE}.conf"
+	default_userconf="~/${PACKAGE}rc"
+	default_sharepath="."
+	default_userpath="."
+else
+	default_globalconf="/etc/${PACKAGE}.conf"
 	default_userconf="~/.${PACKAGE}rc"
 	eval foo="$datadir"
 	default_sharepath="$foo/games/$PACKAGE"
 	default_userpath="~/.$PACKAGE"
-else
-	AC_MSG_RESULT([old style (id Software defaults)])
-	AC_DEFINE(BASEGAME, "id1")
-	AC_DEFINE(SKINBASE, "qw")
-	if test "x$SYSTYPE" = xWIN32; then
-		default_globalconf="%WINDIR%/$PACKAGE.conf"
-		default_userconf=""
-	else
-		default_globalconf="/etc/$PACKAGE.conf"
-		default_userconf=""
-	fi
-	default_sharepath="."
-	default_userpath="."
 fi
 
 AC_ARG_WITH(global-cfg,
