@@ -286,6 +286,18 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 void
 R_DrawSkyDomePoly (glpoly_t *poly)
 {
+	int i;
+
+	glDisable (GL_BLEND);
+	glDisable (GL_TEXTURE_2D);
+	glColor3f (0, 0, 0);
+	glBegin (GL_POLYGON);
+	for (i=0; i<poly->numverts; i++) {
+		glVertex3fv (poly->verts[i]);
+	}
+	glEnd ();
+	glEnable (GL_TEXTURE_2D);
+	glEnable (GL_BLEND);
 }
 
 void
@@ -298,7 +310,11 @@ R_DrawSkyChain (msurface_t *sky_chain)
 		}
 	} else {
 		while (sky_chain) {
-			R_DrawSkyDomePoly (sky_chain->polys);
+			glpoly_t *p = sky_chain->polys;
+			while (p) {
+				R_DrawSkyDomePoly (p);
+				p = p->next;
+			}
 			sky_chain = sky_chain->texturechain;
 		}
 	}
