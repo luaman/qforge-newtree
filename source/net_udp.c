@@ -415,10 +415,7 @@ void
 NET_Init (int port)
 {
 #ifdef _WIN32
-	WORD        wVersionRequested;
 	int         r;
-
-	wVersionRequested = MAKEWORD (1, 1);
 
 	r = WSAStartup (MAKEWORD (1, 1), &winsockdata);
 	if (r)
