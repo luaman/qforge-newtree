@@ -92,7 +92,12 @@ static Atom aWMDelete = 0;
 #ifdef HAVE_VIDMODE
 static XF86VidModeModeInfo **vidmodes;
 static int  nummodes;
+
+static int	screen_width;
+static int	screen_height;
+static int	original_mode;
 #endif
+
 static qboolean	vidmode_avail = false;
 static qboolean	vidmode_active = false;
 
@@ -266,13 +271,22 @@ x11_set_vidmode (int width, int height)
 #ifdef HAVE_VIDMODE
 	vidmode_avail = VID_CheckVMode (x_disp, NULL, NULL);
 
-	XF86VidModeGetAllModeLines (x_disp, x_screen, &nummodes, &vidmodes);
-
 	if (vid_fullscreen->int_val && vidmode_avail) {
 
 		int 		i;
 		int 		best_mode = 0;
 		qboolean	found_mode = false;
+
+		XF86VidModeGetAllModeLines (x_disp, x_screen, &nummodes, &vidmodes);
+		XF86VidModeGetViewPort (x_disp, x_screen, &screen_width, &screen_height);
+	
+		for (i = 0; i < nummodes; i++) {
+			if ((vidmodes[i]->hdisplay == screen_width) &&
+					(vidmodes[i]->vdisplay == screen_height)) {
+				original_mode = i;
+				break;
+			}
+		}
 
 		for (i = 0; i < nummodes; i++) {
 			if ((vidmodes[i]->hdisplay == vid.width) &&
@@ -384,7 +398,7 @@ x11_restore_vidmode (void)
 
 #ifdef HAVE_VIDMODE
 	if (vidmode_active) {
-		XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[0]);
+		XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[original_mode]);
 		XFree (vidmodes);
 	}
 #endif
