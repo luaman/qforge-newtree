@@ -43,7 +43,7 @@
 #include "view.h"
 
 #define JOY_MAX_AXES	6
-#define JOY_MAX_BUTTONS 10
+#define JOY_MAX_BUTTONS 16
 
 cvar_t     *joy_device;					// Joystick device name
 cvar_t     *joy_enable;					// Joystick enabling flag
