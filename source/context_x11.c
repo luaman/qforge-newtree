@@ -50,6 +50,7 @@
 #include <X11/extensions/XShm.h>
 #include <errno.h>
 #include <limits.h>
+#include <sys/poll.h>
 
 #ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
@@ -96,6 +97,8 @@ static int xss_interval;
 static int xss_blanking;
 static int xss_exposures;
 
+static int need_screen_warp;
+
 qboolean
 x11_add_event (int event, void (*event_handler) (XEvent *))
 {
@@ -134,6 +137,17 @@ x11_process_event (void)
 			oktodraw = 1;
 		return;
 	}
+#ifdef xHAVE_VIDMODE
+	if (need_screen_warp) {
+		int x, y;
+		XF86VidModeGetViewPort (x_disp, x_screen, &x, &y);
+		if (x || y) {
+			XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
+		} else {
+			need_screen_warp = 0;
+		}
+	}
+#endif
 	if (event_handlers[x_event.type])
 		event_handlers[x_event.type] (&x_event);
 }
@@ -263,7 +277,7 @@ x11_set_vidmode(int width, int height)
 #ifdef HAVE_VIDMODE
 	hasvidmode = VID_CheckVMode(x_disp, NULL, NULL);
 	if (hasvidmode) {
-		if (! XF86VidModeGetAllModeLines(x_disp, DefaultScreen(x_disp),
+		if (! XF86VidModeGetAllModeLines(x_disp, x_screen,
 										&nummodes, &vidmodes)
 			|| nummodes <= 0) { 
 			hasvidmode = 0;
@@ -289,12 +303,11 @@ x11_set_vidmode(int width, int height)
 			 i=(i?i-1:nummodes-1)) {
 			if (vidmodes[i]->hdisplay>=width
 				&& vidmodes[i]->vdisplay>=height) {
-				XF86VidModeSwitchToMode (x_disp, DefaultScreen (x_disp),
-										 vidmodes[i]);
+				XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[i]);
 				break;
 			}
 		}
-		XF86VidModeSetViewPort (x_disp, DefaultScreen (x_disp), 0, 0);
+		XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
 		_windowed_mouse = Cvar_Get ("_windowed_mouse","1",CVAR_ARCHIVE|CVAR_ROM,"None");
 	} else
 #endif
@@ -362,6 +375,19 @@ x11_create_window (int width, int height)
 
 	XMapWindow (x_disp, x_win);
 	XRaiseWindow (x_disp, x_win);
+	
+	if (vid_fullscreen->int_val) {
+		int x, y;
+
+		XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
+					 vid.width+2, vid.height+2);
+		need_screen_warp = 1;
+		do {
+			XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
+			poll (0, 0, 50);
+			XF86VidModeGetViewPort (x_disp, x_screen, &x, &y);
+		} while (x || y);
+	}
 }
 
 void
@@ -372,7 +398,7 @@ x11_restore_vidmode (void)
 
 #ifdef HAVE_VIDMODE
 	if (hasvidmode) {
-		XF86VidModeSwitchToMode (x_disp, DefaultScreen (x_disp),
+		XF86VidModeSwitchToMode (x_disp, x_screen,
 								 vidmodes[0]);
 		XFree(vidmodes);
 	}

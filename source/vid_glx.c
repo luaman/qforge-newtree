@@ -530,9 +530,6 @@ void VID_Init(unsigned char *palette)
 	/* Invisible cursor */
 	x11_create_null_cursor();
 
-	XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
-				 vid.width+2, vid.height+2);
-
 	x11_grab_keyboard();
 
 	XSync(x_disp, 0);

@@ -566,9 +566,6 @@ void VID_Init (unsigned char *palette)
 		x_gc = XCreateGC(x_disp, x_win, valuemask, &xgcvalues );
 	}
 
-	// map the window
-	XMapWindow(x_disp, x_win);
-	XRaiseWindow(x_disp, x_win);
 	x11_grab_keyboard();
 
 	// wait for first exposure event
