@@ -385,7 +385,6 @@ void Con_Printf (char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
-	static qboolean	inupdate;
 	
 	va_start (argptr, fmt);
 	vsnprintf (msg, sizeof(msg), fmt, argptr);
@@ -403,12 +402,14 @@ void Con_Printf (char *fmt, ...)
 		
 // write it to the scrollable buffer
 	Con_Print (msg);
-	
+
+#if 0	// Tonik
 // update the screen immediately if the console is displayed
 	if (cls.state != ca_active)
 	{
 	// protect against infinite loop if something in SCR_UpdateScreen calls
-	// Con_Printd
+	// Con_Printf
+		static qboolean	inupdate;
 		if (!inupdate)
 		{
 			inupdate = true;
@@ -416,6 +417,7 @@ void Con_Printf (char *fmt, ...)
 			inupdate = false;
 		}
 	}
+#endif
 }
 
 /*
