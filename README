@@ -56,9 +56,8 @@ contributions to QuakeForge:
 
 And last but certainly not least, we would like to thank every single
 person who has contributed even one line of code, documentation, or
-other support to the QuakeForge project.
-
-Without all of you, we would not be where we are right now.
+other support to the QuakeForge project. Without all of you, we would
+not be where we are today.
 
 If you'd like to contribute in any way to the QuakeForge project, please
 contact our mailing list at quake-devel@lists.sourceforge.net.
@@ -69,8 +68,9 @@ contact our mailing list at quake-devel@lists.sourceforge.net.
 
 * A raster-capable display. ;-)
 * 16 megabytes of memory beyond operating system footprint.
-* A Floating-point processor (FPU). While not strictly required, QuakeForge
-  uses a lot of floating-point math, so a FPU is highly recommended.
+* A Floating-point processor (FPU). While not strictly required,
+  QuakeForge uses a lot of floating-point math, so a FPU is highly
+  recommended.
 * 10MB of free hard disk space to build all targets. In addition to the
   base system, you will require game data files. For the default game
   ("Quake"), you will need either the shareware or registered version of
@@ -101,9 +101,8 @@ This section discusses issues that affect only certain platforms.
 4.1	Linux/Unix
 
 SVGALib-using targets (-svga and -3dfx) can't be started from within the
-X Window System. We are aware of the problem, and if you can figure out
-the reason, we'd appreciate a patch, PLEASE! As a workaround, you can
-use "open" to start those targets from within X.
+X Window System. This is caused by a design limitation in SVGAlib. As a
+workaround, you can use "open" to start those targets from within X.
 (example: "open -s -- qf-client-svga")
 
 4.2	Windows 95/98/Me
