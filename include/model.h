@@ -452,7 +452,7 @@ void	Mod_TouchModel (char *name);
 mleaf_t *Mod_PointInLeaf (float *p, model_t *model);
 byte	*Mod_LeafPVS (mleaf_t *leaf, model_t *model);
 model_t	*Mod_FindName (char *name);
-void	Mod_LoadMMNearest(miptex_t *mt, texture_t *tx);
+void	Mod_ProcessTexture(miptex_t *mt, texture_t *tx);
 void	Mod_LoadLighting (lump_t *l);
 
 #endif	// _MODEL_H

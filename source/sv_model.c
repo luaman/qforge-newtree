@@ -66,7 +66,7 @@ R_InitSky(struct texture_s *mt)
 }
 
 void
-Mod_LoadMMNearest(miptex_t *mx, texture_t	*tx)
+Mod_ProcessTexture(miptex_t *mx, texture_t	*tx)
 {
 }
 

@@ -47,7 +47,7 @@ GL_SubdivideSurface(msurface_t *fa)
 }
 
 void
-Mod_LoadMMNearest(miptex_t *mt, texture_t   *tx)
+Mod_ProcessTexture(miptex_t *mt, texture_t   *tx)
 {
 }
 

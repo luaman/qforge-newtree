@@ -201,7 +201,7 @@ void Mod_LoadTextures (lump_t *l)
 			R_InitSky (tx);
 		else
 		{
-			Mod_LoadMMNearest(mt, tx);
+			Mod_ProcessTexture(mt, tx);
 		}
 	}
 

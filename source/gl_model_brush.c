@@ -46,7 +46,7 @@ extern	byte	*mod_base;
 const int mod_lightmap_bytes=3;
 
 void
-Mod_LoadMMNearest(miptex_t *mt, texture_t   *tx)
+Mod_ProcessTexture(miptex_t *mt, texture_t   *tx)
 {
 	texture_mode = GL_LINEAR_MIPMAP_NEAREST; //_LINEAR;
 	tx->gl_texturenum = GL_LoadTexture (mt->name, tx->width, tx->height, (byte *)(tx+1), true, false, 1);
