@@ -525,7 +525,7 @@ void R_TimeRefresh_f (void)
 	start = Sys_DoubleTime ();
 	for (i=0 ; i<128 ; i++)
 	{
-		GL_BeginRendering();
+		GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 		r_refdef.viewangles[1] = i/128.0*360.0;
 		R_RenderView ();
 		glFinish ();
@@ -539,7 +539,7 @@ void R_TimeRefresh_f (void)
 
 //	glDrawBuffer  (GL_BACK);
 //	GL_EndRendering ();
-	GL_BeginRendering();
+	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 }
 
 void D_FlushCaches (void)
