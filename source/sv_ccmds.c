@@ -302,7 +302,8 @@ void SV_Give_f (void)
 	}
 }
 
-
+// Use this to keep track of current level  --KB
+static char	curlevel[MAX_QPATH] = "";
 /*
 ======================
 SV_Map_f
@@ -331,6 +332,11 @@ void SV_Map_f (void)
 	if (!f)
 	{
 		Con_Printf ("Can't find %s\n", expanded);
+		// If curlevel == level, something is SCREWED!  --KB
+		if (stricmp (level, curlevel) == 0)
+			SV_Error ("map: cannot restart level\n");
+		else
+			Cbuf_AddText (va("map %s", curlevel));
 		return;
 	}
 	fclose (f);
@@ -338,6 +344,7 @@ void SV_Map_f (void)
 	SV_BroadcastCommand ("changing\n");
 	SV_SendMessagesToAll ();
 
+	strcpy (curlevel, level);
 	SV_SpawnServer (level);
 
 	SV_BroadcastCommand ("reconnect\n");
