@@ -1186,4 +1186,7 @@ AC_MSG_RESULT([
 	Per-user game data directory: $userpath
 	Global configuration file: $globalconf
 	Sound sytem: $SNDTYPE
+
+	WARNING: Hackers at work, watch for falling bits of code.
+	(This is from a development CVS tree, expect things to break.)
 ])
