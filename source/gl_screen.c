@@ -1129,6 +1129,8 @@ needs almost the entire 256k of stack space!
 */
 void SCR_UpdateScreen (void)
 {
+	double	time1 = 0, time2;
+
 	if (block_drawing)
 		return;
 
@@ -1159,6 +1161,13 @@ void SCR_UpdateScreen (void)
 
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	
+	if (r_speeds->value)
+	{
+		time1 = Sys_DoubleTime ();
+		c_brush_polys = 0;
+		c_alias_polys = 0;
+	}
+
 	//
 	// determine size of refresh window
 	//
@@ -1241,5 +1250,14 @@ void SCR_UpdateScreen (void)
 
 	V_UpdatePalette ();
 
+	if (r_speeds->value)
+	{
+//		glFinish ();
+		time2 = Sys_DoubleTime ();
+		Con_Printf ("%3i ms  %4i wpoly %4i epoly\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys); 
+	}
+
+	glFinish ();
 	GL_EndRendering ();
 }
+

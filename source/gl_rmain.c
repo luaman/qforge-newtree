@@ -1165,26 +1165,15 @@ r_refdef must be set before the first call
 */
 void R_RenderView (void)
 {
-	double	time1 = 0, time2;
-
 	if (r_norefresh->value)
 		return;
 
 	if (!r_worldentity.model || !cl.worldmodel)
 		Sys_Error ("R_RenderView: NULL worldmodel");
 
-	if (r_speeds->value)
-	{
-		glFinish ();
-		time1 = Sys_DoubleTime ();
-		c_brush_polys = 0;
-		c_alias_polys = 0;
-	}
+	glFinish ();
 
 	mirror = false;
-
-	if (gl_finish->value)
-		glFinish ();
 
 	R_Clear ();
 
@@ -1197,11 +1186,4 @@ void R_RenderView (void)
 //	R_Mirror ();
 
 	R_PolyBlend ();
-
-	if (r_speeds->value)
-	{
-//		glFinish ();
-		time2 = Sys_DoubleTime ();
-		Con_Printf ("%3i ms  %4i wpoly %4i epoly\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys); 
-	}
 }
