@@ -1,7 +1,7 @@
 /*
 	snd_mem.c
 
-	sound caching
+	@description@
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -27,15 +27,16 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
+#include <string.h>
+
 #include "sys.h"
 #include "sound.h"
 #include "qendian.h"
 #include "quakefs.h"
 #include "console.h"
-
-#include <string.h>
 
 int			cache_full_cycle;
 
@@ -54,53 +55,104 @@ void ResampleSfx (sfx_t *sfx, int inrate, int inwidth, byte *data)
 	int		i;
 	int		sample, samplefrac, fracstep;
 	sfxcache_t	*sc;
+	short	*is, *os;
+	unsigned char	*ib, *ob;
 	
 	sc = Cache_Check (&sfx->cache);
 	if (!sc)
 		return;
 
+	is = (short*)data;
+	os = (short*)sc->data;
+	ib = data;
+	ob = sc->data;
+
 	stepscale = (float)inrate / shm->speed;	// this is usually 0.5, 1, or 2
 
 	outcount = sc->length / stepscale;
+
+	sc->speed = shm->speed;
+	if (loadas8bit->int_val)
+		sc->width = 1;
+	else
+		sc->width = 2;
+	sc->stereo = 0;
+
+	// resample / decimate to the current source rate
+	if (stepscale == 1) {
+		if (inwidth == 1 && sc->width == 1) {
+			for (i=0 ; i<outcount ; i++) {
+				*ob++ = *ib++ - 128;
+			}
+		} else if (inwidth == 1 && sc->width == 2) {
+			for (i=0 ; i<outcount ; i++) {
+				*os++ = (*ib++ - 128) << 8;
+			}
+		} else if (inwidth == 2 && sc->width == 1) {
+			for (i=0 ; i<outcount ; i++) {
+				*ob++ = LittleShort (*is++) >> 8;
+			}
+		} else if (inwidth == 2 && sc->width == 2) {
+			for (i=0 ; i<outcount ; i++) {
+				*os++ = LittleShort (*is++);
+			}
+		}
+	} else {
+		// general case
+		if (stepscale < 1) {
+			int points = 1/stepscale;
+			int j;
+
+			for (i = 0; i < sc->length; i++) {
+				int s1, s2;
+
+				if (inwidth == 2) {
+					s2 = s1 = LittleShort (is[0]);
+					if (i < sc->length - 1)
+						s2 = LittleShort (is[1]);
+					is++;
+				} else {
+					s2 = s1 = (ib[0] - 128) << 8;
+					if (i < sc->length - 1)
+						s2 = (ib[1] - 128) << 8;
+					ib++;
+				}
+				for (j = 0; j < points; j++) {
+					sample = s1 + (s2 - s1) * ((float)j) / points;
+					if (sc->width == 2) {
+						os[j] = sample;
+					} else {
+						ob[j] = sample >> 8;
+					}
+				}
+				if (sc->width == 2) {
+					os += points;
+				} else {
+					ob += points;
+				}
+			}
+		} else {
+			samplefrac = 0;
+			fracstep = stepscale*256;
+			for (i=0 ; i<outcount ; i++)
+			{
+				srcsample = samplefrac >> 8;
+				samplefrac += fracstep;
+				if (inwidth == 2)
+					sample = LittleShort ( ((short *)data)[srcsample] );
+				else
+					sample = (int)( (unsigned char)(data[srcsample]) - 128) << 8;
+				if (sc->width == 2)
+					((short *)sc->data)[i] = sample;
+				else
+					((signed char *)sc->data)[i] = sample >> 8;
+			}
+		}
+	}
+
 	sc->length = outcount;
 	if (sc->loopstart != -1)
 		sc->loopstart = sc->loopstart / stepscale;
-
-	sc->speed = shm->speed;
-	if (loadas8bit->value)
-		sc->width = 1;
-	else
-		sc->width = inwidth;
-	sc->stereo = 0;
-
-// resample / decimate to the current source rate
-
-	if (stepscale == 1 && inwidth == 1 && sc->width == 1)
-	{
-// fast special case
-		for (i=0 ; i<outcount ; i++)
-			((signed char *)sc->data)[i]
-			= (int)( (unsigned char)(data[i]) - 128);
-	}
-	else
-	{
-// general case
-		samplefrac = 0;
-		fracstep = stepscale*256;
-		for (i=0 ; i<outcount ; i++)
-		{
-			srcsample = samplefrac >> 8;
-			samplefrac += fracstep;
-			if (inwidth == 2)
-				sample = LittleShort ( ((short *)data)[srcsample] );
-			else
-				sample = (int)( (unsigned char)(data[srcsample]) - 128) << 8;
-			if (sc->width == 2)
-				((short *)sc->data)[i] = sample;
-			else
-				((signed char *)sc->data)[i] = sample >> 8;
-		}
-	}
 }
 
 //=============================================================================
@@ -150,7 +202,11 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 	stepscale = (float)info.rate / shm->speed;	
 	len = info.samples / stepscale;
 
-	len = len * info.width * info.channels;
+	if (loadas8bit->int_val) {
+		len = len * info.channels;
+	} else {
+		len = len * 2 * info.channels;
+	}
 
 	sc = Cache_Alloc ( &s->cache, len + sizeof(sfxcache_t), s->name);
 	if (!sc)
@@ -240,7 +296,6 @@ void FindChunk(char *name)
 }
 
 
-#if 0
 void DumpChunks(void)
 {
 	char	str[5];
@@ -256,7 +311,6 @@ void DumpChunks(void)
 		data_p += (iff_chunk_len + 1) & ~1;
 	} while (data_p < iff_end);
 }
-#endif
 
 /*
 ============
