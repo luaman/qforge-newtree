@@ -114,7 +114,6 @@ cvar_t	*r_waterripple;
 
 cvar_t	*gl_affinemodels;
 cvar_t	*gl_clear;
-cvar_t	*gl_cull;
 cvar_t  *gl_dlight_lightmap;
 cvar_t	*gl_dlight_polyblend;
 cvar_t	*gl_fb_models;
@@ -1180,11 +1179,7 @@ R_SetupGL (void)
 	// 
 	// set drawing parms
 	// 
-	if (gl_cull->int_val)
-		glEnable (GL_CULL_FACE);
-	else
-		glDisable (GL_CULL_FACE);
-
+	glEnable (GL_CULL_FACE);
 	glDisable (GL_ALPHA_TEST);
 	glAlphaFunc (GL_GREATER, 0.5);
 	glEnable (GL_DEPTH_TEST);
