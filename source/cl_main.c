@@ -466,7 +466,7 @@ void CL_Disconnect (void)
 
 	connect_time = -1;
 
-        VID_SetCaption(PROGRAM ": disconnected");
+	VID_SetCaption(PROGRAM ": disconnected");
 
 // stop sounds (especially looping!)
 	S_StopAllSounds (true);
@@ -488,6 +488,9 @@ void CL_Disconnect (void)
 		cls.state = ca_disconnected;
 
 		cls.demoplayback = cls.demorecording = cls.timedemo = false;
+
+		Info_RemoveKey (cls.userinfo, "*cap");
+		Info_RemoveKey (cls.userinfo, "*qsg_version");
 	}
 	Cam_Reset();
 
@@ -654,6 +657,19 @@ void CL_FullServerinfo_f (void)
 		}
 	} else {
 		allowskybox = false;
+	}
+	if ((p = Info_ValueForKey (cl.serverinfo, "*qsg_version")) && *p) {
+		char cap[100] = "";		// max of 98 or so flags
+		// set the capabilities info. single char flags (possibly with
+		// modifiefs)
+		// defined capabilities:
+#ifdef HAVE_ZLIB
+		//  z   client can accept gzipped files.
+		strcat (cap, "z");
+#endif
+		Info_SetValueForStarKey (cls.userinfo, "*cap", cap, MAX_INFO_STRING);
+		Info_SetValueForStarKey (cls.userinfo, "*qsg_version", QSG_VERSION,
+				MAX_SERVERINFO_STRING);
 	}
 }
 
@@ -1142,10 +1158,6 @@ void CL_Init (void)
 	sprintf (st, "%s", QW_VERSION);
 	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING);
 	Info_SetValueForStarKey (cls.userinfo, "stdver", QSG_VERSION, MAX_INFO_STRING);
-	// set the capabilities info. single char flags (possibly with modifiefs)
-	// defined capabilities:
-	//  z   client can accept gzipped files.
-	Info_SetValueForStarKey (cls.userinfo, "*cap", "z", MAX_INFO_STRING);
 
 	CL_InitInput ();
 	CL_InitTEnts ();
