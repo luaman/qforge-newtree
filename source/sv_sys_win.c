@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include <stdlib.h>
@@ -44,11 +44,7 @@
 qboolean is_server = true;
 qboolean WinNT;
 
-/* cvar_t	sys_nostdout = {"sys_nostdout","0"};
- CVAR_FIXME */
 cvar_t	*sys_nostdout;
-/* cvar_t	sys_sleep = {"sys_sleep","1"};
- CVAR_FIXME */
 cvar_t	*sys_sleep;
 
 /*
@@ -104,7 +100,7 @@ char *Sys_ConsoleInput (void)
 	int		c;
 
 	// read a line out
-        while (kbhit())
+	while (kbhit())
 	{
 		c = _getch();
 		putch (c);
@@ -146,8 +142,6 @@ void Sys_Printf (char *fmt, ...)
 {
 	va_list		argptr;
 	
-/* 	if (sys_nostdout.value)
- CVAR_FIXME */
 	if (sys_nostdout->value)
 		return;
 		
@@ -179,12 +173,8 @@ void Sys_Init (void)
 {
 	OSVERSIONINFO	vinfo;
 
-/* 	Cvar_RegisterVariable (&sys_nostdout);
- CVAR_FIXME */
 	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sys_sleep);
- CVAR_FIXME */
-	sys_sleep = Cvar_Get("sys_sleep", "1", CVAR_NONE, "None");
+	sys_sleep = Cvar_Get("sys_sleep", "8", CVAR_NONE, "None");
 
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution
