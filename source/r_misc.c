@@ -50,12 +50,8 @@ void R_CheckVariables (void)
 #if 0
 	static float	oldbright;
 
-/* 	if (r_fullbright.value != oldbright)
- CVAR_FIXME */
 	if (r_fullbright->value != oldbright)
 	{
-/* 		oldbright = r_fullbright.value;
- CVAR_FIXME */
 		oldbright = r_fullbright->value;
 		D_FlushCaches ();	// so all lighting changes
 	}
@@ -160,8 +156,6 @@ void R_LineGraph (int x, int y, int h)
 	
 	dest = vid.buffer + vid.rowbytes*y + x;
 	
-/* 	s = r_graphheight.value;
- CVAR_FIXME */
 	s = r_graphheight->value;
 
 	if (h == 10000)
@@ -212,8 +206,6 @@ void R_TimeGraph (void)
 
 	a = (r_time2-r_time1)/0.01;
 //a = fabs(mouse_y * 0.05);
-/* //a = (int)((r_refdef.vieworg[2] + 1024)/1)%(int)r_graphheight.value;
- CVAR_FIXME */
 //a = (int)((r_refdef.vieworg[2] + 1024)/1)%(int)r_graphheight->value;
 //a = (int)((pmove.velocity[2] + 500)/10);
 //a = fabs(velocity[0])/20;
@@ -261,12 +253,8 @@ void R_NetGraph (void)
 		w = NET_TIMINGS;
 
 	x = w - ((vid.width - 320)>>1);
-/* 	y = vid.height - sb_lines - 24 - (int)r_graphheight.value*2 - 2;
- CVAR_FIXME */
 	y = vid.height - sb_lines - 24 - (int)r_graphheight->value*2 - 2;
 
-/* 	M_DrawTextBox (x, y, (w+7)/8, ((int)r_graphheight.value*2+7)/8 + 1);
- CVAR_FIXME */
 	M_DrawTextBox (x, y, (w+7)/8, ((int)r_graphheight->value*2+7)/8 + 1);
 	y2 = y + 8;
 	y = vid.height - sb_lines - 8 - 2;
@@ -492,21 +480,11 @@ void R_SetupFrame (void)
 	float			w, h;
 
 // don't allow cheats in multiplayer
-/* r_draworder.value = 0;
- CVAR_FIXME */
 r_draworder->value = 0;
-/* r_fullbright.value = 0;
- CVAR_FIXME */
 r_fullbright->value = 0;
-/* r_ambient.value = 0;
- CVAR_FIXME */
 r_ambient->value = 0;
-/* r_drawflat.value = 0;
- CVAR_FIXME */
 r_drawflat->value = 0;
 
-/* 	if (r_numsurfs.value)
- CVAR_FIXME */
 	if (r_numsurfs->value)
 	{
 		if ((surface_p - surfaces) > r_maxsurfsseen)
@@ -516,8 +494,6 @@ r_drawflat->value = 0;
 				surf_max - surfaces, r_maxsurfsseen);
 	}
 
-/* 	if (r_numedges.value)
- CVAR_FIXME */
 	if (r_numedges->value)
 	{
 		edgecount = edge_p - r_edges;
@@ -529,16 +505,12 @@ r_drawflat->value = 0;
 				r_numallocatededges, r_maxedgesseen);
 	}
 
-/* 	r_refdef.ambientlight = r_ambient.value;
- CVAR_FIXME */
 	r_refdef.ambientlight = r_ambient->value;
 
 	if (r_refdef.ambientlight < 0)
 		r_refdef.ambientlight = 0;
 
 //	if (!sv.active)
-/* 		r_draworder.value = 0;	// don't let cheaters look behind walls
- CVAR_FIXME */
 		r_draworder->value = 0;	// don't let cheaters look behind walls
 		
 	R_CheckVariables ();
@@ -570,8 +542,6 @@ r_refdef.viewangles[2]=    0;
 	r_viewleaf = Mod_PointInLeaf (r_origin, cl.worldmodel);
 
 	r_dowarpold = r_dowarp;
-/* 	r_dowarp = r_waterwarp.value && (r_viewleaf->contents <= CONTENTS_WATER);
- CVAR_FIXME */
 	r_dowarp = r_waterwarp->value && (r_viewleaf->contents <= CONTENTS_WATER);
 
 	if ((r_dowarp != r_dowarpold) || r_viewchanged)

@@ -54,8 +54,6 @@
 #endif
 
 
-/* cvar_t	sys_extrasleep = {"sys_extrasleep","0"};
- CVAR_FIXME */
 cvar_t	*sys_extrasleep;
 
 qboolean	is_server = true;
@@ -143,11 +141,7 @@ is marked
 */
 void Sys_Init (void)
 {
-/* 	Cvar_RegisterVariable (&sys_nostdout);
- CVAR_FIXME */
 	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&sys_extrasleep);
- CVAR_FIXME */
 	sys_extrasleep = Cvar_Get("sys_extrasleep", "0", CVAR_NONE, "None");
 }
 
@@ -214,11 +208,7 @@ int main(int argc, char *argv[])
 		SV_Frame (time);		
 		
 	// extrasleep is just a way to generate a fucked up connection on purpose
-/* 		if (sys_extrasleep.value)
- CVAR_FIXME */
 		if (sys_extrasleep->value)
-/* 			usleep (sys_extrasleep.value);
- CVAR_FIXME */
 			usleep (sys_extrasleep->value);
 	}	
 	return 1;

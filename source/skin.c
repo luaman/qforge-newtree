@@ -38,11 +38,7 @@
 
 #include <string.h>
 
-/* cvar_t		baseskin = {"baseskin", "base"};
- CVAR_FIXME */
 cvar_t		*baseskin;
-/* cvar_t		noskins = {"noskins", "0"};
- CVAR_FIXME */
 cvar_t		*noskins;
 
 char		allskins[128];
@@ -126,8 +122,6 @@ byte	*Skin_Cache (skin_t *skin)
 	if (cls.downloadtype == dl_skin)
 		return NULL;		// use base until downloaded
 
-/* 	if (noskins.value==1) // JACK: So NOSKINS > 1 will show skins, but
- CVAR_FIXME */
 	if (noskins->value==1) // JACK: So NOSKINS > 1 will show skins, but
 		return NULL;	  // not download new ones.
 
@@ -257,8 +251,6 @@ void Skin_NextDownload (void)
 		if (!sc->name[0])
 			continue;
 		Skin_Find (sc);
-/* 		if (noskins.value)
- CVAR_FIXME */
 		if (noskins->value)
 			continue;
 		if (!CL_CheckOrDownloadFile(va("skins/%s.pcx", sc->skin->name)))

@@ -53,10 +53,8 @@ qboolean	sv_allow_cheats;
 
 int fp_messages=4, fp_persecond=4, fp_secondsdead=10;
 char fp_msg[255] = { 0 };
-/* extern cvar_t cl_warncmd;
- CVAR_FIXME */
 extern cvar_t *cl_warncmd;
-	extern		redirect_t	sv_redirected;
+extern redirect_t sv_redirected;
 
 
 /*
