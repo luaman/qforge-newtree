@@ -32,6 +32,9 @@ EXTRA_libqfsys_sv_a_SOURCES = sv_sys_unix.c sv_sys_win.c sys_win.c sys_unix.c fn
 if SNDTYPE_ALSA
 libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_alsa.c
 endif
+if SNDTYPE_MME
+libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_mme.c
+endif
 if SNDTYPE_OSS
 libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_oss.c
 endif
