@@ -1,7 +1,7 @@
 /*
-	cl_parse.c
+	cl_trans.c
 
-	parse a message received from the server
+	(description)
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
