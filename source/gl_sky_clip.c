@@ -338,7 +338,7 @@ fixup_center_face (struct box_def *box, int c_face)
 	}
 	for (i = 0; i < 4; i++) {
 		int ind = face_loop[c_face][i];
-		insert_cube_vertexen (box, ind, v[i], v[(i - 1) % 4]);
+		insert_cube_vertexen (box, ind, v[i], v[(i - 1) & 3]);
 	}
 }
 
