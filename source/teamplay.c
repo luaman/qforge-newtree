@@ -428,7 +428,7 @@ locs_dumploc (void)
 	t1[0] = 'l';
 	t1[1] = 'o';
 	t1[2] = 'c';
-	if (strncasecmp(Cmd_Argv(0),"dumploc",7) == 0) {
+	if (strcmp(Cmd_Argv(0),"dumploc") == 0) {
 		snprintf (locfile, sizeof (locfile), "%s/%s", com_gamedir, mapname);
 		locfd = Qopen (locfile, "w+");
 #ifdef HAVE_ZLIB
@@ -489,7 +489,7 @@ locs_delloc (void)
 	vec3_t      loc;
 	int         i, j;
 	
-	if ((strncasecmp(Cmd_Argv(0),"delloc",6) == 0) && (Cmd_Argc () != 1)) {
+	if (Cmd_Argc () != 1) {
 		Con_Printf("delloc :removes the nearest location marker\n");
 		return;
 	}
@@ -526,8 +526,7 @@ locs_editloc (void)
 	int             i;
 	char           *desc = Cmd_Args ();
 	
-	if ((strncasecmp(Cmd_Argv(0),"editloc",7) == 0) && 
-			(Cmd_Argc () == 1)) {
+	if (Cmd_Argc () == 1) {
 		Con_Printf("editloc <description> :changed the description of the nearest location marker\n");
 		return;
 	}
@@ -560,8 +559,7 @@ locs_moveloc (void)
 	vec3_t          loc;
 	int             i;
 
-	if ((strncasecmp(Cmd_Argv(0),"moveloc",7) == 0) &&
-			(Cmd_Argc () != 1)) {
+	if (Cmd_Argc () != 1) {
 		Con_Printf("moveloc :Move the nearest location marker to your current location\n");
 		return;
 	}
