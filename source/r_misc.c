@@ -116,6 +116,23 @@ void R_TimeRefresh_f (void)
 	r_refdef.viewangles[1] = startangle;
 }
 
+
+/*
+   R_LoadSky_f
+*/
+void
+R_LoadSky_f ()
+{
+	if (Cmd_Argc () != 2)
+	{
+		Con_Printf ("loadsky <name> : load a skybox\n");
+		return;
+	}
+
+	R_LoadSkys (Cmd_Argv(1));
+}
+
+
 /*
 ================
 R_LineGraph

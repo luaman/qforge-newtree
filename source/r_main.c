@@ -239,6 +239,8 @@ void	R_InitTextures (void)
 	}	
 }
 
+void R_LoadSky_f ();
+
 /*
 ===============
 R_Init
@@ -255,6 +257,7 @@ void R_Init (void)
 	
 	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);	
 	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);	
+	Cmd_AddCommand ("loadsky", R_LoadSky_f);
 
 /* 	Cvar_RegisterVariable (&r_draworder);
  CVAR_FIXME */

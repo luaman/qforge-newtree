@@ -288,3 +288,13 @@ void R_SetSkyFrame (void)
 }
 
 
+/*
+   R_LoadSkys
+
+   Stub function for loading a skybox.  Currently we only have support for
+   skyboxes in GL targets, so we just do nothing here.  --KB
+*/
+void
+R_LoadSkys (char * name)
+{
+}

@@ -196,6 +196,22 @@ void R_Envmap_f (void)
 }
 
 /*
+   R_LoadSky_f
+*/
+void
+R_LoadSky_f ()
+{
+	if (Cmd_Argc () != 2)
+	{
+		Con_Printf ("loadsky <name> : load a skybox\n");
+		return;
+	}
+
+	R_LoadSkys (Cmd_Argv(1));
+}
+
+
+/*
 ===============
 R_Init
 ===============
@@ -204,7 +220,8 @@ void R_Init (void)
 {	
 	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);	
 	Cmd_AddCommand ("envmap", R_Envmap_f);	
-	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);	
+	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);
+	Cmd_AddCommand ("loadsky", R_LoadSky_f);
 
 /* 	Cvar_RegisterVariable (&r_norefresh);
  CVAR_FIXME */
