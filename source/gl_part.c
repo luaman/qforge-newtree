@@ -518,8 +518,11 @@ void R_DrawParticles (void)
 	qboolean		alphaTestEnabled;
 
 	glBindTexture (GL_TEXTURE_2D, particletexture);
+	// LordHavoc: reset to single texture and modulate mode before drawing particles
+	GL_DisableMultitexture();
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	alphaTestEnabled = glIsEnabled(GL_ALPHA_TEST);
-	
+
 	if (alphaTestEnabled)
 		glDisable(GL_ALPHA_TEST);
 	glBegin (GL_TRIANGLES);
