@@ -51,7 +51,7 @@ if ASM_ARCH
 math_ASM = math.S sys_x86.S
 endif
 common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c hash.c \
-	info.c link.c locs.c mathlib.c mdfour.c model.c model_brush.c \
+	info.c link.c mathlib.c mdfour.c model.c model_brush.c \
 	msg.c pmove.c pmovetst.c qargs.c qendian.c quakefs.c quakeio.c \
 	sizebuf.c va.c zone.c $(math_ASM) $(packetlogger)
 
@@ -179,7 +179,7 @@ endif
 
 client_SOURCES= cl_cam.c cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c \
 	cl_main.c cl_misc.c cl_parse.c cl_pred.c cl_slist.c cl_tent.c \
-	console.c keys.c menu.c model_alias.c model_sprite.c nonintel.c \
+	console.c keys.c locs.c menu.c model_alias.c model_sprite.c nonintel.c \
 	pcx.c r_view.c sbar.c skin.c teamplay.c tga.c wad.c vid.c $(client_ASM)
 
 #
