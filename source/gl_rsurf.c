@@ -535,7 +535,6 @@ R_RenderFullbrights (void)
 	glpoly_t *p;
 	float *v;
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glBlendFunc(GL_ONE, GL_ONE);
 
 	for (i=1; i<MAX_GLTEXTURES; i++) {
@@ -551,8 +550,6 @@ R_RenderFullbrights (void)
 			glEnd();
 		}
 	}
-
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
@@ -696,7 +693,6 @@ void DrawTextureChains (void)
 	msurface_t	*s;
 
 	glDisable(GL_BLEND);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	for (i=0 ; i<cl.worldmodel->numtextures ; i++)
 	{
@@ -708,7 +704,6 @@ void DrawTextureChains (void)
 		cl.worldmodel->textures[i]->texturechain = NULL;
 	}
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glEnable(GL_BLEND);
 }
 
@@ -795,8 +790,6 @@ void R_DrawBrushModel (entity_t *e)
 	if (!gl_mtexable)
 		Cvar_SetValue (gl_texsort, 1);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
 	//
 	// draw texture
 	//
@@ -822,8 +815,6 @@ void R_DrawBrushModel (entity_t *e)
 				R_DrawMultitexturePoly (psurf);
 		}
 	}
-
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	if (gl_texsort->value)
 		R_BlendLightmaps ();
