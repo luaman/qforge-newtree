@@ -136,6 +136,8 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\vid.obj\
+   $(OBJS)\joy_null.obj\
    $(OBJS)\locs.obj\
    $(ZLIB)\zlib.lib\
    $(DIRECTXSDK)\lib\borland\dxguid.lib\
@@ -227,6 +229,8 @@ $(EXE)\qf-client-sgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\vid.obj+
+$(OBJS)\joy_null.obj+
 $(OBJS)\locs.obj+
 $(ZLIB)\zlib.lib+
 $(OBJS)\model.obj+
@@ -315,6 +319,16 @@ $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SDLSDK)\lib\sdl.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
+
+|
+$(OBJS)\vid.obj :  $(QFROOT)\source\vid.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\vid.c
+
+|
+$(OBJS)\joy_null.obj :  $(QFROOT)\source\joy_null.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\joy_null.c
 
 |
 $(OBJS)\locs.obj :  $(QFROOT)\source\locs.c
