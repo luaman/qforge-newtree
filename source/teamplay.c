@@ -349,7 +349,6 @@ locs_loc (void)
 	char           *mapname; 
 	char           *desc = NULL;
 	char            locfile[MAX_OSPATH];
-	int i;
 	
 	//FIXME checking needed to make sure you are actually in the game and a live.
 	if (Cmd_Argc () == 1) {

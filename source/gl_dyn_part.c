@@ -565,7 +565,7 @@ R_DrawParticles (void)
 	unsigned char *at;
 	byte        alpha;
 	vec3_t      up, right;
-	float       scale, scale2;
+	float       scale;
 	particle_t *part;
 	int         activeparticles, maxparticle, j, k;
 
