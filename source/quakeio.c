@@ -54,10 +54,7 @@
 #include <limits.h>
 
 #ifdef WIN32
-#ifdef __BORLANDC__
-#	define
-#	define
-#else
+#ifndef __BORLANDC__
 #	define setmode _setmode
 #	define O_BINARY _O_BINARY
 #endif
@@ -182,8 +179,6 @@ Qdopen(int fd, const char *mode)
 #ifdef WIN32
 	if (file->file)
 		setmode(_fileno(file->file),O_BINARY);
-	else
-		setmode(_fileno(file->gzfile),O_BINARY);
 #endif
 	return file;
 }
