@@ -637,66 +637,72 @@ R_DrawParticles (void)
 		switch (part->type) {
 			case pt_static:
 				break;
-
 			case pt_blob:
 				for (i = 0; i < 3; i++)
 					part->vel[i] += part->vel[i] * dvel;
 				part->vel[2] -= grav;
 				break;
-
 			case pt_blob2:
 				for (i = 0; i < 2; i++)
 					part->vel[i] -= part->vel[i] * dvel;
 				part->vel[2] -= grav;
 				break;
-
 			case pt_grav:
 				part->vel[2] -= grav;
 				break;
-
 			case pt_smoke:
+				if ((part->alpha -= host_frametime * 128) < 1)
+					part->die = -1;
 				part->scale += host_frametime * 6;
-				part->alpha -= host_frametime * 128;
 				break;
 			case pt_smokecloud:
+				if ((part->alpha -= host_frametime * 128) < 1)
+					part->die = -1;
 				part->scale += host_frametime * 60;
-				part->alpha -= host_frametime * 128;
 				break;
 			case pt_bloodcloud:
-				/* 
-				   if (Mod_PointInLeaf(part->org, cl.worldmodel)->contents != 
-				   CONTENTS_EMPTY) { part->die = -1; break; } */
+/*
+				if (Mod_PointInLeaf(part->org, cl.worldmodel)->contents != CONTENTS_EMPTY)
+				{
+					part->die = -1;
+					break;
+				}
+*/
+				if ((part->alpha -= host_frametime * 64) < 1)
+				{
+					part->die = -1;
+					// extra break only helps here
+					break;
+				}
 				part->scale += host_frametime * 4;
-				part->alpha -= host_frametime * 64;
 				part->vel[2] -= grav;
 				break;
 			case pt_fadespark:
-				part->alpha -= host_frametime * 256;
+				if ((part->alpha -= host_frametime * 256) < 1)
+					part->die = -1;
 				part->vel[2] -= grav;
 				break;
 			case pt_fadespark2:
-				part->alpha -= host_frametime * 512;
+				if ((part->alpha -= host_frametime * 512) < 1)
+					part->die = -1;
 				part->vel[2] -= grav;
 				break;
 			case pt_fallfadespark:
-				part->alpha -= host_frametime * 256;
+				if ((part->alpha -= host_frametime * 256) < 1)
+					part->die = -1;
 				part->vel[2] -= fast_grav;
 				break;
 		}
-
-		// LordHavoc: most particles already did this, consistency...
-		if (part->alpha < 1)
-			part->die = -1;
-
 		// LordHavoc: immediate removal of unnecessary particles (must be done to ensure compactor below operates properly in all cases)
-		if (part->die < cl.time)
+		if (part->die <= cl.time)
 			freeparticles[j++] = part;
 	}
 	k = 0;
 	while (maxparticle >= activeparticles) {
 		*freeparticles[k++] = particles[maxparticle--];
 		while (maxparticle >= activeparticles
-			   && particles[maxparticle].die < cl.time) maxparticle--;
+		       && particles[maxparticle].die <= cl.time)
+			maxparticle--;
 	}
 	numparticles = activeparticles;
 
