@@ -33,6 +33,8 @@
 #include "mathlib.h"
 #include "model.h"
 
+#define STOP_EPSILON 0.1
+
 typedef struct
 {
 	vec3_t	normal;
