@@ -42,6 +42,7 @@
 extern cvar_t *fs_userpath;
 extern cvar_t *fs_sharepath;
 extern cvar_t *fs_skinbase;
+extern cvar_t *fs_basegame;
 
 extern int com_filesize;
 struct cache_user_s;
