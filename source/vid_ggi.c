@@ -66,7 +66,7 @@
 #include "qargs.h"
 #include "compat.h"
 #include "d_local.h"
-#inlcude "input.h"
+#include "input.h"
 
 extern viddef_t        vid; // global video state
 unsigned short	d_8to16table[256];
