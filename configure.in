@@ -190,115 +190,143 @@ dnl Checks for X11 and XShm
 AC_PATH_XTRA
 if test "x$no_x" = x; then
 	HAVE_X=yes
-	AC_CHECK_LIB(Xext, XShmQueryExtension, [X_SHM_LIB=-lXext],
-		[HAVE_X="no"], [ $X_LIBS -lX11 $X_EXTRA_LIBS ]
+	AC_CHECK_LIB(Xext, XShmQueryExtension,
+		X_SHM_LIB=-lXext,
+		HAVE_X=no,
+		[ $X_LIBS -lX11 $X_EXTRA_LIBS ]
 	)
 fi
-
 AC_SUBST(X_SHM_LIB)
 
-dnl Checks for OpenGL support
-AC_ARG_WITH(opengl,
-[  --with-opengl[=DIR]     use OpenGL with libraries found in DIR],
-	OPENGL_LIBS=$withval, OPENGL_LIBS=auto
+dnl Checks for GLX support
+AC_ARG_WITH(glx,
+[  --with-glx[=DIR]        use GLX with libraries found in DIR],
+	glx_libraries=$withval, glx_libraries=auto
 )
-AC_ARG_WITH(opengl-includes,
-[  --with-opengl-includes[=DIR]
-                          use OpenGL with header files found in DIR],
-	OPENGL_INCLUDES=$withval, OPENGL_INCLUDES=auto
+AC_ARG_WITH(glx-includes,
+[  --with-glx-includes[=DIR]
+                          use GLX with header files found in DIR],
+	glx_includes=$withval, glx_includes=auto
 )
-if test "x$OPENGL_INCLUDES" = xno; then
-	OPENGL_LIBS="no"
+if test "x$glx_includes" = xno; then
+	glx_libraries=""
 fi
-if test "x$OPENGL_LIBS" = xno; then
-	OPENGL_INCLUDES=""
+if test "x$glx_librariesS" = xno; then
+	glx_includes=""
 fi
-if test "x$OPENGL_LIBS" != xno; then
-	if test "x$OPENGL_LIBS" != xauto; then
-		OPENGL_LIBS="-L$OPENGL_LIBS"
-	else
-		OPENGL_LIBS="${X_LIBS:-}"
-	fi
-	if test "x$OPENGL_INCLUDES" != xauto; then
-		OPENGL_INCLUDES="-I$OPENGL_INCLUDES"
-	else
-		OPENGL_INCLUDES="${X_INCLUDES:-}"
-	fi
+
+dnl Checks for GLX headers. lib[Mesa]GL should be either in a standard
+dnl include directory or the X include directory. Either way, we
+dnl use X_CFLAGS.
+if test "x$glx_includes" != xauto -a "x$glx_includes" != x; then
 	save_CPPFLAGS="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $OPENGL_INCLUDES"
-	AC_CHECK_HEADER(GL/gl.h, HAVE_OPENGL=yes, HAVE_OPENGL=no)
-	if test "x$HAVE_OPENGL" != xno; then
-		AC_MSG_CHECKING(for GL_COLOR_INDEX8_EXT in GL/gl.h)
-		AC_TRY_COMPILE([#include "GL/gl.h"],
-			[ int x = (int) GL_COLOR_INDEX8_EXT;],
-			AC_DEFINE(HAVE_GL_COLOR_INDEX8_EXT) AC_MSG_RESULT(yes),
-			AC_MSG_RESULT(no)
-		)
-		AC_MSG_CHECKING(for GLAPIENTRY in GL/gl.h)
+	CPPFLAGS="$CPPFLAGS -I$glx_includes"
+	AC_CHECK_HEADER($glx_includes/GL/gl.h, HAVE_GLX=yes, HAVE_GLX=no )
+	CPPFLAGS="$save_CPPFLAGS"
+else
+	save_CPPFLAGS="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+	AC_CHECK_HEADER(GL/gl.h, HAVE_GLX=yes, HAVE_GLX=no)
+	CPPFLAGS="$save_CPPFLAGS"
+fi
+
+save_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+dnl Checks for OpenGL features in headers
+if test "x$HAVE_GLX" != xno; then
+	AC_MSG_CHECKING(for GL_COLOR_INDEX8_EXT in GL/gl.h)
+	AC_TRY_COMPILE([#include "GL/gl.h"],
+		[ int x = (int) GL_COLOR_INDEX8_EXT;],
+		AC_DEFINE(HAVE_GL_COLOR_INDEX8_EXT) AC_MSG_RESULT(yes),
+		AC_MSG_RESULT(no)
+	)
+	AC_MSG_CHECKING(for GLAPIENTRY in GL/gl.h)
+	AC_TRY_COMPILE(
+		[#include "GL/gl.h"],
+		[ int x = GLAPIENTRY printf("");],
+		AC_MSG_RESULT(yes)
+		,
+		AC_MSG_RESULT(no)
+		AC_MSG_CHECKING(for APIENTRY in GL/gl.h)
 		AC_TRY_COMPILE(
 			[#include "GL/gl.h"],
-        	[ int x = GLAPIENTRY printf("");],
-	        HAVE_GLAPIENTRY=yes, HAVE_GLAPIENTRY=no
+			[ int x = APIENTRY printf("");],
+			AC_DEFINE(GLAPIENTRY, APIENTRY) AC_MSG_RESULT(yes),
+			AC_DEFINE(GLAPIENTRY, ) AC_MSG_RESULT(no)
 		)
-		if test "x$HAVE_GLAPIENTRY" != xno; then
-			AC_MSG_RESULT(yes)
-		else
-			AC_MSG_RESULT(no)
-      
-			AC_MSG_CHECKING(for APIENTRY in GL/gl.h)
-			AC_TRY_COMPILE(
-				[#include "GL/gl.h"],
-				[ int x = APIENTRY printf("");],
-				AC_DEFINE(GLAPIENTRY, APIENTRY) AC_MSG_RESULT(yes),
-				AC_DEFINE(GLAPIENTRY, ) AC_MSG_RESULT(no)
-			)
-		fi
-	fi
-	CPPFLAGS="$save_CPPFLAGS"
+	)
+fi
+CPPFLAGS="$save_CPPFLAGS"
 
-	dnl Make sure -lGL or -lMesaGL works
-	if test "x$HAVE_OPENGL" = xyes; then
+
+dnl Make sure -lGL or -lMesaGL works
+if test "x$glx_libraries" != xauto -a "x$glx_libraries" != xno -a "x$glx_libraries" != x; then
+	if test "x$HAVE_GLX" = xyes; then
+		HAVE_GLX=no
 		AC_CHECK_LIB(GL, glColor4f,
-			HAVE_OPENGL=yes
-			OPENGL_NAME=GL
-			if test "x$have_dynload" != "xyes"; then
-				AC_CHECK_LIB(GL, XMesaSetFXmode,, HAVE_XMESA=no,
-					[ $OPENGL_LIBS $X_PRE_LIBS $X_LIBS -lX11 -lXext $X_EXTRA_LIBS]
-				)
-			fi
-			,HAVE_OPENGL=no,
-			[ $OPENGL_LIBS $X_PRE_LIBS $X_LIBS -lX11 -lXext $X_EXTRA_LIBS]
+			HAVE_GLX=yes
+			GLX_NAME=GL,,
+			[ -L$glx_libraries ]
 		)
-		if test "x$HAVE_OPENGL" != xyes; then
-			AC_CHECK_LIB(MesaGL, glColor4f, OPENGL_LIBS="$OPENGL_LIBS -lMesaGL"
-		        HAVE_OPENGL=yes
-				OPENGL_NAME=MesaGL
-		        if test "x$have_dynload" != "xyes"; then
-					AC_CHECK_LIB(MesaGL, XMesaSetFXmode,, HAVE_XMESA=no,
-						[ $OPENGL_LIBS $X_LIBS -lXext -lX11 $X_EXTRA_LIBS]
-					)
-				fi
-		        ,HAVE_OPENGL=no,
-				[ $OPENGL_LIBS $X_PRE_LIBS $X_LIBS -lX11 -lXext $X_EXTRA_LIBS]
+		if test "x$HAVE_GLX" != xyes; then
+			AC_CHECK_LIB(MesaGL, glColor4f,
+				HAVE_GLX=yes
+				GLX_NAME=MesaGL,,
+				[ -L$glx_libraries ]
+			)
+		fi
+		if test "x$HAVE_GLX" = xyes -a "x$have_dynload" != xyes; then
+			AC_CHECK_LIB($GLX_NAME, XMesaSetFXmode,
+				AC_DEFINE(HAVE_XMESA),,
+				[ -L$glx_libraries ]
 			)
 		fi
 	fi
-	if test "x$HAVE_OPENGL" != xyes; then
-		OPENGL_CFLAGS="" OPENGL_LIBS=""
-	else
-		OPENGL_LIBS="$OPENGL_LIBS -l$OPENGL_NAME"
-		if test "x$HAVE_XMESA" = xyes; then
-			AC_DEFINE(HAVE_XMESA)
+else
+	if test "x$glx_libraries" != xauto \
+			-o "x$glx_libraries" != xno \
+			-o "x$glx_libraries" != x; then
+		glx_libraries=""
+	fi
+	
+	if test "x$HAVE_GLX" = xyes; then
+		HAVE_GLX=no
+		AC_CHECK_LIB(GL, glColor4f,
+			HAVE_GLX=yes
+			GLX_NAME=GL,,
+			[ $X_LIBS ]
+		)
+		if test "x$HAVE_GLX" != xyes; then
+			AC_CHECK_LIB(MesaGL, glColor4f,
+				HAVE_GLX=yes
+				GLX_NAME=MesaGL,,
+				[ $X_LIBS ]
+			)
+		fi
+		if test "x$HAVE_GLX" = xyes -a "x$have_dynload" != xyes; then
+			AC_CHECK_LIB($GLX_NAME, XMesaSetFXmode,
+				AC_DEFINE(HAVE_XMESA),,
+				[ $X_LIBS ]
+			)
 		fi
 	fi
 fi
-if test "x$HAVE_OPENGL" = xyes; then
-	AC_DEFINE(HAVE_OPENGL)
+
+if test "x$HAVE_GLX" = xyes; then
+	if test "x$GLX_CFLAGS" != x; then
+		GLX_CFLAGS="-I$GLX_CFLAGS"
+	fi
+	if test "x$glx_libraries" != x; then
+		GLX_LIBS="-L$glx_libraries"
+	fi
+	GLX_LIBS="$GLX_LIBS -l$GLX_NAME"
+	AC_DEFINE(HAVE_GLX)
+else
+	GLX_CFLAGS=""
+	GLX_LIBS=""
 fi
-AC_SUBST(HAVE_OPENGL)
-AC_SUBST(OPENGL_CFLAGS)
-AC_SUBST(OPENGL_INCLUDES)
-AC_SUBST(OPENGL_LIBS)
+AC_SUBST(GLX_CFLAGS)
+AC_SUBST(GLX_LIBS)
 
 dnl Set $prefix and $exec_prefix to $ac_default_prefix if they are not set
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
@@ -461,21 +489,21 @@ case "${target}" in
       ;;
 esac
 if test "x$DEFAULT_SYS" = xyes; then
-AC_MSG_RESULT([no, using default])
+	AC_MSG_RESULT([no, using default])
 else
-AC_MSG_RESULT(yes ($CL_SYS_SRC $SV_SYS_SRC))
+	AC_MSG_RESULT(yes ($CL_SYS_SRC $SV_SYS_SRC))
 fi
 AC_SUBST(CL_SYS_SRC)
 AC_SUBST(SV_SYS_SRC)
 
 if test "x$HAVE_SVGA" = xyes; then
-   TARGETS="$TARGETS qf-client-svga"
+	TARGETS="$TARGETS qf-client-svga"
 fi
 if test "x$HAVE_X" = xyes; then
-   TARGETS="$TARGETS qf-client-x11"
-fi
-if test "x$HAVE_OPENGL" = xyes; then
-   TARGETS="$TARGETS qf-client-glx"
+	TARGETS="$TARGETS qf-client-x11"
+	if test "x$HAVE_GLX" = xyes; then
+	   TARGETS="$TARGETS qf-client-glx"
+	fi
 fi
 AC_SUBST(TARGETS)
 
