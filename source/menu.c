@@ -155,11 +155,9 @@ void        M_ConfigureNetSubsystem (void);
 /* Support Routines */
 
 /*
-================
-M_DrawCharacter
+	M_DrawCharacter
 
-Draws one solid graphics character
-================
+	Draws one solid graphics character
 */
 void
 M_DrawCharacter (int cx, int line, int num)
@@ -294,9 +292,7 @@ M_DrawTextBox (int x, int y, int width, int lines)
 int         m_save_demonum;
 
 /*
-================
-M_ToggleMenu_f
-================
+	M_ToggleMenu_f
 */
 void
 M_ToggleMenu_f (void)

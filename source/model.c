@@ -63,9 +63,7 @@ extern byte mod_novis[MAX_MAP_LEAFS / 8];
 texture_t  *r_notexture_mip;
 
 /*
-===============
-Mod_Init
-===============
+	Mod_Init
 */
 void
 Mod_Init (void)
@@ -81,9 +79,7 @@ Mod_Init_Cvars (void)
 }
 
 /*
-===================
-Mod_ClearAll
-===================
+	Mod_ClearAll
 */
 void
 Mod_ClearAll (void)
@@ -97,10 +93,7 @@ Mod_ClearAll (void)
 }
 
 /*
-==================
-Mod_FindName
-
-==================
+	Mod_FindName
 */
 model_t    *
 Mod_FindName (char *name)
@@ -130,11 +123,9 @@ Mod_FindName (char *name)
 }
 
 /*
-==================
-Mod_LoadModel
+	Mod_LoadModel
 
-Loads a model into the cache
-==================
+	Loads a model into the cache
 */
 model_t    *
 Mod_LoadModel (model_t *mod, qboolean crash)
@@ -195,11 +186,9 @@ Mod_LoadModel (model_t *mod, qboolean crash)
 }
 
 /*
-==================
-Mod_ForName
+	Mod_ForName
 
-Loads in a model for the given name
-==================
+	Loads in a model for the given name
 */
 model_t    *
 Mod_ForName (char *name, qboolean crash)
@@ -213,11 +202,9 @@ Mod_ForName (char *name, qboolean crash)
 }
 
 /*
-===============
-Mod_Init
+	Mod_Init
 
-Caches the data if needed
-===============
+	Caches the data if needed
 */
 void       *
 Mod_Extradata (model_t *mod)
@@ -236,10 +223,7 @@ Mod_Extradata (model_t *mod)
 }
 
 /*
-==================
-Mod_TouchModel
-
-==================
+	Mod_TouchModel
 */
 void
 Mod_TouchModel (char *name)
@@ -255,9 +239,7 @@ Mod_TouchModel (char *name)
 }
 
 /*
-================
-Mod_Print
-================
+	Mod_Print
 */
 void
 Mod_Print (void)

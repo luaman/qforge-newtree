@@ -87,3 +87,28 @@ VID_GetWindowSize (int def_w, int def_h)
 	scr_width = vid.width = vid_width->int_val;
 	scr_height = vid.height = vid_height->int_val;
 }
+
+#if 0
+VID_Calc_Gamma (void)
+{
+	float f;
+	int i;
+	int v;
+	byte 
+	float g = bound (0.3, gamma->value, 3);
+
+	Cvar_SetValue (gamma, g);
+	if (gamma_flipped->int_val)
+		g = 1 / g;
+	for (i = 0; i < 256; i++) {
+		f = pow ((i + 1) / 256.0, g);
+		v = f * 255 + 0.5;
+		lightmap_gamma[i] = bound (0, v, 255);
+		for (j = 0; j < 3; j++) {
+			f = pow ((host_basepal[i * 3 + j] + 1) / 256.0, g);
+			v = f * 255 + 0.5;
+			palette[i] = bound (0, v, 255);
+		}
+	}
+}
+#endif

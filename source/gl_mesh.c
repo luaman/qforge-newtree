@@ -44,11 +44,7 @@
 #include "quakefs.h"
 
 /*
-=================================================================
-
-ALIAS MODEL DISPLAY LIST GENERATION
-
-=================================================================
+	ALIAS MODEL DISPLAY LIST GENERATION
 */
 
 model_t    *aliasmodel;
@@ -73,9 +69,7 @@ int         striptris[128];
 int         stripcount;
 
 /*
-================
-StripLength
-================
+	StripLength
 */
 int
 StripLength (int starttri, int startv)
@@ -142,9 +136,7 @@ done:
 }
 
 /*
-===========
-FanLength
-===========
+	FanLength
 */
 int
 FanLength (int starttri, int startv)
@@ -210,12 +202,10 @@ FanLength (int starttri, int startv)
 
 
 /*
-================
-BuildTris
+	BuildTris
 
-Generate a list of trifans or strips
-for the model, which holds for all frames
-================
+	Generate a list of trifans or strips
+	for the model, which holds for all frames
 */
 void
 BuildTris (void)
@@ -297,9 +287,7 @@ BuildTris (void)
 
 
 /*
-================
-GL_MakeAliasModelDisplayLists
-================
+	GL_MakeAliasModelDisplayLists
 */
 void
 GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr, void *_m, int _s)

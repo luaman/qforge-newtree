@@ -263,9 +263,7 @@ VID_DescribeModes_f (void)
 
 
 /*
-================
-VID_NumModes
-================
+	VID_NumModes
 */
 static int
 VID_NumModes (void)
@@ -711,9 +709,7 @@ VID_DitherOff (void)
 
 
 /*
-================
-VID_ModeInfo
-================
+	VID_ModeInfo
 */
 char       *
 VID_ModeInfo (int modenum)

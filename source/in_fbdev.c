@@ -141,9 +141,7 @@ IN_Move (usercmd_t *cmd)
 }
 
 /*
-===========
-IN_ModeChanged
-===========
+	IN_ModeChanged
 */
 void
 IN_ModeChanged (void)

@@ -49,11 +49,7 @@
 extern model_t *loadmodel;
 
 /*
-==============================================================================
-
-ALIAS MODELS
-
-==============================================================================
+	ALIAS MODELS
 */
 
 extern aliashdr_t *pheader;
@@ -69,11 +65,9 @@ extern int  posenum;
 //=========================================================
 
 /*
-=================
-Mod_FloodFillSkin
+	Mod_FloodFillSkin
 
-Fill background pixels so mipmapping doesn't have haloes - Ed
-=================
+	Fill background pixels so mipmapping doesn't have haloes - Ed
 */
 
 typedef struct {
@@ -187,9 +181,7 @@ Mod_LoadSkin (byte * skin, int skinsize, int snum, int gnum, qboolean group)
 }
 
 /*
-===============
-Mod_LoadAllSkins
-===============
+	Mod_LoadAllSkins
 */
 void       *
 Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinindex)
@@ -245,9 +237,7 @@ Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinindex)
 }
 
 /*
-=================
-Mod_LoadAliasFrame
-=================
+	Mod_LoadAliasFrame
 */
 void *
 Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
@@ -278,9 +268,7 @@ Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
 }
 
 /*
-=================
-Mod_LoadAliasGroup
-=================
+	Mod_LoadAliasGroup
 */
 void *
 Mod_LoadAliasGroup (void *pin, maliasframedesc_t *frame)

@@ -108,11 +108,7 @@ extern qboolean is_server;
 */
 
 /*
-=============================================================================
-
-QUAKE FILESYSTEM
-
-=============================================================================
+	QUAKE FILESYSTEM
 */
 
 char        gamedirfile[MAX_OSPATH];
@@ -998,11 +994,9 @@ COM_Gamedir (char *dir)
 }
 
 /*
-================
-SV_Gamedir_f
+	SV_Gamedir_f
 
-Sets the gamedir and path to a different directory.
-================
+	Sets the gamedir and path to a different directory.
 */
 
 void
@@ -1100,9 +1094,7 @@ COM_Filesystem_Init_Cvars (void)
 }
 
 /*
-============
-COM_SkipPath
-============
+	COM_SkipPath
 */
 char *
 COM_SkipPath (char *pathname)
@@ -1119,9 +1111,7 @@ COM_SkipPath (char *pathname)
 }
 
 /*
-============
-COM_StripExtension
-============
+	COM_StripExtension
 */
 void
 COM_StripExtension (char *in, char *out)
@@ -1132,9 +1122,7 @@ COM_StripExtension (char *in, char *out)
 }
 
 /*
-============
-COM_FileExtension
-============
+	COM_FileExtension
 */
 char *
 COM_FileExtension (char *in)
@@ -1155,9 +1143,7 @@ COM_FileExtension (char *in)
 
 
 /*
-==================
-COM_DefaultExtension
-==================
+	COM_DefaultExtension
 */
 void
 COM_DefaultExtension (char *path, char *extension)

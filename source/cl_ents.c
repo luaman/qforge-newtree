@@ -86,10 +86,7 @@ CL_ClearEnts ()
 }
 
 /*
-===============
-CL_AllocDlight
-
-===============
+	CL_AllocDlight
 */
 dlight_t *
 CL_AllocDlight (int key)
@@ -127,9 +124,7 @@ CL_AllocDlight (int key)
 }
 
 /*
-===============
-CL_NewDlight
-===============
+	CL_NewDlight
 */
 void
 CL_NewDlight (int key, vec3_t org, int effects)
@@ -172,10 +167,7 @@ CL_NewDlight (int key, vec3_t org, int effects)
 
 
 /*
-===============
-CL_DecayLights
-
-===============
+	CL_DecayLights
 */
 void
 CL_DecayLights (void)
@@ -196,11 +188,7 @@ CL_DecayLights (void)
 
 
 /*
-=========================================================================
-
-PACKET ENTITY PARSING / LINKING
-
-=========================================================================
+	PACKET ENTITY PARSING / LINKING
 */
 
 /*
@@ -307,9 +295,7 @@ CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 
 
 /*
-=================
-FlushEntityPacket
-=================
+	FlushEntityPacket
 */
 void
 FlushEntityPacket (void)
@@ -469,10 +455,7 @@ CL_ParsePacketEntities (qboolean delta)
 
 
 /*
-===============
-CL_LinkPacketEntities
-
-===============
+	CL_LinkPacketEntities
 */
 void
 CL_LinkPacketEntities (void)
@@ -603,11 +586,7 @@ CL_LinkPacketEntities (void)
 
 
 /*
-=========================================================================
-
-PROJECTILE PARSING / LINKING
-
-=========================================================================
+	PROJECTILE PARSING / LINKING
 */
 
 typedef struct {
@@ -628,11 +607,9 @@ CL_ClearProjectiles (void)
 }
 
 /*
-=====================
-CL_ParseProjectiles
+	CL_ParseProjectiles
 
-Nails are passed as efficient temporary entities
-=====================
+	Nails are passed as efficient temporary entities
 */
 void
 CL_ParseProjectiles (void)
@@ -662,10 +639,7 @@ CL_ParseProjectiles (void)
 }
 
 /*
-=============
-CL_LinkProjectiles
-
-=============
+	CL_LinkProjectiles
 */
 void
 CL_LinkProjectiles (void)
@@ -703,9 +677,7 @@ CL_LinkProjectiles (void)
 extern int  cl_spikeindex, cl_playerindex, cl_flagindex;
 
 /*
-===================
-CL_ParsePlayerinfo
-===================
+	CL_ParsePlayerinfo
 */
 extern int  parsecountmod;
 extern double parsecounttime;
@@ -778,11 +750,9 @@ CL_ParsePlayerinfo (void)
 
 
 /*
-================
-CL_AddFlagModels
+	CL_AddFlagModels
 
-Called when the CTF flags are set
-================
+	Called when the CTF flags are set
 */
 void
 CL_AddFlagModels (entity_t *ent, int team)
@@ -853,12 +823,10 @@ CL_AddFlagModels (entity_t *ent, int team)
 }
 
 /*
-=============
-CL_LinkPlayers
+	CL_LinkPlayers
 
-Create visible entities in the correct position
-for all current players
-=============
+	Create visible entities in the correct position
+	for all current players
 */
 void
 CL_LinkPlayers (void)
@@ -966,11 +934,9 @@ CL_LinkPlayers (void)
 //======================================================================
 
 /*
-===============
-CL_SetSolid
+	CL_SetSolid
 
-Builds all the pmove physents for the current frame
-===============
+	Builds all the pmove physents for the current frame
 */
 void
 CL_SetSolidEntities (void)
@@ -1007,14 +973,12 @@ CL_SetSolidEntities (void)
 }
 
 /*
-===
-Calculate the new position of players, without other player clipping
+	Calculate the new position of players, without other player clipping
 
-We do this to set up real player prediction.
-Players are predicted twice, first without clipping other players,
-then with clipping against them.
-This sets up the first phase.
-===
+	We do this to set up real player prediction.
+	Players are predicted twice, first without clipping other players,
+	then with clipping against them.
+	This sets up the first phase.
 */
 void
 CL_SetUpPlayerPrediction (qboolean dopred)
@@ -1073,14 +1037,12 @@ CL_SetUpPlayerPrediction (qboolean dopred)
 }
 
 /*
-===============
-CL_SetSolid
+	CL_SetSolid
 
-Builds all the pmove physents for the current frame
-Note that CL_SetUpPlayerPrediction() must be called first!
-pmove must be setup with world and solid entity hulls before calling
-(via CL_PredictMove)
-===============
+	Builds all the pmove physents for the current frame
+	Note that CL_SetUpPlayerPrediction() must be called first!
+	pmove must be setup with world and solid entity hulls before calling
+	(via CL_PredictMove)
 */
 void
 CL_SetSolidPlayers (int playernum)
@@ -1119,13 +1081,11 @@ CL_SetSolidPlayers (int playernum)
 
 
 /*
-===============
-CL_EmitEntities
+	CL_EmitEntities
 
-Builds the visedicts array for cl.time
+	Builds the visedicts array for cl.time
 
-Made up of: clients, packet_entities, nails, and tents
-===============
+	Made up of: clients, packet_entities, nails, and tents
 */
 void
 CL_EmitEntities (void)

@@ -58,9 +58,7 @@ hashtab_t  *cvar_hash;
 hashtab_t  *calias_hash;
 
 /*
-============
-Cvar_FindVar
-============
+	Cvar_FindVar
 */
 cvar_t *
 Cvar_FindVar (char *var_name)
@@ -106,9 +104,7 @@ Cvar_Alias_Get (char *name, cvar_t *cvar)
 }
 
 /*
-============
-Cvar_VariableValue
-============
+	Cvar_VariableValue
 */
 float
 Cvar_VariableValue (char *var_name)
@@ -125,9 +121,7 @@ Cvar_VariableValue (char *var_name)
 
 
 /*
-============
-Cvar_VariableString
-============
+	Cvar_VariableString
 */
 char *
 Cvar_VariableString (char *var_name)
@@ -144,9 +138,7 @@ Cvar_VariableString (char *var_name)
 
 
 /*
-============
-Cvar_CompleteVariable
-============
+	Cvar_CompleteVariable
 */
 char *
 Cvar_CompleteVariable (char *partial)
@@ -187,9 +179,7 @@ Cvar_CompleteVariable (char *partial)
 void Cvar_Info (cvar_t *var);
 
 /*
-============
-Cvar_Set
-============
+	Cvar_Set
 */
 void
 Cvar_Set (cvar_t *var, char *value)
@@ -235,9 +225,7 @@ Cvar_SetROM (cvar_t *var, char *value)
 }
 
 /*
-============
-Cvar_SetValue
-============
+	Cvar_SetValue
 */
 // 1999-09-07 weird cvar zeros fix by Maddes
 void
@@ -254,11 +242,9 @@ Cvar_SetValue (cvar_t *var, float value)
 }
 
 /*
-============
-Cvar_Command
+	Cvar_Command
 
-Handles variable inspection and changing from the console
-============
+	Handles variable inspection and changing from the console
 */
 qboolean
 Cvar_Command (void)
@@ -284,12 +270,10 @@ Cvar_Command (void)
 
 
 /*
-============
-Cvar_WriteVariables
+	Cvar_WriteVariables
 
-Writes lines containing "set variable value" for all variables
-with the archive flag set to true.
-============
+	Writes lines containing "set variable value" for all variables
+	with the archive flag set to true.
 */
 void
 Cvar_WriteVariables (QFile *f)

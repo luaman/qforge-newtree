@@ -50,24 +50,19 @@
 void        CL_FinishTimeDemo (void);
 
 /*
-==============================================================================
+	DEMO CODE
 
-DEMO CODE
+	When a demo is playing back, all NET_SendMessages are skipped, and
+	NET_GetMessages are read from the demo file.
 
-When a demo is playing back, all NET_SendMessages are skipped, and
-NET_GetMessages are read from the demo file.
-
-Whenever cl.time gets past the last received message, another message is
-read from the demo file.
-==============================================================================
+	Whenever cl.time gets past the last received message, another message is
+	read from the demo file.
 */
 
 /*
-==============
-CL_StopPlayback
+	CL_StopPlayback
 
-Called when a demo file runs out, or the user starts a game
-==============
+	Called when a demo file runs out, or the user starts a game
 */
 void
 CL_StopPlayback (void)
@@ -89,11 +84,9 @@ CL_StopPlayback (void)
 #define dem_set		2
 
 /*
-====================
-CL_WriteDemoCmd
+	CL_WriteDemoCmd
 
-Writes the current user cmd
-====================
+	Writes the current user cmd
 */
 void
 CL_WriteDemoCmd (usercmd_t *pcmd)
@@ -131,11 +124,9 @@ CL_WriteDemoCmd (usercmd_t *pcmd)
 }
 
 /*
-====================
-CL_WriteDemoMessage
+	CL_WriteDemoMessage
 
-Dumps the current net message, prefixed by the length and view angles
-====================
+	Dumps the current net message, prefixed by the length and view angles
 */
 void
 CL_WriteDemoMessage (sizebuf_t *msg)
@@ -163,11 +154,9 @@ CL_WriteDemoMessage (sizebuf_t *msg)
 }
 
 /*
-====================
-CL_GetDemoMessage
+	CL_GetDemoMessage
 
-  FIXME...
-====================
+	FIXME...
 */
 qboolean
 CL_GetDemoMessage (void)
@@ -287,11 +276,9 @@ CL_GetDemoMessage (void)
 }
 
 /*
-====================
-CL_GetMessage
+	CL_GetMessage
 
-Handles recording and playback of demos, on top of NET_ code
-====================
+	Handles recording and playback of demos, on top of NET_ code
 */
 qboolean
 CL_GetMessage (void)
@@ -309,11 +296,9 @@ CL_GetMessage (void)
 
 
 /*
-====================
-CL_Stop_f
+	CL_Stop_f
 
-stop recording a demo
-====================
+	stop recording a demo
 */
 void
 CL_Stop_f (void)
@@ -338,11 +323,9 @@ CL_Stop_f (void)
 
 
 /*
-====================
-CL_WriteDemoMessage
+	CL_WriteDemoMessage
 
-Dumps the current net message, prefixed by the length and view angles
-====================
+	Dumps the current net message, prefixed by the length and view angles
 */
 void
 CL_WriteRecordDemoMessage (sizebuf_t *msg, int seq)
@@ -406,11 +389,9 @@ CL_WriteSetDemoMessage (void)
 
 
 /*
-====================
-CL_Record_f
+	CL_Record_f
 
-record <demoname> <server>
-====================
+	record <demoname> <server>
 */
 void
 CL_Record_f (void)
@@ -694,11 +675,9 @@ CL_Record_f (void)
 }
 
 /*
-====================
-CL_ReRecord_f
+	CL_ReRecord_f
 
-record <demoname>
-====================
+	record <demoname>
 */
 void
 CL_ReRecord_f (void)
@@ -742,11 +721,9 @@ CL_ReRecord_f (void)
 
 
 /*
-====================
-CL_PlayDemo_f
+	CL_PlayDemo_f
 
-play [demoname]
-====================
+	play [demoname]
 */
 void
 CL_PlayDemo_f (void)
@@ -783,10 +760,7 @@ CL_PlayDemo_f (void)
 }
 
 /*
-====================
-CL_FinishTimeDemo
-
-====================
+	CL_FinishTimeDemo
 */
 void
 CL_FinishTimeDemo (void)
@@ -806,11 +780,9 @@ CL_FinishTimeDemo (void)
 }
 
 /*
-====================
-CL_TimeDemo_f
+	CL_TimeDemo_f
 
-timedemo [demoname]
-====================
+	timedemo [demoname]
 */
 void
 CL_TimeDemo_f (void)

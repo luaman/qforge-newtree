@@ -47,9 +47,7 @@ extern model_t *loadmodel;
 extern char loadname[];
 
 /*
-=================
-Mod_LoadSpriteFrame
-=================
+	Mod_LoadSpriteFrame
 */
 void       *
 Mod_LoadSpriteFrame (void *pin, mspriteframe_t **ppframe, int framenum)

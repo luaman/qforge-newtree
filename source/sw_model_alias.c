@@ -51,11 +51,7 @@ extern char loadname[];
 extern model_t *loadmodel;
 
 /*
-==============================================================================
-
-ALIAS MODELS
-
-==============================================================================
+	ALIAS MODELS
 */
 
 extern aliashdr_t *pheader;
@@ -96,9 +92,7 @@ Mod_LoadSkin (byte * skin, int skinsize, int *pskinindex, int snum, int gnum)
 }
 
 /*
-===============
-Mod_LoadAllSkins
-===============
+	Mod_LoadAllSkins
 */
 void *
 Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinindex)
@@ -198,9 +192,7 @@ GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr, void *_m, int _s)
 }
 
 /*
-=================
-Mod_LoadAliasFrame
-=================
+	Mod_LoadAliasFrame
 */
 void *
 Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
@@ -241,9 +233,7 @@ Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
 
 
 /*
-=================
-Mod_LoadAliasGroup
-=================
+	Mod_LoadAliasGroup
 */
 void *
 Mod_LoadAliasGroup (void *pin, maliasframedesc_t *frame)

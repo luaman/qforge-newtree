@@ -182,9 +182,7 @@ LONG WINAPI MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void        AppActivate (BOOL fActive, BOOL minimize);
 
 /*
-================
-VID_RememberWindowPos
-================
+	VID_RememberWindowPos
 */
 void
 VID_RememberWindowPos (void)
@@ -203,9 +201,7 @@ VID_RememberWindowPos (void)
 
 
 /*
-================
-VID_CheckWindowXY
-================
+	VID_CheckWindowXY
 */
 void
 VID_CheckWindowXY (void)
@@ -221,9 +217,7 @@ VID_CheckWindowXY (void)
 
 
 /*
-================
-VID_UpdateWindowStatus
-================
+	VID_UpdateWindowStatus
 */
 void
 VID_UpdateWindowStatus (void)
@@ -243,9 +237,7 @@ VID_UpdateWindowStatus (void)
 extern void CL_ClearStates ();
 
 /*
-================
-ClearAllStates
-================
+	ClearAllStates
 */
 void
 ClearAllStates (void)
@@ -257,9 +249,7 @@ ClearAllStates (void)
 
 
 /*
-================
-VID_CheckAdequateMem
-================
+	VID_CheckAdequateMem
 */
 qboolean
 VID_CheckAdequateMem (int width, int height)
@@ -731,9 +721,7 @@ VID_InitMGLDIB (HINSTANCE hInstance)
 
 
 /*
-=================
-VID_InitFullDIB
-=================
+	VID_InitFullDIB
 */
 void
 VID_InitFullDIB (HINSTANCE hInstance)
@@ -999,9 +987,7 @@ VID_InitFullDIB (HINSTANCE hInstance)
 
 
 /*
-=================
-VID_NumModes
-=================
+	VID_NumModes
 */
 int
 VID_NumModes (void)
@@ -1011,9 +997,7 @@ VID_NumModes (void)
 
 
 /*
-=================
-VID_GetModePtr
-=================
+	VID_GetModePtr
 */
 vmode_t    *
 VID_GetModePtr (int modenum)
@@ -1027,9 +1011,7 @@ VID_GetModePtr (int modenum)
 
 
 /*
-=================
-VID_CheckModedescFixup
-=================
+	VID_CheckModedescFixup
 */
 void
 VID_CheckModedescFixup (int mode)
@@ -1056,9 +1038,7 @@ VID_CheckModedescFixup (int mode)
 
 
 /*
-=================
-VID_GetModeDescriptionMemCheck
-=================
+	VID_GetModeDescriptionMemCheck
 */
 char       *
 VID_GetModeDescriptionMemCheck (int mode)
@@ -1083,9 +1063,7 @@ VID_GetModeDescriptionMemCheck (int mode)
 
 
 /*
-=================
-VID_GetModeDescription
-=================
+	VID_GetModeDescription
 */
 char       *
 VID_GetModeDescription (int mode)
@@ -1105,11 +1083,9 @@ VID_GetModeDescription (int mode)
 
 
 /*
-=================
-VID_GetModeDescription2
+	VID_GetModeDescription2
 
-Tacks on "windowed" or "fullscreen"
-=================
+	Tacks on "windowed" or "fullscreen"
 */
 char       *
 VID_GetModeDescription2 (int mode)
@@ -1843,9 +1819,7 @@ VID_ShiftPalette (unsigned char *palette)
 
 
 /*
-=================
-VID_DescribeCurrentMode_f
-=================
+	VID_DescribeCurrentMode_f
 */
 void
 VID_DescribeCurrentMode_f (void)
@@ -1855,9 +1829,7 @@ VID_DescribeCurrentMode_f (void)
 
 
 /*
-=================
-VID_NumModes_f
-=================
+	VID_NumModes_f
 */
 void
 VID_NumModes_f (void)
@@ -1871,9 +1843,7 @@ VID_NumModes_f (void)
 
 
 /*
-=================
-VID_DescribeMode_f
-=================
+	VID_DescribeMode_f
 */
 void
 VID_DescribeMode_f (void)
@@ -1887,9 +1857,7 @@ VID_DescribeMode_f (void)
 
 
 /*
-=================
-VID_DescribeModes_f
-=================
+	VID_DescribeModes_f
 */
 void
 VID_DescribeModes_f (void)
@@ -1922,9 +1890,7 @@ VID_DescribeModes_f (void)
 
 
 /*
-=================
-VID_TestMode_f
-=================
+	VID_TestMode_f
 */
 void
 VID_TestMode_f (void)
@@ -1946,9 +1912,7 @@ VID_TestMode_f (void)
 }
 
 /*
-=================
-VID_Windowed_f
-=================
+	VID_Windowed_f
 */
 void
 VID_Windowed_f (void)
@@ -1959,9 +1923,7 @@ VID_Windowed_f (void)
 
 
 /*
-=================
-VID_Fullscreen_f
-=================
+	VID_Fullscreen_f
 */
 void
 VID_Fullscreen_f (void)
@@ -1971,9 +1933,7 @@ VID_Fullscreen_f (void)
 }
 
 /*
-=================
-VID_Minimize_f
-=================
+	VID_Minimize_f
 */
 void
 VID_Minimize_f (void)
@@ -1988,9 +1948,7 @@ VID_Minimize_f (void)
 
 
 /*
-=================
-VID_ForceMode_f
-=================
+	VID_ForceMode_f
 */
 void
 VID_ForceMode_f (void)
@@ -2167,9 +2125,7 @@ VID_Shutdown (void)
 
 
 /*
-================
-FlipScreen
-================
+	FlipScreen
 */
 void
 FlipScreen (vrect_t *rects)
@@ -2337,9 +2293,7 @@ VID_Update (vrect_t *rects)
 
 
 /*
-================
-D_BeginDirectRect
-================
+	D_BeginDirectRect
 */
 void
 D_BeginDirectRect (int x, int y, byte * pbitmap, int width, int height)
@@ -2422,9 +2376,7 @@ D_BeginDirectRect (int x, int y, byte * pbitmap, int width, int height)
 
 
 /*
-================
-D_EndDirectRect
-================
+	D_EndDirectRect
 */
 void
 D_EndDirectRect (int x, int y, int width, int height)
@@ -2546,11 +2498,9 @@ byte        extscantokey[128] = {
 
 
 /*
-=======
-MapKey
+	MapKey
 
-Map from windows to quake keynums
-=======
+	Map from windows to quake keynums
 */
 int
 MapKey (int key)
@@ -2702,9 +2652,7 @@ AppActivate (BOOL fActive, BOOL minimize)
 
 
 /*
-================
-VID_HandlePause
-================
+	VID_HandlePause
 */
 void
 VID_HandlePause (qboolean pause)
@@ -2724,11 +2672,7 @@ VID_HandlePause (qboolean pause)
 
 
 /*
-===================================================================
-
-MAIN WINDOW
-
-===================================================================
+	MAIN WINDOW
 */
 
 LONG        CDAudio_MessageHandler (HWND hWnd, UINT uMsg, WPARAM wParam,
@@ -2990,9 +2934,7 @@ typedef struct {
 static modedesc_t modedescs[MAX_MODEDESCS];
 
 /*
-================
-VID_MenuDraw
-================
+	VID_MenuDraw
 */
 void
 VID_MenuDraw (void)
@@ -3150,9 +3092,7 @@ VID_MenuDraw (void)
 
 
 /*
-================
-VID_MenuKey
-================
+	VID_MenuKey
 */
 void
 VID_MenuKey (int key)

@@ -73,9 +73,7 @@ cvar_t     *sv_waterfriction;
 void        SV_Physics_Toss (edict_t *ent);
 
 /*
-================
-SV_CheckAllEnts
-================
+	SV_CheckAllEnts
 */
 void
 SV_CheckAllEnts (void)
@@ -98,9 +96,7 @@ SV_CheckAllEnts (void)
 }
 
 /*
-================
-SV_CheckVelocity
-================
+	SV_CheckVelocity
 */
 void
 SV_CheckVelocity (edict_t *ent)
@@ -134,14 +130,12 @@ SV_CheckVelocity (edict_t *ent)
 }
 
 /*
-=============
-SV_RunThink
+	SV_RunThink
 
-Runs thinking code if time.  There is some play in the exact time the think
-function will be called, because it is called before any movement is done
-in a frame.  Not used for pushmove objects, because they must be exact.
-Returns false if the entity removed itself.
-=============
+	Runs thinking code if time.  There is some play in the exact time the think
+	function will be called, because it is called before any movement is done
+	in a frame.  Not used for pushmove objects, because they must be exact.
+	Returns false if the entity removed itself.
  */
 qboolean
 SV_RunThink (edict_t *ent)
@@ -173,11 +167,9 @@ SV_RunThink (edict_t *ent)
 }
 
 /*
-==================
-SV_Impact
+	SV_Impact
 
-Two entities have touched, so run their touch functions
-==================
+	Two entities have touched, so run their touch functions
  */
 void
 SV_Impact (edict_t *e1, edict_t *e2)
@@ -206,12 +198,10 @@ SV_Impact (edict_t *e1, edict_t *e2)
 
 
 /*
-==================
-ClipVelocity
+	ClipVelocity
 
-Slide off of the impacting object
-returns the blocked flags (1 = floor, 2 = step / wall)
-==================
+	Slide off of the impacting object
+	returns the blocked flags (1 = floor, 2 = step / wall)
  */
 int
 ClipVelocity (vec3_t in, vec3_t normal, vec3_t out, float overbounce)
@@ -240,16 +230,14 @@ ClipVelocity (vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 
 
 /*
-============
-SV_FlyMove
+	SV_FlyMove
 
-The basic solid body movement clip that slides along multiple planes
-Returns the clipflags if the velocity was modified (hit something solid)
-1 = floor
-2 = wall / step
-4 = dead stop
-If steptrace is not NULL, the trace of any vertical wall hit will be stored
-============
+	The basic solid body movement clip that slides along multiple planes
+	Returns the clipflags if the velocity was modified (hit something solid)
+	1 = floor
+	2 = wall / step
+	4 = dead stop
+	If steptrace is not NULL, the trace of any vertical wall hit will be stored
 */
 #define	MAX_CLIP_PLANES	5
 int
@@ -374,10 +362,7 @@ SV_FlyMove (edict_t *ent, float time, trace_t *steptrace)
 
 
 /*
-============
-SV_AddGravity
-
-============
+	SV_AddGravity
 */
 void
 SV_AddGravity (edict_t *ent, float scale)
@@ -386,19 +371,13 @@ SV_AddGravity (edict_t *ent, float scale)
 }
 
 /*
-===============================================================================
-
-PUSHMOVE
-
-===============================================================================
+	PUSHMOVE
 */
 
 /*
-============
-SV_PushEntity
+	SV_PushEntity
 
-Does not change the entities velocity at all
-============
+	Does not change the entities velocity at all
 */
 trace_t
 SV_PushEntity (edict_t *ent, vec3_t push)
@@ -433,10 +412,7 @@ SV_PushEntity (edict_t *ent, vec3_t push)
 
 
 /*
-============
-SV_Push
-
-============
+	SV_Push
 */
 qboolean
 SV_Push (edict_t *pusher, vec3_t move)
@@ -553,10 +529,7 @@ SV_Push (edict_t *pusher, vec3_t move)
 }
 
 /*
-============
-SV_PushMove
-
-============
+	SV_PushMove
 */
 void
 SV_PushMove (edict_t *pusher, float movetime)
@@ -579,10 +552,7 @@ SV_PushMove (edict_t *pusher, float movetime)
 
 
 /*
-================
-SV_Physics_Pusher
-
-================
+	SV_Physics_Pusher
 */
 void
 SV_Physics_Pusher (edict_t *ent)
@@ -630,11 +600,9 @@ SV_Physics_Pusher (edict_t *ent)
 
 
 /*
-=============
-SV_Physics_None
+	SV_Physics_None
 
-Non moving objects can only think
-=============
+	Non moving objects can only think
 */
 void
 SV_Physics_None (edict_t *ent)
@@ -645,11 +613,9 @@ SV_Physics_None (edict_t *ent)
 }
 
 /*
-=============
-SV_Physics_Noclip
+	SV_Physics_Noclip
 
-A moving object that doesn't obey physics
-=============
+	A moving object that doesn't obey physics
 */
 void
 SV_Physics_Noclip (edict_t *ent)
@@ -665,18 +631,11 @@ SV_Physics_Noclip (edict_t *ent)
 }
 
 /*
-==============================================================================
-
-TOSS / BOUNCE
-
-==============================================================================
+	TOSS / BOUNCE
 */
 
 /*
-=============
-SV_CheckWaterTransition
-
-=============
+	SV_CheckWaterTransition
 */
 void
 SV_CheckWaterTransition (edict_t *ent)
@@ -708,11 +667,9 @@ SV_CheckWaterTransition (edict_t *ent)
 }
 
 /*
-=============
-SV_Physics_Toss
+	SV_Physics_Toss
 
-Toss, bounce, and fly movement.  When onground, do nothing.
-=============
+	Toss, bounce, and fly movement.  When onground, do nothing.
 */
 void
 SV_Physics_Toss (edict_t *ent)
@@ -771,24 +728,18 @@ SV_Physics_Toss (edict_t *ent)
 }
 
 /*
-===============================================================================
-
-STEPPING MOVEMENT
-
-===============================================================================
+	STEPPING MOVEMENT
 */
 
 /*
-=============
-SV_Physics_Step
+	SV_Physics_Step
 
-Monsters freefall when they don't have a ground entity, otherwise
-all movement is done with discrete steps.
+	Monsters freefall when they don't have a ground entity, otherwise
+	all movement is done with discrete steps.
 
-This is also used for objects that have become still on the ground, but
-will fall if the floor is pulled out from under them.
-FIXME: is this true?
-=============
+	This is also used for objects that have become still on the ground, but
+	will fall if the floor is pulled out from under them.
+	FIXME: is this true?
 */
 void
 SV_Physics_Step (edict_t *ent)
@@ -936,10 +887,7 @@ SV_ProgStartFrame (void)
 }
 
 /*
-================
-SV_RunEntity
-
-================
+	SV_RunEntity
 */
 void
 SV_RunEntity (edict_t *ent)
@@ -976,10 +924,7 @@ SV_RunEntity (edict_t *ent)
 }
 
 /*
-================
-SV_RunNewmis
-
-================
+	SV_RunNewmis
 */
 void
 SV_RunNewmis (void)
@@ -996,10 +941,7 @@ SV_RunNewmis (void)
 }
 
 /*
-================
-SV_Physics
-
-================
+	SV_Physics
 */
 void
 SV_Physics (void)

@@ -68,9 +68,7 @@ static int  mouse_oldbuttonstate = 0;
 extern viddef_t vid;					// global video state
 
 /*
-================
-IN_SendKeyEvents
-================
+	IN_SendKeyEvents
 */
 
 void

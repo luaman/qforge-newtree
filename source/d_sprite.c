@@ -39,9 +39,7 @@ static sspan_t *sprite_spans;
 #ifndef USE_INTEL_ASM
 
 /*
-=====================
-D_SpriteDrawSpans
-=====================
+	D_SpriteDrawSpans
 */
 void
 D_SpriteDrawSpans (sspan_t *pspan)
@@ -200,9 +198,7 @@ D_SpriteDrawSpans (sspan_t *pspan)
 
 
 /*
-=====================
-D_SpriteScanLeftEdge
-=====================
+	D_SpriteScanLeftEdge
 */
 void
 D_SpriteScanLeftEdge (void)
@@ -260,9 +256,7 @@ D_SpriteScanLeftEdge (void)
 
 
 /*
-=====================
-D_SpriteScanRightEdge
-=====================
+	D_SpriteScanRightEdge
 */
 void
 D_SpriteScanRightEdge (void)
@@ -340,9 +334,7 @@ D_SpriteScanRightEdge (void)
 
 
 /*
-=====================
-D_SpriteCalculateGradients
-=====================
+	D_SpriteCalculateGradients
 */
 void
 D_SpriteCalculateGradients (void)
@@ -387,9 +379,7 @@ D_SpriteCalculateGradients (void)
 
 
 /*
-=====================
-D_DrawSprite
-=====================
+	D_DrawSprite
 */
 void
 D_DrawSprite (void)

@@ -129,9 +129,7 @@ void        D_PolysetScanLeftEdge (int height);
 #ifndef USE_INTEL_ASM
 
 /*
-================
-D_PolysetDraw
-================
+	D_PolysetDraw
 */
 void
 D_PolysetDraw (void)
@@ -153,9 +151,7 @@ D_PolysetDraw (void)
 
 
 /*
-================
-D_PolysetDrawFinalVerts
-================
+	D_PolysetDrawFinalVerts
 */
 void
 D_PolysetDrawFinalVerts (finalvert_t *fv, int numverts)
@@ -184,9 +180,7 @@ D_PolysetDrawFinalVerts (finalvert_t *fv, int numverts)
 
 
 /*
-================
-D_DrawSubdiv
-================
+	D_DrawSubdiv
 */
 void
 D_DrawSubdiv (void)
@@ -241,9 +235,7 @@ D_DrawSubdiv (void)
 
 
 /*
-================
-D_DrawNonSubdiv
-================
+	D_DrawNonSubdiv
 */
 void
 D_DrawNonSubdiv (void)
@@ -307,9 +299,7 @@ D_DrawNonSubdiv (void)
 
 
 /*
-================
-D_PolysetRecursiveTriangle
-================
+	D_PolysetRecursiveTriangle
 */
 void
 D_PolysetRecursiveTriangle (int *lp1, int *lp2, int *lp3)
@@ -391,9 +381,7 @@ D_PolysetRecursiveTriangle (int *lp1, int *lp2, int *lp3)
 
 
 /*
-================
-D_PolysetUpdateTables
-================
+	D_PolysetUpdateTables
 */
 void
 D_PolysetUpdateTables (void)
@@ -415,9 +403,7 @@ D_PolysetUpdateTables (void)
 #ifndef USE_INTEL_ASM
 
 /*
-===================
-D_PolysetScanLeftEdge
-====================
+	D_PolysetScanLeftEdge
 */
 void
 D_PolysetScanLeftEdge (int height)
@@ -479,9 +465,7 @@ D_PolysetScanLeftEdge (int height)
 
 
 /*
-===================
-D_PolysetSetUpForLineScan
-====================
+	D_PolysetSetUpForLineScan
 */
 void
 D_PolysetSetUpForLineScan (fixed8_t startvertu, fixed8_t startvertv,
@@ -517,9 +501,7 @@ D_PolysetSetUpForLineScan (fixed8_t startvertu, fixed8_t startvertv,
 #ifndef USE_INTEL_ASM
 
 /*
-================
-D_PolysetCalcGradients
-================
+	D_PolysetCalcGradients
 */
 void
 D_PolysetCalcGradients (int skinwidth)
@@ -601,9 +583,7 @@ InitGel (byte * palette)
 #ifndef USE_INTEL_ASM
 
 /*
-================
-D_PolysetDrawSpans8
-================
+	D_PolysetDrawSpans8
 */
 void
 D_PolysetDrawSpans8 (spanpackage_t * pspanpackage)
@@ -665,9 +645,7 @@ D_PolysetDrawSpans8 (spanpackage_t * pspanpackage)
 
 
 /*
-================
-D_PolysetFillSpans8
-================
+	D_PolysetFillSpans8
 */
 void
 D_PolysetFillSpans8 (spanpackage_t * pspanpackage)
@@ -700,9 +678,7 @@ D_PolysetFillSpans8 (spanpackage_t * pspanpackage)
 }
 
 /*
-================
-D_RasterizeAliasPolySmooth
-================
+	D_RasterizeAliasPolySmooth
 */
 void
 D_RasterizeAliasPolySmooth (void)
@@ -913,9 +889,7 @@ D_RasterizeAliasPolySmooth (void)
 
 
 /*
-================
-D_PolysetSetEdgeTable
-================
+	D_PolysetSetEdgeTable
 */
 void
 D_PolysetSetEdgeTable (void)

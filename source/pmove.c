@@ -89,12 +89,10 @@ Pmove_Init_Cvars (void)
 
 
 /*
-==================
-PM_ClipVelocity
+	PM_ClipVelocity
 
-Slide off of the impacting object
-returns the blocked flags (1 = floor, 2 = step / wall)
-==================
+	Slide off of the impacting object
+	returns the blocked flags (1 = floor, 2 = step / wall)
 */
 
 int
@@ -124,11 +122,9 @@ PM_ClipVelocity (vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 
 
 /*
-============
-PM_FlyMove
+	PM_FlyMove
 
-The basic solid body movement clip that slides along multiple planes
-============
+	The basic solid body movement clip that slides along multiple planes
 */
 #define	MAX_CLIP_PLANES	5
 
@@ -288,11 +284,9 @@ PM_FlymodeMove (void)
 
 
 /*
-=============
-PM_GroundMove
+	PM_GroundMove
 
-Player is on ground, with no upwards velocity
-=============
+	Player is on ground, with no upwards velocity
 */
 void
 PM_GroundMove (void)
@@ -373,11 +367,9 @@ PM_GroundMove (void)
 
 
 /*
-==================
-PM_Friction
+	PM_Friction
 
-Handles both ground friction and water friction
-==================
+	Handles both ground friction and water friction
 */
 void
 PM_Friction (void)
@@ -439,9 +431,7 @@ PM_Friction (void)
 
 
 /*
-==============
-PM_Accelerate
-==============
+	PM_Accelerate
 */
 void
 PM_Accelerate (vec3_t wishdir, float wishspeed, float accel)
@@ -494,10 +484,7 @@ PM_AirAccelerate (vec3_t wishdir, float wishspeed, float accel)
 
 
 /*
-===================
-PM_WaterMove
-
-===================
+	PM_WaterMove
 */
 void
 PM_WaterMove (void)
@@ -555,10 +542,7 @@ PM_WaterMove (void)
 
 
 /*
-===================
-PM_AirMove
-
-===================
+	PM_AirMove
 */
 void
 PM_AirMove (void)
@@ -641,9 +625,7 @@ PM_AirMove (void)
 
 
 /*
-=============
-PM_CategorizePosition
-=============
+	PM_CategorizePosition
 */
 void
 PM_CategorizePosition (void)
@@ -752,9 +734,7 @@ JumpButton (void)
 }
 
 /*
-=============
-CheckWaterJump
-=============
+	CheckWaterJump
 */
 void
 CheckWaterJump (void)
@@ -793,13 +773,11 @@ CheckWaterJump (void)
 }
 
 /*
-=================
-NudgePosition
+	NudgePosition
 
-If pmove.origin is in a solid position,
-try nudging slightly on all axis to
-allow for the cut precision of the net coordinates
-=================
+	If pmove.origin is in a solid position,
+	try nudging slightly on all axis to
+	allow for the cut precision of the net coordinates
 */
 void
 NudgePosition (void)
@@ -836,9 +814,7 @@ NudgePosition (void)
 }
 
 /*
-===============
-SpectatorMove
-===============
+	SpectatorMove
 */
 void
 SpectatorMove (void)
@@ -911,14 +887,12 @@ SpectatorMove (void)
 }
 
 /*
-=============
-PlayerMove
+	PlayerMove
 
-Returns with origin, angles, and velocity modified in place.
+	Returns with origin, angles, and velocity modified in place.
 
-Numtouch and touchindex[] will be set if any of the physents
-were contacted during the move.
-=============
+	Numtouch and touchindex[] will be set if any of the physents
+	were contacted during the move.
 */
 void
 PlayerMove (void)

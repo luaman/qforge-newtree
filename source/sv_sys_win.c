@@ -50,9 +50,7 @@ extern cvar_t *sys_nostdout;
 cvar_t     *sys_sleep;
 
 /*
-================
-Sys_FileTime
-================
+	Sys_FileTime
 */
 int
 Sys_FileTime (char *path)
@@ -70,9 +68,7 @@ Sys_FileTime (char *path)
 
 
 /*
-================
-Sys_Error
-================
+	Sys_Error
 */
 void
 Sys_Error (char *error, ...)
@@ -92,9 +88,7 @@ Sys_Error (char *error, ...)
 
 
 /*
-================
-Sys_ConsoleInput
-================
+	Sys_ConsoleInput
 */
 char       *
 Sys_ConsoleInput (void)
@@ -133,9 +127,7 @@ Sys_ConsoleInput (void)
 }
 
 /*
-================
-Sys_Quit
-================
+	Sys_Quit
 */
 void
 Sys_Quit (void)
@@ -147,12 +139,10 @@ Sys_Quit (void)
 }
 
 /*
-=============
-Sys_Init
+	Sys_Init
 
-Quake calls this so the system can register variables before host_hunklevel
-is marked
-=============
+	Quake calls this so the system can register variables before host_hunklevel
+	is marked
 */
 
 void
@@ -192,10 +182,7 @@ Sys_Init (void)
 }
 
 /*
-==================
-main
-
-==================
+	main
 */
 char       *newargv[256];
 

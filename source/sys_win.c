@@ -76,9 +76,7 @@ static char qfont_table[256] = {
 };
 
 /*
-==============
-Sys_DoubleTime
-==============
+	Sys_DoubleTime
 */
 double
 Sys_DoubleTime (void)
@@ -106,9 +104,7 @@ Sys_DoubleTime (void)
 
 #define MAXPRINTMSG 4096
 /*
-================
-Sys_Printf
-================
+	Sys_Printf
 */
 void
 Sys_Printf (char *fmt, ...)
@@ -133,9 +129,7 @@ Sys_Printf (char *fmt, ...)
 }
 
 /*
-================
-Sys_mkdir
-================
+	Sys_mkdir
 */
 void
 Sys_mkdir (char *path)

@@ -58,9 +58,7 @@ vec3_t      r_pright, r_pup, r_ppn;
 cvar_t      *r_particles;
 
 /*
-===============
-R_InitParticles
-===============
+	R_InitParticles
 */
 void
 R_InitParticles (void)
@@ -83,9 +81,7 @@ R_InitParticles (void)
 
 
 /*
-===============
-R_ClearParticles
-===============
+	R_ClearParticles
 */
 void
 R_ClearParticles (void)
@@ -189,10 +185,7 @@ R_RunPuffEffect (vec3_t pos, byte type, byte cnt)
 }
 
 /*
-===============
-R_ParticleExplosion
-
-===============
+	R_ParticleExplosion
 */
 void
 R_ParticleExplosion (vec3_t org)
@@ -231,10 +224,7 @@ R_ParticleExplosion (vec3_t org)
 }
 
 /*
-===============
-R_BlobExplosion
-
-===============
+	R_BlobExplosion
 */
 void
 R_BlobExplosion (vec3_t org)
@@ -274,10 +264,7 @@ R_BlobExplosion (vec3_t org)
 }
 
 /*
-===============
-R_RunParticleEffect
-
-===============
+	R_RunParticleEffect
 */
 void
 R_RunParticleEffect (vec3_t org, int color, int count)
@@ -316,10 +303,7 @@ R_RunParticleEffect (vec3_t org, int color, int count)
 
 
 /*
-===============
-R_LavaSplash
-
-===============
+	R_LavaSplash
 */
 void
 R_LavaSplash (vec3_t org)
@@ -361,10 +345,7 @@ R_LavaSplash (vec3_t org)
 }
 
 /*
-===============
-R_TeleportSplash
-
-===============
+	R_TeleportSplash
 */
 void
 R_TeleportSplash (vec3_t org)
@@ -489,9 +470,7 @@ R_RocketTrail (int type, entity_t *ent)
 
 
 /*
-===============
-R_DrawParticles
-===============
+	R_DrawParticles
 */
 void
 R_DrawParticles (void)

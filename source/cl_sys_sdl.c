@@ -91,11 +91,7 @@ Sys_DebugLog (char *file, char *fmt, ...)
 };
 
 /*
-===============================================================================
-
-FILE IO
-
-===============================================================================
+	FILE IO
 */
 
 int
@@ -118,17 +114,11 @@ Sys_FileTime (char *path)
 
 
 /*
-===============================================================================
-
-SYSTEM IO
-
-===============================================================================
+	SYSTEM IO
 */
 
 /*
-================
-Sys_MakeCodeWriteable
-================
+	Sys_MakeCodeWriteable
 */
 void
 Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
@@ -160,9 +150,7 @@ Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
 
 
 /*
-================
-Sys_Init
-================
+	Sys_Init
 */
 void
 Sys_Init (void)

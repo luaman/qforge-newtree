@@ -145,13 +145,11 @@ SubdividePolygon (int numverts, float *verts)
 }
 
 /*
-================
-GL_SubdivideSurface
+	GL_SubdivideSurface
 
-Breaks a polygon up along axial 64 unit
-boundaries so that turbulent and sky warps
-can be done reasonably.
-================
+	Breaks a polygon up along axial 64 unit
+	boundaries so that turbulent and sky warps
+	can be done reasonably.
 */
 void
 GL_SubdivideSurface (msurface_t *fa)
@@ -194,11 +192,9 @@ float       turbsin[] = {
 #define TURBSCALE (256.0 / (2 * M_PI))
 
 /*
-=============
-EmitWaterPolys
+	EmitWaterPolys
 
-Does a water warp on the pre-fragmented glpoly_t chain
-=============
+	Does a water warp on the pre-fragmented glpoly_t chain
 */
 void
 EmitWaterPolys (msurface_t *fa)

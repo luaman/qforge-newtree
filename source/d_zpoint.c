@@ -34,9 +34,7 @@
 
 
 /*
-=====================
-D_DrawZPoint
-=====================
+	D_DrawZPoint
 */
 void
 D_DrawZPoint (void)

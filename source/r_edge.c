@@ -92,9 +92,7 @@ R_TrailingEdge (surf_t *surf, edge_t *edge);
 
 
 /*
-==============
-R_DrawCulledPolys
-==============
+	R_DrawCulledPolys
 */
 void
 R_DrawCulledPolys (void)
@@ -129,9 +127,7 @@ R_DrawCulledPolys (void)
 
 
 /*
-==============
-R_BeginEdgeFrame
-==============
+	R_BeginEdgeFrame
 */
 void
 R_BeginEdgeFrame (void)
@@ -167,14 +163,13 @@ R_BeginEdgeFrame (void)
 #ifndef USE_INTEL_ASM
 
 /*
-==============
-R_InsertNewEdges
+	R_InsertNewEdges
 
-Adds the edges in the linked list edgestoadd, adding them to the edges in the
-linked list edgelist.  edgestoadd is assumed to be sorted on u, and non-empty (this is actually newedges[v]).  edgelist is assumed to be sorted on u, with a
-sentinel at the end (actually, this is the active edge table starting at
-edge_head.next).
-==============
+	Adds the edges in the linked list edgestoadd, adding them to the edges
+	in the linked list edgelist.  edgestoadd is assumed to be sorted on u,
+	and non-empty (this is actually newedges[v]).  edgelist is assumed to
+	be sorted on u, with a sentinel at the end (actually, this is the
+	active edge table starting at edge_head.next).
 */
 void
 R_InsertNewEdges (edge_t *edgestoadd, edge_t *edgelist)
@@ -213,9 +208,7 @@ R_InsertNewEdges (edge_t *edgestoadd, edge_t *edgelist)
 #ifndef USE_INTEL_ASM
 
 /*
-==============
-R_RemoveEdges
-==============
+	R_RemoveEdges
 */
 void
 R_RemoveEdges (edge_t *pedge)
@@ -233,9 +226,7 @@ R_RemoveEdges (edge_t *pedge)
 #ifndef USE_INTEL_ASM
 
 /*
-==============
-R_StepActiveU
-==============
+	R_StepActiveU
 */
 void
 R_StepActiveU (edge_t *pedge)
@@ -300,9 +291,7 @@ R_StepActiveU (edge_t *pedge)
 
 
 /*
-==============
-R_CleanupSpan
-==============
+	R_CleanupSpan
 */
 void
 R_CleanupSpan (void)
@@ -332,9 +321,7 @@ R_CleanupSpan (void)
 
 
 /*
-==============
-R_LeadingEdgeBackwards
-==============
+	R_LeadingEdgeBackwards
 */
 void
 R_LeadingEdgeBackwards (edge_t *edge)
@@ -409,9 +396,7 @@ R_LeadingEdgeBackwards (edge_t *edge)
 
 
 /*
-==============
-R_TrailingEdge
-==============
+	R_TrailingEdge
 */
 void
 R_TrailingEdge (surf_t *surf, edge_t *edge)
@@ -450,9 +435,7 @@ R_TrailingEdge (surf_t *surf, edge_t *edge)
 #ifndef USE_INTEL_ASM
 
 /*
-==============
-R_LeadingEdge
-==============
+	R_LeadingEdge
 */
 void
 R_LeadingEdge (edge_t *edge)
@@ -567,9 +550,7 @@ R_LeadingEdge (edge_t *edge)
 
 
 /*
-==============
-R_GenerateSpans
-==============
+	R_GenerateSpans
 */
 void
 R_GenerateSpans (void)
@@ -606,9 +587,7 @@ R_GenerateSpans (void)
 
 
 /*
-==============
-R_GenerateSpansBackward
-==============
+	R_GenerateSpansBackward
 */
 void
 R_GenerateSpansBackward (void)
@@ -635,16 +614,14 @@ R_GenerateSpansBackward (void)
 
 
 /*
-==============
-R_ScanEdges
+	R_ScanEdges
 
-Input: 
-newedges[] array
-	this has links to edges, which have links to surfaces
+	Input: 
+	newedges[] array
+		this has links to edges, which have links to surfaces
 
-Output:
-Each surface has a linked list of its visible spans
-==============
+	Output:
+	Each surface has a linked list of its visible spans
 */
 void
 R_ScanEdges (void)

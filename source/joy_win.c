@@ -400,9 +400,7 @@ JOY_Shutdown (void)
 }
 
 /*
-===========
-Joy_AdvancedUpdate_f
-===========
+	Joy_AdvancedUpdate_f
 */
 void
 JOY_AdvancedUpdate_f (void)
@@ -465,9 +463,7 @@ JOY_AdvancedUpdate_f (void)
 
 
 /* 
-=============== 
-IN_StartupJoystick 
-=============== 
+	IN_StartupJoystick 
 */
 void
 JOY_StartupJoystick (void)
@@ -531,9 +527,7 @@ JOY_StartupJoystick (void)
 }
 
 /*
-===========
-RawValuePointer
-===========
+	RawValuePointer
 */
 PDWORD
 RawValuePointer (int axis)

@@ -73,9 +73,7 @@ static qboolean makeclippededge;
 //===========================================================================
 
 /*
-================
-R_EntityRotate
-================
+	R_EntityRotate
 */
 void
 R_EntityRotate (vec3_t vec)
@@ -90,9 +88,7 @@ R_EntityRotate (vec3_t vec)
 
 
 /*
-================
-R_RotateBmodel
-================
+	R_RotateBmodel
 */
 void
 R_RotateBmodel (void)
@@ -170,9 +166,7 @@ R_RotateBmodel (void)
 
 
 /*
-================
-R_RecursiveClipBPoly
-================
+	R_RecursiveClipBPoly
 */
 void
 R_RecursiveClipBPoly (bedge_t *pedges, mnode_t *pnode, msurface_t *psurf)
@@ -322,9 +316,7 @@ R_RecursiveClipBPoly (bedge_t *pedges, mnode_t *pnode, msurface_t *psurf)
 
 
 /*
-================
-R_DrawSolidClippedSubmodelPolygons
-================
+	R_DrawSolidClippedSubmodelPolygons
 */
 void
 R_DrawSolidClippedSubmodelPolygons (model_t *pmodel)
@@ -397,9 +389,7 @@ R_DrawSolidClippedSubmodelPolygons (model_t *pmodel)
 
 
 /*
-================
-R_DrawSubmodelPolygons
-================
+	R_DrawSubmodelPolygons
 */
 void
 R_DrawSubmodelPolygons (model_t *pmodel, int clipflags)
@@ -434,9 +424,7 @@ R_DrawSubmodelPolygons (model_t *pmodel, int clipflags)
 
 
 /*
-================
-R_RecursiveWorldNode
-================
+	R_RecursiveWorldNode
 */
 void
 R_RecursiveWorldNode (mnode_t *node, int clipflags)
@@ -602,9 +590,7 @@ R_RecursiveWorldNode (mnode_t *node, int clipflags)
 
 
 /*
-================
-R_RenderWorld
-================
+	R_RenderWorld
 */
 void
 R_RenderWorld (void)

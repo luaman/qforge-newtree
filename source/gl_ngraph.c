@@ -110,9 +110,7 @@ Draw_CharToNetGraph (int x, int y, int num)
 
 
 /*
-==============
-R_NetGraph
-==============
+	R_NetGraph
 */
 void
 R_NetGraph (void)

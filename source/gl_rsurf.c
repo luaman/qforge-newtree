@@ -125,11 +125,9 @@ int         dlightdivtable[8192];
 int         dlightdivtableinitialized = 0;
 
 /*
-===============
-R_AddDynamicLights
+	R_AddDynamicLights
 
-NOTE! LordHavoc was here, and it shows... (Mercury)
-===============
+	NOTE! LordHavoc was here, and it shows... (Mercury)
 */
 void
 R_AddDynamicLights (msurface_t *surf)
@@ -333,11 +331,9 @@ R_BuildLightMap (msurface_t *surf, byte * dest, int stride)
 }
 
 /*
-===============
-R_TextureAnimation
+	R_TextureAnimation
 
-Returns the proper texture for a given time and base texture
-===============
+	Returns the proper texture for a given time and base texture
 */
 texture_t  *
 R_TextureAnimation (texture_t *base)
@@ -369,11 +365,7 @@ R_TextureAnimation (texture_t *base)
 
 
 /*
-=============================================================
-
 	BRUSH MODELS
-
-=============================================================
 */
 
 
@@ -393,12 +385,10 @@ GL_UploadLightmap (int i, int x, int y, int w, int h)
 }
 
 /*
-================
-R_DrawSequentialPoly
+	R_DrawSequentialPoly
 
-Systems that have fast state and texture changes can
-just do everything as it passes with no need to sort
-================
+	Systems that have fast state and texture changes can
+	just do everything as it passes with no need to sort
 */
 void
 R_DrawMultitexturePoly (msurface_t *s)
@@ -466,9 +456,7 @@ R_DrawMultitexturePoly (msurface_t *s)
 }
 
 /*
-================
-R_BlendLightmaps
-================
+	R_BlendLightmaps
 */
 void
 R_BlendLightmaps (void)
@@ -542,9 +530,7 @@ R_RenderFullbrights (void)
 }
 
 /*
-================
-R_RenderBrushPoly
-================
+	R_RenderBrushPoly
 */
 void
 R_RenderBrushPoly (msurface_t *fa)
@@ -639,9 +625,7 @@ GL_WaterSurface (msurface_t *s)
 }
 
 /*
-================
-R_DrawWaterSurfaces
-================
+	R_DrawWaterSurfaces
 */
 void
 R_DrawWaterSurfaces (void)
@@ -684,9 +668,7 @@ R_DrawWaterSurfaces (void)
 
 
 /*
-================
-DrawTextureChains
-================
+	DrawTextureChains
 */
 void
 DrawTextureChains (void)
@@ -709,9 +691,7 @@ DrawTextureChains (void)
 }
 
 /*
-=================
-R_DrawBrushModel
-=================
+	R_DrawBrushModel
 */
 void
 R_DrawBrushModel (entity_t *e)
@@ -821,17 +801,11 @@ R_DrawBrushModel (entity_t *e)
 }
 
 /*
-=============================================================
-
 	WORLD MODEL
-
-=============================================================
 */
 
 /*
-================
-R_RecursiveWorldNode
-================
+	R_RecursiveWorldNode
 */
 void
 R_RecursiveWorldNode (mnode_t *node)
@@ -942,9 +916,7 @@ R_RecursiveWorldNode (mnode_t *node)
 
 
 /*
-=============
-R_DrawWorld
-=============
+	R_DrawWorld
 */
 void
 R_DrawWorld (void)
@@ -983,9 +955,7 @@ R_DrawWorld (void)
 
 
 /*
-===============
-R_MarkLeaves
-===============
+	R_MarkLeaves
 */
 void
 R_MarkLeaves (void)
@@ -1023,11 +993,7 @@ R_MarkLeaves (void)
 
 
 /*
-=============================================================================
-
-  LIGHTMAP ALLOCATION
-
-=============================================================================
+	LIGHTMAP ALLOCATION
 */
 
 // returns a texture number and the position inside it
@@ -1081,9 +1047,7 @@ model_t    *currentmodel;
 int         nColinElim;
 
 /*
-================
-BuildSurfaceDisplayList
-================
+	BuildSurfaceDisplayList
 */
 void
 BuildSurfaceDisplayList (msurface_t *fa)
@@ -1184,9 +1148,7 @@ BuildSurfaceDisplayList (msurface_t *fa)
 }
 
 /*
-========================
-GL_CreateSurfaceLightmap
-========================
+	GL_CreateSurfaceLightmap
 */
 void
 GL_CreateSurfaceLightmap (msurface_t *surf)
@@ -1207,12 +1169,10 @@ GL_CreateSurfaceLightmap (msurface_t *surf)
 
 
 /*
-==================
-GL_BuildLightmaps
+	GL_BuildLightmaps
 
-Builds the lightmap texture
-with all the surfaces from all brush models
-==================
+	Builds the lightmap texture
+	with all the surfaces from all brush models
 */
 void
 GL_BuildLightmaps (void)

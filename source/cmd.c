@@ -72,13 +72,11 @@ hashtab_t  *cmd_hash;
 //=============================================================================
 
 /*
-============
-Cmd_Wait_f
+	Cmd_Wait_f
 
-Causes execution of the remainder of the command buffer to be delayed until
-next frame.  This allows commands like:
-bind g "impulse 5 ; +attack ; wait ; -attack ; impulse 2"
-============
+	Causes execution of the remainder of the command buffer to be delayed until
+	next frame.  This allows commands like:
+	bind g "impulse 5 ; +attack ; wait ; -attack ; impulse 2"
 */
 void
 Cmd_Wait_f (void)
@@ -87,20 +85,14 @@ Cmd_Wait_f (void)
 }
 
 /*
-=============================================================================
-
 						COMMAND BUFFER
-
-=============================================================================
 */
 
 sizebuf_t   cmd_text;
 byte        cmd_text_buf[8192];
 
 /*
-============
-Cbuf_Init
-============
+	Cbuf_Init
 */
 void
 Cbuf_Init (void)
@@ -110,11 +102,9 @@ Cbuf_Init (void)
 }
 
 /*
-============
-Cbuf_AddText
+	Cbuf_AddText
 
-Adds command text at the end of the buffer
-============
+	Adds command text at the end of the buffer
 */
 void
 Cbuf_AddText (char *text)
@@ -132,13 +122,11 @@ Cbuf_AddText (char *text)
 
 
 /*
-============
-Cbuf_InsertText
+	Cbuf_InsertText
 
-Adds command text immediately after the current command
-Adds a \n to the text
-TODO: Can we just read the buffer in the reverse order?
-============
+	Adds command text immediately after the current command
+	Adds a \n to the text
+	TODO: Can we just read the buffer in the reverse order?
 */
 void
 Cbuf_InsertText (char *text)
@@ -253,22 +241,16 @@ Cbuf_Execute_Sets (void)
 }
 
 /*
-==============================================================================
-
 						SCRIPT COMMANDS
-
-==============================================================================
 */
 
 /*
-===============
-Cmd_StuffCmds_f
+	Cmd_StuffCmds_f
 
-Adds command line parameters as script statements
-Commands lead with a +, and continue until a - or another +
-quake +prog jctest.qp +cmd amlev1
-quake -nosound +cmd amlev1
-===============
+	Adds command line parameters as script statements
+	Commands lead with a +, and continue until a - or another +
+	quake +prog jctest.qp +cmd amlev1
+	quake -nosound +cmd amlev1
 */
 void
 Cmd_StuffCmds_f (void)
@@ -343,9 +325,7 @@ Cmd_Exec_File (char *path)
 }
 
 /*
-===============
-Cmd_Exec_f
-===============
+	Cmd_Exec_f
 */
 void
 Cmd_Exec_f (void)
@@ -374,11 +354,9 @@ Cmd_Exec_f (void)
 
 
 /*
-===============
-Cmd_Echo_f
+	Cmd_Echo_f
 
-Just prints the rest of the line to the console
-===============
+	Just prints the rest of the line to the console
 */
 void
 Cmd_Echo_f (void)
@@ -391,11 +369,9 @@ Cmd_Echo_f (void)
 }
 
 /*
-===============
-Cmd_Alias_f
+	Cmd_Alias_f
 
-Creates a new command that executes a command string (possibly ; seperated)
-===============
+	Creates a new command that executes a command string (possibly ; seperated)
 */
 
 char       *
@@ -489,11 +465,7 @@ Cmd_UnAlias_f (void)
 }
 
 /*
-=============================================================================
-
 					COMMAND EXECUTION
-
-=============================================================================
 */
 
 typedef struct cmd_function_s {
@@ -516,9 +488,7 @@ static char *cmd_args = NULL;
 static cmd_function_t *cmd_functions;	// possible commands to execute
 
 /*
-============
-Cmd_Argc
-============
+	Cmd_Argc
 */
 int
 Cmd_Argc (void)
@@ -527,9 +497,7 @@ Cmd_Argc (void)
 }
 
 /*
-============
-Cmd_Argv
-============
+	Cmd_Argv
 */
 char       *
 Cmd_Argv (int arg)
@@ -540,11 +508,9 @@ Cmd_Argv (int arg)
 }
 
 /*
-============
-Cmd_Args
+	Cmd_Args
 
-Returns a single string containing argv(1) to argv(argc()-1)
-============
+	Returns a single string containing argv(1) to argv(argc()-1)
 */
 char       *
 Cmd_Args (void)
@@ -556,11 +522,9 @@ Cmd_Args (void)
 
 
 /*
-============
-Cmd_TokenizeString
+	Cmd_TokenizeString
 
-Parses the given string into command line tokens.
-============
+	Parses the given string into command line tokens.
 */
 void
 Cmd_TokenizeString (char *text)
@@ -649,9 +613,7 @@ Cmd_AddCommand (char *cmd_name, xcommand_t function, char *description)
 }
 
 /*
-============
-Cmd_Exists
-============
+	Cmd_Exists
 */
 qboolean
 Cmd_Exists (char *cmd_name)
@@ -669,9 +631,7 @@ Cmd_Exists (char *cmd_name)
 
 
 /*
-============
-Cmd_CompleteCommand
-============
+	Cmd_CompleteCommand
 */
 char       *
 Cmd_CompleteCommand (char *partial)
@@ -705,12 +665,10 @@ Cmd_CompleteCommand (char *partial)
 }
 
 /*
-============
-Cmd_ExpandVariables
+	Cmd_ExpandVariables
 
-Expand $fov-like expressions
-FIXME: better handling of buffer overflows?
-============
+	Expand $fov-like expressions
+	FIXME: better handling of buffer overflows?
 */
 // dest must point to a 1024-byte buffer
 void
@@ -778,12 +736,10 @@ Cmd_ExpandVariables (char *data, char *dest)
 }
 
 /*
-============
-Cmd_ExecuteString
+	Cmd_ExecuteString
 
-A complete command line has been parsed, so try to execute it
-FIXME: lookupnoadd the token to speed search?
-============
+	A complete command line has been parsed, so try to execute it
+	FIXME: lookupnoadd the token to speed search?
 */
 void
 Cmd_ExecuteString (char *text)
@@ -831,12 +787,10 @@ Cmd_ExecuteString (char *text)
 
 
 /*
-================
-Cmd_CheckParm
+	Cmd_CheckParm
 
-Returns the position (1 to argc-1) in the command's argument list
-where the given parameter apears, or 0 if not present
-================
+	Returns the position (1 to argc-1) in the command's argument list
+	where the given parameter apears, or 0 if not present
 */
 int
 Cmd_CheckParm (char *parm)
@@ -909,9 +863,7 @@ Cmd_Init_Hash (void)
 }
 
 /*
-============
-Cmd_Init
-============
+	Cmd_Init
 */
 void
 Cmd_Init (void)
@@ -934,11 +886,9 @@ Cmd_Init (void)
 char        com_token[MAX_COM_TOKEN];
 
 /*
-==============
-COM_Parse
+	COM_Parse
 
-Parse a token out of a string
-==============
+	Parse a token out of a string
 */
 char       *
 COM_Parse (char *data)

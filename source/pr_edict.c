@@ -573,12 +573,9 @@ ED_Count (progs_t *pr)
 }
 
 /*
-==============================================================================
+	ARCHIVING GLOBALS
 
-					ARCHIVING GLOBALS
-
-FIXME: need to tag constants, doesn't really work
-==============================================================================
+	FIXME: need to tag constants, doesn't really work
 */
 
 /*

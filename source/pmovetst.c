@@ -50,12 +50,10 @@ extern vec3_t player_mins;
 extern vec3_t player_maxs;
 
 /*
-===================
-PM_InitBoxHull
+	PM_InitBoxHull
 
-Set up the planes and clipnodes so that the six floats of a bounding box
-can just be stored out and get a proper hull_t structure.
-===================
+	Set up the planes and clipnodes so that the six floats of a bounding box
+	can just be stored out and get a proper hull_t structure.
 */
 void
 PM_InitBoxHull (void)
@@ -87,12 +85,10 @@ PM_InitBoxHull (void)
 
 
 /*
-===================
-PM_HullForBox
+	PM_HullForBox
 
-To keep everything totally uniform, bounding boxes are turned into small
-BSP trees instead of being compared directly.
-===================
+	To keep everything totally uniform, bounding boxes are turned into small
+	BSP trees instead of being compared directly.
 */
 hull_t     *
 PM_HullForBox (vec3_t mins, vec3_t maxs)
@@ -109,10 +105,7 @@ PM_HullForBox (vec3_t mins, vec3_t maxs)
 
 
 /*
-==================
-PM_HullPointContents
-
-==================
+	PM_HullPointContents
 */
 int
 PM_HullPointContents (hull_t *hull, int num, vec3_t p)
@@ -142,10 +135,7 @@ PM_HullPointContents (hull_t *hull, int num, vec3_t p)
 }
 
 /*
-==================
-PM_PointContents
-
-==================
+	PM_PointContents
 */
 int
 PM_PointContents (vec3_t p)
@@ -181,21 +171,14 @@ PM_PointContents (vec3_t p)
 }
 
 /*
-===============================================================================
-
-LINE TESTING IN HULLS
-
-===============================================================================
+	LINE TESTING IN HULLS
 */
 
 // 1/32 epsilon to keep floating point happy
 #define	DIST_EPSILON	(0.03125)
 
 /*
-==================
-PM_RecursiveHullCheck
-
-==================
+	PM_RecursiveHullCheck
 */
 qboolean
 PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
@@ -332,11 +315,9 @@ PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
 
 
 /*
-================
-PM_TestPlayerPosition
+	PM_TestPlayerPosition
 
-Returns false if the given player position is not valid (in solid)
-================
+	Returns false if the given player position is not valid (in solid)
 */
 qboolean
 PM_TestPlayerPosition (vec3_t pos)
@@ -367,9 +348,7 @@ PM_TestPlayerPosition (vec3_t pos)
 }
 
 /*
-================
-PM_PlayerMove
-================
+	PM_PlayerMove
 */
 pmtrace_t
 PM_PlayerMove (vec3_t start, vec3_t end)

@@ -96,10 +96,7 @@ D_ClearCacheGuard (void)
 
 
 /*
-================
-D_InitCaches
-
-================
+	D_InitCaches
 */
 void
 D_InitCaches (void *buffer, int size)
@@ -120,9 +117,7 @@ D_InitCaches (void *buffer, int size)
 
 
 /*
-==================
-D_FlushCaches
-==================
+	D_FlushCaches
 */
 void
 D_FlushCaches (void)
@@ -144,9 +139,7 @@ D_FlushCaches (void)
 }
 
 /*
-=================
-D_SCAlloc
-=================
+	D_SCAlloc
 */
 surfcache_t *
 D_SCAlloc (int width, int size)
@@ -229,9 +222,7 @@ D_SCAlloc (int width, int size)
 
 
 /*
-=================
-D_SCDump
-=================
+	D_SCDump
 */
 void
 D_SCDump (void)
@@ -279,9 +270,7 @@ D_log2 (int num)
 //=============================================================================
 
 /*
-================
-D_CacheSurface
-================
+	D_CacheSurface
 */
 surfcache_t *
 D_CacheSurface (msurface_t *surface, int miplevel)

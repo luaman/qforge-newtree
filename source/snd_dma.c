@@ -163,9 +163,7 @@ S_SoundInfo_f (void)
 
 
 /*
-================
-S_Startup
-================
+	S_Startup
 */
 
 void
@@ -193,9 +191,7 @@ S_Startup (void)
 
 
 /*
-================
-S_Init
-================
+	S_Init
 */
 void
 S_Init (void)
@@ -312,10 +308,7 @@ S_Shutdown (void)
 // =======================================================================
 
 /*
-==================
-S_FindName
-
-==================
+	S_FindName
 */
 sfx_t      *
 S_FindName (char *name)
@@ -348,10 +341,7 @@ S_FindName (char *name)
 
 
 /*
-==================
-S_TouchSound
-
-==================
+	S_TouchSound
 */
 void
 S_TouchSound (char *name)
@@ -366,10 +356,7 @@ S_TouchSound (char *name)
 }
 
 /*
-==================
-S_PrecacheSound
-
-==================
+	S_PrecacheSound
 */
 sfx_t      *
 S_PrecacheSound (char *name)
@@ -392,9 +379,7 @@ S_PrecacheSound (char *name)
 //=============================================================================
 
 /*
-=================
-SND_PickChannel
-=================
+	SND_PickChannel
 */
 channel_t  *
 SND_PickChannel (int entnum, int entchannel)
@@ -436,9 +421,7 @@ SND_PickChannel (int entnum, int entchannel)
 }
 
 /*
-=================
-SND_Spatialize
-=================
+	SND_Spatialize
 */
 void
 SND_Spatialize (channel_t *ch)
@@ -632,9 +615,7 @@ S_ClearBuffer (void)
 
 
 /*
-=================
-S_StaticSound
-=================
+	S_StaticSound
 */
 void
 S_StaticSound (sfx_t *sfx, vec3_t origin, float vol, float attenuation)
@@ -676,9 +657,7 @@ S_StaticSound (sfx_t *sfx, vec3_t origin, float vol, float attenuation)
 //=============================================================================
 
 /*
-===================
-S_UpdateAmbientSounds
-===================
+	S_UpdateAmbientSounds
 */
 void
 S_UpdateAmbientSounds (void)
@@ -728,11 +707,9 @@ S_UpdateAmbientSounds (void)
 
 
 /*
-============
-S_Update
+	S_Update
 
-Called once each time through the main loop
-============
+	Called once each time through the main loop
 */
 void
 S_Update (vec3_t origin, vec3_t forward, vec3_t right, vec3_t up)
@@ -893,11 +870,7 @@ S_Update_ (void)
 }
 
 /*
-===============================================================================
-
-console functions
-
-===============================================================================
+	console functions
 */
 
 void

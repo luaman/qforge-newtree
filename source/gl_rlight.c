@@ -46,9 +46,7 @@ extern qboolean lighthalf;
 
 
 /*
-==================
-R_AnimateLight
-==================
+	R_AnimateLight
 */
 void
 R_AnimateLight (void)
@@ -72,11 +70,7 @@ R_AnimateLight (void)
 }
 
 /*
-=============================================================================
-
-DYNAMIC LIGHTS BLEND RENDERING
-
-=============================================================================
+	DYNAMIC LIGHTS BLEND RENDERING
 */
 
 void
@@ -160,9 +154,7 @@ R_RenderDlight (dlight_t *light)
 }
 
 /*
-=============
-R_RenderDlights
-=============
+	R_RenderDlights
 */
 void
 R_RenderDlights (void)
@@ -197,17 +189,11 @@ R_RenderDlights (void)
 
 
 /*
-=============================================================================
-
-DYNAMIC LIGHTS
-
-=============================================================================
+	DYNAMIC LIGHTS
 */
 
 /*
-=============
-R_MarkLights
-=============
+	R_MarkLights
 */
 // LordHavoc: heavily modified, to eliminate unnecessary texture uploads,
 //            and support bmodel lighting better
@@ -295,9 +281,7 @@ R_MarkLights (vec3_t lightorigin, dlight_t *light, int bit, mnode_t *node)
 
 
 /*
-=============
-R_PushDlights
-=============
+	R_PushDlights
 */
 void
 R_PushDlights (vec3_t entorigin)
@@ -323,11 +307,7 @@ R_PushDlights (vec3_t entorigin)
 
 
 /*
-=============================================================================
-
-LIGHT SAMPLING
-
-=============================================================================
+	LIGHT SAMPLING
 */
 
 mplane_t   *lightplane;

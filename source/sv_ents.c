@@ -49,14 +49,10 @@ extern int  eval_alpha, eval_scale, eval_glowsize, eval_glowcolor,
 extern eval_t *GETEDICTFIELDVALUE (edict_t *ed, int fieldoffset);
 
 /*
-=============================================================================
-
-The PVS must include a small area around the client to allow head bobbing
-or other small motion on the client side.  Otherwise, a bob might cause an
-entity that should be visible to not show up, especially when the bob
-crosses a waterline.
-
-=============================================================================
+	The PVS must include a small area around the client to allow head
+	bobbing or other small motion on the client side.  Otherwise, a bob
+	might cause an entity that should be visible to not show up, especially
+	when the bob crosses a waterline.
 */
 
 int         fatbytes;
@@ -95,12 +91,10 @@ SV_AddToFatPVS (vec3_t org, mnode_t *node)
 }
 
 /*
-=============
-SV_FatPVS
+	SV_FatPVS
 
-Calculates a PVS that is the inclusive or of all leafs within 8 pixels of the
-given point.
-=============
+	Calculates a PVS that is the inclusive or of all leafs within 8 pixels
+	of the given point.
 */
 byte       *
 SV_FatPVS (vec3_t org)
@@ -171,12 +165,10 @@ SV_EmitNailUpdate (sizebuf_t *msg)
 
 
 /*
-==================
-SV_WriteDelta
+	SV_WriteDelta
 
-Writes part of a packetentities message.
-Can delta from either a baseline or a previous packet_entity
-==================
+	Writes part of a packetentities message.
+	Can delta from either a baseline or a previous packet_entity
 */
 void
 SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg,
@@ -320,12 +312,9 @@ SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg,
 }
 
 /*
-=============
-SV_EmitPacketEntities
+	SV_EmitPacketEntities
 
-Writes a delta update of a packet_entities_t to the message.
-
-=============
+	Writes a delta update of a packet_entities_t to the message.
 */
 void
 SV_EmitPacketEntities (client_t *client, packet_entities_t *to, sizebuf_t *msg)
@@ -393,10 +382,7 @@ SV_EmitPacketEntities (client_t *client, packet_entities_t *to, sizebuf_t *msg)
 }
 
 /*
-=============
-SV_WritePlayersToClient
-
-=============
+	SV_WritePlayersToClient
 */
 void
 SV_WritePlayersToClient (client_t *client, edict_t *clent, byte * pvs,
@@ -510,14 +496,12 @@ SV_WritePlayersToClient (client_t *client, edict_t *clent, byte * pvs,
 
 
 /*
-=============
-SV_WriteEntitiesToClient
+	SV_WriteEntitiesToClient
 
-Encodes the current state of the world as
-a svc_packetentities messages and possibly
-a svc_nails message and
-svc_playerinfo messages
-=============
+	Encodes the current state of the world as
+	a svc_packetentities messages and possibly
+	a svc_nails message and
+	svc_playerinfo messages
 */
 void
 SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)

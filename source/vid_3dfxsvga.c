@@ -105,9 +105,7 @@ InitSig (void)
 }
 
 /*
-===============
-GL_Init
-===============
+	GL_Init
 */
 void
 GL_Init (void)

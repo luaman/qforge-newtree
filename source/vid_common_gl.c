@@ -197,9 +197,7 @@ VID_SetPalette (unsigned char *palette)
 }
 
 /*
-===============
-GL_Init_Common
-===============
+	GL_Init_Common
 */
 void
 GL_Init_Common (void)
@@ -239,9 +237,7 @@ GL_Init_Common (void)
 }
 
 /*
-=================
-GL_BeginRendering
-=================
+	GL_BeginRendering
 */
 void
 GL_BeginRendering (int *x, int *y, int *width, int *height)

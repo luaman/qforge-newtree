@@ -166,14 +166,12 @@ NET_BaseAdrToString (netadr_t a)
 }
 
 /*
-=============
-NET_StringToAdr
+	NET_StringToAdr
 
-idnewt
-idnewt:28000
-192.246.40.70
-192.246.40.70:28000
-=============
+	idnewt
+	idnewt:28000
+	192.246.40.70
+	192.246.40.70:28000
 */
 qboolean
 NET_StringToAdr (char *s, netadr_t *a)
@@ -411,9 +409,7 @@ NET_GetLocalAddress (void)
 }
 
 /*
-====================
-NET_Init
-====================
+	NET_Init
 */
 void
 NET_Init (int port)
@@ -448,9 +444,7 @@ NET_Init (int port)
 }
 
 /*
-====================
-NET_Shutdown
-====================
+	NET_Shutdown
 */
 void
 NET_Shutdown (void)

@@ -43,10 +43,7 @@ int         vstartscan;
 vec3_t      transformed_modelorg;
 
 /*
-==============
-D_DrawPoly
-
-==============
+	D_DrawPoly
 */
 void
 D_DrawPoly (void)
@@ -56,9 +53,7 @@ D_DrawPoly (void)
 
 
 /*
-=============
-D_MipLevelForScale
-=============
+	D_MipLevelForScale
 */
 int
 D_MipLevelForScale (float scale)
@@ -82,9 +77,7 @@ D_MipLevelForScale (float scale)
 
 
 /*
-==============
-D_DrawSolidSurface
-==============
+	D_DrawSolidSurface
 */
 
 // FIXME: clean this up
@@ -122,9 +115,7 @@ D_DrawSolidSurface (surf_t *surf, int color)
 
 
 /*
-==============
-D_CalcGradients
-==============
+	D_CalcGradients
 */
 void
 D_CalcGradients (msurface_t *pface)
@@ -174,9 +165,7 @@ D_CalcGradients (msurface_t *pface)
 
 
 /*
-==============
-D_DrawSurfaces
-==============
+	D_DrawSurfaces
 */
 void
 D_DrawSurfaces (void)

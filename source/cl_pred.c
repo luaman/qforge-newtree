@@ -46,13 +46,11 @@ cvar_t     *cl_pushlatency;
 extern frame_t *view_frame;
 
 /*
-=================
-CL_NudgePosition
+	CL_NudgePosition
 
-If pmove.origin is in a solid position,
-try nudging slightly on all axis to
-allow for the cut precision of the net coordinates
-=================
+	If pmove.origin is in a solid position,
+	try nudging slightly on all axis to
+	allow for the cut precision of the net coordinates
 */
 void
 CL_NudgePosition (void)
@@ -78,9 +76,7 @@ CL_NudgePosition (void)
 }
 
 /*
-==============
-CL_PredictUsercmd
-==============
+	CL_PredictUsercmd
 */
 void
 CL_PredictUsercmd (player_state_t * from, player_state_t * to, usercmd_t *u,
@@ -129,9 +125,7 @@ CL_PredictUsercmd (player_state_t * from, player_state_t * to, usercmd_t *u,
 
 
 /*
-==============
-CL_PredictMove
-==============
+	CL_PredictMove
 */
 void
 CL_PredictMove (void)
@@ -239,9 +233,7 @@ CL_PredictMove (void)
 
 
 /*
-==============
-CL_Prediction_Init_Cvars
-==============
+	CL_Prediction_Init_Cvars
 */
 void
 CL_Prediction_Init_Cvars (void)

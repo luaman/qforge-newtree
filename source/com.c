@@ -51,14 +51,12 @@ void        COM_Path_f (void);
 
 
 /*
-================
-COM_CheckRegistered
+	COM_CheckRegistered
 
-Looks for the pop.txt file and verifies it.
-Sets the "registered" cvar.
-Immediately exits out if an alternate game was attempted to be started without
-being registered.
-================
+	Looks for the pop.txt file and verifies it.
+	Sets the "registered" cvar.
+	Immediately exits out if an alternate game was attempted to be started
+	without being registered.
 */
 void
 COM_CheckRegistered (void)
@@ -83,9 +81,7 @@ COM_CheckRegistered (void)
 
 
 /*
-================
-COM_Init
-================
+	COM_Init
 */
 void
 COM_Init (void)

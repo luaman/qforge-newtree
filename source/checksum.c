@@ -111,11 +111,9 @@ static byte chktbl[1024 + 4] = {
 
 #if 0
 /*
-====================
-COM_BlockSequenceCheckByte
+	COM_BlockSequenceCheckByte
 
-For proxy protecting
-====================
+	For proxy protecting
 */
 byte
 COM_BlockSequenceCheckByte (byte * base, int length, int sequence,
@@ -158,11 +156,9 @@ COM_BlockSequenceCheckByte (byte * base, int length, int sequence,
 #endif
 
 /*
-====================
-COM_BlockSequenceCRCByte
+	COM_BlockSequenceCRCByte
 
-For proxy protecting
-====================
+	For proxy protecting
 */
 byte
 COM_BlockSequenceCRCByte (byte * base, int length, int sequence)

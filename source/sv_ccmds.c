@@ -57,20 +57,16 @@ extern redirect_t sv_redirected;
 
 
 /*
-===============================================================================
+	OPERATOR CONSOLE ONLY COMMANDS
 
-OPERATOR CONSOLE ONLY COMMANDS
-
-These commands can only be entered from stdin or by a remote operator datagram
-===============================================================================
+	These commands can only be entered from stdin or by a remote operator
+	datagram
 */
 
 /*
-====================
-SV_SetMaster_f
+	SV_SetMaster_f
 
-Make a master server current
-====================
+	Make a master server current
 */
 void
 SV_SetMaster_f (void)
@@ -104,9 +100,7 @@ SV_SetMaster_f (void)
 
 
 /*
-==================
-SV_Quit_f
-==================
+	SV_Quit_f
 */
 void
 SV_Quit_f (void)
@@ -118,9 +112,7 @@ SV_Quit_f (void)
 }
 
 /*
-============
-SV_Logfile_f
-============
+	SV_Logfile_f
 */
 void
 SV_Logfile_f (void)
@@ -143,9 +135,7 @@ SV_Logfile_f (void)
 
 
 /*
-============
-SV_Fraglogfile_f
-============
+	SV_Fraglogfile_f
 */
 void
 SV_Fraglogfile_f (void)
@@ -182,11 +172,9 @@ SV_Fraglogfile_f (void)
 
 
 /*
-==================
-SV_SetPlayer
+	SV_SetPlayer
 
-Sets host_client and sv_player to the player with idnum Cmd_Argv(1)
-==================
+	Sets host_client and sv_player to the player with idnum Cmd_Argv(1)
 */
 qboolean
 SV_SetPlayer (void)
@@ -212,11 +200,9 @@ SV_SetPlayer (void)
 
 
 /*
-==================
-SV_God_f
+	SV_God_f
 
-Sets client to godmode
-==================
+	Sets client to godmode
 */
 void
 SV_God_f (void)
@@ -261,9 +247,7 @@ SV_Noclip_f (void)
 
 
 /*
-==================
-SV_Give_f
-==================
+	SV_Give_f
 */
 void
 SV_Give_f (void)
@@ -318,13 +302,11 @@ SV_Give_f (void)
 static char curlevel[MAX_QPATH] = "";
 
 /*
-======================
-SV_Map_f
+	SV_Map_f
 
-handle a 
-map <mapname>
-command from the console or progs.
-======================
+	handle a 
+	map <mapname>
+	command from the console or progs.
 */
 void
 SV_Map_f (void)
@@ -366,11 +348,9 @@ SV_Map_f (void)
 
 
 /*
-==================
-SV_Kick_f
+	SV_Kick_f
 
-Kick a user off of the server
-==================
+	Kick a user off of the server
 */
 void
 SV_Kick_f (void)
@@ -399,9 +379,7 @@ SV_Kick_f (void)
 
 
 /*
-================
-SV_Status_f
-================
+	SV_Status_f
 */
 void
 SV_Status_f (void)
@@ -499,9 +477,7 @@ SV_Status_f (void)
 }
 
 /*
-==================
-SV_ConSay_f
-==================
+	SV_ConSay_f
 */
 void
 SV_ConSay_f (void)
@@ -533,9 +509,7 @@ SV_ConSay_f (void)
 
 
 /*
-==================
-SV_Heartbeat_f
-==================
+	SV_Heartbeat_f
 */
 void
 SV_Heartbeat_f (void)
@@ -555,11 +529,9 @@ SV_SendServerInfoChange (char *key, char *value)
 }
 
 /*
-===========
-SV_Serverinfo_f
+	SV_Serverinfo_f
 
-  Examine or change the serverinfo string
-===========
+	Examine or change the serverinfo string
 */
 char       *CopyString (char *s);
 void
@@ -597,11 +569,9 @@ SV_Serverinfo_f (void)
 
 
 /*
-===========
-SV_Serverinfo_f
+	SV_Serverinfo_f
 
-  Examine or change the serverinfo string
-===========
+	Examine or change the serverinfo string
 */
 char       *CopyString (char *s);
 void
@@ -628,11 +598,9 @@ SV_Localinfo_f (void)
 
 
 /*
-===========
-SV_User_f
+	SV_User_f
 
-Examine a users info strings
-===========
+	Examine a users info strings
 */
 void
 SV_User_f (void)
@@ -649,11 +617,9 @@ SV_User_f (void)
 }
 
 /*
-================
-SV_Gamedir
+	SV_Gamedir
 
-Sets the fake *gamedir to a different directory.
-================
+	Sets the fake *gamedir to a different directory.
 */
 void
 SV_Gamedir (void)
@@ -683,11 +649,9 @@ SV_Gamedir (void)
 }
 
 /*
-================
-SV_Floodport_f
+	SV_Floodport_f
 
-Sets the gamedir and path to a different directory.
-================
+	Sets the gamedir and path to a different directory.
 */
 
 void
@@ -746,9 +710,7 @@ SV_Floodprotmsg_f (void)
 }
 
 /*
-================
-SV_Snap
-================
+	SV_Snap
 */
 void
 SV_Snap (int uid)
@@ -800,9 +762,7 @@ SV_Snap (int uid)
 }
 
 /*
-================
-SV_Snap_f
-================
+	SV_Snap_f
 */
 void
 SV_Snap_f (void)
@@ -820,9 +780,7 @@ SV_Snap_f (void)
 }
 
 /*
-================
-SV_Snap
-================
+	SV_Snap
 */
 void
 SV_SnapAll_f (void)
@@ -838,9 +796,7 @@ SV_SnapAll_f (void)
 }
 
 /*
-==================
-SV_InitOperatorCommands
-==================
+	SV_InitOperatorCommands
 */
 void
 SV_InitOperatorCommands (void)

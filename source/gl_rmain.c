@@ -188,11 +188,9 @@ GL_CheckBrightness (unsigned char *pal)
 }
 
 /*
-=================
-R_CullBox
+	R_CullBox
 
-Returns true if the box is completely outside the frustom
-=================
+	Returns true if the box is completely outside the frustom
 */
 /*
 qboolean R_CullBox (vec3_t mins, vec3_t maxs)
@@ -219,17 +217,11 @@ R_RotateForEntity (entity_t *e)
 }
 
 /*
-=============================================================
-
-  SPRITE MODELS
-
-=============================================================
+	SPRITE MODELS
 */
 
 /*
-================
-R_GetSpriteFrame
-================
+	R_GetSpriteFrame
 */
 static mspriteframe_t *
 R_GetSpriteFrame (entity_t *currententity)
@@ -276,10 +268,7 @@ R_GetSpriteFrame (entity_t *currententity)
 
 
 /*
-=================
-R_DrawSpriteModel
-
-=================
+	R_DrawSpriteModel
 */
 static void
 R_DrawSpriteModel (entity_t *e)
@@ -335,11 +324,7 @@ R_DrawSpriteModel (entity_t *e)
 }
 
 /*
-=============================================================
-
-  ALIAS MODELS
-
-=============================================================
+	ALIAS MODELS
 */
 
 
@@ -712,10 +697,7 @@ R_SetupAliasBlendedFrame (int frame, aliashdr_t *paliashdr, entity_t *e, qboolea
 
 
 /*
-=================
-R_DrawAliasModel
-
-=================
+	R_DrawAliasModel
 */
 static void
 R_DrawAliasModel (entity_t *e)
@@ -990,9 +972,7 @@ R_DrawEntitiesOnList (void)
 }
 
 /*
-=============
-R_DrawViewModel
-=============
+	R_DrawViewModel
 */
 static void
 R_DrawViewModel (void)
@@ -1069,9 +1049,7 @@ R_SetFrustum (void)
 
 
 /*
-===============
-R_SetupFrame
-===============
+	R_SetupFrame
 */
 static void
 R_SetupFrame (void)
@@ -1118,9 +1096,7 @@ MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
 
 
 /*
-=============
-R_SetupGL
-=============
+	R_SetupGL
 */
 static void
 R_SetupGL (void)
@@ -1187,9 +1163,7 @@ R_SetupGL (void)
 
 
 /*
-=============
-R_Clear
-=============
+	R_Clear
 */
 static void
 R_Clear (void)
@@ -1206,11 +1180,9 @@ R_Clear (void)
 }
 
 /*
-================
-R_RenderView
+	R_RenderView
 
-r_refdef must be set before the first call
-================
+	r_refdef must be set before the first call
 */
 void
 R_RenderView (void)

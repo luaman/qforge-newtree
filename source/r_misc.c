@@ -45,9 +45,7 @@ qboolean    allowskybox;				// whether or not to allow skyboxes
 										// --KB
 
 /*
-===============
-R_CheckVariables
-===============
+	R_CheckVariables
 */
 void
 R_CheckVariables (void)
@@ -56,11 +54,9 @@ R_CheckVariables (void)
 
 
 /*
-============
-Show
+	Show
 
-Debugging use
-============
+	Debugging use
 */
 void
 Show (void)
@@ -75,11 +71,9 @@ Show (void)
 }
 
 /*
-====================
-R_TimeRefresh_f
+	R_TimeRefresh_f
 
-For program optimization
-====================
+	For program optimization
 */
 void
 R_TimeRefresh_f (void)
@@ -132,11 +126,9 @@ R_LoadSky_f (void)
 
 
 /*
-================
-R_LineGraph
+	R_LineGraph
 
-Only called by R_DisplayTime
-================
+	Only called by R_DisplayTime
 */
 void
 R_LineGraph (int x, int y, int h)
@@ -180,11 +172,9 @@ R_LineGraph (int x, int y, int h)
 }
 
 /*
-==============
-R_TimeGraph
+	R_TimeGraph
 
-Performance monitoring tool
-==============
+	Performance monitoring tool
 */
 #define	MAX_TIMINGS		100
 extern float mouse_x, mouse_y;
@@ -232,9 +222,7 @@ R_TimeGraph (void)
 }
 
 /*
-==============
-R_NetGraph
-==============
+	R_NetGraph
 */
 void
 R_NetGraph (void)
@@ -267,9 +255,7 @@ R_NetGraph (void)
 }
 
 /*
-==============
-R_ZGraph
-==============
+	R_ZGraph
 */
 void
 R_ZGraph (void)
@@ -292,9 +278,7 @@ R_ZGraph (void)
 }
 
 /*
-=============
-R_PrintTimes
-=============
+	R_PrintTimes
 */
 void
 R_PrintTimes (void)
@@ -313,9 +297,7 @@ R_PrintTimes (void)
 
 
 /*
-=============
-R_PrintDSpeeds
-=============
+	R_PrintDSpeeds
 */
 void
 R_PrintDSpeeds (void)
@@ -341,9 +323,7 @@ R_PrintDSpeeds (void)
 
 
 /*
-=============
-R_PrintAliasStats
-=============
+	R_PrintAliasStats
 */
 void
 R_PrintAliasStats (void)
@@ -376,9 +356,7 @@ WarpPalette (void)
 
 
 /*
-===================
-R_TransformFrustum
-===================
+	R_TransformFrustum
 */
 void
 R_TransformFrustum (void)
@@ -405,9 +383,7 @@ R_TransformFrustum (void)
 #ifndef USE_INTEL_ASM
 
 /*
-================
-TransformVector
-================
+	TransformVector
 */
 void
 TransformVector (vec3_t in, vec3_t out)
@@ -421,9 +397,7 @@ TransformVector (vec3_t in, vec3_t out)
 
 
 /*
-================
-R_TransformPlane
-================
+	R_TransformPlane
 */
 void
 R_TransformPlane (mplane_t *p, float *normal, float *dist)
@@ -438,9 +412,7 @@ R_TransformPlane (mplane_t *p, float *normal, float *dist)
 
 
 /*
-===============
-R_SetUpFrustumIndexes
-===============
+	R_SetUpFrustumIndexes
 */
 void
 R_SetUpFrustumIndexes (void)
@@ -468,9 +440,7 @@ R_SetUpFrustumIndexes (void)
 
 
 /*
-===============
-R_SetupFrame
-===============
+	R_SetupFrame
 */
 void
 R_SetupFrame (void)

@@ -43,11 +43,7 @@ mnode_t    *r_pefragtopnode;
 //===========================================================================
 
 /*
-===============================================================================
-
 					ENTITY FRAGMENT FUNCTIONS
-
-===============================================================================
 */
 
 efrag_t   **lastlink;
@@ -58,11 +54,9 @@ entity_t   *r_addent;
 
 
 /*
-================
-R_RemoveEfrags
+	R_RemoveEfrags
 
-Call when removing an object from the world or moving it to another position
-================
+	Call when removing an object from the world or moving it to another position
 */
 void
 R_RemoveEfrags (entity_t *ent)
@@ -96,9 +90,7 @@ R_RemoveEfrags (entity_t *ent)
 }
 
 /*
-===================
-R_SplitEntityOnNode
-===================
+	R_SplitEntityOnNode
 */
 void
 R_SplitEntityOnNode (mnode_t *node)
@@ -162,9 +154,7 @@ R_SplitEntityOnNode (mnode_t *node)
 
 
 /*
-===================
-R_SplitEntityOnNode2
-===================
+	R_SplitEntityOnNode2
 */
 void
 R_SplitEntityOnNode2 (mnode_t *node)
@@ -200,9 +190,7 @@ R_SplitEntityOnNode2 (mnode_t *node)
 
 
 /*
-===========
-R_AddEfrags
-===========
+	R_AddEfrags
 */
 void
 R_AddEfrags (entity_t *ent)
@@ -235,11 +223,9 @@ R_AddEfrags (entity_t *ent)
 
 
 /*
-================
-R_StoreEfrags
+	R_StoreEfrags
 
-// FIXME: a lot of this goes away with edge-based
-================
+	// FIXME: a lot of this goes away with edge-based
 */
 void
 R_StoreEfrags (efrag_t **ppefrag)

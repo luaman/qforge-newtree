@@ -194,12 +194,10 @@ CL_CalcNet (void)
 //=============================================================================
 
 /*
-===============
-CL_CheckOrDownloadFile
+	CL_CheckOrDownloadFile
 
-Returns true if the file exists, otherwise it attempts
-to start a download from the server.
-===============
+	Returns true if the file exists, otherwise it attempts
+	to start a download from the server.
 */
 qboolean
 CL_CheckOrDownloadFile (char *filename)
@@ -251,9 +249,7 @@ CL_CheckOrDownloadFile (char *filename)
 }
 
 /*
-=================
-Model_NextDownload
-=================
+	Model_NextDownload
 */
 void
 Model_NextDownload (void)
@@ -316,9 +312,7 @@ Model_NextDownload (void)
 }
 
 /*
-=================
-Sound_NextDownload
-=================
+	Sound_NextDownload
 */
 void
 Sound_NextDownload (void)
@@ -360,9 +354,7 @@ Sound_NextDownload (void)
 
 
 /*
-======================
-CL_RequestNextDownload
-======================
+	CL_RequestNextDownload
 */
 void
 CL_RequestNextDownload (void)
@@ -386,11 +378,9 @@ CL_RequestNextDownload (void)
 }
 
 /*
-=====================
-CL_ParseDownload
+	CL_ParseDownload
 
-A download message has been received from the server
-=====================
+	A download message has been received from the server
 */
 void
 CL_ParseDownload (void)
@@ -597,11 +587,7 @@ CL_StopUpload (void)
 }
 
 /*
-=====================================================================
-
-  SERVER CONNECTING MESSAGES
-
-=====================================================================
+	SERVER CONNECTING MESSAGES
 */
 
 void Draw_ClearCache (void);
@@ -609,9 +595,7 @@ void Draw_ClearCache (void);
 void CL_ClearBaselines (void);		// LordHavoc: BIG BUG-FIX!
 
 /*
-==================
-CL_ParseServerData
-==================
+	CL_ParseServerData
 */
 void
 CL_ParseServerData (void)
@@ -724,9 +708,7 @@ CL_ClearBaselines (void)
 }
 
 /*
-==================
-CL_ParseSoundlist
-==================
+	CL_ParseSoundlist
 */
 void
 CL_ParseSoundlist (void)
@@ -765,9 +747,7 @@ CL_ParseSoundlist (void)
 }
 
 /*
-==================
-CL_ParseModellist
-==================
+	CL_ParseModellist
 */
 void
 CL_ParseModellist (void)
@@ -820,9 +800,7 @@ CL_ParseModellist (void)
 }
 
 /*
-==================
-CL_ParseBaseline
-==================
+	CL_ParseBaseline
 */
 void
 CL_ParseBaseline (entity_state_t *es)
@@ -849,12 +827,10 @@ CL_ParseBaseline (entity_state_t *es)
 
 
 /*
-=====================
-CL_ParseStatic
+	CL_ParseStatic
 
-Static entities are non-interactive world objects
-like torches
-=====================
+	Static entities are non-interactive world objects
+	like torches
 */
 void
 CL_ParseStatic (void)
@@ -881,9 +857,7 @@ CL_ParseStatic (void)
 }
 
 /*
-===================
-CL_ParseStaticSound
-===================
+	CL_ParseStaticSound
 */
 void
 CL_ParseStaticSound (void)
@@ -904,17 +878,11 @@ CL_ParseStaticSound (void)
 
 
 /*
-=====================================================================
-
-ACTION MESSAGES
-
-=====================================================================
+	ACTION MESSAGES
 */
 
 /*
-==================
-CL_ParseStartSoundPacket
-==================
+	CL_ParseStartSoundPacket
 */
 void
 CL_ParseStartSoundPacket (void)
@@ -955,11 +923,9 @@ CL_ParseStartSoundPacket (void)
 
 
 /*
-==================
-CL_ParseClientdata
+	CL_ParseClientdata
 
-Server information pertaining to this client only, sent every frame
-==================
+	Server information pertaining to this client only, sent every frame
 */
 void
 CL_ParseClientdata (void)
@@ -995,9 +961,7 @@ CL_ParseClientdata (void)
 }
 
 /*
-==============
-CL_UpdateUserinfo
-==============
+	CL_UpdateUserinfo
 */
 void
 CL_ProcessUserInfo (int slot, player_info_t *player)
@@ -1021,9 +985,7 @@ CL_ProcessUserInfo (int slot, player_info_t *player)
 }
 
 /*
-==============
-CL_UpdateUserinfo
-==============
+	CL_UpdateUserinfo
 */
 void
 CL_UpdateUserinfo (void)
@@ -1045,9 +1007,7 @@ CL_UpdateUserinfo (void)
 }
 
 /*
-==============
-CL_SetInfo
-==============
+	CL_SetInfo
 */
 void
 CL_SetInfo (void)
@@ -1076,9 +1036,7 @@ CL_SetInfo (void)
 }
 
 /*
-==============
-CL_ServerInfo
-==============
+	CL_ServerInfo
 */
 void
 CL_ServerInfo (void)
@@ -1097,9 +1055,7 @@ CL_ServerInfo (void)
 }
 
 /*
-=====================
-CL_SetStat
-=====================
+	CL_SetStat
 */
 void
 CL_SetStat (int stat, int value)
@@ -1129,9 +1085,7 @@ CL_SetStat (int stat, int value)
 }
 
 /*
-==============
-CL_MuzzleFlash
-==============
+	CL_MuzzleFlash
 */
 void
 CL_MuzzleFlash (void)
@@ -1163,10 +1117,9 @@ CL_MuzzleFlash (void)
 
 
 #define SHOWNET(x) if (cl_shownet->int_val == 2) Con_Printf ("%3i:%s\n", msg_readcount-1, x);
+
 /*
-=====================
-CL_ParseServerMessage
-=====================
+	CL_ParseServerMessage
 */
 int         received_framecount;
 void

@@ -59,9 +59,7 @@ void        GL_SubdivideSurface (msurface_t *fa);
 extern cvar_t	*gl_sky_divide;
 
 /*
-===============
-Mod_PointInLeaf
-===============
+	Mod_PointInLeaf
 */
 mleaf_t    *
 Mod_PointInLeaf (vec3_t p, model_t *model)
@@ -90,9 +88,7 @@ Mod_PointInLeaf (vec3_t p, model_t *model)
 
 
 /*
-===================
-Mod_DecompressVis
-===================
+	Mod_DecompressVis
 */
 byte       *
 Mod_DecompressVis (byte * in, model_t *model)
@@ -143,20 +139,14 @@ Mod_LeafPVS (mleaf_t *leaf, model_t *model)
 }
 
 /*
-===============================================================================
-
 					BRUSHMODEL LOADING
-
-===============================================================================
 */
 
 byte       *mod_base;
 
 
 /*
-=================
-Mod_LoadTextures
-=================
+	Mod_LoadTextures
 */
 void
 Mod_LoadTextures (lump_t *l)
@@ -297,9 +287,7 @@ Mod_LoadTextures (lump_t *l)
 }
 
 /*
-=================
-Mod_LoadVisibility
-=================
+	Mod_LoadVisibility
 */
 void
 Mod_LoadVisibility (lump_t *l)
@@ -314,9 +302,7 @@ Mod_LoadVisibility (lump_t *l)
 
 
 /*
-=================
-Mod_LoadEntities
-=================
+	Mod_LoadEntities
 */
 void
 Mod_LoadEntities (lump_t *l)
@@ -331,9 +317,7 @@ Mod_LoadEntities (lump_t *l)
 
 
 /*
-=================
-Mod_LoadVertexes
-=================
+	Mod_LoadVertexes
 */
 void
 Mod_LoadVertexes (lump_t *l)
@@ -359,9 +343,7 @@ Mod_LoadVertexes (lump_t *l)
 }
 
 /*
-=================
-Mod_LoadSubmodels
-=================
+	Mod_LoadSubmodels
 */
 void
 Mod_LoadSubmodels (lump_t *l)
@@ -394,9 +376,7 @@ Mod_LoadSubmodels (lump_t *l)
 }
 
 /*
-=================
-Mod_LoadEdges
-=================
+	Mod_LoadEdges
 */
 void
 Mod_LoadEdges (lump_t *l)
@@ -421,9 +401,7 @@ Mod_LoadEdges (lump_t *l)
 }
 
 /*
-=================
-Mod_LoadTexinfo
-=================
+	Mod_LoadTexinfo
 */
 void
 Mod_LoadTexinfo (lump_t *l)
@@ -480,11 +458,9 @@ Mod_LoadTexinfo (lump_t *l)
 }
 
 /*
-================
-CalcSurfaceExtents
+	CalcSurfaceExtents
 
-Fills in s->texturemins[] and s->extents[]
-================
+	Fills in s->texturemins[] and s->extents[]
 */
 void
 CalcSurfaceExtents (msurface_t *s)
@@ -531,9 +507,7 @@ CalcSurfaceExtents (msurface_t *s)
 
 
 /*
-=================
-Mod_LoadFaces
-=================
+	Mod_LoadFaces
 */
 void
 Mod_LoadFaces (lump_t *l)
@@ -608,9 +582,7 @@ Mod_LoadFaces (lump_t *l)
 
 
 /*
-=================
-Mod_SetParent
-=================
+	Mod_SetParent
 */
 void
 Mod_SetParent (mnode_t *node, mnode_t *parent)
@@ -623,9 +595,7 @@ Mod_SetParent (mnode_t *node, mnode_t *parent)
 }
 
 /*
-=================
-Mod_LoadNodes
-=================
+	Mod_LoadNodes
 */
 void
 Mod_LoadNodes (lump_t *l)
@@ -668,9 +638,7 @@ Mod_LoadNodes (lump_t *l)
 }
 
 /*
-=================
-Mod_LoadLeafs
-=================
+	Mod_LoadLeafs
 */
 void
 Mod_LoadLeafs (lump_t *l)
@@ -730,9 +698,7 @@ Mod_LoadLeafs (lump_t *l)
 }
 
 /*
-=================
-Mod_LoadClipnodes
-=================
+	Mod_LoadClipnodes
 */
 void
 Mod_LoadClipnodes (lump_t *l)
@@ -782,11 +748,9 @@ Mod_LoadClipnodes (lump_t *l)
 }
 
 /*
-=================
-Mod_MakeHull0
+	Mod_MakeHull0
 
-Deplicate the drawing hull structure as a clipping hull
-=================
+	Deplicate the drawing hull structure as a clipping hull
 */
 void
 Mod_MakeHull0 (void)
@@ -820,9 +784,7 @@ Mod_MakeHull0 (void)
 }
 
 /*
-=================
-Mod_LoadMarksurfaces
-=================
+	Mod_LoadMarksurfaces
 */
 void
 Mod_LoadMarksurfaces (lump_t *l)
@@ -849,9 +811,7 @@ Mod_LoadMarksurfaces (lump_t *l)
 }
 
 /*
-=================
-Mod_LoadSurfedges
-=================
+	Mod_LoadSurfedges
 */
 void
 Mod_LoadSurfedges (lump_t *l)
@@ -873,9 +833,7 @@ Mod_LoadSurfedges (lump_t *l)
 }
 
 /*
-=================
-Mod_LoadPlanes
-=================
+	Mod_LoadPlanes
 */
 void
 Mod_LoadPlanes (lump_t *l)
@@ -910,9 +868,7 @@ Mod_LoadPlanes (lump_t *l)
 }
 
 /*
-=================
-RadiusFromBounds
-=================
+	RadiusFromBounds
 */
 float
 RadiusFromBounds (vec3_t mins, vec3_t maxs)
@@ -929,9 +885,7 @@ RadiusFromBounds (vec3_t mins, vec3_t maxs)
 }
 
 /*
-=================
-Mod_LoadBrushModel
-=================
+	Mod_LoadBrushModel
 */
 void
 Mod_LoadBrushModel (model_t *mod, void *buffer)

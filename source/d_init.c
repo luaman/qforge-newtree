@@ -52,9 +52,7 @@ void        (*d_drawspans) (espan_t *pspan);
 
 
 /*
-===============
-D_Init
-===============
+	D_Init
 */
 void
 D_Init (void)
@@ -77,9 +75,7 @@ D_Init_Cvars (void)
 }
 
 /*
-===============
-D_CopyRects
-===============
+	D_CopyRects
 */
 void
 D_CopyRects (vrect_t *prects, int transparent)
@@ -97,9 +93,7 @@ D_CopyRects (vrect_t *prects, int transparent)
 
 
 /*
-===============
-D_EnableBackBufferAccess
-===============
+	D_EnableBackBufferAccess
 */
 void
 D_EnableBackBufferAccess (void)
@@ -110,9 +104,7 @@ D_EnableBackBufferAccess (void)
 
 
 /*
-===============
-D_TurnZOn
-===============
+	D_TurnZOn
 */
 void
 D_TurnZOn (void)
@@ -122,9 +114,7 @@ D_TurnZOn (void)
 
 
 /*
-===============
-D_DisableBackBufferAccess
-===============
+	D_DisableBackBufferAccess
 */
 void
 D_DisableBackBufferAccess (void)
@@ -134,9 +124,7 @@ D_DisableBackBufferAccess (void)
 
 
 /*
-===============
-D_SetupFrame
-===============
+	D_SetupFrame
 */
 void
 D_SetupFrame (void)
@@ -175,9 +163,7 @@ D_SetupFrame (void)
 
 
 /*
-===============
-D_UpdateRects
-===============
+	D_UpdateRects
 */
 void
 D_UpdateRects (vrect_t *prect)

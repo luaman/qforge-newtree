@@ -58,11 +58,9 @@ byte        newsky[128 * 256];			// newsky and topsky both pack in
 
 
 /*
-=============
-R_InitSky
+	R_InitSky
 
-A sky texture is 256*128, with the right side being a masked overlay
-==============
+	A sky texture is 256*128, with the right side being a masked overlay
 */
 void
 R_InitSky (texture_t *mt)
@@ -95,9 +93,7 @@ R_InitSky (texture_t *mt)
 
 
 /*
-=================
-R_MakeSky
-=================
+	R_MakeSky
 */
 void
 R_MakeSky (void)
@@ -158,9 +154,7 @@ R_MakeSky (void)
 
 
 /*
-=================
-R_GenSkyTile
-=================
+	R_GenSkyTile
 */
 void
 R_GenSkyTile (void *pdest)
@@ -216,9 +210,7 @@ R_GenSkyTile (void *pdest)
 
 
 /*
-=================
-R_GenSkyTile16
-=================
+	R_GenSkyTile16
 */
 void
 R_GenSkyTile16 (void *pdest)
@@ -256,9 +248,7 @@ R_GenSkyTile16 (void *pdest)
 
 
 /*
-=============
-R_SetSkyFrame
-==============
+	R_SetSkyFrame
 */
 void
 R_SetSkyFrame (void)

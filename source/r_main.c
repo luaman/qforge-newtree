@@ -185,9 +185,7 @@ void        R_NetGraph (void);
 void        R_ZGraph (void);
 
 /*
-==================
-R_Textures_Init
-==================
+	R_Textures_Init
 */
 void
 R_Textures_Init (void)
@@ -222,9 +220,7 @@ R_Textures_Init (void)
 void        R_LoadSky_f (void);
 
 /*
-===============
-R_Init
-===============
+	R_Init
 */
 void
 R_Init (void)
@@ -300,9 +296,7 @@ R_Init_Cvars (void)
 }
 
 /*
-===============
-R_NewMap
-===============
+	R_NewMap
 */
 void
 R_NewMap (void)
@@ -360,9 +354,7 @@ R_NewMap (void)
 
 
 /*
-===============
-R_SetVrect
-===============
+	R_SetVrect
 */
 void
 R_SetVrect (vrect_t *pvrectin, vrect_t *pvrect, int lineadj)
@@ -418,12 +410,10 @@ R_SetVrect (vrect_t *pvrectin, vrect_t *pvrect, int lineadj)
 
 
 /*
-===============
-R_ViewChanged
+	R_ViewChanged
 
-Called every time the vid structure or r_refdef changes.
-Guaranteed to be called before the first refresh
-===============
+	Called every time the vid structure or r_refdef changes.
+	Guaranteed to be called before the first refresh
 */
 void
 R_ViewChanged (vrect_t *pvrect, int lineadj, float aspect)
@@ -551,9 +541,7 @@ R_ViewChanged (vrect_t *pvrect, int lineadj, float aspect)
 
 
 /*
-===============
-R_MarkLeaves
-===============
+	R_MarkLeaves
 */
 void
 R_MarkLeaves (void)
@@ -611,9 +599,7 @@ R_ShowNearestLoc (void)
 }
 			
 /*
-=============
-R_DrawEntitiesOnList
-=============
+	R_DrawEntitiesOnList
 */
 void
 R_DrawEntitiesOnList (void)
@@ -686,9 +672,7 @@ R_DrawEntitiesOnList (void)
 }
 
 /*
-=============
-R_DrawViewModel
-=============
+	R_DrawViewModel
 */
 void
 R_DrawViewModel (void)
@@ -758,9 +742,7 @@ R_DrawViewModel (void)
 
 
 /*
-=============
-R_BmodelCheckBBox
-=============
+	R_BmodelCheckBBox
 */
 int
 R_BmodelCheckBBox (model_t *clmodel, float *minmaxs)
@@ -819,9 +801,7 @@ R_BmodelCheckBBox (model_t *clmodel, float *minmaxs)
 
 
 /*
-=============
-R_DrawBEntitiesOnList
-=============
+	R_DrawBEntitiesOnList
 */
 void
 R_DrawBEntitiesOnList (void)
@@ -944,9 +924,7 @@ R_DrawBEntitiesOnList (void)
 
 
 /*
-================
-R_EdgeDrawing
-================
+	R_EdgeDrawing
 */
 void
 R_EdgeDrawing (void)
@@ -1015,11 +993,9 @@ R_EdgeDrawing (void)
 
 
 /*
-================
-R_RenderView
+	R_RenderView
 
-r_refdef must be set before the first call
-================
+	r_refdef must be set before the first call
 */
 void
 R_RenderView_ (void)
@@ -1145,9 +1121,7 @@ R_RenderView (void)
 }
 
 /*
-================
-R_InitTurb
-================
+	R_InitTurb
 */
 void
 R_InitTurb (void)

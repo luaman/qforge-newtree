@@ -68,9 +68,7 @@ Mod_ProcessTexture (miptex_t *mt, texture_t *tx)
 }
 
 /*
-=================
-Mod_LoadLighting
-=================
+	Mod_LoadLighting
 */
 void
 Mod_LoadLighting (lump_t *l)

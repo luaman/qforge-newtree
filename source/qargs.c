@@ -69,12 +69,10 @@ char       *com_cmdline;
 qboolean    nouse = false;				// 1999-10-29 +USE fix by Maddes
 
 /*
-================
-COM_CheckParm
+	COM_CheckParm
 
-Returns the position (1 to argc-1) in the program's argument list
-where the given parameter apears, or 0 if not present
-================
+	Returns the position (1 to argc-1) in the program's argument list
+	where the given parameter apears, or 0 if not present
 */
 int
 COM_CheckParm (char *parm)
@@ -93,9 +91,7 @@ COM_CheckParm (char *parm)
 }
 
 /*
-================
-COM_InitArgv
-================
+	COM_InitArgv
 */
 void
 COM_InitArgv (int argc, char **argv)
@@ -149,11 +145,9 @@ COM_InitArgv (int argc, char **argv)
 }
 
 /*
-================
-COM_AddParm
+	COM_AddParm
 
-Adds the given string at the end of the current argument list
-================
+	Adds the given string at the end of the current argument list
 */
 void
 COM_AddParm (char *parm)

@@ -47,9 +47,7 @@ int         cache_full_cycle;
 byte       *S_Alloc (int size);
 
 /*
-================
-ResampleSfx
-================
+	ResampleSfx
 */
 void
 ResampleSfx (sfx_t *sfx, int inrate, int inwidth, byte * data)
@@ -164,9 +162,7 @@ ResampleSfx (sfx_t *sfx, int inrate, int inwidth, byte * data)
 //=============================================================================
 
 /*
-==============
-S_LoadSound
-==============
+	S_LoadSound
 */
 sfxcache_t *
 S_LoadSound (sfx_t *s)
@@ -232,11 +228,7 @@ S_LoadSound (sfx_t *s)
 
 
 /*
-===============================================================================
-
-WAV loading
-
-===============================================================================
+	WAV loading
 */
 
 
@@ -322,9 +314,7 @@ DumpChunks (void)
 }
 
 /*
-============
-GetWavinfo
-============
+	GetWavinfo
 */
 wavinfo_t
 GetWavinfo (char *name, byte * wav, int wavlength)

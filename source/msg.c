@@ -43,12 +43,9 @@
 #include "sys.h"
 
 /*
-==============================================================================
+	MESSAGE IO FUNCTIONS
 
-			MESSAGE IO FUNCTIONS
-
-Handles byte ordering and avoids alignment errors
-==============================================================================
+	Handles byte ordering and avoids alignment errors
 */
 
 //

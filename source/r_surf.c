@@ -64,9 +64,7 @@ static void (*surfmiptable[4]) (void) = {
 unsigned int blocklights[18 * 18];
 
 /*
-===============
-R_AddDynamicLights
-===============
+	R_AddDynamicLights
 */
 void
 R_AddDynamicLights (void)
@@ -130,11 +128,9 @@ R_AddDynamicLights (void)
 }
 
 /*
-===============
-R_BuildLightMap
+	R_BuildLightMap
 
-Combine and scale multiple lightmaps into the 8.8 format in blocklights
-===============
+	Combine and scale multiple lightmaps into the 8.8 format in blocklights
 */
 void
 R_BuildLightMap (void)
@@ -189,11 +185,9 @@ R_BuildLightMap (void)
 
 
 /*
-===============
-R_TextureAnimation
+	R_TextureAnimation
 
-Returns the proper texture for a given time and base texture
-===============
+	Returns the proper texture for a given time and base texture
 */
 texture_t  *
 R_TextureAnimation (texture_t *base)
@@ -225,9 +219,7 @@ R_TextureAnimation (texture_t *base)
 
 
 /*
-===============
-R_DrawSurface
-===============
+	R_DrawSurface
 */
 void
 R_DrawSurface (void)
@@ -317,9 +309,7 @@ R_DrawSurface (void)
 #ifndef USE_INTEL_ASM
 
 /*
-================
-R_DrawSurfaceBlock8_mip0
-================
+	R_DrawSurfaceBlock8_mip0
 */
 void
 R_DrawSurfaceBlock8_mip0 (void)
@@ -365,9 +355,7 @@ R_DrawSurfaceBlock8_mip0 (void)
 
 
 /*
-================
-R_DrawSurfaceBlock8_mip1
-================
+	R_DrawSurfaceBlock8_mip1
 */
 void
 R_DrawSurfaceBlock8_mip1 (void)
@@ -413,9 +401,7 @@ R_DrawSurfaceBlock8_mip1 (void)
 
 
 /*
-================
-R_DrawSurfaceBlock8_mip2
-================
+	R_DrawSurfaceBlock8_mip2
 */
 void
 R_DrawSurfaceBlock8_mip2 (void)
@@ -461,9 +447,7 @@ R_DrawSurfaceBlock8_mip2 (void)
 
 
 /*
-================
-R_DrawSurfaceBlock8_mip3
-================
+	R_DrawSurfaceBlock8_mip3
 */
 void
 R_DrawSurfaceBlock8_mip3 (void)
@@ -509,11 +493,9 @@ R_DrawSurfaceBlock8_mip3 (void)
 
 
 /*
-================
-R_DrawSurfaceBlock16
+	R_DrawSurfaceBlock16
 
-FIXME: make this work
-================
+	FIXME: make this work
 */
 void
 R_DrawSurfaceBlock16 (void)
@@ -560,9 +542,7 @@ R_DrawSurfaceBlock16 (void)
 //============================================================================
 
 /*
-================
-R_GenTurbTile
-================
+	R_GenTurbTile
 */
 void
 R_GenTurbTile (pixel_t *pbasetex, void *pdest)
@@ -585,9 +565,7 @@ R_GenTurbTile (pixel_t *pbasetex, void *pdest)
 
 
 /*
-================
-R_GenTurbTile16
-================
+	R_GenTurbTile16
 */
 void
 R_GenTurbTile16 (pixel_t *pbasetex, void *pdest)
@@ -610,9 +588,7 @@ R_GenTurbTile16 (pixel_t *pbasetex, void *pdest)
 
 
 /*
-================
-R_GenTile
-================
+	R_GenTile
 */
 void
 R_GenTile (msurface_t *psurf, void *pdest)

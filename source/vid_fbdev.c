@@ -214,9 +214,7 @@ VID_DescribeModes_f (void)
 
 
 /*
-================
-VID_NumModes
-================
+	VID_NumModes
 */
 static int
 VID_NumModes (void)

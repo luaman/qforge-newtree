@@ -69,9 +69,7 @@ fgetLittleLong (QFile *f)
 
 
 /*
-=============
-LoadTGA
-=============
+	LoadTGA
 */
 byte       *
 LoadTGA (QFile *fin)

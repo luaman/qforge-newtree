@@ -45,9 +45,7 @@ void       *Mod_LoadSpriteFrame (void *pin, mspriteframe_t **ppframe,
 								 int framenum);
 
 /*
-=================
-Mod_LoadSpriteGroup
-=================
+	Mod_LoadSpriteGroup
 */
 void       *
 Mod_LoadSpriteGroup (void *pin, mspriteframe_t **ppframe, int framenum)
@@ -100,9 +98,7 @@ Mod_LoadSpriteGroup (void *pin, mspriteframe_t **ppframe, int framenum)
 }
 
 /*
-=================
-Mod_LoadSpriteModel
-=================
+	Mod_LoadSpriteModel
 */
 void
 Mod_LoadSpriteModel (model_t *mod, void *buffer)

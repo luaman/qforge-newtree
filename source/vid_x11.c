@@ -283,9 +283,7 @@ st3_fixup (XImage * framebuf, int x, int y, int width, int height)
 }
 
 /*
-================
-D_BeginDirectRect
-================
+	D_BeginDirectRect
 */
 void
 D_BeginDirectRect (int x, int y, byte * pbitmap, int width, int height)
@@ -295,9 +293,7 @@ D_BeginDirectRect (int x, int y, byte * pbitmap, int width, int height)
 
 
 /*
-================
-D_EndDirectRect
-================
+	D_EndDirectRect
 */
 void
 D_EndDirectRect (int x, int y, int width, int height)
@@ -307,11 +303,9 @@ D_EndDirectRect (int x, int y, int width, int height)
 
 
 /*
-=================
-VID_Gamma_f
+	VID_Gamma_f
 
-Keybinding command
-=================
+	Keybinding command
 */
 
 byte        vid_gamma[256];

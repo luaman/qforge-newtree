@@ -183,11 +183,9 @@ anglemod (float a)
 }
 
 /*
-==================
-BOPS_Error
+	BOPS_Error
 
-Split out like this for ASM to call.
-==================
+	Split out like this for ASM to call.
 */
 void
 BOPS_Error (void)
@@ -198,11 +196,9 @@ BOPS_Error (void)
 #ifndef USE_INTEL_ASM
 
 /*
-==================
-BoxOnPlaneSide
+	BoxOnPlaneSide
 
-Returns 1, 2, or 1 + 2
-==================
+	Returns 1, 2, or 1 + 2
 */
 int
 BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, mplane_t *p)
@@ -486,9 +482,7 @@ Q_log2 (int val)
 
 
 /*
-================
-R_ConcatRotations
-================
+	R_ConcatRotations
 */
 void
 R_ConcatRotations (float in1[3][3], float in2[3][3], float out[3][3])
@@ -515,9 +509,7 @@ R_ConcatRotations (float in1[3][3], float in2[3][3], float out[3][3])
 
 
 /*
-================
-R_ConcatTransforms
-================
+	R_ConcatTransforms
 */
 void
 R_ConcatTransforms (float in1[3][4], float in2[3][4], float out[3][4])
@@ -550,13 +542,11 @@ R_ConcatTransforms (float in1[3][4], float in2[3][4], float out[3][4])
 
 
 /*
-===================
-FloorDivMod
+	FloorDivMod
 
-Returns mathematically correct (floor-based) quotient and remainder for
-numer and denom, both of which should contain no fractional part. The
-quotient must fit in 32 bits.
-====================
+	Returns mathematically correct (floor-based) quotient and remainder for
+	numer and denom, both of which should contain no fractional part. The
+	quotient must fit in 32 bits.
 */
 
 void
@@ -599,9 +589,7 @@ FloorDivMod (double numer, double denom, int *quotient, int *rem)
 
 
 /*
-===================
-GreatestCommonDivisor
-====================
+	GreatestCommonDivisor
 */
 int
 GreatestCommonDivisor (int i1, int i2)
@@ -623,11 +611,9 @@ GreatestCommonDivisor (int i1, int i2)
 // TODO: move to nonintel.c
 
 /*
-===================
-Invert24To16
+	Invert24To16
 
-Inverts an 8.24 value to a 16.16 value
-====================
+	Inverts an 8.24 value to a 16.16 value
 */
 
 fixed16_t

@@ -126,9 +126,7 @@ extern void JOY_AdvancedUpdate_f (void);
 extern void JOY_Move (usercmd_t *cmd);
 
 /*
-===========
-Force_CenterView_f
-===========
+	Force_CenterView_f
 */
 static void
 Force_CenterView_f (void)
@@ -138,9 +136,7 @@ Force_CenterView_f (void)
 
 
 /*
-===========
-IN_UpdateClipCursor
-===========
+	IN_UpdateClipCursor
 */
 void
 IN_UpdateClipCursor (void)
@@ -153,9 +149,7 @@ IN_UpdateClipCursor (void)
 
 
 /*
-===========
-IN_ShowMouse
-===========
+	IN_ShowMouse
 */
 void
 IN_ShowMouse (void)
@@ -169,9 +163,7 @@ IN_ShowMouse (void)
 
 
 /*
-===========
-IN_HideMouse
-===========
+	IN_HideMouse
 */
 void
 IN_HideMouse (void)
@@ -185,9 +177,7 @@ IN_HideMouse (void)
 
 
 /*
-===========
-IN_ActivateMouse
-===========
+	IN_ActivateMouse
 */
 void
 IN_ActivateMouse (void)
@@ -221,9 +211,7 @@ IN_ActivateMouse (void)
 
 
 /*
-===========
-IN_SetQuakeMouseState
-===========
+	IN_SetQuakeMouseState
 */
 void
 IN_SetQuakeMouseState (void)
@@ -234,9 +222,7 @@ IN_SetQuakeMouseState (void)
 
 
 /*
-===========
-IN_DeactivateMouse
-===========
+	IN_DeactivateMouse
 */
 void
 IN_DeactivateMouse (void)
@@ -266,9 +252,7 @@ IN_DeactivateMouse (void)
 
 
 /*
-===========
-IN_RestoreOriginalMouseState
-===========
+	IN_RestoreOriginalMouseState
 */
 void
 IN_RestoreOriginalMouseState (void)
@@ -285,9 +269,7 @@ IN_RestoreOriginalMouseState (void)
 
 
 /*
-===========
-IN_InitDInput
-===========
+	IN_InitDInput
 */
 static qboolean
 IN_InitDInput (void)
@@ -370,9 +352,7 @@ IN_InitDInput (void)
 
 
 /*
-===========
-IN_StartupMouse
-===========
+	IN_StartupMouse
 */
 static void
 IN_StartupMouse (void)
@@ -425,9 +405,7 @@ IN_StartupMouse (void)
 
 
 /*
-===========
-IN_Init
-===========
+	IN_Init
 */
 void
 IN_Init (void)
@@ -452,9 +430,7 @@ IN_Init_Cvars (void)
 }
 
 /*
-===========
-IN_Shutdown
-===========
+	IN_Shutdown
 */
 void
 IN_Shutdown (void)
@@ -476,9 +452,7 @@ IN_Shutdown (void)
 
 
 /*
-===========
-IN_MouseEvent
-===========
+	IN_MouseEvent
 */
 void
 IN_MouseEvent (int mstate)
@@ -503,9 +477,7 @@ IN_MouseEvent (int mstate)
 
 
 /*
-===========
-IN_MouseMove
-===========
+	IN_MouseMove
 */
 void
 IN_MouseMove (usercmd_t *cmd)
@@ -638,9 +610,7 @@ IN_MouseMove (usercmd_t *cmd)
 
 
 /*
-===========
-IN_Move
-===========
+	IN_Move
 */
 void
 IN_Move (usercmd_t *cmd)
@@ -654,9 +624,7 @@ IN_Move (usercmd_t *cmd)
 
 
 /*
-===========
-IN_Accumulate
-===========
+	IN_Accumulate
 */
 void
 IN_Accumulate (void)
@@ -679,9 +647,7 @@ IN_Accumulate (void)
 
 
 /*
-===================
-IN_ClearStates
-===================
+	IN_ClearStates
 */
 void
 IN_ClearStates (void)
@@ -695,9 +661,7 @@ IN_ClearStates (void)
 }
 
 /*
-===========
-IN_Commands
-===========
+	IN_Commands
 */
 void
 IN_Commands (void)

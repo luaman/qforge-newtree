@@ -109,10 +109,7 @@ cvar_t     *qport;
 extern qboolean is_server;
 
 /*
-===============
-Netchan_Init
-
-===============
+	Netchan_Init
 */
 void
 Netchan_Init (void)
@@ -139,11 +136,9 @@ Netchan_Init_Cvars (void)
 }
 
 /*
-===============
-Netchan_OutOfBand
+	Netchan_OutOfBand
 
-Sends an out-of-band datagram
-================
+	Sends an out-of-band datagram
 */
 void
 Netchan_OutOfBand (netadr_t adr, int length, byte * data)
@@ -170,11 +165,9 @@ Netchan_OutOfBand (netadr_t adr, int length, byte * data)
 }
 
 /*
-===============
-Netchan_OutOfBandPrint
+	Netchan_OutOfBandPrint
 
-Sends a text message in an out-of-band datagram
-================
+	Sends a text message in an out-of-band datagram
 */
 void
 Netchan_OutOfBandPrint (netadr_t adr, char *format, ...)
@@ -192,11 +185,9 @@ Netchan_OutOfBandPrint (netadr_t adr, char *format, ...)
 
 
 /*
-==============
-Netchan_Setup
+	Netchan_Setup
 
-called to open a channel to a remote system
-==============
+	called to open a channel to a remote system
 */
 void
 Netchan_Setup (netchan_t *chan, netadr_t adr, int qport)
@@ -217,11 +208,9 @@ Netchan_Setup (netchan_t *chan, netadr_t adr, int qport)
 
 
 /*
-===============
-Netchan_CanPacket
+	Netchan_CanPacket
 
-Returns true if the bandwidth choke isn't active
-================
+	Returns true if the bandwidth choke isn't active
 */
 #define	MAX_BACKUP	200
 qboolean
@@ -234,11 +223,9 @@ Netchan_CanPacket (netchan_t *chan)
 
 
 /*
-===============
-Netchan_CanReliable
+	Netchan_CanReliable
 
-Returns true if the bandwidth choke isn't 
-================
+	Returns true if the bandwidth choke isn't 
 */
 qboolean
 Netchan_CanReliable (netchan_t *chan)
@@ -251,14 +238,12 @@ Netchan_CanReliable (netchan_t *chan)
 qboolean    ServerPaused (void);
 
 /*
-===============
-Netchan_Transmit
+	Netchan_Transmit
 
-tries to send an unreliable message to a connection, and handles the
-transmition / retransmition of the reliable messages.
+	tries to send an unreliable message to a connection, and handles the
+	transmition / retransmition of the reliable messages.
 
-A 0 length will still generate a packet and deal with the reliable messages.
-================
+	A 0 length will still generate a packet and deal with the reliable messages.
 */
 void
 Netchan_Transmit (netchan_t *chan, int length, byte * data)
@@ -344,12 +329,10 @@ Netchan_Transmit (netchan_t *chan, int length, byte * data)
 }
 
 /*
-=================
-Netchan_Process
+	Netchan_Process
 
-called when the current net_message is from remote_address
-modifies net_message so that it points to the packet payload
-=================
+	called when the current net_message is from remote_address
+	modifies net_message so that it points to the packet payload
 */
 qboolean
 Netchan_Process (netchan_t *chan)

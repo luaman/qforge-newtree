@@ -80,9 +80,7 @@ qboolean    r_lastvertvalid;
 #ifndef USE_INTEL_ASM
 
 /*
-================
-R_EmitEdge
-================
+	R_EmitEdge
 */
 void
 R_EmitEdge (mvertex_t *pv0, mvertex_t *pv1)
@@ -249,9 +247,7 @@ R_EmitEdge (mvertex_t *pv0, mvertex_t *pv1)
 
 
 /*
-================
-R_ClipEdge
-================
+	R_ClipEdge
 */
 void
 R_ClipEdge (mvertex_t *pv0, mvertex_t *pv1, clipplane_t *clip)
@@ -338,9 +334,7 @@ R_ClipEdge (mvertex_t *pv0, mvertex_t *pv1, clipplane_t *clip)
 
 
 /*
-================
-R_EmitCachedEdge
-================
+	R_EmitCachedEdge
 */
 void
 R_EmitCachedEdge (void)
@@ -362,9 +356,7 @@ R_EmitCachedEdge (void)
 
 
 /*
-================
-R_RenderFace
-================
+	R_RenderFace
 */
 void
 R_RenderFace (msurface_t *fa, int clipflags)
@@ -533,9 +525,7 @@ R_RenderFace (msurface_t *fa, int clipflags)
 
 
 /*
-================
-R_RenderBmodelFace
-================
+	R_RenderBmodelFace
 */
 void
 R_RenderBmodelFace (bedge_t *pedges, msurface_t *psurf)
@@ -638,9 +628,7 @@ R_RenderBmodelFace (bedge_t *pedges, msurface_t *psurf)
 
 
 /*
-================
-R_RenderPoly
-================
+	R_RenderPoly
 */
 void
 R_RenderPoly (msurface_t *fa, int clipflags)
@@ -810,9 +798,7 @@ R_RenderPoly (msurface_t *fa, int clipflags)
 
 
 /*
-================
-R_ZDrawSubmodelPolys
-================
+	R_ZDrawSubmodelPolys
 */
 void
 R_ZDrawSubmodelPolys (model_t *pmodel)

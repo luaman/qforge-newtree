@@ -184,11 +184,9 @@ SNDDMA_Shutdown (void)
 }
 
 /*
-==============
-SNDDMA_Submit
+	SNDDMA_Submit
 
-Send sound to device if buffer isn't really the dma buffer
-===============
+	Send sound to device if buffer isn't really the dma buffer
 */
 void
 SNDDMA_Submit (void)

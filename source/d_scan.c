@@ -42,12 +42,10 @@ void        D_DrawTurbulent8Span (void);
 
 
 /*
-=============
-D_WarpScreen
+	D_WarpScreen
 
-// this performs a slight compression of the screen at the same time as
-// the sine warp, to keep the edges from wrapping
-=============
+	this performs a slight compression of the screen at the same time as
+	the sine warp, to keep the edges from wrapping
 */
 void
 D_WarpScreen (void)
@@ -97,9 +95,7 @@ D_WarpScreen (void)
 #ifndef USE_INTEL_ASM
 
 /*
-=============
-D_DrawTurbulent8Span
-=============
+	D_DrawTurbulent8Span
 */
 void
 D_DrawTurbulent8Span (void)
@@ -122,9 +118,7 @@ D_DrawTurbulent8Span (void)
 #endif // !USE_INTEL_ASM
 
 /*
-=============
-Turbulent8
-=============
+	Turbulent8
 */
 void
 Turbulent8 (espan_t *pspan)
@@ -259,9 +253,7 @@ Turbulent8 (espan_t *pspan)
 #ifndef USE_INTEL_ASM
 
 /*
-=============
-D_DrawSpans8
-=============
+	D_DrawSpans8
 */
 void
 D_DrawSpans8 (espan_t *pspan)
@@ -398,9 +390,7 @@ D_DrawSpans8 (espan_t *pspan)
 #ifndef USE_INTEL_ASM
 
 /*
-=============
-D_DrawZSpans
-=============
+	D_DrawZSpans
 */
 void
 D_DrawZSpans (espan_t *pspan)

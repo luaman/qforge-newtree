@@ -59,11 +59,7 @@ void       *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype,
 void        GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr, void *model, int size);
 
 /*
-==============================================================================
-
-ALIAS MODELS
-
-==============================================================================
+	ALIAS MODELS
 */
 
 aliashdr_t *pheader;
@@ -83,9 +79,7 @@ void       *Mod_LoadAliasGroup (void *pin, maliasframedesc_t *frame);
 //=========================================================================
 
 /*
-=================
-Mod_LoadAliasModel
-=================
+	Mod_LoadAliasModel
 */
 void
 Mod_LoadAliasModel (model_t *mod, void *buffer)

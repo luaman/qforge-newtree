@@ -112,9 +112,7 @@ InitSig (void)
 #endif
 
 /*
-===============
-GL_Init
-===============
+	GL_Init
 */
 void
 GL_Init (void)

@@ -55,11 +55,8 @@ void        Cache_FreeHigh (int new_high_hunk);
 
 
 /*
-==============================================================================
-
-The zone calls are pretty much only used for small strings and structures,
-all big things are allocated on the hunk.
-==============================================================================
+	The zone calls are pretty much only used for small strings and structures,
+	all big things are allocated on the hunk.
 */
 
 //============================================================================
@@ -83,11 +80,9 @@ int         hunk_tempmark;
 void        R_FreeTextures (void);
 
 /*
-==============
-Hunk_Check
+	Hunk_Check
 
-Run consistancy and sentinal trahing checks
-==============
+	Run consistancy and sentinal trahing checks
 */
 void
 Hunk_Check (void)
@@ -104,12 +99,11 @@ Hunk_Check (void)
 }
 
 /*
-==============
-Hunk_Print
+	Hunk_Print
 
-If "all" is specified, every single allocation is printed.
-Otherwise, allocations with the same name will be totaled up before printing.
-==============
+	If "all" is specified, every single allocation is printed.
+	Otherwise, allocations with the same name will be totaled up before
+	printing.
 */
 void
 Hunk_Print (qboolean all)
@@ -189,9 +183,7 @@ Hunk_Print (qboolean all)
 }
 
 /*
-===================
-Hunk_AllocName
-===================
+	Hunk_AllocName
 */
 void       *
 Hunk_AllocName (int size, char *name)
@@ -234,9 +226,7 @@ Hunk_AllocName (int size, char *name)
 }
 
 /*
-===================
-Hunk_Alloc
-===================
+	Hunk_Alloc
 */
 void       *
 Hunk_Alloc (int size)
@@ -285,9 +275,7 @@ Hunk_FreeToHighMark (int mark)
 
 
 /*
-===================
-Hunk_HighAllocName
-===================
+	Hunk_HighAllocName
 */
 void       *
 Hunk_HighAllocName (int size, char *name)
@@ -327,11 +315,9 @@ Hunk_HighAllocName (int size, char *name)
 
 
 /*
-=================
-Hunk_TempAlloc
+	Hunk_TempAlloc
 
-Return space from the top of the hunk
-=================
+	Return space from the top of the hunk
 */
 void       *
 Hunk_TempAlloc (int size)
@@ -355,11 +341,7 @@ Hunk_TempAlloc (int size)
 }
 
 /*
-===============================================================================
-
-CACHE MEMORY
-
-===============================================================================
+	CACHE MEMORY
 */
 
 typedef struct cache_system_s {
@@ -375,9 +357,7 @@ cache_system_t *Cache_TryAlloc (int size, qboolean nobottom);
 cache_system_t cache_head;
 
 /*
-===========
-Cache_Move
-===========
+	Cache_Move
 */
 void
 Cache_Move (cache_system_t * c)
@@ -402,11 +382,9 @@ Cache_Move (cache_system_t * c)
 }
 
 /*
-============
-Cache_FreeLow
+	Cache_FreeLow
 
-Throw things out until the hunk can be expanded to the given point
-============
+	Throw things out until the hunk can be expanded to the given point
 */
 void
 Cache_FreeLow (int new_low_hunk)
@@ -424,11 +402,9 @@ Cache_FreeLow (int new_low_hunk)
 }
 
 /*
-============
-Cache_FreeHigh
+	Cache_FreeHigh
 
-Throw things out until the hunk can be expanded to the given point
-============
+	Throw things out until the hunk can be expanded to the given point
 */
 void
 Cache_FreeHigh (int new_high_hunk)
@@ -476,12 +452,10 @@ Cache_MakeLRU (cache_system_t * cs)
 }
 
 /*
-============
-Cache_TryAlloc
+	Cache_TryAlloc
 
-Looks for a free block of memory between the high and low hunk marks
-Size should already include the header and padding
-============
+	Looks for a free block of memory between the high and low hunk marks
+	Size should already include the header and padding
 */
 cache_system_t *
 Cache_TryAlloc (int size, qboolean nobottom)
@@ -550,11 +524,9 @@ Cache_TryAlloc (int size, qboolean nobottom)
 }
 
 /*
-============
-Cache_Flush
+	Cache_Flush
 
-Throw everything out, so new data will be demand cached
-============
+	Throw everything out, so new data will be demand cached
 */
 void
 Cache_Flush (void)
@@ -565,10 +537,7 @@ Cache_Flush (void)
 
 
 /*
-============
-Cache_Print
-
-============
+	Cache_Print
 */
 void
 Cache_Print (void)
@@ -581,10 +550,7 @@ Cache_Print (void)
 }
 
 /*
-============
-Cache_Report
-
-============
+	Cache_Report
 */
 void
 Cache_Report (void)
@@ -595,10 +561,7 @@ Cache_Report (void)
 }
 
 /*
-============
-Cache_Compact
-
-============
+	Cache_Compact
 */
 void
 Cache_Compact (void)
@@ -606,10 +569,7 @@ Cache_Compact (void)
 }
 
 /*
-============
-Cache_Init
-
-============
+	Cache_Init
 */
 void
 Cache_Init (void)
@@ -621,11 +581,9 @@ Cache_Init (void)
 }
 
 /*
-==============
-Cache_Free
+	Cache_Free
 
-Frees the memory and removes it from the LRU list
-==============
+	Frees the memory and removes it from the LRU list
 */
 void
 Cache_Free (cache_user_t *c)
@@ -649,9 +607,7 @@ Cache_Free (cache_user_t *c)
 
 
 /*
-==============
-Cache_Check
-==============
+	Cache_Check
 */
 void       *
 Cache_Check (cache_user_t *c)
@@ -672,9 +628,7 @@ Cache_Check (cache_user_t *c)
 
 
 /*
-==============
-Cache_Alloc
-==============
+	Cache_Alloc
 */
 void       *
 Cache_Alloc (cache_user_t *c, int size, char *name)
@@ -712,9 +666,7 @@ Cache_Alloc (cache_user_t *c, int size, char *name)
 
 
 /*
-========================
-Memory_Init
-========================
+	Memory_Init
 */
 void
 Memory_Init (void *buf, int size)

@@ -41,13 +41,10 @@
 #define	STEPSIZE	18
 
 /*
-=============
-SV_CheckBottom
+	SV_CheckBottom
 
-Returns false if any part of the bottom of the entity is off an edge that
-is not a staircase.
-
-=============
+	Returns false if any part of the bottom of the entity is off an edge that
+	is not a staircase.
 */
 int         c_yes, c_no;
 
@@ -114,14 +111,12 @@ SV_CheckBottom (edict_t *ent)
 
 
 /*
-=============
-SV_movestep
+	SV_movestep
 
-Called by monster program code.
-The move will be adjusted for slopes and stairs, but if the move isn't
-possible, no move is done, false is returned, and
-pr_global_struct->trace_normal is set to the normal of the blocking wall
-=============
+	Called by monster program code.
+	The move will be adjusted for slopes and stairs, but if the move isn't
+	possible, no move is done, false is returned, and
+	pr_global_struct->trace_normal is set to the normal of the blocking wall
 */
 qboolean
 SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
@@ -233,13 +228,10 @@ SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 //============================================================================
 
 /*
-======================
-SV_StepDirection
+	SV_StepDirection
 
-Turns to the movement direction, and walks the current distance if
-facing it.
-
-======================
+	Turns to the movement direction, and walks the current distance if
+	facing it.
 */
 qboolean
 SV_StepDirection (edict_t *ent, float yaw, float dist)
@@ -271,10 +263,7 @@ SV_StepDirection (edict_t *ent, float yaw, float dist)
 }
 
 /*
-======================
-SV_FixCheckBottom
-
-======================
+	SV_FixCheckBottom
 */
 void
 SV_FixCheckBottom (edict_t *ent)
@@ -287,10 +276,7 @@ SV_FixCheckBottom (edict_t *ent)
 
 
 /*
-================
-SV_NewChaseDir
-
-================
+	SV_NewChaseDir
 */
 #define	DI_NODIR	-1
 void
@@ -371,10 +357,7 @@ SV_NewChaseDir (edict_t *actor, edict_t *enemy, float dist)
 }
 
 /*
-======================
-SV_CloseEnough
-
-======================
+	SV_CloseEnough
 */
 qboolean
 SV_CloseEnough (edict_t *ent, edict_t *goal, float dist)
@@ -391,10 +374,7 @@ SV_CloseEnough (edict_t *ent, edict_t *goal, float dist)
 }
 
 /*
-======================
-SV_MoveToGoal
-
-======================
+	SV_MoveToGoal
 */
 void
 SV_MoveToGoal (progs_t *pr)

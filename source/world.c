@@ -69,11 +69,7 @@ typedef struct {
 int         SV_HullPointContents (hull_t *hull, int num, vec3_t p);
 
 /*
-===============================================================================
-
-HULL BOXES
-
-===============================================================================
+	HULL BOXES
 */
 
 
@@ -82,12 +78,10 @@ static dclipnode_t box_clipnodes[6];
 static mplane_t box_planes[6];
 
 /*
-===================
-SV_InitBoxHull
+	SV_InitBoxHull
 
-Set up the planes and clipnodes so that the six floats of a bounding box
-can just be stored out and get a proper hull_t structure.
-===================
+	Set up the planes and clipnodes so that the six floats of a bounding box
+	can just be stored out and get a proper hull_t structure.
 */
 void
 SV_InitBoxHull (void)
@@ -119,12 +113,10 @@ SV_InitBoxHull (void)
 
 
 /*
-===================
-SV_HullForBox
+	SV_HullForBox
 
-To keep everything totally uniform, bounding boxes are turned into small
-BSP trees instead of being compared directly.
-===================
+	To keep everything totally uniform, bounding boxes are turned into small
+	BSP trees instead of being compared directly.
 */
 hull_t     *
 SV_HullForBox (vec3_t mins, vec3_t maxs)
@@ -142,14 +134,12 @@ SV_HullForBox (vec3_t mins, vec3_t maxs)
 
 
 /*
-================
-SV_HullForEntity
+	SV_HullForEntity
 
-Returns a hull that can be used for testing or clipping an object of mins/maxs
-size.
-Offset is filled in to contain the adjustment that must be added to the
-testing object's origin to get a point to use with the returned hull.
-================
+	Returns a hull that can be used for testing or clipping an object of
+	mins/maxs size.  Offset is filled in to contain the adjustment that
+	must be added to the testing object's origin to get a point to use with
+	the returned hull.
 */
 hull_t     *
 SV_HullForEntity (edict_t *ent, vec3_t mins, vec3_t maxs, vec3_t offset)
@@ -196,11 +186,7 @@ SV_HullForEntity (edict_t *ent, vec3_t mins, vec3_t maxs, vec3_t offset)
 }
 
 /*
-===============================================================================
-
-ENTITY AREA CHECKING
-
-===============================================================================
+	ENTITY AREA CHECKING
 */
 
 
@@ -208,10 +194,7 @@ areanode_t  sv_areanodes[AREA_NODES];
 int         sv_numareanodes;
 
 /*
-===============
-SV_CreateAreaNode
-
-===============
+	SV_CreateAreaNode
 */
 areanode_t *
 SV_CreateAreaNode (int depth, vec3_t mins, vec3_t maxs)
@@ -253,10 +236,7 @@ SV_CreateAreaNode (int depth, vec3_t mins, vec3_t maxs)
 }
 
 /*
-===============
-SV_ClearWorld
-
-===============
+	SV_ClearWorld
 */
 void
 SV_ClearWorld (void)
@@ -270,10 +250,7 @@ SV_ClearWorld (void)
 
 
 /*
-===============
-SV_UnlinkEdict
-
-===============
+	SV_UnlinkEdict
 */
 void
 SV_UnlinkEdict (edict_t *ent)
@@ -286,9 +263,7 @@ SV_UnlinkEdict (edict_t *ent)
 
 
 /*
-====================
-SV_TouchLinks
-====================
+	SV_TouchLinks
 */
 void
 SV_TouchLinks (edict_t *ent, areanode_t *node)
@@ -337,10 +312,7 @@ SV_TouchLinks (edict_t *ent, areanode_t *node)
 
 
 /*
-===============
-SV_FindTouchedLeafs
-
-===============
+	SV_FindTouchedLeafs
 */
 void
 SV_FindTouchedLeafs (edict_t *ent, mnode_t *node)
@@ -380,10 +352,7 @@ SV_FindTouchedLeafs (edict_t *ent, mnode_t *node)
 }
 
 /*
-===============
-SV_LinkEdict
-
-===============
+	SV_LinkEdict
 */
 void
 SV_LinkEdict (edict_t *ent, qboolean touch_triggers)
@@ -459,20 +428,13 @@ SV_LinkEdict (edict_t *ent, qboolean touch_triggers)
 
 
 /*
-===============================================================================
-
-POINT TESTING IN HULLS
-
-===============================================================================
+	POINT TESTING IN HULLS
 */
 
 #ifndef USE_INTEL_ASM
 
 /*
-==================
-SV_HullPointContents
-
-==================
+	SV_HullPointContents
 */
 int
 SV_HullPointContents (hull_t *hull, int num, vec3_t p)
@@ -505,10 +467,7 @@ SV_HullPointContents (hull_t *hull, int num, vec3_t p)
 
 
 /*
-==================
-SV_PointContents
-
-==================
+	SV_PointContents
 */
 int
 SV_PointContents (vec3_t p)
@@ -519,12 +478,10 @@ SV_PointContents (vec3_t p)
 //===========================================================================
 
 /*
-============
-SV_TestEntityPosition
+	SV_TestEntityPosition
 
-A small wrapper around SV_BoxInSolidEntity that never clips against the
-supplied entity.
-============
+	A small wrapper around SV_BoxInSolidEntity that never clips against the
+	supplied entity.
 */
 edict_t    *
 SV_TestEntityPosition (edict_t *ent)
@@ -542,21 +499,14 @@ SV_TestEntityPosition (edict_t *ent)
 }
 
 /*
-===============================================================================
-
-LINE TESTING IN HULLS
-
-===============================================================================
+	LINE TESTING IN HULLS
 */
 
 // 1/32 epsilon to keep floating point happy
 #define	DIST_EPSILON	(0.03125)
 
 /*
-==================
-SV_RecursiveHullCheck
-
-==================
+	SV_RecursiveHullCheck
 */
 qboolean
 SV_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
@@ -688,12 +638,10 @@ SV_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
 
 
 /*
-==================
-SV_ClipMoveToEntity
+	SV_ClipMoveToEntity
 
-Handles selection or creation of a clipping hull, and offseting (and
-eventually rotation) of the end points
-==================
+	Handles selection or creation of a clipping hull, and offseting (and
+	eventually rotation) of the end points
 */
 trace_t
 SV_ClipMoveToEntity (edict_t *ent, vec3_t start, vec3_t mins, vec3_t maxs,
@@ -735,11 +683,9 @@ SV_ClipMoveToEntity (edict_t *ent, vec3_t start, vec3_t mins, vec3_t maxs,
 //===========================================================================
 
 /*
-====================
-SV_ClipToLinks
+	SV_ClipToLinks
 
-Mins and maxs enclose the entire area swept by the move
-====================
+	Mins and maxs enclose the entire area swept by the move
 */
 void
 SV_ClipToLinks (areanode_t *node, moveclip_t * clip)
@@ -815,9 +761,7 @@ SV_ClipToLinks (areanode_t *node, moveclip_t * clip)
 
 
 /*
-==================
-SV_MoveBounds
-==================
+	SV_MoveBounds
 */
 void
 SV_MoveBounds (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end,
@@ -843,9 +787,7 @@ SV_MoveBounds (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end,
 }
 
 /*
-==================
-SV_Move
-==================
+	SV_Move
 */
 trace_t
 SV_Move (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int type,
@@ -889,10 +831,7 @@ SV_Move (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int type,
 //=============================================================================
 
 /*
-============
-SV_TestPlayerPosition
-
-============
+	SV_TestPlayerPosition
 */
 edict_t    *
 SV_TestPlayerPosition (edict_t *ent, vec3_t origin)

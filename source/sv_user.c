@@ -78,21 +78,16 @@ extern cvar_t *pausable;
 void        SV_FullClientUpdateToClient (client_t *client, client_t *cl);
 
 /*
-============================================================
+	USER STRINGCMD EXECUTION
 
-USER STRINGCMD EXECUTION
-
-host_client and sv_player will be valid.
-============================================================
+	host_client and sv_player will be valid.
 */
 
 /*
-================
-SV_New_f
+	SV_New_f
 
-Sends the first message from the server to a connected client.
-This will be sent on the initial connection and upon each server load.
-================
+	Sends the first message from the server to a connected client.
+	This will be sent on the initial connection and upon each server load.
 */
 void
 SV_New_f (void)
@@ -160,9 +155,7 @@ SV_New_f (void)
 }
 
 /*
-==================
-SV_Soundlist_f
-==================
+	SV_Soundlist_f
 */
 void
 SV_Soundlist_f (void)
@@ -212,9 +205,7 @@ SV_Soundlist_f (void)
 }
 
 /*
-==================
-SV_Modellist_f
-==================
+	SV_Modellist_f
 */
 void
 SV_Modellist_f (void)
@@ -263,9 +254,7 @@ SV_Modellist_f (void)
 }
 
 /*
-==================
-SV_PreSpawn_f
-==================
+	SV_PreSpawn_f
 */
 void
 SV_PreSpawn_f (void)
@@ -332,9 +321,7 @@ SV_PreSpawn_f (void)
 }
 
 /*
-==================
-SV_Spawn_f
-==================
+	SV_Spawn_f
 */
 void
 SV_Spawn_f (void)
@@ -431,9 +418,7 @@ SV_Spawn_f (void)
 }
 
 /*
-==================
-SV_SpawnSpectator
-==================
+	SV_SpawnSpectator
 */
 void
 SV_SpawnSpectator (void)
@@ -457,9 +442,7 @@ SV_SpawnSpectator (void)
 }
 
 /*
-==================
-SV_Begin_f
-==================
+	SV_Begin_f
 */
 void
 SV_Begin_f (void)
@@ -548,9 +531,7 @@ SV_Begin_f (void)
 //=============================================================================
 
 /*
-==================
-SV_NextDownload_f
-==================
+	SV_NextDownload_f
 */
 void
 SV_NextDownload_f (void)
@@ -605,9 +586,7 @@ OutofBandPrintf (netadr_t where, char *fmt, ...)
 }
 
 /*
-==================
-SV_NextUpload
-==================
+	SV_NextUpload
 */
 void
 SV_NextUpload (void)
@@ -677,9 +656,7 @@ SV_NextUpload (void)
 }
 
 /*
-==================
-SV_BeginDownload_f
-==================
+	SV_BeginDownload_f
 */
 void
 SV_BeginDownload_f (void)
@@ -774,9 +751,7 @@ SV_BeginDownload_f (void)
 //=============================================================================
 
 /*
-==================
-SV_Say
-==================
+	SV_Say
 */
 void
 SV_Say (qboolean team)
@@ -868,9 +843,7 @@ SV_Say (qboolean team)
 
 
 /*
-==================
-SV_Say_f
-==================
+	SV_Say_f
 */
 void
 SV_Say_f (void)
@@ -879,9 +852,7 @@ SV_Say_f (void)
 }
 
 /*
-==================
-SV_Say_Team_f
-==================
+	SV_Say_Team_f
 */
 void
 SV_Say_Team_f (void)
@@ -894,12 +865,10 @@ SV_Say_Team_f (void)
 //============================================================================
 
 /*
-=================
-SV_Pings_f
+	SV_Pings_f
 
-The client is showing the scoreboard, so send new ping times for all
-clients
-=================
+	The client is showing the scoreboard, so send new ping times for all
+	clients
 */
 void
 SV_Pings_f (void)
@@ -923,9 +892,7 @@ SV_Pings_f (void)
 
 
 /*
-==================
-SV_Kill_f
-==================
+	SV_Kill_f
 */
 void
 SV_Kill_f (void)
@@ -944,9 +911,7 @@ SV_Kill_f (void)
 }
 
 /*
-==================
-SV_TogglePause
-==================
+	SV_TogglePause
 */
 void
 SV_TogglePause (const char *msg)
@@ -970,9 +935,7 @@ SV_TogglePause (const char *msg)
 
 
 /*
-==================
-SV_Pause_f
-==================
+	SV_Pause_f
 */
 void
 SV_Pause_f (void)
@@ -1011,11 +974,9 @@ SV_Pause_f (void)
 
 
 /*
-=================
-SV_Drop_f
+	SV_Drop_f
 
-The client is going to disconnect, so remove the connection immediately
-=================
+	The client is going to disconnect, so remove the connection immediately
 */
 void
 SV_Drop_f (void)
@@ -1027,11 +988,9 @@ SV_Drop_f (void)
 }
 
 /*
-=================
-SV_PTrack_f
+	SV_PTrack_f
 
-Change the bandwidth estimate for a client
-=================
+	Change the bandwidth estimate for a client
 */
 void
 SV_PTrack_f (void)
@@ -1268,19 +1227,13 @@ SV_ExecuteUserCommand (char *s)
 }
 
 /*
-===========================================================================
-
-USER CMD EXECUTION
-
-===========================================================================
+	USER CMD EXECUTION
 */
 
 /*
-===============
-SV_CalcRoll
+	SV_CalcRoll
 
-Used by view and sv_user
-===============
+	Used by view and sv_user
 */
 float
 SV_CalcRoll (vec3_t angles, vec3_t velocity)
@@ -1314,10 +1267,7 @@ SV_CalcRoll (vec3_t angles, vec3_t velocity)
 vec3_t      pmove_mins, pmove_maxs;
 
 /*
-====================
-AddLinksToPmove
-
-====================
+	AddLinksToPmove
 */
 void
 AddLinksToPmove (areanode_t *node)
@@ -1379,11 +1329,9 @@ AddLinksToPmove (areanode_t *node)
 
 
 /*
-================
-AddAllEntsToPmove
+	AddAllEntsToPmove
 
-For debugging
-================
+	For debugging
 */
 void
 AddAllEntsToPmove (void)
@@ -1431,10 +1379,9 @@ AddAllEntsToPmove (void)
 }
 
 /*
-===========
-SV_PreRunCmd
-===========
-Done before running a player command.  Clears the touch array
+	SV_PreRunCmd
+
+	Done before running a player command.  Clears the touch array
 */
 byte        playertouch[(MAX_EDICTS + 7) / 8];
 
@@ -1445,9 +1392,7 @@ SV_PreRunCmd (void)
 }
 
 /*
-===========
-SV_RunCmd
-===========
+	SV_RunCmd
 */
 extern qboolean nouse;					// 1999-10-29 +USE fix by Maddes
 
@@ -1633,10 +1578,9 @@ SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 }
 
 /*
-===========
-SV_PostRunCmd
-===========
-Done after running a player command.
+	SV_PostRunCmd
+
+	Done after running a player command.
 */
 void
 SV_PostRunCmd (void)
@@ -1657,11 +1601,9 @@ SV_PostRunCmd (void)
 
 
 /*
-===================
-SV_ExecuteClientMessage
+	SV_ExecuteClientMessage
 
-The current net_message is parsed for the given client
-===================
+	The current net_message is parsed for the given client
 */
 void
 SV_ExecuteClientMessage (client_t *cl)
@@ -1808,9 +1750,7 @@ SV_ExecuteClientMessage (client_t *cl)
 }
 
 /*
-==============
-SV_UserInit
-==============
+	SV_UserInit
 */
 void
 SV_UserInit (void)

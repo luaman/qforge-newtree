@@ -36,9 +36,7 @@ int         r_dlightframecount;
 
 
 /*
-==================
-R_AnimateLight
-==================
+	R_AnimateLight
 */
 void
 R_AnimateLight (void)
@@ -63,17 +61,11 @@ R_AnimateLight (void)
 
 
 /*
-=============================================================================
-
-DYNAMIC LIGHTS
-
-=============================================================================
+	DYNAMIC LIGHTS
 */
 
 /*
-=============
-R_MarkLights
-=============
+	R_MarkLights
 */
 void
 R_MarkLights (vec3_t lightorigin, dlight_t *light, int bit, mnode_t *node)
@@ -113,9 +105,7 @@ R_MarkLights (vec3_t lightorigin, dlight_t *light, int bit, mnode_t *node)
 
 
 /*
-=============
-R_PushDlights
-=============
+	R_PushDlights
 */
 void
 R_PushDlights (vec3_t entorigin)
@@ -138,11 +128,7 @@ R_PushDlights (vec3_t entorigin)
 
 
 /*
-=============================================================================
-
-LIGHT SAMPLING
-
-=============================================================================
+	LIGHT SAMPLING
 */
 
 int

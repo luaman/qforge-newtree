@@ -94,17 +94,11 @@ Sys_DebugLog (char *file, char *fmt, ...)
 };
 
 /*
-===============================================================================
-
-FILE IO
-
-===============================================================================
+	FILE IO
 */
 
 /*
-================
-wfilelength
-================
+	wfilelength
 */
 int
 wfilelength (QFile *f)
@@ -144,17 +138,11 @@ Sys_FileTime (char *path)
 
 
 /*
-===============================================================================
-
-SYSTEM IO
-
-===============================================================================
+	SYSTEM IO
 */
 
 /*
-================
-Sys_MakeCodeWriteable
-================
+	Sys_MakeCodeWriteable
 */
 void
 Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
@@ -169,9 +157,7 @@ Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
 
 
 /*
-================
-Sys_Init
-================
+	Sys_Init
 */
 
 void
@@ -405,17 +391,11 @@ IN_SendKeyEvents (void)
 
 
 /*
-==============================================================================
-
- WINDOWS CRAP
-
-==============================================================================
+	WINDOWS CRAP
 */
 
 /*
-==================
-WinMain
-==================
+	WinMain
 */
 void
 SleepUntilInput (int time)
@@ -427,9 +407,7 @@ SleepUntilInput (int time)
 
 
 /*
-==================
-WinMain
-==================
+	WinMain
 */
 HINSTANCE   global_hInstance;
 int         global_nCmdShow;

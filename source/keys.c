@@ -210,11 +210,7 @@ keyname_t   keynames[] = {
 };
 
 /*
-==============================================================================
-
 			LINE TYPING INTO THE CONSOLE
-
-==============================================================================
 */
 
 qboolean
@@ -265,11 +261,9 @@ CompleteCommand (void)
 }
 
 /*
-====================
-Key_Console
+	Key_Console
 
-Interactive line editing and console scrollback
-====================
+	Interactive line editing and console scrollback
 */
 void
 Key_Console (int key)
@@ -501,13 +495,11 @@ Key_Message (int key)
 
 
 /*
-===================
-Key_StringToKeynum
+	Key_StringToKeynum
 
-Returns a key number to be used to index keybindings[] by looking at
-the given string.  Single ascii characters return themselves, while
-the K_* names are matched up.
-===================
+	Returns a key number to be used to index keybindings[] by looking at
+	the given string.  Single ascii characters return themselves, while
+	the K_* names are matched up.
 */
 int
 Key_StringToKeynum (char *str)
@@ -527,13 +519,11 @@ Key_StringToKeynum (char *str)
 }
 
 /*
-===================
-Key_KeynumToString
+	Key_KeynumToString
 
-Returns a string (either a single ascii char, or a K_* name) for the
-given keynum.
-FIXME: handle quote special (general escape sequence?)
-===================
+	Returns a string (either a single ascii char, or a K_* name) for the
+	given keynum.
+	FIXME: handle quote special (general escape sequence?)
 */
 char       *
 Key_KeynumToString (int keynum)
@@ -558,9 +548,7 @@ Key_KeynumToString (int keynum)
 
 
 /*
-===================
-Key_SetBinding
-===================
+	Key_SetBinding
 */
 void
 Key_SetBinding (int keynum, char *binding)
@@ -585,9 +573,7 @@ Key_SetBinding (int keynum, char *binding)
 }
 
 /*
-===================
-Key_Unbind_f
-===================
+	Key_Unbind_f
 */
 void
 Key_Unbind_f (void)
@@ -620,9 +606,7 @@ Key_Unbindall_f (void)
 
 
 /*
-===================
-Key_Bind_f
-===================
+	Key_Bind_f
 */
 void
 Key_Bind_f (void)
@@ -661,11 +645,9 @@ Key_Bind_f (void)
 }
 
 /*
-============
-Key_WriteBindings
+	Key_WriteBindings
 
-Writes lines containing "bind key value"
-============
+	Writes lines containing "bind key value"
 */
 void
 Key_WriteBindings (QFile *f)
@@ -681,9 +663,7 @@ Key_WriteBindings (QFile *f)
 
 
 /*
-===================
-Key_Init
-===================
+	Key_Init
 */
 void
 Key_Init (void)
@@ -772,12 +752,10 @@ Key_Init_Cvars (void)
 }
 
 /*
-===================
-Key_Event
+	Key_Event
 
-Called by the system between frames for both key up and key down events
-Should NOT be called during an interrupt!
-===================
+	Called by the system between frames for both key up and key down events
+	Should NOT be called during an interrupt!
 */
 void
 Key_Event (int key, int alt_key, qboolean down)
@@ -920,9 +898,7 @@ Key_Event (int key, int alt_key, qboolean down)
 }
 
 /*
-===================
-Key_ClearStates
-===================
+	Key_ClearStates
 */
 void
 Key_ClearStates (void)

@@ -90,9 +90,7 @@ Draw_ClearCache (void)
 }
 
 /*
-================
-Draw_CachePic
-================
+	Draw_CachePic
 */
 qpic_t     *
 Draw_CachePic (char *path)
@@ -185,9 +183,7 @@ Draw_TextBox (int x, int y, int width, int lines)
 }
 
 /*
-===============
-Draw_Init
-===============
+	Draw_Init
 */
 void
 Draw_Init (void)
@@ -212,13 +208,11 @@ Draw_Init_Cvars (void)
 
 
 /*
-================
-Draw_Character8
+	Draw_Character8
 
-Draws one 8*8 graphics character with 0 being transparent.
-It can be clipped to the top of the screen to allow the console to be
-smoothly scrolled off.
-================
+	Draws one 8*8 graphics character with 0 being transparent.
+	It can be clipped to the top of the screen to allow the console to be
+	smoothly scrolled off.
 */
 void
 Draw_Character8 (int x, int y, int num)
@@ -304,9 +298,7 @@ Draw_Character8 (int x, int y, int num)
 }
 
 /*
-================
-Draw_String8
-================
+	Draw_String8
 */
 void
 Draw_String8 (int x, int y, char *str)
@@ -319,9 +311,7 @@ Draw_String8 (int x, int y, char *str)
 }
 
 /*
-================
-Draw_AltString8
-================
+	Draw_AltString8
 */
 void
 Draw_AltString8 (int x, int y, char *str)
@@ -377,9 +367,7 @@ Draw_Crosshair (void)
 }
 
 /*
-=============
-Draw_Pic
-=============
+	Draw_Pic
 */
 void
 Draw_Pic (int x, int y, qpic_t *pic)
@@ -452,9 +440,7 @@ Draw_Pic (int x, int y, qpic_t *pic)
 
 
 /*
-=============
-Draw_SubPic
-=============
+	Draw_SubPic
 */
 void
 Draw_SubPic (int x, int y, qpic_t *pic, int srcx, int srcy, int width,
@@ -495,9 +481,7 @@ Draw_SubPic (int x, int y, qpic_t *pic, int srcx, int srcy, int width,
 }
 
 /*
-=============
-Draw_TransPicTranslate
-=============
+	Draw_TransPicTranslate
 */
 void
 Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte * translation)
@@ -570,10 +554,7 @@ Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte * translation)
 
 
 /*
-================
-Draw_ConsoleBackground
-
-================
+	Draw_ConsoleBackground
 */
 void
 Draw_ConsoleBackground (int lines)
@@ -641,9 +622,7 @@ Draw_ConsoleBackground (int lines)
 
 
 /*
-==============
-R_DrawRect8
-==============
+	R_DrawRect8
 */
 void
 R_DrawRect8 (vrect_t *prect, int rowbytes, byte * psrc, int transparent)
@@ -683,9 +662,7 @@ R_DrawRect8 (vrect_t *prect, int rowbytes, byte * psrc, int transparent)
 
 
 /*
-==============
-R_DrawRect16
-==============
+	R_DrawRect16
 */
 void
 R_DrawRect16 (vrect_t *prect, int rowbytes, byte * psrc, int transparent)
@@ -733,12 +710,10 @@ R_DrawRect16 (vrect_t *prect, int rowbytes, byte * psrc, int transparent)
 
 
 /*
-=============
-Draw_TileClear
+	Draw_TileClear
 
-This repeats a 64*64 tile graphic to fill the screen around a sized down
-refresh window.
-=============
+	This repeats a 64*64 tile graphic to fill the screen around a sized down
+	refresh window.
 */
 void
 Draw_TileClear (int x, int y, int w, int h)
@@ -804,11 +779,9 @@ Draw_TileClear (int x, int y, int w, int h)
 
 
 /*
-=============
-Draw_Fill
+	Draw_Fill
 
-Fills a box of pixels with a single color
-=============
+	Fills a box of pixels with a single color
 */
 void
 Draw_Fill (int x, int y, int w, int h, int c)
@@ -841,10 +814,7 @@ Draw_Fill (int x, int y, int w, int h, int c)
 //=============================================================================
 
 /*
-================
-Draw_FadeScreen
-
-================
+	Draw_FadeScreen
 */
 void
 Draw_FadeScreen (void)
@@ -876,12 +846,10 @@ Draw_FadeScreen (void)
 //=============================================================================
 
 /*
-================
-Draw_BeginDisc
+	Draw_BeginDisc
 
-Draws the little blue disc in the corner of the screen.
-Call before beginning any disc IO.
-================
+	Draws the little blue disc in the corner of the screen.
+	Call before beginning any disc IO.
 */
 void
 Draw_BeginDisc (void)
@@ -892,12 +860,10 @@ Draw_BeginDisc (void)
 
 
 /*
-================
-Draw_EndDisc
+	Draw_EndDisc
 
-Erases the disc icon.
-Call after completing any disc IO
-================
+	Erases the disc icon.
+	Call after completing any disc IO
 */
 void
 Draw_EndDisc (void)

@@ -88,9 +88,7 @@ qboolean    SNDDMA_InitWav (void);
 
 
 /*
-==================
-S_BlockSound
-==================
+	S_BlockSound
 */
 void
 S_BlockSound (void)
@@ -107,9 +105,7 @@ S_BlockSound (void)
 
 
 /*
-==================
-S_UnblockSound
-==================
+	S_UnblockSound
 */
 void
 S_UnblockSound (void)
@@ -123,9 +119,7 @@ S_UnblockSound (void)
 
 
 /*
-==================
-FreeSound
-==================
+	FreeSound
 */
 void
 FreeSound (void)
@@ -183,11 +177,9 @@ FreeSound (void)
 
 
 /*
-==================
-SNDDMA_InitDirect
+	SNDDMA_InitDirect
 
-Direct-Sound support
-==================
+	Direct-Sound support
 */
 sndinitstat
 SNDDMA_InitDirect (void)
@@ -380,11 +372,9 @@ SNDDMA_InitDirect (void)
 
 
 /*
-==================
-SNDDM_InitWav
+	SNDDM_InitWav
 
-Crappy windows multimedia base
-==================
+	Crappy windows multimedia base
 */
 qboolean
 SNDDMA_InitWav (void)
@@ -494,12 +484,10 @@ SNDDMA_InitWav (void)
 }
 
 /*
-==================
-SNDDMA_Init
+	SNDDMA_Init
 
-Try to find a sound device to mix for.
-Returns false if nothing is found.
-==================
+	Try to find a sound device to mix for.
+	Returns false if nothing is found.
 */
 
 qboolean
@@ -562,13 +550,11 @@ SNDDMA_Init (void)
 }
 
 /*
-==============
-SNDDMA_GetDMAPos
+	SNDDMA_GetDMAPos
 
-return the current sample position (in mono samples read)
-inside the recirculating dma buffer, so the mixing code will know
-how many sample are required to fill it up.
-===============
+	return the current sample position (in mono samples read)
+	inside the recirculating dma buffer, so the mixing code will know
+	how many sample are required to fill it up.
 */
 int
 SNDDMA_GetDMAPos (void)
@@ -594,11 +580,9 @@ SNDDMA_GetDMAPos (void)
 }
 
 /*
-==============
-SNDDMA_Submit
+	SNDDMA_Submit
 
-Send sound to device if buffer isn't really the dma buffer
-===============
+	Send sound to device if buffer isn't really the dma buffer
 */
 void
 SNDDMA_Submit (void)
@@ -648,11 +632,9 @@ SNDDMA_Submit (void)
 }
 
 /*
-==============
-SNDDMA_Shutdown
+	SNDDMA_Shutdown
 
-Reset the sound device for exiting
-===============
+	Reset the sound device for exiting
 */
 void
 SNDDMA_Shutdown (void)

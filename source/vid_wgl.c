@@ -480,9 +480,7 @@ VID_SetMode (int modenum, unsigned char *palette)
 
 
 /*
-================
-VID_UpdateWindowStatus
-================
+	VID_UpdateWindowStatus
 */
 void
 VID_UpdateWindowStatus (void)
@@ -529,9 +527,7 @@ CheckMultiTextureExtensions (void)
 }
 
 /*
-===============
-GL_Init
-===============
+	GL_Init
 */
 void
 GL_Init (void)
@@ -580,10 +576,7 @@ GL_Init (void)
 }
 
 /*
-=================
-GL_BeginRendering
-
-=================
+	GL_BeginRendering
 */
 void
 GL_BeginRendering (int *x, int *y, int *width, int *height)
@@ -839,11 +832,9 @@ byte        extscantokey[128] = {
 
 
 /*
-=======
-MapKey
+	MapKey
 
-Map from windows to quake keynums
-=======
+	Map from windows to quake keynums
 */
 int
 MapKey (int key)
@@ -864,18 +855,12 @@ MapKey (int key)
 
 
 /*
-===================================================================
-
-MAIN WINDOW
-
-===================================================================
+	MAIN WINDOW
 */
 
 
 /*
-================
-ClearAllStates
-================
+	ClearAllStates
 */
 void
 ClearAllStates (void)
@@ -1076,9 +1061,7 @@ MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 /*
-=================
-VID_NumModes
-=================
+	VID_NumModes
 */
 int
 VID_NumModes (void)
@@ -1088,9 +1071,7 @@ VID_NumModes (void)
 
 
 /*
-=================
-VID_GetModePtr
-=================
+	VID_GetModePtr
 */
 vmode_t    *
 VID_GetModePtr (int modenum)
@@ -1104,9 +1085,7 @@ VID_GetModePtr (int modenum)
 
 
 /*
-=================
-VID_GetModeDescription
-=================
+	VID_GetModeDescription
 */
 char       *
 VID_GetModeDescription (int mode)
@@ -1164,9 +1143,7 @@ VID_GetExtModeDescription (int mode)
 
 
 /*
-=================
-VID_DescribeCurrentMode_f
-=================
+	VID_DescribeCurrentMode_f
 */
 void
 VID_DescribeCurrentMode_f (void)
@@ -1176,9 +1153,7 @@ VID_DescribeCurrentMode_f (void)
 
 
 /*
-=================
-VID_NumModes_f
-=================
+	VID_NumModes_f
 */
 void
 VID_NumModes_f (void)
@@ -1192,9 +1167,7 @@ VID_NumModes_f (void)
 
 
 /*
-=================
-VID_DescribeMode_f
-=================
+	VID_DescribeMode_f
 */
 void
 VID_DescribeMode_f (void)
@@ -1213,9 +1186,7 @@ VID_DescribeMode_f (void)
 
 
 /*
-=================
-VID_DescribeModes_f
-=================
+	VID_DescribeModes_f
 */
 void
 VID_DescribeModes_f (void)
@@ -1291,9 +1262,7 @@ VID_InitDIB (HINSTANCE hInstance)
 
 
 /*
-=================
-VID_InitFullDIB
-=================
+	VID_InitFullDIB
 */
 void
 VID_InitFullDIB (HINSTANCE hInstance)
@@ -1469,9 +1438,7 @@ VID_Init8bitPalette (void)
 }
 
 /*
-===================
-VID_Init
-===================
+	VID_Init
 */
 void
 VID_Init (unsigned char *palette)
@@ -1729,9 +1696,7 @@ typedef struct {
 static modedesc_t modedescs[MAX_MODEDESCS];
 
 /*
-================
-VID_MenuDraw
-================
+	VID_MenuDraw
 */
 void
 VID_MenuDraw (void)
@@ -1797,9 +1762,7 @@ VID_MenuDraw (void)
 
 
 /*
-================
-VID_MenuKey
-================
+	VID_MenuKey
 */
 void
 VID_MenuKey (int key)

@@ -49,11 +49,7 @@
 #define CHAN_BODY   4
 
 /*
-=============================================================================
-
 	Con_Printf redirection
-
-=============================================================================
 */
 
 char        outputbuf[8000];
@@ -66,9 +62,7 @@ extern cvar_t *sv_timestamps;
 extern cvar_t *sv_timefmt;
 
 /*
-==================
-SV_FlushRedirect
-==================
+	SV_FlushRedirect
 */
 void
 SV_FlushRedirect (void)
@@ -96,12 +90,10 @@ SV_FlushRedirect (void)
 
 
 /*
-==================
-SV_BeginRedirect
+	SV_BeginRedirect
 
-  Send Con_Printf data to the remote client
-  instead of the console
-==================
+	Send Con_Printf data to the remote client
+	instead of the console
 */
 void
 SV_BeginRedirect (redirect_t rd)
@@ -119,11 +111,9 @@ SV_EndRedirect (void)
 
 
 /*
-================
-Con_Printf
+	Con_Printf
 
-Handles cursor positioning, line wrapping, etc
-================
+	Handles cursor positioning, line wrapping, etc
 */
 #define	MAXPRINTMSG	4096
 
@@ -177,11 +167,9 @@ Con_Printf (char *fmt, ...)
 }
 
 /*
-================
-Con_DPrintf
+	Con_DPrintf
 
-A Con_Printf that only shows up if the "developer" cvar is set
-================
+	A Con_Printf that only shows up if the "developer" cvar is set
 */
 void
 Con_DPrintf (char *fmt, ...)
@@ -200,11 +188,7 @@ Con_DPrintf (char *fmt, ...)
 }
 
 /*
-=============================================================================
-
-EVENT MESSAGES
-
-=============================================================================
+	EVENT MESSAGES
 */
 
 static void
@@ -217,11 +201,9 @@ SV_PrintToClient (client_t *cl, int level, char *string)
 
 
 /*
-=================
-SV_ClientPrintf
+	SV_ClientPrintf
 
-Sends text across to be displayed if the level passes
-=================
+	Sends text across to be displayed if the level passes
 */
 void
 SV_ClientPrintf (client_t *cl, int level, char *fmt, ...)
@@ -240,11 +222,9 @@ SV_ClientPrintf (client_t *cl, int level, char *fmt, ...)
 }
 
 /*
-=================
-SV_BroadcastPrintf
+	SV_BroadcastPrintf
 
-Sends text to all active clients
-=================
+	Sends text to all active clients
 */
 void
 SV_BroadcastPrintf (int level, char *fmt, ...)
@@ -271,11 +251,9 @@ SV_BroadcastPrintf (int level, char *fmt, ...)
 }
 
 /*
-=================
-SV_BroadcastCommand
+	SV_BroadcastCommand
 
-Sends text to all active clients
-=================
+	Sends text to all active clients
 */
 void
 SV_BroadcastCommand (char *fmt, ...)
@@ -295,16 +273,14 @@ SV_BroadcastCommand (char *fmt, ...)
 
 
 /*
-=================
-SV_Multicast
+	SV_Multicast
 
-Sends the contents of sv.multicast to a subset of the clients,
-then clears sv.multicast.
+	Sends the contents of sv.multicast to a subset of the clients,
+	then clears sv.multicast.
 
-MULTICAST_ALL	same as broadcast
-MULTICAST_PVS	send to clients potentially visible from org
-MULTICAST_PHS	send to clients potentially hearable from org
-=================
+	MULTICAST_ALL	same as broadcast
+	MULTICAST_PVS	send to clients potentially visible from org
+	MULTICAST_PHS	send to clients potentially hearable from org
 */
 void
 SV_Multicast (vec3_t origin, int to)
@@ -386,19 +362,16 @@ SV_Multicast (vec3_t origin, int to)
 
 
 /*  
-==================
-SV_StartSound
+	SV_StartSound
 
-Each entity can have eight independant sound sources, like voice,
-weapon, feet, etc.
+	Each entity can have eight independant sound sources, like voice,
+	weapon, feet, etc.
 
-Channel 0 is an auto-allocate channel, the others override anything
-allready running on that entity/channel pair.
+	Channel 0 is an auto-allocate channel, the others override anything
+	allready running on that entity/channel pair.
 
-An attenuation of 0 will play full volume everywhere in the level.
-Larger attenuations will drop off.  (max 4 attenuation)
-
-==================
+	An attenuation of 0 will play full volume everywhere in the level.
+	Larger attenuations will drop off.  (max 4 attenuation)
 */
 void
 SV_StartSound (edict_t *entity, int channel, char *sample, int volume,
@@ -483,11 +456,7 @@ SV_StartSound (edict_t *entity, int channel, char *sample, int volume,
 
 
 /*
-===============================================================================
-
-FRAME UPDATES
-
-===============================================================================
+	FRAME UPDATES
 */
 
 int         sv_nailmodel, sv_supernailmodel, sv_playermodel;
@@ -515,10 +484,7 @@ SV_FindModelNumbers (void)
 
 
 /*
-==================
-SV_WriteClientdataToMessage
-
-==================
+	SV_WriteClientdataToMessage
 */
 void
 SV_WriteClientdataToMessage (client_t *client, sizebuf_t *msg)
@@ -559,12 +525,10 @@ SV_WriteClientdataToMessage (client_t *client, sizebuf_t *msg)
 }
 
 /*
-=======================
-SV_UpdateClientStats
+	SV_UpdateClientStats
 
-Performs a delta update of the stats array.  This should only be performed
-when a reliable message can be delivered this frame.
-=======================
+	Performs a delta update of the stats array.  This should only be performed
+	when a reliable message can be delivered this frame.
 */
 void
 SV_UpdateClientStats (client_t *client)
@@ -622,9 +586,7 @@ SV_UpdateClientStats (client_t *client)
 }
 
 /*
-=======================
-SV_SendClientDatagram
-=======================
+	SV_SendClientDatagram
 */
 qboolean
 SV_SendClientDatagram (client_t *client)
@@ -669,9 +631,7 @@ SV_SendClientDatagram (client_t *client)
 }
 
 /*
-=======================
-SV_UpdateToReliableMessages
-=======================
+	SV_UpdateToReliableMessages
 */
 void
 SV_UpdateToReliableMessages (void)
@@ -747,9 +707,7 @@ SV_UpdateToReliableMessages (void)
 
 
 /*
-=======================
-SV_SendClientMessages
-=======================
+	SV_SendClientMessages
 */
 void
 SV_SendClientMessages (void)
@@ -837,11 +795,9 @@ SV_SendClientMessages (void)
 
 
 /*
-=======================
-SV_SendMessagesToAll
+	SV_SendMessagesToAll
 
-FIXME: does this sequence right?
-=======================
+	FIXME: does this sequence right?
 */
 void
 SV_SendMessagesToAll (void)

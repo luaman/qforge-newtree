@@ -97,9 +97,7 @@ void        R_AliasProjectFinalVert (finalvert_t *fv, auxvert_t *av);
 
 
 /*
-================
-R_AliasCheckBBox
-================
+	R_AliasCheckBBox
 */
 qboolean
 R_AliasCheckBBox (void)
@@ -249,9 +247,7 @@ R_AliasCheckBBox (void)
 
 
 /*
-================
-R_AliasTransformVector
-================
+	R_AliasTransformVector
 */
 void
 R_AliasTransformVector (vec3_t in, vec3_t out)
@@ -263,11 +259,9 @@ R_AliasTransformVector (vec3_t in, vec3_t out)
 
 
 /*
-================
-R_AliasPreparePoints
+	R_AliasPreparePoints
 
-General clipped case
-================
+	General clipped case
 */
 void
 R_AliasPreparePoints (void)
@@ -330,9 +324,7 @@ R_AliasPreparePoints (void)
 
 
 /*
-================
-R_AliasSetUpTransform
-================
+	R_AliasSetUpTransform
 */
 void
 R_AliasSetUpTransform (int trivial_accept)
@@ -406,9 +398,7 @@ R_AliasSetUpTransform (int trivial_accept)
 
 
 /*
-================
-R_AliasTransformFinalVert
-================
+	R_AliasTransformFinalVert
 */
 void
 R_AliasTransformFinalVert (finalvert_t *fv, auxvert_t *av,
@@ -451,9 +441,7 @@ R_AliasTransformFinalVert (finalvert_t *fv, auxvert_t *av,
 #ifndef USE_INTEL_ASM
 
 /*
-================
-R_AliasTransformAndProjectFinalVerts
-================
+	R_AliasTransformAndProjectFinalVerts
 */
 void
 R_AliasTransformAndProjectFinalVerts (finalvert_t *fv, stvert_t *pstverts)
@@ -507,9 +495,7 @@ R_AliasTransformAndProjectFinalVerts (finalvert_t *fv, stvert_t *pstverts)
 
 
 /*
-================
-R_AliasProjectFinalVert
-================
+	R_AliasProjectFinalVert
 */
 void
 R_AliasProjectFinalVert (finalvert_t *fv, auxvert_t *av)
@@ -527,9 +513,7 @@ R_AliasProjectFinalVert (finalvert_t *fv, auxvert_t *av)
 
 
 /*
-================
-R_AliasPrepareUnclippedPoints
-================
+	R_AliasPrepareUnclippedPoints
 */
 void
 R_AliasPrepareUnclippedPoints (void)
@@ -556,9 +540,7 @@ R_AliasPrepareUnclippedPoints (void)
 }
 
 /*
-===============
-R_AliasSetupSkin
-===============
+	R_AliasSetupSkin
 */
 void
 R_AliasSetupSkin (void)
@@ -623,9 +605,7 @@ R_AliasSetupSkin (void)
 }
 
 /*
-================
-R_AliasSetupLighting
-================
+	R_AliasSetupLighting
 */
 void
 R_AliasSetupLighting (alight_t *plighting)
@@ -657,11 +637,9 @@ R_AliasSetupLighting (alight_t *plighting)
 }
 
 /*
-=================
-R_AliasSetupFrame
+	R_AliasSetupFrame
 
-set r_apverts
-=================
+	set r_apverts
 */
 void
 R_AliasSetupFrame (void)
@@ -708,9 +686,7 @@ R_AliasSetupFrame (void)
 
 
 /*
-================
-R_AliasDrawModel
-================
+	R_AliasDrawModel
 */
 void
 R_AliasDrawModel (alight_t *plighting)

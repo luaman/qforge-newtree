@@ -48,15 +48,13 @@ byte       *wad_base;
 void        SwapPic (qpic_t *pic);
 
 /*
-==================
-W_CleanupName
+	W_CleanupName
 
-Lowercases name and pads with spaces and a terminating 0 to the length of
-lumpinfo_t->name.
-Used so lumpname lookups can proceed rapidly by comparing 4 chars at a time
-Space padding is so names can be printed nicely in tables.
-Can safely be performed in place.
-==================
+	Lowercases name and pads with spaces and a terminating 0 to the length of
+	lumpinfo_t->name.
+	Used so lumpname lookups can proceed rapidly by comparing 4 chars at a time
+	Space padding is so names can be printed nicely in tables.
+	Can safely be performed in place.
 */
 void
 W_CleanupName (char *in, char *out)
@@ -81,9 +79,7 @@ W_CleanupName (char *in, char *out)
 
 
 /*
-====================
-W_LoadWadFile
-====================
+	W_LoadWadFile
 */
 void
 W_LoadWadFile (char *filename)
@@ -119,9 +115,7 @@ W_LoadWadFile (char *filename)
 
 
 /*
-=============
-W_GetLumpinfo
-=============
+	W_GetLumpinfo
 */
 lumpinfo_t *
 W_GetLumpinfo (char *name)
@@ -165,11 +159,7 @@ W_GetLumpNum (int num)
 }
 
 /*
-=============================================================================
-
-automatic byte swapping
-
-=============================================================================
+	automatic byte swapping
 */
 
 void

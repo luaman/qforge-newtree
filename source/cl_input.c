@@ -54,24 +54,20 @@
 cvar_t     *cl_nodelta;
 
 /*
-===============================================================================
+	KEY BUTTONS
 
-KEY BUTTONS
+	Continuous button event tracking is complicated by the fact that two
+	different input sources (say, mouse button 1 and the control key) can
+	both press the same button, but the button should only be released when
+	both of the pressing key have been released.
 
-Continuous button event tracking is complicated by the fact that two different
-input sources (say, mouse button 1 and the control key) can both press the
-same button, but the button should only be released when both of the
-pressing key have been released.
+	When a key event issues a button command (+forward, +attack, etc), it
+	appends its key number as a parameter to the command so it can be
+	matched up with the release.
 
-When a key event issues a button command (+forward, +attack, etc), it appends
-its key number as a parameter to the command so it can be matched up with
-the release.
-
-state bit 0 is the current state of the key
-state bit 1 is edge triggered on the up to down transition
-state bit 2 is edge triggered on the down to up transition
-
-===============================================================================
+	state bit 0 is the current state of the key
+	state bit 1 is edge triggered on the up to down transition
+	state bit 2 is edge triggered on the down to up transition
 */
 
 
@@ -365,14 +361,12 @@ IN_Impulse (void)
 }
 
 /*
-===============
-CL_KeyState
+	CL_KeyState
 
-Returns 0.25 if a key was pressed and released during the frame,
-0.5 if it was pressed and held
-0 if held then released, and
-1.0 if held for the entire time
-===============
+	Returns 0.25 if a key was pressed and released during the frame,
+	0.5 if it was pressed and held
+	0 if held then released, and
+	1.0 if held for the entire time
 */
 float
 CL_KeyState (kbutton_t *key)
@@ -434,11 +428,9 @@ cvar_t     *cl_anglespeedkey;
 
 
 /*
-================
-CL_AdjustAngles
+	CL_AdjustAngles
 
-Moves the local angle positions
-================
+	Moves the local angle positions
 */
 void
 CL_AdjustAngles (void)
@@ -488,11 +480,9 @@ CL_AdjustAngles (void)
 }
 
 /*
-================
-CL_BaseMove
+	CL_BaseMove
 
-Send the intended movement message to the server
-================
+	Send the intended movement message to the server
 */
 void
 CL_BaseMove (usercmd_t *cmd)
@@ -539,9 +529,7 @@ MakeChar (int i)
 }
 
 /*
-==============
-CL_FinishMove
-==============
+	CL_FinishMove
 */
 void
 CL_FinishMove (usercmd_t *cmd)
@@ -598,9 +586,7 @@ CL_FinishMove (usercmd_t *cmd)
 }
 
 /*
-=================
-CL_SendCmd
-=================
+	CL_SendCmd
 */
 void
 CL_SendCmd (void)
@@ -700,9 +686,7 @@ CL_SendCmd (void)
 
 
 /*
-============
-CL_InitInput
-============
+	CL_InitInput
 */
 void
 CL_Input_Init (void)
@@ -755,10 +739,9 @@ CL_Input_Init_Cvars (void)
 extern qboolean keydown[256];
 
 /*
-============
-CL_ClearStates
-============
-Generate key up event for each key that is down
+	CL_ClearStates
+
+	Generate key up event for each key that is down
 */
 void
 CL_ClearStates (void)

@@ -60,9 +60,7 @@ extern cvar_t	*gl_lerp_anim;
 qboolean	allowskybox;				// allow skyboxes?  --KB
 
 /*
-==================
-R_Textures_Init
-==================
+	R_Textures_Init
 */
 void
 R_Textures_Init (void)
@@ -96,11 +94,9 @@ R_Textures_Init (void)
 }
 
 /*
-===============
-R_Envmap_f
+	R_Envmap_f
 
-Grab six views for environment mapping tests
-===============
+	Grab six views for environment mapping tests
 */
 void
 R_Envmap_f (void)
@@ -178,9 +174,7 @@ R_LoadSky_f (void)
 
 
 /*
-===============
-R_Init
-===============
+	R_Init
 */
 void
 R_Init (void)
@@ -244,9 +238,7 @@ R_Init_Cvars (void)
 }
 
 /*
-===============
-R_NewMap
-===============
+	R_NewMap
 */
 void
 R_NewMap (void)
@@ -287,11 +279,9 @@ R_NewMap (void)
 
 
 /*
-====================
-R_TimeRefresh_f
+	R_TimeRefresh_f
 
-For program optimization
-====================
+	For program optimization
 */
 // LordHavoc: improved appearance and accuracy of timerefresh
 void

@@ -193,11 +193,7 @@ S_TransferPaintBuffer (int endtime)
 
 
 /*
-===============================================================================
-
-CHANNEL MIXING
-
-===============================================================================
+	CHANNEL MIXING
 */
 
 void        SND_PaintChannelFrom8 (channel_t *ch, sfxcache_t *sc, int endtime);

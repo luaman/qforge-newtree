@@ -34,9 +34,7 @@
 
 
 /*
-================
-D_FillRect
-================
+	D_FillRect
 */
 void
 D_FillRect (vrect_t *rect, int color)

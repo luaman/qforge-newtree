@@ -50,10 +50,7 @@ char        localmodels[MAX_MODELS][5];	// inline model names for precache
 char        localinfo[MAX_LOCALINFO_STRING + 1];	// local game info
 
 /*
-================
-SV_ModelIndex
-
-================
+	SV_ModelIndex
 */
 int
 SV_ModelIndex (char *name)
@@ -72,11 +69,9 @@ SV_ModelIndex (char *name)
 }
 
 /*
-================
-SV_FlushSignon
+	SV_FlushSignon
 
-Moves to the next signon buffer if needed
-================
+	Moves to the next signon buffer if needed
 */
 void
 SV_FlushSignon (void)
@@ -94,13 +89,11 @@ SV_FlushSignon (void)
 }
 
 /*
-================
-SV_CreateBaseline
+	SV_CreateBaseline
 
-Entity baselines are used to compress the update messages
-to the clients -- only the fields that differ from the
-baseline will be transmitted
-================
+	Entity baselines are used to compress the update messages
+	to the clients -- only the fields that differ from the
+	baseline will be transmitted
 */
 void
 SV_CreateBaseline (void)
@@ -165,13 +158,11 @@ SV_CreateBaseline (void)
 
 
 /*
-================
-SV_SaveSpawnparms
+	SV_SaveSpawnparms
 
-Grabs the current state of the progs serverinfo flags 
-and each client for saving across the
-transition to another level
-================
+	Grabs the current state of the progs serverinfo flags 
+	and each client for saving across the
+	transition to another level
 */
 void
 SV_SaveSpawnparms (void)
@@ -200,12 +191,10 @@ SV_SaveSpawnparms (void)
 }
 
 /*
-================
-SV_CalcPHS
+	SV_CalcPHS
 
-Expands the PVS and calculates the PHS
-(Potentially Hearable Set)
-================
+	Expands the PVS and calculates the PHS
+	(Potentially Hearable Set)
 */
 void
 SV_CalcPHS (void)
@@ -294,14 +283,12 @@ SV_CheckModel (char *mdl)
 }
 
 /*
-================
-SV_SpawnServer
+	SV_SpawnServer
 
-Change the server to a new map, taking all connected
-clients along with it.
+	Change the server to a new map, taking all connected
+	clients along with it.
 
-This is only called from the SV_Map_f() function.
-================
+	This is only called from the SV_Map_f() function.
 */
 void
 SV_SpawnServer (char *server)

@@ -224,9 +224,7 @@ main (int c, char **v)
 
 
 /*
-================
-Sys_MakeCodeWriteable
-================
+	Sys_MakeCodeWriteable
 */
 void
 Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)

@@ -33,9 +33,7 @@
 #include "d_local.h"
 
 /*
-==============
-D_EndParticles
-==============
+	D_EndParticles
 */
 void
 D_EndParticles (void)
@@ -45,9 +43,7 @@ D_EndParticles (void)
 
 
 /*
-==============
-D_StartParticles
-==============
+	D_StartParticles
 */
 void
 D_StartParticles (void)
@@ -59,9 +55,7 @@ D_StartParticles (void)
 #ifndef USE_INTEL_ASM
 
 /*
-==============
-D_DrawParticle
-==============
+	D_DrawParticle
 */
 void
 D_DrawParticle (particle_t *pparticle)

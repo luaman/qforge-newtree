@@ -88,9 +88,7 @@ Key_ClearTyping (void)
 }
 
 /*
-================
-Con_ToggleConsole_f
-================
+	Con_ToggleConsole_f
 */
 void
 Con_ToggleConsole_f (void)
@@ -107,9 +105,7 @@ Con_ToggleConsole_f (void)
 }
 
 /*
-================
-Con_ToggleChat_f
-================
+	Con_ToggleChat_f
 */
 void
 Con_ToggleChat_f (void)
@@ -126,9 +122,7 @@ Con_ToggleChat_f (void)
 }
 
 /*
-================
-Con_Clear_f
-================
+	Con_Clear_f
 */
 void
 Con_Clear_f (void)
@@ -142,9 +136,7 @@ Con_Clear_f (void)
 
 
 /*
-================
-Con_ClearNotify
-================
+	Con_ClearNotify
 */
 void
 Con_ClearNotify (void)
@@ -157,9 +149,7 @@ Con_ClearNotify (void)
 
 
 /*
-================
-Con_MessageMode_f
-================
+	Con_MessageMode_f
 */
 void
 Con_MessageMode_f (void)
@@ -171,9 +161,7 @@ Con_MessageMode_f (void)
 }
 
 /*
-================
-Con_MessageMode2_f
-================
+	Con_MessageMode2_f
 */
 void
 Con_MessageMode2_f (void)
@@ -185,10 +173,7 @@ Con_MessageMode2_f (void)
 }
 
 /*
-================
-Con_Resize
-
-================
+	Con_Resize
 */
 void
 Con_Resize (console_t *con)
@@ -241,11 +226,9 @@ Con_Resize (console_t *con)
 
 
 /*
-================
-Con_CheckResize
+	Con_CheckResize
 
-If the line width has changed, reformat the buffer.
-================
+	If the line width has changed, reformat the buffer.
 */
 void
 Con_CheckResize (void)
@@ -256,9 +239,7 @@ Con_CheckResize (void)
 
 
 /*
-================
-Con_Init
-================
+	Con_Init
 */
 void
 Con_Init (void)
@@ -290,9 +271,7 @@ Con_Init_Cvars (void)
 
 
 /*
-===============
-Con_Linefeed
-===============
+	Con_Linefeed
 */
 void
 Con_Linefeed (void)
@@ -308,13 +287,11 @@ Con_Linefeed (void)
 }
 
 /*
-================
-Con_Print
+	Con_Print
 
-Handles cursor positioning, line wrapping, etc
-All console printing must go through this in order to be logged to disk
-If no console is visible, the notify window will pop up.
-================
+	Handles cursor positioning, line wrapping, etc
+	All console printing must go through this in order to be logged to disk
+	If no console is visible, the notify window will pop up.
 */
 void
 Con_Print (char *txt)
@@ -380,11 +357,9 @@ Con_Print (char *txt)
 
 
 /*
-================
-Con_Printf
+	Con_Printf
 
-Handles cursor positioning, line wrapping, etc
-================
+	Handles cursor positioning, line wrapping, etc
 */
 #define	MAXPRINTMSG	4096
 
@@ -413,11 +388,9 @@ Con_Printf (char *fmt, ...)
 }
 
 /*
-================
-Con_DPrintf
+	Con_DPrintf
 
-A Con_Printf that only shows up if the "developer" cvar is set
-================
+	A Con_Printf that only shows up if the "developer" cvar is set
 */
 void
 Con_DPrintf (char *fmt, ...)
@@ -437,20 +410,14 @@ Con_DPrintf (char *fmt, ...)
 }
 
 /*
-==============================================================================
-
-DRAWING
-
-==============================================================================
+	DRAWING
 */
 
 
 /*
-================
-Con_DrawInput
+	Con_DrawInput
 
-The input line scrolls horizontally if typing goes beyond the right edge
-================
+	The input line scrolls horizontally if typing goes beyond the right edge
 */
 void
 Con_DrawInput (void)
@@ -487,11 +454,9 @@ Con_DrawInput (void)
 
 
 /*
-================
-Con_DrawNotify
+	Con_DrawNotify
 
-Draws the last few lines of output transparently over the game top
-================
+	Draws the last few lines of output transparently over the game top
 */
 void
 Con_DrawNotify (void)
@@ -555,11 +520,9 @@ Con_DrawNotify (void)
 }
 
 /*
-================
-Con_DrawConsole
+	Con_DrawConsole
 
-Draws the console with the solid background
-================
+	Draws the console with the solid background
 */
 void
 Con_DrawConsole (int lines)

@@ -64,17 +64,11 @@ char       *svs_info = svs.info;
 
 
 /*
-===============================================================================
-
 				REQUIRED SYS FUNCTIONS
-
-===============================================================================
 */
 
 /*
-================
-Sys_Error
-================
+	Sys_Error
 */
 void
 Sys_Error (char *error, ...)
@@ -92,9 +86,7 @@ Sys_Error (char *error, ...)
 
 
 /*
-================
-Sys_Quit
-================
+	Sys_Quit
 */
 void
 Sys_Quit (void)
@@ -110,12 +102,10 @@ Sys_Quit (void)
 static int  do_stdin = 1;
 
 /*
-================
-Sys_ConsoleInput
+	Sys_ConsoleInput
 
-Checks for a complete line of text typed in at the console, then forwards
-it to the host command processor
-================
+	Checks for a complete line of text typed in at the console, then forwards
+	it to the host command processor
 */
 char       *
 Sys_ConsoleInput (void)
@@ -141,12 +131,10 @@ Sys_ConsoleInput (void)
 }
 
 /*
-=============
-Sys_Init
+	Sys_Init
 
-Quake calls this so the system can register variables before host_hunklevel
-is marked
-=============
+	Quake calls this so the system can register variables before host_hunklevel
+	is marked
 */
 void
 Sys_Init_Cvars (void)
@@ -169,9 +157,7 @@ Sys_Init (void)
 }
 
 /*
-=============
-main
-=============
+	main
 */
 int
 main (int argc, char *argv[])

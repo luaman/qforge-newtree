@@ -43,20 +43,14 @@
 #include "info.h"
 
 /*
-=====================================================================
-
-  INFO STRINGS
-
-=====================================================================
+	INFO STRINGS
 */
 
 /*
-===============
-Info_ValueForKey
+	Info_ValueForKey
 
-Searches the string for the given
-key and returns the associated value, or an empty string.
-===============
+	Searches the string for the given
+	key and returns the associated value, or an empty string.
 */
 char       *
 Info_ValueForKey (char *s, char *key)
