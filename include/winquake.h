@@ -1,4 +1,6 @@
 /*
+winquake.h - Win32-specific Quake header file
+
 Copyright (C) 1996-1997 Id Software, Inc.
 
 This program is free software; you can redistribute it and/or
@@ -17,23 +19,26 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-// winquake.h: Win32-specific Quake header file
 
 #ifndef _WINQUAKE_H
 #define _WINQUAKE_H
 
 #ifdef _WIN32 
 
-#pragma warning( disable : 4229 )  // mgraph gets this
+#pragma warning( disable : 4229 )  /* mgraph gets this */
 
 #include <windows.h>
 #include <ddraw.h>
 #include <dsound.h>
-#include <mgraph.h> // Was #ifdef GLQUAKE
+#ifdef HAVE_MGRAPH_H
+# include <mgraph.h>
+#endif
 
 #include "common.h"
 
-#define WM_MOUSEWHEEL                   0x020A
+#ifndef WM_MOUSEWHEEL
+# define WM_MOUSEWHEEL                   0x020A
+#endif
 
 extern	HINSTANCE	global_hInstance;
 extern	int			global_nCmdShow;
@@ -107,6 +112,6 @@ struct hostent FAR * (PASCAL FAR *pgethostbyaddr)(const char FAR * addr,
 												  int len, int type);
 int (PASCAL FAR *pgetsockname)(SOCKET s, struct sockaddr FAR *name,
 							   int FAR * namelen);
-#endif // _WIN32
+#endif /* _WIN32 */
 
-#endif // _WINQUAKE_H
+#endif /* _WINQUAKE_H */
