@@ -30,10 +30,11 @@
 # include "config.h"
 #endif
 
-#ifdef USE_INTEL_ASM
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
+
+#ifdef USE_INTEL_ASM
 
 	.data
 

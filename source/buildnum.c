@@ -32,9 +32,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
 
 //char *date = "Dec 21 1999";
 static char *date = __DATE__ ;

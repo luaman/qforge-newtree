@@ -34,9 +34,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
 
 #include "bothdefs.h"
 #include "console.h"

@@ -40,9 +40,6 @@
 #include "msg.h"
 #include "pmove.h"
 #include "sbar.h"
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
 
 extern     cvar_t  *gl_flashblend;
 extern     cvar_t  *cl_autoexec;
