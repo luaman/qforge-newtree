@@ -47,6 +47,7 @@
 
 static fire_t r_fires[MAX_FIRES];
 extern cvar_t *gl_fires;
+extern cvar_t *r_firecolor;
 
 /*
 	R_AddFire
@@ -54,14 +55,12 @@ extern cvar_t *gl_fires;
 	Nifty ball of fire GL effect.  Kinda a meshing of the dlight and
 	particle engine code.
 */
-float       r_firecolor[3] = { 0.9, 0.4, 0 };
 
 void
 R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
 {
 	float       len;
 	fire_t     *f;
-	dlight_t   *dl;
 	vec3_t      vec;
 	int         key;
 
@@ -79,13 +78,7 @@ R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
 		f->size = 20;
 		f->die = cl.time + 0.5;
 		f->decay = -1;
-		f->color = r_firecolor;
-
-		dl = CL_AllocDlight (-key);
-		VectorCopy (end, dl->origin);
-		dl->radius = 200;
-		dl->die = cl.time + 0.5;
-		dl->color = r_firecolor;
+		f->color = r_firecolor->vec;
 	}
 }
 
@@ -212,26 +205,4 @@ R_UpdateFires (void)
 	glEnable (GL_TEXTURE_2D);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask (GL_TRUE);
-}
-
-void
-R_FireColor_f (void)
-{
-	int         i;
-
-	if (Cmd_Argc () == 1) {
-		Con_Printf ("r_firecolor %g %g %g\n",
-					r_firecolor[0], r_firecolor[1], r_firecolor[2]);
-		return;
-	}
-	if (Cmd_Argc () == 5 || Cmd_Argc () == 6) {
-		Con_Printf
-			("Warning: obsolete 4th and 5th parameters to r_firecolor ignored\n");
-	} else if (Cmd_Argc () != 4) {
-		Con_Printf ("Usage r_firecolor R G B\n");
-		return;
-	}
-	for (i = 0; i < 4; i++) {
-		r_firecolor[i] = atof (Cmd_Argv (i + 1));
-	}
 }

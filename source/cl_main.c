@@ -441,6 +441,7 @@ CL_ClearState (void)
 	if (host_hunklevel)					// FIXME: check this...
 		Hunk_FreeToLowMark (host_hunklevel);
 
+	CL_Ents_Init ();
 	CL_ClearEnts ();
 	CL_ClearTEnts ();
 

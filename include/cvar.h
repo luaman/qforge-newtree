@@ -40,6 +40,7 @@ typedef struct cvar_s
 	char 	*description;	// for "help" command
 	float	value;
 	int		int_val;
+	vec3_t	vec;
 	struct cvar_s *next;
 } cvar_t;
 

@@ -49,6 +49,8 @@ extern cvar_t *cl_solid_players;
 
 extern cvar_t *gl_flashblend;
 
+cvar_t *r_firecolor;
+
 static struct predicted_player {
 	int         flags;
 	qboolean    active;
@@ -611,6 +613,7 @@ CL_LinkPacketEntities (void)
 			dl = CL_AllocDlight (-s1->number);
 			VectorCopy ((*ent)->origin, dl->origin);
 			dl->radius = 200;
+			VectorCopy (r_firecolor->vec, dl->color);
 			dl->die = cl.time + 0.1;
 			R_RocketTrail (0, (*ent));
 		} else if (model->flags & EF_GRENADE)
@@ -1191,4 +1194,11 @@ CL_EmitEntities (void)
 	CL_LinkPacketEntities ();
 	CL_LinkProjectiles ();
 	CL_UpdateTEnts ();
+}
+
+void
+CL_Ents_Init (void)
+{
+	r_firecolor = Cvar_Get ("r_firecolor", "0.9 0.4 0", CVAR_ARCHIVE,
+							"color of rocket and lava ball fires");
 }

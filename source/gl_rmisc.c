@@ -49,7 +49,6 @@
 
 qboolean VID_Is8bit (void);
 void R_InitBubble (void);
-void R_FireColor_f (void);
 
 cvar_t	*gl_fires;
 cvar_t	*r_netgraph_alpha;
@@ -193,8 +192,6 @@ R_Init (void)
 	Cmd_AddCommand ("envmap", R_Envmap_f);
 	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);
 	Cmd_AddCommand ("loadsky", R_LoadSky_f);
-
-	Cmd_AddCommand ("r_firecolor", R_FireColor_f);
 
 	R_InitBubble ();
 

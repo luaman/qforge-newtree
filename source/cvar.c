@@ -207,6 +207,7 @@ Cvar_Set (cvar_t *var, char *value)
 	var->string = strdup (value);
 	var->value = atof (var->string);
 	var->int_val = atoi (var->string);
+	sscanf (var->string, "%f %f %f", &var->vec[0], &var->vec[1], &var->vec[2]);
 
 	Cvar_Info (var);
 }
@@ -228,6 +229,7 @@ Cvar_SetROM (cvar_t *var, char *value)
 	var->string = strdup (value);
 	var->value = atof (var->string);
 	var->int_val = atoi (var->string);
+	sscanf (var->string, "%f %f %f", &var->vec[0], &var->vec[1], &var->vec[2]);
 
 	Cvar_Info (var);
 }
@@ -525,6 +527,8 @@ Cvar_Get (char *name, char *string, int cvarflags, char *description)
 		v->description = description;
 		v->value = atof (v->string);
 		v->int_val = atoi (v->string);
+		sscanf (v->string, "%f %f %f",
+				&v->vec[0], &v->vec[1], &v->vec[2]);
 		Hash_Add (cvar_hash, v);
 	} else {
 		// Cvar does exist, so we update the flags and return.
