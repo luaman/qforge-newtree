@@ -1,5 +1,5 @@
 /*
-	gl_vidlinuxglx.c
+	vid_glx.c
 
 	(description)
 
@@ -26,10 +26,6 @@
 	$Id$
 */
 
-#include <termios.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/vt.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
