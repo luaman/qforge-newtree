@@ -609,5 +609,9 @@ VID_UnlockBuffer ( void )
 void
 VID_SetCaption (char *text)
 {
-	x11_set_caption (text);
+	if (text && *text) {
+		x11_set_caption (va ("%s %s: %s", PROGRAM, VERSION, text));
+	} else {
+		x11_set_caption (va ("%s %s", PROGRAM, VERSION));
+	}
 }

@@ -703,6 +703,10 @@ VID_UnlockBuffer ( void )
 void
 VID_SetCaption (char *text)
 {
-	SDL_WM_SetCaption(text, NULL);
+	if (text && *text) {
+		SDL_WM_SetCaption(va ("%s %s: %s", PROGRAM, VERSION, text), NULL);
+	} else {
+		SDL_WM_SetCaption(va ("%s %s", PROGRAM, VERSION), NULL);
+	}
 }
 

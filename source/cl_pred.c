@@ -167,12 +167,8 @@ void CL_PredictMove (void)
 	// we can now render a frame
 	if (cls.state == ca_onserver)
 	{	// first update is the final signon stage
-
-                char            text[1024];
-                snprintf (text, sizeof(text), "%s: %s", PROGRAM, cls.servername);
-                VID_SetCaption(text);
-
-                cls.state = ca_active;
+		VID_SetCaption(cls.servername);
+		cls.state = ca_active;
 	}
 
 	if (cl_nopred->value)

@@ -1,5 +1,5 @@
 /*
-        vid_sdl.c
+	vid_sdl.c
 
 	Video driver for Sam Lantinga's Simple DirectMedia Layer
 
@@ -149,7 +149,7 @@ void    VID_Init (unsigned char *palette)
     if (!(screen = SDL_SetVideoMode(vid.width, vid.height, 8, flags)))
         Sys_Error("VID: Couldn't set video mode: %s\n", SDL_GetError());
     VID_SetPalette(palette);
-    VID_SetCaption("sdlquakeworld");
+    VID_SetCaption("");
 
     // now know everything we need to know about the buffer
     VGA_width = vid.conwidth = vid.width;
@@ -524,6 +524,10 @@ VID_UnlockBuffer ( void )
 void
 VID_SetCaption (char *text)
 {
-        SDL_WM_SetCaption(text, NULL);
+	if (text && *text) {
+		SDL_WM_SetCaption(va ("%s %s: %s", PROGRAM, VERSION, text), NULL);
+	} else {
+		SDL_WM_SetCaption(va ("%s %s", PROGRAM, VERSION), NULL);
+	}
 }
 

@@ -1939,5 +1939,9 @@ void VID_MenuKey (int key)
 
 void VID_SetCaption (char *text)
 {
-        SetWindowText(mainwindow,(LPSTR) text);
+	if (text && *text) {
+		SetWindowText(mainwindow,(LPSTR) va ("%s %s: %s", PROGRAM, VERSION, text));
+	} else {
+		SetWindowText(mainwindow,(LPSTR) va ("%s %s", PROGRAM, VERSION));
+	}
 }

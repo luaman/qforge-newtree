@@ -322,7 +322,7 @@ x11_create_window(int width, int height)
 						x_vis, mask, &attr);
 
 	// Set window title
-	XStoreName (x_disp, x_win, va ("%s %s", PROGRAM, VERSION));
+	x11_set_caption (va ("%s %s", PROGRAM, VERSION));
 	// Set icon name
 	XSetIconName (x_disp, x_win, PROGRAM);
 
