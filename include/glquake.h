@@ -243,7 +243,7 @@ void GL_Set2D (void);
 //qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_RotateForEntity (entity_t *e);
 
-extern inline qboolean R_CullBox (vec3_t mins, vec3_t maxs)
+static inline qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 {
 	int i;
 
