@@ -124,6 +124,9 @@ cvar_t	*gl_particles;
 cvar_t	*r_skyname;
 cvar_t	*gl_skymultipass;
 
+cvar_t *gl_fb_models;
+cvar_t *gl_fb_bmodels;
+
 extern	cvar_t	*scr_fov;
 
 extern byte gammatable[256];
@@ -217,7 +220,7 @@ void R_RotateForEntity (entity_t *e)
 R_GetSpriteFrame
 ================
 */
-mspriteframe_t *R_GetSpriteFrame (entity_t *currententity)
+static mspriteframe_t *R_GetSpriteFrame (entity_t *currententity)
 {
 	msprite_t		*psprite;
 	mspritegroup_t	*pspritegroup;
@@ -270,7 +273,7 @@ R_DrawSpriteModel
 
 =================
 */
-void R_DrawSpriteModel (entity_t *e)
+static void R_DrawSpriteModel (entity_t *e)
 {
 	vec3_t	point;
 	mspriteframe_t	*frame;
@@ -366,7 +369,7 @@ int	lastposenum;
 GL_DrawAliasFrame
 =============
 */
-void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
+static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 {
 	float 	l;
 	trivertx_t	*verts;
@@ -402,11 +405,15 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 			glTexCoord2f (((float *)order)[0], ((float *)order)[1]);
 			order += 2;
 
-			// normals and vertexes come from the frame list
-			l = shadedots[verts->lightnormalindex] * shadelight;
+			if (fb) {
+				glColor4f (1, 1, 1, modelalpha);
+			} else {
+				// normals and vertexes come from the frame list
+				l = shadedots[verts->lightnormalindex] * shadelight;
 
-			// LordHavoc: cleanup after Endy
-			glColor4f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l, modelalpha);
+				// LordHavoc: cleanup after Endy
+				glColor4f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l, modelalpha);
+			}
 
 			glVertex3f (verts->v[0], verts->v[1], verts->v[2]);
 			verts++;
@@ -427,7 +434,7 @@ GL_DrawAliasShadow
 */
 extern	vec3_t			lightspot;
 
-void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
+static void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 {
 	trivertx_t	*verts;
 	int		*order;
@@ -490,7 +497,7 @@ R_SetupAliasFrame
 
 =================
 */
-void R_SetupAliasFrame (int frame, aliashdr_t *paliashdr)
+static void R_SetupAliasFrame (int frame, aliashdr_t *paliashdr, qboolean fb)
 {
 	int				pose, numposes;
 	float			interval;
@@ -510,7 +517,7 @@ void R_SetupAliasFrame (int frame, aliashdr_t *paliashdr)
 		pose += (int)(cl.time / interval) % numposes;
 	}
 
-	GL_DrawAliasFrame (paliashdr, pose);
+	GL_DrawAliasFrame (paliashdr, pose, fb);
 }
 
 
@@ -520,7 +527,7 @@ R_DrawAliasModel
 
 =================
 */
-void R_DrawAliasModel (entity_t *e)
+static void R_DrawAliasModel (entity_t *e)
 {
 	int			i;
 	int			lnum;
@@ -593,11 +600,12 @@ void R_DrawAliasModel (entity_t *e)
 	{
 		if (ambientlight < 8)
 			ambientlight = shadelight = 8;
-	}
-	else if (!strcmp (clmodel->name, "progs/flame2.mdl")
-		|| !strcmp (clmodel->name, "progs/flame.mdl") )
+	} else if (!gl_fb_models->value && (
+			!strcmp (clmodel->name, "progs/flame.mdl") ||
+			!strcmp (clmodel->name, "progs/flame2.mdl"))) {
 		// HACK HACK HACK -- no fullbright colors, so make torches full light
 		ambientlight = shadelight = 256;
+	}
 
 	shadedots = r_avertexnormal_dots[((int)(e->angles[1] * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
 	shadelight = shadelight / 200.0;
@@ -657,7 +665,20 @@ void R_DrawAliasModel (entity_t *e)
 	if (gl_affinemodels->value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
-	R_SetupAliasFrame (currententity->frame, paliashdr);
+	R_SetupAliasFrame (currententity->frame, paliashdr, false);
+
+	// This block is GL fullbright support for objects...
+	if (clmodel->hasfullbrights && gl_fb_models->value) {
+		/*
+		glEnable (GL_BLEND);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		*/
+
+		glBindTexture (GL_TEXTURE_2D, paliashdr->gl_fb_texturenum[currententity->skinnum][anim]);
+		R_SetupAliasFrame (currententity->frame, paliashdr, true);
+
+		//glDisable (GL_BLEND);
+	}
 
 	glShadeModel (GL_FLAT);
 	if (gl_affinemodels->value)
@@ -686,7 +707,7 @@ void R_DrawAliasModel (entity_t *e)
 R_DrawEntitiesOnList
 =============
 */
-void R_DrawEntitiesOnList (void)
+static void R_DrawEntitiesOnList (void)
 {
 	int		i;
 
@@ -730,7 +751,7 @@ void R_DrawEntitiesOnList (void)
 R_DrawViewModel
 =============
 */
-void R_DrawViewModel (void)
+static void R_DrawViewModel (void)
 {
 	currententity = &cl.viewent;
 	if (!r_drawviewmodel->value
@@ -751,7 +772,7 @@ void R_DrawViewModel (void)
 	glDepthRange (gldepthmin, gldepthmax);
 }
 
-int SignbitsForPlane (mplane_t *out)
+static int SignbitsForPlane (mplane_t *out)
 {
 	int	bits, j;
 
@@ -767,7 +788,7 @@ int SignbitsForPlane (mplane_t *out)
 }
 
 
-void R_SetFrustum (void)
+static void R_SetFrustum (void)
 {
 	int		i;
 
@@ -809,7 +830,7 @@ void R_SetFrustum (void)
 R_SetupFrame
 ===============
 */
-void R_SetupFrame (void)
+static void R_SetupFrame (void)
 {
 // don't allow cheats in multiplayer
 	r_fullbright->value = 0;
@@ -841,7 +862,7 @@ void R_SetupFrame (void)
 }
 
 
-void MYgluPerspective( GLdouble fovy, GLdouble aspect,
+static void MYgluPerspective( GLdouble fovy, GLdouble aspect,
 		     GLdouble zNear, GLdouble zFar )
 {
    GLdouble xmin, xmax, ymin, ymax;
@@ -861,7 +882,7 @@ void MYgluPerspective( GLdouble fovy, GLdouble aspect,
 R_SetupGL
 =============
 */
-void R_SetupGL (void)
+static void R_SetupGL (void)
 {
 	float	screenaspect;
 	extern	int glwidth, glheight;
@@ -949,7 +970,7 @@ R_RenderScene
 r_refdef must be set before the first call
 ================
 */
-void R_RenderScene (void)
+static void R_RenderScene (void)
 {
 	R_SetupFrame ();
 
@@ -976,7 +997,7 @@ void R_RenderScene (void)
 R_Clear
 =============
 */
-void R_Clear (void)
+static void R_Clear (void)
 {
 	if (gl_clear->value)
 		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

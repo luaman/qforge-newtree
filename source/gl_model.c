@@ -280,6 +280,7 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 
 // call the apropriate loader
 	mod->needload = false;
+	mod->hasfullbrights = false;
 	
 	switch (LittleLong(*(unsigned *)buf))
 	{
@@ -1529,23 +1530,67 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			Mod_FloodFillSkin( skin, pheader->skinwidth, pheader->skinheight );
 
 			// save 8 bit texels for the player model to remap
-			// save 8 bit texels for the player model to remap
 			if (!strcmp(loadmodel->name,"progs/player.mdl"))
 			{
 				if (s > sizeof(player_8bit_texels))
 					SV_Error ("Player skin too large");
 				memcpy (player_8bit_texels, (byte *)(pskintype + 1), s);
 			}
+
+			// This block is GL fullbright support for objects...
+			{
+				int		pixels;
+				byte	*ptexel;
+
+				// Check for fullbright pixels..
+				pixels = pheader->skinwidth * pheader->skinheight;
+				ptexel = (byte *)(pskintype + 1);
+
+				for (j=0 ; j<pixels ; j++) {
+					if (ptexel[j] >= 256-32) {
+						loadmodel->hasfullbrights = true;
+						break;
+					}
+				}
+
+				if (loadmodel->hasfullbrights) {
+					byte	*ptexels;
+
+					//ptexels = Hunk_Alloc(s);
+					ptexels = malloc(pixels);
+
+					snprintf(name, sizeof(name), "fb_%s_%i", loadmodel->name,i);
+					Con_DPrintf("FB Model ID: '%s'\n", name);
+					for (j=0 ; j<pixels ; j++) {
+						if (ptexel[j] >= 256-32) {
+							ptexels[j] = ptexel[j];
+						} else {
+							ptexels[j] = 255;
+						}
+					}
+					pheader->gl_fb_texturenum[i][0] =
+						pheader->gl_fb_texturenum[i][1] =
+						pheader->gl_fb_texturenum[i][2] =
+						pheader->gl_fb_texturenum[i][3] =
+						GL_LoadTexture (name, pheader->skinwidth,
+								pheader->skinheight, ptexels, true, true, 1);
+
+					free(ptexels);
+				}
+			}
+
+
 			snprintf (name, sizeof(name), "%s_%i", loadmodel->name, i);
 			pheader->gl_texturenum[i][0] =
 			pheader->gl_texturenum[i][1] =
 			pheader->gl_texturenum[i][2] =
 			pheader->gl_texturenum[i][3] =
 				GL_LoadTexture (name, pheader->skinwidth, 
-				pheader->skinheight, (byte *)(pskintype + 1), true, false, 1);
+				pheader->skinheight, (byte *)(pskintype + 1), true, true, 1);
 			pskintype = (daliasskintype_t *)((byte *)(pskintype+1) + s);
 		} else {
 			// animating skin group.  yuck.
+			Con_Printf("Animating Skin Group, if you get this message please notify warp@debian.org\n");
 			pskintype++;
 			pinskingroup = (daliasskingroup_t *)pskintype;
 			groupskins = LittleLong (pinskingroup->numskins);

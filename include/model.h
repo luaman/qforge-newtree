@@ -339,6 +339,7 @@ typedef struct {
 	int			posedata;	// numposes*poseverts trivert_t
 	int			commands;	// gl command list with embedded s/t
 	int			gl_texturenum[MAX_SKINS][4];
+	int			gl_fb_texturenum[MAX_SKINS][4];
 	int			model;
 	int			stverts;
 	int			skindesc;
@@ -376,6 +377,7 @@ typedef struct model_s
 {
 	char		name[MAX_QPATH];
 	qboolean	needload;		// bmodels and sprites don't cache normally
+	qboolean	hasfullbrights;
 
 	modtype_t	type;
 	int			numframes;
