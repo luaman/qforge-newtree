@@ -71,7 +71,6 @@
 #include "keys.h"
 #include "qargs.h"
 #include "sys.h"
-#include "vid.h"
 #include "view.h"
 
 cvar_t     *_windowed_mouse;
