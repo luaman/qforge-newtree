@@ -1495,7 +1495,7 @@ int COM_FOpenFile (char *filename, FILE **file)
 			if (findtime == -1)
 				continue;
 				
-			Sys_Printf ("FindFile: %s\n",netpath);
+			Con_DPrintf ("FindFile: %s\n",netpath);
 
 			*file = fopen (netpath, "rb");
 			return COM_filelength (*file);
