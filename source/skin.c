@@ -167,6 +167,8 @@ Skin_Cache (skin_t *skin)
 
 	memcpy (out, tex->data, tex->width * tex->height);
 
+	Skin_Process (skin, tex);
+
 	skin->failedload = false;
 
 	return out;

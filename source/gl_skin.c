@@ -35,6 +35,7 @@
 #include "protocol.h"
 #include "skin.h"
 #include "sys.h"
+#include "texture.h"
 
 byte        player_8bit_texels[320 * 200];
 static byte translate[256];
@@ -190,4 +191,9 @@ Skin_Init_Translation (void)
 		translate[i] = i;
 		translate32[i] = d_8to24table[i];
 	}
+}
+
+void
+Skin_Process (skin_t *skin, tex_t *tex)
+{
 }

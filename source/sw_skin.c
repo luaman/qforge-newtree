@@ -81,3 +81,8 @@ void
 Skin_Init_Translation (void)
 {
 }
+
+void
+Skin_Process (skin_t *skin, struct tex_s *)
+{
+}

@@ -1055,7 +1055,7 @@ COM_Filesystem_Init (void)
 	COM_CreateGameDirectory (fs_basegame->string);
 
 	// If we're dealing with id1, use qw too
-	if (!strequal (fs_basegame->string, fs_skinbase->string) == 0) {
+	if (!strequal (fs_basegame->string, fs_skinbase->string)) {
 		COM_CreateGameDirectory (fs_skinbase->string);
 	}
 
