@@ -171,7 +171,7 @@ Skin_Cache (skin_t *skin)
 	opix = out->data;
 	out->width = 320;
 	out->height = 200;
-	out->palette = tex->palette;
+	out->palette = tex->palette; //FIXME assumes 0 or host_basepal
 	memset (opix, 0, pixels);
 	for (i = 0, ipix = tex->data; i < tex->height;
 	     i++, opix += 320, ipix += tex->width)
