@@ -151,7 +151,7 @@ server_entry_t *Server_List_LoadF (FILE *f,server_entry_t *start) { // This coul
 		i = 0;
 		c = ' ';
 		while (c != '\n' && c != EOF) {
-			c = Qgetc(f);
+			c = getc(f);
 			if (i < 255) {
 				line[i] = c;
 				i++;
@@ -177,7 +177,7 @@ server_entry_t *Server_List_LoadF (FILE *f,server_entry_t *start) { // This coul
 
  void Server_List_SaveF (FILE *f,server_entry_t *start) {
  	do {
- 		Qprintf(f,"%s   %s\n",start->server,start->desc);
+ 		fprintf(f,"%s   %s\n",start->server,start->desc);
  		start = start->next;
  
  	} while (start);
@@ -186,9 +186,9 @@ server_entry_t *Server_List_LoadF (FILE *f,server_entry_t *start) { // This coul
  void Server_List_Shutdown (server_entry_t *start) {
  	FILE *f;
  	if (start) {
- 		if ((f = Qopen(va("%s/servers.txt",fs_userpath->string),"w"))) {
+ 		if ((f = fopen(va("%s/servers.txt",fs_userpath->string),"w"))) {
  			Server_List_SaveF(f,start);
- 			Qclose(f);
+ 			fclose(f);
  		}
  		Server_List_Del_All (start);
   	}

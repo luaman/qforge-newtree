@@ -307,7 +307,7 @@ Cmd_Exec_File (char *path)
 	char	base[32];
 	FILE   *file;
 
-	if ((file = Qopen (path, "r")) != NULL) {
+	if ((file = fopen (path, "r")) != NULL) {
 		// extract the filename base name for hunk tag
 		COM_FileBase (path, base);
 		len = COM_filelength (file);
@@ -315,8 +315,8 @@ Cmd_Exec_File (char *path)
 		f = (char *)Hunk_AllocName (len+1, base);
 		if (f) {
 			f[len] = 0;
-			Qread (file, f, len);
-			Qclose (file);
+			fread (f, 1, len, file);
+			fclose (file);
 			Cbuf_InsertText (f);
 		}
 		Hunk_FreeToLowMark (mark);

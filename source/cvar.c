@@ -275,7 +275,7 @@ void Cvar_WriteVariables (FILE *f)
 
 	for (var = cvar_vars ; var ; var = var->next)
 		if (var->flags&CVAR_ARCHIVE)
-			Qprintf (f, "%s \"%s\"\n", var->name, var->string);
+			fprintf (f, "%s \"%s\"\n", var->name, var->string);
 }
 
 void Cvar_Set_f(void)

@@ -70,8 +70,8 @@ void COM_CheckRegistered (void)
 
 	if (h) {
 		static_registered = 1;
-		Qread (h, check, sizeof(check));
-		Qclose (h);
+		fread (check, 1, sizeof(check), h);
+		fclose (h);
 	}
 
 	if (static_registered) {

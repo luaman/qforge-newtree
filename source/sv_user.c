@@ -595,7 +595,7 @@ void SV_NextDownload_f (void)
 	r = host_client->downloadsize - host_client->downloadcount;
 	if (r > 768)
 		r = 768;
-	r = Qread (host_client->download, buffer, r);
+	r = fread (buffer, 1, r, host_client->download);
 	ClientReliableWrite_Begin (host_client, svc_download, 6+r);
 	ClientReliableWrite_Short (host_client, r);
 
@@ -610,7 +610,7 @@ void SV_NextDownload_f (void)
 	if (host_client->downloadcount != host_client->downloadsize)
 		return;
 
-	Qclose (host_client->download);
+	fclose (host_client->download);
 	host_client->download = NULL;
 
 }
@@ -658,7 +658,7 @@ void SV_NextUpload (void)
 
 	if (!host_client->upload)
 	{
-		host_client->upload = Qopen(host_client->uploadfn, "wb");
+		host_client->upload = fopen(host_client->uploadfn, "wb");
 		if (!host_client->upload) {
 			Sys_Printf("Can't create %s\n", host_client->uploadfn);
 			ClientReliableWrite_Begin (host_client, svc_stufftext, 8);
@@ -671,7 +671,7 @@ void SV_NextUpload (void)
 			OutofBandPrintf(host_client->snap_from, "Server receiving %s from %d...\n", host_client->uploadfn, host_client->userid);
 	}
 
-	Qwrite (host_client->upload, net_message.data + msg_readcount, size);
+	fwrite (net_message.data + msg_readcount, 1, size, host_client->upload);
 	msg_readcount += size;
 
 Con_DPrintf ("UPLOAD: %d received\n", size);
@@ -680,7 +680,7 @@ Con_DPrintf ("UPLOAD: %d received\n", size);
 		ClientReliableWrite_Begin (host_client, svc_stufftext, 8);
 		ClientReliableWrite_String (host_client, "nextul\n");
 	} else {
-		Qclose (host_client->upload);
+		fclose (host_client->upload);
 		host_client->upload = NULL;
 
 		Sys_Printf("%s upload completed.\n", host_client->uploadfn);
@@ -760,7 +760,7 @@ void SV_BeginDownload_f(void)
 	}
 
 	if (host_client->download) {
-		Qclose (host_client->download);
+		fclose (host_client->download);
 		host_client->download = NULL;
 	}
 
@@ -772,6 +772,7 @@ void SV_BeginDownload_f(void)
 			*p = tolower((int)*p);
 	}
 
+
 	host_client->downloadsize = COM_FOpenFile (name, &host_client->download);
 	host_client->downloadcount = 0;
 
@@ -781,7 +782,7 @@ void SV_BeginDownload_f(void)
 		|| (strncmp(name, "maps/", 5) == 0 && file_from_pak))
 	{
 		if (host_client->download) {
-			Qclose(host_client->download);
+			fclose(host_client->download);
 			host_client->download = NULL;
 		}
 

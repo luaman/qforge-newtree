@@ -188,12 +188,12 @@ void SV_Shutdown (void)
 	Master_Shutdown ();
 	if (sv_logfile)
 	{
-		Qclose (sv_logfile);
+		fclose (sv_logfile);
 		sv_logfile = NULL;
 	}
 	if (sv_fraglogfile)
 	{
-		Qclose (sv_fraglogfile);
+		fclose (sv_fraglogfile);
 		sv_logfile = NULL;
 	}
 	NET_Shutdown ();
@@ -298,12 +298,12 @@ void SV_DropClient (client_t *drop)
 
 	if (drop->download)
 	{
-		Qclose (drop->download);
+		fclose (drop->download);
 		drop->download = NULL;
 	}
 	if (drop->upload)
 	{
-		Qclose (drop->upload);
+		fclose (drop->upload);
 		drop->upload = NULL;
 	}
 	*drop->uploadfn = 0;
@@ -1119,7 +1119,7 @@ void SV_WriteIP_f (void)
 
 	Con_Printf ("Writing %s.\n", name);
 
-	f = Qopen (name, "wb");
+	f = fopen (name, "wb");
 	if (!f)
 	{
 		Con_Printf ("Couldn't open %s\n", name);
@@ -1129,10 +1129,10 @@ void SV_WriteIP_f (void)
 	for (i=0 ; i<numipfilters ; i++)
 	{
 		*(unsigned *)b = ipfilters[i].compare;
-		Qprintf (f, "addip %i.%i.%i.%i\n", b[0], b[1], b[2], b[3]);
+		fprintf (f, "addip %i.%i.%i.%i\n", b[0], b[1], b[2], b[3]);
 	}
 	
-	Qclose (f);
+	fclose (f);
 }
 
 /*

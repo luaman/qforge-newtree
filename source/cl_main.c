@@ -548,7 +548,7 @@ void CL_Disconnect (void)
 	Cam_Reset();
 
 	if (cls.download) {
-		Qclose(cls.download);
+		fclose(cls.download);
 		cls.download = NULL;
 	}
 
@@ -1158,7 +1158,7 @@ void CL_Download_f (void)
 	}
 
 	strncpy (cls.downloadtempname, cls.downloadname, sizeof(cls.downloadtempname));
-	cls.download = Qopen (cls.downloadname, "wb");
+	cls.download = fopen (cls.downloadname, "wb");
 	cls.downloadtype = dl_single;
 
 	MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
@@ -1207,9 +1207,9 @@ void CL_Init (void)
 	CL_InitCam ();
 	Pmove_Init ();
 	
-	if ((servlist = Qopen(va("%s/servers.txt",fs_userpath->string),"r"))) {
+	if ((servlist = fopen(va("%s/servers.txt",fs_userpath->string),"r"))) {
 		slist = Server_List_LoadF(servlist,slist);
-		Qclose(servlist);
+		fclose(servlist);
 	}
 	
 
@@ -1488,7 +1488,7 @@ void Host_WriteConfiguration (void)
 
 	if (host_initialized)
 	{
-		f = Qopen (va("%s/config.cfg",com_gamedir), "w");
+		f = fopen (va("%s/config.cfg",com_gamedir), "w");
 		if (!f)
 		{
 			Con_Printf ("Couldn't write config.cfg.\n");
@@ -1498,7 +1498,7 @@ void Host_WriteConfiguration (void)
 		Key_WriteBindings (f);
 		Cvar_WriteVariables (f);
 
-		Qclose (f);
+		fclose (f);
 	}
 }
 

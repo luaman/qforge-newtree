@@ -190,7 +190,7 @@ qboolean	CL_CheckOrDownloadFile (char *filename)
 	COM_FOpenFile (filename, &f);
 	if (f)
 	{	// it exists, no need to download
-		Qclose (f);
+		fclose (f);
 		return true;
 	}
 
@@ -378,7 +378,7 @@ void CL_ParseDownload (void)
 		if (cls.download)
 		{
 			Con_Printf ("cls.download shouldn't have been set\n");
-			Qclose (cls.download);
+			fclose (cls.download);
 			cls.download = NULL;
 		}
 		CL_RequestNextDownload ();
@@ -395,7 +395,7 @@ void CL_ParseDownload (void)
 
 		COM_CreatePath (name);
 
-		cls.download = Qopen (name, "wb");
+		cls.download = fopen (name, "wb");
 		if (!cls.download)
 		{
 			msg_readcount += size;
@@ -405,7 +405,7 @@ void CL_ParseDownload (void)
 		}
 	}
 
-	Qwrite (cls.download, net_message.data + msg_readcount, size);
+	fwrite (net_message.data + msg_readcount, 1, size, cls.download);
 	msg_readcount += size;
 
 	if (percent != 100)
@@ -434,7 +434,7 @@ void CL_ParseDownload (void)
 		Con_Printf ("100%%\n");
 #endif
 
-		Qclose (cls.download);
+		fclose (cls.download);
 
 		// rename the temp file to it's final name
 		if (strcmp(cls.downloadtempname, cls.downloadname)) {
@@ -586,21 +586,21 @@ void CL_ParseServerData (void)
 	if (cflag) {
 		int cl_warncmd_val = cl_warncmd->value;
 		snprintf(fn, sizeof(fn), "%s/%s", com_gamedir, "config.cfg");
-		if ((f = Qopen(fn, "r")) != NULL) {
-			Qclose(f);
+		if ((f = fopen(fn, "r")) != NULL) {
+			fclose(f);
 			Cbuf_AddText ("cl_warncmd 0\n");
 			Cbuf_AddText ("exec config.cfg\n");
 		}
 		snprintf(fn, sizeof(fn), "%s/%s", com_gamedir, "frontend.cfg");
-		if ((f = Qopen(fn, "r")) != NULL) {
-			Qclose(f);
+		if ((f = fopen(fn, "r")) != NULL) {
+			fclose(f);
 			Cbuf_AddText ("cl_warncmd 0\n");
 			Cbuf_AddText ("exec frontend.cfg\n");
 		}
 		if (cl_autoexec->value) {
 			snprintf(fn, sizeof(fn), "%s/%s", com_gamedir, "autoexec.cfg");
-			if ((f = Qopen(fn, "r")) != NULL) {
-				Qclose(f);
+			if ((f = fopen(fn, "r")) != NULL) {
+				fclose(f);
 				Cbuf_AddText ("cl_warncmd 0\n");
 				Cbuf_AddText ("exec autoexec.cfg\n");
 			}
