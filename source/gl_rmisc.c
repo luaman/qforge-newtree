@@ -228,10 +228,12 @@ R_Init_Cvars (void)
 	gl_affinemodels = Cvar_Get ("gl_affinemodels", "0", CVAR_ARCHIVE, "Makes texture rendering quality better if set to 1");
 	gl_clear = Cvar_Get ("gl_clear", "0", CVAR_NONE, "Set to 1 to make background black. Useful for removing HOM effect");
 	gl_cull = Cvar_Get ("gl_cull", "1", CVAR_ARCHIVE, "If set to 1, does not render things that do not need to be");
+	gl_dlight_lightmap = Cvar_Get ("gl_dlight_lightmap", "0", CVAR_ARCHIVE, "Set to 1 for high quality dynamic lighting.");
+	gl_dlight_polyblend = Cvar_Get ("gl_dlight_polyblend", "0", CVAR_ARCHIVE, "Set to 1 to use a dynamic light effect faster on GL");
+	gl_dlight_smooth = Cvar_Get ("gl_dlight_smooth", "1", CVAR_ARCHIVE, "Smooth dynamic vertex lighting");
 	gl_fb_bmodels = Cvar_Get ("gl_fb_bmodels", "1", CVAR_ARCHIVE, "Toggles fullbright color support for bmodels");
 	gl_fb_models = Cvar_Get ("gl_fb_models", "1", CVAR_ARCHIVE, "Toggles fullbright color support for models");
 	gl_fires = Cvar_Get ("gl_fires", "0", CVAR_ARCHIVE, "Toggles lavaball and rocket fireballs");
-	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_ARCHIVE, "Set to 1 to use a type of lighting faster on GL");
 	gl_keeptjunctions = Cvar_Get ("gl_keeptjunctions", "1", CVAR_ARCHIVE, "Set to 0 to turn off colinear vertexes upon level load");
 	gl_lerp_anim = Cvar_Get ("gl_lerp_anim", "1", CVAR_ARCHIVE, "Toggles model animation interpolation");
 	gl_multitexture = Cvar_Get ("gl_multitexture", "0", CVAR_ARCHIVE, "Use multitexture when available");
@@ -240,8 +242,6 @@ R_Init_Cvars (void)
 	gl_sky_clip = Cvar_Get ("gl_sky_clip", "0", CVAR_ARCHIVE, "controls whether sky is drawn first (0) or later (1)");
 	gl_sky_divide = Cvar_Get ("gl_sky_divide", "1", CVAR_ARCHIVE, "subdivide sky polys");
 	gl_skymultipass = Cvar_Get ("gl_skymultipass", "1", CVAR_ARCHIVE, "controls whether the skydome is single or double pass");
-	gl_smooth = Cvar_Get ("gl_smooth", "1", CVAR_ARCHIVE, "Smooth lighting on models");
-	gl_smoothdlights = Cvar_Get ("gl_smoothdlights", "1", CVAR_ARCHIVE, "Smooth dynamic lights");
 }
 
 /*

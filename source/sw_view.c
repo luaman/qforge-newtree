@@ -30,19 +30,60 @@
 # include "config.h"
 #endif
 
+#include "bothdefs.h"
 #include "host.h"
 #include "r_local.h"
+#include "view.h"
+
+extern cvar_t   *cl_cshift_powerup;
 
 extern byte gammatable[256];
 
-void        V_CalcPowerupCshift (void);
 qboolean    V_CheckGamma (void);
+
+/* 
+============= 
+V_CalcPowerupCshift 
+============= 
+ */ 
+void 
+V_CalcPowerupCshift (void) 
+{ 
+	if (!cl_cshift_powerup->int_val
+	    || (atoi (Info_ValueForKey (cl.serverinfo, "cshifts")) & INFO_CSHIFT_POWERUP))
+		return;
+
+	if (cl.stats[STAT_ITEMS] & IT_QUAD) {
+		cl.cshifts[CSHIFT_POWERUP].destcolor[0] = 0;
+		cl.cshifts[CSHIFT_POWERUP].destcolor[1] = 0;
+		cl.cshifts[CSHIFT_POWERUP].destcolor[2] = 255;
+		cl.cshifts[CSHIFT_POWERUP].percent = 30;
+	} else if (cl.stats[STAT_ITEMS] & IT_SUIT) {
+		cl.cshifts[CSHIFT_POWERUP].destcolor[0] = 0;
+		cl.cshifts[CSHIFT_POWERUP].destcolor[1] = 255;
+		cl.cshifts[CSHIFT_POWERUP].destcolor[2] = 0;
+		cl.cshifts[CSHIFT_POWERUP].percent = 20;
+	} else if (cl.stats[STAT_ITEMS] & IT_INVISIBILITY) {
+		cl.cshifts[CSHIFT_POWERUP].destcolor[0] = 100;
+		cl.cshifts[CSHIFT_POWERUP].destcolor[1] = 100;
+		cl.cshifts[CSHIFT_POWERUP].destcolor[2] = 100;
+		cl.cshifts[CSHIFT_POWERUP].percent = 100;
+	} else if (cl.stats[STAT_ITEMS] & IT_INVULNERABILITY) {
+		cl.cshifts[CSHIFT_POWERUP].destcolor[0] = 255;
+		cl.cshifts[CSHIFT_POWERUP].destcolor[1] = 255;
+		cl.cshifts[CSHIFT_POWERUP].destcolor[2] = 0;
+		cl.cshifts[CSHIFT_POWERUP].percent = 30;
+	} else
+		cl.cshifts[CSHIFT_POWERUP].percent = 0;
+}
+
+
 
 /*
 =============
 V_UpdatePalette
 =============
-*/
+ */
 void
 V_UpdatePalette (void)
 {

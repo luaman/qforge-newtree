@@ -172,7 +172,8 @@ cvar_t     *r_numedges;
 cvar_t     *r_aliastransbase;
 cvar_t     *r_aliastransadj;
 
-cvar_t     *gl_flashblend;
+cvar_t     *gl_dlight_lightmap;
+cvar_t     *gl_dlight_polyblend;
 cvar_t     *gl_sky_divide;
 
 extern cvar_t *scr_fov;
@@ -294,7 +295,6 @@ R_Init_Cvars (void)
 	r_numedges = Cvar_Get ("r_numedges", "0", CVAR_NONE, "Toggles the displaying of number of edges currently being viewed");
 	r_aliastransbase = Cvar_Get ("r_aliastransbase", "200", CVAR_NONE, "Determines how much of an alias model is clipped away and how much is viewable");
 	r_aliastransadj = Cvar_Get ("r_aliastransadj", "100", CVAR_NONE, "Determines how much of an alias model is clipped away and how much is viewable.");
-	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_NONE, "Toggles the type of lighting for objects");
 	gl_sky_divide = Cvar_Get ("gl_sky_divide", "1", CVAR_ARCHIVE,
 		"subdivide sky polys");
 }

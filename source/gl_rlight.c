@@ -168,7 +168,7 @@ R_RenderDlights (void)
 	int         i;
 	dlight_t   *l;
 
-	if (!gl_flashblend->int_val)
+	if (!gl_dlight_polyblend->int_val)
 		return;
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
@@ -176,8 +176,7 @@ R_RenderDlights (void)
 	glDepthMask (GL_FALSE);
 	glDisable (GL_TEXTURE_2D);
 	glBlendFunc (GL_ONE, GL_ONE);
-	if (gl_smoothdlights->int_val)
-		glShadeModel (GL_SMOOTH);
+	glShadeModel (GL_SMOOTH);
 
 	l = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, l++) {
@@ -186,7 +185,7 @@ R_RenderDlights (void)
 		R_RenderDlight (l);
 	}
 
-	if (!gl_smooth->int_val)
+	if (!gl_dlight_smooth->int_val)
 		glShadeModel (GL_FLAT);
 	glColor3ubv (lighthalf_v);
 	glEnable (GL_TEXTURE_2D);
@@ -305,7 +304,7 @@ R_PushDlights (vec3_t entorigin)
 	dlight_t   *l;
 	vec3_t      lightorigin;
 
-	if (gl_flashblend->int_val)
+	if (!gl_dlight_lightmap->int_val)
 		return;
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't

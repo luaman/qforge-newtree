@@ -115,7 +115,8 @@ cvar_t	*r_waterripple;
 cvar_t	*gl_affinemodels;
 cvar_t	*gl_clear;
 cvar_t	*gl_cull;
-cvar_t	*gl_flashblend;
+cvar_t  *gl_dlight_lightmap;
+cvar_t	*gl_dlight_polyblend;
 cvar_t	*gl_fb_models;
 cvar_t	*gl_fb_bmodels;
 cvar_t	*gl_keeptjunctions;
@@ -123,8 +124,7 @@ cvar_t	*gl_lerp_anim;
 cvar_t	*gl_multitexture;
 cvar_t	*gl_nocolors;
 cvar_t	*gl_playermip;
-cvar_t	*gl_smooth;
-cvar_t	*gl_smoothdlights;
+cvar_t	*gl_dlight_smooth;
 
 cvar_t	*r_skyname;
 cvar_t	*gl_skymultipass;
@@ -1188,7 +1188,7 @@ R_SetupGL (void)
 	glDisable (GL_ALPHA_TEST);
 	glAlphaFunc (GL_GREATER, 0.5);
 	glEnable (GL_DEPTH_TEST);
-	if (gl_smooth->int_val)
+	if (gl_dlight_smooth->int_val)
 		glShadeModel (GL_SMOOTH);
 	else
 		glShadeModel (GL_FLAT);

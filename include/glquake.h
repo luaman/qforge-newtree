@@ -161,14 +161,14 @@ extern cvar_t	*gl_clear;
 extern cvar_t	*gl_cull;
 extern cvar_t	*gl_fb_bmodels;
 extern cvar_t	*gl_fb_models;
-extern cvar_t	*gl_flashblend;
+extern cvar_t   *gl_dlight_lightmap;
+extern cvar_t	*gl_dlight_polyblend;
+extern cvar_t	*gl_dlight_smooth;
 extern cvar_t	*gl_keeptjunctions;
 extern cvar_t	*gl_multitexture;
 extern cvar_t	*gl_nocolors;
 extern cvar_t	*gl_poly;
 extern cvar_t	*gl_polyblend;
-extern cvar_t	*gl_smooth;
-extern cvar_t	*gl_smoothdlights;
 
 extern cvar_t	*gl_max_size;
 extern cvar_t	*gl_playermip;

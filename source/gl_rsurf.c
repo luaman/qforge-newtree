@@ -765,7 +765,7 @@ R_DrawBrushModel (entity_t *e)
 	psurf = &clmodel->surfaces[clmodel->firstmodelsurface];
 
 	// calculate dynamic lighting for bmodel if it's not an instanced model
-	if (clmodel->firstmodelsurface != 0 && !gl_flashblend->int_val) {
+	if (clmodel->firstmodelsurface != 0 && gl_dlight_lightmap->int_val) {
 		vec3_t      lightorigin;
 
 		for (k = 0; k < MAX_DLIGHTS; k++) {
