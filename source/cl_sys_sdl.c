@@ -63,6 +63,7 @@
 #include "client.h"
 
 qboolean is_server = false;
+extern cvar_t	*sys_nostd_out;
 
 int		starttime;
 
@@ -165,7 +166,10 @@ Sys_Init
 */
 void Sys_Init (void)
 {
+
+#ifdef WIN32
 	OSVERSIONINFO	vinfo;
+#endif
 
 #ifdef USE_INTEL_ASM
 #ifdef WIN32
@@ -256,10 +260,6 @@ C_LINKAGE int SDL_main(int c, char **v)
 
 	memset(&parms, 0, sizeof(parms));
 
-//	COM_InitArgv(c, v);
-//        parms.argc = argc;
-//        parms.argv = argv;
-
 	COM_InitArgv(c, v);
 	parms.argc = com_argc;
 	parms.argv = com_argv;
@@ -286,12 +286,14 @@ C_LINKAGE int SDL_main(int c, char **v)
 */
         parms.basedir = BASEDIR;
 
+        sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
+
 #ifndef WIN32
 	noconinput = COM_CheckParm("-noconinput");
 	if (!noconinput)
 		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | O_NONBLOCK);
-	if (COM_CheckParm("-nostdout")) Cvar_Set(sys_nostdout, "1");
 #endif
+        if (COM_CheckParm("-nostdout")) Cvar_Set(sys_nostdout, "1");
 
 	Host_Init(&parms);
 
