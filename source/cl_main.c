@@ -1575,7 +1575,7 @@ void Host_Frame (float time)
 Host_Init
 ====================
 */
-void Host_Init ()
+void Host_Init (void)
 {
 	if (COM_CheckParm ("-minmemory"))
 		host_parms.memsize = MINIMUM_MEMORY;
