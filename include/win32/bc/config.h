@@ -251,10 +251,10 @@
 #undef HAVE_LIBM
 
 /* Define if you have the zlib library (-lz).  */
-#define HAVE_ZLIB
+#define HAVE_ZLIB 1
 
 /* Posix, needed for limits.h and Unix stuffs to work right */
-#define _POSIX_
+#define _POSIX_ 1
 
 /* Define if you've string.h
 #define HAVE_STRING_H 1
@@ -280,7 +280,9 @@
 /* Define if you have the <netinet/in.h> header file */
 #undef HAVE_NETINET_IN_H
 
-#define ZERO_LENGTH_ARRAY
+#define ZERO_LENGTH_ARRAY 1
+/* Define if you have the <winsock.h> header file */
+#define HAVE_WINSOCK_H 1
 
 /* Experimental 3DNOW support */
 #ifdef HAVE_3DNOW_ASM
