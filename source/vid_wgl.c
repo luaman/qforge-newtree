@@ -705,7 +705,8 @@ void GL_EndRendering (void)
 		Sbar_Changed();
 }
 
-void	VID_SetPalette (unsigned char *palette)
+void
+VID_SetPalette (unsigned char *palette)
 {
 	byte	*pal;
 	unsigned int r,g,b;
@@ -1787,6 +1788,7 @@ void	VID_Init (unsigned char *palette)
 
 	DestroyWindow (hwnd_dialog);
 
+	GL_CheckBrightness (palette);
 	VID_SetPalette (palette);
 
 	VID_SetMode (vid_default, palette);

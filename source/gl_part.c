@@ -662,8 +662,8 @@ void R_DrawParticles (void)
 	Nifty ball of fire GL effect.  Kinda a meshing of the dlight and
 	particle engine code.
 */
-float r_firecolor_flame[3]={0.9,0.7,0.3};
-float r_firecolor_light[3]={0.9,0.7,0.3};
+float r_firecolor_flame[3]={0.9,0.4,0};
+float r_firecolor_light[3]={0.9,0.4,0};
 
 void
 R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
@@ -835,7 +835,7 @@ R_FireColor_f (void)
 	int i;
 
 	if (Cmd_Argc() == 1) {
-		Con_Printf ("r_firecolor %f %f %f\n",
+		Con_Printf ("r_firecolor %g %g %g\n",
 					r_firecolor_flame[0],
 					r_firecolor_flame[1],
 					r_firecolor_flame[2]);

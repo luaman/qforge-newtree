@@ -81,7 +81,7 @@ cvar_t *Cvar_FindAlias (char *alias_name)
 void Cvar_Alias_Get (char *name, cvar_t *cvar)
 {
 	cvar_alias_t	*alias;
-	cvar_t		*var;
+	cvar_t			*var;
 
 	if (Cmd_Exists (name))
 	{

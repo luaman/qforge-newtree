@@ -108,7 +108,7 @@ GL_Init (void)
 void
 GL_EndRendering (void)
 {
-	glFlush();
+	glFlush ();
 	SDL_GL_SwapBuffers ();
 }
 
@@ -182,12 +182,14 @@ VID_Init (unsigned char *palette)
 
 	vid.aspect = ((float) vid.height / (float) vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
+
 #ifndef WIN32
 	InitSig (); // trap evil signals
 #endif
 
 	GL_Init();
 
+	GL_CheckBrightness (palette);
 	VID_SetPalette (palette);
 
 	// Check for 3DFX Extensions and initialize them.
@@ -197,6 +199,7 @@ VID_Init (unsigned char *palette)
 				scr_width, scr_height);
 
 	vid_initialized = true;
+
 #ifdef WIN32
 	// FIXME: EVIL thing - but needed for win32 until we get
 	// SDL_sound ready - without this DirectSound fails.
@@ -211,9 +214,9 @@ VID_SetCaption (char *text)
 {
 	if (text && *text) {
 		char *temp = strdup (text);
-		SDL_WM_SetCaption(va ("%s %s: %s", PROGRAM, VERSION, temp), NULL);
+		SDL_WM_SetCaption (va ("%s %s: %s", PROGRAM, VERSION, temp), NULL);
 		free (temp);
 	} else {
-		SDL_WM_SetCaption(va ("%s %s", PROGRAM, VERSION), NULL);
+		SDL_WM_SetCaption (va ("%s %s", PROGRAM, VERSION), NULL);
 	}
 }

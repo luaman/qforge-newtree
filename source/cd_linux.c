@@ -353,7 +353,7 @@ static void CD_f (void)
 			Con_Printf("Currently %s track %u\n", playLooping ? "looping" : "playing", playTrack);
 		else if (wasPlaying)
 			Con_Printf("Paused %s track %u\n", playLooping ? "looping" : "playing", playTrack);
-		Con_Printf("Volume is %f\n", cdvolume);
+		Con_Printf("Volume is %g\n", cdvolume);
 		return;
 	}
 }

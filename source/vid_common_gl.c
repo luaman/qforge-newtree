@@ -261,6 +261,7 @@ GL_Init_Common (void)
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	CheckMultiTextureExtensions ();
+	
 }
 
 /*

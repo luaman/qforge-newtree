@@ -127,6 +127,43 @@ void glrmain_init()
 {
 };
 
+/*
+	GL_CheckBrightness
+
+	This is something like the brightness cvar, except it hacks the palette
+	directly instead of brightening the screen afterward.
+*/
+void
+GL_CheckBrightness (unsigned char *pal)
+{
+	int 	i, inf;
+	float	brightness;
+
+	if ((i = COM_CheckParm ("-brighten"))) {
+		brightness = atof (com_argv[i + 1]);
+		brightness = bound (1, brightness, 5);
+	} else {
+		brightness = 1.0;
+	}
+	
+	// Build gamma table
+	if (brightness == 1.0) {	// screw the math
+		for (i = 0; i < 256; i++) {
+			gammatable[i] = i;
+		}
+	} else {
+		for (i = 0; i < 256; i++) {	// brighten up the palette
+			inf = (i * brightness);
+			inf = bound (0, inf, 255);
+			gammatable[i] = inf;
+		}
+	}
+	
+	// correct the palette
+	for (i = 0; i < 768; i++) {
+		pal[i] = gammatable[pal[i]];
+	}
+}
 
 /*
 =================
