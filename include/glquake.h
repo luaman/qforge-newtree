@@ -36,28 +36,27 @@
 #if defined(_WIN32) && !defined(__GNUC__)
 // disable data conversion warnings
 // FIXME: move that somewhere else -- yan
-#pragma warning(disable : 4244)     // MIPS
-#pragma warning(disable : 4136)     // X86
-#pragma warning(disable : 4051)     // ALPHA
-#pragma warning(disable : 4305)     // thousands of double to float truncation warnings
-  
-#include <windows.h>
+# pragma warning(disable : 4244)     // MIPS
+# pragma warning(disable : 4136)     // X86
+# pragma warning(disable : 4051)     // ALPHA
+# pragma warning(disable : 4305)     // thousands of double to float truncation warnings
+# include <windows.h>
 #endif
 
 #include <GL/gl.h>
 
+#include "client.h"
+#include "cvar.h"
 #include "model.h"
 #include "render.h"
-#include "cvar.h"
 #include "wad.h"
-#include "client.h"
 
 #ifndef GL_BGR
-#define GL_BGR 0x80E0
+# define GL_BGR 0x80E0
 #endif
 
 #ifndef GL_BGRA
-#define GL_BGRA 0x80E1
+# define GL_BGRA 0x80E1
 #endif
 
 #ifndef GLAPIENTRY
@@ -85,6 +84,7 @@ extern	DELTEXFUNCPTR delTexFunc;
 extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
 
 extern	int texture_extension_number;
+extern	int		texture_mode;
 
 extern	float	gldepthmin, gldepthmax;
 
