@@ -8,6 +8,7 @@ qf-client-ggi
 qf-client-glx
 qf-client-svga
 qf-client-x11
+qf-client-3dfx
 qf-server
 server.exe
 .deps
