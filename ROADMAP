@@ -1,10 +1,11 @@
 o = todo
 X = done
 ? = maybe but not likely
+M = more testing
 
 o  it seems possible to crash a QF server still - need to fix this!
 X  water textures are seriously screwed in GL
-o  GL is still way too slow
+M  GL is still way too slow
 X  R_DrawParticles in software hangs
 o  Draw_Pic and friends need a cleanup in GL at least
 o  It's possible to stick on some obtuse-angled corners qwsv 2.3x didn't
