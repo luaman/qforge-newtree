@@ -153,10 +153,11 @@ COMPILING NEWTREE WITH MINGW (http://www.mingw.org)
 These are MINGW compile instructions for users without cygwin or self-hosting
 mingw. If you've cygwin or self-hosting mingw, you can soon use standard 
 ./configure process. You can also build WIN32 binaries under Linux using 
-cross-compiling mingw.
+cross-compiling mingw. Note: THIS IS WORK IN A PROGRESS (in case you
+haven't noticed yet)
 
-1) Get and install fully working MINGW system. See mingw home page
-for closer details. Make sure your MINGW\BIN directory is in your PATH.
+1) Get and install MINGW compiler. See mingw home page for closer details.
+Make sure your MINGW\BIN directory is in your PATH.
 (if you want easy way in, get http://www.libsdl.org/Xmingw32/mingw32.zip and extract it)
 
 2) Get and install LATEST WIN32API for mingw
@@ -166,17 +167,21 @@ Latest one at the time of the writing is
 http://download.sourceforge.net/mingw/w32api-0.4-20001122.tar.gz
 
 3) Get and install ZLIB
-You can either download ZLIB source code from http://www.info-zip.org/pub/infozip/zlib/ 
-and compile it or 
+You can either download ZLIB source code from
+http://www.info-zip.org/pub/infozip/zlib/
+and compile it OR get zlib packages from
+http://sourceforge.net/projects/mingwrep/
+and just install them.
 
 4) If you want to compile SDL/SGL targets, you also need to get SDL 
 Source Code and Win32 Binary Runtime (http://www.libsdl.org.)
 Extract the runtime (sdl.dll) into the lib subdirectory of the SDL 
 Source Code. If you don't know what SDL means, you don't need this.
 
-Look libsdl page for closer details how to get mingw working with sdl.
+Look libsdl FAQ page for closer details how to get mingw working with SDL.
 
-5) Go to source directory and check paths in makefile.mgw and change them to suit your system.
+5) Go to source directory and check paths in makefile.mgw and change them
+to suit your system.
 
 Then just type:
 
@@ -184,5 +189,20 @@ make -fmakefile.mgw
 
 And hope for best. You will see lot of "warnings" but they're ok as long
 as you manage to get working .EXE files.
+
+Notes about mingw:
+If you get weird compile errors, try getting
+http://pws.prserv.net/thefortins/basetyps_h.tar.gz
+and replacing your basetyps.h with it.
+
+If you don't have WORKING DirectX libs with your mingw, you need
+to get them.
+(http://pws.prserv.net/thefortins/directx6_1-cyg.tar.gz)
+Any later DX release (7.0, 8.0) is fine too.
+
+If you don't get SDL library to build with mingw, don't worry, you're
+not the only one. Just FLAME ON SDL dev. team, not us.
+
 -----------------------------------------------------------------------
+
 
