@@ -43,6 +43,8 @@
 #include "qargs.h"
 #include "cmd.h"
 #include "input.h"
+#include "cl_input.h"
+#include "view.h"
 //#include "dosisms.h"
 
 #define DINPUT_BUFFERSIZE           16
