@@ -218,25 +218,6 @@ SOURCE=.\cl_tent.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\sw_skin.c
-
-!IF  "$(CFG)" == "qw_client - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-# PROP Exclude_From_Build 1
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=.\cmd.c
 # End Source File
 # Begin Source File
@@ -816,6 +797,25 @@ SOURCE=.\gl_screen.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\gl_skin.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\gl_sky.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
@@ -836,25 +836,6 @@ SOURCE=.\gl_sky.c
 # Begin Source File
 
 SOURCE=.\gl_sky_clip.c
-
-!IF  "$(CFG)" == "qw_client - Win32 Release"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\gl_skin.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 
@@ -1393,6 +1374,25 @@ SOURCE=.\sw_model_sprite.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\sw_skin.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\sw_view.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
@@ -1478,6 +1478,10 @@ SOURCE=.\vid_wgl.c
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\vid_win.c
 # End Source File
 # Begin Source File
 
