@@ -1099,6 +1099,10 @@ CL_ReadPackets (void)
 {
 //  while (NET_GetPacket ())
 	while (CL_GetMessage ()) {
+
+#ifdef PACKET_LOGGING
+                if (cls.demoplayback) Log_Incoming_Packet(net_message.data,net_message.cursize);
+#endif
 		// 
 		// remote command packet
 		//
@@ -1219,7 +1223,9 @@ CL_Init (void)
 	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING);
 	Info_SetValueForStarKey (cls.userinfo, "stdver", QSG_VERSION,
 							 MAX_INFO_STRING);
-
+#ifdef PACKET_LOGGING
+        Net_Log_Init();
+#endif
 	CL_Input_Init ();
 	CL_Ents_Init ();
 	CL_TEnts_Init ();
