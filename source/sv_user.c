@@ -1244,11 +1244,14 @@ void
 SV_ExecuteUserCommand (char *s)
 {
 	ucmd_t     *u;
+	int         no_redirect;
 
+	no_redirect = strnequal (s, "say", 3);
 	Cmd_TokenizeString (s);
 	sv_player = host_client->edict;
 
-	SV_BeginRedirect (RD_CLIENT);
+	if (!no_redirect)
+		SV_BeginRedirect (RD_CLIENT);
 
 	for (u = ucmds; u->name; u++) {
 		if (!strcmp (Cmd_Argv (0), u->name)) {
@@ -1257,10 +1260,15 @@ SV_ExecuteUserCommand (char *s)
 		}
 	}
 
-	if (!u->name)
+	if (!u->name) {
+		if (no_redirect)
+			SV_BeginRedirect (RD_CLIENT);
+		no_redirect = 0;
 		Con_Printf ("Bad user command: %s\n", Cmd_Argv (0));
+	}
 
-	SV_EndRedirect ();
+	if (!no_redirect)
+		SV_EndRedirect ();
 }
 
 /*
