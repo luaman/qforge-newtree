@@ -130,6 +130,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\quakeforge.res\
    $(OBJS)\locs.obj\
    $(ZLIB)\zlib.lib\
    $(OBJS)\model.obj\
@@ -364,6 +365,13 @@ $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SCITECHROOT)\lib\win32\bc5\mglfx.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
+
+quakeforge.res
+
+|
+$(OBJS)\quakeforge.res :  $(QFROOT)\include\win32\resources\quakeforge.rc
+  $(BRC32) -R @&&|
+ -FO$@ $(QFROOT)\include\win32\resources\quakeforge.rc
 
 |
 $(OBJS)\locs.obj :  $(QFROOT)\source\locs.c
