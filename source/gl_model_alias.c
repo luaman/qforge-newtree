@@ -251,7 +251,7 @@ Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinindex)
 Mod_LoadAliasFrame
 =================
 */
-void       *
+void *
 Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
 {
 	trivertx_t *pinframe;
@@ -264,9 +264,7 @@ Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
 	frame->firstpose = posenum;
 	frame->numposes = 1;
 
-	for (i = 0; i < 3; i++) {
-		// these are byte values, so we don't have to worry about
-		// endianness
+	for (i = 0; i < 3; i++) {	// byte values, don't worry about endianness
 		frame->bboxmin.v[i] = pdaliasframe->bboxmin.v[i];
 		frame->bboxmin.v[i] = pdaliasframe->bboxmax.v[i];
 	}
@@ -286,7 +284,7 @@ Mod_LoadAliasFrame (void *pin, maliasframedesc_t *frame)
 Mod_LoadAliasGroup
 =================
 */
-void       *
+void *
 Mod_LoadAliasGroup (void *pin, maliasframedesc_t *frame)
 {
 	daliasgroup_t *pingroup;
@@ -318,11 +316,7 @@ Mod_LoadAliasGroup (void *pin, maliasframedesc_t *frame)
 	for (i = 0; i < numframes; i++) {
 		poseverts[posenum] = (trivertx_t *) ((daliasframe_t *) ptemp + 1);
 		posenum++;
-
-		ptemp =
-			(trivertx_t *) ((daliasframe_t *) ptemp + 1) +
-			pheader->mdl.numverts;
+		ptemp =	(trivertx_t *) ((daliasframe_t *) ptemp + 1) + pheader->mdl.numverts;
 	}
-
 	return ptemp;
 }

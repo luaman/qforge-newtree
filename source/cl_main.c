@@ -656,7 +656,7 @@ CL_FullServerinfo_f (void)
 */
 
 void
-CL_AddQFInfoKeys ()
+CL_AddQFInfoKeys (void)
 {
 	char        cap[100] = "";			// max of 98 or so flags
 
@@ -688,7 +688,7 @@ CL_AddQFInfoKeys ()
 
 */
 void
-CL_RemoveQFInfoKeys ()
+CL_RemoveQFInfoKeys (void)
 {
 	Info_RemoveKey (cls.userinfo, "*cap");
 	Info_RemoveKey (cls.userinfo, "*qf_version");
@@ -1488,9 +1488,8 @@ Host_Frame (float time)
 	int         pass1, pass2, pass3;
 	float       fps;
 
-	if (setjmp (host_abort))
-		return;							// something bad happened, or the
-										// server disconnected
+	if (setjmp (host_abort))	// something bad happened, or the server disconnected
+		return;
 
 	// decide the simulation time
 	realtime += time;
@@ -1503,17 +1502,16 @@ Host_Frame (float time)
 		fps = max (30.0, min (rate->value / 80.0, 72.0));
 
 	if (!cls.timedemo && realtime - oldrealtime < 1.0 / fps)
-		return;							// framerate is too high
+		return;					// framerate is too high
 
 	host_frametime = realtime - oldrealtime;
 	oldrealtime = realtime;
-	if (host_frametime > 0.2)
-		host_frametime = 0.2;
+	host_frametime = min (host_frametime, 0.2);
 
 	// get new key events
 	IN_SendKeyEvents ();
 
-	// allow mice or other external controllers to add commands
+	// allow mouses or other external controllers to add commands
 	IN_Commands ();
 
 	// process console commands

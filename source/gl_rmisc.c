@@ -60,18 +60,18 @@
 #include "r_dynamic.h"
 #include "skin.h"
 
-qboolean    VID_Is8bit (void);
-void        R_InitBubble ();
-void        R_FireColor_f (void);
+qboolean VID_Is8bit (void);
+void R_InitBubble (void);
+void R_FireColor_f (void);
 
-cvar_t		*gl_fires;
-cvar_t		*r_netgraph_alpha;
-cvar_t		*r_netgraph_box;
+cvar_t	*gl_fires;
+cvar_t	*r_netgraph_alpha;
+cvar_t	*r_netgraph_box;
 
 extern cvar_t	*r_netgraph;
 extern cvar_t	*gl_lerp_anim;
 
-qboolean    allowskybox;				// allow skyboxes?  --KB
+qboolean	allowskybox;				// allow skyboxes?  --KB
 
 /*
 ==================
@@ -84,7 +84,7 @@ R_Textures_Init (void)
 	int         x, y, m;
 	byte       *dest;
 
-// create a simple checkerboard texture for the default
+	// create a simple checkerboard texture for the default
 	r_notexture_mip =
 		Hunk_AllocName (sizeof (texture_t) + 16 * 16 + 8 * 8 + 4 * 4 + 2 * 2,
 						"notexture");
@@ -98,13 +98,14 @@ R_Textures_Init (void)
 
 	for (m = 0; m < 4; m++) {
 		dest = (byte *) r_notexture_mip + r_notexture_mip->offsets[m];
-		for (y = 0; y < (16 >> m); y++)
+		for (y = 0; y < (16 >> m); y++) {
 			for (x = 0; x < (16 >> m); x++) {
 				if ((y < (8 >> m)) ^ (x < (8 >> m)))
 					*dest++ = 0;
 				else
 					*dest++ = 0xff;
 			}
+		}
 	}
 }
 
