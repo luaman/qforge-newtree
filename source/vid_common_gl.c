@@ -37,36 +37,18 @@
 
 #include <GL/gl.h>
 
-#ifdef HAVE_GL_GLEXT_H
-# include <GL/glext.h>
-#endif
-
 #include <string.h>
-
-#ifdef HAVE_DLFCN_H
-# include <dlfcn.h>
-#endif
-#ifndef RTLD_LAZY
-# ifdef DL_LAZY
-#  define RTLD_LAZY     DL_LAZY
-# else
-#  define RTLD_LAZY     0
-# endif
-#endif
 
 #include "console.h"
 #include "glquake.h"
 #include "input.h"
 #include "qargs.h"
+#include "qfgl_ext.h"
 #include "quakefs.h"
 #include "sbar.h"
 
 #define WARP_WIDTH              320
 #define WARP_HEIGHT             200
-
-#ifdef HAVE_DLOPEN
-static void 	*dlhand = NULL;
-#endif
 
 //unsigned short	d_8to16table[256];
 unsigned int	d_8to24table[256];
@@ -104,43 +86,36 @@ cvar_t *vid_use8bit;
 void
 CheckMultiTextureExtensions (void)
 {
-	Con_Printf ("Checking for multitexture... ");
+	Con_Printf ("Checking for multitexture: ");
 	if (COM_CheckParm ("-nomtex")) {
 		Con_Printf ("disabled\n");
 		return;
 	}
 #ifdef HAVE_DLOPEN
-	dlhand = dlopen (NULL, RTLD_LAZY);
-	if (dlhand == NULL) {
-		Con_Printf ("unable to check\n");
-		return;
-	}
-	if (strstr(gl_extensions, "GL_ARB_multitexture ")) {
+	if (QFGL_ExtensionPresent ("GL_ARB_multitexture")) {
 		Con_Printf ("GL_ARB_multitexture\n");
-		qglMTexCoord2f = (void *)dlsym(dlhand, "glMultiTexCoord2fARB");
-		qglSelectTexture = (void *)dlsym(dlhand, "glActiveTextureARB");
+		qglMTexCoord2f = QFGL_ExtensionAddress ("glMultiTexCoord2fARB");
+		qglSelectTexture = QFGL_ExtensionAddress ("glActiveTextureARB");
 		gl_mtex_enum = GL_TEXTURE0_ARB;
 		gl_mtexable = true;
 		gl_arb_mtex = true;
-	} else if (strstr(gl_extensions, "GL_SGIS_multitexture ")) {
+	} else if (QFGL_ExtensionPresent ("GL_SGIS_multitexture")) {
 		Con_Printf ("GL_SGIS_multitexture\n");
-		qglMTexCoord2f = (void *)dlsym(dlhand, "glMTexCoord2fSGIS");
-		qglSelectTexture = (void *)dlsym(dlhand, "glSelectTextureSGIS");
+		qglMTexCoord2f = QFGL_ExtensionAddress ("glMTexCoord2fSGIS");
+		qglSelectTexture = QFGL_ExtensionAddress ("glSelectTextureSGIS");
 		gl_mtex_enum = TEXTURE0_SGIS;
 		gl_mtexable = true;
 		gl_arb_mtex = false;
-	} else if (strstr(gl_extensions, "GL_EXT_multitexture ")) {
+	} else if (QFGL_ExtensionPresent ("GL_EXT_multitexture")) {
 		Con_Printf ("GL_EXT_multitexture\n");
-		qglMTexCoord2f = (void *)dlsym(dlhand, "glMTexCoord2fEXT");
-		qglSelectTexture = (void *)dlsym(dlhand, "glSelectTextureEXT");
+		qglMTexCoord2f = QFGL_ExtensionAddress ("glMTexCoord2fEXT");
+		qglSelectTexture = QFGL_ExtensionAddress ("glSelectTextureEXT");
 		gl_mtex_enum = TEXTURE0_SGIS;
 		gl_mtexable = true;
 		gl_arb_mtex = false;
 	} else {
-		Con_Printf ("none found\n");
+		Con_Printf ("none\n");
 	}
-	dlclose(dlhand);
-	dlhand = NULL;          
 #else
 	gl_mtexable = false;
 #endif
@@ -244,29 +219,28 @@ GL_Init_Common (void)
 	gl_extensions = glGetString (GL_EXTENSIONS);
 	Con_Printf ("GL_EXTENSIONS: %s\n", gl_extensions);
 
-	glClearColor (0,0,0,0);
-	glCullFace(GL_FRONT);
-	glEnable(GL_TEXTURE_2D);
+	glClearColor (0, 0, 0, 0);
+	glCullFace (GL_FRONT);
+	glEnable (GL_TEXTURE_2D);
 
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.666);
+	glEnable (GL_ALPHA_TEST);
+	glAlphaFunc (GL_GREATER, 0.666);
 
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
 	glShadeModel (GL_FLAT);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glEnable(GL_BLEND);
+	glEnable (GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	CheckMultiTextureExtensions ();
-	
 }
 
 /*
@@ -282,14 +256,16 @@ GL_BeginRendering (int *x, int *y, int *width, int *height)
 	*height = scr_height;
 }
 
-qboolean VID_Is8bit (void)
+qboolean
+VID_Is8bit (void)
 {
 	return is8bit;
 }
 
-#ifdef HAVE_TDFXGL
+
+#ifdef GL_SHARED_TEXTURE_PALETTE_EXT
 void
-3dfx_Init8bitPalette (void)
+Tdfx_Init8bitPalette (void)
 {
 	// Check for 8bit Extensions and initialize them.
 	int 	i;
@@ -298,13 +274,13 @@ void
 		return;
 	}
 
-	if (strstr (gl_extensions, "3DFX_set_global_palette")) {
+	if (QFGL_ExtensionPresent ("3DFX_set_global_palette")) {
 
 		char	*oldpal;
 		GLubyte table[256][4];
-		gl3DfxSetPaletteEXT_FUNC qgl3DfxSetPaletteEXT = NULL;
+		QF_gl3DfxSetPaletteEXT qgl3DfxSetPaletteEXT = NULL;
 
-		if (!(qgl3DfxSetPaletteEXT = (void *) dlsym (dlhand, "gl3DfxSetPaletteEXT"))) {
+		if (!(qgl3DfxSetPaletteEXT = QFGL_ExtensionAddress ("gl3DfxSetPaletteEXT"))) {
 			return;
 		}
 
@@ -323,15 +299,7 @@ void
 		is8bit = true;
 	}
 }
-#endif
 
-#ifndef HAVE_PFNGLCOLORTABLEEXTPROC
-# ifndef PFNGLCOLORTABLEEXTPROC
-typedef void (GLAPIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const GLvoid *table);
-# endif
-#endif
-
-#ifdef GL_SHARED_TEXTURE_PALETTE_EXT
 void
 Shared_Init8bitPalette (void)
 {
@@ -339,14 +307,14 @@ Shared_Init8bitPalette (void)
 	GLubyte thePalette[256][4];
 	GLubyte	*oldPalette;
 
-	PFNGLCOLORTABLEEXTPROC qglColorTableEXT = NULL;
+	QF_glColorTableEXT qglColorTableEXT = NULL;
 
 	if (is8bit) {
 		return;
 	}
 
-	if (strstr (gl_extensions, "GL_EXT_shared_texture_palette")) {
-		if (!(qglColorTableEXT = (void *) dlsym (dlhand, "glColorTableEXT"))) {
+	if (QFGL_ExtensionPresent ("GL_EXT_shared_texture_palette")) {
+		if (!(qglColorTableEXT = QFGL_ExtensionAddress ("glColorTableEXT"))) {
 			return;
 		}
 
@@ -369,36 +337,20 @@ Shared_Init8bitPalette (void)
 void
 VID_Init8bitPalette (void)
 {
-	vid_use8bit = Cvar_Get ("vid_use8bit", "0", CVAR_ROM,
-				"Whether to use 8-bit shared palettes.");
+	vid_use8bit = Cvar_Get ("vid_use8bit", "1", CVAR_ROM, "Use 8-bit shared palettes.");
 
-	Con_Printf ("8-bit OpenGL extension: ");
-
-#ifdef HAVE_DLOPEN
-	if (!(dlhand = dlopen (NULL, RTLD_LAZY))) {
-		Con_Printf ("unable to check.\n");
-		return;
-	}
-#endif
-
+	Con_Printf ("Checking for 8-bit extension: ");
 	if (vid_use8bit->int_val) {
-#ifdef HAVE_TDFXGL
-		3dfx_Init8bitPalette ();
-#endif
-#ifdef HAVE_PFNGLCOLORTABLEEXTPROC
+#ifdef GL_SHARED_TEXTURE_PALETTE_EXT
+		Tdfx_Init8bitPalette ();
 		Shared_Init8bitPalette ();
 #endif
 		if (!is8bit) {
-			Con_Printf ("not found.\n");
+			Con_Printf ("none\n");
 		}
 	} else {
 		Con_Printf ("disabled.\n");
 	}
-
-#ifdef HAVE_DLOPEN
-	dlclose (dlhand);
-	dlhand = NULL;
-#endif
 }
 
 void
