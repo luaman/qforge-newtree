@@ -271,6 +271,8 @@
 /* Define if you have the fnmatch proto file.  */
 #undef HAVE_FNMATCH_PROTO
 
+#define ZERO_LENGTH_ARRAY 0
+
 /* Experimental 3DNOW support */
 #ifdef HAVE_3DNOW_ASM
         #define atan  _atan

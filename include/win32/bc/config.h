@@ -273,6 +273,8 @@
 /* Define if you have the <netinet/in.h> header file */
 #undef HAVE_NETINET_IN_H
 
+#define ZERO_LENGTH_ARRAY
+
 /* Experimental 3DNOW support */
 #ifdef HAVE_3DNOW_ASM
         #define atan  _atan
