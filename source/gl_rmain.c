@@ -545,11 +545,11 @@ void R_DrawAliasModel (entity_t *e)
 	shadecolor[0] = currententity->colormod[0];
 	shadecolor[1] = currententity->colormod[1];
 	shadecolor[2] = currententity->colormod[2];
-	if (lighthalf)
+	if (!lighthalf)
 	{
-		shadecolor[0] *= 0.5;
-		shadecolor[1] *= 0.5;
-		shadecolor[2] *= 0.5;
+		shadecolor[0] *= 2.0;
+		shadecolor[1] *= 2.0;
+		shadecolor[2] *= 2.0;
 	}
 
 	VectorCopy (currententity->origin, r_entorigin);
