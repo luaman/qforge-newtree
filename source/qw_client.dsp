@@ -2201,7 +2201,6 @@ InputName=worlda
 	cl /D "USE_INTEL_ASM=1" /D "HAVE_CONFIG_H=1" /I "..\source" /I "..\include" /I "..\include\win32\vc" /I "..\include\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
 	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
 	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
-	del $(OUTDIR)\$(InputName).spp 
 	
 # End Custom Build
 

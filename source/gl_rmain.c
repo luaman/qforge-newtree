@@ -125,7 +125,7 @@ cvar_t	*r_skyname;
 extern	cvar_t	*gl_ztrick;
 extern	cvar_t	*scr_fov;
 
-byte gammatable[256];
+extern byte gammatable[256];
 static float vid_gamma = 1.0;
 
 /*
