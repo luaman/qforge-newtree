@@ -145,8 +145,14 @@ void MSG_ReadDeltaUsercmd (struct usercmd_s *from, struct usercmd_s *cmd);
 
 #ifdef _WIN32
 
+#ifdef __BORLANDC__
+#define Q_strcasecmp(s1, s2) stricmp((s1), (s2))
+#define Q_strncasecmp(s1, s2, n) strnicmp((s1), (s2), (n))
+
+#else
 #define Q_strcasecmp(s1, s2) _stricmp((s1), (s2))
 #define Q_strncasecmp(s1, s2, n) _strnicmp((s1), (s2), (n))
+#endif
 
 #else
 
