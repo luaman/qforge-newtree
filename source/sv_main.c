@@ -1917,11 +1917,11 @@ void SV_Init (quakeparms_t *parms)
 	host_initialized = true;
 	
 //	Con_Printf ("Exe: "__TIME__" "__DATE__"\n");
-	Con_Printf ("%4.1f megabyte heap\n",parms->memsize/ (1024*1024.0));	
+	Con_Printf ("%4.1f megabyte heap\n", parms->memsize / (1024*1024.0));	
 
-	Con_Printf ("\nQuakeForge Version %s (Build %04d)\n\n", VERSION, build_number());
+	Con_Printf ("\n%s server, Version %s (build %04d)\n\n", PROGRAM, VERSION, build_number ());
 
-	Con_Printf ("======== %s Initialized ========\n", PROGRAM);
+	Con_Printf ("<==> %s initialized <==>\n", PROGRAM);
 
 // process command line arguments
 	Cmd_StuffCmds_f ();

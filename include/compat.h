@@ -74,3 +74,17 @@ extern int vsnprintf(char *s, size_t maxlen, const char *format, va_list arg);
 #endif
 
 #endif // _COMPAT_H
+
+/* String utility functions */
+#if !defined(strequal)
+# define strequal(a,b) (strcmp (a, b) == 0)
+#endif
+#if !defined(strcaseequal)
+# define strcaseequal(a,b) (strcasecmp (a, b) == 0)
+#endif
+#if !defined(strnequal)
+# define strnequal(a,b,c) (strncmp (a, b, c) == 0)
+#endif
+#if !defined(strncaseequal)
+# define strncaseequal(a,b,c) (strncasecmp (a, b, c) == 0)
+#endif

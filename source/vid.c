@@ -47,13 +47,19 @@ VID_GetWindowSize (int def_w, int def_h)
 {
 	int pnum;
 
-	vid_width = Cvar_Get ("vid_width", va("%d",def_w), CVAR_ROM, "screen width");
-	vid_height = Cvar_Get ("vid_height", va("%d",def_h), CVAR_ROM, "screen height");
+	if ((pnum=COM_CheckParm("-winsize"))) {
+		if (pnum >= com_argc-2)
+			Sys_Error("VID: -winsize <width> <height>\n");
+		vid_width = Cvar_Get ("vid_width", com_argv[pnum+1], CVAR_ROM, "screen width");
+		vid_height = Cvar_Get ("vid_height", com_argv[pnum+2], CVAR_ROM, "screen height");
+		if (!vid_width->int_val || !vid_height->int_val)
+			Sys_Error("VID: Bad window width/height\n");
+	}
 
 	if ((pnum=COM_CheckParm("-width"))) {
 		if (pnum >= com_argc-1)
 			Sys_Error("VID: -width <width>\n");
-		Cvar_SetROM (vid_width, com_argv[pnum+1]);
+		vid_width = Cvar_Get ("vid_width", com_argv[pnum+1], CVAR_ROM, "screen width");
 		if (!vid_width->int_val)
 			Sys_Error("VID: Bad window width\n");
 	}
@@ -61,19 +67,13 @@ VID_GetWindowSize (int def_w, int def_h)
 	if ((pnum=COM_CheckParm("-height"))) {
 		if (pnum >= com_argc-1)
 			Sys_Error("VID: -height <height>\n");
-		Cvar_SetROM (vid_height, com_argv[pnum+1]);
+		vid_height = Cvar_Get ("vid_height", com_argv[pnum+1], CVAR_ROM, "screen height");
 		if (!vid_height->int_val)
 			Sys_Error("VID: Bad window height\n");
 	}
 
-	if ((pnum=COM_CheckParm("-winsize"))) {
-		if (pnum >= com_argc-2)
-			Sys_Error("VID: -winsize <width> <height>\n");
-		Cvar_SetROM (vid_width, com_argv[pnum+1]);
-		Cvar_SetROM (vid_height, com_argv[pnum+2]);
-		if (!vid_width->int_val || !vid_height->int_val)
-			Sys_Error("VID: Bad window width/height\n");
-	}
+	vid_width = Cvar_Get ("vid_width", va("%d",def_w), CVAR_ROM, "screen width");
+	vid_height = Cvar_Get ("vid_height", va("%d",def_h), CVAR_ROM, "screen height");
 
 	scr_width = vid.width = vid_width->int_val;
 	scr_height = vid.height = vid_height->int_val;

@@ -187,22 +187,25 @@ void Cvar_Info (cvar_t *var);
 Cvar_Set
 ============
 */
-void Cvar_Set (cvar_t *var, char *value)
+void
+Cvar_Set (cvar_t *var, char *value)
 {
 	if (!var)
 		return;
 
-	if(var->flags & CVAR_ROM)
+	if(var->flags & CVAR_ROM) {
+		Con_DPrintf ("Cvar \"%s\" is read-only, cannot modify\n", var->name);
 		return;
+	}
 
 	free (var->string);   // free the old value string
 
-	var->string = malloc (strlen(value)+1);
+	var->string = malloc (strlen (value) + 1);
 	strcpy (var->string, value);
 	var->value = atof (var->string);
 	var->int_val = atoi (var->string);
 
-	Cvar_Info(var);
+	Cvar_Info (var);
 }
 
 
@@ -211,7 +214,8 @@ void Cvar_Set (cvar_t *var, char *value)
 
 	doesn't check for CVAR_ROM flag
 */
-void Cvar_SetROM (cvar_t *var, char *value)
+void
+Cvar_SetROM (cvar_t *var, char *value)
 {
 	if (!var)
 		return;
@@ -252,11 +256,12 @@ Cvar_Command
 Handles variable inspection and changing from the console
 ============
 */
-qboolean	Cvar_Command (void)
+qboolean
+Cvar_Command (void)
 {
-	cvar_t			*v;
+	cvar_t	*v;
 
-// check variables
+	// check variables
 	v = Cvar_FindVar (Cmd_Argv(0));
 	if (!v)
 		v = Cvar_FindAlias (Cmd_Argv(0));
@@ -264,8 +269,7 @@ qboolean	Cvar_Command (void)
 		return false;
 
 // perform a variable print or set
-	if (Cmd_Argc() == 1)
-	{
+	if (Cmd_Argc() == 1) {
 		Con_Printf ("\"%s\" is \"%s\"\n", v->name, v->string);
 		return true;
 	}
@@ -292,56 +296,63 @@ void Cvar_WriteVariables (QFile *f)
 			Qprintf (f, "%s \"%s\"\n", var->name, var->string);
 }
 
-void Cvar_Set_f(void)
+void
+Cvar_Set_f (void)
 {
 	cvar_t *var;
 	char *value;
 	char *var_name;
 
-	if (Cmd_Argc() != 3)
-	{
+	if (Cmd_Argc() != 3) {
 		Con_Printf ("usage: set <cvar> <value>\n");
 		return;
 	}
 	var_name = Cmd_Argv (1);
 	value = Cmd_Argv (2);
 	var = Cvar_FindVar (var_name);
+
 	if (!var)
 		var = Cvar_FindAlias (var_name);
-	if (var)
-	{
-		Cvar_Set (var, value);
-	}
-	else
-	{
+
+	if (var) {
+		if (var->flags & CVAR_ROM) {
+			Con_DPrintf ("Cvar \"%s\" is read-only, cannot modify\n", var_name);
+		} else {
+			Cvar_Set (var, value);
+		}
+	} else {
 		var = Cvar_Get (var_name, value, CVAR_USER_CREATED,
-				"User created cvar");
+				"User-created cvar");
 	}
 }
 
-void Cvar_Setrom_f(void)
+void
+Cvar_Setrom_f (void)
 {
-	cvar_t *var;
-	char *value;
-	char *var_name;
+	cvar_t	*var;
+	char	*value;
+	char	*var_name;
 
-	if (Cmd_Argc() != 2)
-	{
-		Con_Printf ("usage: setrom <cvar>\n");
+	if (Cmd_Argc() != 3) {
+		Con_Printf ("usage: setrom <cvar> <value>\n");
 		return;
 	}
 	var_name = Cmd_Argv (1);
 	value = Cmd_Argv (2);
 	var = Cvar_FindVar (var_name);
+
 	if (!var)
 		var = Cvar_FindAlias (var_name);
-	if (var)
-	{
-		var->flags |= CVAR_ROM;
-	}
-	else
-	{
-		Con_Printf ("cvar %s not found\n", var_name);
+
+	if (var) {
+		if (var->flags & CVAR_ROM) {
+			Con_DPrintf ("Cvar \"%s\" is read-only, cannot modify\n", var_name);
+		} else {
+			Cvar_Set (var, value);
+		}
+	} else {
+		var = Cvar_Get (var_name, value, CVAR_USER_CREATED|CVAR_ROM,
+				"User-created READ-ONLY Cvar");
 	}
 }
 

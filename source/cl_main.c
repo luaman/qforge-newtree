@@ -1702,9 +1702,9 @@ void Host_Init (quakeparms_t *parms)
 
 	host_initialized = true;
 
-	Con_Printf ("\nClient Version %s (Build %04d)\n\n", VERSION, build_number());
+	Con_Printf ("\nClient version %s (build %04d)\n\n", VERSION, build_number ());
 
-	Con_Printf ("€ %s Initialized ‚\n", PROGRAM);
+	Con_Printf ("€‚ %s initialized €‚\n", PROGRAM);
 }
 
 

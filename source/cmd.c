@@ -27,10 +27,18 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
+#include <string.h>
+#include <ctype.h>
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #include "sys.h"
 #include "cmd.h"
+#include "compat.h"
 #include "cvar.h"
 #include "sizebuf.h"
 #include "console.h"
@@ -38,12 +46,6 @@
 #include "quakefs.h"
 #include "commdef.h"
 #include "zone.h"
-
-#include <string.h>
-#include <ctype.h>
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
 
 void Cmd_ForwardToServer (void);
 
@@ -258,10 +260,14 @@ Cbuf_Execute_Sets (void)
 	while (cmd_text.cursize) {
 		extract_line (line);
 		// execute the command line
-		if (strncmp(line,"set",3)==0
-			&& isspace((int) line[3]))
-			//Con_DPrintf("+%s\n",line),
+		if (strnequal(line, "set", 3) && isspace((int) line[3])) {
+			//Con_DPrintf ("+%s\n",line);
 			Cmd_ExecuteString (line);
+		}
+		if (strnequal(line, "setrom", 6) && isspace((int) line[6])) {
+			//Con_DPrintf ("+%s\n",line);
+			Cmd_ExecuteString (line);
+		}
 	}
 }
 
