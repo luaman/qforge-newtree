@@ -45,6 +45,7 @@
 #include "commdef.h"
 #include "cvar.h"
 #include "console.h"
+#include "hash.h"
 #include "qargs.h"
 #include "cmd.h"
 #include "commdef.h"
@@ -53,6 +54,8 @@ cvar_t     *cvar_vars;
 char       *cvar_null_string = "";
 extern cvar_t *developer;
 cvar_alias_t *calias_vars;
+hashtab_t  *cvar_hash;
+hashtab_t  *calias_hash;
 
 /*
 ============
@@ -62,13 +65,7 @@ Cvar_FindVar
 cvar_t *
 Cvar_FindVar (char *var_name)
 {
-	cvar_t     *var;
-
-	for (var = cvar_vars; var; var = var->next)
-		if (!strcmp (var_name, var->name))
-			return var;
-
-	return NULL;
+	return (cvar_t*)Hash_Find (cvar_hash, var_name);
 }
 
 cvar_t *
@@ -76,10 +73,10 @@ Cvar_FindAlias (char *alias_name)
 {
 	cvar_alias_t *alias;
 
-	for (alias = calias_vars; alias; alias = alias->next)
-		if (!strcmp (alias_name, alias->name))
-			return alias->cvar;
-	return NULL;
+	alias = (cvar_alias_t*)Hash_Find (calias_hash, alias_name);
+	if (alias)
+		return alias->cvar;
+	return 0;
 }
 
 void
@@ -104,6 +101,7 @@ Cvar_Alias_Get (char *name, cvar_t *cvar)
 		calias_vars = alias;
 		alias->name = strdup (name);
 		alias->cvar = cvar;
+		Hash_Add (calias_hash, alias);
 	}
 }
 
@@ -206,8 +204,7 @@ Cvar_Set (cvar_t *var, char *value)
 
 	free (var->string);					// free the old value string
 
-	var->string = malloc (strlen (value) + 1);
-	strcpy (var->string, value);
+	var->string = strdup (value);
 	var->value = atof (var->string);
 	var->int_val = atoi (var->string);
 
@@ -228,8 +225,7 @@ Cvar_SetROM (cvar_t *var, char *value)
 
 	free (var->string);					// free the old value string
 
-	var->string = malloc (strlen (value) + 1);
-	strcpy (var->string, value);
+	var->string = strdup (value);
 	var->value = atof (var->string);
 	var->int_val = atoi (var->string);
 
@@ -430,6 +426,44 @@ Cvar_CvarList_f (void)
 	Con_Printf ("------------\n%d variables\n", i);
 }
 
+static void
+cvar_free (void *c)
+{
+	cvar_t *cvar = (cvar_t*)c;
+	free (cvar->name);
+	free (cvar->string);
+	free (cvar);
+}
+
+static char *
+cvar_get_key (void *c)
+{
+	cvar_t *cvar = (cvar_t*)c;
+	return cvar->name;
+}
+
+static void
+calias_free (void *c)
+{
+	cvar_alias_t *calias = (cvar_alias_t*)c;
+	free (calias->name);
+	free (calias);
+}
+
+static char *
+calias_get_key (void *c)
+{
+	cvar_alias_t *calias = (cvar_alias_t*)c;
+	return calias->name;
+}
+
+void
+Cvar_Init_Hash (void)
+{
+	cvar_hash = Hash_NewTable (1021, cvar_get_key, cvar_free);
+	calias_hash = Hash_NewTable (1021, calias_get_key, calias_free);
+}
+
 void
 Cvar_Init (void)
 {
@@ -486,12 +520,12 @@ Cvar_Get (char *name, char *string, int cvarflags, char *description)
 		v->next = cvar_vars;
 		cvar_vars = v;
 		v->name = strdup (name);
-		v->string = malloc (strlen (string) + 1);
-		strcpy (v->string, string);
+		v->string = strdup (string);
 		v->flags = cvarflags;
 		v->description = description;
 		v->value = atof (v->string);
 		v->int_val = atoi (v->string);
+		Hash_Add (cvar_hash, v);
 	} else {
 		// Cvar does exist, so we update the flags and return.
 		v->flags &= ~CVAR_USER_CREATED;

@@ -118,6 +118,7 @@ void 	Cvar_WriteVariables (QFile *f);
 // Returns a pointer to the Cvar, NULL if not found
 cvar_t *Cvar_FindVar (char *var_name);
 
+void Cvar_Init_Hash (void);
 void Cvar_Init();
 
 void Cvar_Shutdown();

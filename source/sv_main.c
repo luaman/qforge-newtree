@@ -1867,6 +1867,7 @@ SV_Init (void)
 		SV_Error ("Only %4.1f megs of memory reported, can't execute game",
 				  host_parms.memsize / (float) 0x100000);
 
+	Cvar_Init_Hash ();
 	Memory_Init (host_parms.membase, host_parms.memsize);
 	Cvar_Init ();
 	Sys_Init_Cvars ();

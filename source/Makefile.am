@@ -45,7 +45,8 @@ noinst_LIBRARIES= libqfcd.a libqfjs.a libqfsnd.a libqfsys_cl.a libqfsys_sv.a
 if ASM_ARCH
 math_ASM = math.S sys_x86.S
 endif
-common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c info.c link.c \
+common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c hash.c \
+        info.c link.c \
 		locs.c mathlib.c mdfour.c model.c model_brush.c msg.c \
 		net_chan.c net_com.c net_udp.c pmove.c pmovetst.c qargs.c \
 		qendian.c quakefs.c quakeio.c sizebuf.c va.c zone.c \

@@ -152,6 +152,13 @@ AC_TRY_COMPILE(
 	AC_MSG_RESULT(no)
 )
 
+AC_MSG_CHECKING(for zero length array syntax)
+AC_TRY_COMPILE(
+	[],
+	[int foo[0];],
+	AC_DEFINE(ZERO_LENGTH_ARRAY,0) AC_MSG_RESULT([0]),
+	AC_DEFINE(ZERO_LENGTH_ARRAY,) AC_MSG_RESULT([])
+)
 
 dnl ==================================================================
 dnl Checks for library functions.

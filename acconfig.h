@@ -97,5 +97,8 @@
 /* Define this if fnmatch is prototyped in fnmatch.h */
 #undef HAVE_FNMATCH_PROTO
 
+/* Define this to something appropriate for declaring 0 length arrays */
+#undef ZERO_LENGTH_ARRAY
+
 @BOTTOM@
 #endif // __config_h_
