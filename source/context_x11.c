@@ -98,8 +98,6 @@ static int xss_interval;
 static int xss_blanking;
 static int xss_exposures;
 
-static int need_screen_warp;
-
 qboolean
 x11_add_event (int event, void (*event_handler) (XEvent *))
 {
@@ -138,17 +136,6 @@ x11_process_event (void)
 			oktodraw = 1;
 		return;
 	}
-#ifdef xHAVE_VIDMODE
-	if (need_screen_warp) {
-		int x, y;
-		XF86VidModeGetViewPort (x_disp, x_screen, &x, &y);
-		if (x || y) {
-			XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
-		} else {
-			need_screen_warp = 0;
-		}
-	}
-#endif
 	if (event_handlers[x_event.type])
 		event_handlers[x_event.type] (&x_event);
 }
@@ -304,7 +291,7 @@ x11_set_vidmode(int width, int height)
 			printf("%dx%d\n", vidmodes[i]->hdisplay, vidmodes[i]->vdisplay);
 		}
 		XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[best_mode]);
-		XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
+		x11_force_view_port ();
 	}
 #endif
 }
@@ -369,19 +356,10 @@ x11_create_window (int width, int height)
 	XSetWMProtocols (x_disp, x_win, &aWMDelete, 1);
 	
 	if (vid_fullscreen->int_val) {
-		int x, y;
-
 		XMoveWindow (x_disp, x_win, 0, 0);
 		XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
 					 vid.width+2, vid.height+2);
-		need_screen_warp = 1;
-#ifdef HAVE_VIDMODE
-		do {
-			XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
-			poll (0, 0, 50);
-			XF86VidModeGetViewPort (x_disp, x_screen, &x, &y);
-		} while (x || y);
-#endif
+		x11_force_view_port ();
 	}
 
 	XMapWindow (x_disp, x_win);
@@ -419,4 +397,20 @@ x11_set_caption (char *text)
 {
 	if (x_disp && x_win && text)
 		XStoreName (x_disp, x_win, text);
+}
+
+void
+x11_force_view_port (void)
+{
+#ifdef HAVE_VIDMODE
+	int x, y;
+
+	if (vid_fullscreen->int_val) {
+		do {
+			XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
+			poll (0, 0, 50);
+			XF86VidModeGetViewPort (x_disp, x_screen, &x, &y);
+		} while (x || y);
+	}
+#endif
 }

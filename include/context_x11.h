@@ -59,5 +59,6 @@ void x11_restore_vidmode (void);
 void x11_create_window (int, int);
 void x11_grab_keyboard (void);
 void x11_set_caption (char *);
+void x11_force_view_port (void);
 
 #endif	// __CONTEXT_X11_H__

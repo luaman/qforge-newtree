@@ -312,6 +312,7 @@ IN_Commands (void)
 		if (_windowed_mouse->int_val) { // grab the pointer
 			XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
 							GrabModeAsync, x_win, None, CurrentTime);
+			x11_force_view_port();
 #ifdef HAVE_DGA
 			if (dga_avail && in_dga->int_val && !dga_active) {
 				XF86DGADirectVideo (x_disp, DefaultScreen (x_disp),
