@@ -76,34 +76,42 @@ typedef struct cvar_alias_s
 // "look, the user made fs_basepath already", uses the users value, but sets
 // CVAR_ROM as per the call.
 
+
+// Returns the Cvar if found, creates it with value if not.  Description and
+// flags are always updated.
 cvar_t	*Cvar_Get (char *name, char *value, int cvarflags, char *description);
 
 cvar_t	*Cvar_FindAlias (char *alias_name);
 
 void	Cvar_Alias_Get (char *name, cvar_t *cvar);
 
+// equivelants to "<name> <variable>" typed at the console
 void 	Cvar_Set (cvar_t *var, char *value);
-// equivelant to "<name> <variable>" typed at the console
 void	Cvar_SetValue (cvar_t *var, float value);
-float	Cvar_VariableValue (char *var_name);
+
+// allows you to change a Cvar's flags without a full Cvar_Get
+void	Cvar_SetFlags (cvar_t *var, int cvarflags);
+
 // returns 0 if not defined or non numeric
+float	Cvar_VariableValue (char *var_name);
 
-char	*Cvar_VariableString (char *var_name);
 // returns an empty string if not defined
+char	*Cvar_VariableString (char *var_name);
 
-char 	*Cvar_CompleteVariable (char *partial);
 // attempts to match a partial variable name for command line completion
 // returns NULL if nothing fits
+char 	*Cvar_CompleteVariable (char *partial);
 
-qboolean Cvar_Command (void);
 // called by Cmd_ExecuteString when Cmd_Argv(0) doesn't match a known
 // command.  Returns true if the command was a variable reference that
 // was handled. (print or change)
+qboolean Cvar_Command (void);
 
-void 	Cvar_WriteVariables (FILE *f);
 // Writes lines containing "set variable value" for all variables
 // with the archive flag set to true.
+void 	Cvar_WriteVariables (FILE *f);
 
+// Returns a pointer to the Cvar, NULL if not found
 cvar_t *Cvar_FindVar (char *var_name);
 
 void Cvar_Init();

@@ -200,12 +200,12 @@ void Cvar_Set (cvar_t *var, char *value)
 
 	Cvar_Info(var);
 }
-/*
 
+
+/*
 	Cvar_SetROM
 
 	doesn't check for CVAR_ROM flag
-
 */
 void Cvar_SetROM (cvar_t *var, char *value)
 {
@@ -464,3 +464,18 @@ cvar_t *Cvar_Get(char *name, char *string, int cvarflags, char *description)
 	}
 	return v;
 }
+
+/*
+	Cvar_SetFlags
+
+	sets a Cvar's flags simply and easily
+*/
+void
+Cvar_SetFlags (cvar_t *var, int cvarflags);
+{
+	if (var == NULL)
+		return;
+
+	var->flags = cvarflags;
+}
+

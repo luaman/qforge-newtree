@@ -70,7 +70,7 @@ cvar_t		*_windowed_mouse;
 cvar_t		*m_filter;
 #ifdef HAVE_DGA
 cvar_t		*in_dgamouse;
-cvar_t		*vid_dga_mouseaccel;
+cvar_t		*in_dga_mouseaccel;
 #endif
 
 static qboolean	mouse_avail;
@@ -297,8 +297,8 @@ event_motion(XEvent *event)
 {
 #ifdef HAVE_DGA
 	if (in_dgamouse->value) {
-		mouse_x += event->xmotion.x_root * vid_dga_mouseaccel->value;
-		mouse_y += event->xmotion.y_root * vid_dga_mouseaccel->value;
+		mouse_x += event->xmotion.x_root * in_dga_mouseaccel->value;
+		mouse_y += event->xmotion.y_root * in_dga_mouseaccel->value;
 	} else
 #endif
 	{
@@ -461,11 +461,20 @@ IN_Init(void)
 
 	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
 	m_filter = Cvar_Get ("m_filter","0",CVAR_ARCHIVE,"None");
+	in_dgamouse = Cvar_Get ("in_dgamouse", "0", CVAR_NONE,
+			"1 if you have DGA mouse support");
+	
+
+	if (COM_CheckParm("-nomouse")) return 1;
 #ifdef HAVE_DGA
-	vid_dga_mouseaccel = Cvar_Get ("vid_dga_mouseaccel","1",CVAR_ARCHIVE,
+	in_dga_mouseaccel = Cvar_Get ("in_dga_mouseaccel","1",CVAR_ARCHIVE,
 					"None");
 
-	if (!COM_CheckParm("-nodga")) {
+	if (!COM_CheckParm("-nodga"))
+	{
+		XGrabKeyboard (x_disp, x_win, True, GrabModeAsync, 
+				GrabModeAsync, CurrentTime);
+
 		// XF86DGASetViewPort, XF86DGASetVidPage, and XF86DGADirectVideo's
 		// XF86DGADirectVideo flag are disabled till someone has a chance to
 		// figure out what's wrong with them (if anything)  --KB
@@ -476,29 +485,30 @@ IN_Init(void)
 						   XF86DGADirectMouse|XF86DGADirectKeyb);
 		//	XF86DGASetVidPage(x_disp, DefaultScreen(x_disp), 0);
 
-		XGrabKeyboard (x_disp, x_win, True, GrabModeAsync, 
-				GrabModeAsync, CurrentTime);
-
-		XWarpPointer (x_disp, None, x_win, 0, 0, 0, 0, scr_width,
-				scr_height);
+		XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
+				vid.width, vid.height);
+//		XWarpPointer (x_disp, None, x_win, 0, 0, 0, 0, scr_width,
+//				scr_height);
 
 		XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
 				GrabModeAsync, x_win, None, CurrentTime);
 
-		in_dgamouse = Cvar_Get ("in_dgamouse", "1", CVAR_ROM,
-				"1 if you have DGA mouse support");
-	} else
-		in_dgamouse = Cvar_Get ("in_dgamouse", "0", CVAR_ROM,
-				"1 if you have DGA mouse support");
-
+		Cvar_Set (in_dgamouse, "1");
+	}
 #endif
-	if (COM_CheckParm("-nomouse")) return 1;
+
+	in_dgamouse = Cvar_Get ("in_dgamouse", "0", CVAR_ROM,
+			"1 if you have DGA mouse support");
+
 	mouse_x = mouse_y = 0.0;
 	mouse_avail = 1;
 
 	/* Invisible cursor */
-	CreateNullCursor(x_disp, x_win);
-	XDefineCursor(x_disp, x_win, nullcursor);
+	if (!in_dgamouse->value)
+	{
+		CreateNullCursor(x_disp, x_win);
+		XDefineCursor(x_disp, x_win, nullcursor);
+	}
 
 	x11_add_event(KeyPress, &event_key);
 	x11_add_event(KeyRelease, &event_key);

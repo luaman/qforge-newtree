@@ -92,7 +92,7 @@ unsigned char	d_15to8table[65536];
 cvar_t	*vid_mode;
 cvar_t	*vid_fullscreen;
 extern cvar_t	*gl_triplebuffer;
-extern cvar_t *vid_dga_mouseaccel;
+extern cvar_t	*in_dga_mouseaccel;
 
 #ifdef HAVE_VIDMODE
 static XF86VidModeModeInfo **vidmodes;
@@ -420,7 +420,7 @@ void VID_Init(unsigned char *palette)
 	gl_ztrick = Cvar_Get ("gl_ztrick","0",CVAR_ARCHIVE,"None");
 	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
 #ifdef HAVE_DGA
-	vid_dga_mouseaccel = Cvar_Get("vid_dga_mouseaccel","1",CVAR_ARCHIVE,
+	in_dga_mouseaccel = Cvar_Get("vid_dga_mouseaccel","1",CVAR_ARCHIVE,
 					"None");
 #endif
 	vid.maxwarpwidth = WARP_WIDTH;
