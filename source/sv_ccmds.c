@@ -337,7 +337,8 @@ SV_Map_f (void)
 		Con_Printf ("map <levelname> : continue game on a new level\n");
 		return;
 	}
-	strcpy (level, Cmd_Argv (1));
+	strncpy (level, Cmd_Argv (1), sizeof (level) - 1);
+	level[sizeof (level) - 1] = 0;
 
 	// check to make sure the level exists
 	snprintf (expanded, sizeof (expanded), "maps/%s.bsp", level);
@@ -356,7 +357,8 @@ SV_Map_f (void)
 	SV_BroadcastCommand ("changing\n");
 	SV_SendMessagesToAll ();
 
-	strcpy (curlevel, level);
+	strncpy (curlevel, level, sizeof (curlevel) - 1);
+	curlevel[sizeof (curlevel) - 1] = 0;
 	SV_SpawnServer (level);
 
 	SV_BroadcastCommand ("reconnect\n");
