@@ -29,6 +29,20 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#include <vga.h>
+#include <vgakeyboard.h>
+#include <vgamouse.h>
+
 #include "host.h"
 #include "client.h"
 #include "cl_input.h"
@@ -43,17 +57,6 @@
 #include "sys.h"
 #include "view.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-#include <vga.h>
-#include <vgakeyboard.h>
-#include <vgamouse.h>
-
-
 static int  UseKeyboard = 1;
 static int  UseMouse = 1;
 static int  in_svgalib_inited = 0;
@@ -66,11 +69,11 @@ static float mouse_x, mouse_y;
 static float old_mouse_x, old_mouse_y;
 static int  mx, my;
 
-static void IN_init_kb ();
-static void IN_init_mouse ();
+static void IN_InitKeyboard (void);
+static void IN_InitMouse (void);
 
-cvar_t     *_windowed_mouse;
-cvar_t     *m_filter;
+cvar_t		*_windowed_mouse;
+cvar_t		*m_filter;
 
 static void
 keyhandler (int scancode, int state)
@@ -87,8 +90,7 @@ keyhandler (int scancode, int state)
 
 
 static void
-mousehandler (int buttonstate, int dx, int dy, int dz, int drx, int dry,
-			  int drz)
+mousehandler (int buttonstate, int dx, int dy, int dz, int drx, int dry, int drz)
 {
 	mouse_buttonstate = buttonstate;
 	mx += dx;
@@ -119,9 +121,9 @@ IN_Init (void)
 		UseMouse = 0;
 
 	if (UseKeyboard)
-		IN_init_kb ();
+		IN_InitKeyboard ();
 	if (UseMouse)
-		IN_init_mouse ();
+		IN_InitMouse ();
 
 	JOY_Init ();
 
@@ -137,7 +139,7 @@ IN_Init_Cvars (void)
 }
 
 static void
-IN_init_kb (void)
+IN_InitKeyboard (void)
 {
 	int         i;
 
@@ -258,7 +260,7 @@ IN_init_kb (void)
 }
 
 static void
-IN_init_mouse ()
+IN_InitMouse (void)
 {
 	int         mtype;
 	char       *mousedev;
