@@ -17,8 +17,8 @@ libqfsys_cl_a_SOURCES = sys_unix.c cl_sys_unix.c
 libqfsys_sv_a_SOURCES = sys_unix.c sv_sys_unix.c
 endif
 
-EXTRA_libqfsys_cl_a_SOURCES = sys_unix.c cl_sys_unix.c fnmatch.c
-EXTRA_libqfsys_sv_a_SOURCES = sys_unix.c sv_sys_unix.c fnmatch.c
+EXTRA_libqfsys_cl_a_SOURCES = cl_sys_unix.c cl_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
+EXTRA_libqfsys_sv_a_SOURCES = sv_sys_unix.c sv_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
 
 if SNDTYPE_WIN32
 libqfsnd_a_SOURCES = snd_win.c
