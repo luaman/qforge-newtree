@@ -1488,6 +1488,8 @@ void Host_Init (quakeparms_t *parms)
 	SCR_Init ();
 	R_Init ();
 
+	S_Init ();		// S_Init is now done as part of VID. Sigh.
+
 	cls.state = ca_disconnected;
 	CDAudio_Init ();
 	Sbar_Init ();
