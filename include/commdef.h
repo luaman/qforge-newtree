@@ -44,7 +44,6 @@
 
 typedef struct
 {
-	char	*basedir;
 	int		argc;
 	char	**argv;
 	void	*membase;

@@ -87,9 +87,8 @@ extern qboolean      is_server;
 	sources.
 
 	The "user directory" is the path to the directory holding the quake.exe
-	and all game directories.  The sys_* files pass this to host_init in
-	quakeparms_t->basedir.  This can be overridden with the "-basedir"
-	command line parm to allow code debugging in a different directory.
+	and all game directories.  This can be overridden with the "fs_sharepath"
+	and "fs_userpath" cvars to allow code debugging in a different directory.
 	The base directory is only used during filesystem initialization.
 
 	The "game directory" is the first tree on the search path and directory
@@ -119,7 +118,6 @@ cvar_t	*fs_userpath;
 cvar_t	*fs_sharepath;
 cvar_t	*fs_basegame;
 
-quakeparms_t host_parms;
 
 int com_filesize;
 
@@ -1066,17 +1064,9 @@ COM_Filesystem_Init ( void )
 void
 COM_Filesystem_Init_Cvars ( void )
 {
-	int t;
-	char *s, *u;
-	// LordHavoc: check for -basedir
-	s = FS_SHAREPATH;
-	u = FS_USERPATH;
-	t = COM_CheckParm("-basedir");
-	if (t && (t + 1) < com_argc)
-		s = u = com_argv[t+1];
-	fs_sharepath = Cvar_Get ("fs_sharepath", s, CVAR_ROM,
+	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH, CVAR_ROM,
 			"location of shared (read only) game directories");
-	fs_userpath = Cvar_Get ("fs_userpath", u, CVAR_ROM,
+	fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
 			"location of your game directories");
 	fs_basegame = Cvar_Get ("fs_basegame", BASEGAME, CVAR_ROM,
 			"game to use by default");
