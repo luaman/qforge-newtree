@@ -197,6 +197,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	
 	mod = Mod_FindName (name);
 	
+	Con_DPrintf("Mod_ForName: %s, %p\n", name, mod);
 	return Mod_LoadModel (mod, crash);
 }
 

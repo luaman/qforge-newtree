@@ -652,8 +652,6 @@ R_DrawSkyBox (void)
 
 	glEnable (GL_DEPTH_TEST);
 	glDepthFunc (GL_ALWAYS);
-//	glDisable (GL_BLEND);
-//	glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glDepthRange (gldepthmax, gldepthmax);
 	if (lighthalf)
 		glColor3f(0.5,0.5,0.5);
@@ -733,8 +731,6 @@ R_DrawSkyDome (void)
 {
 	glEnable (GL_DEPTH_TEST);
 	glDepthFunc (GL_ALWAYS);
-//	glDisable (GL_BLEND);
-//	glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthRange (gldepthmax, gldepthmax);
 	glDisable (GL_BLEND);
@@ -764,7 +760,6 @@ R_DrawSkyDome (void)
 		R_DrawSkyLayer (speedscale);
 	}
 
-//	glDisable (GL_BLEND);
 	glColor3f (1,1,1);
 	glDepthFunc (GL_LEQUAL);
 	glEnable (GL_DEPTH_TEST);

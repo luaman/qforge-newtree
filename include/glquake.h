@@ -297,8 +297,19 @@ void GL_Set2D (void);
 // gl_rmain.c
 //
 void GL_CheckGamma (unsigned char *pal);
-qboolean R_CullBox (vec3_t mins, vec3_t maxs);
+//qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_RotateForEntity (entity_t *e);
+
+extern inline qboolean R_CullBox (vec3_t mins, vec3_t maxs)
+{
+	int i;
+
+	for (i=0 ; i<4 ; i++)
+		if (BoxOnPlaneSide (mins, maxs, &frustum[i]) == 2)
+			return true;
+	return false;
+}
+
 
 //
 // gl_rlight.c

@@ -486,9 +486,7 @@ void R_BlendLightmaps (void)
 
 	glDepthMask (0);		// don't bother writing Z
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc (GL_ZERO, GL_SRC_COLOR);
-	glEnable(GL_BLEND);
 
 	for (i=0 ; i<MAX_LIGHTMAPS ; i++)
 	{
@@ -531,9 +529,8 @@ R_RenderFullbrights (void)
 	glpoly_t *p;
 	float *v;
 
-	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glBlendFunc(GL_ONE, GL_ONE);
-	glEnable (GL_BLEND);
 	glColor3f(1,1,1);
 
 	for (i=1; i<MAX_GLTEXTURES; i++) {
@@ -550,7 +547,7 @@ R_RenderFullbrights (void)
 		}
 	}
 
-	glDisable (GL_BLEND);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
@@ -703,6 +700,9 @@ void DrawTextureChains (void)
 	int		i;
 	msurface_t	*s;
 
+	glDisable(GL_BLEND);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
 	for (i=0 ; i<cl.worldmodel->numtextures ; i++)
 	{
 		if (!cl.worldmodel->textures[i])
@@ -712,6 +712,10 @@ void DrawTextureChains (void)
 
 		cl.worldmodel->textures[i]->texturechain = NULL;
 	}
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 }
 
 /*
@@ -827,15 +831,14 @@ void R_DrawBrushModel (entity_t *e)
 		}
 	}
 
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	if (gl_texsort->value)
 		R_BlendLightmaps ();
 
 	if (gl_fb_bmodels->value)
 		R_RenderFullbrights ();
-
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
 
 	glPopMatrix ();
 }
@@ -990,9 +993,6 @@ void R_DrawWorld (void)
 	// Be sure to clear the skybox --KB
 	R_DrawSky ();
 
-	glDisable(GL_BLEND);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
 	R_RecursiveWorldNode (cl.worldmodel->nodes);
 
 	DrawTextureChains ();
@@ -1002,10 +1002,6 @@ void R_DrawWorld (void)
 
 	if (gl_fb_bmodels->value)
 		R_RenderFullbrights ();
-
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
 }
 
 

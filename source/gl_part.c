@@ -566,8 +566,9 @@ void R_DrawParticles (void)
 		}
 
 		// hack a scale up to keep particles from disapearing
-		scale = (p->org[0] - r_origin[0])*vpn[0] + (p->org[1] - r_origin[1])*vpn[1]
-			+ (p->org[2] - r_origin[2])*vpn[2];
+		scale = (p->org[0] - r_origin[0])*vpn[0] + 
+				(p->org[1] - r_origin[1])*vpn[1] +
+				(p->org[2] - r_origin[2])*vpn[2];
 		if (scale < 20)
 			scale = 1;
 		else
@@ -575,17 +576,12 @@ void R_DrawParticles (void)
 		at = (byte *)&d_8to24table[(int)p->color];
 		if (p->type==pt_fire)
 			theAlpha = 255*(6-p->ramp)/6;
-//			theAlpha = 192;
-//		else if (p->type==pt_explode || p->type==pt_explode2)
-//			theAlpha = 255*(8-p->ramp)/8;
 		else
 			theAlpha = 255;
 		if (lighthalf)
 			glColor4ub((byte) ((int) at[0] >> 1), (byte) ((int) at[1] >> 1), (byte) ((int) at[2] >> 1), theAlpha);
 		else
 			glColor4ub(at[0], at[1], at[2], theAlpha);
-//		glColor3ubv (at);
-//		glColor3ubv ((byte *)&d_8to24table[(int)p->color]);
 		glTexCoord2f (0,0);
 		glVertex3fv (p->org);
 		glTexCoord2f (1,0);

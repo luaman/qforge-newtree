@@ -24,6 +24,8 @@
 #include "config.h"
 #endif
 
+#include "protocol.h"
+
 #ifdef HAVE_LINUX_JOYSTICK_H
 
 #include <linux/joystick.h>

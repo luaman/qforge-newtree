@@ -1233,7 +1233,6 @@ void SCR_UpdateScreen (void)
 // LordHavoc: adjustable brightness and contrast,
 //            also makes polyblend apply to whole screen
 	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
 	Cvar_SetValue (brightness, bound (1, brightness->value, 5));
 	if (lighthalf) // LordHavoc: render was done at half brightness
 		f = brightness->value * 2;
@@ -1280,7 +1279,6 @@ void SCR_UpdateScreen (void)
 		glEnd ();
 	}
 
-	glDisable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
 
 	V_UpdatePalette ();

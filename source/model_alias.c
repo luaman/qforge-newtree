@@ -65,7 +65,7 @@ mtriangle_t	triangles[MAXALIASTRIS];
 // a pose is a single set of vertexes.  a frame may be
 // an animating sequence of poses
 trivertx_t	*poseverts[MAXALIASFRAMES];
-int			posenum;
+int			posenum = 0;
 
 void *Mod_LoadAliasFrame (void * pin, maliasframedesc_t *frame);
 void *Mod_LoadAliasGroup (void * pin, maliasframedesc_t *frame);

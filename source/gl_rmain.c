@@ -186,6 +186,7 @@ R_CullBox
 Returns true if the box is completely outside the frustom
 =================
 */
+/*
 qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 {
 	int		i;
@@ -195,6 +196,7 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 			return true;
 	return false;
 }
+*/
 
 
 void R_RotateForEntity (entity_t *e)
@@ -308,9 +310,6 @@ static void R_DrawSpriteModel (entity_t *e)
 	glEnable (GL_ALPHA_TEST);
 	glBegin (GL_QUADS);
 
-	glEnable (GL_ALPHA_TEST);
-	glBegin (GL_QUADS);
-
 	glTexCoord2f (0, 1);
 	VectorMA (e->origin, frame->down, up, point);
 	VectorMA (point, frame->left, right, point);
@@ -352,7 +351,7 @@ float	r_avertexnormals[NUMVERTEXNORMALS][3] = {
 };
 
 vec3_t	shadevector;
-float	shadelight, ambientlight;
+float	shadelight;
 
 // precalculated dot products for quantized angles
 #define SHADEDOT_QUANT 16
@@ -565,11 +564,11 @@ static void R_DrawAliasModel (entity_t *e)
 	// get lighting information
 	//
 
-	ambientlight = shadelight = R_LightPoint (currententity->origin);
+	shadelight = R_LightPoint (currententity->origin);
 
 	// allways give the gun some light
-	if (e == &cl.viewent && ambientlight < 24)
-		ambientlight = shadelight = 24;
+	if (e == &cl.viewent)
+		shadelight = min(shadelight, 24);
 
 	for (lnum=0 ; lnum<MAX_DLIGHTS ; lnum++)
 	{
@@ -582,33 +581,27 @@ static void R_DrawAliasModel (entity_t *e)
 
 			if (add > 0)
 			{
-				ambientlight += add;
-				//ZOID models should be affected by dlights as well
 				shadelight += add;
 			}
 		}
 	}
 
 	// clamp lighting so it doesn't overbright as much
-	if (ambientlight > 128)
-		ambientlight = 128;
-	if (ambientlight + shadelight > 192)
-		shadelight = 192 - ambientlight;
+	shadelight = min(shadelight, 100);
 
 	// ZOID: never allow players to go totally black
 	if (!strcmp(clmodel->name, "progs/player.mdl"))
 	{
-		if (ambientlight < 8)
-			ambientlight = shadelight = 8;
+		shadelight = max(shadelight, 8);
 	} else if (!gl_fb_models->value && (
 			!strcmp (clmodel->name, "progs/flame.mdl") ||
 			!strcmp (clmodel->name, "progs/flame2.mdl"))) {
 		// HACK HACK HACK -- no fullbright colors, so make torches full light
-		ambientlight = shadelight = 256;
+		shadelight = 256;
 	}
 
 	shadedots = r_avertexnormal_dots[((int)(e->angles[1] * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
-	shadelight = shadelight / 200.0;
+	shadelight /= 200.0;
 	
 	an = e->angles[1]/180*M_PI;
 	shadevector[0] = cos(-an);
@@ -671,14 +664,11 @@ static void R_DrawAliasModel (entity_t *e)
 	if (clmodel->hasfullbrights && gl_fb_models->value &&
 			paliashdr->gl_fb_texturenum[currententity->skinnum][anim]) {
 		/*
-		glEnable (GL_BLEND);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		*/
 
 		glBindTexture (GL_TEXTURE_2D, paliashdr->gl_fb_texturenum[currententity->skinnum][anim]);
 		R_SetupAliasFrame (currententity->frame, paliashdr, true);
-
-		//glDisable (GL_BLEND);
 	}
 
 	glShadeModel (GL_FLAT);
