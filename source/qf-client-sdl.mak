@@ -191,6 +191,7 @@ DEPEND = \
    $(OBJS)\r_aliasa.obj\
    $(OBJS)\r_aclipa.obj\
    $(OBJS)\math.obj\
+   $(OBJS)\cl_math.obj\
    $(OBJS)\d_draw.obj\
    $(OBJS)\d_scana.obj\
    $(OBJS)\d_polysa.obj\
@@ -311,6 +312,7 @@ $(OBJS)\r_edgea.obj+
 $(OBJS)\r_drawa.obj+
 $(OBJS)\r_aliasa.obj+
 $(OBJS)\r_aclipa.obj+
+$(OBJS)\cl_math.obj+
 $(OBJS)\math.obj+
 $(OBJS)\d_draw.obj+
 $(OBJS)\d_scana.obj+
@@ -910,6 +912,11 @@ $(OBJS)\r_aclipa.obj :  $(QFROOT)\source\r_aclipa.asm
 $(OBJS)\math.obj :  $(QFROOT)\source\math.asm
   $(ASSEMBLER) @&&|
  $(ASMOPTS) $(ASMIN)\math$(EXT2) $(ASMOUT)\math$(EXT1)
+|
+
+$(OBJS)\cl_math.obj :  $(QFROOT)\source\cl_math.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\cl_math$(EXT2) $(ASMOUT)\cl_math$(EXT1)
 |
 
 $(OBJS)\d_varsa.obj :  $(QFROOT)\source\d_varsa.asm
