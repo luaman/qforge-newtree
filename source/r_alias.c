@@ -35,6 +35,7 @@
 #include "r_local.h"
 #include "skin.h"
 #include "sys.h"
+#include "texture.h"
 
 #define LIGHT_MIN	5					// lowest light value we'll allow, to 
 										// avoid the
@@ -608,13 +609,13 @@ R_AliasSetupSkin (void)
 	r_affinetridesc.skinheight = pmdl->skinheight;
 
 	if (currententity->scoreboard) {
-		byte       *base;
+		tex_t      *base;
 
 		if (!currententity->scoreboard->skin)
 			Skin_Find (currententity->scoreboard);
 		base = Skin_Cache (currententity->scoreboard->skin);
 		if (base) {
-			r_affinetridesc.pskin = base;
+			r_affinetridesc.pskin = base->data;
 			r_affinetridesc.skinwidth = 320;
 			r_affinetridesc.skinheight = 200;
 		}

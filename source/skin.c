@@ -38,6 +38,7 @@
 #endif
 
 #include "cl_parse.h"
+#include "client.h"
 #include "console.h"
 #include "cmd.h"
 #include "host.h"
@@ -58,7 +59,7 @@ cvar_t     *bottomcolor;
 
 char        allskins[128];
 
-skin_t      skins[MAX_CACHED_SKINS];
+skin_t      skin_cache[MAX_CACHED_SKINS];
 int         numskins;
 
 /*
@@ -90,8 +91,8 @@ Skin_Find (player_info_t *sc)
 	COM_StripExtension (name, name);
 
 	for (i = 0; i < numskins; i++) {
-		if (!strcmp (name, skins[i].name)) {
-			sc->skin = &skins[i];
+		if (!strcmp (name, skin_cache[i].name)) {
+			sc->skin = &skin_cache[i];
 			Skin_Cache (sc->skin);
 			return;
 		}
@@ -103,7 +104,7 @@ Skin_Find (player_info_t *sc)
 		return;
 	}
 
-	skin = &skins[numskins];
+	skin = &skin_cache[numskins];
 	sc->skin = skin;
 	numskins++;
 
@@ -117,13 +118,14 @@ Skin_Find (player_info_t *sc)
 
 	Returns a pointer to the skin bitmap, or NULL to use the default
 */
-byte *
+tex_t *
 Skin_Cache (skin_t *skin)
 {
 	char        name[1024];
-	byte       *out;
+	tex_t      *out;
 	QFile      *file;
 	tex_t      *tex;
+	int         pixels;
 
 	if (cls.downloadtype == dl_skin)
 		return NULL;					// use base until downloaded
@@ -159,14 +161,15 @@ Skin_Cache (skin_t *skin)
 		Con_Printf ("Bad skin %s\n", name);
 		return NULL;
 	}
+	pixels = tex->width * tex->height;
 
-	out = Cache_Alloc (&skin->cache, 320 * 200, skin->name);
+	out = Cache_Alloc (&skin->cache, sizeof (tex_t) + pixels, skin->name);
 	if (!out)
 		Sys_Error ("Skin_Cache: couldn't allocate");
 
-	memcpy (out, tex->data, tex->width * tex->height);
+	memcpy (out, tex, sizeof (tex_t) + pixels);
 
-	Skin_Process (skin, tex);
+	Skin_Process (skin, out);
 
 	skin->failedload = false;
 
@@ -230,8 +233,8 @@ Skin_Skins_f (void)
 	int         i;
 
 	for (i = 0; i < numskins; i++) {
-		if (skins[i].cache.data)
-			Cache_Free (&skins[i].cache);
+		if (skin_cache[i].cache.data)
+			Cache_Free (&skin_cache[i].cache);
 	}
 	numskins = 0;
 

@@ -41,40 +41,38 @@
 #include "sys.h"
 
 int
+Mod_CalcFullbright (byte *in, byte *out, int pixels)
+{
+	int fb = 0;
+	
+	while (pixels--) {
+		if (*in >= 256 - 32) {
+			fb = 1;
+			*out++ = *in++;
+		} else {
+			*out++ = 255;
+			in++;
+		}
+	}
+	return fb;
+}
+
+int
 Mod_Fullbright (byte * skin, int width, int height, char *name)
 {
-	int         j;
 	int         pixels;
-	qboolean    hasfullbrights = false;
-	int         texnum;
+	int         texnum = 0;
+	byte       *ptexels;
 
 	// Check for fullbright pixels..
 	pixels = width * height;
 
-	for (j = 0; j < pixels; j++) {
-		if (skin[j] >= 256 - 32) {
-			hasfullbrights = true;
-			break;
-		}
-	}
-
-	if (hasfullbrights) {
-		byte       *ptexels;
-
-		// ptexels = Hunk_Alloc(s);
-		ptexels = malloc (pixels);
-
+	// ptexels = Hunk_Alloc(s);
+	ptexels = malloc (pixels);
+	if (Mod_CalcFullbright (skin, ptexels, pixels)) {
 		Con_DPrintf ("FB Model ID: '%s'\n", name);
-		for (j = 0; j < pixels; j++) {
-			if (skin[j] >= 256 - 32) {
-				ptexels[j] = skin[j];
-			} else {
-				ptexels[j] = 255;
-			}
-		}
 		texnum = GL_LoadTexture (name, width, height, ptexels, true, true, 1);
-		free (ptexels);
-		return texnum;
 	}
-	return 0;
+	free (ptexels);
+	return texnum;
 }

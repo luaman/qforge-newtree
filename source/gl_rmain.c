@@ -722,6 +722,7 @@ R_DrawAliasModel (entity_t *e)
 	float		an;
 	int 		anim;
 	qboolean	torch = false;
+	int         fb_texture = 0;
 
 	clmodel = currententity->model;
 
@@ -823,19 +824,34 @@ R_DrawAliasModel (entity_t *e)
 	}
 
 	anim = (int) (cl.time * 10) & 3;
-	glBindTexture (GL_TEXTURE_2D,
-				   paliashdr->gl_texturenum[currententity->skinnum][anim]);
 
 	// we can't dynamically colormap textures, so they are cached
 	// seperately for the players.  Heads are just uncolored.
 	if (currententity->scoreboard && !gl_nocolors->int_val) {
+		skin_t *skin;
+
 		i = currententity->scoreboard - cl.players;
 		if (!currententity->scoreboard->skin) {
 			Skin_Find (currententity->scoreboard);
 			CL_NewTranslation (i);
 		}
+		skin = currententity->scoreboard->skin;
 		if (i >= 0 && i < MAX_CLIENTS)
 			glBindTexture (GL_TEXTURE_2D, playertextures + i);
+		if (gl_fb_models->int_val) {
+			if (skin)
+				fb_texture = skin->fb_texture;
+			else
+				fb_texture = paliashdr->gl_fb_texturenum[currententity->skinnum]
+				                                                    [anim];
+		}
+	} else {
+		glBindTexture (GL_TEXTURE_2D,
+					   paliashdr->gl_texturenum[currententity->skinnum][anim]);
+		if (clmodel->hasfullbrights && gl_fb_models->int_val &&
+			paliashdr->gl_fb_texturenum[currententity->skinnum][anim])
+			fb_texture = paliashdr->gl_fb_texturenum[currententity->skinnum]
+			                                        [anim];
 	}
 
 	if (gl_affinemodels->int_val)
@@ -848,11 +864,11 @@ R_DrawAliasModel (entity_t *e)
 	}
 
 	// This block is GL fullbright support for objects...
-	if (clmodel->hasfullbrights && gl_fb_models->int_val &&
-		paliashdr->gl_fb_texturenum[currententity->skinnum][anim]) {
-		glBindTexture (GL_TEXTURE_2D, paliashdr->gl_fb_texturenum[currententity->skinnum][anim]);
+	if (fb_texture) {
+		glBindTexture (GL_TEXTURE_2D, fb_texture);
 		if (gl_lerp_anim->int_val) {
-			R_SetupAliasBlendedFrame (currententity->frame, paliashdr, currententity, true);
+			R_SetupAliasBlendedFrame (currententity->frame, paliashdr,
+			                          currententity, true);
 		} else {
 			R_SetupAliasFrame (currententity->frame, paliashdr, true);
 		}
