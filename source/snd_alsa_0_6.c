@@ -209,8 +209,8 @@ SNDDMA_Init (void)
 	hwparams.rate = rate;
 	hwparams.channels = stereo + 1;
 
-	hwparams.fragment_size = 512;
-	hwparams.fragments = 32;
+	hwparams.fragment_size = 32;
+	hwparams.fragments = 512;
 
 	err_msg = "snd_pcm_hw_params";
 	if ((rc = snd_pcm_hw_params (pcm_handle, &hwparams)) < 0) {
@@ -220,7 +220,7 @@ SNDDMA_Init (void)
 
 	memset (&swparams, 0, sizeof (swparams));
 	swparams.start_mode = SND_PCM_START_EXPLICIT;
-	swparams.xrun_mode = SND_PCM_XRUN_NONE;
+	swparams.xrun_mode = SND_PCM_XRUN_FRAGMENT;
 	swparams.xfer_min = 1;
 	swparams.xfer_align = 1;
 	err_msg = "snd_pcm_sw_params";
@@ -347,7 +347,7 @@ SNDDMA_Submit (void)
 			}
 			break;
 		default:
-			printf("umm\n");
+			printf("umm %d\n", state);
 			break;
 	}
 }
