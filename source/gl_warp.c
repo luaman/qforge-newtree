@@ -26,9 +26,32 @@
 	$Id$
 */
 // gl_warp.c -- sky and water polygons
+#include <math.h>
+#include <stdio.h>
 
-#include "quakedef.h"
+#include "bothdefs.h"   // needed by: common.h, net.h, client.h
 
+#include "common.h"
+#include "bspfile.h"    // needed by: glquake.h
+#include "vid.h"
+#include "sys.h"
+#include "zone.h"       // needed by: client.h, gl_model.h
+#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
+                        //  modelgen.h, glmodel.h
+#include "wad.h"
+#include "draw.h"
+#include "cvar.h"
+#include "net.h"        // needed by: client.h
+#include "protocol.h"   // needed by: client.h
+#include "cmd.h"
+#include "sbar.h"
+#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
+#include "client.h"     // need cls in this file
+#include "gl_model.h"   // needed by: glquake.h
+#include "console.h"
+#include "glquake.h"
+
+extern	double	realtime;
 extern	model_t	*loadmodel;
 
 int		skytexturenum;
@@ -1042,7 +1065,6 @@ void R_InitSky (texture_t *mt)
 	unsigned	transpix;
 	int			r, g, b;
 	unsigned	*rgba;
-	extern	int			skytexturenum;
 
 	src = (byte *)mt + mt->offsets[0];
 

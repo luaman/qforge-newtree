@@ -25,8 +25,31 @@
 
 	$Id$
 */
+#include <math.h>
+#include <string.h>
+#include <stdio.h>
 
-#include "quakedef.h"
+#include "bothdefs.h"   // needed by: common.h, net.h, client.h
+
+#include "common.h"
+#include "bspfile.h"    // needed by: glquake.h
+#include "vid.h"
+#include "sys.h"
+#include "zone.h"       // needed by: client.h, gl_model.h
+#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
+                        //  modelgen.h, glmodel.h
+#include "wad.h"
+#include "draw.h"
+#include "cvar.h"	// needed by: view.h
+#include "net.h"        // needed by: client.h
+#include "protocol.h"   // needed by: client.h
+#include "cmd.h"
+#include "sbar.h"
+#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
+#include "client.h"     // need cls in this file
+#include "gl_model.h"   // needed by: glquake.h
+#include "console.h"
+#include "glquake.h"
 
 int	r_dlightframecount;
 

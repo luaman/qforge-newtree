@@ -26,10 +26,37 @@
 	$Id$
 */
 // screen.c -- master for refresh, status bar, console, chat, notify, etc
-
-#include "quakedef.h"
-
+#include <math.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
+
+#include "bothdefs.h"   // needed by: common.h, net.h, client.h
+
+#include "common.h"
+#include "bspfile.h"    // needed by: glquake.h
+#include "vid.h"
+#include "sys.h"
+#include "zone.h"       // needed by: client.h, gl_model.h
+#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
+                        //  modelgen.h, glmodel.h
+#include "wad.h"
+#include "draw.h"
+#include "cvar.h"
+#include "net.h"        // needed by: client.h
+#include "protocol.h"   // needed by: client.h
+#include "keys.h"
+#include "menu.h"
+#include "cmd.h"
+#include "sbar.h"
+#include "sound.h"
+#include "screen.h"
+#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
+#include "client.h"     // need cls in this file
+#include "gl_model.h"   // needed by: glquake.h
+#include "console.h"
+#include "glquake.h"
 
 /*
 
@@ -78,7 +105,9 @@ console is:
 
 */
 
-
+extern	byte		*host_basepal;
+extern	double		host_frametime;
+extern	double		realtime;
 int                     glx, gly, glwidth, glheight;
 
 // only the refresh window will be updated unless these variables are flagged 
@@ -472,7 +501,7 @@ void SCR_DrawFPS (void)
 	static double lastframetime;
 	double t;
 	extern int fps_count;
-	static lastfps;
+	static int lastfps;
 	int x, y;
 	char st[80];
 
@@ -760,7 +789,7 @@ int MipColor(int r, int g, int b)
 {
 	int i;
 	float dist;
-	int best;
+	int best = 0;
 	float bestdist;
 	int r1, g1, b1;
 	static int lr = -1, lg = -1, lb = -1;
@@ -837,12 +866,10 @@ SCR_RSShot_f
 */  
 void SCR_RSShot_f (void) 
 { 
-	int     i, x, y;
+	int     x, y;
 	unsigned char		*src, *dest;
 	char		pcxname[80]; 
-	char		checkname[MAX_OSPATH];
-	unsigned char		*newbuf, *srcbuf;
-	int srcrowbytes;
+	unsigned char		*newbuf;
 	int w, h;
 	int dx, dy, dex, dey, nx;
 	int r, b, g;
