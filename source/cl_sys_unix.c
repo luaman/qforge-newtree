@@ -52,6 +52,9 @@
 int         noconinput = 0;
 qboolean    is_server = false;
 
+#ifdef PACKET_LOGGING
+void Net_LogStop (void);
+#endif
 
 // =======================================================================
 // General routines
