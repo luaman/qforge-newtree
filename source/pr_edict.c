@@ -1241,7 +1241,7 @@ void
 PR_Init_Cvars (void)
 {
 	r_skyname =
-		Cvar_Get ("r_skyname", com_token, CVAR_SERVERINFO, "name of skybox");
+		Cvar_Get ("r_skyname", "", CVAR_SERVERINFO, "name of skybox");
 	pr_boundscheck =
 		Cvar_Get ("pr_boundscheck", "1", CVAR_NONE,
 				  "Server progs bounds checking");
