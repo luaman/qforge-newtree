@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // defs common to client and server
 
-#define GLQUAKE_VERSION 1.00
-#define	VERSION		2.40
-#define LINUX_VERSION 0.98
+#define QSG_STANDARD	"1"
+#define QW_VERSION	"2.40"
+#define QF_VERSION	"newtree test build"
 
 
 #if id386
