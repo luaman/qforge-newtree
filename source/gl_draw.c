@@ -123,7 +123,6 @@ typedef struct
 	int		crc;	// not really a standard CRC, but it works
 } gltexture_t;
 
-#define	MAX_GLTEXTURES	1024
 static gltexture_t	gltextures[MAX_GLTEXTURES];
 static int			numgltextures = 0;
 

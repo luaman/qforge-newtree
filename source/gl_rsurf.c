@@ -79,6 +79,7 @@ typedef struct glRect_s {
 } glRect_t;
 
 glpoly_t	*lightmap_polys[MAX_LIGHTMAPS];
+glpoly_t	*fullbright_polys[MAX_GLTEXTURES];
 qboolean	lightmap_modified[MAX_LIGHTMAPS];
 glRect_t	lightmap_rectchange[MAX_LIGHTMAPS];
 
@@ -434,6 +435,7 @@ void R_DrawMultitexturePoly (msurface_t *s)
 	int			maps;
 	float		*v;
 	int			i;
+	texture_t	*texture = R_TextureAnimation (s->texinfo->texture);
 
 	c_brush_polys++;
 
@@ -442,7 +444,7 @@ void R_DrawMultitexturePoly (msurface_t *s)
 	glColor3f(1,1,1);
 	// Binds world to texture env 0
 	qglSelectTexture (gl_mtex_enum+0);
-	glBindTexture (GL_TEXTURE_2D, R_TextureAnimation (s->texinfo->texture)->gl_texturenum);
+	glBindTexture (GL_TEXTURE_2D, texture->gl_texturenum);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glEnable(GL_TEXTURE_2D);
 	// Binds lightmap to texenv 1
@@ -479,6 +481,11 @@ dynamic:
 	glDisable(GL_TEXTURE_2D);
 	qglSelectTexture (gl_mtex_enum+0);
 	glEnable(GL_TEXTURE_2D);
+
+	if (texture->gl_fb_texturenum>0) {
+		s->polys->fb_chain = fullbright_polys[texture->gl_fb_texturenum];
+		fullbright_polys[texture->gl_fb_texturenum] = s->polys;
+	}
 }
 
 /*
@@ -529,6 +536,40 @@ void R_BlendLightmaps (void)
 }
 
 /*
+	R_RenderFullbrights
+*/
+
+void
+R_RenderFullbrights (void)
+{
+	int i, j;
+	glpoly_t *p;
+	float *v;
+
+	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glEnable (GL_BLEND);
+	glColor3f(1,1,1);
+
+	for (i=1; i<MAX_GLTEXTURES; i++) {
+		if (!fullbright_polys[i])
+			continue;
+		glBindTexture (GL_TEXTURE_2D, i);
+		for (p=fullbright_polys[i]; p; p=p->fb_chain) {
+			glBegin (GL_POLYGON);
+			for (j=0, v=p->verts[0]; j<p->numverts; j++, v+=VERTEXSIZE) {
+				glTexCoord2fv (&v[3]);
+				glVertex3fv (v);
+			}
+			glEnd();
+		}
+	}
+
+	glDisable (GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+/*
 ================
 R_RenderBrushPoly
 ================
@@ -541,10 +582,11 @@ void R_RenderBrushPoly (msurface_t *fa)
 	int			i;
 	float		*v;
 	int			smax, tmax;
+	texture_t	*texture = R_TextureAnimation (fa->texinfo->texture);
 
 	c_brush_polys++;
 
-	glBindTexture (GL_TEXTURE_2D, R_TextureAnimation (fa->texinfo->texture)->gl_texturenum);
+	glBindTexture (GL_TEXTURE_2D, texture->gl_texturenum);
 
 	glBegin (GL_POLYGON);
 	v = fa->polys->verts[0];
@@ -559,6 +601,11 @@ void R_RenderBrushPoly (msurface_t *fa)
 
 	fa->polys->chain = lightmap_polys[fa->lightmaptexturenum];
 	lightmap_polys[fa->lightmaptexturenum] = fa->polys;
+
+	if (texture->gl_fb_texturenum>0) {
+		fa->polys->fb_chain = fullbright_polys[texture->gl_fb_texturenum];
+		fullbright_polys[texture->gl_fb_texturenum] = fa->polys;
+	}
 
 	// check for lightmap modification
 	for (maps = 0 ; maps < MAXLIGHTMAPS && fa->styles[maps] != 255 ;
@@ -598,11 +645,14 @@ dynamic:
 
 void GL_WaterSurface(msurface_t *s)
 {
+	int i;
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	if (lighthalf)
 		glColor4f(0.5,0.5,0.5, r_wateralpha->value);
 	else
 		glColor4f(1,1,1, r_wateralpha->value);
+	i = s->texinfo->texture->gl_texturenum;
+	glBindTexture (GL_TEXTURE_2D, i);
 	if (r_wateralpha->value < 1.0)
 	{
 		glDepthMask(0);
@@ -721,6 +771,7 @@ void R_DrawBrushModel (entity_t *e)
 	glColor3f (1, 1, 1);
 
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
+	memset (fullbright_polys, 0, sizeof(fullbright_polys));
 
 	VectorSubtract (r_refdef.vieworg, e->origin, modelorg);
 	if (rotated)
@@ -793,6 +844,9 @@ void R_DrawBrushModel (entity_t *e)
 
 	if (gl_texsort->value)
 		R_BlendLightmaps ();
+
+	if (gl_fb_bmodels->value)
+		R_RenderFullbrights ();
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -947,6 +1001,7 @@ void R_DrawWorld (void)
 
 	glColor3f (1.0, 1.0, 1.0);
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
+	memset (fullbright_polys, 0, sizeof(fullbright_polys));
 	// Be sure to clear the skybox --KB
 	R_DrawSky ();
 
@@ -959,6 +1014,9 @@ void R_DrawWorld (void)
 
 	if (gl_texsort->value)
 		R_BlendLightmaps ();
+
+	if (gl_fb_bmodels->value)
+		R_RenderFullbrights ();
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

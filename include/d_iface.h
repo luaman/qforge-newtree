@@ -36,9 +36,7 @@
 #define WARP_WIDTH		320
 #define WARP_HEIGHT		200
 
-#ifndef MAX_LBM_HEIGHT  // FIXME: get rid of this ifndef  --KB
 #define MAX_LBM_HEIGHT	480
-#endif
 
 typedef struct
 {

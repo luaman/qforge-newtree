@@ -270,6 +270,8 @@ void R_Init (void)
 	gl_fb_models = Cvar_Get ("gl_fb_models", "1", CVAR_ARCHIVE,
 			"Toggles fullbright color support for models..  "
 			"This is very handy, but costs me 2 FPS.. (=:]");
+	gl_fb_bmodels = Cvar_Get ("gl_fb_bmodels", "1", CVAR_ARCHIVE,
+			"Toggles fullbright color support for bmodels");
 
 	gl_keeptjunctions = Cvar_Get("gl_keeptjunctions", "1", CVAR_NONE, "None");
 	gl_reporttjunctions = Cvar_Get("gl_reporttjunctions", "0", CVAR_NONE, "None");
