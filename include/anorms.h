@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 #pragma warning(disable:4305)
 #endif
 {-0.525731, 0.000000, 0.850651}, 
