@@ -1171,7 +1171,7 @@ void R_RenderView (void)
 	if (!r_worldentity.model || !cl.worldmodel)
 		Sys_Error ("R_RenderView: NULL worldmodel");
 
-	glFinish ();
+//	glFinish ();
 
 	mirror = false;
 
