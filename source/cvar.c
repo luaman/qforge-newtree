@@ -57,7 +57,7 @@ cvar_alias_t *calias_vars;
 Cvar_FindVar
 ============
 */
-cvar_t     *
+cvar_t *
 Cvar_FindVar (char *var_name)
 {
 	cvar_t     *var;
@@ -69,7 +69,7 @@ Cvar_FindVar (char *var_name)
 	return NULL;
 }
 
-cvar_t     *
+cvar_t *
 Cvar_FindAlias (char *alias_name)
 {
 	cvar_alias_t *alias;
@@ -129,7 +129,7 @@ Cvar_VariableValue (char *var_name)
 Cvar_VariableString
 ============
 */
-char       *
+char *
 Cvar_VariableString (char *var_name)
 {
 	cvar_t     *var;
@@ -148,7 +148,7 @@ Cvar_VariableString (char *var_name)
 Cvar_CompleteVariable
 ============
 */
-char       *
+char *
 Cvar_CompleteVariable (char *partial)
 {
 	cvar_t     *cvar;
@@ -184,7 +184,7 @@ Cvar_CompleteVariable (char *partial)
 }
 
 
-void        Cvar_Info (cvar_t *var);
+void Cvar_Info (cvar_t *var);
 
 /*
 ============
@@ -421,7 +421,7 @@ Cvar_CvarList_f (void)
 }
 
 void
-Cvar_Init ()
+Cvar_Init (void)
 {
 	developer = Cvar_Get ("developer", "0", 0, "None");
 
@@ -458,7 +458,7 @@ Cvar_Shutdown (void)
 }
 
 
-cvar_t     *
+cvar_t *
 Cvar_Get (char *name, char *string, int cvarflags, char *description)
 {
 
