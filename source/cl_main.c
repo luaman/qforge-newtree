@@ -1249,60 +1249,104 @@ void CL_InitCvars (void)
 	extern	cvar_t		*noskins;
 
 
-	show_fps = Cvar_Get("show_fps", "0", CVAR_NONE, "None");
-	host_speeds = Cvar_Get("host_speeds", "0", CVAR_NONE, "None");
-	developer = Cvar_Get("developer", "0", CVAR_NONE, "None");
+	show_fps = Cvar_Get("show_fps", "0", CVAR_NONE,
+			"display realtime frames per second");
+	host_speeds = Cvar_Get("host_speeds", "0", CVAR_NONE,
+			"display host processing times");
+	developer = Cvar_Get("developer", "0", CVAR_NONE,
+			"show info interesting to developers");
 
-	cl_autoexec = Cvar_Get ("cl_autoexec","0",CVAR_ROM,"exec autoexec.cfg on gamedir change");
-	cl_warncmd = Cvar_Get("cl_warncmd",  "0", CVAR_NONE, "None");
-	cl_upspeed = Cvar_Get("cl_upspeed", "200", CVAR_NONE, "None");
-	cl_forwardspeed = Cvar_Get("cl_forwardspeed", "200", CVAR_ARCHIVE, "None");
-	cl_backspeed = Cvar_Get("cl_backspeed", "200", CVAR_ARCHIVE, "None");
-	cl_sidespeed = Cvar_Get("cl_sidespeed", "350", CVAR_NONE, "None");
-	cl_movespeedkey = Cvar_Get("cl_movespeedkey", "2.0", CVAR_NONE, "None");
-	cl_yawspeed = Cvar_Get("cl_yawspeed", "140", CVAR_NONE, "None");
-	cl_pitchspeed = Cvar_Get("cl_pitchspeed", "150", CVAR_NONE, "None");
-	cl_anglespeedkey = Cvar_Get("cl_anglespeedkey", "1.5", CVAR_NONE, "None");
-	cl_shownet = Cvar_Get("cl_shownet", "0", CVAR_NONE, "None");
-	cl_sbar = Cvar_Get("cl_sbar",  "0", CVAR_ARCHIVE, "None");
-	cl_hudswap = Cvar_Get("cl_hudswap",  "0", CVAR_ARCHIVE, "None");
-	cl_maxfps = Cvar_Get("cl_maxfps",  "0", CVAR_ARCHIVE, "None");
-	cl_timeout = Cvar_Get("cl_timeout",  "60", CVAR_ARCHIVE, "None");
-	lookspring = Cvar_Get("lookspring", "0", CVAR_ARCHIVE, "None");
-	lookstrafe = Cvar_Get("lookstrafe", "0", CVAR_ARCHIVE, "None");
-	sensitivity = Cvar_Get("sensitivity", "3", CVAR_ARCHIVE, "None");
-	cl_freelook = Cvar_Get("freelook", "0", CVAR_ARCHIVE, "None");
+	cl_autoexec = Cvar_Get ("cl_autoexec","0",CVAR_ROM,
+			"exec autoexec.cfg on gamedir change");
+	cl_warncmd = Cvar_Get("cl_warncmd",  "0", CVAR_NONE,
+			"inform when execing a command");
+	cl_upspeed = Cvar_Get("cl_upspeed", "200", CVAR_NONE,
+			"swim/fly up/down speed");
+	cl_forwardspeed = Cvar_Get("cl_forwardspeed", "200", CVAR_ARCHIVE,
+			"forward speed");
+	cl_backspeed = Cvar_Get("cl_backspeed", "200", CVAR_ARCHIVE,
+			"backward speed");
+	cl_sidespeed = Cvar_Get("cl_sidespeed", "350", CVAR_NONE,
+			"strafe speed");
+	cl_movespeedkey = Cvar_Get("cl_movespeedkey", "2.0", CVAR_NONE,
+			"move `run' speed multiplier");
+	cl_yawspeed = Cvar_Get("cl_yawspeed", "140", CVAR_NONE,
+			"turning speed");
+	cl_pitchspeed = Cvar_Get("cl_pitchspeed", "150", CVAR_NONE,
+			"look up/down speed");
+	cl_anglespeedkey = Cvar_Get("cl_anglespeedkey", "1.5", CVAR_NONE,
+			"turn `run' speed multiplier");
+	cl_shownet = Cvar_Get("cl_shownet", "0", CVAR_NONE,
+			"show network packets. 0=off, 1=basic, 2=verbose");
+	cl_sbar = Cvar_Get("cl_sbar",  "0", CVAR_ARCHIVE,
+			"status bar mode");
+	cl_hudswap = Cvar_Get("cl_hudswap",  "0", CVAR_ARCHIVE,
+			"put items on left");
+	cl_maxfps = Cvar_Get("cl_maxfps",  "0", CVAR_ARCHIVE,
+			"maximum frames rendered in one second. 0 == 32");
+	cl_timeout = Cvar_Get("cl_timeout",  "60", CVAR_ARCHIVE,
+			"server connection timeout (since last packet received)");
+	lookspring = Cvar_Get("lookspring", "0", CVAR_ARCHIVE,
+			"None");
+	lookstrafe = Cvar_Get("lookstrafe", "0", CVAR_ARCHIVE,
+			"None");
+	sensitivity = Cvar_Get("sensitivity", "3", CVAR_ARCHIVE,
+			"mouse sensitivity multiplier");
+	cl_freelook = Cvar_Get("freelook", "0", CVAR_ARCHIVE,
+			"force +mlook");
 
-	m_pitch = Cvar_Get("m_pitch", "0.022", CVAR_ARCHIVE, "None");
-	m_yaw = Cvar_Get("m_yaw", "0.022", CVAR_NONE, "None");
-	m_forward = Cvar_Get("m_forward", "1", CVAR_NONE, "None");
-	m_side = Cvar_Get("m_side", "0.8", CVAR_NONE, "None");
+	m_pitch = Cvar_Get("m_pitch", "0.022", CVAR_ARCHIVE,
+			"mouse pitch (up/down) multipier");
+	m_yaw = Cvar_Get("m_yaw", "0.022", CVAR_NONE,
+			"mouse yaw (left/right) multipiler");
+	m_forward = Cvar_Get("m_forward", "1", CVAR_NONE,
+			"mouse forward/back speed");
+	m_side = Cvar_Get("m_side", "0.8", CVAR_NONE,
+			"mouse strafe speed");
 
-	rcon_password = Cvar_Get("rcon_password",  "", CVAR_NONE, "None");
-	rcon_address = Cvar_Get("rcon_address",  "", CVAR_NONE, "None");
+	rcon_password = Cvar_Get("rcon_password",  "", CVAR_NONE,
+			"None");
+	rcon_address = Cvar_Get("rcon_address",  "", CVAR_NONE,
+			"None");
 
-	cl_predict_players2 = Cvar_Get("cl_predict_players2",  "1", CVAR_NONE, "None");
-	cl_predict_players = Cvar_Get("cl_predict_players",  "1", CVAR_NONE, "None");
-	cl_solid_players = Cvar_Get("cl_solid_players",  "1", CVAR_NONE, "None");
+	cl_predict_players2 = Cvar_Get("cl_predict_players2",  "1", CVAR_NONE,
+			"None");
+	cl_predict_players = Cvar_Get("cl_predict_players",  "1", CVAR_NONE,
+			"None");
+	cl_solid_players = Cvar_Get("cl_solid_players",  "1", CVAR_NONE,
+			"None");
 
-	localid = Cvar_Get("localid",  "", CVAR_NONE, "None");
+	localid = Cvar_Get("localid",  "", CVAR_NONE,
+			"None");
 
-	baseskin = Cvar_Get("baseskin",  "base", CVAR_NONE, "None");
-	noskins = Cvar_Get("noskins",  "0", CVAR_NONE, "None");
+	baseskin = Cvar_Get("baseskin",  "base", CVAR_NONE,
+			"None");
+	noskins = Cvar_Get("noskins",  "0", CVAR_NONE,
+			"None");
 
 	//
 	// info mirrors
 	//
-	name = Cvar_Get("name", "unnamed", CVAR_ARCHIVE|CVAR_USERINFO, "None");
-	password = Cvar_Get("password",  "", CVAR_USERINFO, "None");
-	spectator = Cvar_Get("spectator",  "", CVAR_USERINFO, "None");
-	skin = Cvar_Get("skin", "", CVAR_ARCHIVE|CVAR_USERINFO, "None");
-	team = Cvar_Get("team", "", CVAR_ARCHIVE|CVAR_USERINFO, "None");
-	topcolor = Cvar_Get("topcolor", "0", CVAR_ARCHIVE|CVAR_USERINFO, "None");
-	bottomcolor = Cvar_Get("bottomcolor", "0", CVAR_ARCHIVE|CVAR_USERINFO, "None");
-	rate = Cvar_Get("rate", "2500", CVAR_ARCHIVE|CVAR_USERINFO, "None");
-	msg = Cvar_Get("msg", "1", CVAR_ARCHIVE|CVAR_USERINFO, "None");
-	noaim = Cvar_Get("noaim", "0", CVAR_ARCHIVE|CVAR_USERINFO, "None");
+	name = Cvar_Get("name", "unnamed", CVAR_ARCHIVE|CVAR_USERINFO,
+			"None");
+	password = Cvar_Get("password",  "", CVAR_USERINFO,
+			"None");
+	spectator = Cvar_Get("spectator",  "", CVAR_USERINFO,
+			"None");
+	skin = Cvar_Get("skin", "", CVAR_ARCHIVE|CVAR_USERINFO,
+			"None");
+	team = Cvar_Get("team", "", CVAR_ARCHIVE|CVAR_USERINFO,
+			"None");
+	topcolor = Cvar_Get("topcolor", "0", CVAR_ARCHIVE|CVAR_USERINFO,
+			"None");
+	bottomcolor = Cvar_Get("bottomcolor", "0", CVAR_ARCHIVE|CVAR_USERINFO,
+			"None");
+	rate = Cvar_Get("rate", "2500", CVAR_ARCHIVE|CVAR_USERINFO,
+			"None");
+	msg = Cvar_Get("msg", "1", CVAR_ARCHIVE|CVAR_USERINFO,
+			"None");
+	noaim = Cvar_Get("noaim", "0", CVAR_ARCHIVE|CVAR_USERINFO,
+			"None");
 }
 
 /*
