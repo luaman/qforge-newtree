@@ -833,6 +833,7 @@ void CL_LinkPlayers (void)
 	int				msec;
 	frame_t			*frame;
 	int				oldphysent;
+	vec3_t			org;
 
 	playertime = realtime - cls.latency + 0.02;
 	if (playertime > realtime)
@@ -848,19 +849,23 @@ void CL_LinkPlayers (void)
 
 		// FIXME: Use a findvar or something for gl_flashblend  --KB
 		// spawn light flashes, even ones coming from invisible objects
-/* 		if (!gl_flashblend.value || j != cl.playernum) {
- CVAR_FIXME */
 		if (!gl_flashblend->value || j != cl.playernum) {
+
+			if (j == cl.playernum) {
+				VectorCopy (cl.simorg, org);
+			} else
+				VectorCopy (state->origin, org);
+
 			if ((state->effects & (EF_BLUE | EF_RED)) == (EF_BLUE | EF_RED))
-				CL_NewDlight (j, state->origin[0], state->origin[1], state->origin[2], 200 + (rand()&31), 0.1, 3);
+				CL_NewDlight (j, org[0], org[1], org[2], 200 + (rand()&31), 0.1, 3);
 			else if (state->effects & EF_BLUE)
-				CL_NewDlight (j, state->origin[0], state->origin[1], state->origin[2], 200 + (rand()&31), 0.1, 1);
+				CL_NewDlight (j, org[0], org[1], org[2], 200 + (rand()&31), 0.1, 1);
 			else if (state->effects & EF_RED)
-				CL_NewDlight (j, state->origin[0], state->origin[1], state->origin[2], 200 + (rand()&31), 0.1, 2);
+				CL_NewDlight (j, org[0], org[1], org[2], 200 + (rand()&31), 0.1, 2);
 			else if (state->effects & EF_BRIGHTLIGHT)
-				CL_NewDlight (j, state->origin[0], state->origin[1], state->origin[2] + 16, 400 + (rand()&31), 0.1, 0);
+				CL_NewDlight (j, org[0], org[1], org[2] + 16, 400 + (rand()&31), 0.1, 0);
 			else if (state->effects & EF_DIMLIGHT)
-				CL_NewDlight (j, state->origin[0], state->origin[1], state->origin[2], 200 + (rand()&31), 0.1, 0);
+				CL_NewDlight (j, org[0], org[1], org[2], 200 + (rand()&31), 0.1, 0);
 		}
 
 		// the player object never gets added
