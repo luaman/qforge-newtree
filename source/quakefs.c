@@ -881,9 +881,9 @@ void COM_Gamedir_f (void)
 void
 COM_InitFilesystem ( void )
 {
-	fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
+	fs_userpath = Cvar_Get ("fs_userpath", ".", CVAR_ROM,
 			"the location of your game directories");
-	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH,
+	fs_sharepath = Cvar_Get ("fs_sharepath", fs_userpath->string,
 			CVAR_ROM, "read-only game directories");
 	Cmd_AddCommand ("gamedir", COM_Gamedir_f);
 
