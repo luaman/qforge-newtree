@@ -30,8 +30,10 @@
 # include "config.h"
 #endif
 
+#ifndef _WIN32
 #include <sys/time.h>
 #include <unistd.h>
+#endif
 
 #include "host.h"
 #include "sys.h"
@@ -53,7 +55,10 @@
 #include "cl_main.h"
 #include "cl_input.h"
 #include "net.h"
+
+#ifndef _WIN32
 #include <netinet/in.h>
+#endif
 
 void        (*vid_menudrawfn) (void);
 void        (*vid_menukeyfn) (int key);

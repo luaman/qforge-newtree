@@ -34,8 +34,10 @@
 #endif
 
 #include <string.h>
+#ifndef WIN32
 #include <sys/time.h>
 #include <unistd.h>
+#endif
 
 #include "cl_slist.h"
 #include "bothdefs.h"
