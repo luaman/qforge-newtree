@@ -125,7 +125,6 @@ DEPEND = \
    $(QFROOT)\opengl32.lib\
    $(OBJS)\gl_draw.obj\
    $(OBJS)\gl_trans.obj\
-   $(OBJS)\gl_test.obj\
    $(OBJS)\gl_screen.obj\
    $(OBJS)\gl_rsurf.obj\
    $(OBJS)\gl_rmisc.obj\
@@ -203,7 +202,6 @@ $(OBJS)\gl_view.obj+
 $(OBJS)\vid_wgl.obj+
 $(OBJS)\gl_draw.obj+
 $(OBJS)\gl_trans.obj+
-$(OBJS)\gl_test.obj+
 $(OBJS)\gl_screen.obj+
 $(OBJS)\gl_rsurf.obj+
 $(OBJS)\gl_rmisc.obj+
@@ -300,11 +298,6 @@ $(OBJS)\gl_draw.obj :  $(QFROOT)\source\gl_draw.c
 $(OBJS)\gl_trans.obj :  $(QFROOT)\source\gl_trans.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_trans.c
-|
-
-$(OBJS)\gl_test.obj :  $(QFROOT)\source\gl_test.c
-  $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_test.c
 |
 
 $(OBJS)\gl_screen.obj :  $(QFROOT)\source\gl_screen.c
