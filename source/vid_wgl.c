@@ -43,6 +43,7 @@
 #include "resource.h"
 #include "sbar.h"
 #include "screen.h"
+#include "sound.h"
 #include "sys.h"
 #include "va.h"
 #include "winquake.h"
@@ -388,7 +389,7 @@ int
 VID_SetMode (int modenum, unsigned char *palette)
 {
 	int         original_mode, temp;
-	qboolean    stat;
+	qboolean    stat = 0;
 	MSG         msg;
 
 	if ((windowed && (modenum != 0)) ||
@@ -645,8 +646,6 @@ GL_BeginRendering
 void
 GL_BeginRendering (int *x, int *y, int *width, int *height)
 {
-	extern cvar_t *gl_clear;
-
 	*x = *y = 0;
 	*width = WindowRect.right - WindowRect.left;
 	*height = WindowRect.bottom - WindowRect.top;
@@ -1759,7 +1758,7 @@ extern void M_DrawCharacter (int cx, int line, int num);
 extern void M_DrawTransPic (int x, int y, qpic_t *pic);
 extern void M_DrawPic (int x, int y, qpic_t *pic);
 
-static int  vid_line, vid_wmodes;
+static int  vid_wmodes;
 
 typedef struct {
 	int         modenum;
