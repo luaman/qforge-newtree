@@ -49,7 +49,7 @@
 #include <X11/keysym.h>
 #include <X11/extensions/XShm.h>
 #include <errno.h>
-#include <values.h>
+#include <limits.h>
 
 #ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
@@ -270,7 +270,7 @@ x11_set_vidmode(int width, int height)
 	Con_Printf ("hasvidmode = %i\nnummodes = %i\n", hasvidmode, nummodes);
 
 	if (hasvidmode && vid_fullscreen->value) {
-		int smallest_mode=0, x=MAXINT, y=MAXINT;
+		int smallest_mode=0, x=INT_MAX, y=INT_MAX;
 
 		// FIXME: does this depend on mode line order in XF86Config?
 		for (i=0; i<nummodes; i++) {
