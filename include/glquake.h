@@ -260,7 +260,7 @@ typedef struct {
 	float	size;
 	float	die, decay;             // duration settings
 	float	minlight;               // lighting threshold
-	float	_color[4];              // RGBA
+	float	_color[3];              // RGBA
 	float	*color;
 } fire_t;
 

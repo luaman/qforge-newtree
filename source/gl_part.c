@@ -657,8 +657,8 @@ void R_DrawParticles (void)
 	Nifty ball of fire GL effect.  Kinda a meshing of the dlight and
 	particle engine code.
 */
-float r_firecolor_flame[4]={0.9,0.7,0.3,1.0};
-float r_firecolor_light[4]={0.9,0.7,0.3,0}; // alpha not used
+float r_firecolor_flame[3]={0.9,0.7,0.3};
+float r_firecolor_light[3]={0.9,0.7,0.3};
 
 void
 R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
@@ -764,11 +764,11 @@ R_DrawFire (fire_t *f)
 
 	// we're not - draw it
 	glBegin (GL_TRIANGLE_FAN);
-	glColor4fv (f->color);
+	glColor3fv (f->color);
 	for (i=0 ; i<3 ; i++)
 		vec[i] = f->origin[i] - vpn[i] * radius;
 	glVertex3fv (vec);
-	glColor4f (0.0, 0.0, 0.0, 0.0);
+	glColor3f (0.0, 0.0, 0.0);
 
 	// don't panic, this just draws a bubble...
 	for (i=16 ; i>=0 ; i--)
@@ -813,7 +813,6 @@ R_UpdateFires (void)
 		if (f->die < cl.time || !f->size)
 			continue;
 		f->size += f->decay;
-		f->color[3] /= 2.0;
 		R_DrawFire (f);
 	}
 
@@ -829,17 +828,16 @@ R_FireColor_f (void)
 	int i;
 
 	if (Cmd_Argc() == 1) {
-		Con_Printf ("r_firecolor %f %f %f %f\n",
+		Con_Printf ("r_firecolor %f %f %f\n",
 					r_firecolor_flame[0],
 					r_firecolor_flame[1],
-					r_firecolor_flame[2],
-					r_firecolor_flame[3]);
+					r_firecolor_flame[2]);
 		return;
 	}
-	if (Cmd_Argc() == 6) {
-		Con_Printf ("Warning: obsolete 5th parameter to r_firecolor ignored\n");
+	if (Cmd_Argc() == 5 || Cmd_Argc() == 6) {
+		Con_Printf ("Warning: obsolete 4th and 5th parameters to r_firecolor ignored\n");
 	} else if (Cmd_Argc() !=5) {
-		Con_Printf ("Usage r_firecolor R G B A\n");
+		Con_Printf ("Usage r_firecolor R G B\n");
 		return;
 	}
 	for (i=0; i<4; i++) {
