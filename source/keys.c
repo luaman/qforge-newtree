@@ -404,9 +404,10 @@ no_lf:
 				if (clipText) {
 					textCopied = malloc(GlobalSize(th)+1);
 					strcpy(textCopied, clipText);
-	/* Substitutes a NULL for every token */strtok(textCopied, "\n\r\b");
+					/* Substitutes a NULL for every token */
+					strtok(textCopied, "\n\r\b");
 					i = strlen(textCopied);
-					if (i + strlen(key_lines[edit_line]) >= MAXCMDLINE-1)
+					if (i + strlen(key_lines[edit_line]) > MAXCMDLINE-1)
 						i = MAXCMDLINE-1 - strlen(key_lines[edit_line]);
 					if (i > 0)
 					{	// insert the string
@@ -752,12 +753,12 @@ void Key_Init (void)
 //
 // register our functions
 //
-	Cmd_AddCommand ("bind",Key_Bind_f);
-	Cmd_AddCommand ("unbind",Key_Unbind_f);
-	Cmd_AddCommand ("unbindall",Key_Unbindall_f);
+	Cmd_AddCommand ("bind", Key_Bind_f);
+	Cmd_AddCommand ("unbind", Key_Unbind_f);
+	Cmd_AddCommand ("unbindall", Key_Unbindall_f);
 
 	cl_chatmode = Cvar_Get ("cl_chatmode", "2", 0,
-		"Controls when console text will be treated as a chat message"
+		"Controls when console text will be treated as a chat message\n"
 		"0 - never, 1 - always, 2 - smart");
 }
 
