@@ -113,9 +113,10 @@ Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinindex)
 	skinsize = pheader->mdl.skinwidth * pheader->mdl.skinheight;
 	pskindesc = Hunk_AllocName (numskins * sizeof (maliasskindesc_t), loadname);
 
-	pheader->skindesc = (byte *) pskindesc - (byte *) pheader;
+	*pskinindex = (byte *) pskindesc - (byte *) pheader;
 
 	for (snum = 0; snum < numskins; snum++) {
+		pskindesc[snum].type = pskintype->type;
 		if (pskintype->type == ALIAS_SKIN_SINGLE) {
 			skin = (byte *) (pskintype + 1);
 			skin =
@@ -129,12 +130,11 @@ Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinindex)
 			paliasskingroup = Hunk_AllocName (t, loadname);
 			paliasskingroup->numskins = groupskins;
 
-			*pskinindex = (byte *) paliasskingroup - (byte *) pheader;
+			pskindesc[snum].skin = (byte *) paliasskingroup - (byte *) pheader;
 
 			pinskinintervals = (daliasskininterval_t *) (pinskingroup + 1);
-			poutskinintervals =
-
-				Hunk_AllocName (groupskins * sizeof (float), loadname);
+			poutskinintervals = Hunk_AllocName (groupskins * sizeof (float),
+												loadname);
 			paliasskingroup->intervals =
 				(byte *) poutskinintervals - (byte *) pheader;
 			for (gnum = 0; gnum < groupskins; gnum++) {
@@ -150,9 +150,10 @@ Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinindex)
 			skin = (byte *) pskintype;
 
 			for (gnum = 0; gnum < groupskins; gnum++) {
+				paliasskingroup->skindescs[gnum].type = ALIAS_SKIN_SINGLE;
 				skin =
 					Mod_LoadSkin (skin, skinsize,
-								  &paliasskingroup->skindescs[snum].skin, snum,
+								  &paliasskingroup->skindescs[gnum].skin, snum,
 								  gnum);
 			}
 		}
