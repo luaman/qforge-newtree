@@ -57,9 +57,7 @@ qboolean is_server = false;
 
 cvar_t  sys_linerefresh = {"sys_linerefresh","0"};// set for entity display
 
-//
-// Translation table for text consoles
-//
+// The translation table between the graphical font and plain ASCII  --KB
 char qfont_table[256] =
 {
 	'\0', '#',  '#',  '#',  '#',  '.',  '#',  '#',
@@ -166,9 +164,10 @@ void Sys_Printf (char *fmt, ...)
 	if (strlen(text) > sizeof(text))
 		Sys_Error("memory overwrite in Sys_Printf");
 
-    if (nostdout)
-        return;
+	if (nostdout)
+		return;
 
+	// translate to ASCII instead of printing [xx]  --KB
 	for (p = (unsigned char *)text; *p; p++)
 		putc(qfont_table[*p], stdout);
 }
