@@ -611,8 +611,8 @@ R_DrawParticles (void)
 			glBindTexture (GL_TEXTURE_2D, part->tex);
 			glBegin (GL_QUADS);
 			glTexCoord2f (0, 1);
-			glVertex3f ((part->org[0] + ((up[0] + right[0]) * scale))
-						(part->org[1] + ((up[1] + right[1]) * scale))
+			glVertex3f ((part->org[0] + ((up[0] + right[0]) * scale)),
+						(part->org[1] + ((up[1] + right[1]) * scale)),
 						(part->org[2] + ((up[2] + right[2]) * scale)));
 
 			glTexCoord2f (0, 0);
@@ -621,8 +621,8 @@ R_DrawParticles (void)
 						(part->org[2] + (up[2] * -scale) + (right[2] * scale)));
 
 			glTexCoord2f (1, 0);
-			glVertex3f ((part->org[0] + ((up[0] + right[0]) * -scale))
-						(part->org[1] + ((up[1] + right[1]) * -scale))
+			glVertex3f ((part->org[0] + ((up[0] + right[0]) * -scale)),
+						(part->org[1] + ((up[1] + right[1]) * -scale)),
 						(part->org[2] + ((up[2] + right[2]) * -scale)));
 
 			glTexCoord2f (1, 1);
