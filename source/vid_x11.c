@@ -85,6 +85,7 @@ static GC			x_gc;
 static Visual		*x_vis;
 static XVisualInfo	*x_visinfo;
 static Atom			aWMDelete = 0;
+static Cursor		nullcursor = None;
 
 #ifdef HAVE_VIDMODE
 static XF86VidModeModeInfo **vidmodes;
@@ -122,6 +123,36 @@ int scr_width, scr_height;
 
 #define STD_EVENT_MASK \
 			( VisibilityChangeMask | ExposureMask | StructureNotifyMask)
+
+
+/*
+======================
+Create an empty cursor
+======================
+*/
+
+static void
+CreateNullCursor(Display *display, Window root)
+{
+    Pixmap cursormask;
+    XGCValues xgc;
+    GC gc;
+    XColor dummycolour;
+
+	if (nullcursor != None) return;
+
+	cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
+	xgc.function = GXclear;
+	gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
+	XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
+	dummycolour.pixel = 0;
+	dummycolour.red = 0;
+	dummycolour.flags = 04;
+	nullcursor = XCreatePixmapCursor(display, cursormask, cursormask,
+									 &dummycolour,&dummycolour, 0,0);
+	XFreePixmap(display,cursormask);
+	XFreeGC(display,gc);
+}
 
 
 static void
@@ -637,6 +668,10 @@ void VID_Init (unsigned char *palette)
 		/* Make window respond to Delete events */
 		aWMDelete = XInternAtom(x_disp, "WM_DELETE_WINDOW", False);
 		XSetWMProtocols(x_disp, x_win, &aWMDelete, 1);
+
+		/* Invisible cursor */
+		CreateNullCursor(x_disp, x_win);
+		XDefineCursor(x_disp, x_win, nullcursor);
 	}
 
 	if (x_visinfo->depth == 8) {
@@ -775,6 +810,10 @@ VID_Shutdown(void)
 			XFree(vidmodes);
 		}
 #endif
+		if (nullcursor != None) {
+			XFreeCursor(x_disp, nullcursor);
+			nullcursor = None;
+		}
 		XAutoRepeatOn(x_disp);
 		x11_close_display();
 		x_disp = 0;

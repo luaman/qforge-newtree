@@ -87,6 +87,7 @@ static qboolean		vid_initialized = false;
 static int		screen;
 Window			x_win;
 static GLXContext	ctx = NULL;
+static Cursor	nullcursor = None;
 
 #define X_MASK (VisibilityChangeMask | StructureNotifyMask)
 
@@ -148,6 +149,36 @@ int gl_mtex_enum = TEXTURE0_SGIS;
 qboolean gl_arb_mtex = false;
 qboolean gl_mtexable = false;
 
+/*
+======================
+Create an empty cursor
+======================
+*/
+
+static void
+CreateNullCursor(Display *display, Window root)
+{
+    Pixmap cursormask;
+    XGCValues xgc;
+    GC gc;
+    XColor dummycolour;
+
+	if (nullcursor != None) return;
+
+	cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
+	xgc.function = GXclear;
+	gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
+	XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
+	dummycolour.pixel = 0;
+	dummycolour.red = 0;
+	dummycolour.flags = 04;
+	nullcursor = XCreatePixmapCursor(display, cursormask, cursormask,
+									 &dummycolour,&dummycolour, 0,0);
+	XFreePixmap(display,cursormask);
+	XFreeGC(display,gc);
+}
+
+
 /*-----------------------------------------------------------------------*/
 void D_BeginDirectRect (int x, int y, byte *pbitmap, int width, int height)
 {
@@ -185,6 +216,10 @@ VID_Shutdown(void)
 		dlhand = NULL;
 	}
 #endif
+	if (nullcursor != None) {
+		XFreeCursor(x_disp, nullcursor);
+		nullcursor = None;
+	}
 	x11_close_display();
 }
 #if 0
@@ -627,6 +662,11 @@ void VID_Init(unsigned char *palette)
 						visinfo->visual, mask, &attr);
 	XMapWindow(x_disp, x_win);
 	XRaiseWindow(x_disp, x_win);
+
+	/* Invisible cursor */
+	CreateNullCursor(x_disp, x_win);
+	XDefineCursor(x_disp, x_win, nullcursor);
+
 #ifdef HAVE_VIDMODE
 	if (hasvidmode && vid_fullscreen->value) {
 		XGrabKeyboard(x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
