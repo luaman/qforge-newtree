@@ -14,7 +14,7 @@ o  software PCXs don't work in X11 at least if you're using 24/32 color
 o  console commands to see a user, ignore talk from them, etc
 o  more direct inter-team comms (ie, talk to offense or defense directly)
 o  improved crosshairs (custom file, 32 bit for GL, etc)
-M  Endy's effects need to be made to work properly
+o  Endy's effects need to be made to work properly (totally broken!)
 ?  software targets should mix color at 16/16 or 24/32 color
 ?  Draw_Pic and other tex draw functions should to use local palettes
 ?  wad loader should load wad3 and fall back to wad2 if necessary
