@@ -38,10 +38,14 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#ifdef HAVE_IO_H
+# include <io.h>
+#endif
+#ifdef HAVE_CONIO_H
+# include <conio.h>
+#endif
 
 #ifndef _WIN32
-# include <io.h>
-# include <conio.h>
 # include <unistd.h>
 # include <stdarg.h>
 # include <string.h>
