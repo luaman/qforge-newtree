@@ -10,15 +10,15 @@ EXTRA_PROGRAMS= qf-server qf-client-mgl qf-client-ggi qf-client-svga \
 noinst_LIBRARIES = libqfsys_cl.a libqfsys_sv.a libqfsnd.a libqfcd.a
 
 if SYSTYPE_WIN32
-libqfsys_cl_a_SOURCES = sys_win.c cl_sys_win.c
-libqfsys_sv_a_SOURCES = sys_win.c sv_sys_win.c
+libqfsys_cl_a_SOURCES = sys_win.c cl_sys_win.c fnmatch.c
+libqfsys_sv_a_SOURCES = sys_win.c sv_sys_win.c fnmatch.c
 else
 libqfsys_cl_a_SOURCES = sys_unix.c cl_sys_unix.c
 libqfsys_sv_a_SOURCES = sys_unix.c sv_sys_unix.c
 endif
 
-EXTRA_libqfsys_cl_a_SOURCES = sys_unix.c cl_sys_unix.c 
-EXTRA_libqfsys_sv_a_SOURCES = sys_unix.c sv_sys_unix.c 
+EXTRA_libqfsys_cl_a_SOURCES = sys_unix.c cl_sys_unix.c fnmatch.c
+EXTRA_libqfsys_sv_a_SOURCES = sys_unix.c sv_sys_unix.c fnmatch.c
 
 if SNDTYPE_WIN32
 libqfsnd_a_SOURCES = snd_win.c
