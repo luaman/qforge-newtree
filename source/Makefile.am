@@ -1,10 +1,11 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES=	@X_INCLUDES@ @OPENGL_INCLUDES@
+INCLUDES=	@X_INCLUDES@ @OPENGL_INCLUDES@ -I$(top_srcdir)/include
 
 bin_PROGRAMS =	@TARGETS@
 
-EXTRA_PROGRAMS= qf-server qf-client-svga qf-client-x11 qf-client-glx
+EXTRA_PROGRAMS= qf-server qf-client-ggi qf-client-svga qf-client-x11 \
+		qf-client-glx
 
 common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
 		mdfour.c mathlib.c math.S cvar.c crc.c common.c model.c cmd.c
@@ -29,11 +30,13 @@ ogl_SOURCES=	gl_draw.c gl_mesh.c gl_model.c gl_ngraph.c gl_part.c \
 		gl_refrag.c gl_rlight.c gl_rmain.c gl_rmisc.c gl_rsurf.c \
 		gl_screen.c gl_trans.c gl_view.c gl_warp.c
 
+ggi_SOURCES=	vid_ggi.c
 svga_SOURCES=	vid_svgalib.c
-glx_SOURCES=	vid_glx.c
 x11_SOURCES=	vid_x11.c
+glx_SOURCES=	vid_glx.c
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
+qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(ggi_SOURCES)
 qf_client_svga_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(svga_SOURCES)
 qf_client_x11_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(x11_SOURCES)
 qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
@@ -41,3 +44,4 @@ qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_
 qf_client_svga_LDADD=	@SVGA_LIBS@
 qf_client_x11_LDADD=	@X_PRE_LIBS@ @X_LIBS@ @X_EXTRA_LIBS@ -lX11 @X_SHM_LIB@
 qf_client_glx_LDADD=	@OPENGL_LIBS@
+qf_client_ggi_LDADD=	@GGI_LIBS@
