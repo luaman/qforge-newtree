@@ -1,5 +1,5 @@
 /*
-	snd_alsa.c
+	snd_alsa_0_6.c
 
 	(description)
 
@@ -69,14 +69,9 @@ static snd_pcm_t *pcm_handle;
 static snd_pcm_params_info_t cpinfo;
 static snd_pcm_params_t params;
 static snd_pcm_setup_t setup;
-static snd_pcm_mmap_control_t *mmap_control = NULL;
-static snd_pcm_mmap_status_t *mmap_status = NULL;
-static char *mmap_data = NULL;
+static snd_pcm_channel_area_t mmap_stopped_areas[2];
+static snd_pcm_channel_area_t mmap_running_areas[2];
 static int card=-1,dev=-1,subdev=-1;;
-
-//XXX ugh, not defined in asoundlib.h
-int snd_pcm_mmap_status(snd_pcm_t *pcm, snd_pcm_mmap_status_t **status);
-int snd_pcm_mmap_control(snd_pcm_t *pcm, snd_pcm_mmap_control_t **control);
 
 int check_card(int card)
 {
@@ -84,7 +79,7 @@ int check_card(int card)
 	snd_ctl_hw_info_t info;
 	int rc;
 
-	if ((rc = snd_ctl_hw_open(&handle, card)) < 0) {
+	if ((rc = snd_ctl_hw_open(&handle, 0, card)) < 0) {
 		Con_Printf("Error: control open (%i): %s\n", card, snd_strerror(rc));
 		return rc;
 	}
@@ -226,6 +221,8 @@ qboolean SNDDMA_Init(void)
 	//XXX can't support non-interleaved stereo
 	params.xfer_mode = stereo ? SND_PCM_XFER_INTERLEAVED
 							  : SND_PCM_XFER_NONINTERLEAVED;
+	params.mmap_shape = stereo ? SND_PCM_XFER_INTERLEAVED
+								: SND_PCM_XFER_NONINTERLEAVED;
 	params.format.sfmt=format;
 	params.format.rate=rate;
 	params.format.channels=stereo+1;
@@ -236,7 +233,6 @@ qboolean SNDDMA_Init(void)
 	params.frag_size=frag_size;
 	params.avail_min = frag_size;
 
-	params.xrun_max = 1024;
 	params.boundary = params.buffer_size;
 
 	while (1) {
@@ -254,11 +250,9 @@ qboolean SNDDMA_Init(void)
 	}
 
 	err_msg="audio mmap";
-	if ((rc=snd_pcm_mmap(pcm_handle, (void**)&mmap_data))<0)
+	if ((rc=snd_pcm_mmap(pcm_handle))<0)
 		goto error;
-	if ((rc=snd_pcm_mmap_status(pcm_handle, &mmap_status))<0)
-		goto error;
-	if ((rc=snd_pcm_mmap_control(pcm_handle, &mmap_control))<0)
+	if ((rc=snd_pcm_mmap_get_areas(pcm_handle, mmap_stopped_areas, mmap_running_areas)))
 		goto error;
 	err_msg="audio prepare";
 	if ((rc=snd_pcm_prepare(pcm_handle))<0)
@@ -273,7 +267,7 @@ qboolean SNDDMA_Init(void)
 	shm->samplebits=setup.format.sfmt==SND_PCM_SFMT_S16_LE?16:8;
 	shm->samples=setup.buffer_size*shm->channels;	// mono samples in buffer
 	shm->speed=setup.format.rate;
-	shm->buffer=(unsigned char*)mmap_data;
+	shm->buffer=(unsigned char*)mmap_running_areas->addr;
     Con_Printf("%5d stereo\n", shm->channels - 1);
     Con_Printf("%5d samples\n", shm->samples);
     Con_Printf("%5d samplepos\n", shm->samplepos);
@@ -296,8 +290,7 @@ int SNDDMA_GetDMAPos(void)
 {
 	size_t hw_ptr;
 	if (!snd_inited) return 0;
-	hw_ptr = mmap_status->hw_ptr;
-	//printf("%7d %7d\n", mmap_control->appl_ptr, hw_ptr);
+	hw_ptr = snd_pcm_mmap_offset (pcm_handle);
 	hw_ptr *= shm->channels;
 	shm->samplepos = hw_ptr;
 	return shm->samplepos;
@@ -321,27 +314,24 @@ Send sound to device if buffer isn't really the dma buffer
 */
 void SNDDMA_Submit(void)
 {
-	int count=paintedtime-soundtime;
-	int rc;
+	int count = paintedtime - soundtime;
+	int avail = snd_pcm_avail_update(pcm_handle);
+	int state;
 
-	mmap_control->appl_ptr=mmap_status->hw_ptr+count;
-	switch (mmap_status->state) {
+	state = snd_pcm_state (pcm_handle);
+
+	printf("%d %d %d\n", state, count, avail);
+
+	//count -= delay;
+
+	if (count > avail) {
+		snd_pcm_mmap_forward (pcm_handle, avail);
+		count -= avail;
+	}
+	snd_pcm_mmap_forward (pcm_handle, count);
+	switch (state) {
 	case SND_PCM_STATE_PREPARED:
-		if ((rc=snd_pcm_start(pcm_handle))<0) {
-			fprintf(stderr, "unable to start playback. %s\n",
-					snd_strerror(rc));
-			exit(1);
-		}
-		break;
-	case SND_PCM_STATE_RUNNING:
-		break;
-	case SND_PCM_STATE_UNDERRUN:
-		printf("sound underrun\n");
-		if ((rc=snd_pcm_prepare (pcm_handle))<0) {
-			fprintf(stderr, "underrun: playback channel prepare error. %s\n",
-				snd_strerror(rc));
-			exit(1);
-		}
+		printf ("%d\n", snd_pcm_start (pcm_handle));
 		break;
 	}
 }
