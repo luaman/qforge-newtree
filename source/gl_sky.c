@@ -115,42 +115,42 @@ R_SkyBoxPolyVec (vec5_t v)
 
 vec5_t      skyvec[6][4] = {
 	{
-	 // right
+	 // right +y
 	 {ftc (1), ftc (0), 1024, 1024, 1024},
 	 {ftc (1), ftc (1), 1024, 1024, -1024},
 	 {ftc (0), ftc (1), -1024, 1024, -1024},
 	 {ftc (0), ftc (0), -1024, 1024, 1024}
 	 },
 	{
-	 // back
+	 // back -x
 	 {ftc (1), ftc (0), -1024, 1024, 1024},
 	 {ftc (1), ftc (1), -1024, 1024, -1024},
 	 {ftc (0), ftc (1), -1024, -1024, -1024},
 	 {ftc (0), ftc (0), -1024, -1024, 1024}
 	 },
 	{
-	 // left
+	 // left -y
 	 {ftc (1), ftc (0), -1024, -1024, 1024},
 	 {ftc (1), ftc (1), -1024, -1024, -1024},
 	 {ftc (0), ftc (1), 1024, -1024, -1024},
 	 {ftc (0), ftc (0), 1024, -1024, 1024}
 	 },
 	{
-	 // front
+	 // front +x
 	 {ftc (1), ftc (0), 1024, -1024, 1024},
 	 {ftc (1), ftc (1), 1024, -1024, -1024},
 	 {ftc (0), ftc (1), 1024, 1024, -1024},
 	 {ftc (0), ftc (0), 1024, 1024, 1024}
 	 },
 	{
-	 // up
+	 // up +z
 	 {ftc (1), ftc (0), 1024, -1024, 1024},
 	 {ftc (1), ftc (1), 1024, 1024, 1024},
 	 {ftc (0), ftc (1), -1024, 1024, 1024},
 	 {ftc (0), ftc (0), -1024, -1024, 1024}
 	 },
 	{
-	 // down
+	 // down -z
 	 {ftc (1), ftc (0), 1024, 1024, -1024},
 	 {ftc (1), ftc (1), 1024, -1024, -1024},
 	 {ftc (0), ftc (1), -1024, -1024, -1024},
@@ -305,19 +305,59 @@ determine_face (vec3_t v)
 	return i;
 }
 
+static void
+set_vertex (glpoly_t *p, vec3_t v, int face)
+{
+	int ind = p->numverts++;
+	VectorCopy (v, p->verts[ind]);
+	VectorAdd (v, r_refdef.vieworg, p->verts[ind]);
+	switch (face) {
+	case 0:
+		p->verts[ind][3] = (1024 - v[1]) / 2048;
+		p->verts[ind][4] = (1024 - v[2]) / 2048;
+		break;
+	case 1:
+		p->verts[ind][3] = (1024 + v[0]) / 2048;
+		p->verts[ind][4] = (1024 - v[2]) / 2048;
+		break;
+	case 2:
+		p->verts[ind][3] = (1024 + v[0]) / 2048;
+		p->verts[ind][4] = (1024 + v[1]) / 2048;
+		break;
+	case 4:
+		p->verts[ind][3] = (1024 + v[1]) / 2048;
+		p->verts[ind][4] = (1024 - v[2]) / 2048;
+		break;
+	case 5:
+		p->verts[ind][3] = (1024 - v[0]) / 2048;
+		p->verts[ind][4] = (1024 - v[2]) / 2048;
+		break;
+	case 6:
+		p->verts[ind][3] = (1024 - v[0]) / 2048;
+		p->verts[ind][4] = (1024 - v[1]) / 2048;
+		break;
+	}
+}
+
 void
 R_DrawSkyBoxPoly (glpoly_t *poly)
 {
 	vec3_t v, last_v;
 	struct {
+		int			tex;
 		glpoly_t	poly;
 		float		verts[32][VERTEXSIZE];
 	} box[6];
-	glpoly_t *p;
-	int i;
+	int i, j;
 	int face, prev_face;
 
 	memset (box, 0, sizeof (box));
+	box[0].tex = SKY_TEX + 0;
+	box[1].tex = SKY_TEX + 1;
+	box[2].tex = SKY_TEX + 2;
+	box[3].tex = SKY_TEX + 3;
+	box[4].tex = SKY_TEX + 4;
+	box[5].tex = SKY_TEX + 5;
 	if (poly->numverts>=32) {
 		Con_Printf ("too many verts!");
 		abort();
@@ -325,7 +365,6 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 
 	VectorSubtract (poly->verts[poly->numverts - 1], r_refdef.vieworg, v);
 	prev_face = determine_face (v);
-	p = &box[prev_face].poly;
 	VectorCopy (v, last_v);
 
 	for (i=0; i< poly->numverts; i++) {
@@ -339,17 +378,27 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 				VectorSubtract (v, last_v, l);
 				l[prev_face % 3] = 0;
 				VectorAdd (last_v, l, l);
-				p = &box[prev_face].poly;
-				VectorCopy (l, p->verts[p->numverts++]);
-				p = &box[face].poly;
-				VectorCopy (l, p->verts[p->numverts++]);
+
+				set_vertex(&box[prev_face].poly, l, prev_face);
+				set_vertex(&box[face].poly, l, face);
 			}
 		}
-		p = &box[face].poly;
-		VectorCopy (v, p->verts[p->numverts++]);
+		set_vertex(&box[face].poly, v, face);
 
 		VectorCopy (v, last_v);
 		prev_face = face;
+	}
+
+	for (i = 0; i < 6; i++) {
+		if (box[i].poly.numverts < 2)
+			continue;
+		glBegin (GL_POLYGON);
+		glBindTexture (GL_TEXTURE_2D, box[i].tex);
+		for (j=0; j < box[i].poly.numverts; j++) {
+			glTexCoord2fv (box[i].poly.verts[j]+3);
+			glVertex3fv (box[i].poly.verts[j]);
+		}
+		glEnd ();
 	}
 }
 
@@ -375,7 +424,11 @@ R_DrawSkyChain (msurface_t *sky_chain)
 {
 	if (skyloaded) {
 		while (sky_chain) {
-			R_DrawSkyBoxPoly (sky_chain->polys);
+			glpoly_t *p = sky_chain->polys;
+			while (p) {
+				R_DrawSkyBoxPoly (p);
+				p = p->next;
+			}
 			sky_chain = sky_chain->texturechain;
 		}
 	} else {

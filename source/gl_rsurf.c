@@ -931,14 +931,14 @@ void R_RecursiveWorldNode (mnode_t *node)
 			if (surf->visframe != r_framecount)
 				continue;
 
-			if ((dot < 0) ^ !!(surf->flags & SURF_PLANEBACK))
-				continue;		// wrong side
-
 			if (surf->flags & SURF_DRAWSKY) {
 				surf->texturechain = sky_chain;
 				sky_chain = surf;
 				continue;
 			}
+
+			if ((dot < 0) ^ !!(surf->flags & SURF_PLANEBACK))
+				continue;		// wrong side
 
 			if (surf->flags & SURF_DRAWTURB)
 			{
