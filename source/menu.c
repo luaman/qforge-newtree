@@ -1059,14 +1059,14 @@ void M_MultiPlayer_Draw (void) {
 	M_DrawTextBox(STAT_X,STAT_Y,23,4);
 	M_DrawTextBox(STAT_X,STAT_Y+38,23,3);
 	M_DrawTextBox(MENU_X,MENU_Y,23,(m_multip_maxs - m_multip_mins)+1);
-	for (serv = m_multip_mins; serv <= m_multip_maxs && serv < Server_List_Len(slist); serv++) {
-		cp = Server_List_Get_By_Num(slist,serv);
+	for (serv = m_multip_mins; serv <= m_multip_maxs && serv < SL_Len(slist); serv++) {
+		cp = SL_Get_By_Num(slist,serv);
 		M_Print(MENU_X+18,line*8+MENU_Y,
 			va("%1.21s",
 			strlen(cp->desc) <= m_multip_horiz ? "" : cp->desc+m_multip_horiz));
 		line++;
 	}
-	cp = Server_List_Get_By_Num(slist,m_multip_cursor);
+	cp = SL_Get_By_Num(slist,m_multip_cursor);
 	M_PrintWhite(STAT_X+18,STAT_Y+16,"IP/Hostname:");
 	M_Print(STAT_X+18,STAT_Y+24,cp->server);
 	M_DrawCharacter(MENU_X+8,(m_multip_cursor - m_multip_mins + 1) * 8+MENU_Y,
@@ -1087,7 +1087,7 @@ void M_MultiPlayer_Key (key) {
 	case KP_DOWNARROW:
 	case K_DOWNARROW:
 		S_LocalSound("misc/menu1.wav");
-		if (Server_List_Get_By_Num(slist,m_multip_cursor+1)) {
+		if (SL_Get_By_Num(slist,m_multip_cursor+1)) {
 			m_multip_cursor++;
 		}
 		break;
@@ -1107,8 +1107,8 @@ void M_MultiPlayer_Key (key) {
 	case K_PGDN:
 		S_LocalSound("misc/menu1.wav");
 		m_multip_cursor += (m_multip_maxs - m_multip_mins);
-		if (Server_List_Len(slist) - 1  < m_multip_cursor )
-			m_multip_cursor = Server_List_Len(slist) - 1;
+		if (SL_Len(slist) - 1  < m_multip_cursor )
+			m_multip_cursor = SL_Len(slist) - 1;
 		break;
 	case K_RIGHTARROW:
 		S_LocalSound("misc/menu1.wav");
@@ -1124,7 +1124,7 @@ void M_MultiPlayer_Key (key) {
 		m_state = m_main;
 		M_ToggleMenu_f();
 		CL_Disconnect();
-		strncpy(cls.servername,Server_List_Get_By_Num(slist,m_multip_cursor)->server,sizeof(cls.servername)-1);
+		strncpy(cls.servername,SL_Get_By_Num(slist,m_multip_cursor)->server,sizeof(cls.servername)-1);
 		CL_BeginServerConnect();
 		break;
 	case 'e':
@@ -1135,26 +1135,26 @@ void M_MultiPlayer_Key (key) {
 		S_LocalSound("misc/menu2.wav");
 		if (!slist) {
 			m_multip_cursor = 0;
-			slist = Server_List_Add(slist, "127.0.0.1","<BLANK>");
+			slist = SL_Add(slist, "127.0.0.1","<BLANK>");
 		}
 		else {
-		temp = Server_List_Get_By_Num(slist,m_multip_cursor);
-		slist = Server_List_InsB(slist, temp, "127.0.0.1","<BLANK>");
+		temp = SL_Get_By_Num(slist,m_multip_cursor);
+		slist = SL_InsB(slist, temp, "127.0.0.1","<BLANK>");
 		}
 		break;
 	case K_DEL:
 		S_LocalSound("misc/menu2.wav");
-		if (Server_List_Len(slist) > 0) {
-			slist = Server_List_Del(slist, Server_List_Get_By_Num(slist,m_multip_cursor));
-			if (Server_List_Len(slist) == m_multip_cursor && slist)
+		if (SL_Len(slist) > 0) {
+			slist = SL_Del(slist, SL_Get_By_Num(slist,m_multip_cursor));
+			if (SL_Len(slist) == m_multip_cursor && slist)
 				m_multip_cursor--;
 		}
 		break;
 	case ']':
 	case '}':
 		S_LocalSound("misc/menu1.wav");
-		if (m_multip_cursor != Server_List_Len(slist) - 1) {
-			Server_List_Swap(Server_List_Get_By_Num(slist,m_multip_cursor),Server_List_Get_By_Num(slist,m_multip_cursor+1));
+		if (m_multip_cursor != SL_Len(slist) - 1) {
+			SL_Swap(SL_Get_By_Num(slist,m_multip_cursor),SL_Get_By_Num(slist,m_multip_cursor+1));
 			m_multip_cursor++;
 		}
 		break;
@@ -1162,7 +1162,7 @@ void M_MultiPlayer_Key (key) {
 	case '{':
 		S_LocalSound("misc/menu1.wav");
 		if (m_multip_cursor) {
-			Server_List_Swap(Server_List_Get_By_Num(slist,m_multip_cursor),Server_List_Get_By_Num(slist,m_multip_cursor-1));
+			SL_Swap(SL_Get_By_Num(slist,m_multip_cursor),SL_Get_By_Num(slist,m_multip_cursor-1));
 			m_multip_cursor--;
 		}
 		break;
@@ -1191,15 +1191,15 @@ int serv_max;
 int serv_min;
 int desc_max;
 int desc_min;
-int sedit_state;
+qboolean sedit_state;
 
 void M_Menu_SEdit_f (void) {
 	server_entry_t *c;
 	key_dest = key_menu;
 	m_entersound = true;
 	m_state = m_sedit;
-	sedit_state = 0;
-	c = Server_List_Get_By_Num(slist,m_multip_cursor);
+	sedit_state = false;
+	c = SL_Get_By_Num(slist,m_multip_cursor);
 	strncpy(serv,c->server,255);
 	serv[strlen(c->server) + 1] = 0;
 	strncpy(desc,c->desc,255);
@@ -1235,12 +1235,13 @@ void M_SEdit_Draw (void) {
 void M_SEdit_Key (int key) {
 	int	l;
 	server_entry_t *c;
+
 	switch (key) {
 		case K_ESCAPE:
 			M_Menu_MultiPlayer_f ();
 			break;
 		case K_ENTER:
-			c = Server_List_Get_By_Num(slist,m_multip_cursor);
+			c = SL_Get_By_Num(slist,m_multip_cursor);
 			free(c->server);
 			free(c->desc);
 			c->server = malloc(strlen(serv) + 1);
@@ -1251,60 +1252,54 @@ void M_SEdit_Key (int key) {
 			break;
 		case K_UPARROW:
 			S_LocalSound("misc/menu1.wav");
-			sedit_state = sedit_state == 0 ? 1 : 0;
+			sedit_state = !sedit_state; 
 			break;
 		case K_DOWNARROW:
 			S_LocalSound("misc/menu1.wav");
-			sedit_state = sedit_state == 1 ? 0 : 1;
+			sedit_state = !sedit_state; 
 			break;
 		case K_BACKSPACE:
-			switch (sedit_state) {
-				case 0:
+			if (sedit_state) {
+				if ((l = strlen(desc)))
+					desc[--l] = 0;
+				if (strlen(desc)-6 < desc_min && desc_min) {
+					desc_min--;
+					desc_max--;
+				}
+			}
+			else {
 					if ((l = strlen(serv)))
 						serv[--l] = 0;
 					if (strlen(serv)-6 < serv_min && serv_min) {
 						serv_min--;
 						serv_max--;
 					}
-					break;
-				case 1:
-					if ((l = strlen(desc)))
-						desc[--l] = 0;
-					if (strlen(desc)-6 < desc_min && desc_min) {
-						desc_min--;
-						desc_max--;
-					}
-					break;
-				default:
-					break;
 			}
 			break;
 		default:
 			if (key < 32 || key > 127)
 				break;
-			switch(sedit_state) {
-				case 0:
-					l = strlen(serv);
-					if (l < 254) {
-						serv[l+1] = 0;
-						serv[l] = key;
-					}
-					if (strlen(serv) > serv_max) {
-						serv_min++;
-						serv_max++;
-					}
-					break;
-				case 1:
-					l = strlen(desc);
-					if (l < 254) {
-						desc[l+1] = 0;
-						desc[l] = key;
-					}
-					if (strlen(desc) > desc_max) {
-						desc_min++;
-						desc_max++;
-					}
-					break;
+			if (sedit_state) {
+				l = strlen(desc);
+				if (l < 254) {
+					desc[l+1] = 0;
+					desc[l] = key;
+				}
+				if (strlen(desc) > desc_max) {
+					desc_min++;
+					desc_max++;
+				}
+			}
+			else {	
+				l = strlen(serv);
+				if (l < 254) {
+					serv[l+1] = 0;
+					serv[l] = key;
+				}
+				if (strlen(serv) > serv_max) {
+					serv_min++;
+					serv_max++;
+				}
 			}
 			break;
 	}

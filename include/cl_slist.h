@@ -42,18 +42,18 @@ typedef struct server_entry_s {
   
 extern server_entry_t	*slist;
   
-server_entry_t *Server_List_Add(server_entry_t *start, char *ip, char *desc);
-server_entry_t *Server_List_Del(server_entry_t *start, server_entry_t *del);
-server_entry_t *Server_List_InsB(server_entry_t *start, server_entry_t *place, char *ip, char *desc);
-void Server_List_Swap(server_entry_t *swap1, server_entry_t *swap2);
-server_entry_t *Server_List_Get_By_Num(server_entry_t *start, int n);
-int Server_List_Len(server_entry_t *start);
+server_entry_t *SL_Add(server_entry_t *start, char *ip, char *desc);
+server_entry_t *SL_Del(server_entry_t *start, server_entry_t *del);
+server_entry_t *SL_InsB(server_entry_t *start, server_entry_t *place, char *ip, char *desc);
+void SL_Swap(server_entry_t *swap1, server_entry_t *swap2);
+server_entry_t *SL_Get_By_Num(server_entry_t *start, int n);
+int SL_Len(server_entry_t *start);
 
-server_entry_t *Server_List_LoadF(FILE *f, server_entry_t *start);
-void Server_List_SaveF(FILE *f, server_entry_t *start);
+server_entry_t *SL_LoadF(FILE *f, server_entry_t *start);
+void SL_SaveF(FILE *f, server_entry_t *start);
 
-void Server_List_Del_All(server_entry_t *start);
-void Server_List_Shutdown(server_entry_t *start);
+void SL_Del_All(server_entry_t *start);
+void SL_Shutdown(server_entry_t *start);
 
 char *gettokstart(char *str, int req, char delim);
 int gettoklen(char *str, int req, char delim);

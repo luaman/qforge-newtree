@@ -1140,7 +1140,7 @@ void CL_Init (void)
 	
 	Qexpand_squiggle(fs_userpath->string, e_path);
 	if ((servlist = fopen(va("%s/servers.txt", e_path), "r"))) {
-		slist = Server_List_LoadF(servlist,slist);
+		slist = SL_LoadF(servlist,slist);
 		fclose(servlist);
 	}
 	
@@ -1631,7 +1631,7 @@ void Host_Shutdown(void)
 	}
 	isdown = true;
 
-	Server_List_Shutdown (slist);
+	SL_Shutdown (slist);
 
 	Host_WriteConfiguration (); 
 		

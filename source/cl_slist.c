@@ -42,7 +42,7 @@
 
 server_entry_t	*slist;
   
-server_entry_t *Server_List_Add (server_entry_t *start, char *ip, char *desc) {
+server_entry_t *SL_Add (server_entry_t *start, char *ip, char *desc) {
 	server_entry_t *p;
 	p = start;
 	if (!start) { //Nothing at beginning of list, create it
@@ -70,7 +70,7 @@ server_entry_t *Server_List_Add (server_entry_t *start, char *ip, char *desc) {
 	return (start);
 	}
 
-server_entry_t *Server_List_Del(server_entry_t *start, server_entry_t *del) {
+server_entry_t *SL_Del(server_entry_t *start, server_entry_t *del) {
 	server_entry_t *n;
 	if (del == start) {
 		Z_Free(start->server);
@@ -92,7 +92,7 @@ server_entry_t *Server_List_Del(server_entry_t *start, server_entry_t *del) {
 	return (start);
 }
 
-server_entry_t *Server_List_InsB (server_entry_t *start, server_entry_t *place, char *ip, char *desc) {
+server_entry_t *SL_InsB (server_entry_t *start, server_entry_t *place, char *ip, char *desc) {
 		server_entry_t *new;
 		server_entry_t *other;
 	
@@ -112,7 +112,7 @@ server_entry_t *Server_List_InsB (server_entry_t *start, server_entry_t *place, 
 		return start;
 }
 
-void Server_List_Swap (server_entry_t *swap1, server_entry_t *swap2) {
+void SL_Swap (server_entry_t *swap1, server_entry_t *swap2) {
 		char *p;
 		p = swap1->server;
 		swap1->server = swap2->server;
@@ -122,23 +122,23 @@ void Server_List_Swap (server_entry_t *swap1, server_entry_t *swap2) {
 		swap2->desc = p;
 }
   
-server_entry_t *Server_List_Get_By_Num (server_entry_t *start, int n) {
+server_entry_t *SL_Get_By_Num (server_entry_t *start, int n) {
 	int i;
 	for (i=0;i < n;i++)
 		start = start->next;
-		if (!start)
-			return (0);
+	if (!start)
+		return (0);
 	return (start);
 }
   
-int Server_List_Len (server_entry_t *start) {
+int SL_Len (server_entry_t *start) {
 	int i;
 	for (i=0;start;i++)
 		start=start->next;
 	return i;
   }
   
-server_entry_t *Server_List_LoadF (FILE *f,server_entry_t *start) { // This could get messy
+server_entry_t *SL_LoadF (FILE *f,server_entry_t *start) { // This could get messy
   	char line[256]; /* Long lines get truncated. */
   	int c = ' ';    /* int so it can be compared to EOF properly*/
   	int len;
@@ -164,10 +164,10 @@ server_entry_t *Server_List_LoadF (FILE *f,server_entry_t *start) { // This coul
   			strncpy(addr,&line[0],len);
   			addr[len] = '\0';
  			if ((st = gettokstart(line,2,' '))) {
- 				start = Server_List_Add(start,addr,st);
+ 				start = SL_Add(start,addr,st);
   			}
   			else {
- 				start = Server_List_Add(start,addr,"Unknown");
+ 				start = SL_Add(start,addr,"Unknown");
   			}
   		} 
   		if (c == EOF)  // We're done
@@ -175,7 +175,7 @@ server_entry_t *Server_List_LoadF (FILE *f,server_entry_t *start) { // This coul
   	}
 }
 
- void Server_List_SaveF (FILE *f,server_entry_t *start) {
+ void SL_SaveF (FILE *f,server_entry_t *start) {
  	do {
  		fprintf(f,"%s   %s\n",start->server,start->desc);
  		start = start->next;
@@ -183,21 +183,21 @@ server_entry_t *Server_List_LoadF (FILE *f,server_entry_t *start) { // This coul
  	} while (start);
  }
  
- void Server_List_Shutdown (server_entry_t *start) {
+ void SL_Shutdown (server_entry_t *start) {
  	FILE	*f;
 	char	e_path[MAX_OSPATH];
 	
  	if (start) {
 		Qexpand_squiggle(fs_userpath->string, e_path);
  		if ((f = fopen(va("%s/servers.txt", e_path),"w"))) {
- 			Server_List_SaveF(f,start);
+ 			SL_SaveF(f,start);
  			fclose(f);
  		}
- 		Server_List_Del_All (start);
+ 		SL_Del_All (start);
   	}
   }
  
- void Server_List_Del_All (server_entry_t *start) {
+ void SL_Del_All (server_entry_t *start) {
  	server_entry_t *n;
  	while (start) {
  		n = start->next;
