@@ -3,11 +3,7 @@
 
 	general video driver functions
 
-	Copyright (C) 1996-1997  Id Software, Inc.
-	Copyright (C) 1999-2000  contributors of the QuakeForge project
-	Copyright (C) 2000       Marcus Sundberg [mackan@stacken.kth.se]
-	Copyright (C) 1999,2000  contributors of the QuakeForge project
-	Please see the file "AUTHORS" for a list of contributors
+	Copyright (C) 1996-1997 Id Software, Inc.
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -29,9 +25,9 @@
 
 	$Id$
 */
-#define _BSD
+
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
 
 #include "cvar.h"
@@ -40,13 +36,14 @@
 #include "qargs.h"
 #include "sys.h"
 
-extern viddef_t        vid; // global video state
+extern viddef_t vid; // global video state
 
 int		scr_width, scr_height;
 cvar_t	*vid_width;
 cvar_t	*vid_height;
 
-void VID_GetWindowSize (int def_w, int def_h)
+void
+VID_GetWindowSize (int def_w, int def_h)
 {
 	int pnum;
 

@@ -31,6 +31,7 @@
 #endif
 
 #include <GL/gl.h>
+
 #ifdef HAVE_GL_GLEXT_H
 #include <GL/glext.h>
 #endif
@@ -59,7 +60,7 @@
 #define WARP_HEIGHT             200
 
 #ifdef HAVE_DLOPEN
-static void     *dlhand = NULL;
+static void 	*dlhand = NULL;
 #endif
 
 //unsigned short	d_8to16table[256];
@@ -70,9 +71,9 @@ cvar_t	*vid_mode;
 
 /*-----------------------------------------------------------------------*/
 
-int		texture_mode = GL_LINEAR;
+int 	texture_mode = GL_LINEAR;
 int		texture_extension_number = 1;
-float		gldepthmin, gldepthmax;
+float	gldepthmin, gldepthmax;
 
 const char *gl_vendor;
 const char *gl_renderer;
@@ -96,7 +97,7 @@ cvar_t *vid_use8bit;
 */
 
 void
-CheckMultiTextureExtensions ( void )
+CheckMultiTextureExtensions (void)
 {
 	Con_Printf ("Checking for multitexture... ");
 	if (COM_CheckParm ("-nomtex")) {
@@ -162,7 +163,7 @@ VID_SetPalette (unsigned char *palette)
 
 	pal = palette;
 	table = d_8to24table;
-	for (i=0 ; i<255 ; i++) { // used to be i<256, see d_8to24table below
+	for (i = 0; i < 255; i++) { // used to be i<256, see d_8to24table below
 		r = pal[0];
 		g = pal[1];
 		b = pal[2];
@@ -186,18 +187,20 @@ VID_SetPalette (unsigned char *palette)
 		Qread(f, d_15to8table, 1<<15);
 		Qclose(f);
 	} else {
-		for (i=0; i < (1<<15); i++) {
+		for (i = 0; i < (1<<15); i++) {
 			/* Maps
  			000000000000000
  			000000000011111 = Red  = 0x1F
  			000001111100000 = Blue = 0x03E0
  			111110000000000 = Grn  = 0x7C00
  			*/
- 			r = ((i & 0x1F) << 3)+4;
- 			g = ((i & 0x03E0) >> 2)+4;
- 			b = ((i & 0x7C00) >> 7)+4;
-			pal = (unsigned char *)d_8to24table;
-			for (v=0,k=0,bestdist=10000.0; v<256; v++,pal+=4) {
+ 			r = ((i & 0x1F) << 3) + 4;
+ 			g = ((i & 0x03E0) >> 2) + 4;
+ 			b = ((i & 0x7C00) >> 7) + 4;
+
+			pal = (unsigned char *) d_8to24table;
+
+			for (v=0, k=0, bestdist = 10000.0; v<256; v++,pal+=4) {
  				r1 = (int)r - (int)pal[0];
  				g1 = (int)g - (int)pal[1];
  				b1 = (int)b - (int)pal[2];
