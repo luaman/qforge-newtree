@@ -41,8 +41,9 @@
 #include "msg.h"
 #include "net.h"
 #include "protocol.h"
-#include "quakeio.h"
+#include "quakefs.h"
 #include "server.h"
+#include "va.h"
 
 cvar_t     *netlogger;
 cvar_t     *netloglevel;
@@ -196,8 +197,11 @@ Net_LogPrintf (char *fmt, ...)
 int
 Net_LogStart (char *fname)
 {
+	char        e_path[MAX_OSPATH];
+
+	Qexpand_squiggle (fs_userpath->string, e_path);
 	Con_Printf ("Opening packet logfile: %s\n", fname);
-	Net_PacketLog = Qopen (fname, "wt+");
+	Net_PacketLog = Qopen (va ("%s/%s", e_path, fname), "wt+");
 	if (!Net_PacketLog)
 		return -1;
 	return 0;
@@ -968,6 +972,6 @@ Net_Log_Init (void)
 	netloglevel =
 		Cvar_Get ("net_loglevel", "2", CVAR_NONE, "Packet logging/parsing");
 
-	Net_LogStart ("QFPACKET.LOG");
+	Net_LogStart ("qfpacket.log");
 	return 0;
 }
