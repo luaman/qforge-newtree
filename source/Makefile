@@ -230,3 +230,4 @@ clean:
 -include $(CL_SVGA_dependencies)
 -include $(CL_X11_dependencies)
 -include $(CL_GLX_dependencies)
+-include $(CL_GGI_dependencies)
