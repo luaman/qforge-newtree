@@ -29,15 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <stdlib.h>
-
 #ifdef HAVE_STRING_H
 # include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
 # include <strings.h>
 #endif
+
+#include <stdlib.h>
 
 #include "cmd.h"
 #include "console.h"
@@ -494,9 +493,9 @@ R_RocketTrail (int type, entity_t *ent)
 				VectorCopy (ent->old_origin, porg);
 				break;
 			case 4:					// slight blood
-				len -= 3;
+				len -= 4;
 			case 2:					// blood
-				len -= 3;
+				len -= 4;
 				ptex = part_tex_dot;
 				pcolor = 68 + (rand () & 3);
 				pdie = cl.time + 2;
