@@ -1158,9 +1158,8 @@ SV_SetInfo_f (void)
 //  host_client->sendinfo = true;
 
 	if (strequal
-		(Info_ValueForKey (host_client->userinfo, Cmd_Argv (1)), oldval)) return;	// key 
-																					// hasn't 
-																					// changed
+		(Info_ValueForKey (host_client->userinfo, Cmd_Argv (1)), oldval))
+		return;								// key hasn't changed
 
 	// process any changed values
 	SV_ExtractFromUserinfo (host_client);

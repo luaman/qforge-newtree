@@ -684,7 +684,7 @@ SVC_DirectConnect (void)
 	}
 
 	s = Info_ValueForKey (userinfo, "*qf_version");
-	if ((!s[0]) || sv_minqfversion->value) {	// kick old clients?
+	if ((!s[0]) || sv_minqfversion->string[0]) {	// kick old clients?
 		if (ver_compare (s, sv_minqfversion->string) < 0) {
 			Con_Printf ("%s: Version %s is less than minimum version %s.\n",
 						NET_AdrToString (net_from), s, sv_minqfversion->string);
