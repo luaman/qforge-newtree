@@ -36,7 +36,7 @@
 #include <signal.h>
 #include <values.h>
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 #include "qtypes.h"
 #include "quakedef.h"
