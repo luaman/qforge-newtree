@@ -726,7 +726,7 @@ void R_DrawViewModel (void)
 	 || envmap
 	 || !r_drawentities->value
 	 || (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
-	 || cl.stats[STAT_HEALTH] <= 0)
+	 || cl.stats[STAT_HEALTH] <= 0
 	 || !currententity->model)
 		return;
 
