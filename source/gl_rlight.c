@@ -106,7 +106,7 @@ void AddLightBlend (float r, float g, float b, float a2)
 //Con_Printf("AddLightBlend(): %4.2f %4.2f %4.2f %4.6f\n", v_blend[0], v_blend[1], v_blend[2], v_blend[3]);
 }
 
-float bubble_sintable[17], bubble_costable[17];
+float bubble_sintable[33], bubble_costable[33];
 
 void R_InitBubble() {
 	float a;
@@ -116,9 +116,9 @@ void R_InitBubble() {
 	bub_sin = bubble_sintable;
 	bub_cos = bubble_costable;
 
-	for (i=16 ; i>=0 ; i--)
+	for (i=32 ; i>=0 ; i--)
 	{
-		a = i/16.0 * M_PI*2;
+		a = i/32.0 * M_PI*2;
 		*bub_sin++ = sin(a);
 		*bub_cos++ = cos(a);
 	}
@@ -157,8 +157,8 @@ void R_RenderDlight (dlight_t *light)
 		for (j=0 ; j<3 ; j++)
 			v[j] = light->origin[j] + (vright[j]*(*bub_cos) +
 				+ vup[j]*(*bub_sin)) * rad;
-		bub_sin++; 
-		bub_cos++;
+		bub_sin+=2; 
+		bub_cos+=2;
 		glVertex3fv (v);
 	}
 	glEnd ();

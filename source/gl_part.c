@@ -781,8 +781,8 @@ R_DrawFire (fire_t *f)
 		glVertex3fv (vec);
 		glVertex3fv (vec2);
 
-		b_sin++;
-		b_cos++;
+		b_sin+=2;
+		b_cos+=2;
 	}
 	glEnd ();
 }

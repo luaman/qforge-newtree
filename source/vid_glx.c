@@ -183,7 +183,7 @@ VID_Shutdown(void)
 #endif
 	x11_close_display();
 }
-
+#if 0
 static void
 signal_handler(int sig)
 {
@@ -206,7 +206,7 @@ InitSig(void)
 	signal(SIGSEGV, signal_handler);
 	signal(SIGTERM, signal_handler);
 }
-
+#endif
 void VID_ShiftPalette(unsigned char *p)
 {
 	VID_SetPalette(p);

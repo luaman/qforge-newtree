@@ -297,7 +297,7 @@ void R_RotateForEntity (entity_t *e);
 // gl_rlight.c
 //
 
-extern float bubble_sintable[17], bubble_costable[17];
+extern float bubble_sintable[], bubble_costable[];
 extern float v_blend[4];
 
 void R_MarkLights (dlight_t *light, int bit, mnode_t *node);

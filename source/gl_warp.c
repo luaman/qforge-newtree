@@ -677,21 +677,22 @@ vec3_t domescale;
 void
 R_DrawSkyLayer (float s)
 {
-	float a, b, x, y, a1x, a1y, a2x, a2y;
+	int a, b;
+	float x, y, a1x, a1y, a2x, a2y;
 	vec3_t v;
 	
-	for (a = 0; a < 1; a += (1.0 / 32.0))
+	for (a = 0; a < 32; a++)
 	{
-		a1x = cos(a * M_PI * 2);
-		a1y = -sin(a * M_PI * 2);
-		a2x = cos((a+(1.0/32.0)) * M_PI * 2);
-		a2y = -sin((a+(1.0/32.0)) * M_PI * 2);
+		a1x = bubble_costable[a];
+		a1y = -bubble_sintable[a];
+		a2x = bubble_costable[a+1];
+		a2y = -bubble_sintable[a+1];
 
 		glBegin (GL_TRIANGLE_STRIP);
-		for (b = 0; b <= 1; b += (1.0 / 32.0))
+		for (b = 0; b <= 32; b++)
 		{
-			x = cos(b * M_PI * 2);
-			y = -sin(b * M_PI * 2);
+			x = bubble_costable[b];
+			y = -bubble_sintable[b];
 
 			v[0] = a1x*x * domescale[0];
 			v[1] = a1y*x * domescale[1];
