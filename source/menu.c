@@ -30,8 +30,11 @@
 # include "config.h"
 #endif
 
-#ifndef _WIN32
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -56,7 +59,7 @@
 #include "cl_input.h"
 #include "net.h"
 
-#ifndef _WIN32
+#ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
 
