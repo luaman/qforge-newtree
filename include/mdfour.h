@@ -30,9 +30,7 @@
 #ifndef _MDFOUR_H
 #define _MDFOUR_H
 
-#ifndef _UINT32_H
-#include	<uint32.h>
-#endif
+#include	"uint32.h"
 
 struct mdfour {
 	uint32 A, B, C, D;
