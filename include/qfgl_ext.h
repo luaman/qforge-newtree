@@ -60,11 +60,24 @@
 
 // OpenGL numbers for extensions we use or want to use
 #ifndef GL_EXT_bgra
+#define GL_EXT_bgra
 # define GL_BGR_EXT 						0x80E0
 # define GL_BGRA_EXT						0x80E1
 #endif
 
+#ifndef GL_EXT_paletted_texture
+#define GL_EXT_paletted_texture
+#define GL_COLOR_INDEX1_EXT 				0x80E2
+#define GL_COLOR_INDEX2_EXT 				0x80E3
+#define GL_COLOR_INDEX4_EXT 				0x80E4
+#define GL_COLOR_INDEX8_EXT 				0x80E5
+#define GL_COLOR_INDEX12_EXT				0x80E6
+#define GL_COLOR_INDEX16_EXT				0x80E7
+#define GL_TEXTURE_INDEX_SIZE_EXT			0x80ED
+#endif
+
 #ifndef GL_EXT_texture_object
+#define GL_EXT_texture_object
 #define GL_TEXTURE_PRIORITY_EXT 			0x8066
 #define GL_TEXTURE_RESIDENT_EXT 			0x8067
 #define GL_TEXTURE_1D_BINDING_EXT			0x8068
@@ -73,17 +86,20 @@
 #endif
 
 #ifndef GL_EXT_point_parameters
+#define GL_EXT_point_parameters
 #define GL_POINT_SIZE_MIN_EXT				0x8126
 #define GL_POINT_SIZE_MAX_EXT				0x8127
 #define GL_POINT_FADE_THRESHOLD_SIZE_EXT	0x8128
 #define GL_DISTANCE_ATTENUATION_EXT 		0x8129
 #endif
 
-#ifndef GL_SHARED_TEXTURE_PALETTE_EXT
-#define GL_SHARED_TEXTURE_PALETTE_EXT 0x81FB
+#ifndef GL_EXT_shared_texture_palette
+#define GL_EXT_shared_texture_palette
+#define GL_SHARED_TEXTURE_PALETTE_EXT		0x81FB
 #endif
 
 #ifndef GL_ARB_multitexture
+#define GL_ARB_multitexture
 #define GL_TEXTURE0_ARB 					0x84C0
 #define GL_TEXTURE1_ARB 					0x84C1
 #define GL_TEXTURE2_ARB 					0x84C2

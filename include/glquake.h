@@ -154,20 +154,20 @@ extern cvar_t	*r_dynamic;
 extern cvar_t	*r_novis;
 extern cvar_t	*r_netgraph;
 
+extern cvar_t	*gl_affinemodels;
 extern cvar_t	*gl_clear;
 extern cvar_t	*gl_cull;
-extern cvar_t	*gl_poly;
-extern cvar_t	*gl_texsort;
-extern cvar_t	*gl_smooth;
-extern cvar_t	*gl_smoothdlights;
-extern cvar_t	*gl_affinemodels;
-extern cvar_t	*gl_polyblend;
-extern cvar_t	*gl_keeptjunctions;
+extern cvar_t	*gl_fb_bmodels;
+extern cvar_t	*gl_fb_models;
 extern cvar_t	*gl_flashblend;
+extern cvar_t	*gl_keeptjunctions;
+extern cvar_t	*gl_multitexture;
 extern cvar_t	*gl_nocolors;
 extern cvar_t	*gl_particles;
-extern cvar_t	*gl_fb_models;
-extern cvar_t	*gl_fb_bmodels;
+extern cvar_t	*gl_poly;
+extern cvar_t	*gl_polyblend;
+extern cvar_t	*gl_smooth;
+extern cvar_t	*gl_smoothdlights;
 
 extern cvar_t	*gl_max_size;
 extern cvar_t	*gl_playermip;
@@ -195,6 +195,8 @@ extern QF_glActiveTextureARB	qglActiveTexture;
 extern QF_glMultiTexCoord2fARB	qglMultiTexCoord2f;
 extern qboolean 				gl_mtex_capable;
 extern GLenum					gl_mtex_enum;
+// convenience check
+#define gl_mtex_active	(gl_mtex_capable && gl_multitexture->int_val)
 
 void GL_DisableMultitexture (void);
 void GL_EnableMultitexture (void);
