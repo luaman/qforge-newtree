@@ -30,6 +30,8 @@
 # include "config.h"
 #endif
 
+#include <stdarg.h>
+
 #include "console.h"
 #include "cvar.h"
 #include "progs.h"
