@@ -90,7 +90,10 @@ extern int		window_center_x, window_center_y;
 extern RECT		window_rect;
 
 extern qboolean	mouseinitialized;
+
+#ifdef SPLASH_SCREEN
 extern HWND		hwnd_dialog;
+#endif
 
 extern HANDLE	hinput, houtput;
 
