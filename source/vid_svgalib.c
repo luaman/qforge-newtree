@@ -572,8 +572,8 @@ VID_Init (unsigned char *palette)
 		VID_InitModes ();
 
 		Cmd_AddCommand ("vid_nummodes", VID_NumModes_f, "Reports the total number of video modes available.");
-		Cmd_AddCommand ("vid_describemode", VID_DescribeMode_f, "Report information on specified video mode, default is current.
-(vid_describemode (mode))");
+		Cmd_AddCommand ("vid_describemode", VID_DescribeMode_f, "Report information on specified video mode, default is current.\n"
+			"(vid_describemode (mode))");
 		Cmd_AddCommand ("vid_describemodes", VID_DescribeModes_f, "Report information on all video modes.");
 		Cmd_AddCommand ("vid_debug", VID_Debug_f, "FIXME: No Description");
 
