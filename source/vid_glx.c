@@ -36,6 +36,7 @@
 #include <ctype.h>
 #include <signal.h>
 #include <values.h>
+#include <string.h>
 
 #ifdef HAVE_DLFCN_H
 # include <dlfcn.h>
@@ -56,9 +57,6 @@
 #ifdef HAVE_DGA
 # include <X11/extensions/xf86dga.h>
 #endif
-#ifdef HAVE_VIDMODE
-# include <X11/extensions/xf86vmode.h>
-#endif
 
 #ifdef XMESA
 # include <GL/xmesa.h>
@@ -74,7 +72,9 @@
 #include "keys.h"
 #include "menu.h"
 #include "sys.h"
+#include "quakefs.h"
 #include "draw.h"
+#include "input.h"
 #include "sbar.h"
 #include "context_x11.h"
 #include "dga_check.h"
@@ -84,26 +84,16 @@
 
 static qboolean		vid_initialized = false;
 
-static int		screen;
-Window			x_win;
 static GLXContext	ctx = NULL;
-static Cursor	nullcursor = None;
-
-#define X_MASK (VisibilityChangeMask | StructureNotifyMask)
 
 unsigned short	d_8to16table[256];
 unsigned int	d_8to24table[256];
 unsigned char	d_15to8table[65536];
 
 cvar_t	*vid_mode;
-cvar_t	*vid_fullscreen;
 extern cvar_t	*gl_triplebuffer;
 extern cvar_t	*in_dga_mouseaccel;
 
-#ifdef HAVE_VIDMODE
-static XF86VidModeModeInfo **vidmodes;
-static int	nummodes, hasvidmode = 0;
-#endif
 #ifdef HAVE_DGA
 static int	hasdgavideo = 0;
 static int	hasdga = 0;
@@ -149,35 +139,6 @@ int gl_mtex_enum = TEXTURE0_SGIS;
 qboolean gl_arb_mtex = false;
 qboolean gl_mtexable = false;
 
-/*
-======================
-Create an empty cursor
-======================
-*/
-
-static void
-CreateNullCursor(Display *display, Window root)
-{
-    Pixmap cursormask;
-    XGCValues xgc;
-    GC gc;
-    XColor dummycolour;
-
-	if (nullcursor != None) return;
-
-	cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
-	xgc.function = GXclear;
-	gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
-	XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
-	dummycolour.pixel = 0;
-	dummycolour.red = 0;
-	dummycolour.flags = 04;
-	nullcursor = XCreatePixmapCursor(display, cursormask, cursormask,
-									 &dummycolour,&dummycolour, 0,0);
-	XFreePixmap(display,cursormask);
-	XFreeGC(display,gc);
-}
-
 
 /*-----------------------------------------------------------------------*/
 void D_BeginDirectRect (int x, int y, byte *pbitmap, int width, int height)
@@ -198,28 +159,13 @@ VID_Shutdown(void)
 	XDestroyWindow(x_disp, x_win);
 	glXDestroyContext(x_disp, ctx);
 
-#ifdef HAVE_VIDMODE
-	if (hasvidmode) {
-		int i;
-
-		XF86VidModeSwitchToMode (x_disp, DefaultScreen (x_disp),
-								 vidmodes[0]);
-		for (i = 0; i < nummodes; i++) {
-		//	if (vidmodes[i]->privsize) XFree(vidmodes[i]->private);
-		}
-		XFree(vidmodes);
-	}
-#endif
+	x11_restore_vidmode();
 #ifdef HAVE_DLOPEN
 	if (dlhand) {
 		dlclose(dlhand);
 		dlhand = NULL;
 	}
 #endif
-	if (nullcursor != None) {
-		XFreeCursor(x_disp, nullcursor);
-		nullcursor = None;
-	}
 	x11_close_display();
 }
 #if 0
@@ -510,13 +456,8 @@ void VID_Init(unsigned char *palette)
 	};
 	char	gldir[MAX_OSPATH];
 	int width = 640, height = 480;
-	XSetWindowAttributes attr;
-	unsigned long mask;
-	Window root;
-	XVisualInfo *visinfo;
 
 	vid_mode = Cvar_Get ("vid_mode","0",0,"None");
-	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
 #ifdef HAVE_DGA
 	in_dga_mouseaccel = Cvar_Get("vid_dga_mouseaccel","1",CVAR_ARCHIVE,
 					"None");
@@ -555,14 +496,12 @@ void VID_Init(unsigned char *palette)
 
 	x11_open_display();
 
-	screen = DefaultScreen(x_disp);
-	root = RootWindow(x_disp, screen);
-
-	visinfo = glXChooseVisual(x_disp, screen, attrib);
-	if (!visinfo) {
+	x_visinfo = glXChooseVisual(x_disp, x_screen, attrib);
+	if (!x_visinfo) {
 		fprintf(stderr, "Error couldn't get an RGB, Double-buffered, Depth visual\n");
 		exit(1);
 	}
+	x_vis = x_visinfo->visual;
 
 #ifdef HAVE_DGA
 	{
@@ -574,17 +513,6 @@ void VID_Init(unsigned char *palette)
 		}
 	}
 	Con_SafePrintf ("hasdga = %i\nhasdgavideo = %i\n", hasdga, hasdgavideo);
-#endif
-#ifdef HAVE_VIDMODE
-	hasvidmode = VID_CheckVMode(x_disp, NULL, NULL);
-	if (hasvidmode) {
-		if (! XF86VidModeGetAllModeLines(x_disp, DefaultScreen(x_disp),
-						 &nummodes, &vidmodes)
-		    || nummodes <= 0) {
-			hasvidmode = 0;
-		}
-	}
-	Con_SafePrintf ("hasvidmode = %i\nnummodes = %i\n", hasvidmode, nummodes);
 #endif
 #ifdef HAVE_DLOPEN
 	dlhand = dlopen(NULL, RTLD_LAZY);
@@ -617,69 +545,19 @@ void VID_Init(unsigned char *palette)
 //		hasdga = 0;
 	}
 
-	/* window attributes */
-	attr.background_pixel = 0;
-	attr.border_pixel = 0;
-	attr.colormap = XCreateColormap(x_disp, root, visinfo->visual, AllocNone);
-	attr.event_mask = X_MASK;
-	mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
-
-#ifdef HAVE_VIDMODE
-	if (hasvidmode && vid_fullscreen->value) {
-		int smallest_mode=0, x=MAXINT, y=MAXINT;
-
-		attr.override_redirect=1;
-		mask|=CWOverrideRedirect;
-
-		// FIXME: does this depend on mode line order in XF86Config?
-		for (i=0; i<nummodes; i++) {
-			if (x>vidmodes[i]->hdisplay || y>vidmodes[i]->vdisplay) {
-				smallest_mode=i;
-				x=vidmodes[i]->hdisplay;
-				y=vidmodes[i]->vdisplay;
-			}
-			printf("%dx%d\n",vidmodes[i]->hdisplay,vidmodes[i]->vdisplay);
-		}
-		// chose the smallest mode that our window fits into;
-		for (i=smallest_mode;
-			 i!=(smallest_mode+1)%nummodes;
-			 i=(i?i-1:nummodes-1)) {
-			if (vidmodes[i]->hdisplay>=width
-				&& vidmodes[i]->vdisplay>=height) {
-				XF86VidModeSwitchToMode (x_disp, DefaultScreen (x_disp),
-										 vidmodes[i]);
-				break;
-			}
-		}
-		XF86VidModeSetViewPort(x_disp, DefaultScreen (x_disp), 0, 0);
-		_windowed_mouse = Cvar_Get ("_windowed_mouse","1",CVAR_ARCHIVE|CVAR_ROM,"None");
-	} else
-#endif
-		_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
-
-	x_win = XCreateWindow(x_disp, root, 0, 0, width, height,
-						0, visinfo->depth, InputOutput,
-						visinfo->visual, mask, &attr);
-	XMapWindow(x_disp, x_win);
-	XRaiseWindow(x_disp, x_win);
-
+	x11_set_vidmode(width, height);
+	x11_create_window(width, height);
 	/* Invisible cursor */
-	CreateNullCursor(x_disp, x_win);
-	XDefineCursor(x_disp, x_win, nullcursor);
+	x11_create_null_cursor();
 
 	XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
 				 vid.width+2, vid.height+2);
 
-#ifdef HAVE_VIDMODE
-	if (hasvidmode && vid_fullscreen->value) {
-		XGrabKeyboard(x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
-					  CurrentTime);
-	}
-#endif
+	x11_grab_keyboard();
 
 	XSync(x_disp, 0);
 
-	ctx = glXCreateContext(x_disp, visinfo, NULL, True);
+	ctx = glXCreateContext(x_disp, x_visinfo, NULL, True);
 
 	glXMakeCurrent(x_disp, x_win, ctx);
 

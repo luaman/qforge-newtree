@@ -79,18 +79,8 @@
 extern viddef_t        vid; // global video state
 unsigned short	d_8to16table[256];
 
-Window				x_win;
 static Colormap		x_cmap;
 static GC			x_gc;
-static Visual		*x_vis;
-static XVisualInfo	*x_visinfo;
-static Atom			aWMDelete = 0;
-static Cursor		nullcursor = None;
-
-#ifdef HAVE_VIDMODE
-static XF86VidModeModeInfo **vidmodes;
-static int	nummodes, hasvidmode = 0;
-#endif
 
 int 	XShmQueryExtension(Display *);
 int 	XShmGetEventBase(Display *);
@@ -120,40 +110,6 @@ static unsigned long r_mask,g_mask,b_mask;
 static long X11_highhunkmark;
 
 int scr_width, scr_height;
-
-#define STD_EVENT_MASK \
-			( VisibilityChangeMask | ExposureMask | StructureNotifyMask)
-
-
-/*
-======================
-Create an empty cursor
-======================
-*/
-
-static void
-CreateNullCursor(Display *display, Window root)
-{
-    Pixmap cursormask;
-    XGCValues xgc;
-    GC gc;
-    XColor dummycolour;
-
-	if (nullcursor != None) return;
-
-	cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
-	xgc.function = GXclear;
-	gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
-	XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
-	dummycolour.pixel = 0;
-	dummycolour.red = 0;
-	dummycolour.flags = 04;
-	nullcursor = XCreatePixmapCursor(display, cursormask, cursormask,
-									 &dummycolour,&dummycolour, 0,0);
-	XFreePixmap(display,cursormask);
-	XFreeGC(display,gc);
-}
-
 
 static void
 shiftmask_init( void )
@@ -522,18 +478,6 @@ void VID_Init (unsigned char *palette)
 // open the display
 	x11_open_display();
 
-#ifdef HAVE_VIDMODE
-	hasvidmode = VID_CheckVMode(x_disp, NULL, NULL);
-	if (hasvidmode) {
-		if (! XF86VidModeGetAllModeLines(x_disp, DefaultScreen(x_disp),
-						 &nummodes, &vidmodes)
-		    || nummodes <= 0) {
-			hasvidmode = 0;
-		}
-	}
-	Con_SafePrintf ("hasvidmode = %i\nnummodes = %i\n", hasvidmode, nummodes);
-#endif
-
 // check for command-line window size
 	if ((pnum=COM_CheckParm("-winsize")))
 	{
@@ -573,15 +517,15 @@ void VID_Init (unsigned char *palette)
 // If not specified, use default visual
 	else
 	{
-		int screen;
-		screen = XDefaultScreen(x_disp);
 		template.visualid =
-			XVisualIDFromVisual(XDefaultVisual(x_disp, screen));
+			XVisualIDFromVisual(XDefaultVisual(x_disp, x_screen));
 		template_mask = VisualIDMask;
 	}
 
 // pick a visual- warn if more than one was available
 	x_visinfo = XGetVisualInfo(x_disp, template_mask, &template, &num_visuals);
+	x_vis = x_visinfo->visual;
+
 	if (num_visuals > 1) {
 		printf("Found more than one visual id at depth %d:\n", template.depth);
 		for (i=0 ; i<num_visuals ; i++)
@@ -608,71 +552,17 @@ void VID_Init (unsigned char *palette)
 		printf("	bits_per_rgb %d\n", x_visinfo->bits_per_rgb);
 	}
 
-	x_vis = x_visinfo->visual;
-
 	/* Setup attributes for main window */
-	{
-		int attribmask = CWEventMask | CWBorderPixel;
-		XSetWindowAttributes attribs;
-
-		attribs.event_mask = STD_EVENT_MASK;
-		attribs.border_pixel = 0;
-
-#ifdef HAVE_VIDMODE
-		if (hasvidmode && vid_fullscreen->value) {
-			int smallest_mode=0, x=INT_MAX, y=INT_MAX;
-
-			attribs.override_redirect=1;
-			attribmask|=CWOverrideRedirect;
-
-			// FIXME: does this depend on mode line order in XF86Config?
-			for (i=0; i<nummodes; i++) {
-				if (x>vidmodes[i]->hdisplay || y>vidmodes[i]->vdisplay) {
-					smallest_mode=i;
-					x=vidmodes[i]->hdisplay;
-					y=vidmodes[i]->vdisplay;
-				}
-				printf("%dx%d\n",vidmodes[i]->hdisplay,vidmodes[i]->vdisplay);
-			}
-			// chose the smallest mode that our window fits into;
-			for (i=smallest_mode;
-				 i!=(smallest_mode+1)%nummodes;
-				 i=(i?i-1:nummodes-1)) {
-				if (vidmodes[i]->hdisplay>=vid.width
-					&& vidmodes[i]->vdisplay>=vid.height) {
-					XF86VidModeSwitchToMode (x_disp, DefaultScreen (x_disp),
-											 vidmodes[i]);
-					break;
-				}
-			}
-			XF86VidModeSetViewPort(x_disp, DefaultScreen (x_disp), 0, 0);
-			_windowed_mouse = Cvar_Get ("_windowed_mouse","1",CVAR_ARCHIVE|CVAR_ROM,"None");
-		} else
-#endif
-			_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
+	x11_set_vidmode(vid.width, vid.height);
 
 		/* Create the main window */
-		x_win = XCreateWindow(x_disp,
-			      XRootWindow(x_disp, x_visinfo->screen),
-			      0, 0, vid.width, vid.height,
-			      0, /* borderwidth	*/
-			      x_visinfo->depth, InputOutput, x_vis,
-			      attribmask, &attribs);
+	x11_create_window(vid.width, vid.height);
+
+	/* Invisible cursor */
+	x11_create_null_cursor();
 
 		scr_width = vid.width;
 		scr_height = vid.height;
-
-		/* Give it a title */
-		XStoreName(x_disp, x_win, "XQuake");
-
-		/* Make window respond to Delete events */
-		aWMDelete = XInternAtom(x_disp, "WM_DELETE_WINDOW", False);
-		XSetWMProtocols(x_disp, x_win, &aWMDelete, 1);
-
-		/* Invisible cursor */
-		CreateNullCursor(x_disp, x_win);
-		XDefineCursor(x_disp, x_win, nullcursor);
-	}
 
 	if (x_visinfo->depth == 8) {
 		/* Create and upload the palette */
@@ -695,12 +585,7 @@ void VID_Init (unsigned char *palette)
 // map the window
 	XMapWindow(x_disp, x_win);
 	XRaiseWindow(x_disp, x_win);
-#ifdef HAVE_VIDMODE
-	if (hasvidmode && vid_fullscreen->value) {
-		XGrabKeyboard(x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
-					  CurrentTime);
-	}
-#endif
+	x11_grab_keyboard();
 
 // wait for first exposure event
 	{
@@ -798,23 +683,7 @@ VID_Shutdown(void)
 {
 	Sys_Printf("VID_Shutdown\n");
 	if (x_disp) {
-#ifdef HAVE_VIDMODE
-		if (hasvidmode) {
-			int i;
-
-			XF86VidModeSwitchToMode (x_disp, DefaultScreen (x_disp),
-									 vidmodes[0]);
-			for (i = 0; i < nummodes; i++) {
-				if (vidmodes[i]->private) XFree(vidmodes[i]->private);
-			}
-			XFree(vidmodes);
-		}
-#endif
-		if (nullcursor != None) {
-			XFreeCursor(x_disp, nullcursor);
-			nullcursor = None;
-		}
-		XAutoRepeatOn(x_disp);
+		x11_restore_vidmode();
 		x11_close_display();
 		x_disp = 0;
 	}

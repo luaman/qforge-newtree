@@ -30,6 +30,7 @@
 #define _INPUT_H
 
 #include "protocol.h"
+#include "cvar.h"
 
 #define freelook (in_mlook.state&1 || cl_freelook->value)
 
@@ -48,5 +49,7 @@ void IN_Move (usercmd_t *cmd);
 
 void IN_ModeChanged (void);
 // called whenever screen dimensions change
+
+extern cvar_t		*_windowed_mouse;
 
 #endif // _INPUT_H

@@ -43,6 +43,7 @@
 #include "screen.h"
 #include "client.h"
 #include "console.h"
+#include "input.h"
 #include "view.h"
 
 void (*vid_menudrawfn)(void);

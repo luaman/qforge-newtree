@@ -427,6 +427,8 @@ IN_Init(void)
 	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
 	m_filter = Cvar_Get ("m_filter","0",CVAR_ARCHIVE,"None");
 
+	XAutoRepeatOff(x_disp);
+
 	if (COM_CheckParm("-nomouse")) return 1;
 #ifdef HAVE_DGA
 	in_dgamouse = Cvar_Get ("in_dgamouse", "0", CVAR_ROM,

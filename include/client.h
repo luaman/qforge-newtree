@@ -349,8 +349,6 @@ extern	cvar_t	*m_yaw;
 extern	cvar_t	*m_forward;
 extern	cvar_t	*m_side;
 
-extern cvar_t		*_windowed_mouse;
-
 extern	cvar_t	*name;
 
 

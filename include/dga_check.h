@@ -33,6 +33,8 @@
 
 #include <X11/Xlib.h>
 
+#include "cvar.h"
+
 extern cvar_t	*vid_dga_mouseaccel;
 
 /*
