@@ -93,6 +93,9 @@ extern cvar_t	*sv_timekick;
 extern cvar_t	*sv_timekick_fuzz;
 extern cvar_t	*sv_timekick_interval;
 
+cvar_t	*sv_timestamps;
+cvar_t	*sv_timefmt;
+
 //
 // game rules mirrored in svs.info
 //
@@ -1389,6 +1392,9 @@ void SV_InitLocal (void)
 	sv_timekick = Cvar_Get("sv_timekick",  "3", CVAR_NONE, "Time cheat protection");
 	sv_timekick_fuzz = Cvar_Get("sv_timekick_fuzz",  "15", CVAR_NONE, "Time cheat \"fuzz factor\"");
 	sv_timekick_interval = Cvar_Get("sv_timekick_interval",  "30", CVAR_NONE, "Time cheat check interval");
+
+	sv_timestamps = Cvar_Get ("sv_timestamps", "0", CVAR_NONE, "Time/date stamps in log entries");
+	sv_timefmt = Cvar_Get ("sv_timefmt", "[%b %e %X] ", CVAR_NONE, "Time/date format to use");
 
 	filterban = Cvar_Get("filterban",  "1", CVAR_NONE, "None");
 	

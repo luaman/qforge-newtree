@@ -42,6 +42,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define CHAN_AUTO   0
 #define CHAN_WEAPON 1
@@ -61,7 +62,9 @@ char	outputbuf[8000];
 
 redirect_t	sv_redirected;
 
-extern cvar_t *sv_phs;
+extern cvar_t	*sv_phs;
+extern cvar_t	*sv_timestamps;
+extern cvar_t	*sv_timefmt;
 
 /*
 ==================
@@ -129,23 +132,39 @@ void Con_Printf (char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
+	char		msg2[MAXPRINTMSG];
+	char		msg3[MAXPRINTMSG];
+	time_t		mytime = 0;
+	struct tm	*local = NULL;
+	qboolean	timestamps = false;
 	
 	va_start (argptr, fmt);
 	vsnprintf (msg, sizeof(msg), fmt, argptr);
 	va_end (argptr);
 
-	// add to redirected message
-	if (sv_redirected)
-	{
-		if (strlen (msg) + strlen(outputbuf) > sizeof(outputbuf) - 1)
+	if (sv_timestamps && sv_timestamps->value && sv_timefmt && sv_timefmt->string)
+		timestamps = true;
+	
+	if (timestamps) {
+		mytime = time (NULL);
+		local = localtime (&mytime);
+		strftime (msg3, sizeof (msg3), sv_timefmt->string, local);
+
+		snprintf (msg2, sizeof (msg2), "%s%s", msg3, msg);
+	} else {
+		snprintf (msg2, sizeof (msg2), "%s", msg);
+	}
+
+	if (sv_redirected) {	// add to redirected message
+		if (strlen (msg2) + strlen(outputbuf) > sizeof(outputbuf) - 1)
 			SV_FlushRedirect ();
-		strcat (outputbuf, msg);
+		strcat (outputbuf, msg2);
 		return;
 	}
 
-	Sys_Printf ("%s", msg);	// also echo to debugging console
+	Sys_Printf ("%s", msg2);	// also echo to debugging console
 	if (sv_logfile)
-		fprintf (sv_logfile, "%s", msg);
+		fprintf (sv_logfile, "%s", msg2);
 }
 
 /*
