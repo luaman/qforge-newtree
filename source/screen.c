@@ -526,15 +526,25 @@ void SCR_DrawTime (void)
 	char local_time[120];
 	time_t systime;
 	
-	if (!show_time->int_val)
+	/* any cvar that can take multiple settings must be able to handle abuse. */
+	if (show_time->int_val <= 0)
 		return;
 	
 	/* actually find the time and set systime to it*/
 	time(&systime);
-	/* now set local_time to 24 hour time using hours:minutes format */
-	strftime(local_time, sizeof(local_time), "%k:%M", localtime(&systime));
+	
+	if (show_time->int_val == 1) {
+		/* now set local_time to 24 hour time using hours:minutes format */
+		strftime (local_time, sizeof (local_time), "%k:%M",
+				  localtime (&systime));
+	} else if (show_time->int_val >= 2) {
+		/* >= is another cvar abuse protector */
+		strftime (local_time, sizeof (local_time), "%l:%M %P",
+				  localtime (&systime));
+	}
+			
 	/* now actually print it to the screen directly below where show_fps is */
-	sprintf(st, "%s", local_time);
+	sprintf (st, "%s", local_time);
 	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + 8) : 8;
 	y = vid.height - sb_lines - 16;
 	Draw_String8 (x, y, st);
