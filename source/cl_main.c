@@ -31,6 +31,7 @@
 #include "winquake.h"
 #ifdef _WIN32
 #include "winsock.h"
+#include "in_win.h"
 #else
 #include <netinet/in.h>
 #endif
@@ -222,7 +223,11 @@ void CL_SendConnectPacket (void)
 
 	cls.qport = Cvar_VariableValue("qport");
 
-	Info_SetValueForStarKey (cls.userinfo, "*ip", NET_AdrToString(adr), MAX_INFO_STRING);
+	// Arrgh, this was not in the old binary only release, and eats up
+	// far too much of the 196 chars in the userinfo space, leaving nothing
+	// for player use, thus, its commented out for the moment..
+	//
+	//Info_SetValueForStarKey (cls.userinfo, "*ip", NET_AdrToString(adr), MAX_INFO_STRING);
 
 //	Con_Printf ("Connecting to %s...\n", cls.servername);
 	sprintf (data, "%c%c%c%cconnect %i %i %i \"%s\"\n",
@@ -1477,7 +1482,7 @@ void Host_Init (quakeparms_t *parms)
 	SCR_Init ();
 	R_Init ();
 
-	S_Init ();		// S_Init is now done as part of VID. Sigh.
+	S_Init ();
 	
 	cls.state = ca_disconnected;
 	Sbar_Init ();
@@ -1488,7 +1493,7 @@ void Host_Init (quakeparms_t *parms)
 	SCR_Init ();
 	R_Init ();
 
-	S_Init ();		// S_Init is now done as part of VID. Sigh.
+	S_Init ();
 
 	cls.state = ca_disconnected;
 	CDAudio_Init ();

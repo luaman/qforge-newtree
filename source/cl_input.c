@@ -28,6 +28,7 @@
 // cl.input.c  -- builds an intended movement command to send to the server
 
 #include "quakedef.h"
+#include "in_win.h"
 
 cvar_t	cl_nodelta = {"cl_nodelta","0"};
 

@@ -31,6 +31,7 @@
 #include "winquake.h"
 #include "resource.h"
 #include "glquake.h"
+#include "in_win.h"
 #include <commctrl.h>
 
 #define MAX_MODE_LIST	30
@@ -89,7 +90,6 @@ static qboolean	windowed, leavecurrentmode;
 static qboolean vid_canalttab = false;
 static qboolean vid_wassuspended = false;
 static int		windowed_mouse;
-extern qboolean	mouseactive;  // from in_win.c
 static HICON	hIcon;
 
 int			DIBWidth, DIBHeight;

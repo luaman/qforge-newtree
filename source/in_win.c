@@ -39,30 +39,33 @@
 HRESULT (WINAPI *pDirectInputCreate)(HINSTANCE hinst, DWORD dwVersion,
 	LPDIRECTINPUT * lplpDirectInput, LPUNKNOWN punkOuter);
 
-// mouse variables
-cvar_t	m_filter = {"m_filter","0"};
+// mouse public variables
 
-int			mouse_buttons;
-int			mouse_oldbuttonstate;
-POINT		current_pos;
-int			mouse_x, mouse_y, old_mouse_x, old_mouse_y, mx_accum, my_accum;
+float          mouse_x, mouse_y;
+qboolean       mouseactive;
+unsigned int   uiWheelMessage;
 
-static qboolean	restore_spi;
-static int		originalmouseparms[3], newmouseparms[3] = {0, 0, 1};
-qboolean		mouseinitialized;
-static qboolean	mouseparmsvalid, mouseactivatetoggle;
-static qboolean	mouseshowtoggle = 1;
-static qboolean	dinput_acquired;
-static unsigned int		mstate_di;
-unsigned int uiWheelMessage;
+// mouse local variables
 
-qboolean	mouseactive;
+static int           mouse_buttons;
+static int           mouse_oldbuttonstate;
+static POINT         current_pos;
+static float         old_mouse_x, old_mouse_y, mx_accum, my_accum;
+static qboolean      mouseinitialized;
+static cvar_t        m_filter = {"m_filter","0"};
+static qboolean      restore_spi;
+static int           originalmouseparms[3], newmouseparms[3] = {0, 0, 1};
+static qboolean      mouseparmsvalid, mouseactivatetoggle;
+static qboolean      mouseshowtoggle = 1;
+static qboolean      dinput_acquired;
+static unsigned int  mstate_di;
 
 // joystick defines and variables
 // where should defines be moved?
+
 #define JOY_ABSOLUTE_AXIS	0x00000000		// control like a joystick
 #define JOY_RELATIVE_AXIS	0x00000010		// control like a mouse, spinner, trackball
-#define	JOY_MAX_AXES		6				// X, Y, Z, R, U, V
+#define JOY_MAX_AXES		6				// X, Y, Z, R, U, V
 #define JOY_AXIS_X			0
 #define JOY_AXIS_Y			1
 #define JOY_AXIS_Z			2
@@ -75,46 +78,47 @@ enum _ControlList
 	AxisNada = 0, AxisForward, AxisLook, AxisSide, AxisTurn
 };
 
-DWORD	dwAxisFlags[JOY_MAX_AXES] =
+static DWORD	dwAxisFlags[JOY_MAX_AXES] =
 {
 	JOY_RETURNX, JOY_RETURNY, JOY_RETURNZ, JOY_RETURNR, JOY_RETURNU, JOY_RETURNV
 };
 
-DWORD	dwAxisMap[JOY_MAX_AXES];
-DWORD	dwControlMap[JOY_MAX_AXES];
-PDWORD	pdwRawValue[JOY_MAX_AXES];
+static DWORD	dwAxisMap[JOY_MAX_AXES];
+static DWORD	dwControlMap[JOY_MAX_AXES];
+static PDWORD	pdwRawValue[JOY_MAX_AXES];
 
 // none of these cvars are saved over a session
 // this means that advanced controller configuration needs to be executed
 // each time.  this avoids any problems with getting back to a default usage
 // or when changing from one controller to another.  this way at least something
 // works.
-cvar_t	in_joystick = {"joystick","0", true};
-cvar_t	joy_name = {"joyname", "joystick"};
-cvar_t	joy_advanced = {"joyadvanced", "0"};
-cvar_t	joy_advaxisx = {"joyadvaxisx", "0"};
-cvar_t	joy_advaxisy = {"joyadvaxisy", "0"};
-cvar_t	joy_advaxisz = {"joyadvaxisz", "0"};
-cvar_t	joy_advaxisr = {"joyadvaxisr", "0"};
-cvar_t	joy_advaxisu = {"joyadvaxisu", "0"};
-cvar_t	joy_advaxisv = {"joyadvaxisv", "0"};
-cvar_t	joy_forwardthreshold = {"joyforwardthreshold", "0.15"};
-cvar_t	joy_sidethreshold = {"joysidethreshold", "0.15"};
-cvar_t	joy_pitchthreshold = {"joypitchthreshold", "0.15"};
-cvar_t	joy_yawthreshold = {"joyyawthreshold", "0.15"};
-cvar_t	joy_forwardsensitivity = {"joyforwardsensitivity", "-1.0"};
-cvar_t	joy_sidesensitivity = {"joysidesensitivity", "-1.0"};
-cvar_t	joy_pitchsensitivity = {"joypitchsensitivity", "1.0"};
-cvar_t	joy_yawsensitivity = {"joyyawsensitivity", "-1.0"};
-cvar_t	joy_wwhack1 = {"joywwhack1", "0.0"};
-cvar_t	joy_wwhack2 = {"joywwhack2", "0.0"};
+static cvar_t	in_joystick = {"joystick","0", true};
+static cvar_t	joy_name = {"joyname", "joystick"};
+static cvar_t	joy_advanced = {"joyadvanced", "0"};
+static cvar_t	joy_advaxisx = {"joyadvaxisx", "0"};
+static cvar_t	joy_advaxisy = {"joyadvaxisy", "0"};
+static cvar_t	joy_advaxisz = {"joyadvaxisz", "0"};
+static cvar_t	joy_advaxisr = {"joyadvaxisr", "0"};
+static cvar_t	joy_advaxisu = {"joyadvaxisu", "0"};
+static cvar_t	joy_advaxisv = {"joyadvaxisv", "0"};
+static cvar_t	joy_forwardthreshold = {"joyforwardthreshold", "0.15"};
+static cvar_t	joy_sidethreshold = {"joysidethreshold", "0.15"};
+static cvar_t	joy_pitchthreshold = {"joypitchthreshold", "0.15"};
+static cvar_t	joy_yawthreshold = {"joyyawthreshold", "0.15"};
+static cvar_t	joy_forwardsensitivity = {"joyforwardsensitivity", "-1.0"};
+static cvar_t	joy_sidesensitivity = {"joysidesensitivity", "-1.0"};
+static cvar_t	joy_pitchsensitivity = {"joypitchsensitivity", "1.0"};
+static cvar_t	joy_yawsensitivity = {"joyyawsensitivity", "-1.0"};
+static cvar_t	joy_wwhack1 = {"joywwhack1", "0.0"};
+static cvar_t	joy_wwhack2 = {"joywwhack2", "0.0"};
 
-qboolean	joy_avail, joy_advancedinit, joy_haspov;
-DWORD		joy_oldbuttonstate, joy_oldpovstate;
+static qboolean	joy_avail, joy_advancedinit, joy_haspov;
+static DWORD		joy_oldbuttonstate, joy_oldpovstate;
+static int			joy_id;
+static DWORD		joy_flags;
+static DWORD		joy_numbuttons;
 
-int			joy_id;
-DWORD		joy_flags;
-DWORD		joy_numbuttons;
+// misc locals
 
 static LPDIRECTINPUT		g_pdi;
 static LPDIRECTINPUTDEVICE	g_pMouse;
@@ -156,18 +160,17 @@ static DIDATAFORMAT	df = {
 	rgodf,                      // and here they are
 };
 
-// forward-referenced functions
-void IN_StartupJoystick (void);
-void Joy_AdvancedUpdate_f (void);
-void IN_JoyMove (usercmd_t *cmd);
-
+// forward-referenced functions, locals
+static void IN_StartupJoystick (void);
+static void Joy_AdvancedUpdate_f (void);
+static void IN_JoyMove (usercmd_t *cmd);
 
 /*
 ===========
 Force_CenterView_f
 ===========
 */
-void Force_CenterView_f (void)
+static void Force_CenterView_f (void)
 {
 	cl.viewangles[PITCH] = 0;
 }
@@ -336,7 +339,7 @@ void IN_RestoreOriginalMouseState (void)
 IN_InitDInput
 ===========
 */
-qboolean IN_InitDInput (void)
+static qboolean IN_InitDInput (void)
 {
     HRESULT		hr;
 	DIPROPDWORD	dipdw = {
@@ -427,7 +430,7 @@ qboolean IN_InitDInput (void)
 IN_StartupMouse
 ===========
 */
-void IN_StartupMouse (void)
+static void IN_StartupMouse (void)
 {
 //	HDC			hdc;
 
@@ -795,7 +798,7 @@ void IN_ClearStates (void)
 IN_StartupJoystick 
 =============== 
 */  
-void IN_StartupJoystick (void) 
+static void IN_StartupJoystick (void) 
 { 
 	int			/*i,*/ numdevs;
 	JOYCAPS		jc;
@@ -864,7 +867,7 @@ void IN_StartupJoystick (void)
 RawValuePointer
 ===========
 */
-PDWORD RawValuePointer (int axis)
+static PDWORD RawValuePointer (int axis)
 {
 	switch (axis)
 	{
@@ -881,15 +884,15 @@ PDWORD RawValuePointer (int axis)
 	case JOY_AXIS_V:
 		return &ji.dwVpos;
 	}
+   return NULL;
 }
-
 
 /*
 ===========
 Joy_AdvancedUpdate_f
 ===========
 */
-void Joy_AdvancedUpdate_f (void)
+static void Joy_AdvancedUpdate_f (void)
 {
 
 	// called once by IN_ReadJoystick and by user whenever an update is needed
@@ -1031,7 +1034,7 @@ void IN_Commands (void)
 IN_ReadJoystick
 =============== 
 */  
-qboolean IN_ReadJoystick (void)
+static qboolean IN_ReadJoystick (void)
 {
 
 	memset (&ji, 0, sizeof(ji));
@@ -1066,7 +1069,7 @@ qboolean IN_ReadJoystick (void)
 IN_JoyMove
 ===========
 */
-void IN_JoyMove (usercmd_t *cmd)
+static void IN_JoyMove (usercmd_t *cmd)
 {
 	float	speed, aspeed;
 	float	fAxisValue, fTemp;

@@ -31,6 +31,7 @@
 
 #ifdef _WIN32
 #include "winquake.h"
+#include "in_win.h"
 #endif
 
 void S_Play(void);

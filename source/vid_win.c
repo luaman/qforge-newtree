@@ -31,6 +31,7 @@
 #include "winquake.h"
 #include "d_local.h"
 #include "resource.h"
+#include "in_win.h"
 
 #define	MINIMUM_MEMORY	0x550000
 
@@ -63,8 +64,6 @@ static qboolean	force_minimized, in_mode_set, is_mode0x13, force_mode_set;
 static int		vid_stretched, windowed_mouse;
 static qboolean	palette_changed, syscolchg, vid_mode_set, hide_window, pal_is_nostatic;
 static HICON	hIcon;
-
-qboolean mouseactive; // from in_win.c
 
 extern viddef_t	vid;				// global video state
 
