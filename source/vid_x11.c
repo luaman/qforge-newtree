@@ -79,6 +79,7 @@
 #include "menu.h"
 #include "qargs.h"
 #include "qendian.h"
+#include "screen.h"
 #include "sys.h"
 #include "va.h"
 
@@ -780,6 +781,7 @@ VID_Update (vrect_t *rects)
 		}
 	}
 	XSync (x_disp, False);
+	scr_fullupdate = 0;
 }
 
 static qboolean dither;
