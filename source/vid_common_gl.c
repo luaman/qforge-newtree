@@ -63,7 +63,6 @@ cvar_t     *vid_mode;
 
 /*-----------------------------------------------------------------------*/
 
-int         texture_mode = GL_LINEAR_MIPMAP_LINEAR; // DESPAIR: was GL_LINEAR
 int         texture_extension_number = 1;
 float       gldepthmin, gldepthmax;
 
