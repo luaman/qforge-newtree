@@ -1111,8 +1111,6 @@ CL_Download_f
 */
 void CL_Download_f (void)
 {
-	char *p, *q;
-
 	if (cls.state == ca_disconnected)
 	{
 		Con_Printf ("Must be connected.\n");
@@ -1127,16 +1125,7 @@ void CL_Download_f (void)
 
 	snprintf (cls.downloadname, sizeof(cls.downloadname), "%s/%s", com_gamedir, Cmd_Argv(1));
 
-	p = cls.downloadname;
-	for (;;) {
-		if ((q = strchr(p, '/')) != NULL) {
-			*q = 0;
-			Sys_mkdir(cls.downloadname);
-			*q = '/';
-			p = q + 1;
-		} else
-			break;
-	}
+	COM_CreatePath (cls.downloadname);
 
 	strncpy (cls.downloadtempname, cls.downloadname, sizeof(cls.downloadtempname));
 	cls.download = Qopen (cls.downloadname, "wb");

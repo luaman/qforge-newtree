@@ -777,8 +777,7 @@ void SV_Snap (int uid)
 	sprintf(pcxname, "%d-00.pcx", uid);
 
 	snprintf (checkname, sizeof(checkname), "%s/snap", com_gamedir);
-	Sys_mkdir(com_gamedir);
-	Sys_mkdir(checkname);
+	COM_CreatePath (va ("%s/dummy", checkname));
 		
 	for (i=0 ; i<=99 ; i++) 
 	{ 
