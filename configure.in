@@ -181,66 +181,57 @@ if test "x$HAVE_SVGA" != xno; then
 		SVGA_CFLAGS="" SVGA_LIBS=""
 	fi
 fi
+AC_SUBST(HAVE_SVGA)
 AC_SUBST(SVGA_CFLAGS)
 AC_SUBST(SVGA_LIBS)
 
 dnl Checks for X11 and XShm
 AC_PATH_XTRA
 if test "x$no_x" = x; then
-	HAVE_X11=yes
-	AC_CHECK_LIB(Xext, XShmQueryExtension, [X11_SHM_LIB=-lXext],
-		[HAVE_X11="no"], [ $X_LIBS -lX11 $X_EXTRA_LIBS ]
+	HAVE_X=yes
+	X_INCLUDES="-I$x_includes"
+	X_LIBS="-L$x_libraries"
+	AC_CHECK_LIB(Xext, XShmQueryExtension, [X_SHM_LIB=-lXext],
+		[HAVE_X="no"], [ $X_LIBS -lX11 $X_EXTRA_LIBS ]
 	)
-
-	dnl check for X11 video driver
-	AC_MSG_CHECKING(for X11 video driver)
-	case "${target}" in
-	   *-solaris*) 
-	      X11_VID_SRC="vid_sunx.c" ;;
-	   *)
-	      if test "x$HAVE_X11"; then
-	         X11_VID_SRC="vid_x11.c";
-	      else
-	         X11_VID_SRC=
-	      fi
-	     ;;
-	esac
 fi
-if test "x$X11_VID_SRC" = x; then
-AC_MSG_RESULT(no)
+if test "x$HAVE_X" != "x"; then
+	AC_MSG_RESULT(yes)
 else
-AC_MSG_RESULT(yes ($X11_VID_SRC))
+	AC_MSG_RESULT(no)
 fi
-AC_SUBST(X_CFLAGS)
+AC_SUBST(HAVE_X)
+AC_SUBST(X_INCLUDES)
 AC_SUBST(X_LIBS)
-AC_SUBST(X11_SHM_LIB)
-AC_SUBST(X11_VID_SRC)
-     
+AC_SUBST(X_PRE_LIBS)
+AC_SUBST(X_SHM_LIB)
+
 dnl Checks for OpenGL support
-dnl GL is a special case, we need seperate includes/libs entires
 AC_ARG_WITH(opengl,
-	[  --with-opengl[=DIR]     use OpenGL with libraries found in DIR],
-	HAVE_OPENGL=$withval, HAVE_OPENGL=auto
+[  --with-opengl[=DIR]     use OpenGL with libraries found in DIR],
+	OPENGL_LIBS=$withval, OPENGL_LIBS=auto
 )
 AC_ARG_WITH(opengl-includes,
-	[  --with-opengl-includes[=DIR]
+[  --with-opengl-includes[=DIR]
                           use OpenGL with header files found in DIR],
 	OPENGL_INCLUDES=$withval, OPENGL_INCLUDES=auto
 )
 if test "x$OPENGL_INCLUDES" = xno; then
-	HAVE_OPENGL="no"
+	OPENGL_LIBS="no"
 fi
-if test "x$HAVE_OPENGL" = xno; then
+if test "x$OPENGL_LIBS" = xno; then
 	OPENGL_INCLUDES=""
 fi
-if test "x$HAVE_OPENGL" != xno; then
-	if test "x$HAVE_OPENGL" != xauto; then
-		OPENGL_LIBS="$OPENGL_LIBS -L$HAVE_OPENGL"
+if test "x$OPENGL_LIBS" != xno; then
+	if test "x$OPENGL_LIBS" != xauto; then
+		OPENGL_LIBS="-L$OPENGL_LIBS"
+	else
+		OPENGL_LIBS="${X_LIBS:-}"
 	fi
 	if test "x$OPENGL_INCLUDES" != xauto; then
 		OPENGL_INCLUDES="-I$OPENGL_INCLUDES"
 	else
-		OPENGL_INCLUDES="-I${x_includes:-.}"
+		OPENGL_INCLUDES="${X_INCLUDES:-}"
 	fi
 	save_CPPFLAGS="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $OPENGL_INCLUDES"
@@ -281,7 +272,7 @@ if test "x$HAVE_OPENGL" != xno; then
 			HAVE_OPENGL=yes
 			OPENGL_NAME=GL
 			if test "x$have_dynload" != "xyes"; then
-				AC_CHECK_LIB(GL, XMesaSetFXmode, qwfoo=qwfoo, HAVE_XMESA=no,
+				AC_CHECK_LIB(GL, XMesaSetFXmode,, HAVE_XMESA=no,
 					[ $OPENGL_LIBS $X_PRE_LIBS $X_LIBS -lX11 -lXext $X_EXTRA_LIBS]
 				)
 			fi
@@ -289,11 +280,11 @@ if test "x$HAVE_OPENGL" != xno; then
 			[ $OPENGL_LIBS $X_PRE_LIBS $X_LIBS -lX11 -lXext $X_EXTRA_LIBS]
 		)
 		if test "x$HAVE_OPENGL" != xyes; then
-			AC_CHECK_LIB(MesaGL, glColor4f, OGL_LIBS="$OGL_LIBS -lMesaGL"
+			AC_CHECK_LIB(MesaGL, glColor4f, OPENGL_LIBS="$OPENGL_LIBS -lMesaGL"
 		        HAVE_OPENGL=yes
 				OPENGL_NAME=MesaGL
 		        if test "x$have_dynload" != "xyes"; then
-					AC_CHECK_LIB(MesaGL, XMesaSetFXmode, qwfoo=qwfoo, HAVE_XMESA=no,
+					AC_CHECK_LIB(MesaGL, XMesaSetFXmode,, HAVE_XMESA=no,
 						[ $OPENGL_LIBS $X_LIBS -lXext -lX11 $X_EXTRA_LIBS]
 					)
 				fi
@@ -303,7 +294,7 @@ if test "x$HAVE_OPENGL" != xno; then
 		fi
 	fi
 	if test "x$HAVE_OPENGL" != xyes; then
-		OGL_CFLAGS="" OGL_LIBS=""
+		OPENGL_CFLAGS="" OPENGL_LIBS=""
 	else
 		if test "x$HAVE_XMESA" = xyes; then
 			AC_DEFINE(HAVE_XMESA)
@@ -313,10 +304,10 @@ fi
 if test "x$HAVE_OPENGL" = xyes; then
 	AC_DEFINE(HAVE_OPENGL)
 fi
-
-AC_SUBST(OGL_CFLAGS)
-AC_SUBST(OGL_INCLUDES)
-AC_SUBST(OGL_LIBS)
+AC_SUBST(HAVE_OPENGL)
+AC_SUBST(OPENGL_CFLAGS)
+AC_SUBST(OPENGL_INCLUDES)
+AC_SUBST(OPENGL_LIBS)
 
 dnl Set $prefix and $exec_prefix to $ac_default_prefix if they haven't been set
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
@@ -453,6 +444,7 @@ case "${target}" in
 		;;
 	*) AC_MSG_RESULT(no)
 esac
+AC_SUBST(ASM_ARCH)
 
 dnl Checks for which system driver to use
 AC_MSG_CHECKING(for system driver)
@@ -482,34 +474,23 @@ AC_MSG_RESULT([no, using default])
 else
 AC_MSG_RESULT(yes ($CL_SYS_SRC $SV_SYS_SRC))
 fi
+AC_SUBST(CL_SYS_SRC)
+AC_SUBST(SV_SYS_SRC)
 
 if test "x$HAVE_SVGA" = xyes; then
    TARGETS="$TARGETS qf-client-svga"
 fi
-if test "x$HAVE_X11" = xyes; then
+if test "x$HAVE_X" = xyes; then
    TARGETS="$TARGETS qf-client-x11"
 fi
 if test "x$HAVE_OPENGL" = xyes; then
    TARGETS="$TARGETS qf-client-glx"
 fi
-
-AC_SUBST(libdir)
-
-AC_SUBST(ASM_ARCH)
-AC_SUBST(HAVE_OPENGL)
-AC_SUBST(HAVE_SVGA)
-AC_SUBST(HAVE_X11)
-AC_SUBST(INTEL_ARCH)
-AC_SUBST(LIBS)
-AC_SUBST(CL_SYS_SRC)
-AC_SUBST(SV_SYS_SRC)
-AC_SUBST(QW_VERSION)
 AC_SUBST(TARGETS)
-
-AC_SUBST(ac_configure_args)
 
 dnl Output files
 AC_OUTPUT(
+	include/Makefile
 	source/Makefile
 	Makefile
 	RPM/quakeforge.spec

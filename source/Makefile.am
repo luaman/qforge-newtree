@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+INCLUDES=	@X_INCLUDES@ @OPENGL_INCLUDES@
+
 bin_PROGRAMS =	@TARGETS@
 
 EXTRA_PROGRAMS= qf-server qf-client-svga qf-client-x11 qf-client-glx
@@ -37,5 +39,5 @@ qf_client_x11_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(x11
 qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
 
 qf_client_svga_LDADD=	@SVGA_LIBS@
-qf_client_x11_LDADD=	@X_PRE_LIBS@ @X_LIBS@ @X_EXTRA_LIBS@ -lX11 @X11_SHM_LIB@
+qf_client_x11_LDADD=	@X_PRE_LIBS@ @X_LIBS@ @X_EXTRA_LIBS@ -lX11 @X_SHM_LIB@
 qf_client_glx_LDADD=	@OPENGL_LIBS@
