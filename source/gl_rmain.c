@@ -136,9 +136,9 @@ extern qboolean lighthalf;
 
 // LordHavoc: place for gl_rmain setup code
 void
-glrmain_init ()
+glrmain_init (void)
 {
-};
+}
 
 /*
 	GL_CheckBrightness
@@ -444,6 +444,9 @@ GL_DrawAliasBlendedFrame (aliashdr_t *paliashdr, int pose1, int pose2, float ble
 
 	order = (int *) ((byte *) paliashdr + paliashdr->commands);
 
+	if (modelalpha != 1.0)
+		glDepthMask (GL_FALSE);
+
 	while ((count = *order++)) {
 		// get the vertex count and primitive type
 
@@ -482,6 +485,11 @@ GL_DrawAliasBlendedFrame (aliashdr_t *paliashdr, int pose1, int pose2, float ble
 		} while (--count);
 		glEnd ();
 	}
+
+	if (modelalpha != 1.0)
+		glDepthMask (GL_TRUE);
+	glColor3ubv (lighthalf_v);
+
 }
 
 /*
