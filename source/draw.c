@@ -44,6 +44,8 @@ byte		*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
 qpic_t		*draw_backtile;
 
+cvar_t		cl_verstring = {"cl_verstring", "set in Draw_Init"};
+
 //=============================================================================
 /* Support Routines */
 
@@ -124,6 +126,10 @@ void Draw_Init (void)
 	r_rectdesc.height = draw_backtile->height;
 	r_rectdesc.ptexbytes = draw_backtile->data;
 	r_rectdesc.rowbytes = draw_backtile->width;
+
+	Cvar_RegisterVariable (&cl_verstring);
+
+	Cvar_Set ("cl_verstring", va("QuakeForge %2.2f", VERSION));
 }
 
 
@@ -619,30 +625,6 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 }
 
 
-void Draw_CharToConback (int num, byte *dest)
-{
-	int		row, col;
-	byte	*source;
-	int		drawline;
-	int		x;
-
-	row = num>>4;
-	col = num&15;
-	source = draw_chars + (row<<10) + (col<<3);
-
-	drawline = 8;
-
-	while (drawline--)
-	{
-		for (x=0 ; x<8 ; x++)
-			if (source[x])
-				dest[x] = 0x60 + source[x];
-		source += 128;
-		dest += 320;
-	}
-
-}
-
 /*
 ================
 Draw_ConsoleBackground
@@ -656,31 +638,9 @@ void Draw_ConsoleBackground (int lines)
 	unsigned short	*pusdest;
 	int				f, fstep;
 	qpic_t			*conback;
-	char			ver[100];
-	static			char saveback[320*8];
 
 	conback = Draw_CachePic ("gfx/conback.lmp");
 
-// hack the version number directly into the pic
-
-	//sprintf (ver, "start commands with a \\ character %4.2f", VERSION);
-
-	if (cls.download) {
-		sprintf (ver, "%4.2f", VERSION);
-		dest = conback->data + 320 + 320*186 - 11 - 8*strlen(ver);
-	} else {
-#if defined(__linux__)
-		sprintf (ver, "Linux (%4.2f) QuakeWorld %4.2f", LINUX_VERSION, VERSION);
-#else
-		sprintf (ver, "QuakeWorld %4.2f", VERSION);
-#endif
-		dest = conback->data + 320 - (strlen(ver)*8 + 11) + 320*186;
-	}
-
-	memcpy(saveback, conback->data + 320*186, 320*8);
-	for (x=0 ; x<strlen(ver) ; x++)
-		Draw_CharToConback (ver[x], dest+(x<<3));
-	
 // draw the pic
 	if (r_pixbytes == 1)
 	{
@@ -735,8 +695,10 @@ void Draw_ConsoleBackground (int lines)
 			}
 		}
 	}
-	// put it back
-	memcpy(conback->data + 320*186, saveback, 320*8);
+
+	Draw_Alt_String (vid.conwidth - strlen(cl_verstring.string)*8 - 11,
+			lines-14, cl_verstring.string);
+	
 }
 
 
