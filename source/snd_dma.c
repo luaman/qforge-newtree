@@ -101,6 +101,7 @@ cvar_t *ambient_level;
 cvar_t *ambient_fade;
 cvar_t *snd_noextraupdate;
 cvar_t *snd_show;
+cvar_t *snd_interp;
 cvar_t *_snd_mixahead;
 
 
@@ -206,6 +207,7 @@ void S_Init (void)
 	ambient_fade = Cvar_Get("ambient_fade",  "100", CVAR_NONE, "None");
 	snd_noextraupdate = Cvar_Get("snd_noextraupdate",  "0", CVAR_NONE, "None");
 	snd_show = Cvar_Get("snd_show",  "0", CVAR_NONE, "None");
+	snd_interp = Cvar_Get("snd_interp", "1", CVAR_ARCHIVE, "control sample interpolation");
 	_snd_mixahead = Cvar_Get("_snd_mixahead",  "0.1", CVAR_ARCHIVE, "None");
 
 	if (COM_CheckParm("-nosound"))

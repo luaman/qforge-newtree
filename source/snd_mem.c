@@ -99,7 +99,7 @@ void ResampleSfx (sfx_t *sfx, int inrate, int inwidth, byte *data)
 		}
 	} else {
 		// general case
-		if (stepscale < 1) {
+		if (snd_interp->int_val && stepscale < 1) {
 			int points = 1/stepscale;
 			int j;
 
