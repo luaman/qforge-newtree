@@ -185,7 +185,6 @@ void Sys_Init (void)
 //	unsigned int	lowpart, highpart;
 	OSVERSIONINFO	vinfo;
 
-#ifndef SERVERONLY
 	// allocate a named semaphore on the client so the
 	// front end can tell if it is alive
 
@@ -203,33 +202,10 @@ void Sys_Init (void)
         0,            /* Initial count       */
         1,            /* Maximum count       */
         "qwcl"); /* Semaphore name      */
-#endif
 
 	MaskExceptions ();
 	Sys_SetFPCW ();
 
-#if 0
-	if (!QueryPerformanceFrequency (&PerformanceFreq))
-		Sys_Error ("No hardware timer available");
-
-// get 32 out of the 64 time bits such that we have around
-// 1 microsecond resolution
-	lowpart = (unsigned int)PerformanceFreq.LowPart;
-	highpart = (unsigned int)PerformanceFreq.HighPart;
-	lowshift = 0;
-
-	while (highpart || (lowpart > 2000000.0))
-	{
-		lowshift++;
-		lowpart >>= 1;
-		lowpart |= (highpart & 1) << 31;
-		highpart >>= 1;
-	}
-
-	pfreq = 1.0 / (double)lowpart;
-
-	Sys_InitFloatTime ();
-#endif
 
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution
@@ -267,9 +243,7 @@ void Sys_Error (char *error, ...)
 
 	MessageBox(NULL, text, "Error", 0 /* MB_OK */ );
 
-#ifndef SERVERONLY
 	CloseHandle (qwclsemaphore);
-#endif
 
 	exit (1);
 }
@@ -290,111 +264,17 @@ void Sys_Quit (void)
 	VID_ForceUnlockedAndReturnState ();
 
 	Host_Shutdown();
-#ifndef SERVERONLY
+
 	if (tevent)
 		CloseHandle (tevent);
 
 	if (qwclsemaphore)
 		CloseHandle (qwclsemaphore);
-#endif
 
 	exit (0);
 }
 
 
-#if 0
-/*
-================
-Sys_DoubleTime
-================
-*/
-double Sys_DoubleTime (void)
-{
-	static int			sametimecount;
-	static unsigned int	oldtime;
-	static int			first = 1;
-	LARGE_INTEGER		PerformanceCount;
-	unsigned int		temp, t2;
-	double				time;
-
-	Sys_PushFPCW_SetHigh ();
-
-	QueryPerformanceCounter (&PerformanceCount);
-
-	temp = ((unsigned int)PerformanceCount.LowPart >> lowshift) |
-		   ((unsigned int)PerformanceCount.HighPart << (32 - lowshift));
-
-	if (first)
-	{
-		oldtime = temp;
-		first = 0;
-	}
-	else
-	{
-	// check for turnover or backward time
-		if ((temp <= oldtime) && ((oldtime - temp) < 0x10000000))
-		{
-			oldtime = temp;	// so we can't get stuck
-		}
-		else
-		{
-			t2 = temp - oldtime;
-
-			time = (double)t2 * pfreq;
-			oldtime = temp;
-
-			curtime += time;
-
-			if (curtime == lastcurtime)
-			{
-				sametimecount++;
-
-				if (sametimecount > 100000)
-				{
-					curtime += 1.0;
-					sametimecount = 0;
-				}
-			}
-			else
-			{
-				sametimecount = 0;
-			}
-
-			lastcurtime = curtime;
-		}
-	}
-
-	Sys_PopFPCW ();
-
-    return curtime;
-}
-
-/*
-================
-Sys_InitFloatTime
-================
-*/
-void Sys_InitFloatTime (void)
-{
-	int		j;
-
-	Sys_DoubleTime ();
-
-	j = COM_CheckParm("-starttime");
-
-	if (j)
-	{
-		curtime = (double) (Q_atof(com_argv[j+1]));
-	}
-	else
-	{
-		curtime = 0.0;
-	}
-
-	lastcurtime = curtime;
-}
-
-#endif
 
 double Sys_DoubleTime (void)
 {
