@@ -773,7 +773,8 @@ void CL_ParsePlayerinfo (void)
 
 	num = MSG_ReadByte ();
 	if (num > MAX_CLIENTS)
-		Sys_Error ("CL_ParsePlayerinfo: bad num");
+//		Sys_Error ("CL_ParsePlayerinfo: bad num");
+		Host_EndGame ("CL_ParsePlayerinfo: bad num");
 
 	info = &cl.players[num];
 

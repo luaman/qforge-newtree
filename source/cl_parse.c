@@ -1039,7 +1039,8 @@ void CL_SetStat (int stat, int value)
 {
 	int	j;
 	if (stat < 0 || stat >= MAX_CL_STATS)
-		Sys_Error ("CL_SetStat: %i is invalid", stat);
+//		Sys_Error ("CL_SetStat: %i is invalid", stat);
+		Host_EndGame ("CL_SetStat: %i is invalid", stat);
 
 	Sbar_Changed ();
 	
@@ -1200,7 +1201,8 @@ void CL_ParseServerMessage (void)
 		case svc_lightstyle:
 			i = MSG_ReadByte ();
 			if (i >= MAX_LIGHTSTYLES)
-				Sys_Error ("svc_lightstyle > MAX_LIGHTSTYLES");
+//				Sys_Error ("svc_lightstyle > MAX_LIGHTSTYLES");
+				Host_EndGame ("svc_lightstyle > MAX_LIGHTSTYLES");
 			strcpy (cl_lightstyle[i].map,  MSG_ReadString());
 			cl_lightstyle[i].length = strlen(cl_lightstyle[i].map);
 			break;

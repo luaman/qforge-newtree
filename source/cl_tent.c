@@ -335,7 +335,8 @@ void CL_ParseTEnt (void)
 		break;
 
 	default:
-		Sys_Error ("CL_ParseTEnt: bad type");
+//		Sys_Error ("CL_ParseTEnt: bad type");
+		Host_EndGame ("CL_ParseTEnt: bad type");
 	}
 }
 
