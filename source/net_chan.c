@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include <unistd.h>
 #include "quakedef.h"
 
 #ifdef _WIN32
@@ -328,7 +329,6 @@ qboolean Netchan_Process (netchan_t *chan)
 #ifdef SERVERONLY
 	int			qport;
 #endif
-	int i;
 
 	if (
 #ifndef SERVERONLY
