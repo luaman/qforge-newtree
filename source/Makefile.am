@@ -231,7 +231,7 @@ qf_client_glx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 sgl_SOURCES=	vid_sgl.c
 
 qf_client_sgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(sgl_SOURCES)
-qf_client_sgl_LDADD=	$(SDL_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
+qf_client_sgl_LDADD=	$(SDL_LIBS) $(GLX_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
 qf_client_sgl_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 
 #
