@@ -742,13 +742,17 @@ bSetupPixelFormat (HDC hDC)
 	PIXELFORMATDESCRIPTOR pfd ;
 	int         pixelformat;
 
+	char test[1024];
+
 	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
 	pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR); 
 	pfd.nVersion   = 1;
 	pfd.dwFlags    = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
 	pfd.iPixelType = PFD_TYPE_RGBA;
-//	pfd.cColorBits = 24;
-	pfd.cColorBits = modelist[vid_default].bpp;
+
+	if (!modelist[vid_default].bpp) pfd.cColorBits = 16;
+	else pfd.cColorBits = modelist[vid_default].bpp;
+
 	pfd.cDepthBits = 32;
 	pfd.iLayerType = PFD_MAIN_PLANE;
 
