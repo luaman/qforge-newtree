@@ -52,9 +52,6 @@ cvar_t	*r_skyname;
 cvar_t	*pr_boundscheck;
 cvar_t	*qwprog;
 
-void        SV_Error (char *error, ...);
-void        FindEdictFieldOffsets (progs_t *pr);
-
 int type_size[8] = {
 	1,
 	sizeof (void *) / 4,

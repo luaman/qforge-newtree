@@ -132,10 +132,6 @@ char       *pr_opnames[] = {
 	"BITOR"
 };
 
-char       *PR_GlobalString (int ofs);
-char       *PR_GlobalStringNoContents (int ofs);
-
-
 //=============================================================================
 
 /*
@@ -154,21 +150,21 @@ PR_PrintStatement (progs_t *pr, dstatement_t *s)
 	}
 
 	if (s->op == OP_IF || s->op == OP_IFNOT)
-		Con_Printf ("%sbranch %i", PR_GlobalString ((unsigned short) s->a),
+		Con_Printf ("%sbranch %i", PR_GlobalString (pr, (unsigned short) s->a),
 					s->b);
 	else if (s->op == OP_GOTO) {
 		Con_Printf ("branch %i", s->a);
 	} else if ((unsigned int) (s->op - OP_STORE_F) < 6) {
-		Con_Printf ("%s", PR_GlobalString ((unsigned short) s->a));
-		Con_Printf ("%s", PR_GlobalStringNoContents ((unsigned short) s->b));
+		Con_Printf ("%s", PR_GlobalString (pr, (unsigned short) s->a));
+		Con_Printf ("%s", PR_GlobalStringNoContents (pr, (unsigned short) s->b));
 	} else {
 		if (s->a)
-			Con_Printf ("%s", PR_GlobalString ((unsigned short) s->a));
+			Con_Printf ("%s", PR_GlobalString (pr, (unsigned short) s->a));
 		if (s->b)
-			Con_Printf ("%s", PR_GlobalString ((unsigned short) s->b));
+			Con_Printf ("%s", PR_GlobalString (pr, (unsigned short) s->b));
 		if (s->c)
 			Con_Printf ("%s",
-						PR_GlobalStringNoContents ((unsigned short) s->c));
+						PR_GlobalStringNoContents (pr, (unsigned short) s->c));
 	}
 	Con_Printf ("\n");
 }

@@ -143,6 +143,9 @@ void ED_PrintNum (progs_t *pr, int ent);
 void ED_Count (progs_t *pr);
 void PR_Profile (progs_t *pr);
 
+char *PR_GlobalString (progs_t *pr, int ofs);
+char *PR_GlobalStringNoContents (progs_t *pr, int ofs);
+
 eval_t *GetEdictFieldValue(progs_t *pr, edict_t *ed, char *field);
 
 //
@@ -156,6 +159,8 @@ int PR_SetString(progs_t *pr, char *s);
 // externaly supplied functions
 
 int ED_Parse_Extra_Fields (progs_t *pr, char *key, char *value);
+void FindEdictFieldOffsets (progs_t *pr);
+
 
 //============================================================================
 
