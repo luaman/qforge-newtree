@@ -30,7 +30,7 @@
 /* Version strings */
 #define PACKAGE 	"quakeforge"
 #define PROGRAM 	"QuakeForge"
-#define VERSION 	"0.3.0"
+#define VERSION 	"0.3.1"
 #define QW_VERSION	"2.40"
 #define QSG_VERSION	"2.0"
 
