@@ -80,8 +80,6 @@ extern int  in_forward, in_forward2, in_back;
 frame_t    *view_frame;
 player_state_t *view_message;
 
-void        BuildGammaTable (float, float);
-
 /*
 	V_CalcRoll
 */
@@ -732,8 +730,6 @@ V_Init (void)
 	Cmd_AddCommand ("bf", V_BonusFlash_f, "Background flash, used when you pick up an item");
 	Cmd_AddCommand ("centerview", V_StartPitchDrift, "Centers the player's view ahead after +lookup or +lookdown \n"
 		"Will not work while mlook is active or freelook is 1.");
-
-	BuildGammaTable (1.0, 1.0);			// no gamma yet
 }
 
 void
@@ -761,7 +757,4 @@ V_Init_Cvars (void)
 	v_kicktime = Cvar_Get ("v_kicktime", "0.5", CVAR_NONE, "How long the kick from an attack lasts");
 	v_kickroll = Cvar_Get ("v_kickroll", "0.6", CVAR_NONE, "How much you lean when hit");
 	v_kickpitch = Cvar_Get ("v_kickpitch", "0.6", CVAR_NONE, "How much you look up when hit");
-
-	brightness = Cvar_Get ("brightness", "1", CVAR_ARCHIVE, "Brightness level");
-	contrast = Cvar_Get ("contrast", "1", CVAR_ARCHIVE, "Contrast level");
 }

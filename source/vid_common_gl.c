@@ -77,11 +77,23 @@ GLenum		gl_mtex_enum = GL_TEXTURE0_ARB;
 
 QF_glColorTableEXT	qglColorTableEXT = NULL;
 qboolean			is8bit = false;
-cvar_t				*vid_use8bit;
+
+cvar_t	*vid_use8bit;
+cvar_t	*brightness;
+cvar_t	*contrast;
 
 extern int gl_filter_min, gl_filter_max;
 
 /*-----------------------------------------------------------------------*/
+
+void
+GL_Common_Init_Cvars (void)
+{
+	vid_use8bit = Cvar_Get ("vid_use8bit", "0", CVAR_ROM, "Use 8-bit shared palettes.");
+	brightness = Cvar_Get ("brightness", "1", CVAR_ARCHIVE, "Brightness level");
+	contrast = Cvar_Get ("contrast", "1", CVAR_ARCHIVE, "Contrast level");
+	gl_multitexture = Cvar_Get ("gl_multitexture", "0", CVAR_ARCHIVE, "Use multitexture when available");
+}
 
 /*
 	CheckMultiTextureExtensions
@@ -198,6 +210,8 @@ VID_SetPalette (unsigned char *palette)
 void
 GL_Init_Common (void)
 {
+	GL_Common_Init_Cvars ();
+
 	gl_vendor = glGetString (GL_VENDOR);
 	Con_Printf ("GL_VENDOR: %s\n", gl_vendor);
 	gl_renderer = glGetString (GL_RENDERER);
