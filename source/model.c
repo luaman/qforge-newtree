@@ -583,19 +583,13 @@ void Mod_LoadTexinfo (lump_t *l)
 
 	for ( i=0 ; i<count ; i++, in++, out++)
 	{
-#if 0
-		for (j=0 ; j<8 ; j++)
-			out->vecs[0][j] = LittleFloat (in->vecs[0][j]);
-		len1 = Length (in->vecs[0]);
-		len2 = Length (in->vecs[1]);
-#else
 		for (j=0 ; j<4 ; j++) {
 			out->vecs[0][j] = LittleFloat (in->vecs[0][j]);
 			out->vecs[1][j] = LittleFloat (in->vecs[1][j]);
 		}
 		len1 = Length (out->vecs[0]);
 		len2 = Length (out->vecs[1]);
-#endif
+
 		if (len1 + len2 < 2 /*0.001*/)
 			out->mipadjust = 1;
 		else
@@ -1062,8 +1056,6 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 	for (i=0 ; i<sizeof(dheader_t)/4 ; i++)
 		((int *)header)[i] = LittleLong ( ((int *)header)[i]);
 
-// load into heap
-
 	mod->checksum = 0;
 	mod->checksum2 = 0;
 
@@ -1079,6 +1071,8 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 		mod->checksum2 ^= LittleLong(Com_BlockChecksum(mod_base + header->lumps[i].fileofs, 
 			header->lumps[i].filelen));
 	}
+
+// load into heap
 
 	Mod_LoadVertexes (&header->lumps[LUMP_VERTEXES]);
 	Mod_LoadEdges (&header->lumps[LUMP_EDGES]);
