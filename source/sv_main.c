@@ -1866,6 +1866,7 @@ void SV_Init (quakeparms_t *parms)
 
 	Memory_Init (parms->membase, parms->memsize);
 	Cvar_Init ();
+	Sys_Init_Cvars ();
 	Sys_Init ();
 
 	Cbuf_Init ();
@@ -1893,7 +1894,6 @@ void SV_Init (quakeparms_t *parms)
 	Netchan_Init_Cvars ();
 	Pmove_Init_Cvars ();
 	PR_Init_Cvars ();
-	Sys_Init_Cvars ();
 
 	// and now reprocess the cmdline's sets for overrides
 	Cmd_StuffCmds_f ();
