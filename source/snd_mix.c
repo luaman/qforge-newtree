@@ -97,9 +97,9 @@ void S_TransferStereo16 (int endtime)
 	{
 		reps = 0;
 
-		while ((hresult = pDSBuf->lpVtbl->Lock(pDSBuf, 0, gSndBufSize, &pbuf, &dwSize, 
-									   &pbuf2, &dwSize2, 0)) != DS_OK)
-		{
+		while ((hresult = pDSBuf->lpVtbl->Lock(pDSBuf, 0, gSndBufSize,
+						   (LPVOID *)&pbuf, &dwSize,
+						   (LPVOID *)&pbuf2, &dwSize2, 0)) != DS_OK) {
 			if (hresult != DSERR_BUFFERLOST)
 			{
 				Con_Printf ("S_TransferStereo16: DS::Lock Sound Buffer Failed\n");
@@ -186,9 +186,9 @@ void S_TransferPaintBuffer(int endtime)
 	{
 		reps = 0;
 
-		while ((hresult = pDSBuf->lpVtbl->Lock(pDSBuf, 0, gSndBufSize, &pbuf, &dwSize, 
-									   &pbuf2,&dwSize2, 0)) != DS_OK)
-		{
+		while ((hresult = pDSBuf->lpVtbl->Lock(pDSBuf, 0, gSndBufSize,
+					   (LPVOID *)&pbuf, &dwSize,
+					   (LPVOID *)&pbuf2, &dwSize2, 0)) != DS_OK) {
 			if (hresult != DSERR_BUFFERLOST)
 			{
 				Con_Printf ("S_TransferPaintBuffer: DS::Lock Sound Buffer Failed\n");

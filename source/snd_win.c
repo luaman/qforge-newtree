@@ -378,8 +378,9 @@ sndinitstat SNDDMA_InitDirect (void)
 // initialize the buffer
 	reps = 0;
 
-	while ((hresult = pDSBuf->lpVtbl->Lock(pDSBuf, 0, gSndBufSize, &lpData, &dwSize, NULL, NULL, 0)) != DS_OK)
-	{
+	while ((hresult = pDSBuf->lpVtbl->Lock(pDSBuf, 0, gSndBufSize,
+										   (LPVOID *)&lpData, &dwSize, NULL,
+										   NULL, 0)) != DS_OK) {
 		if (hresult != DSERR_BUFFERLOST)
 		{
 			Con_SafePrintf ("SNDDMA_InitDirect: DS::Lock Sound Buffer Failed\n");
@@ -645,7 +646,7 @@ how many sample are required to fill it up.
 int SNDDMA_GetDMAPos(void)
 {
 	MMTIME	mmtime;
-	int		s;
+	int		s = 0;
 	DWORD	dwWrite;
 
 	if (dsound_init) 
