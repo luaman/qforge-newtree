@@ -209,14 +209,15 @@ $(CL_GLX_name): $(COM_objects) $(CL_objects) $(CL_GL_objects) $(CL_GLX_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_GLX_libs)
 
 clean:
-	-rm -f *.[od] $(SV_name) $(CL_SVGA_name) $(CL_X11_name)
+	-rm -f *.[od] $(SV_name) $(CL_SVGA_name) $(CL_X11_name) $(CL_GLX_name)
 
 #               *Individual File Dependencies*
 
 -include $(COM_dependencies)
 -include $(SV_dependencies)
 -include $(CL_dependencies)
-#-include $(CL_GL_dependencies)
+-include $(CL_GL_dependencies)
+-include $(CL_SW_dependencies)
 -include $(CL_SVGA_dependencies)
 -include $(CL_X11_dependencies)
 -include $(CL_GLX_dependencies)
