@@ -43,7 +43,7 @@ EXTRA_libqfcd_a_SOURCES = cd_win.c cd_linux.c cd_null.c
 common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
 		mdfour.c mathlib.c math.S cvar.c crc.c model.c cmd.c \
 		qargs.c qendian.c quakefs.c quakeio.c msg.c sizebuf.c info.c \
-		checksum.c link.c build.c va.c com.c
+		checksum.c link.c buildnum.c va.c com.c
 server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c sv_init.c sv_main.c sv_misc.c \
 		sv_model.c sv_nchan.c sv_ents.c sv_send.c sv_move.c sv_phys.c \
 		sv_user.c sv_ccmds.c world.c worlda.S sv_cvar.c

@@ -40,7 +40,7 @@
 #include "quakefs.h"
 #include "qargs.h"
 #include "bothdefs.h"
-#include "build.h"
+#include "buildnum.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
