@@ -667,6 +667,9 @@ void VID_Init(unsigned char *palette)
 	CreateNullCursor(x_disp, x_win);
 	XDefineCursor(x_disp, x_win, nullcursor);
 
+	XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
+				 vid.width+2, vid.height+2);
+
 #ifdef HAVE_VIDMODE
 	if (hasvidmode && vid_fullscreen->value) {
 		XGrabKeyboard(x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,

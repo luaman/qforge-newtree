@@ -441,9 +441,6 @@ IN_Init(void)
 		XF86DGADirectVideo(x_disp, DefaultScreen(x_disp),
 						   XF86DGADirectMouse|XF86DGADirectKeyb);
 
-		//XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
-		//		vid.width+2, vid.height+2);
-
 		XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
 				GrabModeAsync, x_win, None, CurrentTime);
 
