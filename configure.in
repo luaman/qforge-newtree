@@ -419,7 +419,17 @@ if test "x$HAVE_GLX" != xno; then
 		AC_DEFINE(HAVE_GL_COLOR_INDEX8_EXT) AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no)
 	)
-	AC_CHECK_HEADERS(GL/glext.h)
+	AC_CHECK_HEADERS(GL/glext.h, HAVE_GL_GLEXT_H=yes)
+	if test "x$HAVE_GL_GLEXT_H" = xyes; then
+		AC_MSG_CHECKING(for PFNGLCOLORTABLEEXTPROC)
+		AC_TRY_COMPILE(
+			[#include <GL/gl.h>]
+			[#include <GL/glext.h>],
+			[PFNGLCOLORTABLEEXTPROC x;],
+			AC_DEFINE(HAVE_PFNGLCOLORTABLEEXTPROC) AC_MSG_RESULT(yes),
+			AC_MSG_RESULT(no)
+		)
+	fi
 fi
 CPPFLAGS="$save_CPPFLAGS"
 

@@ -55,6 +55,9 @@
 /* Define this if you have GL_COLOR_INDEX8_EXT in GL/gl.h */
 #undef HAVE_GL_COLOR_INDEX8_EXT
 
+/* Define this if you have PFNGLCOLORTABLEEXTPROC in GL/glext.h */
+#undef HAVE_PFNGLCOLORTABLEEXTPROC
+
 /* Define this if you are using a version of Mesa with X mode change support */
 #undef HAVE_XMESA
 
