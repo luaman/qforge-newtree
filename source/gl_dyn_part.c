@@ -584,6 +584,7 @@ R_DrawParticles (void)
 	j = 0;
 
 	for (k = 0, part = particles; k < numparticles; k++, part++) {
+		// LordHavoc: this is probably no longer necessary, as it is checked at the end, but could still happen on weird particle effects, left for safety...
 		if (part->die <= cl.time) {
 			freeparticles[j++] = part;
 			continue;
@@ -635,9 +636,6 @@ R_DrawParticles (void)
 		for (i = 0; i < 3; i++)
 			part->org[i] += part->vel[i] * host_frametime;
 
-
-#define alpha_die(p)			if (p->alpha < 1) part->die = -1;
-
 		switch (part->type) {
 			case pt_static:
 				break;
@@ -661,12 +659,10 @@ R_DrawParticles (void)
 			case pt_smoke:
 				part->scale += host_frametime * 6;
 				part->alpha -= host_frametime * 128;
-				alpha_die (part);
 				break;
 			case pt_smokecloud:
 				part->scale += host_frametime * 60;
 				part->alpha -= host_frametime * 128;
-				alpha_die (part);
 				break;
 			case pt_bloodcloud:
 				/* 
@@ -675,26 +671,28 @@ R_DrawParticles (void)
 				part->scale += host_frametime * 4;
 				part->alpha -= host_frametime * 64;
 				part->vel[2] -= grav;
-				alpha_die (part);
 				break;
 			case pt_fadespark:
 				part->alpha -= host_frametime * 256;
 				part->vel[2] -= grav;
-				if (part->alpha < 1)
-					part->die = -1;
 				break;
 			case pt_fadespark2:
 				part->alpha -= host_frametime * 512;
 				part->vel[2] -= grav;
-				alpha_die (part);
 				break;
 			case pt_fallfadespark:
 				part->alpha -= host_frametime * 256;
 				part->vel[2] -= fast_grav;
-				if (part->alpha < 1)
-					part->die = -1;
 				break;
 		}
+
+		// LordHavoc: most particles already did this, consistency...
+		if (part->alpha < 1)
+			part->die = -1;
+
+		// LordHavoc: immediate removal of unnecessary particles (must be done to ensure compactor below operates properly in all cases)
+		if (part->die < cl.time)
+			freeparticles[j++] = part;
 	}
 	k = 0;
 	while (maxparticle >= activeparticles) {
