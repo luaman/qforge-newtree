@@ -1,15 +1,15 @@
 #				*Defines*
 
-SV_name=qw-server
+SV_name=qf-server
 SV_libs=
 
-CL_SVGA_name=qw-client-svga
+CL_SVGA_name=qf-client-svga
 CL_SVGA_libs=-lvga
 
-CL_X11_name=qw-client-x11
+CL_X11_name=qf-client-x11
 CL_X11_libs=-lX11 -lXext
 
-CL_GLX_name=qw-client-glx
+CL_GLX_name=qf-client-glx
 CL_GLX_libs=-lX11 -lXext -lGL
 
 DIRECTORIES=

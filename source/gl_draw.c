@@ -59,6 +59,8 @@ cvar_t		gl_nobind = {"gl_nobind", "0"};
 cvar_t		gl_max_size = {"gl_max_size", "1024"};
 cvar_t		gl_picmip = {"gl_picmip", "0"};
 
+cvar_t		cl_verstring = {"cl_verstring", "QuakeForge " QF_VERSION};
+
 byte		*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
 qpic_t		*draw_backtile;
@@ -404,9 +406,6 @@ void Draw_Init (void)
 {
 	int		i;
 	qpic_t	*cb;
-	byte	*dest;
-	int		x;
-	char	ver[40];
 	glpic_t	*gl;
 	int start;
 	byte    *ncdata;
@@ -414,6 +413,8 @@ void Draw_Init (void)
 	Cvar_RegisterVariable (&gl_nobind);
 	Cvar_RegisterVariable (&gl_max_size);
 	Cvar_RegisterVariable (&gl_picmip);
+
+	Cvar_RegisterVariable (&cl_verstring);
 
 	// 3dfx can only handle 256 wide textures
 	if (!Q_strncasecmp ((char *)gl_renderer, "3dfx",4) ||
@@ -442,11 +443,6 @@ void Draw_Init (void)
 	if (!cb)
 		Sys_Error ("Couldn't load gfx/conback.lmp");
 	SwapPic (cb);
-
-	sprintf (ver, "%4.2f", VERSION);
-	dest = cb->data + 320 + 320*186 - 11 - 8*strlen(ver);
-	for (x=0 ; x<strlen(ver) ; x++)
-		Draw_CharToConback (ver[x], dest+(x<<3));
 
 #if 0
 	conback->width = vid.conwidth;
@@ -803,8 +799,6 @@ Draw_ConsoleBackground
 */
 void Draw_ConsoleBackground (int lines)
 {
-	char ver[80];
-	int x, i;
 	int y;
 
 	y = (vid.height * 3) >> 2;
@@ -813,19 +807,8 @@ void Draw_ConsoleBackground (int lines)
 	else
 		Draw_AlphaPic (0, lines - vid.height, conback, (float)(1.2 * lines)/y);
 
-	// hack the version number directly into the pic
-//	y = lines-186;
-	y = lines-14;
-	if (!cls.download) {
-#ifdef __linux__
-		sprintf (ver, "LinuxGL (%4.2f) QuakeWorld", LINUX_VERSION);
-#else
-		sprintf (ver, "GL (%4.2f) QuakeWorld", GLQUAKE_VERSION);
-#endif
-		x = vid.conwidth - (strlen(ver)*8 + 11) - (vid.conwidth*8/320)*7;
-		for (i=0 ; i<strlen(ver) ; i++)
-			Draw_Character (x + i * 8, y, ver[i] | 0x80);
-	}
+	Draw_Alt_String (vid.conwidth - strlen(cl_verstring.string)*8 - 11,
+			lines-14, cl_verstring.string);
 }
 
 

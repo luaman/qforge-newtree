@@ -1021,7 +1021,7 @@ void M_SinglePlayer_Draw (void) {
 //	M_DrawTransPic (72, 32, Draw_CachePic ("gfx/sp_menu.lmp") );
 
 	M_DrawTextBox (60, 10*8, 23, 4);	
-	M_PrintWhite (92, 12*8, "QuakeWorld is for");
+	M_PrintWhite (88, 12*8, "This client is for");
 	M_PrintWhite (88, 13*8, "Internet play only");
 
 }

@@ -174,8 +174,8 @@ CL_Version_f
 */
 void CL_Version_f (void)
 {
-	Con_Printf ("Version %4.2f\n", VERSION);
-	Con_Printf ("Exe: "__TIME__" "__DATE__"\n");
+	Con_Printf ("QuakeForge Version %s\n", QF_VERSION);
+	Con_Printf ("Binary: "__TIME__" "__DATE__"\n");
 }
 
 
@@ -419,7 +419,7 @@ void CL_Disconnect (void)
 	connect_time = -1;
 
 #ifdef _WIN32
-	SetWindowText (mainwindow, "QuakeWorld: disconnected");
+	SetWindowText (mainwindow, "QuakeForge: disconnected");
 #endif
 
 // stop sounds (especially looping!)
@@ -875,7 +875,7 @@ void CL_ConnectionlessPacket (void)
 			Con_Printf("===========================\n");
 			Con_Printf("Invalid localid on command packet received from local host. "
 				"\n|%s| != |%s|\n"
-				"You may need to reload your server browser and QuakeWorld.\n",
+				"You may need to reload your server browser and QuakeForge.\n",
 				s, localid.string);
 			Con_Printf("===========================\n");
 			Cvar_Set("localid", "");
@@ -1069,7 +1069,7 @@ void CL_Init (void)
 	Info_SetValueForKey (cls.userinfo, "bottomcolor", "0", MAX_INFO_STRING);
 	Info_SetValueForKey (cls.userinfo, "rate", "2500", MAX_INFO_STRING);
 	Info_SetValueForKey (cls.userinfo, "msg", "1", MAX_INFO_STRING);
-	sprintf (st, "%4.2f-%04d", VERSION, build_number());
+	sprintf (st, "%s-%04d", QW_VERSION, build_number());
 	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING);
 
 	CL_InitInput ();
@@ -1504,9 +1504,9 @@ void Host_Init (quakeparms_t *parms)
 
 	host_initialized = true;
 
-	Con_Printf ("\nClient Version %4.2f (Build %04d)\n\n", VERSION, build_number());
+	Con_Printf ("\nClient Version %s (Build %04d)\n\n", QF_VERSION, build_number());
 
-	Con_Printf ("ÄÅÅÅÅÅÅ QuakeWorld Initialized ÅÅÅÅÅÅÇ\n");	
+	Con_Printf ("ÄÅÅÅÅÅÅ QuakeForge Initialized ÅÅÅÅÅÅÇ\n");	
 }
 
 

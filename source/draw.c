@@ -44,7 +44,7 @@ byte		*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
 qpic_t		*draw_backtile;
 
-cvar_t		cl_verstring = {"cl_verstring", "set in Draw_Init"};
+cvar_t		cl_verstring = {"cl_verstring", "QuakeForge " QF_VERSION};
 
 //=============================================================================
 /* Support Routines */
@@ -128,8 +128,6 @@ void Draw_Init (void)
 	r_rectdesc.rowbytes = draw_backtile->width;
 
 	Cvar_RegisterVariable (&cl_verstring);
-
-	Cvar_Set ("cl_verstring", va("QuakeForge %2.2f", VERSION));
 }
 
 

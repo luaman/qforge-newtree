@@ -528,7 +528,7 @@ void SVC_DirectConnect (void)
 	version = atoi(Cmd_Argv(1));
 	if (version != PROTOCOL_VERSION)
 	{
-		Netchan_OutOfBandPrint (net_from, "%c\nServer is version %4.2f.\n", A2C_PRINT, VERSION);
+		Netchan_OutOfBandPrint (net_from, "%c\nServer is version %s.\n", A2C_PRINT, QW_VERSION);
 		Con_Printf ("* rejected connect from version %i\n", version);
 		return;
 	}
@@ -1374,7 +1374,12 @@ void SV_InitLocal (void)
 	for (i=0 ; i<MAX_MODELS ; i++)
 		sprintf (localmodels[i], "*%i", i);
 
-	Info_SetValueForStarKey (svs.info, "*version", va("%4.2f", VERSION), MAX_SERVERINFO_STRING);
+	Info_SetValueForStarKey (svs.info, "*qf_version", QF_VERSION,
+			MAX_SERVERINFO_STRING);
+	Info_SetValueForStarKey (svs.info, "*version", QW_VERSION,
+			MAX_SERVERINFO_STRING);
+	Info_SetValueForStarKey (svs.info, "*qsg_standard", QSG_STANDARD,
+			MAX_SERVERINFO_STRING);
 
 	// init fraglog stuff
 	svs.logsequence = 1;
@@ -1653,9 +1658,9 @@ void SV_Init (quakeparms_t *parms)
 	Con_Printf ("Exe: "__TIME__" "__DATE__"\n");
 	Con_Printf ("%4.1f megabyte heap\n",parms->memsize/ (1024*1024.0));	
 
-	Con_Printf ("\nServer Version %4.2f (Build %04d)\n\n", VERSION, build_number());
+	Con_Printf ("\nServer Version %s (Build %04d)\n\n", QW_VERSION, build_number());
 
-	Con_Printf ("======== QuakeWorld Initialized ========\n");
+	Con_Printf ("======== QuakeForge Initialized ========\n");
 	
 // process command line arguments
 	Cmd_StuffCmds_f ();
