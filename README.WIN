@@ -93,7 +93,9 @@ implib -c -f opengl32.lib c:\windows\system\opengl32.dll
 
 implib -a -c sdl.lib sdl.dll (in sdlsdk directory where sdl.dll is located)
 
-10) Check all paths in all makefiles and correct them to suit your system.
+10) Check all paths in makefiles (found in sources directory, see list of
+makefiles below) and correct them to suit your system. You shouldn't need
+to change anything below "# end of system dependant stuff."
 
 11) When everything else is done, just start making
 
