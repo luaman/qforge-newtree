@@ -247,6 +247,13 @@ typedef struct
 	challenge_t	challenges[MAX_CHALLENGES];	// to prevent invalid IPs from connecting
 } server_static_t;
 
+typedef struct foobar_s {
+	qboolean	demoplayback;
+	int		qport;
+} foobar_t;
+
+extern foobar_t cls;
+
 //=============================================================================
 
 // edict->movetype values

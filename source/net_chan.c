@@ -88,6 +88,7 @@ int		net_drop;
 cvar_t	showpackets = {"showpackets", "0"};
 cvar_t	showdrop = {"showdrop", "0"};
 cvar_t	qport = {"qport", "0"};
+extern qboolean	is_server;
 
 /*
 ===============
@@ -134,9 +135,7 @@ void Netchan_OutOfBand (netadr_t adr, int length, byte *data)
 
 // send the datagram
 	//zoid, no input in demo playback mode
-#ifndef SERVERONLY
 	if (!cls.demoplayback)
-#endif
 		NET_SendPacket (send.cursize, send.data, adr);
 }
 
@@ -215,9 +214,7 @@ qboolean Netchan_CanReliable (netchan_t *chan)
 	return Netchan_CanPacket (chan);
 }
 
-#ifdef SERVERONLY
 qboolean ServerPaused(void);
-#endif
 
 /*
 ===============
@@ -277,9 +274,8 @@ void Netchan_Transmit (netchan_t *chan, int length, byte *data)
 	MSG_WriteLong (&send, w2);
 
 	// send the qport if we are a client
-#ifndef SERVERONLY
-	MSG_WriteShort (&send, cls.qport);
-#endif
+	if(!is_server)
+		MSG_WriteShort (&send, cls.qport);
 
 // copy the reliable message to the packet first
 	if (send_reliable)
@@ -298,19 +294,15 @@ void Netchan_Transmit (netchan_t *chan, int length, byte *data)
 	chan->outgoing_time[i] = realtime;
 
 	//zoid, no input in demo playback mode
-#ifndef SERVERONLY
 	if (!cls.demoplayback)
-#endif
 		NET_SendPacket (send.cursize, send.data, chan->remote_address);
 
 	if (chan->cleartime < realtime)
 		chan->cleartime = realtime + send.cursize*chan->rate;
 	else
 		chan->cleartime += send.cursize*chan->rate;
-#ifdef SERVERONLY
 	if (ServerPaused())
 		chan->cleartime = realtime;
-#endif
 
 	if (showpackets.value)
 		Con_Printf ("--> s=%i(%i) a=%i(%i) %i\n"
@@ -334,26 +326,22 @@ qboolean Netchan_Process (netchan_t *chan)
 {
 	unsigned		sequence, sequence_ack;
 	unsigned		reliable_ack, reliable_message;
-#ifdef SERVERONLY
 	int			qport;
-#endif
 
-	if (
-#ifndef SERVERONLY
-			!cls.demoplayback && 
-#endif
-			!NET_CompareAdr (net_from, chan->remote_address))
+	if ( !cls.demoplayback && 
+		!NET_CompareAdr (net_from, chan->remote_address))
 		return false;
-	
+	else if (is_server && !NET_CompareAdr (net_from, chan->remote_address))
+		return false;
+
 // get sequence numbers		
 	MSG_BeginReading ();
 	sequence = MSG_ReadLong ();
 	sequence_ack = MSG_ReadLong ();
 
 	// read the qport if we are a server
-#ifdef SERVERONLY
-	qport = MSG_ReadShort ();
-#endif
+	if (is_server)
+		qport = MSG_ReadShort ();
 
 	reliable_message = sequence >> 31;
 	reliable_ack = sequence_ack >> 31;

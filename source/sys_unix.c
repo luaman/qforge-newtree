@@ -46,6 +46,7 @@ cvar_t	sys_nostdout = {"sys_nostdout","0"};
 cvar_t	sys_extrasleep = {"sys_extrasleep","0"};
 
 qboolean	stdin_ready;
+qboolean	is_server = true;
 
 /*
 ===============================================================================

@@ -52,6 +52,7 @@ int nostdout = 0;
 
 char *basedir = ".";
 char *cachedir = "/tmp";
+qboolean is_server = false;
 
 cvar_t  sys_linerefresh = {"sys_linerefresh","0"};// set for entity display
 

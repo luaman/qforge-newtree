@@ -1,5 +1,10 @@
 #include <quakedef.h>
 
+qboolean ServerPaused (void)
+{
+	return false;
+}
+
 void SV_Error (char *error, ...)
 {
 	va_list		argptr;
