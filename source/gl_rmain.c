@@ -124,7 +124,6 @@ cvar_t	*gl_particles;
 cvar_t	*gl_lerp_anim;
 cvar_t	*gl_fb_models;
 cvar_t	*gl_fb_bmodels;
-cvar_t	*gl_texsort;
 cvar_t	*gl_multitexture;
 
 cvar_t	*r_skyname;
