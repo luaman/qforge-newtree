@@ -51,7 +51,7 @@
 #include "sys.h"
 #include "menu.h"
 #include "compat.h"
-#include "build.h"
+#include "buildnum.h"
 #include "keys.h"
 #include "screen.h"
 #include "sbar.h"
