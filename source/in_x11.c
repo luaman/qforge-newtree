@@ -426,7 +426,7 @@ void
 IN_SendKeyEvents (void)
 {
 	/* Get events from X server. */
-	x11_process_events ();
+	X11_ProcessEvents ();
 }
 
 
@@ -487,7 +487,7 @@ IN_Shutdown (void)
 			XF86DGADirectVideo (x_disp, DefaultScreen (x_disp), 0);
 #endif
 	}
-	x11_close_display ();
+	X11_CloseDisplay ();
 }
 
 void
@@ -505,7 +505,7 @@ IN_Init (void)
 	if (!x_win)
 		Sys_Error ("IN: No window!!\n");
 
-	x11_open_display ();				// call to increment the reference
+	X11_OpenDisplay ();				// call to increment the reference
 										// counter
 
 	{
@@ -536,11 +536,11 @@ IN_Init (void)
 	mouse_x = mouse_y = 0.0;
 	mouse_avail = 1;
 
-	x11_add_event (KeyPress, &event_key);
-	x11_add_event (KeyRelease, &event_key);
-	x11_add_event (ButtonPress, &event_button);
-	x11_add_event (ButtonRelease, &event_button);
-	x11_add_event (MotionNotify, &event_motion);
+	X11_AddEvent (KeyPress, &event_key);
+	X11_AddEvent (KeyRelease, &event_key);
+	X11_AddEvent (ButtonPress, &event_button);
+	X11_AddEvent (ButtonRelease, &event_button);
+	X11_AddEvent (MotionNotify, &event_motion);
 
 	Cmd_AddCommand ("force_centerview", Force_CenterView_f, "Force view of player to center");
 }

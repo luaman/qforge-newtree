@@ -759,3 +759,9 @@ void
 VID_SetCaption (char *text)
 {
 }
+
+qboolean
+VID_SetGamma (double gamma)
+{
+	return false; //FIXME
+}

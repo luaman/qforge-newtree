@@ -312,3 +312,12 @@ void
 VID_SetCaption (char *text)
 {
 }
+
+qboolean
+VID_SetGamma (double gamma)
+{
+	// FIXME: Need function for HW gamma correction
+	// return X11_SetGamma (gamma);
+	grGammaCorrectionValue((float) gamma);
+	return true;
+}

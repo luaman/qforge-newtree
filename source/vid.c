@@ -29,18 +29,33 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+#include <math.h>
 
+#include "compat.h"
+#include "console.h"
 #include "cvar.h"
-#include "vid.h"
-#include "va.h"
 #include "qargs.h"
 #include "sys.h"
+#include "va.h"
+#include "vid.h"
+#include "view.h"
 
 extern viddef_t vid;					// global video state
 
-int         scr_width, scr_height;
-cvar_t     *vid_width;
-cvar_t     *vid_height;
+/*
+	Software and hardware gamma support
+*/
+byte		gammatable[256];
+cvar_t		*vid_gamma;
+cvar_t		*vid_system_gamma;
+qboolean	vid_gamma_avail;		// hardware gamma availability
+
+/*
+	Screen size
+*/
+int 		scr_width, scr_height;
+cvar_t		*vid_width;
+cvar_t		*vid_height;
 
 void
 VID_GetWindowSize (int def_w, int def_h)
@@ -88,27 +103,79 @@ VID_GetWindowSize (int def_w, int def_h)
 	scr_height = vid.height = vid_height->int_val;
 }
 
-#if 0
-VID_Calc_Gamma (void)
-{
-	float f;
-	int i;
-	int v;
-	byte 
-	float g = bound (0.3, gamma->value, 3);
+/****************************************************************************
+ *								GAMMA FUNCTIONS 							*
+ ****************************************************************************/
 
-	Cvar_SetValue (gamma, g);
-	if (gamma_flipped->int_val)
-		g = 1 / g;
-	for (i = 0; i < 256; i++) {
-		f = pow ((i + 1) / 256.0, g);
-		v = f * 255 + 0.5;
-		lightmap_gamma[i] = bound (0, v, 255);
-		for (j = 0; j < 3; j++) {
-			f = pow ((host_basepal[i * 3 + j] + 1) / 256.0, g);
-			v = f * 255 + 0.5;
-			palette[i] = bound (0, v, 255);
+void
+VID_BuildGammaTable (double gamma)
+{
+	int 	i;
+
+	if (gamma == 1.0) { // linear, don't bother with the math
+		for (i = 0; i < 256; i++) {
+			gammatable[i] = i;
+		}
+	} else {
+		double	g = 1.0 / gamma;
+		int 	v;
+
+		for (i = 0; i < 256; i++) { // Build/update gamma lookup table
+			v = (int) ((255.0 * pow ((double) i / 255.0, g)) + 0.5);
+			gammatable[i] = bound (0, v, 255);
 		}
 	}
 }
-#endif
+
+/*
+	VID_UpdateGamma
+
+	This is a callback to update the palette or system gamma whenever the
+	vid_gamma Cvar is changed.
+*/
+void
+VID_UpdateGamma (cvar_t *vid_gamma)
+{
+	double gamma = bound (0.1, vid_gamma->value, 9.9);
+	
+	if (vid_gamma->flags & CVAR_ROM)	// System gamma unavailable
+		return;
+
+	if (vid_gamma_avail && vid_system_gamma->int_val) {	// Have system, use it
+		Con_DPrintf ("Setting hardware gamma to %g\n", gamma);
+		VID_BuildGammaTable (1.0);	// hardware gamma wants a linear palette
+		VID_SetGamma (gamma);
+	} else {	// We have to hack the palette
+		Con_DPrintf ("Setting software gamma to %g\n", gamma);
+		VID_BuildGammaTable (gamma);
+		V_UpdatePalette (); // update with the new palette
+	}
+}
+
+/*
+	VID_InitGamma
+
+	Initialize the vid_gamma Cvar, and set up the palette
+*/
+void
+VID_InitGamma (unsigned char *pal)
+{
+	int 	i;
+	double	gamma = 1.45;
+
+	if ((i = COM_CheckParm ("-gamma"))) {
+		gamma = atof (com_argv[i + 1]);
+	}
+	gamma = bound (0.1, gamma, 9.9);
+
+	vid_gamma = Cvar_Get ("vid_gamma", va ("%f", gamma), CVAR_ARCHIVE,
+						  "Gamma correction");
+	VID_UpdateGamma (vid_gamma);
+
+	VID_BuildGammaTable (vid_gamma->value);
+}
+
+void
+VID_HandlePause (qboolean paused)
+{
+}

@@ -82,8 +82,8 @@ VID_Shutdown (void)
 
 	Con_Printf ("VID_Shutdown\n");
 
-	x11_restore_vidmode ();
-	x11_close_display ();
+	X11_RestoreVidMode ();
+	X11_CloseDisplay ();
 }
 
 #if 0
@@ -170,7 +170,7 @@ VID_Init (unsigned char *palette)
 		vid.conheight = atoi (com_argv[i + 1]);
 	vid.conheight = max (vid.conheight, 200);
 
-	x11_open_display ();
+	X11_OpenDisplay ();
 
 	x_visinfo = glXChooseVisual (x_disp, x_screen, attrib);
 	if (!x_visinfo) {
@@ -180,12 +180,12 @@ VID_Init (unsigned char *palette)
 	}
 	x_vis = x_visinfo->visual;
 
-	x11_set_vidmode (scr_width, scr_height);
-	x11_create_window (scr_width, scr_height);
+	X11_SetVidMode (scr_width, scr_height);
+	X11_CreateWindow (scr_width, scr_height);
 	/* Invisible cursor */
-	x11_create_null_cursor ();
+	X11_CreateNullCursor ();
 
-	x11_grab_keyboard ();
+	X11_GrabKeyboard ();
 
 	XSync (x_disp, 0);
 
@@ -219,7 +219,7 @@ VID_Init (unsigned char *palette)
 void
 VID_Init_Cvars ()
 {
-	x11_Init_Cvars ();
+	X11_Init_Cvars ();
 }
 
 void
@@ -228,9 +228,21 @@ VID_SetCaption (char *text)
 	if (text && *text) {
 		char       *temp = strdup (text);
 
-		x11_set_caption (va ("%s %s: %s", PROGRAM, VERSION, temp));
+		X11_SetCaption (va ("%s %s: %s", PROGRAM, VERSION, temp));
 		free (temp);
 	} else {
-		x11_set_caption (va ("%s %s", PROGRAM, VERSION));
+		X11_SetCaption (va ("%s %s", PROGRAM, VERSION));
 	}
+}
+
+double
+VID_GetGamma (void)
+{
+	return (double) X11_GetGamma ();
+}
+
+qboolean
+VID_SetGamma (double gamma)
+{
+	return X11_SetGamma (gamma);
 }

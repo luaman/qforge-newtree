@@ -3195,3 +3195,9 @@ VID_SetCaption (char *text)
 		SetWindowText (mainwindow, (LPSTR) va ("%s %s", PROGRAM, VERSION));
 	}
 }
+
+qboolean
+VID_SetGamma (double gamma)
+{
+	    return false; //FIXME
+}

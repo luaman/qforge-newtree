@@ -43,11 +43,11 @@
 static int snd_inited;
 
 static snd_pcm_t *pcm;
-static const snd_pcm_channel_area_t *mmap_areas;
 static char *pcmname = NULL;
 size_t buffer_size;
 
-qboolean SNDDMA_Init(void)
+qboolean
+SNDDMA_Init(void)
 {
 	int err,i;
 	int rate=-1,bps=-1,stereo=-1,frag_size;
@@ -189,19 +189,17 @@ qboolean SNDDMA_Init(void)
 		goto error;
 	}
 
-	mmap_areas = snd_pcm_mmap_running_areas(pcm);
-
 	shm=&sn;
 	memset((dma_t*)shm,0,sizeof(*shm));
 	shm->splitbuffer = 0;
 	shm->channels=stereo+1;
-	shm->submission_chunk=snd_pcm_hw_params_get_period_size(hw, 0); // don't mix less than this #
+	shm->submission_chunk = snd_pcm_hw_params_get_period_size (hw, 0); // don't mix less than this #
 	shm->samplepos=0;			// in mono samples
 	shm->samplebits=bps;
 	buffer_size = snd_pcm_hw_params_get_buffer_size(hw); 
 	shm->samples=buffer_size*shm->channels;	// mono samples in buffer
 	shm->speed=rate;
-	shm->buffer=(unsigned char*)mmap_areas->addr;
+	SNDDMA_GetDMAPos ();//XXX sets shm->buffer
 	Con_Printf("%5d stereo\n", shm->channels - 1);
 	Con_Printf("%5d samples\n", shm->samples);
 	Con_Printf("%5d samplepos\n", shm->samplepos);
@@ -218,92 +216,64 @@ qboolean SNDDMA_Init(void)
 	return 0;
 }
 
-static inline int
-get_hw_ptr()
+int
+SNDDMA_GetDMAPos(void)
 {
-	size_t app_ptr;
-	snd_pcm_sframes_t delay;
-	int hw_ptr;
+	snd_pcm_uframes_t offset;
+	snd_pcm_uframes_t nframes = shm->samples/shm->channels;
+	const snd_pcm_channel_area_t *areas;
 
-	if (snd_pcm_state (pcm) != SND_PCM_STATE_RUNNING)
+	if (!snd_inited)
 		return 0;
-	app_ptr = snd_pcm_mmap_offset (pcm);
-	snd_pcm_delay (pcm, &delay);
-	hw_ptr = app_ptr - delay;
-	if (hw_ptr < 0)
-		hw_ptr += buffer_size;
-	return hw_ptr;
-}
 
-int SNDDMA_GetDMAPos(void)
-{
-	int hw_ptr;
+	snd_pcm_mmap_begin (pcm, &areas, &offset, &nframes);
+	offset *= shm->channels;
+	nframes *= shm->channels;
+	shm->samplepos = offset;
+	shm->buffer = areas->addr;//XXX FIXME there's an area per channel
 
-	if (!snd_inited) return 0;
-
-	hw_ptr = get_hw_ptr();
-	hw_ptr *= shm->channels;
-	shm->samplepos = hw_ptr;
 	return shm->samplepos;
 }
 
-void SNDDMA_Shutdown(void)
+void
+SNDDMA_Shutdown(void)
 {
-	if (snd_inited)
-	{
+	if (snd_inited) {
 		snd_pcm_close(pcm);
 		snd_inited = 0;
 	}
 }
 
 /*
-==============
-SNDDMA_Submit
+	SNDDMA_Submit
 
-Send sound to device if buffer isn't really the dma buffer
-===============
+	Send sound to device if buffer isn't really the dma buffer
 */
-void SNDDMA_Submit(void)
+void
+SNDDMA_Submit(void)
 {
-	int count = paintedtime - soundtime;
-	int avail;
-	int missed;
-	int state;
-	int hw_ptr;
-	int offset;
+	snd_pcm_uframes_t offset;
+	snd_pcm_uframes_t nframes;
+	const snd_pcm_channel_area_t *areas;
+	int         state;
+	int         count = paintedtime - soundtime;
+
+	nframes = count / shm->channels;
+
+	snd_pcm_mmap_begin (pcm, &areas, &offset, &nframes);
 
 	state = snd_pcm_state (pcm);
 
 	switch (state) {
-	case SND_PCM_STATE_PREPARED:
-		snd_pcm_mmap_forward (pcm, count);
-		snd_pcm_start (pcm);
-		break;
-	case SND_PCM_STATE_RUNNING:
-		hw_ptr = get_hw_ptr();
-		missed = hw_ptr - shm->samplepos / shm->channels;
-		if (missed < 0)
-			missed += buffer_size;
-		count -= missed;
-		offset = snd_pcm_mmap_offset (pcm);
-		if (offset > hw_ptr)
-			count -= (offset - hw_ptr);
-		else
-			count -= (buffer_size - hw_ptr + offset);
-		if (count < 0) {
-			snd_pcm_rewind (pcm, -count);
-		} else {
-			avail = snd_pcm_avail_update(pcm);
-			if (avail < 0)
-				avail = buffer_size;
-			if (count > avail)
-				count = avail;
-			if (count)
-				snd_pcm_mmap_forward (pcm, count);
-		}
-		break;
-	default:
-		break;
+		case SND_PCM_STATE_PREPARED:
+			snd_pcm_mmap_commit (pcm, offset, nframes);
+			snd_pcm_start (pcm);
+			break;
+		case SND_PCM_STATE_RUNNING:
+			snd_pcm_mmap_commit (pcm, offset, nframes);
+			break;
+		default:
+			break;
 	}
 }
 

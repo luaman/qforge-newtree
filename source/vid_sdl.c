@@ -288,3 +288,10 @@ VID_SetCaption (char *text)
 		SDL_WM_SetCaption (va ("%s %s", PROGRAM, VERSION), NULL);
 	}
 }
+
+qboolean
+VID_SetGamma (double gamma)
+{
+//	return SDL_SetGamma ((float) gamma, (float) gamma, (float) gamma);
+	return false; // FIXME
+}

@@ -519,7 +519,7 @@ VID_Init (unsigned char *palette)
 	verbose = COM_CheckParm ("-verbose");
 
 	// open the display
-	x11_open_display ();
+	X11_OpenDisplay ();
 
 	template_mask = 0;
 
@@ -567,13 +567,13 @@ VID_Init (unsigned char *palette)
 	}
 
 	/* Setup attributes for main window */
-	x11_set_vidmode (vid.width, vid.height);
+	X11_SetVidMode (vid.width, vid.height);
 
 	/* Create the main window */
-	x11_create_window (vid.width, vid.height);
+	X11_CreateWindow (vid.width, vid.height);
 
 	/* Invisible cursor */
-	x11_create_null_cursor ();
+	X11_CreateNullCursor ();
 
 	if (x_visinfo->depth == 8) {
 		/* Create and upload the palette */
@@ -592,7 +592,7 @@ VID_Init (unsigned char *palette)
 		x_gc = XCreateGC (x_disp, x_win, valuemask, &xgcvalues);
 	}
 
-	x11_grab_keyboard ();
+	X11_GrabKeyboard ();
 
 	// wait for first exposure event
 	{
@@ -640,13 +640,13 @@ VID_Init (unsigned char *palette)
 	vid.aspect = ((float) vid.height / (float) vid.width) * (320.0 / 240.0);
 
 //  XSynchronize (x_disp, False);
-	x11_add_event (x_shmeventtype, event_shm);
+	X11_AddEvent (x_shmeventtype, event_shm);
 }
 
 void
 VID_Init_Cvars ()
 {
-	x11_Init_Cvars ();
+	X11_Init_Cvars ();
 }
 
 
@@ -696,8 +696,8 @@ VID_Shutdown (void)
 {
 	Sys_Printf ("VID_Shutdown\n");
 	if (x_disp) {
-		x11_restore_vidmode ();
-		x11_close_display ();
+		X11_RestoreVidMode ();
+		X11_CloseDisplay ();
 	}
 }
 
@@ -757,7 +757,7 @@ VID_Update (vrect_t *rects)
 			}
 			oktodraw = false;
 			while (!oktodraw)
-				x11_process_event ();
+				X11_ProcessEvent ();
 			rects = rects->pnext;
 
 			current_framebuffer = !current_framebuffer;
@@ -813,9 +813,21 @@ VID_SetCaption (char *text)
 	if (text && *text) {
 		char       *temp = strdup (text);
 
-		x11_set_caption (va ("%s %s: %s", PROGRAM, VERSION, temp));
+		X11_SetCaption (va ("%s %s: %s", PROGRAM, VERSION, temp));
 		free (temp);
 	} else {
-		x11_set_caption (va ("%s %s", PROGRAM, VERSION));
+		X11_SetCaption (va ("%s %s", PROGRAM, VERSION));
 	}
+}
+
+double
+VID_GetGamma (void)
+{
+	return (double) X11_GetGamma ();
+}
+
+qboolean
+VID_SetGamma (double gamma)
+{
+	return X11_SetGamma (gamma);
 }
