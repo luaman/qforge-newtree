@@ -718,13 +718,19 @@ void	VID_SetPalette (unsigned char *palette)
 	unsigned r,g,b;
 	unsigned v;
 	int     r1,g1,b1;
-	int		j,k,l;
+        int             k;
 	unsigned short i;
 	unsigned	*table;
+	FILE *f;
+	char s[255];
+	float dist, bestdist;
+	static qboolean palflag = false;
 
 //
 // 8 8 8 encoding
 //
+//      Con_Printf("Converting 8to24\n");
+
 	pal = palette;
 	table = d_8to24table;
 	for (i=0 ; i<256 ; i++)
@@ -733,38 +739,55 @@ void	VID_SetPalette (unsigned char *palette)
 		g = pal[1];
 		b = pal[2];
 		pal += 3;
-		
+
 //		v = (255<<24) + (r<<16) + (g<<8) + (b<<0);
 //		v = (255<<0) + (r<<8) + (g<<16) + (b<<24);
 		v = (255<<24) + (r<<0) + (g<<8) + (b<<16);
 		*table++ = v;
 	}
-	d_8to24table[255] &= 0xffffff;	// 255 is transparent
+	d_8to24table[255] &= 0;		// 255 is transparent
 
 	// JACK: 3D distance calcs - k is last closest, l is the distance.
 	// FIXME: Precalculate this and cache to disk.
-	for (i=0; i < (1<<15); i++) {
-		/* Maps
-			000000000000000
-			000000000011111 = Red  = 0x1F
-			000001111100000 = Blue = 0x03E0
-			111110000000000 = Grn  = 0x7C00
-		*/
-		r = ((i & 0x1F) << 3)+4;
-		g = ((i & 0x03E0) >> 2)+4;
-		b = ((i & 0x7C00) >> 7)+4;
-		pal = (unsigned char *)d_8to24table;
-		for (v=0,k=0,l=10000*10000; v<256; v++,pal+=4) {
-			r1 = r-pal[0];
-			g1 = g-pal[1];
-			b1 = b-pal[2];
-			j = (r1*r1)+(g1*g1)+(b1*b1);
-			if (j<l) {
-				k=v;
-				l=j;
+	if (palflag)
+		return;
+	palflag = true;
+
+	COM_FOpenFile("glquake/15to8.pal", &f);
+	if (f) {
+		fread(d_15to8table, 1<<15, 1, f);
+		fclose(f);
+	} else {
+		for (i=0; i < (1<<15); i++) {
+			/* Maps
+ 			000000000000000
+ 			000000000011111 = Red  = 0x1F
+ 			000001111100000 = Blue = 0x03E0
+ 			111110000000000 = Grn  = 0x7C00
+ 			*/
+ 			r = ((i & 0x1F) << 3)+4;
+ 			g = ((i & 0x03E0) >> 2)+4;
+ 			b = ((i & 0x7C00) >> 7)+4;
+			pal = (unsigned char *)d_8to24table;
+			for (v=0,k=0,bestdist=10000.0; v<256; v++,pal+=4) {
+ 				r1 = (int)r - (int)pal[0];
+ 				g1 = (int)g - (int)pal[1];
+ 				b1 = (int)b - (int)pal[2];
+				dist = sqrt(((r1*r1)+(g1*g1)+(b1*b1)));
+				if (dist < bestdist) {
+					k=v;
+					bestdist = dist;
+				}
 			}
+			d_15to8table[i]=k;
 		}
-		d_15to8table[i]=k;
+		snprintf(s, sizeof(s), "%s/glquake", com_gamedir);
+ 		Sys_mkdir (s);
+		snprintf(s, sizeof(s), "%s/glquake/15to8.pal", com_gamedir);
+		if ((f = fopen(s, "wb")) != NULL) {
+			fwrite(d_15to8table, 1<<15, 1, f);
+			fclose(f);
+		}
 	}
 }
 
@@ -773,7 +796,7 @@ BOOL	gammaworks;
 void	VID_ShiftPalette (unsigned char *palette)
 {
 	extern	byte ramps[3][256];
-	
+
 //	VID_SetPalette (palette);
 
 //	gammaworks = SetDeviceGammaRamp (maindc, ramps);
