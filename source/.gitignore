@@ -1,3 +1,5 @@
 *.d
 *.o
 qw-server
+qw-client-x11
+qw-client-svga
