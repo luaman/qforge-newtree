@@ -1435,6 +1435,7 @@ void SV_RunCmd (usercmd_t *ucmd)
 	VectorCopy (sv_player->v.velocity, pmove.velocity);
 	VectorCopy (sv_player->v.v_angle, pmove.angles);
 
+	pmove.flying = sv_player->v.movetype == MOVETYPE_FLY;
 	pmove.spectator = host_client->spectator;
 	pmove.waterjumptime = sv_player->v.teleport_time;
 	pmove.numphysent = 1;

@@ -95,6 +95,7 @@ void CL_PredictUsercmd (player_state_t *from, player_state_t *to, usercmd_t *u, 
 	pmove.waterjumptime = from->waterjumptime;
 	pmove.dead = cl.stats[STAT_HEALTH] <= 0;
 	pmove.spectator = spectator;
+	pmove.flying = cl.stats[STAT_FLYMODE];
 
 	pmove.cmd = *u;
 
