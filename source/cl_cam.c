@@ -34,6 +34,15 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include <math.h>
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #include "cvar.h"
 #include "client.h"
 #include "pmove.h"
@@ -41,8 +50,6 @@
 #include "sbar.h"
 #include "console.h"
 #include "commdef.h"
-
-#include <math.h>
 
 #define	PM_SPECTATORMAXSPEED	500
 #define	PM_STOPSPEED	100

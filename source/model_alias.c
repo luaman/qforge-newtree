@@ -33,6 +33,13 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #include "r_local.h"
 #include "sys.h"
 #include "console.h"
