@@ -120,7 +120,6 @@ static qboolean vid_wassuspended = false;
 static int  windowed_mouse;
 static HICON hIcon;
 
-int         DIBWidth, DIBHeight;
 RECT        WindowRect;
 DWORD       WindowStyle, ExWindowStyle;
 
@@ -133,7 +132,6 @@ static int  windowed_default;
 unsigned char vid_curpal[256 * 3];
 static qboolean fullsbardraw = true;
 
-HGLRC       baseRC;
 HDC         maindc;
 
 glvert_t    glv;
@@ -242,28 +240,27 @@ VID_SetWindowedMode (int modenum)
 	WindowRect.right = modelist[modenum].width;
 	WindowRect.bottom = modelist[modenum].height;
 
-	DIBWidth = modelist[modenum].width;
-	DIBHeight = modelist[modenum].height;
+	window_width = modelist[modenum].width;
+	window_height = modelist[modenum].height;
 
 	WindowStyle = WS_OVERLAPPED | WS_BORDER | WS_CAPTION | WS_SYSMENU |
-		WS_MINIMIZEBOX;
-	ExWindowStyle = 0;
+		WS_MINIMIZEBOX | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 
 	rect = WindowRect;
-	AdjustWindowRectEx (&rect, WindowStyle, FALSE, 0);
+	AdjustWindowRect (&rect, WindowStyle, FALSE);
 
 	width = rect.right - rect.left;
 	height = rect.bottom - rect.top;
 
-	// Create the DIB window
-    mainwindow = CreateWindowEx (ExWindowStyle, "QuakeForge", "GLQuakeWorld",
+	// Create the window
+	mainwindow = CreateWindow ("QuakeForge", "GLQuakeWorld",
 		WindowStyle, rect.left, rect.top, width, height, NULL, NULL,
 		global_hInstance, NULL);
 
 	if (!mainwindow)
-		Sys_Error ("Couldn't create DIB window");
+                Sys_Error ("Couldn't create DIB window (%x)\r\n",GetLastError());
 
-// Center and show the DIB window
+// Center and show the window
 	CenterWindow (mainwindow, WindowRect.right - WindowRect.left,
 	WindowRect.bottom - WindowRect.top, false);
 
@@ -289,8 +286,10 @@ VID_SetWindowedMode (int modenum)
 
 	vid.numpages = 2;
 
-	SendMessage (mainwindow, WM_SETICON, (WPARAM) TRUE, (LPARAM) hIcon);
-	SendMessage (mainwindow, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);
+	if(hIcon) {
+		SendMessage (mainwindow, WM_SETICON, (WPARAM) TRUE, (LPARAM) hIcon);
+		SendMessage (mainwindow, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);
+	}
 
 	return true;
 }
@@ -315,7 +314,7 @@ VID_SetFullDIBMode (int modenum)
 
 		if (ChangeDisplaySettings (&gdevmode, CDS_FULLSCREEN) !=
 			DISP_CHANGE_SUCCESSFUL)
-				Sys_Error ("Couldn't set fullscreen DIB mode");
+                                Sys_Error ("Couldn't set fullscreen DIB mode (%x)\r\n",GetLastError());
 	}
 
 	lastmodestate = modestate;
@@ -326,30 +325,30 @@ VID_SetFullDIBMode (int modenum)
 	WindowRect.right = modelist[modenum].width;
 	WindowRect.bottom = modelist[modenum].height;
 
-	DIBWidth = modelist[modenum].width;
-	DIBHeight = modelist[modenum].height;
+	
+	window_width = modelist[modenum].width;
+	window_height = modelist[modenum].height;
 
 // fixme: some drivers have broken FS popup window handling
 // until I find way around it, or find some other cause for it
 // this is way to avoid it
 
         if (COM_CheckParm ("-brokenpopup")) WindowStyle = 0;
-        else WindowStyle = WS_POPUP;
-	ExWindowStyle = 0;
+        else WindowStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 
 	rect = WindowRect;
-	AdjustWindowRectEx (&rect, WindowStyle, FALSE, 0);
+	AdjustWindowRect (&rect, WindowStyle, FALSE);
 
 	width = rect.right - rect.left;
 	height = rect.bottom - rect.top;
 
 	// Create the DIB window
-	mainwindow = CreateWindowEx (ExWindowStyle, "QuakeForge", "GLQuakeWorld",
+	mainwindow = CreateWindow ("QuakeForge", "GLQuakeWorld",
 		WindowStyle, rect.left, rect.top, width, height, NULL, NULL,
 		global_hInstance, NULL);
 
 	if (!mainwindow)
-		Sys_Error ("Couldn't create DIB window");
+                Sys_Error ("Couldn't create DIB window (%x)\r\n",GetLastError());
 
 	ShowWindow (mainwindow, SW_SHOWDEFAULT);
 	UpdateWindow (mainwindow);
@@ -375,8 +374,10 @@ VID_SetFullDIBMode (int modenum)
 	window_x = 0;
 	window_y = 0;
 
-	SendMessage (mainwindow, WM_SETICON, (WPARAM) TRUE, (LPARAM) hIcon);
-	SendMessage (mainwindow, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);
+	if (hIcon) {
+		SendMessage (mainwindow, WM_SETICON, (WPARAM) TRUE, (LPARAM) hIcon);
+		SendMessage (mainwindow, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);
+	}
 
 	return true;
 }
@@ -423,8 +424,6 @@ VID_SetMode (int modenum, unsigned char *palette)
 		Sys_Error ("VID_SetMode: Bad mode type in modelist");
 	}
 
-	window_width = DIBWidth;
-	window_height = DIBHeight;
 	VID_UpdateWindowStatus ();
 
 	CDAudio_Resume ();
@@ -737,31 +736,21 @@ VID_Shutdown (void)
 
 //==========================================================================
 
-
 BOOL
 bSetupPixelFormat (HDC hDC)
 {
-	static PIXELFORMATDESCRIPTOR pfd = {
-		sizeof (PIXELFORMATDESCRIPTOR),	// size of this pfd
-		1,								// version number
-		PFD_DRAW_TO_WINDOW				// support window
-			| PFD_SUPPORT_OPENGL		// support OpenGL
-			| PFD_DOUBLEBUFFER,			// double buffered
-		PFD_TYPE_RGBA,					// RGBA type
-		24,								// 24-bit color depth
-		0, 0, 0, 0, 0, 0,				// color bits ignored
-		0,								// no alpha buffer
-		0,								// shift bit ignored
-		0,								// no accumulation buffer
-		0, 0, 0, 0,						// accum bits ignored
-		32,								// 32-bit z-buffer  
-		0,								// no stencil buffer
-		0,								// no auxiliary buffer
-		PFD_MAIN_PLANE,					// main layer
-		0,								// reserved
-		0, 0, 0							// layer masks ignored
-	};
+	PIXELFORMATDESCRIPTOR pfd ;
 	int         pixelformat;
+
+	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
+	pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR); 
+	pfd.nVersion   = 1;
+	pfd.dwFlags    = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+//	pfd.cColorBits = 24;
+	pfd.cColorBits = modelist[vid_default].bpp;
+	pfd.cDepthBits = 32;
+	pfd.iLayerType = PFD_MAIN_PLANE;
 
 	if ((pixelformat = ChoosePixelFormat (hDC, &pfd)) == 0) {
 		MessageBox (NULL, "ChoosePixelFormat failed", "Error", MB_OK);
@@ -772,7 +761,6 @@ bSetupPixelFormat (HDC hDC)
 		MessageBox (NULL, "SetPixelFormat failed", "Error", MB_OK);
 		return FALSE;
 	}
-
 	return TRUE;
 }
 
@@ -899,7 +887,7 @@ AppActivate (BOOL fActive, BOOL minimize)
 				if (ChangeDisplaySettings (&gdevmode, CDS_FULLSCREEN) !=
 					DISP_CHANGE_SUCCESSFUL) {
 					IN_ShowMouse ();
-					Sys_Error ("Couldn't set fullscreen DIB mode (try upgrading your video drivers)");
+                                        Sys_Error ("Couldn't set fullscreen DIB mode\n(try upgrading your video drivers)\r\n (%x)",GetLastError());
 				}
 				ShowWindow (mainwindow, SW_SHOWNORMAL);
 
@@ -1220,7 +1208,7 @@ VID_InitDIB (HINSTANCE hInstance)
 	wc.lpszClassName = "QuakeForge";
 
 	if (!RegisterClass (&wc))
-		Sys_Error ("Couldn't register window class");
+                Sys_Error ("Couldn't register window class (%x)\r\n",GetLastError());
 
 	modelist[0].type = MS_WINDOWED;
 
@@ -1440,6 +1428,8 @@ VID_Init (unsigned char *palette)
 	char        gldir[MAX_OSPATH];
 	HDC         hdc;
 	DEVMODE     devmode;
+	HGLRC       baseRC;
+	DWORD lasterror;
 
 	memset (&devmode, 0, sizeof (devmode));
 
@@ -1629,11 +1619,21 @@ VID_Init (unsigned char *palette)
 	bSetupPixelFormat (maindc);
 
 	baseRC = wglCreateContext (maindc);
-	if (!baseRC)
-		Sys_Error
-			("Could not initialize GL (wglCreateContext failed).\n\nMake sure you in are 65535 color mode, and try running -window.");
-	if (!wglMakeCurrent (maindc, baseRC))
-		Sys_Error ("wglMakeCurrent failed");
+	if (!baseRC) {
+		lasterror=GetLastError();
+		if (maindc && mainwindow)
+			ReleaseDC (mainwindow, maindc);
+		Sys_Error("Could not initialize GL (wglCreateContext failed).\n\nMake sure you in are 65535 color mode, and try running -window. \nError code: (%x)\r\n",lasterror);
+	}
+
+	if (!wglMakeCurrent (maindc, baseRC)) {
+		lasterror=GetLastError();
+		if (baseRC)
+			wglDeleteContext (baseRC);
+                if (maindc && mainwindow)
+       	                ReleaseDC (mainwindow, maindc);
+		Sys_Error ("wglMakeCurrent failed (%x)\r\n",lasterror);
+	}
 
 	GL_Init ();
 
