@@ -26,10 +26,10 @@
 	$Id$
 */
 
-#ifndef _WIN32
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+#ifndef _WIN32
 # include <unistd.h>
 #else
 # include <windows.h>
