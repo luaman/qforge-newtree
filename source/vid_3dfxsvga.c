@@ -646,3 +646,6 @@ VID_UnlockBuffer ( void )
 {       
 }       
 
+void VID_SetCaption (char *text)
+{
+}

@@ -991,3 +991,8 @@ IN_Move(usercmd_t *cmd)
 void VID_InitCvars(void)	{}
 void VID_LockBuffer(void)	{}
 void VID_UnlockBuffer(void) {}
+
+void VID_SetCaption (char *text)
+{
+}
+
