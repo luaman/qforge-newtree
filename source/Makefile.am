@@ -69,7 +69,7 @@ server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c pr_offs.c sv_init.c sv_main.c \
 		sv_misc.c sv_model.c sv_nchan.c sv_ents.c sv_send.c sv_move.c \
 		sv_phys.c sv_user.c sv_ccmds.c world.c sv_cvar.c \
 		$(world_ASM)
-		
+
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
 qf_server_LDADD=	-L. -lqfsys_sv $(NET_LIBS)
 qf_server_DEPENDENCIES= libqfsys_sv.a
@@ -190,7 +190,7 @@ qf_client_mgl_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 #
 # ... Sam Lantinga's Simple DirectMedia Layer, version 1.0 and higher
 #
-sdl_SOURCES=		vid_sdl.c
+sdl_SOURCES=		vid_sdl.c in_sdl.c
 
 qf_client_sdl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(sdl_SOURCES)
 qf_client_sdl_LDADD=	$(SDL_LIBS) $(CLIENT_LIBS)
@@ -228,7 +228,7 @@ ogl_SOURCES=	gl_draw.c gl_mesh.c gl_ngraph.c gl_part.c \
 #
 # ... 3Dfx Voodoo 1 and 2 SVGAlib-based console GL
 #
-tdfx_SOURCES=	vid_3dfxsvga.c in_svgalib.c
+tdfx_SOURCES=	vid_3dfxsvga.c vid_common_gl.c in_svgalib.c
 
 qf_client_3dfx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(tdfx_SOURCES)
 qf_client_3dfx_LDADD=	$(TDFXGL_LIBS) $(SVGA_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
@@ -237,7 +237,7 @@ qf_client_3dfx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 #
 # ... OpenGL in X Window
 #
-glx_SOURCES=	vid_glx.c in_x11.c context_x11.c dga_check.c
+glx_SOURCES=	vid_glx.c vid_common_gl.c in_x11.c context_x11.c dga_check.c
 
 qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
 qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
@@ -246,7 +246,7 @@ qf_client_glx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs.a
 #
 # ... Sam Lantinga's Simple DirectMedia Layer, version 1.1 and higher, in GL mode
 #
-sgl_SOURCES=	vid_sgl.c
+sgl_SOURCES=	vid_sgl.c vid_common_gl.c in_sdl.c
 
 qf_client_sgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(sgl_SOURCES)
 qf_client_sgl_LDADD=	$(SDL_LIBS) $(GLX_LIBS) $(CLIENT_LIBS) $(DL_LIBS)

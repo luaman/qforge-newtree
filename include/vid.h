@@ -67,6 +67,7 @@ extern	unsigned short	d_8to16table[256];
 extern	unsigned int	d_8to24table[256];
 extern void (*vid_menudrawfn)(void);
 extern void (*vid_menukeyfn)(int key);
+extern int scr_width, scr_height;
 
 void	VID_SetPalette (unsigned char *palette);
 // called at startup and after any gamma correction
