@@ -1176,6 +1176,8 @@ void CL_Init (void)
 	Cmd_AddCommand ("skins", Skin_Skins_f);
 	Cmd_AddCommand ("allskins", Skin_AllSkins_f);
 
+	Cmd_AddCommand ("maplist", COM_Maplist_f);
+
 	Cmd_AddCommand ("quit", CL_Quit_f);
 
 	Cmd_AddCommand ("connect", CL_Connect_f);
