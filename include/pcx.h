@@ -45,12 +45,11 @@ typedef struct
     unsigned short	bytes_per_line;
     unsigned short	palette_type;
     char	filler[58];
-    unsigned char	data;			// unbounded
 } pcx_t;
 
 void WritePCXfile (char *filename, byte * data, int width, int height,
 				   int rowbytes, byte * palette, qboolean upload,
 				   qboolean flip);
-void LoadPCX (QFile *f);
+struct tex_s *LoadPCX (QFile *f, int convert);	// tex is from Hunk_TempAlloc
 
 #endif // __pcx_h

@@ -39,26 +39,27 @@
 
 #include "cl_parse.h"
 #include "console.h"
+#include "host.h"
 #include "pcx.h"
 #include "qendian.h"
 #include "qtypes.h"
 #include "quakefs.h"
+#include "texture.h"
 #include "zone.h"
-
-byte       *pcx_rgb;
 
 /*
 	LoadPCX
 */
-void
-LoadPCX (QFile *f)
+tex_t *
+LoadPCX (QFile *f, int convert)
 {
 	pcx_t      *pcx, pcxbuf;
 	byte        palette[768];
 	byte       *pix;
 	int         x, y;
-	int         dataByte, runLength;
+	int         dataByte, runLength = 1;
 	int         count;
+	tex_t      *tex;
 
 	// 
 	// parse the PCX file
@@ -81,39 +82,74 @@ LoadPCX (QFile *f)
 		|| pcx->encoding != 1
 		|| pcx->bits_per_pixel != 8 || pcx->xmax >= 320 || pcx->ymax >= 256) {
 		Con_Printf ("Bad pcx file\n");
-		return;
+		return 0;
 	}
-	// seek to palette
-	Qseek (f, -768, SEEK_END);
-	Qread (f, palette, 768);
 
-	Qseek (f, sizeof (pcxbuf) - 4, SEEK_SET);
+	if (convert) {
+		// seek to palette
+		Qseek (f, -768, SEEK_END);
+		Qread (f, palette, 768);
+	}
+
+	Qseek (f, sizeof (pcxbuf), SEEK_SET);
 
 	count = (pcx->xmax + 1) * (pcx->ymax + 1);
-	pcx_rgb = malloc (count * 4);
+	if (convert)
+		count *= 4;
+	tex = Hunk_TempAlloc (sizeof (tex_t) + count);
+	tex->width = pcx->xmax + 1;
+	tex->height = pcx->ymax + 1;
+	if (convert) {
+		tex->palette = 0;
+	} else {
+		tex->palette = host_basepal;
+	}
+	pix = tex->data;
 
-	for (y = 0; y <= pcx->ymax; y++) {
-		pix = pcx_rgb + 4 * y * (pcx->xmax + 1);
-		for (x = 0; x <= pcx->ymax;) {
+	for (y = 0; y < tex->height; y++) {
+		for (x = 0; x < tex->width;) {
+			runLength = 1;
 			dataByte = Qgetc (f);
+			if (dataByte == EOF)
+				break;
 
 			if ((dataByte & 0xC0) == 0xC0) {
 				runLength = dataByte & 0x3F;
 				dataByte = Qgetc (f);
-			} else {
-				runLength = 1;
+				if (dataByte == EOF)
+					break;
 			}
 
-			while (runLength-- > 0) {
-				pix[0] = palette[dataByte * 3];
-				pix[1] = palette[dataByte * 3 + 1];
-				pix[2] = palette[dataByte * 3 + 2];
-				pix[3] = 255;
-				pix += 4;
-				x++;
+			if (convert) {
+				while (count && runLength > 0) {
+					pix[0] = palette[dataByte * 3];
+					pix[1] = palette[dataByte * 3 + 1];
+					pix[2] = palette[dataByte * 3 + 2];
+					pix[3] = 255;
+					pix += 4;
+					count -= 4;
+					runLength--;
+					x++;
+				}
+			} else {
+				while (count && runLength > 0) {
+					*pix++ = dataByte;
+					count--;
+					runLength--;
+					x++;
+				}
 			}
+			if (runLength)
+				break;
 		}
+		if (runLength)
+			break;
 	}
+	if (count || runLength) {
+		Con_Printf ("PCX was malformed. You should delete it.\n");
+		return 0;
+	}
+	return tex;
 }
 
 /* 
@@ -150,7 +186,7 @@ WritePCXfile (char *filename, byte * data, int width, int height,
 	memset (pcx->filler, 0, sizeof (pcx->filler));
 
 	// pack the image
-	pack = &pcx->data;
+	pack = (byte*)&pcx[1];
 
 	if (flip)
 		data += rowbytes * (height - 1);

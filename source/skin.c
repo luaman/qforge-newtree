@@ -47,6 +47,7 @@
 #include "screen.h"
 #include "skin.h"
 #include "sys.h"
+#include "texture.h"
 #include "va.h"
 
 cvar_t     *baseskin;
@@ -62,13 +63,10 @@ skin_t      skins[MAX_CACHED_SKINS];
 int         numskins;
 
 /*
-================
-Skin_Find
+	Skin_Find
 
-  Determines the best skin for the given scoreboard
-  slot, and sets scoreboard->skin
-
-================
+	Determines the best skin for the given scoreboard
+	slot, and sets scoreboard->skin
 */
 void
 Skin_Find (player_info_t *sc)
@@ -116,22 +114,17 @@ Skin_Find (player_info_t *sc)
 
 
 /*
-==========
-Skin_Cache
+	Skin_Cache
 
-Returns a pointer to the skin bitmap, or NULL to use the default
-==========
+	Returns a pointer to the skin bitmap, or NULL to use the default
 */
 byte *
 Skin_Cache (skin_t *skin)
 {
 	char        name[1024];
-	byte       *raw;
-	byte       *out, *pix;
-	pcx_t      *pcx;
-	int         x, y;
-	int         dataByte;
-	int         runLength;
+	byte       *out;
+	QFile      *file;
+	tex_t      *tex;
 
 	if (cls.downloadtype == dl_skin)
 		return NULL;					// use base until downloaded
@@ -149,34 +142,19 @@ Skin_Cache (skin_t *skin)
 
 	// load the pic from disk
 	snprintf (name, sizeof (name), "skins/%s.pcx", skin->name);
-	raw = COM_LoadTempFile (name);
-	if (!raw) {
+	COM_FOpenFile (name, &file);
+	if (!file) {
 		Con_Printf ("Couldn't load skin %s\n", name);
 		snprintf (name, sizeof (name), "skins/%s.pcx", baseskin->string);
-		raw = COM_LoadTempFile (name);
-		if (!raw) {
+		COM_FOpenFile (name, &file);
+		if (!file) {
 			skin->failedload = true;
 			return NULL;
 		}
 	}
+	tex = LoadPCX (file, 0);
 
-	// parse the PCX file
-	pcx = (pcx_t *) raw;
-	raw = &pcx->data;
-
-	pcx->xmax = LittleShort (pcx->xmax);
-	pcx->xmin = LittleShort (pcx->xmin);
-	pcx->ymax = LittleShort (pcx->ymax);
-	pcx->ymin = LittleShort (pcx->ymin);
-	pcx->hres = LittleShort (pcx->hres);
-	pcx->vres = LittleShort (pcx->vres);
-	pcx->bytes_per_line = LittleShort (pcx->bytes_per_line);
-	pcx->palette_type = LittleShort (pcx->palette_type);
-
-	if (pcx->manufacturer != 0x0a
-		|| pcx->version != 5
-		|| pcx->encoding != 1
-		|| pcx->bits_per_pixel != 8 || pcx->xmax >= 320 || pcx->ymax >= 200) {
+	if (!tex || tex->width > 320 || tex->height > 200) {
 		skin->failedload = true;
 		Con_Printf ("Bad skin %s\n", name);
 		return NULL;
@@ -186,54 +164,7 @@ Skin_Cache (skin_t *skin)
 	if (!out)
 		Sys_Error ("Skin_Cache: couldn't allocate");
 
-	pix = out;
-	memset (out, 0, 320 * 200);
-
-	for (y = 0; y < pcx->ymax; y++, pix += 320) {
-		for (x = 0; x <= pcx->xmax;) {
-			if (raw - (byte *) pcx > com_filesize) {
-				Cache_Free (&skin->cache);
-				skin->failedload = true;
-				Con_Printf ("Skin %s was malformed.  You should delete it.\n",
-							name);
-				return NULL;
-			}
-			dataByte = *raw++;
-
-			if ((dataByte & 0xC0) == 0xC0) {
-				runLength = dataByte & 0x3F;
-				if (raw - (byte *) pcx > com_filesize) {
-					Cache_Free (&skin->cache);
-					skin->failedload = true;
-					Con_Printf
-						("Skin %s was malformed.  You should delete it.\n",
-						 name);
-					return NULL;
-				}
-				dataByte = *raw++;
-			} else
-				runLength = 1;
-
-			// skin sanity check
-			if (runLength + x > pcx->xmax + 2) {
-				Cache_Free (&skin->cache);
-				skin->failedload = true;
-				Con_Printf ("Skin %s was malformed.  You should delete it.\n",
-							name);
-				return NULL;
-			}
-			while (runLength-- > 0)
-				pix[x++] = dataByte;
-		}
-
-	}
-
-	if (raw - (byte *) pcx > com_filesize) {
-		Cache_Free (&skin->cache);
-		skin->failedload = true;
-		Con_Printf ("Skin %s was malformed.  You should delete it.\n", name);
-		return NULL;
-	}
+	memcpy (out, tex->data, tex->width * tex->height);
 
 	skin->failedload = false;
 
@@ -242,9 +173,7 @@ Skin_Cache (skin_t *skin)
 
 
 /*
-=================
-Skin_NextDownload
-=================
+	Skin_NextDownload
 */
 void
 Skin_NextDownload (void)
@@ -289,11 +218,9 @@ Skin_NextDownload (void)
 
 
 /*
-==========
-Skin_Skins_f
+	Skin_Skins_f
 
-Refind all skins, downloading if needed.
-==========
+	Refind all skins, downloading if needed.
 */
 void
 Skin_Skins_f (void)
@@ -313,11 +240,9 @@ Skin_Skins_f (void)
 
 
 /*
-==========
-Skin_AllSkins_f
+	Skin_AllSkins_f
 
-Sets all skins to one specific one
-==========
+	Sets all skins to one specific one
 */
 void
 Skin_AllSkins_f (void)
