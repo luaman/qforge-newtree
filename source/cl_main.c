@@ -441,7 +441,6 @@ CL_ClearState (void)
 	if (host_hunklevel)					// FIXME: check this...
 		Hunk_FreeToLowMark (host_hunklevel);
 
-	CL_Ents_Init ();
 	CL_ClearEnts ();
 	CL_ClearTEnts ();
 
@@ -1222,6 +1221,7 @@ CL_Init (void)
 							 MAX_INFO_STRING);
 
 	CL_Input_Init ();
+	CL_Ents_Init ();
 	CL_TEnts_Init ();
 	Pmove_Init ();
 
