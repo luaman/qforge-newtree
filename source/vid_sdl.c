@@ -58,11 +58,8 @@ HWND 		mainwindow;
 int modestate; // fixme: just to avoid cross-comp. errors - remove later
                                                         
 // The original defaults
-//#define    BASEWIDTH    320
-//#define    BASEHEIGHT   200
-// Much better for high resolution displays
-#define    BASEWIDTH    (320*2)
-#define    BASEHEIGHT   (200*2)
+#define    BASEWIDTH    320
+#define    BASEHEIGHT   200
 
 int    VGA_width, VGA_height, VGA_rowbytes, VGA_bufferrowbytes = 0;
 byte    *VGA_pagebase;
@@ -121,13 +118,13 @@ VID_SetPalette (unsigned char *palette)
         colors[i].g = *palette++;
         colors[i].b = *palette++;
     }
-    SDL_SetColors(screen, colors, 0, 256);
+    SDL_SetColors (screen, colors, 0, 256);
 }
 
 void
 VID_ShiftPalette (unsigned char *palette)
 {
-    VID_SetPalette(palette);
+    VID_SetPalette (palette);
 }
 
 void
