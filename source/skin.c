@@ -217,6 +217,7 @@ Skin_NextDownload (void)
 		sc = &cl.players[i];
 		if (!sc->name[0])
 			continue;
+		Skin_Find (sc);
 		Skin_Cache (sc->skin);
 		sc->skin = NULL;
 	}
