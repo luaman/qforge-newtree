@@ -594,9 +594,9 @@ CL_StopUpload (void)
 =====================================================================
 */
 
-void        Draw_ClearCache (void);
+void Draw_ClearCache (void);
 
-void        CL_ClearBaselines ();		// LordHavoc: BIG BUG-FIX!
+void CL_ClearBaselines (void);		// LordHavoc: BIG BUG-FIX!
 
 /*
 ==================
@@ -700,7 +700,7 @@ CL_ParseServerData (void)
 
 // LordHavoc: BIG BUG-FIX!  Clear baselines each time it connects...
 void
-CL_ClearBaselines ()
+CL_ClearBaselines (void)
 {
 	int         i;
 
