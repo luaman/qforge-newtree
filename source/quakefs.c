@@ -1045,10 +1045,8 @@ COM_InitFilesystem ( void )
 		gamedirs = strdup (com_argv[i+1]);
 		where = strtok (gamedirs, ",");
 		while (where) {
+			COM_CreateGameDirectory (where);
 			where = strtok (NULL, ",");
-			if (where) {
-				COM_CreateGameDirectory (where);
-			}
 		}
 		free (gamedirs);
 	}		
