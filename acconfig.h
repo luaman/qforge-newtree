@@ -82,6 +82,9 @@
 /* Define if you have the dlopen function.  */
 #undef HAVE_DLOPEN
 
+/* Define if you have pthread support. */
+#undef HAVE_LIBPTHREAD
+
 /* Define this to something sane if you don't have stricmp */
 #undef stricmp
 
