@@ -303,7 +303,7 @@ void
 Skin_Init (void)
 {
 	Cmd_AddCommand ("skins", Skin_Skins_f, "Download all skins that are currently in use");
-	Cmd_AddCommand ("allskins", Skin_AllSkins_f, "Download all skins that are currently in use");
+	Cmd_AddCommand ("allskins", Skin_AllSkins_f, "Force all player skins to one skin");
 	Cmd_AddCommand ("color", CL_Color_f, "The pant and shirt color (color shirt pants) Note that if only shirt color is given, pants will match");
 	Skin_Init_Translation ();
 }
