@@ -239,7 +239,7 @@ void	R_InitTextures (void)
 	}	
 }
 
-void R_LoadSky_f ();
+void R_LoadSky_f (void);
 
 /*
 ===============

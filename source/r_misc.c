@@ -121,7 +121,7 @@ void R_TimeRefresh_f (void)
    R_LoadSky_f
 */
 void
-R_LoadSky_f ()
+R_LoadSky_f (void)
 {
 	if (Cmd_Argc () != 2)
 	{
