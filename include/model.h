@@ -80,6 +80,8 @@ typedef struct texture_s
 {
 	char		name[16];
 	unsigned	width, height;
+	int			gl_texturenum;
+	struct msurface_s	*texturechain;	// for gl_texsort drawing
 	int			anim_total;				// total tenths in sequence ( 0 = no)
 	int			anim_min, anim_max;		// time for this frame min <=time< max
 	struct texture_s *anim_next;		// in the animation sequence
@@ -94,6 +96,8 @@ typedef struct texture_s
 #define SURF_DRAWTURB		0x10
 #define SURF_DRAWTILED		0x20
 #define SURF_DRAWBACKGROUND	0x40
+#define SURF_UNDERWATER		0x80
+#define SURF_DONTWARP		0x100
 
 // !!! if this is changed, it must be changed in asm_draw.h too !!!
 typedef struct
@@ -110,12 +114,20 @@ typedef struct
 	int			flags;
 } mtexinfo_t;
 
+#define	VERTEXSIZE	7
+
+typedef struct glpoly_s
+{
+	struct	glpoly_s	*next;
+	struct	glpoly_s	*chain;
+	int		numverts;
+	int		flags;			// for SURF_UNDERWATER
+	float	verts[4][VERTEXSIZE];	// variable sized (xyz s1t1 s2t2)
+} glpoly_t;
+
 typedef struct msurface_s
 {
 	int			visframe;		// should be drawn when node is crossed
-
-	int			dlightframe;
-	int			dlightbits;
 
 	mplane_t	*plane;
 	int			flags;
@@ -129,10 +141,21 @@ typedef struct msurface_s
 	short		texturemins[2];
 	short		extents[2];
 
+	int			light_s, light_t;	// gl lightmap coordinates
+
+	glpoly_t	*polys;				// multiple if warped
+	struct	msurface_s	*texturechain;
+
 	mtexinfo_t	*texinfo;
 	
 // lighting info
+	int			dlightframe;
+	int			dlightbits;
+
+	int			lightmaptexturenum;
 	byte		styles[MAXLIGHTMAPS];
+	int			cached_light[MAXLIGHTMAPS];	// values currently used in lightmap
+	qboolean	cached_dlight;				// true if dynamic light in cache
 	byte		*samples;		// [numstyles*surfsize]
 } msurface_t;
 
@@ -142,7 +165,7 @@ typedef struct mnode_s
 	int			contents;		// 0, to differentiate from leafs
 	int			visframe;		// node needs to be traversed if current
 	
-	short		minmaxs[6];		// for bounding box culling
+	float		minmaxs[6];		// for bounding box culling
 
 	struct mnode_s	*parent;
 
@@ -162,7 +185,7 @@ typedef struct mleaf_s
 	int			contents;		// wil be a negative contents number
 	int			visframe;		// node needs to be traversed if current
 
-	short		minmaxs[6];		// for bounding box culling
+	float		minmaxs[6];		// for bounding box culling
 
 	struct mnode_s	*parent;
 
@@ -201,8 +224,8 @@ typedef struct mspriteframe_s
 {
 	int		width;
 	int		height;
-	void	*pcachespot;			// remove?
 	float	up, down, left, right;
+	int		gl_texturenum;
 	byte	pixels[4];
 } mspriteframe_t;
 
@@ -242,6 +265,9 @@ Alias models are position independent, so the cache manager can move them.
 
 typedef struct
 {
+	int					firstpose;
+	int					numposes;
+	float				interval;
 	aliasframetype_t	type;
 	trivertx_t			bboxmin;
 	trivertx_t			bboxmax;
@@ -283,13 +309,44 @@ typedef struct mtriangle_s {
 	int					vertindex[3];
 } mtriangle_t;
 
+
+#define	MAX_SKINS	32
 typedef struct {
+	int			ident;
+	int			version;
+	vec3_t		scale;
+	vec3_t		scale_origin;
+	float		boundingradius;
+	vec3_t		eyeposition;
+	int			numskins;
+	int			skinwidth;
+	int			skinheight;
+	int			numverts;
+	int			numtris;
+	int			numframes;
+	synctype_t	synctype;
+	int			flags;
+	float		size;
+
+	int					numposes;
+	int					poseverts;
+	int					posedata;	// numposes*poseverts trivert_t
+	int					commands;	// gl command list with embedded s/t
+	int					gl_texturenum[MAX_SKINS][4];
 	int					model;
 	int					stverts;
 	int					skindesc;
 	int					triangles;
-	maliasframedesc_t	frames[1];
+	maliasframedesc_t	frames[1];	// variable sized
 } aliashdr_t;
+
+#define	MAXALIASVERTS	1024
+#define	MAXALIASFRAMES	256
+#define	MAXALIASTRIS	2048
+extern	aliashdr_t	*pheader;
+extern	stvert_t	stverts[MAXALIASVERTS];
+extern	mtriangle_t	triangles[MAXALIASTRIS];
+extern	trivertx_t	*poseverts[MAXALIASFRAMES];
 
 //===================================================================
 
