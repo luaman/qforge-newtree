@@ -1,3 +1,9 @@
+/*
+	Compiler/Machine-Specific Configuration
+*/
+#ifndef _CONFIG_H
+#define _CONFIG_H
+@TOP@
 /* "Proper" package name */
 #undef PROGRAM
 
@@ -78,3 +84,6 @@
 
 /* Define if you have the dlopen function.  */
 #undef HAVE_DLOPEN
+
+@BOTTOM@
+#endif // _CONFIG_H
