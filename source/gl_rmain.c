@@ -372,7 +372,7 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
 
 	if (modelalpha != 1.0)
-		glEnable(GL_BLEND);
+		glDepthMask(0);
 
 	while (1)
 	{
