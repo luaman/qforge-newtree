@@ -164,7 +164,7 @@ DEPEND = \
    $(OBJS)\sv_init.obj\
    $(OBJS)\sv_ents.obj\
    $(OBJS)\sv_cvar.obj\
-   $(OBJS)\pr_cmds.obj\
+   $(OBJS)\sv_pr_cmds.obj\
    $(OBJS)\pr_exec.obj\
    $(OBJS)\pr_edict.obj\
    $(OBJS)\sv_ccmds.obj
@@ -221,7 +221,7 @@ $(OBJS)\sv_main.obj+
 $(OBJS)\sv_init.obj+
 $(OBJS)\sv_ents.obj+
 $(OBJS)\sv_cvar.obj+
-$(OBJS)\pr_cmds.obj+
+$(OBJS)\sv_pr_cmds.obj+
 $(OBJS)\pr_exec.obj+
 $(OBJS)\pr_edict.obj+
 $(OBJS)\sv_ccmds.obj
@@ -451,9 +451,9 @@ $(OBJS)\sv_cvar.obj :  $(QFROOT)\source\sv_cvar.c
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sv_cvar.c
 |
 
-$(OBJS)\pr_cmds.obj :  $(QFROOT)\source\pr_cmds.c
+$(OBJS)\sv_pr_cmds.obj :  $(QFROOT)\source\sv_pr_cmds.c
   $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\pr_cmds.c
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sv_pr_cmds.c
 |
 
 $(OBJS)\pr_exec.obj :  $(QFROOT)\source\pr_exec.c
