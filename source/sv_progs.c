@@ -40,9 +40,11 @@
 #include "cmd.h"
 #include "progs.h"
 #include "server.h"
+#include "world.h"
 
 int eval_alpha, eval_scale, eval_glowsize, eval_glowcolor, eval_colormod;
 progs_t	sv_progs;
+cvar_t     *r_skyname;
 
 func_t	EndFrame;
 func_t	SpectatorConnect;
@@ -76,14 +78,6 @@ FindEdictFieldOffsets (progs_t *pr)
 		eval_glowcolor = FindFieldOffset (&sv_progs, "glow_color");
 		eval_colormod = FindFieldOffset (&sv_progs, "colormod");
 	}
-}
-
-void
-SV_Progs_Init (void)
-{
-	sv_progs.edicts = &sv.edicts;
-	sv_progs.num_edicts = &sv.num_edicts;
-	sv_progs.time = &sv.time;
 }
 
 void
@@ -136,4 +130,26 @@ ED_Parse_Extra_Fields (progs_t *pr, char *key, char *value)
 		return 1;
 	}
 	return 0;
+}
+
+void
+SV_Progs_Init (void)
+{
+	sv_progs.edicts = &sv.edicts;
+	sv_progs.num_edicts = &sv.num_edicts;
+	sv_progs.time = &sv.time;
+	sv_progs.unlink = SV_UnlinkEdict;
+	sv_progs.flush = SV_FlushSignon;
+
+	Cmd_AddCommand ("edict", ED_PrintEdict_f);
+	Cmd_AddCommand ("edicts", ED_PrintEdicts_f);
+	Cmd_AddCommand ("edictcount", ED_Count_f);
+	Cmd_AddCommand ("profile", PR_Profile_f);
+}
+
+void
+SV_Progs_Init_Cvars (void)
+{
+	r_skyname =
+		Cvar_Get ("r_skyname", "", CVAR_SERVERINFO, "name of skybox");
 }

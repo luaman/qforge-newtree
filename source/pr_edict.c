@@ -119,7 +119,8 @@ ED_Alloc (progs_t *pr)
 		Con_Printf ("WARNING: ED_Alloc: no free edicts\n");
 		i--;							// step on whatever is the last edict
 		e = EDICT_NUM (pr, i);
-		SV_UnlinkEdict (e);
+		if (pr->unlink)
+			pr->unlink (e);
 	} else
 		(*(pr)->num_edicts)++;
 	e = EDICT_NUM (pr, i);
@@ -137,7 +138,8 @@ ED_Alloc (progs_t *pr)
 void
 ED_Free (progs_t *pr, edict_t *ed)
 {
-	SV_UnlinkEdict (ed);				// unlink from world bsp
+	if (pr->unlink)
+		pr->unlink (ed);				// unlink from world bsp
 
 	ed->free = true;
 	ed->v.model = 0;
@@ -903,7 +905,8 @@ ED_LoadFromFile (progs_t *pr, char *data)
 
 		pr->pr_global_struct->self = EDICT_TO_PROG (pr, ent);
 		PR_ExecuteProgram (pr, func - pr->pr_functions);
-		SV_FlushSignon ();
+		if (pr->flush)
+			pr->flush ();
 	}
 
 	Con_DPrintf ("%i entities inhibited\n", inhibit);
@@ -1117,29 +1120,18 @@ PR_LoadProgs (progs_t *pr)
 										// list
 }
 
-/*
-	PR_Init
-*/
-void
-PR_Init (void)
-{
-	Cmd_AddCommand ("edict", ED_PrintEdict_f);
-	Cmd_AddCommand ("edicts", ED_PrintEdicts_f);
-	Cmd_AddCommand ("edictcount", ED_Count_f);
-	Cmd_AddCommand ("profile", PR_Profile_f);
-}
-
 void
 PR_Init_Cvars (void)
 {
-	r_skyname =
-		Cvar_Get ("r_skyname", "", CVAR_SERVERINFO, "name of skybox");
 	pr_boundscheck =
 		Cvar_Get ("pr_boundscheck", "1", CVAR_NONE,
 				  "Server progs bounds checking");
 }
 
-
+void
+PR_Init (void)
+{
+}
 
 edict_t *
 EDICT_NUM (progs_t *pr, int n)

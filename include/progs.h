@@ -138,9 +138,6 @@ void PR_RunError (struct progs_s *pr, char *error, ...) __attribute__((format(pr
 void ED_PrintEdicts (struct progs_s *pr);
 void ED_PrintNum (struct progs_s *pr, int ent);
 void ED_Count (struct progs_s *pr);
-void ED_PrintEdict_f (void);
-void ED_PrintEdicts_f (void);
-void ED_Count_f (void);
 void PR_Profile (struct progs_s *pr);
 
 eval_t *GetEdictFieldValue(struct progs_s *pr, edict_t *ed, char *field);
@@ -201,6 +198,9 @@ typedef struct progs_s {
 	int				null_bad;
 
 	int				crc;
+
+	void			(*unlink)(edict_t *ent);
+	void			(*flush)(void);
 } progs_t;
 
 #endif // _PROGS_H
