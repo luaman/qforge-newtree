@@ -142,6 +142,9 @@ int         m_return_state;
 qboolean    m_return_onerror;
 char        m_return_reason[32];
 
+cvar_t	*brightness;
+cvar_t	*contrast;
+
 #define StartingGame	(m_multiplayer_cursor == 1)
 #define JoiningGame		(m_multiplayer_cursor == 0)
 #define SerialConfig	(m_net_cursor == 0)
@@ -438,23 +441,21 @@ M_AdjustSliders (int dir)
 						   bound (30, scr_viewsize->int_val + (dir * 10), 120));
 			break;
 		case 4:						// Brightness
-			Cvar_SetValue (brightness,
-						   bound (1, brightness->value + (dir * 0.25), 5));
+			if (brightness)
+				Cvar_SetValue (brightness, bound (1, brightness->value + (dir * 0.25), 5));
 			break;
 		case 5:						// Contrast
-			Cvar_SetValue (contrast,
-						   bound (0.0, contrast->value + (dir * 0.05), 1));
+			if (contrast)
+				Cvar_SetValue (contrast, bound (0.0, contrast->value + (dir * 0.05), 1));
 			break;
 		case 6:						// mouse speed
-			Cvar_SetValue (sensitivity,
-						   bound (1, sensitivity->value + dir, 25));
+			Cvar_SetValue (sensitivity, bound (1, sensitivity->value + dir, 25));
 			break;
 		case 7:						// music volume
 #ifdef _WIN32
 			Cvar_SetValue (bgmvolume, bound (0, bgmvolume->value + dir, 1));
 #else
-			Cvar_SetValue (bgmvolume,
-						   bound (0, bgmvolume->value + (dir * 0.1), 1));
+			Cvar_SetValue (bgmvolume, bound (0, bgmvolume->value + (dir * 0.1), 1));
 #endif
 			break;
 		case 8:						// sfx volume
@@ -544,13 +545,17 @@ M_Options_Draw (void)
 	r = (scr_viewsize->int_val - 30) / (120.0 - 30.0);
 	M_DrawSlider (220, 56, r);
 
-	M_Print (16, 64, "            Brightness");
-	r = (brightness->value - 1) / 4;
-	M_DrawSlider (220, 64, r);
+	if (brightness) {
+		M_Print (16, 64, "            Brightness");
+		r = (brightness->value - 1) / 4;
+		M_DrawSlider (220, 64, r);
+	}
 
-	M_Print (16, 72, "              Contrast");
-	r = contrast->value;
-	M_DrawSlider (220, 72, r);
+	if (contrast) {
+		M_Print (16, 72, "              Contrast");
+		r = contrast->value;
+		M_DrawSlider (220, 72, r);
+	}
 
 	M_Print (16, 80, "           Mouse Speed");
 	r = (sensitivity->value - 1) / 24;
@@ -1536,6 +1541,9 @@ M_Quit_Draw (void)
 void
 M_Init (void)
 {
+	brightness = Cvar_FindVar ("brightness");
+	contrast = Cvar_FindVar ("contrast");
+	
 	Cmd_AddCommand ("togglemenu", M_ToggleMenu_f, "Toggle the menu");
 
 	Cmd_AddCommand ("menu_main", M_Menu_Main_f, "Show main menu");
