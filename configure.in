@@ -8,14 +8,16 @@ AC_CANONICAL_SYSTEM
 dnl This is the only place where the package version appears
 AM_INIT_AUTOMAKE(quakeforge, 0.1.99pre2)
 
-dnl Define the proper name for package
-AC_DEFINE(PROGRAM, "QuakeForge")
-
+dnl Define the proper name and extra version numbers for package
+PROGRAM=QuakeForge
 QW_VERSION=2.40
 QSG_VERSION=1.0
 
+AC_DEFINE_UNQUOTED(PROGRAM, 	"$PROGRAM")
 AC_DEFINE_UNQUOTED(QW_VERSION,	"$QW_VERSION")
 AC_DEFINE_UNQUOTED(QSG_VERSION,	"$QSG_VERSION")
+
+AC_SUBST(PROGRAM)
 AC_SUBST(QW_VERSION)
 AC_SUBST(QSG_VERSION)
 
@@ -23,14 +25,10 @@ dnl Start TARGETS out at "qf-server"
 TARGETS="qf-server\$(EXEEXT)"
 SV_TARGETS=" yes"
 
-dnl Trust me on this one 
-BUILD_TYPE=" Debug"
-
 ISODATE=`date +%Y-%m-%d`
 AC_SUBST(ISODATE)
 
 AC_LANG_C
-
 
 dnl ==================================================================
 dnl Checks for programs.
@@ -180,7 +178,7 @@ AC_CHECK_LIB(m, pow,, AC_MSG_ERROR([math library (-lm) appears broken]))
 
 dnl Checks for MGL support
 AC_ARG_WITH(mgl,
-[  --with-mgl[=DIR]       use MGL found in DIR],
+[  --with-mgl[=DIR]        use MGL found in DIR],
 HAVE_MGL=$withval, HAVE_MGL=auto)
 if test "x$HAVE_MGL" != xno; then
   if test "x$ac_cv_header_windows_h" != "xyes"; then
@@ -216,7 +214,7 @@ AC_SUBST(MGL_LIBS)
 
 dnl Checks for LibGGI support
 AC_ARG_WITH(ggi,
-[  --with-ggi[=DIR]       use LibGGI found in DIR],
+[  --with-ggi[=DIR]        use LibGGI found in DIR],
 HAVE_GGI=$withval, HAVE_GGI=auto)
 if test "x$HAVE_GGI" != xno; then
 	if test "x$HAVE_GGI" != xauto; then
@@ -286,32 +284,43 @@ if test "x$no_x" = x; then
 fi
 AC_SUBST(X_SHM_LIB)
 
-dnl Check for VIDMODE support
-AC_ARG_ENABLE(VIDMODE,
-[  --enable-VIDMODE        use XFree86 VIDMODE extension, if available],
-HAVE_VIDMODE=$enable_VIDMODE, HAVE_VIDMODE=auto)
+dnl Check for XFree86-VidMode support
+AC_ARG_ENABLE(vidmode,
+[  --enable-vidmode        use XFree86 VidMode extension, if available],
+HAVE_VIDMODE=$enable_vidmode, HAVE_VIDMODE=auto)
 if test "x$HAVE_VIDMODE" != xno; then
-   save_CPPFLAGS="$CPPFLAGS"
-   CPPFLAGS="$X_CFLAGS $CPPFLAGS"
-   AC_CHECK_HEADER(X11/extensions/xf86vmode.h, HAVE_VIDMODE=yes, HAVE_VIDMODE=no)
-   CPPFLAGS="$save_CPPFLAGS"
+	save_CPPFLAGS="$CPPFLAGS"
+	CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+	AC_CHECK_HEADER(X11/extensions/xf86vmode.h,
+		dnl Make sure the library works
+		AC_CHECK_LIB(Xxf86vm, XF86VidModeSwitchToMode,
+			AC_DEFINE(HAVE_VIDMODE)
+			VIDMODE_LIBS="-lXxf86vm",,
+			[$X_LIBS -lXext -lX11 $X_EXTRA_LIBS]
+		)
+	)
+	CPPFLAGS="$save_CPPFLAGS"
 fi
+AC_SUBST(VIDMODE_LIBS)
 
 dnl Check for DGA support
-AC_ARG_ENABLE(DGA,
-[  --enable-DGA            use XFree86 DGA extension, if available],
-HAVE_DGA=$enable_DGA, HAVE_DGA=auto)
-if test "x$HAVE_VIDMODE" = xyes; then
-   if test "x$HAVE_DGA" != xno; then
-      save_CPPFLAGS="$CPPFLAGS"
-      CPPFLAGS="$X_CFLAGS $CPPFLAGS"
-      AC_CHECK_HEADER(X11/extensions/xf86dga.h, HAVE_DGA=yes, HAVE_DGA=no)
-      AC_CHECK_HEADER(X11/extensions/xf86vmode.h, qwfoo=qwfoo, HAVE_DGA=no)
-      CPPFLAGS="$save_CPPFLAGS"
-   else
-      HAVE_DGA=no
-   fi
+AC_ARG_ENABLE(dga,
+[  --enable-dga            use XFree86 DGA extension, if available],
+HAVE_DGA=$enable_dga, HAVE_DGA=auto)
+if test "x$HAVE_DGA" != xno; then
+	save_CPPFLAGS="$CPPFLAGS"
+	CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+	AC_CHECK_HEADER(X11/extensions/xf86dga.h,
+		dnl Make sure the library works
+		AC_CHECK_LIB(Xxf86dga, XF86DGAQueryVersion,
+			AC_DEFINE(HAVE_DGA)
+			DGA_LIBS="-lXxf86dga",,
+			[$X_LIBS -lXext -lX11 $X_EXTRA_LIBS]
+		)
+	)
+	CPPFLAGS="$save_CPPFLAGS"
 fi
+AC_SUBST(DGA_LIBS)
 
 dnl Checks for GLX support
 AC_ARG_WITH(glx,
@@ -372,7 +381,6 @@ if test "x$HAVE_GLX" != xno; then
 	)
 fi
 CPPFLAGS="$save_CPPFLAGS"
-
 
 dnl Make sure -lGL or -lMesaGL works
 if test "x$glx_libraries" != xauto -a "x$glx_libraries" != xno -a "x$glx_libraries" != x; then
@@ -439,32 +447,6 @@ fi
 AC_SUBST(GLX_CFLAGS)
 AC_SUBST(GLX_LIBS)
 
-dnl Make sure VIDMODE works
-if test "x$HAVE_VIDMODE" = xyes; then
-   AC_CHECK_LIB(Xxf86vm, XF86VidModeSwitchToMode,qwfoo=qwfoo,
-     HAVE_VIDMODE=no HAVE_DGA=no, [$X_LIBS -lXext -lX11 $X_EXTRA_LIBS])
-fi
-if test "x$HAVE_VIDMODE" != xyes; then
-   VIDMODE_LIBS=""
-else
-   AC_DEFINE(HAVE_VIDMODE)
-   VIDMODE_LIBS="-lXxf86vm"
-fi
-AC_SUBST(VIDMODE_LIBS)
-
-dnl Make sure DGA works
-if test "x$HAVE_DGA" = xyes; then
-   AC_CHECK_LIB(Xxf86dga, XF86DGAQueryVersion,qwfoo=qwfoo,
-     HAVE_DGA=no, [$X_LIBS -lXext -lX11 $X_EXTRA_LIBS])
-fi
-if test "x$HAVE_DGA" != xyes; then
-   DGA_LIBS=""
-else
-   AC_DEFINE(HAVE_DGA)
-   DGA_LIBS="-lXxf86dga"
-fi
-AC_SUBST(DGA_LIBS)
-
 dnl ==================================================================
 dnl Checks for system type
 dnl ==================================================================
@@ -491,51 +473,59 @@ case "${host}" in
 		AC_MSG_CHECKING(to see if we should disable asm optimizations)
 		AC_ARG_ENABLE(asmopt,
 			[  --disable-asmopt        disable assembler optimization],
-			ASM_ARCH=none
 			AC_MSG_RESULT(yes),
  			AC_DEFINE(USE_INTEL_ASM)
-                        ASM_ARCH=yes
+			ASM_ARCH=yes
 			AC_MSG_RESULT(no)
 		)
 		;;
 	*) AC_MSG_RESULT(no)
 esac
-AM_CONDITIONAL(ASM_ARCH, test "$ASM_ARCH" = "yes")
+AM_CONDITIONAL(ASM_ARCH, test "$ASM_ARCH")
 
 dnl ==================================================================
 dnl Checks for sound
 dnl ==================================================================
 
+AC_CHECK_LIB(mme,waveOutOpen,HAVE_LIBMME=yes)
+
 AC_ARG_ENABLE(alsa,
 [  --disable-alsa          disable alsa support],
 )      
 
-dnl MME
-AC_CHECK_LIB(mme,waveOutOpen,HAVE_LIBMME=yes)
-if test -z "$SNDTYPE" -a "x$ac_cv_header_mme_mmsystem_h" = "xyes" -a \
-	"x$HAVE_LIBMME" = "xyes"; then
-  AC_EGREP_CPP([QF_maGiC_VALUE],[
-#include <mme/mmsystem.h>
-#ifdef WAVE_OPEN_SHAREABLE
-QF_maGiC_VALUE
-#endif
-    ], SNDTYPE="MME"
-       SOUND_LIBS="-lmme")
-fi
-
 SNDTYPE=""
+SOUND_LIBS=""
+SOUND_CFLAGS=""
 AC_MSG_CHECKING(for sound support)
 if test "x$enable_alsa" != "xno"; then
-   if test -z "$SNDTYPE" -a "x$ac_cv_header_sys_asoundlib_h" = "xyes"; then
-      AC_EGREP_CPP([QF_maGiC_VALUE],[
+	if test -z "$SNDTYPE" -a "x$ac_cv_header_sys_asoundlib_h" = "xyes"; then
+		AC_EGREP_CPP([QF_maGiC_VALUE],
+			[
 #include <sys/asoundlib.h>
 #if defined(SND_LIB_MAJOR) && defined(SND_LIB_MINOR)
 #if SND_LIB_MAJOR>0 || (SND_LIB_MAJOR==0 && SND_LIB_MINOR>=5)
 QF_maGiC_VALUE
 #endif
 #endif
-      ],[SNDTYPE="ALSA" SOUND_LIBS="-lasound"])
-   fi
+			],
+			SNDTYPE="ALSA"
+			SOUND_LIBS="-lasound"
+		)
+	fi
+fi
+
+dnl MME
+if test -z "$SNDTYPE" -a "x$ac_cv_header_mme_mmsystem_h" = "xyes" -a "x$HAVE_LIBMME" = "xyes"; then
+	AC_EGREP_CPP([QF_maGiC_VALUE],
+		[
+#include <mme/mmsystem.h>
+#ifdef WAVE_OPEN_SHAREABLE
+QF_maGiC_VALUE
+#endif
+		],
+		SNDTYPE="MME"
+		SOUND_LIBS="-lmme"
+	)
 fi
 
 dnl OSS
@@ -564,6 +554,16 @@ QF_maGiC_VALUE
     ], SNDTYPE="OSS")
 fi
 
+dnl Sun
+if test -z "$SNDTYPE" -a "x$ac_cv_header_sys_audioio_h" = "xyes"; then
+   AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <sys/audioio.h>
+#ifdef AUDIO_SETINFO
+QF_maGiC_VALUE
+#endif
+    ], SNDTYPE="SUN")
+fi
+
 dnl Win32
 if test -z "$SNDTYPE" -a "x$ac_cv_header_windows_h" = "xyes" -a \
 	"x$ac_cv_header_mmsystem_h" = "xyes"; then
@@ -578,58 +578,83 @@ QF_maGiC_VALUE
     ], SNDTYPE="WIN32"
        SOUND_LIBS="-lwinmm")
 fi
-dnl Sun
-if test -z "$SNDTYPE" -a "x$ac_cv_header_sys_audioio_h" = "xyes"; then
-  AC_EGREP_CPP([QF_maGiC_VALUE],[
-#include <sys/audioio.h>
-#ifdef AUDIO_SETINFO
-QF_maGiC_VALUE
-#endif
-    ], SNDTYPE="SUN")
-fi
 
-AC_MSG_RESULT([yes ($SNDTYPE)])
+if test "$SNDTYPE"; then
+	AC_MSG_RESULT([yes ($SNDTYPE)])
+else
+	AC_MSG_RESULT([no, using null sound driver])
+fi
 AC_SUBST(SOUND_LIBS)
+AC_SUBST(SOUND_CFLAGS)
+AM_CONDITIONAL(SNDTYPE_ALSA, test "$SNDTYPE" = "ALSA")
 AM_CONDITIONAL(SNDTYPE_MME, test "$SNDTYPE" = "MME")
 AM_CONDITIONAL(SNDTYPE_OSS, test "$SNDTYPE" = "OSS")
-AM_CONDITIONAL(SNDTYPE_ALSA, test "$SNDTYPE" = "ALSA")
-AM_CONDITIONAL(SNDTYPE_WIN32, test "$SNDTYPE" = "WIN32")
 AM_CONDITIONAL(SNDTYPE_SUN, test "$SNDTYPE" = "SUN")
+AM_CONDITIONAL(SNDTYPE_WIN32, test "$SNDTYPE" = "WIN32")
+AM_CONDITIONAL(SNDTYPE_NULL, test "$SNDTYPE" != "ALSA" -a "$SNDTYPE" != "MME" -a "$SNDTYPE" != "OSS" -a "$SNDTYPE" != "SUN" -a "$SNDTYPE" != "WIN32")
 
 dnl ==================================================================
 dnl Checks for CD-ROM
 dnl ==================================================================
 
-dnl Linux/BSD
-AC_EGREP_CPP([QF_maGiC_VALUE],[
+SNDTYPE=""
+CD_LIBS=""
+CD_CFLAGS=""
+AC_MSG_CHECKING(for CD audio support)
+
+dnl Linux
+if test -z "$CDTYPE"; then
+	AC_EGREP_CPP([QF_maGiC_VALUE],
+		[
 #include <linux/cdrom.h>
 #ifdef CDROMREADTOCENTRY
 QF_maGiC_VALUE
 #endif
-],
-      AC_DEFINE(USE_LINUX_CD)
-      CDTYPE=LINUX
-      ,
-      AC_EGREP_CPP([QF_maGiC_VALUE],[
+		],
+		AC_MSG_RESULT([yes (Linux)])
+		CDTYPE=LINUX
+	)
+fi
+
+if test -z "$CDTYPE"; then
+	AC_EGREP_CPP([QF_maGiC_VALUE],
+		[
 #include <sys/cdio.h>
 #if defined (CDIOREADTOCENTRY) || defined (CDIOREADTOCENTRYS)
 QF_maGiC_VALUE
 #endif
-    ], AC_DEFINE(USE_BSD_CD))
-)
-AC_HAVE_STRUCT_FIELD(struct ioc_read_toc_single_entry, entry,[
-#include <sys/cdio.h>
-])
-
-dnl Win32
-if test -z "$CDTYPE" -a "$SYSTYPE" = "WIN32"; then
-    CDTYPE="WIN32"
+		],
+		AC_MSG_RESULT([yes (BSD)])
+		CDTYPE=BSD
+	)
 fi
 
-AM_CONDITIONAL(CDTYPE_WIN32, test "$CDTYPE" = "WIN32")
-AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "LINUX")
-AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "WIN32" -a "$CDTYPE" != "LINUX")
+if test -z "$CDTYPE"; then
+	AC_EGREP_CPP([QF_maGIC_VALUE],
+		[
+#include <windows.h>
+#if defined(MCI_SET_DOOR_OPEN)
+QF_maGiC_VALUE
+#endif
+		],
+		AC_MSG_RESULT([yes (Win32)])
+	    CDTYPE=WIN32
+	)
+fi
 
+test -z "$CDTYPE" && AC_MSG_RESULT([no, using null CD audio driver])
+AC_SUBST(CD_LIBS)
+AC_SUBST(CD_CFLAGS)
+AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "LINUX")
+AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "BSD")
+AM_CONDITIONAL(CDTYPE_WIN32, test "$CDTYPE" = "WIN32")
+AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "LINUX" -a "$CDTYPE" != "BSD" -a "$CDTYPE" != "WIN32")
+
+if test "$CDTTPE" = BSD; then
+	AC_HAVE_STRUCT_FIELD(struct ioc_read_toc_single_entry, entry,
+		[#include <sys/cdio.h>]
+	)
+fi
 
 dnl ==================================================================
 dnl Checks for networking
@@ -762,13 +787,22 @@ AC_ARG_ENABLE(debug,
 	debug=$enable_debug
 )
 if test "x$debug" != xyes; then
+	BUILD_TYPE="Standard"
 	if test "x$GCC" = xyes; then
 		CFLAGS="-O6 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations"
-		BUILD_TYPE=" Standard"
 		AC_MSG_CHECKING(for special compiler settings)
 		case "${host}" in
-			i?86-*-*)
+			i386-*-*)
 				MORE_CFLAGS="-malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				;;
+			i486-*-*)
+				MORE_CFLAGS="-m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				;;
+			i586-*-*)
+				MORE_CFLAGS="-mpentium -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				;;
+			i686-*-*)
+				MORE_CFLAGS="-mpentiumpro -malign-loops=2 -malign-jumps=2 -malign-functions=2"
 				;;
 			*)
 				MORE_CFLAGS=""
@@ -783,6 +817,8 @@ if test "x$debug" != xyes; then
 	else
 		CFLAGS=-O2
 	fi
+else
+	BUILD_TYPE="Debug"
 fi
 
 dnl QuakeForge uses lots of BCPL-style (//) comments, which can cause problems
@@ -856,6 +892,7 @@ AC_OUTPUT(
 	doc/man/Makefile
 	doc/texinfo/Makefile
 	Makefile
+	include/win32/version.h
 	RPM/quakeforge.spec
 	RPM/build_rpm
 	quakeforge.lsm,
@@ -864,7 +901,7 @@ AC_OUTPUT(
 AC_MSG_RESULT([
 	QuakeForge has been configured successfully.
 
-	Build type:$BUILD_TYPE
+	Build type: $BUILD_TYPE
 	Server support:$SV_TARGETS
 	Client support:$CL_TARGETS
 

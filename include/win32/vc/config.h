@@ -31,8 +31,6 @@
 	$Id$
 */
 
-/* common/config.h.in.  Generated automatically from configure.in by autoheader.  */
-
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
@@ -65,28 +63,16 @@
 #define X_DISPLAY_MISSING
 
 /* Version string */
-/* these are included from version.h
-#define QW_VERSION "2.40"
-#define VERSION    "0.2.0"
-#define PROGRAM    "QuakeForge"
-#define PACKAGE    "quakeforge"
-*/
 #include "version.h"
 
 /* Define if you want to use QF-style defaults instead of Id-style */
 #undef NEWSTYLE
 
-#ifdef NEWSTYLE
-#define BASEGAME "base"
-#else
-#define BASEGAME "id1"
-#endif
-
 /* Define this to the subdirectory name of the default game */
 #ifdef NEWSTYLE
-#	define GAMENAME "base"
+#	define BASEGAME "base"
 #else
-#	define GAMENAME "id1"
+#	define BASEGAME "id1"
 #endif
 
 /* Define if you have the XFree86 DGA extension */
@@ -183,7 +169,7 @@
 #undef HAVE_FCNTL_H
 
 /* Define if you have the <fnmatch.h> header file.  */
-#define HAVE_FNMATCH_H
+#define HAVE_FNMATCH_H 1
 
 /* Define if you have the <initguid.h> header file.  */
 #undef HAVE_INITGUID_H
@@ -258,10 +244,7 @@
 #undef HAVE_LIBM
 
 /* Define if you want the QSG standards */
-#define QSG_VERSION "1"
-
-/* Define the name of the global config file */
-#define GLOBAL_CFG_FILE ".\\qforge.cfg"
+#define QSG_VERSION "1.0"
 
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_
@@ -269,9 +252,14 @@
 /* Define if we've scitech MGL library and mgraph.h */
 #define HAVE_MGRAPH_H 1
 
-#define FS_GLOBALCFG ".\\global.cfg"
+/* Dir used for shared game data */
 #define FS_SHAREPATH "."
+
+/* Dir used for unshared (user) game data */
 #define FS_USERPATH "."
+
+/* Location of QuakeForge's global config file */
+#define FS_GLOBALCFG ".\\global.cfg"
 
 #define strcasecmp(s1, s2) stricmp((s1), (s2))
 #define strncasecmp(s1, s2, n) strnicmp((s1), (s2), (n))
@@ -299,4 +287,4 @@
 #	define tan _tan
 #endif
 
-#endif
+#endif	// _CONFIG_H

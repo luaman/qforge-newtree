@@ -29,24 +29,22 @@ endif
 EXTRA_libqfsys_cl_a_SOURCES = cl_sys_unix.c cl_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
 EXTRA_libqfsys_sv_a_SOURCES = sv_sys_unix.c sv_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
 
-if SNDTYPE_WIN32
-libqfsnd_a_SOURCES = snd_win.c snd_dma.c snd_mem.c snd_mix.c 
-else
-if SNDTYPE_OSS
-libqfsnd_a_SOURCES = snd_oss.c snd_dma.c snd_mem.c snd_mix.c 
-else
 if SNDTYPE_ALSA
-libqfsnd_a_SOURCES = snd_alsa.c snd_dma.c snd_mem.c snd_mix.c 
-else
+libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_alsa.c
+endif
+if SNDTYPE_OSS
+libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_oss.c
+endif
 if SNDTYPE_SUN
-libqfsnd_a_SOURCES = snd_sun.c snd_dma.c snd_mem.c snd_mix.c 
-else
+libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_sun.c
+endif
+if SNDTYPE_WIN32
+libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_win.c
+endif
+if SNDTYPE_NULL
 libqfsnd_a_SOURCES = snd_null.c
 endif
-endif
-endif
-endif
-EXTRA_libqfsnd_a_SOURCES = snd_dma.c snd_win.c snd_oss.c snd_alsa.c snd_null.c
+EXTRA_libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_alsa.c snd_oss.c snd_sun.c snd_win.c snd_null.c
 
 if CDTYPE_WIN32
 libqfcd_a_SOURCES = cd_win.c
