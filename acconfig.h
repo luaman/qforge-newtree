@@ -19,6 +19,12 @@
 /* Define this to the location of the global config file */
 #undef FS_GLOBALCFG
 
+/* Define this to the shared game directory root */
+#undef FS_SHAREPATH
+
+/* Define this to the unshared game directory root */
+#undef FS_USERPATH
+
 /* Define this to the base game for the engine to load */
 #undef BASEGAME
 
