@@ -58,6 +58,7 @@
 #include "commdef.h"
 #include "context_x11.h"
 #include "dga_check.h"
+#include "qargs.h"
 #include "qtypes.h"
 #include "vid.h"
 #include "sys.h"
@@ -95,7 +96,7 @@ static int xss_blanking;
 static int xss_exposures;
 
 qboolean
-x11_add_event(int event, void (*event_handler)(XEvent *))
+x11_add_event (int event, void (*event_handler) (XEvent *))
 {
 	if (event >= LASTEvent) {
 		printf("event: %d, LASTEvent: %d\n", event, LASTEvent);
@@ -109,7 +110,7 @@ x11_add_event(int event, void (*event_handler)(XEvent *))
 }
 
 qboolean
-x11_del_event(int event, void (*event_handler)(XEvent *))
+x11_del_event (int event, void (*event_handler) (XEvent *))
 {
 	if (event >= LASTEvent)
 		return false;
@@ -121,7 +122,7 @@ x11_del_event(int event, void (*event_handler)(XEvent *))
 }
 
 void
-x11_process_event( void )
+x11_process_event (void)
 {
 	XEvent	x_event;
 
@@ -133,15 +134,15 @@ x11_process_event( void )
 		return;
 	}
 	if (event_handlers[x_event.type])
-		event_handlers[x_event.type](&x_event);
+		event_handlers[x_event.type] (&x_event);
 }
 
 void
-x11_process_events(void)
+x11_process_events (void)
 {
 	/* Get events from X server. */
-	while ( XPending( x_disp )) {
-		x11_process_event();
+	while (XPending (x_disp)) {
+		x11_process_event ();
 	}
 }
 
@@ -150,18 +151,18 @@ x11_process_events(void)
 // ========================================================================
 
 static void
-TragicDeath(int sig)
+TragicDeath (int sig)
 {
-	printf("Received signal %d, exiting...\n", sig);
-	Sys_Quit();
-	exit(sig);
+	printf ("Received signal %d, exiting...\n", sig);
+	Sys_Quit ();
+	exit (sig);
 	//XCloseDisplay(x_disp);
 	//VID_Shutdown();
 	//Sys_Error("This death brought to you by the number %d\n", signal_num);
 }
 
 void
-x11_open_display( void )
+x11_open_display (void)
 {
 	if ( !x_disp ) {
 		x_disp = XOpenDisplay( NULL );
@@ -194,7 +195,7 @@ x11_open_display( void )
 }
 
 void
-x11_close_display( void )
+x11_close_display (void)
 {
 	if (nullcursor != None) {
 		XFreeCursor(x_disp, nullcursor);
@@ -212,7 +213,7 @@ x11_close_display( void )
 	Create an empty cursor
 */
 void
-x11_create_null_cursor(void)
+x11_create_null_cursor (void)
 {
 	Pixmap cursormask;
 	XGCValues xgc;
@@ -292,7 +293,7 @@ x11_set_vidmode(int width, int height)
 				break;
 			}
 		}
-		XF86VidModeSetViewPort(x_disp, DefaultScreen (x_disp), 0, 0);
+		XF86VidModeSetViewPort (x_disp, DefaultScreen (x_disp), 0, 0);
 		_windowed_mouse = Cvar_Get ("_windowed_mouse","1",CVAR_ARCHIVE|CVAR_ROM,"None");
 	} else
 #endif
@@ -300,10 +301,13 @@ x11_set_vidmode(int width, int height)
 }
 
 void
-x11_create_window(int width, int height)
+x11_create_window (int width, int height)
 {
 	XSetWindowAttributes attr;
-	unsigned long mask;
+	XClassHint			*ClassHint;
+	XSizeHints			*SizeHints;
+	char				*resname;
+	unsigned long		mask;
 
 	/* window attributes */
 	attr.background_pixel = 0;
@@ -317,25 +321,50 @@ x11_create_window(int width, int height)
 		mask|=CWOverrideRedirect;
 	}
 
-	x_win = XCreateWindow(x_disp, x_root, 0, 0, width, height,
-						0, x_visinfo->depth, InputOutput,
-						x_vis, mask, &attr);
+	x_win = XCreateWindow (x_disp, x_root, 0, 0, width, height,
+							0, x_visinfo->depth, InputOutput,
+							x_vis, mask, &attr);
 
+	// Set window size hints
+	SizeHints = XAllocSizeHints ();
+	if (SizeHints) {
+		SizeHints->flags = (PMinSize | PMaxSize);
+		SizeHints->min_width = width;
+		SizeHints->min_height = height;
+		SizeHints->max_width = width;
+		SizeHints->max_height = height;
+		XSetWMNormalHints (x_disp, x_win, SizeHints);
+
+		XFree (SizeHints);
+	}
+	
 	// Set window title
 	x11_set_caption (va ("%s %s", PROGRAM, VERSION));
+
 	// Set icon name
 	XSetIconName (x_disp, x_win, PROGRAM);
 
-	/* Make window respond to Delete events */
-	aWMDelete = XInternAtom(x_disp, "WM_DELETE_WINDOW", False);
-	XSetWMProtocols(x_disp, x_win, &aWMDelete, 1);
+	// Set window class
+	ClassHint = XAllocClassHint ();
+	if (ClassHint) {
+		resname = strrchr (com_argv[0], '/');
 
-	XMapWindow(x_disp, x_win);
-	XRaiseWindow(x_disp, x_win);
+		ClassHint->res_name = (resname ? resname + 1 : resname);
+		ClassHint->res_class = PROGRAM;
+		XSetClassHint (x_disp, x_win, ClassHint);
+		XFree (ClassHint);
+	}
+
+	// Make window respond to Delete events
+	aWMDelete = XInternAtom (x_disp, "WM_DELETE_WINDOW", False);
+	XSetWMProtocols (x_disp, x_win, &aWMDelete, 1);
+
+	XMapWindow (x_disp, x_win);
+	XRaiseWindow (x_disp, x_win);
 }
 
 void
-x11_restore_vidmode(void)
+x11_restore_vidmode (void)
 {
 	XSetScreenSaver (x_disp, xss_timeout, xss_interval, xss_blanking,
 					xss_exposures);
@@ -350,7 +379,7 @@ x11_restore_vidmode(void)
 }
 
 void
-x11_grab_keyboard(void)
+x11_grab_keyboard (void)
 {
 #ifdef HAVE_VIDMODE
 	if (hasvidmode && vid_fullscreen->value) {
