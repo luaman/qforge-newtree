@@ -813,6 +813,7 @@ void R_PolyBlend (void)
 
  	GL_DisableMultitexture();
 
+	glEnable (GL_BLEND);
 	glDisable (GL_DEPTH_TEST);
 	glDisable (GL_TEXTURE_2D);
 
