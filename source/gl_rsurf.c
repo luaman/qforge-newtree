@@ -115,7 +115,7 @@ void recursivelightupdate(mnode_t *node)
 		recursivelightupdate(node->children[0]);
 	if (node->children[1]->contents >= 0)
 		recursivelightupdate(node->children[1]);
-	if (c = node->numsurfaces)
+	if ((c = node->numsurfaces))
 		for (surf = cl.worldmodel->surfaces + node->firstsurface; c ; c--, surf++)
 			surf->cached_dlight = true;
 }
