@@ -594,7 +594,8 @@ R_DrawParticles (void)
 
 		// Don't render particles too close to us.
 		// Note, we must still do physics and such on them.
-		if (!(DotProduct (part->org, vpn) < minparticledist)) {
+		if (!(DotProduct (part->org, vpn) < minparticledist) && 
+				gl_particles->int_val) {
 			at = (byte *) & d_8to24table[(byte) part->color];
 			alpha = part->alpha;
 
