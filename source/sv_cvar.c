@@ -35,12 +35,12 @@ void SV_SendServerInfoChange(char *key, char *value);
 extern cvar_t *sv_highchars; 
 
 /*
-=================
-Cvar_Info
 
-Sets a given cvar (key,value) into svs.info (serverinfo)
-high char filtering is performed according to sv_highchars.value
-=================
+	Cvar_Info
+
+	Sets a given cvar (key,value) into svs.info (serverinfo)
+	high char filtering is performed according to sv_highchars.value
+
 */
 
 void Cvar_Info (cvar_t *var)
@@ -48,23 +48,6 @@ void Cvar_Info (cvar_t *var)
 	if (var->flags & CVAR_SERVERINFO)
 	{
 		unsigned char info[1024], *p, *c;
-
-		/*
-		for (p=info, c=var->string; *c && (p-info<sizeof(info)-1); c++, p++) {
-			if (! sv_highchars.value) {
-				*c &= 127;
-				if (*c < 32 || *c > 127)
-					continue;
-				*p = *c;
-			}
-		}
-		*p=0;
-		Info_SetValueForKey (svs.info, var->name, info, MAX_SERVERINFO_STRING);
-		*/
-
-		// bug above: info[] is not set if sv_highchar == 1
-		// plus, high chars are skipped and replaced with whatever is on the stack in info[]
-		// because p is still incremented
 
 		if (! sv_highchars->value) {
 			for (p=info, c=var->string; *c && (p-info<sizeof(info)-1); ) {
