@@ -430,7 +430,7 @@ void SV_Status_f (void)
 		// most remote clients are 40 columns
 		//           0123456789012345678901234567890123456789
 		Con_Printf ("name               userid frags\n");
-        Con_Printf ("  address          rate ping drop\n");
+		Con_Printf ("  address          rate ping drop\n");
 		Con_Printf ("  ---------------- ---- ---- -----\n");
 		for (i=0,cl=svs.clients ; i<MAX_CLIENTS ; i++,cl++)
 		{
