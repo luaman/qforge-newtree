@@ -121,6 +121,11 @@ SOURCE=.\fnmatch.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\gl_sky.c
+# PROP Exclude_From_Build 1
+# End Source File
+# Begin Source File
+
 SOURCE=.\info.c
 # End Source File
 # Begin Source File
@@ -194,6 +199,10 @@ SOURCE=.\qargs.c
 # Begin Source File
 
 SOURCE=.\qendian.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\win32\resources\quakeforge.rc
 # End Source File
 # Begin Source File
 

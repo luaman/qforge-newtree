@@ -512,7 +512,83 @@ SOURCE=.\fnmatch.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\fractalnoise.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\gl_draw.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\gl_dyn_fires.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\gl_dyn_part.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\gl_dyn_textures.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 
@@ -645,25 +721,6 @@ SOURCE=.\gl_ngraph.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\gl_part.c
-
-!IF  "$(CFG)" == "qw_client - Win32 Release"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=.\gl_refrag.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
@@ -760,6 +817,25 @@ SOURCE=.\gl_rsurf.c
 # Begin Source File
 
 SOURCE=.\gl_screen.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\gl_sky.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 
@@ -912,6 +988,10 @@ SOURCE=.\qargs.c
 # Begin Source File
 
 SOURCE=.\qendian.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\win32\resources\quakeforge.rc
 # End Source File
 # Begin Source File
 
@@ -1324,6 +1404,25 @@ SOURCE=.\teamplay.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\tga.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\va.c
 # End Source File
 # Begin Source File
@@ -1380,6 +1479,10 @@ SOURCE=.\zone.c
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=..\include\win32\resources\icon1.ico
+# End Source File
 # End Group
 # Begin Group "Asm Files"
 

@@ -34,6 +34,8 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+#pragma warning( disable : 4761)
+
 /* Define to empty if the keyword does not work.  */
 #undef const
 
@@ -245,6 +247,9 @@
 
 /* Define if you have the zlib library (-lz).  */
 #define HAVE_ZLIB
+
+/* Define if you have a sane fnmatch.h   */
+#define HAVE_FNMATCH_PROTO
 
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_
