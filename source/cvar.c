@@ -187,16 +187,38 @@ Cvar_Set
 */
 void Cvar_Set (cvar_t *var, char *value)
 {
-        if (!var)
-                return;
+	if (!var)
+		return;
+	if(var->flags&CVAR_ROM)
+		return;
 
-        Z_Free (var->string);   // free the old value string
+	Z_Free (var->string);   // free the old value string
 
-        var->string = Z_Malloc (strlen(value)+1);
-        strcpy (var->string, value);
-        var->value = atof (var->string);
+	var->string = Z_Malloc (strlen(value)+1);
+	strcpy (var->string, value);
+	var->value = atof (var->string);
 
-        Cvar_Info(var);
+	Cvar_Info(var);
+}
+/*
+
+	Cvar_SetROM
+
+	doesn't check for CVAR_ROM flag
+
+*/
+void Cvar_SetROM (cvar_t *var, char *value)
+{
+	if (!var)
+		return;
+
+	Z_Free (var->string);   // free the old value string
+
+	var->string = Z_Malloc (strlen(value)+1);
+	strcpy (var->string, value);
+	var->value = atof (var->string);
+
+	Cvar_Info(var);
 }
 
 /*
@@ -283,6 +305,32 @@ void Cvar_Set_f(void)
 	}
 }
 
+void Cvar_Setrom_f(void)
+{
+	cvar_t *var;
+	char *value;
+	char *var_name;
+
+	if (Cmd_Argc() != 2)
+	{
+		Con_Printf ("usage: setrom <cvar>\n");
+		return;
+	}
+	var_name = Cmd_Argv (1);
+	value = Cmd_Argv (2);
+	var = Cvar_FindVar (var_name);
+	if (!var)
+		var = Cvar_FindAlias (var_name);
+	if (var)
+	{
+		var->flags |= CVAR_ROM;
+	}
+	else
+	{
+		Con_Printf ("cvar %s not found\n", var_name);
+	}
+}
+
 void Cvar_Toggle_f (void)
 {
 	cvar_t *var;
@@ -345,6 +393,7 @@ void Cvar_Init()
 	developer = Cvar_Get ("developer","0",0,"None");
 
 	Cmd_AddCommand ("set", Cvar_Set_f);
+	Cmd_AddCommand ("setrom", Cvar_Setrom_f);
 	Cmd_AddCommand ("toggle", Cvar_Toggle_f);
 	Cmd_AddCommand ("help",Cvar_Help_f);
 	Cmd_AddCommand ("cvarlist",Cvar_CvarList_f);
