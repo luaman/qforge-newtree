@@ -87,8 +87,9 @@ static Atom aWMDelete = 0;
 
 #ifdef HAVE_VIDMODE
 static XF86VidModeModeInfo **vidmodes;
-static int  nummodes, hasvidmode = 0;
+static int  nummodes;
 #endif
+static int	hasvidmode = 0;
 
 cvar_t	*vid_fullscreen;
 
@@ -255,6 +256,7 @@ void
 x11_set_vidmode(int width, int height)
 {
 	int i;
+	int best_mode = 0, best_x = INT_MAX, best_y = INT_MAX;
 
 	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"Toggles fullscreen game mode");
 
@@ -275,43 +277,36 @@ x11_set_vidmode(int width, int height)
 #endif
 
 #ifdef HAVE_VIDMODE
-	hasvidmode = VID_CheckVMode(x_disp, NULL, NULL);
-	if (hasvidmode) {
-		if (! XF86VidModeGetAllModeLines(x_disp, x_screen,
-										&nummodes, &vidmodes)
-			|| nummodes <= 0) { 
-			hasvidmode = 0;
-		}
+	if (!(hasvidmode = VID_CheckVMode(x_disp, NULL, NULL))) {
+		Cvar_Set (vid_fullscreen, "0");
+		return;
 	}
-	Con_Printf ("hasvidmode = %i\nnummodes = %i\n", hasvidmode, nummodes);
 
-	if (hasvidmode && vid_fullscreen->int_val) {
-		int smallest_mode=0, x=INT_MAX, y=INT_MAX;
 
-		// FIXME: does this depend on mode line order in XF86Config?
-		for (i=0; i<nummodes; i++) {
-			if (x>vidmodes[i]->hdisplay || y>vidmodes[i]->vdisplay) {
-				smallest_mode=i;
-				x=vidmodes[i]->hdisplay;
-				y=vidmodes[i]->vdisplay;
-			}
-			printf("%dx%d\n",vidmodes[i]->hdisplay,vidmodes[i]->vdisplay);
-		}
-		// chose the smallest mode that our window fits into;
-		for (i=smallest_mode;
-			 i!=(smallest_mode+1)%nummodes;
-			 i=(i?i-1:nummodes-1)) {
-			if (vidmodes[i]->hdisplay>=width
-				&& vidmodes[i]->vdisplay>=height) {
-				XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[i]);
-				break;
-			}
-		}
-		XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
+	if (vid_fullscreen->int_val)
 		_windowed_mouse = Cvar_Get ("_windowed_mouse","1",CVAR_ARCHIVE|CVAR_ROM,"None");
-	} else
-#endif
+	else
 		_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
+
+	XF86VidModeGetAllModeLines(x_disp, x_screen, &nummodes, &vidmodes);
+
+	if (vid_fullscreen->int_val) {
+		for (i = 0; i < nummodes; i++) {
+			if ((best_x > vidmodes[i]->hdisplay) || 
+					(best_y > vidmodes[i]->vdisplay)) {
+				if ((vidmodes[i]->hdisplay >= width) && 
+						(vidmodes[i]->vdisplay >= height)) {
+					best_mode = i;
+					best_x = vidmodes[i]->hdisplay;
+					best_y = vidmodes[i]->vdisplay;
+				}
+			}
+			printf("%dx%d\n", vidmodes[i]->hdisplay, vidmodes[i]->vdisplay);
+		}
+		XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[best_mode]);
+		XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
+	}
+#endif
 }
 
 void
@@ -372,22 +367,25 @@ x11_create_window (int width, int height)
 	// Make window respond to Delete events
 	aWMDelete = XInternAtom (x_disp, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols (x_disp, x_win, &aWMDelete, 1);
-
-	XMapWindow (x_disp, x_win);
-	XRaiseWindow (x_disp, x_win);
 	
 	if (vid_fullscreen->int_val) {
 		int x, y;
 
+		XMoveWindow (x_disp, x_win, 0, 0);
 		XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
 					 vid.width+2, vid.height+2);
 		need_screen_warp = 1;
+#ifdef HAVE_VIDMODE
 		do {
 			XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
 			poll (0, 0, 50);
 			XF86VidModeGetViewPort (x_disp, x_screen, &x, &y);
 		} while (x || y);
+#endif
 	}
+
+	XMapWindow (x_disp, x_win);
+	XRaiseWindow (x_disp, x_win);
 }
 
 void
