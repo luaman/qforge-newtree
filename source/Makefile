@@ -118,10 +118,8 @@ CL_SW_sources=\
   r_drawa.S \
   r_edgea.S \
   r_varsa.S \
-  snd_mixa.S \
   surf16.S \
-  surf8.S \
-  sys_dosa.S
+  surf8.S
 
 CL_SW_dependencies = $(patsubst %,%.d,$(basename $(CL_SW_sources)))
 CL_SW_objects = $(patsubst %.d,%.o,$(CL_SW_dependencies))
@@ -146,12 +144,14 @@ CL_sources=\
   snd_dma.c \
   snd_mem.c \
   snd_mix.c \
+  snd_mixa.S \
   skin.c \
   sbar.c \
   nonintel.c \
   menu.c \
   keys.c \
-  console.c
+  console.c \
+  sys_dosa.S
 
 CL_dependencies = $(patsubst %,%.d,$(basename $(CL_sources)))
 CL_objects = $(patsubst %.d,%.o,$(CL_dependencies))
