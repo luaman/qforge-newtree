@@ -473,6 +473,7 @@ dynamic:
 		s->polys->fb_chain = fullbright_polys[texture->gl_fb_texturenum];
 		fullbright_polys[texture->gl_fb_texturenum] = s->polys;
 	}
+	glColor3ubv(lighthalf_v);
 }
 
 /*
@@ -489,6 +490,7 @@ void R_BlendLightmaps (void)
 	glDepthMask (0);		// don't bother writing Z
 
 	glBlendFunc (GL_ZERO, GL_SRC_COLOR);
+	glColor3f(1,1,1);
 
 	for (i=0 ; i<MAX_LIGHTMAPS ; i++)
 	{
@@ -515,6 +517,7 @@ void R_BlendLightmaps (void)
 	}
 
 	// Return to normal blending  --KB
+	glColor3ubv(lighthalf_v);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glDepthMask (1);		// back to normal Z buffering
@@ -533,7 +536,6 @@ R_RenderFullbrights (void)
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glBlendFunc(GL_ONE, GL_ONE);
-	glColor3f(1,1,1);
 
 	for (i=1; i<MAX_GLTEXTURES; i++) {
 		if (!fullbright_polys[i])
@@ -570,6 +572,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 
 	c_brush_polys++;
 
+	glColor3f(1, 1, 1);
 	glBindTexture (GL_TEXTURE_2D, texture->gl_texturenum);
 
 	glBegin (GL_POLYGON);
@@ -625,16 +628,13 @@ dynamic:
 			R_BuildLightMap (fa, base, BLOCK_WIDTH*lightmap_bytes);
 		}
 	}
+	glColor3ubv(lighthalf_v);
 }
 
 void GL_WaterSurface(msurface_t *s)
 {
 	int i;
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	if (lighthalf)
-		glColor4f(0.5,0.5,0.5, r_wateralpha->value);
-	else
-		glColor4f(1,1,1, r_wateralpha->value);
 	i = s->texinfo->texture->gl_texturenum;
 	glBindTexture (GL_TEXTURE_2D, i);
 	if (r_wateralpha->value < 1.0)
@@ -666,10 +666,6 @@ void R_DrawWaterSurfaces (void)
 	glLoadMatrixf (r_world_matrix);
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	if (lighthalf)
-		glColor4f(0.5,0.5,0.5, r_wateralpha->value);
-	else
-		glColor4f(1,1,1, r_wateralpha->value);
 	if (r_wateralpha->value < 1.0)
 		glDepthMask(0);
 
@@ -686,7 +682,6 @@ void R_DrawWaterSurfaces (void)
 	
 	waterchain = NULL;
 
-	glColor3f(1,1,1);
 	if (r_wateralpha->value < 1.0)
 		glDepthMask(1);
 }
@@ -716,7 +711,6 @@ void DrawTextureChains (void)
 	}
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 }
 
@@ -758,8 +752,6 @@ void R_DrawBrushModel (entity_t *e)
 
 	if (R_CullBox (mins, maxs))
 		return;
-
-	glColor3f (1, 1, 1);
 
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 	memset (fullbright_polys, 0, sizeof(fullbright_polys));
@@ -834,7 +826,6 @@ void R_DrawBrushModel (entity_t *e)
 	}
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	if (gl_texsort->value)
 		R_BlendLightmaps ();
@@ -989,7 +980,6 @@ void R_DrawWorld (void)
 	if (!gl_mtexable)
 		Cvar_SetValue (gl_texsort, 1);
 
-	glColor3f (1.0, 1.0, 1.0);
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 	memset (fullbright_polys, 0, sizeof(fullbright_polys));
 	// Be sure to clear the skybox --KB

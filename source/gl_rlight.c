@@ -145,8 +145,6 @@ void R_RenderDlight (dlight_t *light)
 	}
 
 	glBegin (GL_TRIANGLE_FAN);
-//	glColor3f (0.2,0.1,0.0);
-//	glColor3f (0.2,0.1,0.05); // changed dimlight effect
 	if (lighthalf)
 		glColor3f(light->color[0]*0.5,light->color[1]*0.5,light->color[2]*0.5);
 	else
@@ -166,6 +164,9 @@ void R_RenderDlight (dlight_t *light)
 		glVertex3fv (v);
 	}
 	glEnd ();
+	// No, we don't reset here, we reset in the function which calls this one.
+	// Largely because this is called in a big loop.
+	// glColor3ubv(lighthalf_v);
 }
 
 /*
@@ -196,7 +197,7 @@ void R_RenderDlights (void)
 		R_RenderDlight (l);
 	}
 
-	glColor3f (1,1,1);
+	glColor3ubv(lighthalf_v);
 	glEnable (GL_TEXTURE_2D);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask (1);

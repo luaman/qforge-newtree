@@ -1101,6 +1101,7 @@ void SCR_TileClear (void)
 float oldsbar = 0;
 extern void R_ForceLightUpdate();
 qboolean lighthalf;
+unsigned char lighthalf_v[3];
 extern cvar_t *gl_lightmode, *brightness, *contrast;
 
 /*
@@ -1176,6 +1177,11 @@ void SCR_UpdateScreen (void)
 	if (lighthalf != (gl_lightmode->value != 0))
 	{
 		lighthalf = gl_lightmode->value != 0;
+		if (lighthalf) {
+			lighthalf_v[0] = lighthalf_v[1] = lighthalf_v[2] = 128;
+		} else {
+			lighthalf_v[0] = lighthalf_v[1] = lighthalf_v[2] = 255;
+		}
 		R_ForceLightUpdate();
 	}
 
@@ -1255,8 +1261,9 @@ void SCR_UpdateScreen (void)
 			f *= 0.5;
 		}
 		glEnd ();
+		glColor3ubv(lighthalf_v);
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	Cvar_SetValue (contrast, bound (0.1, contrast->value, 1));
 	if ((gl_polyblend->value && v_blend[3]) || contrast->value < 1)
 	{
@@ -1277,6 +1284,7 @@ void SCR_UpdateScreen (void)
 			glVertex2f (0, vid.height);
 		}
 		glEnd ();
+		glColor3ubv(lighthalf_v);
 	}
 
 	glEnable(GL_TEXTURE_2D);

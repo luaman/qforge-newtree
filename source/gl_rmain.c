@@ -300,11 +300,6 @@ static void R_DrawSpriteModel (entity_t *e)
 		right = vright;
 	}
 
-	if (lighthalf)
-		glColor4f(0.5,0.5,0.5,1);
-	else
-		glColor4f(1,1,1,1);
-
     glBindTexture (GL_TEXTURE_2D, frame->gl_texturenum);
 
 	glEnable (GL_ALPHA_TEST);
@@ -423,6 +418,7 @@ static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 
 	if (modelalpha != 1.0)
 		glDepthMask(1);
+	glColor3ubv(lighthalf_v);
 }
 
 
@@ -685,7 +681,7 @@ static void R_DrawAliasModel (entity_t *e)
 		glColor4f (0,0,0,0.5);
 		GL_DrawAliasShadow (paliashdr, lastposenum);
 		glEnable (GL_TEXTURE_2D);
-		glColor4f (0.5, 0.5, 0.5, 1);
+		glColor3ubv(lighthalf_v);
 		glPopMatrix ();
 	}
 
@@ -1000,74 +996,6 @@ static void R_Clear (void)
 
 	glDepthRange (gldepthmin, gldepthmax);
 }
-
-#if 0 //!!! FIXME, Zoid, mirror is disabled for now
-/*
-=============
-R_Mirror
-=============
-*/
-void R_Mirror (void)
-{
-	float		d;
-	msurface_t	*s;
-	entity_t	*ent;
-
-	if (!mirror)
-		return;
-
-	memcpy (r_base_world_matrix, r_world_matrix, sizeof(r_base_world_matrix));
-
-	d = DotProduct (r_refdef.vieworg, mirror_plane->normal) - mirror_plane->dist;
-	VectorMA (r_refdef.vieworg, -2*d, mirror_plane->normal, r_refdef.vieworg);
-
-	d = DotProduct (vpn, mirror_plane->normal);
-	VectorMA (vpn, -2*d, mirror_plane->normal, vpn);
-
-	r_refdef.viewangles[0] = -asin (vpn[2])/M_PI*180;
-	r_refdef.viewangles[1] = atan2 (vpn[1], vpn[0])/M_PI*180;
-	r_refdef.viewangles[2] = -r_refdef.viewangles[2];
-
-	ent = &cl_entities[cl.viewentity];
-	if (cl_numvisedicts < MAX_VISEDICTS)
-	{
-		cl_visedicts[cl_numvisedicts] = ent;
-		cl_numvisedicts++;
-	}
-
-	gldepthmin = 0.5;
-	gldepthmax = 1;
-	glDepthRange (gldepthmin, gldepthmax);
-	glDepthFunc (GL_LEQUAL);
-
-	R_RenderScene ();
-	R_DrawWaterSurfaces ();
-
-
-	gldepthmin = 0;
-	gldepthmax = 0.5;
-	glDepthRange (gldepthmin, gldepthmax);
-	glDepthFunc (GL_LEQUAL);
-
-	// blend on top
-	glMatrixMode(GL_PROJECTION);
-	if (mirror_plane->normal[2])
-		glScalef (1,-1,1);
-	else
-		glScalef (-1,1,1);
-	glCullFace(GL_FRONT);
-	glMatrixMode(GL_MODELVIEW);
-
-	glLoadMatrixf (r_base_world_matrix);
-
-	glColor4f (1,1,1,r_mirroralpha->value);
-	s = cl.worldmodel->textures[mirrortexturenum]->texturechain;
-	for ( ; s ; s=s->texturechain)
-		R_RenderBrushPoly (s);
-	cl.worldmodel->textures[mirrortexturenum]->texturechain = NULL;
-	glColor4f (1,1,1,1);
-}
-#endif
 
 /*
 ================

@@ -330,6 +330,13 @@ void AddLightBlend (float, float, float, float);
 void R_StoreEfrags (efrag_t **ppefrag);
 
 //
+// gl_screen.c
+//
+
+extern qboolean lighthalf;
+extern unsigned char lighthalf_v[3];
+
+//
 // gl_mesh.c
 //
 void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr);

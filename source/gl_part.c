@@ -650,6 +650,7 @@ void R_DrawParticles (void)
 	}
 
 	glEnd ();
+	glColor3ubv(lighthalf_v);
 	if (alphaTestEnabled)
 		glEnable(GL_ALPHA_TEST);
 	glDepthMask(1);
@@ -793,6 +794,7 @@ R_DrawFire (fire_t *f)
 		b_cos+=2;
 	}
 	glEnd ();
+	glColor3ubv(lighthalf_v);
 }
 
 /*
@@ -823,7 +825,6 @@ R_UpdateFires (void)
 		R_DrawFire (f);
 	}
 
-	glColor3f (1.0, 1.0, 1.0);
 	glEnable (GL_TEXTURE_2D);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask (1);

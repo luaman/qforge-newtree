@@ -62,7 +62,6 @@ static int GL_LoadPicTexture (qpic_t *pic);
 extern  byte            *host_basepal;
 extern unsigned char d_15to8table[65536];
 extern cvar_t *crosshair, *cl_crossx, *cl_crossy, *crosshaircolor;
-extern qboolean lighthalf;
 
 cvar_t		*gl_nobind;
 cvar_t		*gl_max_size;
@@ -431,6 +430,11 @@ void Draw_Init (void)
 	if (!strncasecmp ((char *)gl_renderer, "3dfx",4))
 		Cvar_Set (gl_lightmode, "0");
 	lighthalf = gl_lightmode->value != 0; // to avoid re-rendering all lightmaps on first frame
+	if (lighthalf) {
+		lighthalf_v[0] = lighthalf_v[1] = lighthalf_v[2] = 128;
+	} else {
+		lighthalf_v[0] = lighthalf_v[1] = lighthalf_v[2] = 255;
+	}
 
 	Cmd_AddCommand ("gl_texturemode", &Draw_TextureMode_f);
 
@@ -504,10 +508,6 @@ void Draw_Character8 (int x, int y, int num)
 
 	glBindTexture (GL_TEXTURE_2D, char_texture);
 
-	if (lighthalf)
-		glColor3f(0.5,0.5,0.5);
-	else
-		glColor3f(1,1,1);
 	glBegin (GL_QUADS);
 	glTexCoord2f (fcol, frow);
 	glVertex2f (x, y);
@@ -586,6 +586,7 @@ void Draw_Crosshair(void)
 			glTexCoord2f (0, 1);
 			glVertex2f (x - 4, y+12);
 			glEnd ();
+			glColor3ubv(lighthalf_v);
 			break;
 	}
 }
@@ -619,6 +620,7 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 	glTexCoord2f (gl->sl, gl->th);
 	glVertex2f (x, y+pic->height);
 	glEnd ();
+	glColor3ubv(lighthalf_v);
 }
 
 void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int height)
@@ -657,6 +659,7 @@ void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int h
 	glTexCoord2f (newsl, newth);
 	glVertex2f (x, y+height);
 	glEnd ();
+	glColor3ubv(lighthalf_v);
 }
 
 /*
@@ -728,6 +731,7 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 	glTexCoord2f (0, 1);
 	glVertex2f (x, y+pic->height);
 	glEnd ();
+	glColor3ubv(lighthalf_v);
 }
 
 
@@ -822,6 +826,7 @@ Draw_ConsoleBackground ( int lines )
 	if (!cls.download)
 		Draw_AltString8 (vid.conwidth - strlen(cl_verstring->string)*8 - 11,
 			lines-14, cl_verstring->string);
+	glColor3ubv(lighthalf_v);
 }
 
 
@@ -850,6 +855,7 @@ void Draw_TileClear (int x, int y, int w, int h)
 	glTexCoord2f ( x/64.0, (y+h)/64.0 );
 	glVertex2f (x, y+h);
 	glEnd ();
+	glColor3ubv(lighthalf_v);
 }
 
 
@@ -876,10 +882,7 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	glVertex2f (x, y+h);
 
 	glEnd ();
-	if (lighthalf)
-		glColor3f(0.5,0.5,0.5);
-	else
-		glColor3f(1,1,1);
+	glColor3ubv(lighthalf_v);
 	glEnable (GL_TEXTURE_2D);
 }
 //=============================================================================
@@ -902,10 +905,7 @@ void Draw_FadeScreen (void)
 	glVertex2f (0, vid.height);
 
 	glEnd ();
-	if (lighthalf)
-		glColor3f(0.5,0.5,0.5);
-	else
-		glColor3f(1,1,1);
+	glColor3ubv(lighthalf_v);
 	glEnable (GL_TEXTURE_2D);
 
 	Sbar_Changed();
@@ -963,10 +963,7 @@ void GL_Set2D (void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	if (lighthalf)
-		glColor3f(0.5,0.5,0.5);
-	else
-		glColor3f(1,1,1);
+	glColor3ubv(lighthalf_v);
 }
 
 //====================================================================

@@ -650,14 +650,8 @@ R_DrawSkyBox (void)
 {
 	int			i, j;
 
-	glEnable (GL_DEPTH_TEST);
-	glDepthFunc (GL_ALWAYS);
+	glDisable (GL_DEPTH_TEST);
 	glDepthRange (gldepthmax, gldepthmax);
-	if (lighthalf)
-		glColor3f(0.5,0.5,0.5);
-	else
-		glColor3f(1,1,1);
-
 	for (i = 0; i < 6; i++)
 	{
 		glBindTexture(GL_TEXTURE_2D, SKY_TEX + i);
@@ -667,8 +661,6 @@ R_DrawSkyBox (void)
 		glEnd();
 	}
 
-	glColor3f (1,1,1);
-	glDepthFunc (GL_LEQUAL);
 	glEnable (GL_DEPTH_TEST);
 	glDepthRange(gldepthmin, gldepthmax);
 }
@@ -729,15 +721,10 @@ R_DrawSkyLayer (float s)
 void
 R_DrawSkyDome (void)
 {
-	glEnable (GL_DEPTH_TEST);
-	glDepthFunc (GL_ALWAYS);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable (GL_DEPTH_TEST);
 	glDepthRange (gldepthmax, gldepthmax);
+
 	glDisable (GL_BLEND);
-	if (lighthalf)
-		glColor3f(0.5,0.5,0.5);
-	else
-		glColor3f(1,1,1);
 
 	// base sky
 	glBindTexture (GL_TEXTURE_2D, solidskytexture);
@@ -760,8 +747,6 @@ R_DrawSkyDome (void)
 		R_DrawSkyLayer (speedscale);
 	}
 
-	glColor3f (1,1,1);
-	glDepthFunc (GL_LEQUAL);
 	glEnable (GL_DEPTH_TEST);
 	glDepthRange (gldepthmin, gldepthmax);
 }
