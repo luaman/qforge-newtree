@@ -328,7 +328,7 @@ void
 
 #ifndef HAVE_PFNGLCOLORTABLEEXTPROC
 # ifndef PFNGLCOLORTABLEEXTPROC
-typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const GLvoid *table);
+typedef void (GLAPIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const GLvoid *table);
 # endif
 #endif
 

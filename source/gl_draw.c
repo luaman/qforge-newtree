@@ -1183,6 +1183,12 @@ GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean al
 
 	free (scaled);
 }
+#else
+void
+GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha) 
+{
+	// this space intentionally left blank
+}
 #endif
 
 extern qboolean VID_Is8bit();
