@@ -60,6 +60,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <X11/extensions/XShm.h>
+
 #ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
 #endif
@@ -73,7 +74,6 @@
 #include "dga_check.h"
 #include "draw.h"
 #include "host.h"
-#include "input.h"
 #include "input.h"
 #include "keys.h"
 #include "menu.h"
