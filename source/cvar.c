@@ -50,12 +50,12 @@
 #include "cmd.h"
 #include "commdef.h"
 
-cvar_t     *cvar_vars;
-char       *cvar_null_string = "";
-extern cvar_t *developer;
-cvar_alias_t *calias_vars;
-hashtab_t  *cvar_hash;
-hashtab_t  *calias_hash;
+cvar_t			*cvar_vars;
+char			*cvar_null_string = "";
+extern cvar_t	*developer;
+cvar_alias_t	*calias_vars;
+hashtab_t		*cvar_hash;
+hashtab_t		*calias_hash;
 
 /*
 	Cvar_FindVar
@@ -63,7 +63,7 @@ hashtab_t  *calias_hash;
 cvar_t *
 Cvar_FindVar (char *var_name)
 {
-	return (cvar_t*)Hash_Find (cvar_hash, var_name);
+	return (cvar_t*) Hash_Find (cvar_hash, var_name);
 }
 
 cvar_t *
@@ -71,7 +71,7 @@ Cvar_FindAlias (char *alias_name)
 {
 	cvar_alias_t *alias;
 
-	alias = (cvar_alias_t*)Hash_Find (calias_hash, alias_name);
+	alias = (cvar_alias_t*) Hash_Find (calias_hash, alias_name);
 	if (alias)
 		return alias->cvar;
 	return 0;
@@ -80,8 +80,8 @@ Cvar_FindAlias (char *alias_name)
 void
 Cvar_Alias_Get (char *name, cvar_t *cvar)
 {
-	cvar_alias_t *alias;
-	cvar_t     *var;
+	cvar_alias_t	*alias;
+	cvar_t			*var;
 
 	if (Cmd_Exists (name)) {
 		Con_Printf ("CAlias_Get: %s is a command\n", name);
@@ -338,6 +338,7 @@ Cvar_Setrom_f (void)
 			Con_DPrintf ("Cvar \"%s\" is read-only, cannot modify\n", var_name);
 		} else {
 			Cvar_Set (var, value);
+			Cvar_SetFlags (var, var->flags | CVAR_ROM);
 		}
 	} else {
 		var = Cvar_Get (var_name, value, CVAR_USER_CREATED | CVAR_ROM,
