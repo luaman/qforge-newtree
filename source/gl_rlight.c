@@ -132,8 +132,11 @@ R_RenderDlight (dlight_t *light)
 	else
 		glColor3fv (light->color);
 
+	VectorSubtract (r_origin, light->origin, v);
+	VectorNormalize (v);
+
 	for (i = 0; i < 3; i++)
-		v[i] = light->origin[i] - vpn[i] * rad;
+		v[i] = light->origin[i] + v[i] * rad;
 
 	glVertex3fv (v);
 	glColor3f (0, 0, 0);
