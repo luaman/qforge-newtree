@@ -40,6 +40,7 @@
 #include "cl_parse.h"
 #include "console.h"
 #include "cmd.h"
+#include "host.h"
 #include "msg.h"
 #include "pcx.h"
 #include "qendian.h"
@@ -366,6 +367,7 @@ Skin_Init (void)
 	Cmd_AddCommand ("skins", Skin_Skins_f, "No Description");
 	Cmd_AddCommand ("allskins", Skin_AllSkins_f, "No Description");
 	Cmd_AddCommand ("color", CL_Color_f, "No Description");
+	Skin_Init_Translation ();
 }
 
 void
@@ -380,4 +382,35 @@ Skin_Init_Cvars (void)
 						 "Players color on top");
 	bottomcolor = Cvar_Get ("bottomcolor", "0", CVAR_ARCHIVE | CVAR_USERINFO,
 							"Players color on bottom");
+}
+
+/*
+	CL_NewTranslation
+*/
+void
+CL_NewTranslation (int slot)
+{
+	player_info_t *player;
+	char        s[512];
+
+	if (slot > MAX_CLIENTS)
+		Host_EndGame ("CL_NewTranslation: slot > MAX_CLIENTS");
+
+	player = &cl.players[slot];
+	if (!player->name[0])
+		return;
+
+	strcpy (s, Info_ValueForKey (player->userinfo, "skin"));
+	COM_StripExtension (s, s);
+	if (player->skin && !strequal (s, player->skin->name))
+		player->skin = NULL;
+
+	if (player->_topcolor != player->topcolor ||
+		player->_bottomcolor != player->bottomcolor || !player->skin) {
+		player->_topcolor = player->topcolor;
+		player->_bottomcolor = player->bottomcolor;
+
+		Skin_Set_Translate (player);
+		Skin_Do_Translation (player);
+	}
 }

@@ -31,6 +31,8 @@
 
 #include "client.h"
 
+extern byte player_8bit_texels[320 * 200];
+
 void	Skin_Find (player_info_t *sc);
 byte	*Skin_Cache (skin_t *skin);
 void	Skin_Skins_f (void);
@@ -38,6 +40,9 @@ void	Skin_AllSkins_f (void);
 void	Skin_NextDownload (void);
 void	Skin_Init (void);
 void	Skin_Init_Cvars (void);
+void	Skin_Init_Translation (void);
+void	Skin_Set_Translate (player_info_t *player);
+void	Skin_Do_Translation (player_info_t *player);
 
 #define RSSHOT_WIDTH 320
 #define RSSHOT_HEIGHT 200

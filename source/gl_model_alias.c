@@ -45,6 +45,7 @@
 #include "model.h"
 #include "qendian.h"
 #include "server.h"
+#include "skin.h"
 
 extern model_t *loadmodel;
 
@@ -65,8 +66,6 @@ extern mtriangle_t triangles[MAXALIASTRIS];
 // an animating sequence of poses
 extern trivertx_t *poseverts[MAXALIASFRAMES];
 extern int  posenum;
-
-byte        player_8bit_texels[320 * 200];
 
 //=========================================================
 
