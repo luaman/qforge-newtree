@@ -160,8 +160,8 @@ typedef enum {
 	K_MWHEELDOWN
 } keynum_t;
 
-
-typedef enum {key_game, key_console, key_message, key_menu} keydest_t;
+// key_none should, preferably, be last
+typedef enum {key_game, key_console, key_message, key_menu, key_none} keydest_t;
 
 extern keydest_t	key_dest;
 extern char *keybindings[256];
