@@ -125,7 +125,8 @@ R_AddDynamicLights (msurface_t *surf)
 		if ( !(surf->dlightbits & (1<<lnum) ) )
 			continue;		// not lit by this light
 
-		dist = DotProduct (cl_dlights[lnum].origin, surf->plane->normal) - surf->plane->dist;
+		VectorSubtract(cl_dlights[lnum].origin, currententity->origin, local);
+		dist = DotProduct (local, surf->plane->normal) - surf->plane->dist;
 
 		for (i=0 ; i<3 ; i++)
 			impact[i] = cl_dlights[lnum].origin[i] - surf->plane->normal[i]*dist;
