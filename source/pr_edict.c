@@ -878,7 +878,8 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 		// If skyname is set, we want to allow skyboxes and set what
 		//  the skybox name should be.  "qlsky" is supported since
 		//  at least one other map uses it already.  --KB
-		if (stricmp (keyname, "skyname") == 0 ||
+		if (stricmp (keyname, "sky") == 0 || // LordHavoc: added "sky" key (Quake2 and DarkPlaces use this)
+			stricmp (keyname, "skyname") == 0 ||
 				stricmp (keyname, "qlsky") == 0)
 		{
 			Info_SetValueForKey (svs.info, "skybox",
@@ -1089,7 +1090,8 @@ void PR_LoadProgs (void)
 	if ((f = ED_FindFunction ("SpectatorDisconnect")) != NULL)
 		SpectatorDisconnect = (func_t)(f - pr_functions);
 
-        FindEdictFieldOffsets();
+	// LordHavoc: Ender added this
+	FindEdictFieldOffsets();
 }
 
 

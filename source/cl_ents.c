@@ -520,28 +520,11 @@ void CL_LinkPacketEntities (void)
 			ent->scoreboard = NULL;
 		}
 
-      // Ender: Extend (Colormod) [QSG - Begin]
-      //        N.B: All messy code below is the sole fault of LordHavoc and
-      //             his futile attempts to save bandwidth. :)
-      //
-        ent->glowsize    = s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
-        ent->glowcolor   = s1->glowcolor;
-
-        if (ent->alpha != 1)
-         ent->alpha       = s1->alpha / 255;
-        else
-         ent->alpha       = 1;
-
-        if (s1->colormod) {
-         ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
-         ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
-         ent->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
-         Con_DPrintf("Colormod: %f %f %f\n", ent->colormod[0], ent->colormod[1], ent->colormod[2]);
-        } else {
-         ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 0;
-        }
-     //
-     // Ender: Extend (Colormod) [QSG - End]
+		// LordHavoc: until a new protocol is written, there's no room for alpha and such
+		ent->glowsize	= 0;
+		ent->glowcolor	= 254;
+		ent->alpha		= 1;
+		ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 
                  // set skin
 		ent->skinnum = s1->skinnum;

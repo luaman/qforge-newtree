@@ -41,11 +41,7 @@
 #include "sys.h"
 #include "pmove.h"
 
-// Ender Extends (QSG - Begin)
-//   HACK HACK HACK
-extern int eval_alpha, eval_fullbright, eval_colormod, eval_glowsize, eval_glowcolor;
-// Ender Extends (QSG - End)
-eval_t *GETEDICTFIELDVALUE(edict_t *ed, int fieldoffset);
+extern eval_t *GETEDICTFIELDVALUE(edict_t *ed, int fieldoffset);
 
 /*
 =============================================================================
@@ -219,20 +215,6 @@ void SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, qb
 	if ( to->modelindex != from->modelindex )
 		bits |= U_MODEL;
 
-// Ender (QSG - Begin)
-        if (stdver > 1) {
-         if (to->glowsize  != from->glowsize)    bits |= U_GLOWSIZE;
-         if (to->glowcolor != from->glowcolor)   bits |= U_GLOWCOLOR;
-         if (to->colormod  != from->colormod)    bits |= U_COLORMOD;
-         if (to->alpha     != from->alpha)       bits |= U_ALPHA;
-        }
-
-        if (bits >= 16777216)
-          bits |= U_EXTEND2;
-
-        if (bits >= 65536)
-          bits |= U_EXTEND1;
-// Ender (QSG - End)
 	if (bits & 511)
 		bits |= U_MOREBITS;
 
@@ -257,13 +239,6 @@ void SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, qb
 	if (bits & U_MOREBITS)
 		MSG_WriteByte (msg, bits&255);
 
-// Ender (QSG - Begin)
-        if (bits & U_EXTEND1)
-                MSG_WriteByte (msg, bits>>16);
-        if (bits & U_EXTEND2)
-                MSG_WriteByte (msg, bits>>24);
-// Ender (QSG - End)
-
 	if (bits & U_MODEL)
 		MSG_WriteByte (msg,	to->modelindex);
 	if (bits & U_FRAME)
@@ -286,17 +261,6 @@ void SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, qb
 		MSG_WriteCoord (msg, to->origin[2]);
 	if (bits & U_ANGLE3)
 		MSG_WriteAngle(msg, to->angles[2]);
-
-// Ender (QSG - Begin)
-        if (bits & U_GLOWSIZE)
-                MSG_WriteByte(msg, to->glowsize);
-        if (bits & U_GLOWCOLOR)
-                MSG_WriteByte(msg, to->glowcolor);
-        if (bits & U_COLORMOD)
-                MSG_WriteByte(msg, to->colormod);
-        if (bits & U_ALPHA)
-                MSG_WriteByte(msg, to->colormod);
-// Ender (QSG - End)
 }
 
 /*
@@ -565,52 +529,6 @@ void SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 		state->colormap = ent->v.colormap;
 		state->skinnum = ent->v.skin;
 		state->effects = ent->v.effects;
-
-// Ender: EXTEND (QSG - Begin)
-        {
-		int tmp;
-         eval_t  *val;
-         state->glowsize  = 0;
-         state->glowcolor = 254;
-         state->colormod  = 0;
-         state->alpha     = 1;
-                if ((val = GETEDICTFIELDVALUE(ent, eval_glowsize))) {
-			tmp = (int)val->_float >> 3;
-			state->glowsize = bound(-128, tmp, 127);
-                 }
-                    
-                 if ((val = GETEDICTFIELDVALUE(ent, eval_glowcolor))) {
-                  if (val->_float != 0)
-                   state->glowcolor = (int) val->_float;
-                 }
-
-                 if ((val = GETEDICTFIELDVALUE(ent, eval_alpha))) {
-                  if (val->_float != 0)
-                   state->alpha = (int) val->_float;
-                 }
-
-                 if ((val = GETEDICTFIELDVALUE(ent, eval_colormod))) {
-                  if (val->vector[0] != 0 || val->vector[1] != 0 || val->vector[2] != 0) {
-                   int modred, modgreen, modblue;
-
-                   modred = val->vector[0] * 8.0;
-                   if (modred < 0) modred = 0;
-                   if (modred > 7) modred = 7;
-                
-                   modgreen = val->vector[1] * 8.0;
-                   if (modgreen < 0) modgreen = 0;
-                   if (modgreen > 7) modgreen = 7;
-                
-                   modblue = val->vector[2] * 4.0;
-                   if (modblue < 0) modblue = 0;
-                   if (modblue > 3) modblue = 3;
-
-//                   Con_Printf("Colormod: %d %d %d\n", modred, modgreen, modblue);
-                   state->colormod = (modred << 5) | (modgreen << 2) | modblue;
-                  }
-                 }
-        }
-// Ender: EXTEND (QSG - End)
      }
 
 	// encode the packet entities as a delta from the
