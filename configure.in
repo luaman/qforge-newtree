@@ -286,6 +286,17 @@ if test "x$no_x" = x; then
 fi
 AC_SUBST(X_SHM_LIB)
 
+dnl Check for VIDMODE support
+AC_ARG_ENABLE(VIDMODE,
+[  --enable-VIDMODE        use XFree86 VIDMODE extension, if available],
+HAVE_VIDMODE=$enable_VIDMODE, HAVE_VIDMODE=auto)
+if test "x$HAVE_VIDMODE" != xno; then
+   save_CPPFLAGS="$CPPFLAGS"
+   CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+   AC_CHECK_HEADER(X11/extensions/xf86vmode.h, HAVE_VIDMODE=yes, HAVE_VIDMODE=no)
+   CPPFLAGS="$save_CPPFLAGS"
+fi
+
 dnl Checks for GLX support
 AC_ARG_WITH(glx,
 [  --with-glx[=DIR]        use GLX with libraries found in DIR],
@@ -412,6 +423,18 @@ fi
 AC_SUBST(GLX_CFLAGS)
 AC_SUBST(GLX_LIBS)
 
+dnl Make sure VIDMODE works
+if test "x$HAVE_VIDMODE" = xyes; then
+   AC_CHECK_LIB(Xxf86vm, XF86VidModeSwitchToMode,qwfoo=qwfoo,
+     HAVE_VIDMODE=no HAVE_DGA=no, [$X_LIBS -lXext -lX11 $X_EXTRA_LIBS])
+fi
+if test "x$HAVE_VIDMODE" != xyes; then
+   VIDMODE_LIBS=""
+else
+   AC_DEFINE(HAVE_VIDMODE)
+   VIDMODE_LIBS="-lXxf86vm"
+fi
+AC_SUBST(VIDMODE_LIBS)
 
 dnl ==================================================================
 dnl Checks for system type

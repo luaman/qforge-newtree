@@ -67,7 +67,7 @@
 #include "client.h"
 #include "input.h"
 #include "context_x11.h"
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
 #endif
 #include "dga_check.h"
@@ -86,7 +86,7 @@ static Visual		*x_vis;
 static XVisualInfo	*x_visinfo;
 static Atom			aWMDelete = 0;
 
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 static XF86VidModeModeInfo **vidmodes;
 static int	nummodes, hasvidmode = 0;
 #endif
@@ -491,7 +491,7 @@ void VID_Init (unsigned char *palette)
 // open the display
 	x11_open_display();
 
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 	hasvidmode = VID_CheckVMode(x_disp, NULL, NULL);
 	if (hasvidmode) {
 		if (! XF86VidModeGetAllModeLines(x_disp, DefaultScreen(x_disp),
@@ -587,7 +587,7 @@ void VID_Init (unsigned char *palette)
 		attribs.event_mask = STD_EVENT_MASK;
 		attribs.border_pixel = 0;
 
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 		if (hasvidmode && vid_fullscreen->value) {
 			int smallest_mode=0, x=INT_MAX, y=INT_MAX;
 
@@ -659,7 +659,7 @@ void VID_Init (unsigned char *palette)
 
 // map the window
 	XMapWindow(x_disp, x_win);
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 	if (hasvidmode && vid_fullscreen->value) {
 		XRaiseWindow(x_disp, x_win);
 		XGrabKeyboard(x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
@@ -763,7 +763,7 @@ VID_Shutdown(void)
 {
 	Sys_Printf("VID_Shutdown\n");
 	if (x_disp) {
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 		if (hasvidmode) {
 			int i;
 

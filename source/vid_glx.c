@@ -68,7 +68,7 @@
 #ifdef HAS_DGA
 # include <X11/extensions/xf86dga.h>
 #endif
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
 #endif
 #include "dga_check.h"
@@ -97,7 +97,7 @@ cvar_t	*vid_fullscreen;
 extern cvar_t	*gl_triplebuffer;
 extern cvar_t *vid_dga_mouseaccel;
 
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 static XF86VidModeModeInfo **vidmodes;
 static int	nummodes, hasvidmode = 0;
 #endif
@@ -163,7 +163,7 @@ VID_Shutdown(void)
 
 	glXDestroyContext(x_disp, ctx);
 
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 	if (hasvidmode) {
 		int i;
 
@@ -480,7 +480,7 @@ void VID_Init(unsigned char *palette)
 	}
 	Con_SafePrintf ("hasdga = %i\nhasdgavideo = %i\n", hasdga, hasdgavideo);
 #endif
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 	hasvidmode = VID_CheckVMode(x_disp, NULL, NULL);
 	if (hasvidmode) {
 		if (! XF86VidModeGetAllModeLines(x_disp, DefaultScreen(x_disp),
@@ -529,7 +529,7 @@ void VID_Init(unsigned char *palette)
 	attr.event_mask = X_MASK;
 	mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
 
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 	if (hasvidmode && vid_fullscreen->value) {
 		int smallest_mode=0, x=MAXINT, y=MAXINT;
 
@@ -566,7 +566,7 @@ void VID_Init(unsigned char *palette)
 						0, visinfo->depth, InputOutput,
 						visinfo->visual, mask, &attr);
 	XMapWindow(x_disp, x_win);
-#ifdef HAS_VIDMODE
+#ifdef HAVE_VIDMODE
 	if (hasvidmode && vid_fullscreen->value) {
 		XRaiseWindow(x_disp, x_win);
 		XGrabKeyboard(x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
