@@ -102,8 +102,6 @@ int		reinit_surfcache = 1;	// if 1, surface cache is currently empty and
 
 mleaf_t		*r_viewleaf, *r_oldviewleaf;
 
-texture_t	*r_notexture_mip;
-
 float		r_aliastransition, r_resfudge;
 
 int		d_lightstylevalue[256];	// 8.8 fraction of base light value
