@@ -135,7 +135,7 @@ determine_face (vec3_t v)
 		y = x - ___ v
 		        v.n
 */
-static void
+static int
 find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 {
 	vec3_t n;					// normal to the plane formed by the eye and
@@ -144,12 +144,14 @@ find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 								// always on an axis plane.
 	vec3_t v = {0, 0, 0};		// direction vector of cube edge. always +ve
 	vec_t x_n, v_n;				// x.n and v.n
+	int axis;
 	vec3_t t;
 
 	x[face1 % 3] = 1024 * (1 - 2 * (face1 / 3));
 	x[face2 % 3] = 1024 * (1 - 2 * (face2 / 3));
 
-	v[3 - ((face1 % 3) + (face2 % 3))] = 1;
+	axis = 3 - ((face1 % 3) + (face2 % 3));
+	v[axis] = 1;
 
 	CrossProduct (x1, x2, n);
 
@@ -157,6 +159,8 @@ find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 	v_n = DotProduct (v, n);
 	VectorScale (v, x_n / v_n, t);
 	VectorSubtract (x, t, y);
+
+	return axis;
 }
 
 /*
@@ -350,13 +354,18 @@ fixup_center_face (struct box_def *box, int c_face)
 	the edge :). The poly edge is going from face 1 to face 2 (for
 	enter/leave purposes).
 */
-static void
+static int
 cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
 				 vec3_t v2)
 {
 	vec3_t l;
+	int axis;
 
-	find_intersect (face1, v1, face2, v2, l);
+	axis = find_intersect (face1, v1, face2, v2, l);
+	if (l[axis] > 1024)
+		return axis;
+	else if (l[axis] < -1024)
+		return axis + 3;
 
 	box[face1].leave_vertex = box[face1].poly.numverts;
 	add_vertex(box, face1, l);
@@ -364,6 +373,8 @@ cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
 	enter_face (box, face1, face2);
 	box[face2].enter_vertex = box[face2].poly.numverts;
 	add_vertex(box, face2, l);
+
+	return -1;
 }
 
 static void
@@ -409,6 +420,15 @@ fix_missed_vertexen (struct box_def *box, int *faces, int face_count)
 	}
 }
 
+static void
+visit_cube_face(int *visited_faces, int *faces_flags, int *face_count, int face)
+{
+	if (!faces_flags[face]) {
+		faces_flags[face] = 1;
+		visited_faces[(*face_count)++] = face;
+	}
+}
+
 void
 R_DrawSkyBoxPoly (glpoly_t *poly)
 {
@@ -443,29 +463,42 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		VectorSubtract (poly->verts[i], r_refdef.vieworg, v);
 		face = determine_face (v);
 		if (face != prev_face) {
-			if ((face % 3) == (prev_face % 3)) {
-				vec3_t x;
-				int x_face;
+			int x_face = -1;
+			if ((face % 3) == (prev_face % 3)
+				|| (x_face = cross_cube_edge (box, prev_face, last_v,
+											  face, v)) >= 0) {
+				vec3_t x, y;
+				int y_face;
 
 				VectorAdd (v, last_v, x);
 				VectorScale (x, 0.5, x);
-				x_face = determine_face (x);
-
-				if (!faces_flags[x_face]) {
-					faces_flags[x_face] = 1;
-					visited_faces[face_count++] = x_face;
+				if (x_face == -1) {
+					x_face = determine_face (x);
 				}
 
-				cross_cube_edge (box, prev_face, last_v, x_face, x);
-				cross_cube_edge (box, x_face, x, face, v);
-			} else {
-				cross_cube_edge (box, prev_face, last_v, face, v);
+				if ((y_face = cross_cube_edge (box, prev_face, last_v,
+											   x_face, x)) >= 0) {
+					VectorAdd (last_v, x, y);
+					VectorScale (y, 0.5, y);
+					cross_cube_edge (box, prev_face, last_v, y_face, y);
+					cross_cube_edge (box, y_face, y, x_face, x);
+
+					visit_cube_face (visited_faces, faces_flags, &face_count, y_face);
+				}
+
+				visit_cube_face (visited_faces, faces_flags, &face_count, x_face);
+
+				if ((y_face = cross_cube_edge (box, x_face, x, face, v)) >= 0) {
+					VectorAdd (x, v, y);
+					VectorScale (y, 0.5, y);
+					cross_cube_edge (box, x_face, x, y_face, y);
+					cross_cube_edge (box, y_face, y, face, v);
+
+					visit_cube_face (visited_faces, faces_flags, &face_count, y_face);
+				}
 			}
 		}
-		if (!faces_flags[face]) {
-			faces_flags[face] = 1;
-			visited_faces[face_count++] = face;
-		}
+		visit_cube_face (visited_faces, faces_flags, &face_count, face);
 		add_vertex(box, face, v);
 
 		VectorCopy (v, last_v);
