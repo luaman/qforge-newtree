@@ -41,6 +41,7 @@
 #include "screen.h"
 #include "wad.h"
 #include "cmd.h"
+#include "qendian.h"
 
 #define	MINIMUM_MEMORY	0x550000
 
@@ -2278,6 +2279,7 @@ void	VID_Init (unsigned char *palette)
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.colormap = host_colormap;
+//	vid.fullbright = 256 - (*((int *)vid.colormap + 2048));
 	vid.fullbright = 256 - LittleLong (*((int *)vid.colormap + 2048));
 	vid_testingmode = 0;
 

@@ -41,6 +41,7 @@
 #include "keys.h"
 #include "qargs.h"
 #include "cmd.h"
+#include "qendian.h"
 
 #define MAX_MODE_LIST	30
 #define VID_ROW_SIZE	3
