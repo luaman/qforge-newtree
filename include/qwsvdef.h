@@ -63,8 +63,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #ifdef _WIN32
+#ifndef __BORLANDC__
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
+#endif
 #endif
 
 //=============================================================================
