@@ -219,11 +219,10 @@ R_Init_Cvars (void)
 	r_dynamic = Cvar_Get ("r_dynamic", "1", CVAR_NONE, "Set to 0 to disable lightmap changes");
 	r_novis = Cvar_Get ("r_novis", "0", CVAR_NONE, "Set to 1 to enable runtime visibility checking (SLOW)");
 	r_speeds = Cvar_Get ("r_speeds", "0", CVAR_NONE, "Display drawing time and statistics of what is being viewed");
-
 	r_netgraph = Cvar_Get ("r_netgraph", "0", CVAR_ARCHIVE, "Graph network stats");
 	r_netgraph_alpha = Cvar_Get ("r_netgraph_alpha", "0.5", CVAR_ARCHIVE, "Net graph translucency");
 	r_netgraph_box = Cvar_Get ("r_netgraph_box", "1", CVAR_ARCHIVE, "Draw box around net graph");
-
+	r_particles = Cvar_Get ("r_particles", "1", CVAR_ARCHIVE, "whether or not to draw particles");
 	r_skyname = Cvar_Get ("r_skyname", "none", CVAR_NONE, "name of the current skybox");
 
 	gl_affinemodels = Cvar_Get ("gl_affinemodels", "0", CVAR_ARCHIVE, "Makes texture rendering quality better if set to 1");
@@ -237,7 +236,6 @@ R_Init_Cvars (void)
 	gl_lerp_anim = Cvar_Get ("gl_lerp_anim", "1", CVAR_ARCHIVE, "Toggles model animation interpolation");
 	gl_multitexture = Cvar_Get ("gl_multitexture", "0", CVAR_ARCHIVE, "Use multitexture when available");
 	gl_nocolors = Cvar_Get ("gl_nocolors", "0", CVAR_NONE, "Set to 1, turns off all player colors");
-	gl_particles = Cvar_Get ("gl_particles", "1", CVAR_ARCHIVE, "whether or not to draw particles");
 	gl_playermip = Cvar_Get ("gl_playermip", "0", CVAR_NONE, "Detail of player skins. 0 best, 4 worst.");
 	gl_sky_clip = Cvar_Get ("gl_sky_clip", "0", CVAR_ARCHIVE, "controls whether sky is drawn first (0) or later (1)");
 	gl_sky_divide = Cvar_Get ("gl_sky_divide", "1", CVAR_ARCHIVE, "subdivide sky polys");

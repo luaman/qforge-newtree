@@ -1,7 +1,7 @@
 /*
 	gl_dyn_part.c
 
-	Particle system!
+	OpenGL particle system.
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -223,7 +223,7 @@ R_ParticleExplosion
 void
 R_ParticleExplosion (vec3_t org)
 {
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	particle_new_random (pt_smokecloud, part_tex_smoke[rand () & 7], org, 4, 30,
@@ -242,7 +242,7 @@ R_BlobExplosion (vec3_t org)
 {
 	int         i;
 
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	for (i = 0; i < 512; i++) {
@@ -260,7 +260,7 @@ R_BlobExplosion (vec3_t org)
 static void
 R_RunSparkEffect (vec3_t org, int count, int ofuzz)
 {
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	particle_new (pt_smokecloud, part_tex_smoke[rand () & 7], org, 
@@ -277,7 +277,7 @@ R_RunGunshotEffect (vec3_t org, int count)
 {
 	int         scale;
 
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	if (count > 6)
@@ -292,7 +292,7 @@ R_RunGunshotEffect (vec3_t org, int count)
 static void
 R_BloodPuff (vec3_t org, int count)
 {
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	particle_new (pt_bloodcloud, part_tex_smoke[rand () & 7], org, 9,
@@ -308,7 +308,7 @@ R_RunPuffEffect
 void
 R_RunPuffEffect (vec3_t org, byte type, byte count)
 {
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	switch (type) {
@@ -336,7 +336,7 @@ R_RunParticleEffect (vec3_t org, int color, int count)
 	int         i, j, scale;
 	vec3_t      porg;
 
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	if (count > 130)
@@ -388,7 +388,7 @@ R_LavaSplash (vec3_t org)
 	float       vel;
 	vec3_t      dir, porg, pvel;
 
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	for (i = -16; i < 16; i++) {
@@ -424,7 +424,7 @@ R_TeleportSplash (vec3_t org)
 	float       vel;
 	vec3_t      dir, porg, pvel;
 
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	for (i = -16; i < 16; i += 4)
@@ -461,7 +461,7 @@ R_RocketTrail (int type, entity_t *ent)
 	if (type == 0)
 		R_AddFire (ent->old_origin, ent->origin, ent);
 
-	if (!gl_particles->int_val)
+	if (!r_particles->int_val)
 		return;
 
 	VectorSubtract (ent->origin, ent->old_origin, vec);
@@ -595,7 +595,7 @@ R_DrawParticles (void)
 		// Don't render particles too close to us.
 		// Note, we must still do physics and such on them.
 		if (!(DotProduct (part->org, vpn) < minparticledist) && 
-				gl_particles->int_val) {
+				r_particles->int_val) {
 			at = (byte *) & d_8to24table[(byte) part->color];
 			alpha = part->alpha;
 

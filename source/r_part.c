@@ -55,7 +55,7 @@ particle_t *particles;
 int         r_numparticles;
 
 vec3_t      r_pright, r_pup, r_ppn;
-
+cvar_t      *r_particles;
 
 /*
 ===============
@@ -172,6 +172,9 @@ R_RunSpikeEffect (vec3_t pos, byte type)
 void
 R_RunPuffEffect (vec3_t pos, byte type, byte cnt)
 {
+	if (!r_particles->int_val)
+		return;
+
 	switch (type) {
 		case TE_GUNSHOT:
 			R_RunParticleEffect (pos, 0, 20 * cnt);
@@ -196,6 +199,9 @@ R_ParticleExplosion (vec3_t org)
 {
 	int         i, j;
 	particle_t *p;
+
+	if (!r_particles->int_val)
+		return;
 
 	for (i = 0; i < 1024; i++) {
 		if (!free_particles)
@@ -235,6 +241,9 @@ R_BlobExplosion (vec3_t org)
 {
 	int         i, j;
 	particle_t *p;
+
+	if (!r_particles->int_val)
+		return;
 
 	for (i = 0; i < 1024; i++) {
 		if (!free_particles)
@@ -277,6 +286,9 @@ R_RunParticleEffect (vec3_t org, int color, int count)
 	particle_t *p;
 	int         scale;
 
+	if (!r_particles->int_val)
+		return;
+
 	if (count > 130)
 		scale = 3;
 	else if (count > 20)
@@ -316,6 +328,9 @@ R_LavaSplash (vec3_t org)
 	particle_t *p;
 	float       vel;
 	vec3_t      dir;
+
+	if (!r_particles->int_val)
+		return;
 
 	for (i = -16; i < 16; i++)
 		for (j = -16; j < 16; j++)
@@ -359,6 +374,9 @@ R_TeleportSplash (vec3_t org)
 	float       vel;
 	vec3_t      dir;
 
+	if (!r_particles->int_val)
+		return;
+
 	for (i = -16; i < 16; i += 4)
 		for (j = -16; j < 16; j += 4)
 			for (k = -24; k < 32; k += 4) {
@@ -394,6 +412,9 @@ R_RocketTrail (int type, entity_t *ent)
 	float       len;
 	int         j;
 	particle_t *p;
+
+	if (!r_particles->int_val)
+		return;
 
 	VectorSubtract (ent->origin, ent->old_origin, vec);
 	len = VectorNormalize (vec);
@@ -461,7 +482,6 @@ R_RocketTrail (int type, entity_t *ent)
 			}
 
 		}
-
 
 		VectorAdd (ent->old_origin, vec, ent->old_origin);
 	}

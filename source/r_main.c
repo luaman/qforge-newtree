@@ -158,6 +158,7 @@ cvar_t     *r_clearcolor;
 cvar_t     *r_waterwarp;
 cvar_t     *r_drawentities;
 cvar_t     *r_drawviewmodel;
+cvar_t     *r_particles;
 cvar_t     *r_aliasstats;
 cvar_t     *r_dspeeds;
 cvar_t     *r_drawflat;
@@ -282,6 +283,7 @@ R_Init_Cvars (void)
 	r_waterwarp = Cvar_Get ("r_waterwarp", "1", CVAR_NONE, "Toggles whether surfaces are warped in a liquid.");
 	r_drawentities = Cvar_Get ("r_drawentities", "1", CVAR_NONE, "Toggles the drawing of entities.");
 	r_drawviewmodel = Cvar_Get ("r_drawviewmodel", "1", CVAR_ARCHIVE, "Toggles the drawing of your weapon");
+	r_particles = Cvar_Get ("r_particles", "1", CVAR_ARCHIVE, "Toggles drawing of particles.");
 	r_aliasstats = Cvar_Get ("r_polymodelstats", "0", CVAR_NONE, "Toggles the displays of number of polygon models current being viewed");
 	r_dspeeds = Cvar_Get ("r_dspeeds", "0", CVAR_NONE, "Toggles the display of drawing speed information");
 	r_reportsurfout = Cvar_Get ("r_reportsurfout", "0", CVAR_NONE, "Toggle the display of how many surfaces where not displayed");
