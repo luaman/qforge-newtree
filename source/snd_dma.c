@@ -91,39 +91,17 @@ int 		desired_bits = 16;
 
 int sound_started=0;
 
-/* cvar_t bgmvolume = {"bgmvolume", "1", true};
- CVAR_FIXME */
 cvar_t *bgmvolume;
-/* cvar_t volume = {"volume", "0.7", true};
- CVAR_FIXME */
 cvar_t *volume;
 
-/* cvar_t nosound = {"nosound", "0"};
- CVAR_FIXME */
 cvar_t *nosound;
-/* cvar_t precache = {"precache", "1"};
- CVAR_FIXME */
 cvar_t *precache;
-/* cvar_t loadas8bit = {"loadas8bit", "0"};
- CVAR_FIXME */
 cvar_t *loadas8bit;
-/* cvar_t bgmbuffer = {"bgmbuffer", "4096"};
- CVAR_FIXME */
 cvar_t *bgmbuffer;
-/* cvar_t ambient_level = {"ambient_level", "0.3"};
- CVAR_FIXME */
 cvar_t *ambient_level;
-/* cvar_t ambient_fade = {"ambient_fade", "100"};
- CVAR_FIXME */
 cvar_t *ambient_fade;
-/* cvar_t snd_noextraupdate = {"snd_noextraupdate", "0"};
- CVAR_FIXME */
 cvar_t *snd_noextraupdate;
-/* cvar_t snd_show = {"snd_show", "0"};
- CVAR_FIXME */
 cvar_t *snd_show;
-/* cvar_t _snd_mixahead = {"_snd_mixahead", "0.1", true};
- CVAR_FIXME */
 cvar_t *_snd_mixahead;
 
 
@@ -376,16 +354,12 @@ sfx_t *S_PrecacheSound (char *name)
 {
 	sfx_t	*sfx;
 
-/* 	if (!sound_started || nosound.value)
- CVAR_FIXME */
 	if (!sound_started || nosound->value)
 		return NULL;
 
 	sfx = S_FindName (name);
 	
 // cache it in
-/* 	if (precache.value)
- CVAR_FIXME */
 	if (precache->value)
 		S_LoadSound (sfx);
 	
@@ -511,8 +485,6 @@ void S_StartSound(int entnum, int entchannel, sfx_t *sfx, vec3_t origin, float f
 	if (!sfx)
 		return;
 
-/* 	if (nosound.value)
- CVAR_FIXME */
 	if (nosound->value)
 		return;
 
@@ -729,8 +701,6 @@ void S_UpdateAmbientSounds (void)
 		return;
 
 	l = Mod_PointInLeaf (listener_origin, cl.worldmodel);
-/* 	if (!l || !ambient_level.value)
- CVAR_FIXME */
 	if (!l || !ambient_level->value)
 	{
 		for (ambient_channel = 0 ; ambient_channel< NUM_AMBIENTS ; ambient_channel++)
@@ -743,8 +713,6 @@ void S_UpdateAmbientSounds (void)
 		chan = &channels[ambient_channel];	
 		chan->sfx = ambient_sfx[ambient_channel];
 	
-/* 		vol = ambient_level.value * l->ambient_sound_level[ambient_channel];
- CVAR_FIXME */
 		vol = ambient_level->value * l->ambient_sound_level[ambient_channel];
 		if (vol < 8)
 			vol = 0;
@@ -752,16 +720,12 @@ void S_UpdateAmbientSounds (void)
 	// don't adjust volume too fast
 		if (chan->master_vol < vol)
 		{
-/* 			chan->master_vol += host_frametime * ambient_fade.value;
- CVAR_FIXME */
 			chan->master_vol += host_frametime * ambient_fade->value;
 			if (chan->master_vol > vol)
 				chan->master_vol = vol;
 		}
 		else if (chan->master_vol > vol)
 		{
-/* 			chan->master_vol -= host_frametime * ambient_fade.value;
- CVAR_FIXME */
 			chan->master_vol -= host_frametime * ambient_fade->value;
 			if (chan->master_vol < vol)
 				chan->master_vol = vol;
@@ -850,8 +814,6 @@ void S_Update(vec3_t origin, vec3_t forward, vec3_t right, vec3_t up)
 //
 // debugging output
 //
-/* 	if (snd_show.value)
- CVAR_FIXME */
 	if (snd_show->value)
 	{
 		total = 0;
@@ -906,8 +868,6 @@ void S_ExtraUpdate (void)
 	IN_Accumulate ();
 #endif
 
-/* 	if (snd_noextraupdate.value)
- CVAR_FIXME */
 	if (snd_noextraupdate->value)
 		return;		// don't pollute timings
 	S_Update_();
@@ -934,8 +894,6 @@ void S_Update_(void)
 	}
 
 // mix ahead of current position
-/* 	endtime = soundtime + _snd_mixahead.value * shm->speed;
- CVAR_FIXME */
 	endtime = soundtime + _snd_mixahead->value * shm->speed;
 	samps = shm->samples >> (shm->channels-1);
 	if (endtime - soundtime > samps)
@@ -1050,8 +1008,6 @@ void S_LocalSound (char *sound)
 {
 	sfx_t	*sfx;
 
-/* 	if (nosound.value)
- CVAR_FIXME */
 	if (nosound->value)
 		return;
 	if (!sound_started)
