@@ -498,7 +498,7 @@ SV_Begin_f (void)
 
 			// call the spawn function
 			sv_progs.pr_global_struct->time = sv.time;
-			sv_progs.pr_global_struct->self = EDICT_TO_PROG (sv_player);
+			sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, sv_player);
 			PR_ExecuteProgram (&sv_progs, SpectatorConnect);
 		}
 	} else {
@@ -508,12 +508,12 @@ SV_Begin_f (void)
 
 		// call the spawn function
 		sv_progs.pr_global_struct->time = sv.time;
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (sv_player);
+		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, sv_player);
 		PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->ClientConnect);
 
 		// actually spawn the player
 		sv_progs.pr_global_struct->time = sv.time;
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (sv_player);
+		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, sv_player);
 		PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->PutClientInServer);
 	}
 
@@ -946,7 +946,7 @@ SV_Kill_f (void)
 	}
 
 	sv_progs.pr_global_struct->time = sv.time;
-	sv_progs.pr_global_struct->self = EDICT_TO_PROG (sv_player);
+	sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, sv_player);
 	PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->ClientKill);
 }
 
@@ -1054,7 +1054,7 @@ SV_PTrack_f (void)
 		host_client->spec_track = 0;
 		ent = EDICT_NUM (&sv_progs, host_client - svs.clients + 1);
 		tent = EDICT_NUM (&sv_progs, 0);
-		ent->v.goalentity = EDICT_TO_PROG (tent);
+		ent->v.goalentity = EDICT_TO_PROG (&sv_progs, tent);
 		return;
 	}
 
@@ -1065,14 +1065,14 @@ SV_PTrack_f (void)
 		host_client->spec_track = 0;
 		ent = EDICT_NUM (&sv_progs, host_client - svs.clients + 1);
 		tent = EDICT_NUM (&sv_progs, 0);
-		ent->v.goalentity = EDICT_TO_PROG (tent);
+		ent->v.goalentity = EDICT_TO_PROG (&sv_progs, tent);
 		return;
 	}
 	host_client->spec_track = i + 1;	// now tracking
 
 	ent = EDICT_NUM (&sv_progs, host_client - svs.clients + 1);
 	tent = EDICT_NUM (&sv_progs, i + 1);
-	ent->v.goalentity = EDICT_TO_PROG (tent);
+	ent->v.goalentity = EDICT_TO_PROG (&sv_progs, tent);
 }
 
 
@@ -1324,7 +1324,7 @@ AddLinksToPmove (areanode_t *node)
 	int         i;
 	physent_t  *pe;
 
-	pl = EDICT_TO_PROG (sv_player);
+	pl = EDICT_TO_PROG (&sv_progs, sv_player);
 
 	// touch linked edicts
 	for (l = node->solid_edicts.next; l != &node->solid_edicts; l = next) {
@@ -1390,7 +1390,7 @@ AddAllEntsToPmove (void)
 	physent_t  *pe;
 	int         pl;
 
-	pl = EDICT_TO_PROG (sv_player);
+	pl = EDICT_TO_PROG (&sv_progs, sv_player);
 	check = NEXT_EDICT (&sv_progs, sv.edicts);
 	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (&sv_progs, check)) {
 		if (check->free)
@@ -1534,7 +1534,7 @@ SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 		sv_progs.pr_global_struct->frametime = sv_frametime;
 
 		sv_progs.pr_global_struct->time = sv.time;
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (sv_player);
+		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, sv_player);
 		PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->PlayerPreThink);
 
 		SV_RunThink (sv_player);
@@ -1591,7 +1591,7 @@ SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 	if (onground != -1) {
 		sv_player->v.flags = (int) sv_player->v.flags | FL_ONGROUND;
 		sv_player->v.groundentity =
-			EDICT_TO_PROG (EDICT_NUM (&sv_progs, pmove.physents[onground].info));
+			EDICT_TO_PROG (&sv_progs, EDICT_NUM (&sv_progs, pmove.physents[onground].info));
 	} else {
 		sv_player->v.flags = (int) sv_player->v.flags & ~FL_ONGROUND;
 	}
@@ -1619,8 +1619,8 @@ SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 			ent = EDICT_NUM (&sv_progs, n);
 			if (!ent->v.touch || (playertouch[n / 8] & (1 << (n % 8))))
 				continue;
-			sv_progs.pr_global_struct->self = EDICT_TO_PROG (ent);
-			sv_progs.pr_global_struct->other = EDICT_TO_PROG (sv_player);
+			sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, ent);
+			sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, sv_player);
 			PR_ExecuteProgram (&sv_progs, ent->v.touch);
 			playertouch[n / 8] |= 1 << (n % 8);
 		}
@@ -1640,12 +1640,12 @@ SV_PostRunCmd (void)
 
 	if (!host_client->spectator) {
 		sv_progs.pr_global_struct->time = sv.time;
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (sv_player);
+		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, sv_player);
 		PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->PlayerPostThink);
 		SV_RunNewmis ();
 	} else if (SpectatorThink) {
 		sv_progs.pr_global_struct->time = sv.time;
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (sv_player);
+		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, sv_player);
 		PR_ExecuteProgram (&sv_progs, SpectatorThink);
 	}
 }

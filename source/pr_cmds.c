@@ -38,7 +38,7 @@
 #include "world.h"
 #include "va.h"
 
-#define	RETURN_EDICT(p, e) (((int *)(p)->pr_globals)[OFS_RETURN] = EDICT_TO_PROG(e))
+#define	RETURN_EDICT(p, e) (((int *)(p)->pr_globals)[OFS_RETURN] = EDICT_TO_PROG(p, e))
 #define	RETURN_STRING(p, s) (((int *)(p)->pr_globals)[OFS_RETURN] = PR_SetString((p), s))
 
 /*
@@ -81,7 +81,7 @@ PF_error (progs_t *pr)
 	s = PF_VarString (pr, 0);
 	Con_Printf ("======SERVER ERROR in %s:\n%s\n",
 				PR_GetString (pr, pr->pr_xfunction->s_name), s);
-	ed = PROG_TO_EDICT (pr->pr_global_struct->self);
+	ed = PROG_TO_EDICT (pr, pr->pr_global_struct->self);
 	ED_Print (pr, ed);
 
 	SV_Error ("Program error");
@@ -104,7 +104,7 @@ PF_objerror (progs_t *pr)
 	s = PF_VarString (pr, 0);
 	Con_Printf ("======OBJECT ERROR in %s:\n%s\n",
 				PR_GetString (pr, pr->pr_xfunction->s_name), s);
-	ed = PROG_TO_EDICT (pr->pr_global_struct->self);
+	ed = PROG_TO_EDICT (pr, pr->pr_global_struct->self);
 	ED_Print (pr, ed);
 	ED_Free (pr, ed);
 
@@ -529,9 +529,9 @@ PF_traceline (progs_t *pr)
 	VectorCopy (trace.plane.normal, pr->pr_global_struct->trace_plane_normal);
 	pr->pr_global_struct->trace_plane_dist = trace.plane.dist;
 	if (trace.ent)
-		pr->pr_global_struct->trace_ent = EDICT_TO_PROG (trace.ent);
+		pr->pr_global_struct->trace_ent = EDICT_TO_PROG (pr, trace.ent);
 	else
-		pr->pr_global_struct->trace_ent = EDICT_TO_PROG (sv.edicts);
+		pr->pr_global_struct->trace_ent = EDICT_TO_PROG (pr, sv.edicts);
 }
 
 /*
@@ -636,7 +636,7 @@ PF_checkclient (progs_t *pr)
 		return;
 	}
 // if current entity can't possibly see the check entity, return 0
-	self = PROG_TO_EDICT (pr->pr_global_struct->self);
+	self = PROG_TO_EDICT (pr, pr->pr_global_struct->self);
 	VectorAdd (self->v.origin, self->v.view_ofs, view);
 	leaf = Mod_PointInLeaf (view, sv.worldmodel);
 	l = (leaf - sv.worldmodel->leafs) - 1;
@@ -786,7 +786,7 @@ PF_findradius (progs_t *pr)
 		if (Length (eorg) > rad)
 			continue;
 
-		ent->v.chain = EDICT_TO_PROG (chain);
+		ent->v.chain = EDICT_TO_PROG (pr, chain);
 		chain = ent;
 	}
 
@@ -1000,7 +1000,7 @@ PF_walkmove (progs_t *pr)
 	dfunction_t *oldf;
 	int         oldself;
 
-	ent = PROG_TO_EDICT (pr->pr_global_struct->self);
+	ent = PROG_TO_EDICT (pr, pr->pr_global_struct->self);
 	yaw = G_FLOAT (pr, OFS_PARM0);
 	dist = G_FLOAT (pr, OFS_PARM1);
 
@@ -1039,7 +1039,7 @@ PF_droptofloor (progs_t *pr)
 	vec3_t      end;
 	trace_t     trace;
 
-	ent = PROG_TO_EDICT (pr->pr_global_struct->self);
+	ent = PROG_TO_EDICT (pr, pr->pr_global_struct->self);
 
 	VectorCopy (ent->v.origin, end);
 	end[2] -= 256;
@@ -1052,7 +1052,7 @@ PF_droptofloor (progs_t *pr)
 		VectorCopy (trace.endpos, ent->v.origin);
 		SV_LinkEdict (ent, false);
 		ent->v.flags = (int) ent->v.flags | FL_ONGROUND;
-		ent->v.groundentity = EDICT_TO_PROG (trace.ent);
+		ent->v.groundentity = EDICT_TO_PROG (pr, trace.ent);
 		G_FLOAT (pr, OFS_RETURN) = 1;
 	}
 }
@@ -1262,7 +1262,7 @@ PF_changeyaw (progs_t *pr)
 	edict_t    *ent;
 	float       ideal, current, move, speed;
 
-	ent = PROG_TO_EDICT (pr->pr_global_struct->self);
+	ent = PROG_TO_EDICT (pr, pr->pr_global_struct->self);
 	current = anglemod (ent->v.angles[1]);
 	ideal = ent->v.ideal_yaw;
 	speed = ent->v.yaw_speed;
@@ -1315,7 +1315,7 @@ WriteDest (progs_t *pr)
 		case MSG_ONE:
 			SV_Error ("Shouldn't be at MSG_ONE");
 #if 0
-			ent = PROG_TO_EDICT (pr->pr_global_struct->msg_entity);
+			ent = PROG_TO_EDICT (pr, pr->pr_global_struct->msg_entity);
 			entnum = NUM_FOR_EDICT (pr, ent);
 			if (entnum < 1 || entnum > MAX_CLIENTS)
 				PR_RunError (pr, "WriteDest: not a client");
@@ -1348,7 +1348,7 @@ Write_GetClient (progs_t *pr)
 	int         entnum;
 	edict_t    *ent;
 
-	ent = PROG_TO_EDICT (pr->pr_global_struct->msg_entity);
+	ent = PROG_TO_EDICT (pr, pr->pr_global_struct->msg_entity);
 	entnum = NUM_FOR_EDICT (pr, ent);
 	if (entnum < 1 || entnum > MAX_CLIENTS)
 		PR_RunError (pr, "Write_GetClient: not a client");

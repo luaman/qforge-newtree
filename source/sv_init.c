@@ -192,7 +192,7 @@ SV_SaveSpawnparms (void)
 		host_client->state = cs_connected;
 
 		// call the progs to get default spawn parms for the new client
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (host_client->edict);
+		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, host_client->edict);
 		PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->SetChangeParms);
 		for (j = 0; j < NUM_SPAWN_PARMS; j++)
 			host_client->spawn_parms[j] = (&sv_progs.pr_global_struct->parm1)[j];
@@ -316,6 +316,7 @@ SV_SpawnServer (char *server)
 	// restarted
 
 	sv.state = ss_dead;
+	sv_progs.null_bad = 0;
 
 	Mod_ClearAll ();
 	Hunk_FreeToLowMark (host_hunklevel);
@@ -391,6 +392,7 @@ SV_SpawnServer (char *server)
 	// precache and static commands can be issued during
 	// map initialization
 	sv.state = ss_loading;
+	sv_progs.null_bad = 0;
 
 	ent = EDICT_NUM (&sv_progs, 0);
 	ent->free = false;
@@ -415,6 +417,7 @@ SV_SpawnServer (char *server)
 	// all spawning is completed, any further precache statements
 	// or prog writes to the signon message are errors
 	sv.state = ss_active;
+	sv_progs.null_bad = 1;
 
 	// run two frames to allow everything to settle
 	sv_frametime = 0.1;

@@ -250,12 +250,12 @@ SV_DropClient (client_t *drop)
 		if (!drop->spectator) {
 			// call the prog function for removing a client
 			// this will set the body to a dead frame, among other things
-			sv_progs.pr_global_struct->self = EDICT_TO_PROG (drop->edict);
+			sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, drop->edict);
 			PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->ClientDisconnect);
 		} else if (SpectatorDisconnect) {
 			// call the prog function for removing a client
 			// this will set the body to a dead frame, among other things
-			sv_progs.pr_global_struct->self = EDICT_TO_PROG (drop->edict);
+			sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, drop->edict);
 			PR_ExecuteProgram (&sv_progs, SpectatorDisconnect);
 		}
 	}
@@ -1907,6 +1907,7 @@ SV_Init (void)
 	COM_Init ();
 
 	PR_Init ();
+	SV_Progs_Init ();
 	Mod_Init ();
 
 	SV_InitNet ();

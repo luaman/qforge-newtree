@@ -30,7 +30,9 @@
 # include "config.h"
 #endif
 
+#include "cmd.h"
 #include "progs.h"
+#include "server.h"
 
 int eval_alpha, eval_scale, eval_glowsize, eval_glowcolor, eval_colormod;
 progs_t	sv_progs;
@@ -67,4 +69,45 @@ FindEdictFieldOffsets (progs_t *pr)
 		eval_glowcolor = FindFieldOffset (&sv_progs, "glow_color");
 		eval_colormod = FindFieldOffset (&sv_progs, "colormod");
 	}
-};
+}
+
+void
+SV_Progs_Init (void)
+{
+	sv_progs.edicts = &sv.edicts;
+	sv_progs.num_edicts = &sv.num_edicts;
+	sv_progs.time = &sv.time;
+}
+
+void
+ED_PrintEdicts_f (void)
+{
+	ED_PrintEdicts (&sv_progs);
+}
+
+/*
+	ED_PrintEdict_f
+
+	For debugging, prints a single edicy
+*/
+void
+ED_PrintEdict_f (void)
+{
+	int         i;
+
+	i = atoi (Cmd_Argv (1));
+	Con_Printf ("\n EDICT %i:\n", i);
+	ED_PrintNum (&sv_progs, i);
+}
+
+void
+ED_Count_f (void)
+{
+	ED_Count (&sv_progs);
+}
+
+void
+PR_Profile_f (void)
+{
+	PR_Profile (&sv_progs);
+}

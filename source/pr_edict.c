@@ -105,11 +105,11 @@ ED_Alloc (progs_t *pr)
 	int         i;
 	edict_t    *e;
 
-	for (i = MAX_CLIENTS + 1; i < sv.num_edicts; i++) {
+	for (i = MAX_CLIENTS + 1; i < *(pr)->num_edicts; i++) {
 		e = EDICT_NUM (pr, i);
 		// the first couple seconds of server time can involve a lot of
 		// freeing and allocating, so relax the replacement policy
-		if (e->free && (e->freetime < 2 || sv.time - e->freetime > 0.5)) {
+		if (e->free && (e->freetime < 2 || *(pr)->time - e->freetime > 0.5)) {
 			ED_ClearEdict (pr, e);
 			return e;
 		}
@@ -121,7 +121,7 @@ ED_Alloc (progs_t *pr)
 		e = EDICT_NUM (pr, i);
 		SV_UnlinkEdict (e);
 	} else
-		sv.num_edicts++;
+		(*(pr)->num_edicts)++;
 	e = EDICT_NUM (pr, i);
 	ED_ClearEdict (pr, e);
 
@@ -151,7 +151,7 @@ ED_Free (progs_t *pr, edict_t *ed)
 	ed->v.nextthink = -1;
 	ed->v.solid = 0;
 
-	ed->freetime = sv.time;
+	ed->freetime = *(pr)->time;
 }
 
 //===========================================================================
@@ -292,7 +292,7 @@ PR_ValueString (progs_t *pr, etype_t type, eval_t *val)
 			break;
 		case ev_entity:
 			snprintf (line, sizeof (line), "entity %i",
-					  NUM_FOR_EDICT (pr, PROG_TO_EDICT (val->edict)));
+					  NUM_FOR_EDICT (pr, PROG_TO_EDICT (pr, val->edict)));
 			break;
 		case ev_function:
 			f = pr->pr_functions + val->function;
@@ -344,7 +344,7 @@ PR_UglyValueString (progs_t *pr, etype_t type, eval_t *val)
 			break;
 		case ev_entity:
 			snprintf (line, sizeof (line), "%i",
-					  NUM_FOR_EDICT (pr, PROG_TO_EDICT (val->edict)));
+					  NUM_FOR_EDICT (pr, PROG_TO_EDICT (pr, val->edict)));
 			break;
 		case ev_function:
 			f = pr->pr_functions + val->function;
@@ -534,31 +534,11 @@ ED_PrintEdicts (progs_t *pr)
 {
 	int         i;
 
-	Con_Printf ("%i entities\n", sv.num_edicts);
-	for (i = 0; i < sv.num_edicts; i++) {
+	Con_Printf ("%i entities\n", *(pr)->num_edicts);
+	for (i = 0; i < *(pr)->num_edicts; i++) {
 		Con_Printf ("\nEDICT %i:\n", i);
 		ED_PrintNum (pr, i);
 	}
-}
-void
-ED_PrintEdicts_f (void)
-{
-	ED_PrintEdicts (&sv_progs);
-}
-
-/*
-	ED_PrintEdict_f
-
-	For debugging, prints a single edicy
-*/
-void
-ED_PrintEdict_f (void)
-{
-	int         i;
-
-	i = atoi (Cmd_Argv (1));
-	Con_Printf ("\n EDICT %i:\n", i);
-	ED_PrintNum (&sv_progs, i);
 }
 
 /*
@@ -574,7 +554,7 @@ ED_Count (progs_t *pr)
 	int         active, models, solid, step;
 
 	active = models = solid = step = 0;
-	for (i = 0; i < sv.num_edicts; i++) {
+	for (i = 0; i < *(pr)->num_edicts; i++) {
 		ent = EDICT_NUM (pr, i);
 		if (ent->free)
 			continue;
@@ -587,18 +567,12 @@ ED_Count (progs_t *pr)
 			step++;
 	}
 
-	Con_Printf ("num_edicts:%3i\n", sv.num_edicts);
+	Con_Printf ("num_edicts:%3i\n", *(pr)->num_edicts);
 	Con_Printf ("active    :%3i\n", active);
 	Con_Printf ("view      :%3i\n", models);
 	Con_Printf ("touch     :%3i\n", solid);
 	Con_Printf ("step      :%3i\n", step);
 
-}
-
-void
-ED_Count_f (void)
-{
-	ED_Count (&sv_progs);
 }
 
 /*
@@ -750,7 +724,7 @@ ED_ParseEpair (progs_t *pr, void *base, ddef_t *key, char *s)
 			break;
 
 		case ev_entity:
-			*(int *) d = EDICT_TO_PROG (EDICT_NUM (pr, atoi (s)));
+			*(int *) d = EDICT_TO_PROG (pr, EDICT_NUM (pr, atoi (s)));
 			break;
 
 		case ev_field:
@@ -795,7 +769,7 @@ ED_ParseEdict (progs_t *pr, char *data, edict_t *ent)
 	init = false;
 
 // clear it
-	if (ent != sv.edicts)				// hack
+	if (ent != *(pr)->edicts)				// hack
 		memset (&ent->v, 0, pr->progs->entityfields * 4);
 
 // go through all the dictionary pairs
@@ -896,7 +870,7 @@ ED_LoadFromFile (progs_t *pr, char *data)
 
 	ent = NULL;
 	inhibit = 0;
-	pr->pr_global_struct->time = sv.time;
+	pr->pr_global_struct->time = *(pr)->time;
 
 // parse ents
 	while (1) {
@@ -938,7 +912,7 @@ ED_LoadFromFile (progs_t *pr, char *data)
 			continue;
 		}
 
-		pr->pr_global_struct->self = EDICT_TO_PROG (ent);
+		pr->pr_global_struct->self = EDICT_TO_PROG (pr, ent);
 		PR_ExecuteProgram (pr, func - pr->pr_functions);
 		SV_FlushSignon ();
 	}
@@ -1186,7 +1160,7 @@ EDICT_NUM (progs_t *pr, int n)
 {
 	if (n < 0 || n >= MAX_EDICTS)
 		SV_Error ("EDICT_NUM: bad number %i", n);
-	return (edict_t *) ((byte *) sv.edicts + (n) * pr->pr_edict_size);
+	return (edict_t *) ((byte *) *(pr)->edicts + (n) * pr->pr_edict_size);
 }
 
 int
@@ -1194,10 +1168,10 @@ NUM_FOR_EDICT (progs_t *pr, edict_t *e)
 {
 	int         b;
 
-	b = (byte *) e - (byte *) sv.edicts;
+	b = (byte *) e - (byte *) *(pr)->edicts;
 	b = b / pr->pr_edict_size;
 
-	if (b < 0 || b >= sv.num_edicts)
+	if (b < 0 || b >= *(pr)->num_edicts)
 		SV_Error ("NUM_FOR_EDICT: bad pointer");
 	return b;
 }

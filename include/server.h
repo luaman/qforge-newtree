@@ -404,6 +404,7 @@ extern	progs_t		sv_progs;
 
 void SV_Error (char *error, ...) __attribute__((format(printf,1,2)));
 void SV_Init (void);
+void SV_Progs_Init (void);
 
 void Con_Printf (char *fmt, ...) __attribute__((format(printf,1,2)));
 void Con_DPrintf (char *fmt, ...) __attribute__((format(printf,1,2)));

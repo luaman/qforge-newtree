@@ -93,22 +93,22 @@ ddef_t *ED_FindField (struct progs_s *pr, char *name);
 dfunction_t *ED_FindFunction (struct progs_s *pr, char *name);
 
 
-//define EDICT_NUM(p,n) ((edict_t *)(sv.edicts+ (n)*(p)->pr_edict_size))
-//define NUM_FOR_EDICT(p,e) (((byte *)(e) - sv.edicts)/(p)->pr_edict_size)
+//define EDICT_NUM(p,n) ((edict_t *)(*(p)->edicts+ (n)*(p)->pr_edict_size))
+//define NUM_FOR_EDICT(p,e) (((byte *)(e) - *(p)->edicts)/(p)->pr_edict_size)
 
 edict_t *EDICT_NUM(struct progs_s *pr, int n);
 int NUM_FOR_EDICT(struct progs_s *pr, edict_t *e);
 
 #define	NEXT_EDICT(p,e) ((edict_t *)( (byte *)e + (p)->pr_edict_size))
 
-#define	EDICT_TO_PROG(e) ((byte *)e - (byte *)sv.edicts)
-#define PROG_TO_EDICT(e) ((edict_t *)((byte *)sv.edicts + e))
+#define	EDICT_TO_PROG(p,e) ((byte *)e - (byte *)*(p)->edicts)
+#define PROG_TO_EDICT(p,e) ((edict_t *)((byte *)*(p)->edicts + e))
 
 //============================================================================
 
 #define	G_FLOAT(p,o) ((p)->pr_globals[o])
 #define	G_INT(p,o) (*(int *)&(p)->pr_globals[o])
-#define	G_EDICT(p,o) ((edict_t *)((byte *)sv.edicts+ *(int *)&(p)->pr_globals[o]))
+#define	G_EDICT(p,o) ((edict_t *)((byte *)*(p)->edicts+ *(int *)&(p)->pr_globals[o]))
 #define G_EDICTNUM(p,o) NUM_FOR_EDICT(p,G_EDICT(p, o))
 #define	G_VECTOR(p,o) (&(p)->pr_globals[o])
 #define	G_STRING(p,o) (PR_GetString(pr,*(string_t *)&(p)->pr_globals[o]))
@@ -137,6 +137,11 @@ void PR_RunError (struct progs_s *pr, char *error, ...) __attribute__((format(pr
 
 void ED_PrintEdicts (struct progs_s *pr);
 void ED_PrintNum (struct progs_s *pr, int ent);
+void ED_Count (struct progs_s *pr);
+void ED_PrintEdict_f (void);
+void ED_PrintEdicts_f (void);
+void ED_Count_f (void);
+void PR_Profile (struct progs_s *pr);
 
 eval_t *GetEdictFieldValue(struct progs_s *pr, edict_t *ed, char *field);
 
@@ -185,6 +190,11 @@ typedef struct progs_s {
 
 	int				localstack[LOCALSTACK_SIZE];
 	int				localstack_used;
+
+	edict_t			**edicts;
+	int				*num_edicts;
+	double			*time;
+	int				null_bad;
 } progs_t;
 
 #endif // _PROGS_H

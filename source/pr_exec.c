@@ -226,13 +226,6 @@ PR_Profile (progs_t *pr)
 	} while (best);
 }
 
-void
-PR_Profile_f (void)
-{
-	PR_Profile (&sv_progs);
-}
-
-
 /*
 	PR_RunError
 
@@ -354,7 +347,7 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 
 	if (!fnum || fnum >= pr->progs->numfunctions) {
 		if (pr->pr_global_struct->self)
-			ED_Print (pr, PROG_TO_EDICT (pr->pr_global_struct->self));
+			ED_Print (pr, PROG_TO_EDICT (pr, pr->pr_global_struct->self));
 		SV_Error ("PR_ExecuteProgram: NULL function");
 	}
 
@@ -457,7 +450,7 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 				OPC->_float = !OPA->function;
 				break;
 			case OP_NOT_ENT:
-				OPC->_float = (PROG_TO_EDICT (OPA->edict) == sv.edicts);
+				OPC->_float = (PROG_TO_EDICT (pr, OPA->edict) == *pr->edicts);
 				break;
 			case OP_EQ_F:
 				OPC->_float = OPA->_float == OPB->_float;
@@ -525,14 +518,14 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 					return;
 				}
 				if (pr_boundscheck->int_val && (OPB->_int % pr->pr_edict_size <
-												((byte *) & sv.edicts->v -
-												 (byte *) sv.edicts))) {
+												((byte *) & (*pr->edicts)->v -
+												 (byte *) *pr->edicts))) {
 					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
 						(pr, "Progs attempted to write to an engine edict field\n");
 					return;
 				}
-				ptr = (eval_t *) ((byte *) sv.edicts + OPB->_int);
+				ptr = (eval_t *) ((byte *) *pr->edicts + OPB->_int);
 				ptr->_int = OPA->_int;
 				break;
 			case OP_STOREP_V:
@@ -543,7 +536,7 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 						(pr, "Progs attempted to write to an out of bounds edict\n");
 					return;
 				}
-				ptr = (eval_t *) ((byte *) sv.edicts + OPB->_int);
+				ptr = (eval_t *) ((byte *) *pr->edicts + OPB->_int);
 				ptr->vector[0] = OPA->vector[0];
 				ptr->vector[1] = OPA->vector[1];
 				ptr->vector[2] = OPA->vector[2];
@@ -557,7 +550,7 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 					return;
 				}
 				if (pr_boundscheck->int_val
-					&& (OPA->edict == 0 && sv.state == ss_active)) {
+					&& (OPA->edict == 0 && pr->null_bad)) {
 					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError (pr, "assignment to world entity");
 					return;
@@ -569,9 +562,9 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 						(pr, "Progs attempted to address an invalid field in an edict\n");
 					return;
 				}
-				ed = PROG_TO_EDICT (OPA->edict);
+				ed = PROG_TO_EDICT (pr, OPA->edict);
 				OPC->_int =
-					(byte *) ((int *) &ed->v + OPB->_int) - (byte *) sv.edicts;
+					(byte *) ((int *) &ed->v + OPB->_int) - (byte *) *pr->edicts;
 				break;
 			case OP_LOAD_F:
 			case OP_LOAD_FLD:
@@ -592,7 +585,7 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 						(pr, "Progs attempted to read an invalid field in an edict\n");
 					return;
 				}
-				ed = PROG_TO_EDICT (OPA->edict);
+				ed = PROG_TO_EDICT (pr, OPA->edict);
 				OPC->_int = ((eval_t *) ((int *) &ed->v + OPB->_int))->_int;
 				break;
 			case OP_LOAD_V:
@@ -610,7 +603,7 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 						(pr, "Progs attempted to read an invalid field in an edict\n");
 					return;
 				}
-				ed = PROG_TO_EDICT (OPA->edict);
+				ed = PROG_TO_EDICT (pr, OPA->edict);
 				OPC->vector[0] =
 					((eval_t *) ((int *) &ed->v + OPB->_int))->vector[0];
 				OPC->vector[1] =
@@ -671,7 +664,7 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 					return;				// all done
 				break;
 			case OP_STATE:
-				ed = PROG_TO_EDICT (pr->pr_global_struct->self);
+				ed = PROG_TO_EDICT (pr, pr->pr_global_struct->self);
 				ed->v.nextthink = pr->pr_global_struct->time + 0.1;
 				ed->v.frame = OPA->_float;
 				ed->v.think = OPB->function;
@@ -840,13 +833,13 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 				}
 				if (pr_boundscheck->int_val
 					&& (OPB->_int % pr->pr_edict_size <
-						((byte *) & sv.edicts->v - (byte *) sv.edicts))) {
+						((byte *) & (*pr->edicts)->v - (byte *) *pr->edicts))) {
 					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
 						(pr, "Progs attempted to write to an engine edict field\n");
 					return;
 				}
-				ptr = (eval_t *) ((byte *) sv.edicts + OPB->_int);
+				ptr = (eval_t *) ((byte *) *pr->edicts + OPB->_int);
 				ptr->_int = OPA->_int;
 				break;
 			case OP_LOAD_I:
@@ -864,7 +857,7 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 						(pr, "Progs attempted to read an invalid field in an edict\n");
 					return;
 				}
-				ed = PROG_TO_EDICT (OPA->edict);
+				ed = PROG_TO_EDICT (pr, OPA->edict);
 				OPC->_int = ((eval_t *) ((int *) &ed->v + OPB->_int))->_int;
 				break;
 
