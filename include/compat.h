@@ -32,6 +32,12 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+#ifdef HAVE_STDARG_H
+# include <stdarg.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
 
 #ifndef max
 # define max(a,b) ((a) > (b) ? (a) : (b))
