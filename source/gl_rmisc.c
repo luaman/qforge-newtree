@@ -243,7 +243,7 @@ void R_Init (void)
 	r_speeds = Cvar_Get("r_speeds", "0", CVAR_NONE, "None");
 	r_netgraph = Cvar_Get("r_netgraph", "0", CVAR_NONE, "None");
 
-        gl_clear = Cvar_Get("gl_clear", "1", CVAR_NONE, "None");
+	gl_clear = Cvar_Get("gl_clear", "0", CVAR_NONE, "None");
 	gl_texsort = Cvar_Get("gl_texsort", "1", CVAR_NONE, "None");
  
  	if (gl_mtexable)

@@ -332,18 +332,18 @@ void EmitBothSkyLayers (msurface_t *fa)
 =================================================================
 */
 
-//byte	*pcx_rgb;
+byte	*pcx_rgb;
 
 /*
 ============
 LoadPCX
 ============
 */
-byte *LoadPCX (FILE *f)
+void LoadPCX (FILE *f)
 {
 	pcx_t	*pcx, pcxbuf;
 	byte	palette[768];
-	byte	*pix, *pcx_rgb;
+	byte	*pix;
 	int		x, y;
 	int		dataByte, runLength;
 	int		count;
@@ -363,7 +363,7 @@ byte *LoadPCX (FILE *f)
 		|| pcx->ymax >= 256)
 	{
 		Con_Printf ("Bad pcx file\n");
-		return NULL;
+		return;
 	}
 
 	// seek to palette
@@ -401,8 +401,6 @@ byte *LoadPCX (FILE *f)
 			}
 		}
 	}
-
-	return pcx_rgb;
 }
 
 /*
@@ -423,7 +421,7 @@ typedef struct _TargaHeader {
 
 
 TargaHeader		targa_header;
-//byte			*targa_rgba;
+byte			*targa_rgba;
 
 int fgetLittleShort (FILE *f)
 {
@@ -453,13 +451,12 @@ int fgetLittleLong (FILE *f)
 LoadTGA
 =============
 */
-byte *LoadTGA (FILE *fin)
+void LoadTGA (FILE *fin)
 {
 	int				columns, rows, numPixels;
 	byte			*pixbuf;
 	int				row, column;
 	unsigned char	red = 0, green = 0, blue = 0, alphabyte = 0;
-	byte			*targa_rgba;
 
 	targa_header.id_length = fgetc(fin);
 	targa_header.colormap_type = fgetc(fin);
@@ -600,7 +597,6 @@ byte *LoadTGA (FILE *fin)
 	}
 	
 	fclose(fin);
-	return targa_rgba;
 }
 
 /*
@@ -614,7 +610,6 @@ void R_LoadSkys (char * skyname)
 	int		i;
 	FILE	*f;
 	char	name[64];
-	byte	*data;
 
 	if (stricmp (skyname, "none") == 0)
 	{
@@ -634,13 +629,13 @@ void R_LoadSkys (char * skyname)
 			skyloaded = false;
 			continue;
 		}
-		data = LoadTGA (f);
+		LoadTGA (f);
 //		LoadPCX (f);
 
-		glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, targa_rgba);
 //		glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, pcx_rgb);
 
-		free (data);
+		free (targa_rgba);
 //		free (pcx_rgb);
 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -1001,14 +996,14 @@ void R_DrawSkyBox (void)
 //===============================================================
 
 /*
-	R_InitSky
+=============
+R_InitSky
 
-	A sky texture is 256*128, with the right side being a masked overlay
+A sky texture is 256*128, with the right side being a masked overlay
+==============
 */
-void
-R_InitSky (texture_t *mt) 
+void R_InitSky (texture_t *mt)
 {
-
 	int			i, j, p;
 	byte		*src;
 	unsigned	trans[128*128];
@@ -1022,8 +1017,9 @@ R_InitSky (texture_t *mt)
 	// a fringe on the top level
 
 	r = g = b = 0;
-	for (i=0 ; i<128 ; i++) {
-		for (j=0 ; j<128 ; j++) {
+	for (i=0 ; i<128 ; i++)
+		for (j=0 ; j<128 ; j++)
+		{
 			p = src[i*256 + j + 128];
 			rgba = &d_8to24table[p];
 			trans[(i*128) + j] = *rgba;
@@ -1031,105 +1027,35 @@ R_InitSky (texture_t *mt)
 			g += ((byte *)rgba)[1];
 			b += ((byte *)rgba)[2];
 		}
-	}
 
 	((byte *)&transpix)[0] = r/(128*128);
 	((byte *)&transpix)[1] = g/(128*128);
 	((byte *)&transpix)[2] = b/(128*128);
 	((byte *)&transpix)[3] = 0;
 
+
 	if (!solidskytexture)
 		solidskytexture = texture_extension_number++;
-	GL_Bind (solidskytexture);
+	GL_Bind (solidskytexture );
 	glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	for (i=0 ; i<128 ; i++) {
-		for (j=0 ; j<128 ; j++)	{
+
+	for (i=0 ; i<128 ; i++)
+		for (j=0 ; j<128 ; j++)
+		{
 			p = src[i*256 + j];
 			if (p == 0)
 				trans[(i*128) + j] = transpix;
 			else
 				trans[(i*128) + j] = d_8to24table[p];
 		}
-	}
 
-	if ( !alphaskytexture )
+	if (!alphaskytexture)
 		alphaskytexture = texture_extension_number++;
 	GL_Bind(alphaskytexture);
 	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}
-
-/*
-=============
-R_InitSky_32
-
-A sky texture is 256*128, with the right side being a masked overlay
-==============
-*/
-void R_InitSky_32 (byte *src, int bytesperpixel)
-{
-        int             i, j, p;
-	unsigned	trans[128*128];
-	unsigned	transpix;
-        int             r, g, b;
-	unsigned	*rgba;
-
-        if (bytesperpixel == 4) {
-         for (i = 0;i < 128;i++)
-          for (j = 0;j < 128;j++)
-           trans[(i*128) + j] = src[i*256+j+128];
-        } else {
-          // make an average value for the back to avoid
-          // a fringe on the top level
-          r = g = b = 0;
-          for (i=0 ; i<128 ; i++)
-           for (j=0 ; j<128 ; j++) {
-            p = src[i*256 + j + 128];
-            rgba = &d_8to24table[p];
-            trans[(i*128) + j] = *rgba;
-            r += ((byte *)rgba)[0];
-            g += ((byte *)rgba)[1];
-            b += ((byte *)rgba)[2];
-           }
-
-          ((byte *)&transpix)[0] = r/(128*128);
-          ((byte *)&transpix)[1] = g/(128*128);
-          ((byte *)&transpix)[2] = b/(128*128);
-          ((byte *)&transpix)[3] = 0;
-	}
-
-	if (!solidskytexture)
-		solidskytexture = texture_extension_number++;
-
-        GL_Bind (solidskytexture );
-        glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        if (bytesperpixel == 4) {
-          for (i = 0;i < 128;i++)
-           for (j = 0;j < 128;j++)
-            trans[(i*128) + j] = src[i*256+j];
-	} else {
-          for (i=0 ; i<128 ; i++)
-           for (j=0 ; j<128 ; j++) {
-            p = src[i*256 + j];
-            if (p == 0)
-             trans[(i*128) + j] = transpix;
-            else
-             trans[(i*128) + j] = d_8to24table[p];
-           }
-	}
-
-	if (!alphaskytexture)
-		alphaskytexture = texture_extension_number++;
-
-        GL_Bind(alphaskytexture);
-        glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }

@@ -686,42 +686,6 @@ void R_BlendLightmaps (void)
 	glDepthMask (1);		// back to normal Z buffering
 }
 
-// Ender: Half-Life BSP loading
-void R_RenderBrushPolyTransparent (msurface_t *fa)
-{
-	texture_t	*t;
-
-        glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(GL_GEQUAL, 0.05f);
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-
-	c_brush_polys++;
-
-	if (fa->flags & SURF_DRAWSKY)
-	{	// warp texture, no lightmaps
-		EmitBothSkyLayers (fa);
-		return;
-	}
-		
-	t = R_TextureAnimation (fa->texinfo->texture);
-	GL_Bind (t->gl_texturenum);
-
-	if (fa->flags & SURF_DRAWTURB)
-	{	// warp texture, no lightmaps
-		EmitWaterPolys (fa);
-		return;
-	}
-
-	if (fa->flags & SURF_UNDERWATER)
-		DrawGLWaterPoly (fa->polys);
-	else
-		DrawGLPoly (fa->polys);
-
-        glDisable(GL_ALPHA_TEST);
-}
-
-
 /*
 ================
 R_RenderBrushPoly
@@ -734,11 +698,6 @@ void R_RenderBrushPoly (msurface_t *fa)
 	int			maps;
 	glRect_t    *theRect;
 	int smax, tmax;
-
-        if (fa->texinfo->texture->transparent) {
-          R_RenderBrushPolyTransparent(fa);
-          return;
-        }
 
 	c_brush_polys++;
 

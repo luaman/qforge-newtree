@@ -29,7 +29,7 @@
 #ifndef _INFO_H
 #define _INFO_H
 
-#define	MAX_INFO_STRING			512
+#define	MAX_INFO_STRING			196
 #define	MAX_SERVERINFO_STRING	512
 #define	MAX_LOCALINFO_STRING	32768
 

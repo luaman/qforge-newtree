@@ -1,4 +1,4 @@
-!include <win32.mak>             # Microsoft VC6++
+include <win32.mak>             # Microsoft VC6++
 #!include <winopt.mak>          # Use to compile with Intel's compiler
 
 all:glclient.exe
@@ -8,7 +8,7 @@ MGLPATH=E:\quakesrc\q1src\libs  # Path to other librarys (mgl)
 DXPATH=E:\quakesrc\q1src\libs   # Path to other librarys (DirectX)
 
 LIBS=winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib  comctl32.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib  ole32.lib oleaut32.lib uuid.lib  $(DXPATH)\dinput.lib $(DXPATH)\dxguid.lib $(MGLPATH)\mgllt.lib glu32.lib opengl32.lib
-NCFLAGS=/c /nologo /DWIN32 /D_WIN32 /I..\include /I..\include\win32\vc /I$(INCPATH) /MT /DHAVE_CONFIG_H -Ox /I..\include\win32
+NCFLAGS=/c /nologo /DWIN32 /D_WIN32 /I..\include /I..\include\win32\vc /I$(INCPATH) /MT /DHAVE_CONFIG_H
 
 COM_sources=\
   net_chan.obj \
@@ -20,26 +20,10 @@ COM_sources=\
   mathlib.obj \
   cvar.obj \
   crc.obj \
-  com.obj \
-  qargs.obj \
-  quakefs.obj \
-  quakeio.obj \
-  qendian.obj \
-  cmd.obj \
-  link.obj \
-  checksum.obj \
-  info.obj \
-  net_com.obj \
-  msg.obj \
-  sizebuf.obj \
-  va.obj \
-  fnmatch.obj \
-  dirent.obj \
-  buildnum.obj \
+  common.obj \
+  cmd.obj
 
 CL_GL_sources=\
-  hl_bsp.obj \
-  hl_wad.obj \
   r_view.obj \
   gl_draw.obj \
   gl_mesh.obj \
@@ -71,6 +55,7 @@ CL_sources=\
   cl_pred.obj \
   cl_tent.obj \
   cl_cam.obj \
+  model.obj \
   wad.obj \
   snd_dma.obj \
   snd_mem.obj \
@@ -80,7 +65,7 @@ CL_sources=\
   nonintel.obj \
   menu.obj \
   keys.obj \
-#  vc6fix.obj \
+  vc6fix.obj \
   console.obj
 
 CL_platform=\
@@ -95,8 +80,8 @@ CL_asm=\
   sys_x86.obj
 
 glclient.exe:     $(COM_sources) $(CL_GL_sources) $(CL_sources) $(CL_platform) $(CL_asm)
-        $(link) /nologo /subsystem:windows /incremental:yes /machine:I386 -out:glclient.exe *.obj $(LIBS)
+        $(link) /nologo /subsystem:windows /incremental:yes /machine:I386 -out:glclient.exe gl\*.obj $(LIBS)
 
 .c.obj:
-    $(cc) $(NCFLAGS) $*.c
+    $(cc) $(NCFLAGS) $*.c /Fogl\$*.obj
 

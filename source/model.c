@@ -36,7 +36,6 @@
 #include "quakefs.h"
 #include "qendian.h"
 #include "checksum.h"
-#include "sys.h"
 
 #include <math.h>
 #include <string.h>
@@ -61,7 +60,7 @@ byte	mod_novis[MAX_MAP_LEAFS/8];
 #define	MAX_MOD_KNOWN	512
 model_t	mod_known[MAX_MOD_KNOWN];
 int		mod_numknown;
-extern int isServer;
+
 unsigned *model_checksum;
 texture_t *r_notexture_mip;
 cvar_t *gl_subdivide_size;
@@ -357,8 +356,7 @@ void Mod_LoadTextures (lump_t *l)
 		for (j=0 ; j<MIPLEVELS ; j++)
 			tx->offsets[j] = mt->offsets[j] + sizeof(texture_t) - sizeof(miptex_t);
 		// the pixels immediately follow the structures
-                if (!isServer)
-                 memcpy ( tx+1, mt+1, pixels);
+		memcpy ( tx+1, mt+1, pixels);
 
 		if (!strncmp(mt->name,"sky",3))	
 			R_InitSky (tx);
@@ -1134,10 +1132,8 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 	header = (dheader_t *)buffer;
 
 	i = LittleLong (header->version);
-        if ((i != BSPVERSION) && (i != 30))
+	if (i != BSPVERSION)
 		SV_Error ("Mod_LoadBrushModel: %s has wrong version number (%i should be %i)", mod->name, i, BSPVERSION);
-        if ((!isServer) && (i == 30))
-                Sys_Error ("Mod_LoadBrushModel: Software cannot load Half-Life maps.");
 
 // swap all the lumps
 	mod_base = (byte *)header;
