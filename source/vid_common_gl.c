@@ -312,7 +312,7 @@ void
 Shared_Init8bitPalette (void)
 {
 	int         i;
-	GLubyte     thePalette[256][4];
+	GLubyte     thePalette[256][3];
 	GLubyte    *oldPalette;
 
 	QF_glColorTableEXT qglColorTableEXT = NULL;
@@ -333,10 +333,9 @@ Shared_Init8bitPalette (void)
 			thePalette[i][0] = *oldPalette++;
 			thePalette[i][1] = *oldPalette++;
 			thePalette[i][2] = *oldPalette++;
-			thePalette[i][3] = *oldPalette++;
 		}
 		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
-		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGBA, 256, GL_RGBA,
+		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB,
 						  GL_UNSIGNED_BYTE, (GLvoid *) thePalette);
 		is8bit = true;
 	}
