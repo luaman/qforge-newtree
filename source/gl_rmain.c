@@ -105,7 +105,6 @@ cvar_t	*gl_texsort;
 cvar_t	*gl_smooth;
 cvar_t	*gl_smoothdlights;
 cvar_t	*gl_affinemodels;
-cvar_t	*gl_polyblend;
 cvar_t	*gl_flashblend;
 cvar_t	*gl_playermip;
 cvar_t	*gl_nocolors;
@@ -122,52 +121,11 @@ extern	cvar_t	*scr_fov;
 
 extern byte gammatable[256];
 extern qboolean lighthalf;
-static float vid_gamma = 1.0;
 
 // LordHavoc: place for gl_rmain setup code
 void glrmain_init()
 {
 };
-
-/*
-	GL_CheckGamma
-
-	More or less redesigned by LordHavoc
-*/
-void
-GL_CheckGamma (unsigned char *pal)
-{
-	float		inf;
-	int		i;
-
-	if ((i = COM_CheckParm("-gamma")) == 0) {
-		if ((gl_renderer && strstr(gl_renderer, "Voodoo")) ||
-			(gl_vendor && strstr(gl_vendor, "3Dfx")))
-			vid_gamma = 1;
-		else
-			vid_gamma = 0.7; // default to 0.7 on non-3dfx hardware
-	} else
-		vid_gamma = atof(com_argv[i+1]);
-
-	// build the gamma table
-	if (vid_gamma == 1)
-	{
-		// screw the math
-		for (i = 0; i < 256; i++)
-			gammatable[i] = i;
-	} else {
-		for (i = 0; i < 256; i++)
-		{
-			inf = pow((i+1)/256.0, vid_gamma)*255 + 0.5;
-			inf = bound(0, inf, 255);
-			gammatable[i] = inf;
-		}
-	}
-
-	// correct the palette
-	for (i = 0; i < 768; i++)
-		pal[i] = gammatable[pal[i]];
-}
 
 
 /*
