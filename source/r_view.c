@@ -683,24 +683,12 @@ Idle swaying
 */
 void V_AddIdle (void)
 {
-/* 	r_refdef.viewangles[ROLL] += v_idlescale.value * sin(cl.time*v_iroll_cycle.value) * v_iroll_level.value;
- CVAR_FIXME */
 	r_refdef.viewangles[ROLL] += v_idlescale->value * sin(cl.time*v_iroll_cycle->value) * v_iroll_level->value;
-/* 	r_refdef.viewangles[PITCH] += v_idlescale.value * sin(cl.time*v_ipitch_cycle.value) * v_ipitch_level.value;
- CVAR_FIXME */
 	r_refdef.viewangles[PITCH] += v_idlescale->value * sin(cl.time*v_ipitch_cycle->value) * v_ipitch_level->value;
-/* 	r_refdef.viewangles[YAW] += v_idlescale.value * sin(cl.time*v_iyaw_cycle.value) * v_iyaw_level.value;
- CVAR_FIXME */
 	r_refdef.viewangles[YAW] += v_idlescale->value * sin(cl.time*v_iyaw_cycle->value) * v_iyaw_level->value;
 
-/* 	cl.viewent.angles[ROLL] -= v_idlescale.value * sin(cl.time*v_iroll_cycle.value) * v_iroll_level.value;
- CVAR_FIXME */
 	cl.viewent.angles[ROLL] -= v_idlescale->value * sin(cl.time*v_iroll_cycle->value) * v_iroll_level->value;
-/* 	cl.viewent.angles[PITCH] -= v_idlescale.value * sin(cl.time*v_ipitch_cycle.value) * v_ipitch_level.value;
- CVAR_FIXME */
 	cl.viewent.angles[PITCH] -= v_idlescale->value * sin(cl.time*v_ipitch_cycle->value) * v_ipitch_level->value;
-/* 	cl.viewent.angles[YAW] -= v_idlescale.value * sin(cl.time*v_iyaw_cycle.value) * v_iyaw_level.value;
- CVAR_FIXME */
 	cl.viewent.angles[YAW] -= v_idlescale->value * sin(cl.time*v_iyaw_cycle->value) * v_iyaw_level->value;
 }
 
@@ -909,7 +897,7 @@ void V_RenderView (void)
 {
 //	if (cl.simangles[ROLL])
 //		Sys_Error ("cl.simangles[ROLL]");	// DEBUG
-cl.simangles[ROLL] = 0;	// FIXME @@@ 
+	cl.simangles[ROLL] = 0;	// FIXME @@@ 
 
 	if (cls.state != ca_active)
 		return;
@@ -930,8 +918,6 @@ cl.simangles[ROLL] = 0;	// FIXME @@@
 	R_PushDlights ();
 	R_RenderView ();
 
-/* 	if (crosshair.value)
- CVAR_FIXME */
 //	if (crosshair->value)
 //		Draw_Crosshair ();
 }
@@ -949,82 +935,38 @@ void V_Init (void)
 	Cmd_AddCommand ("bf", V_BonusFlash_f);
 	Cmd_AddCommand ("centerview", V_StartPitchDrift);
 
-/* 	Cvar_RegisterVariable (&v_centermove);
- CVAR_FIXME */
 	v_centermove = Cvar_Get("v_centermove",  "0.15", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&v_centerspeed);
- CVAR_FIXME */
 	v_centerspeed = Cvar_Get("v_centerspeed", "500", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&v_iyaw_cycle);
- CVAR_FIXME */
 	v_iyaw_cycle = Cvar_Get("v_iyaw_cycle",  "2", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&v_iroll_cycle);
- CVAR_FIXME */
 	v_iroll_cycle = Cvar_Get("v_iroll_cycle",  "0.5", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&v_ipitch_cycle);
- CVAR_FIXME */
 	v_ipitch_cycle = Cvar_Get("v_ipitch_cycle",  "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&v_iyaw_level);
- CVAR_FIXME */
 	v_iyaw_level = Cvar_Get("v_iyaw_level",  "0.3", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&v_iroll_level);
- CVAR_FIXME */
 	v_iroll_level = Cvar_Get("v_iroll_level",  "0.1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&v_ipitch_level);
- CVAR_FIXME */
 	v_ipitch_level = Cvar_Get("v_ipitch_level",  "0.3", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&v_contentblend);
- CVAR_FIXME */
 	v_contentblend = Cvar_Get("v_contentblend",  "1", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&v_idlescale);
- CVAR_FIXME */
 	v_idlescale = Cvar_Get("v_idlescale",  "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&crosshaircolor);
- CVAR_FIXME */
+
 	crosshaircolor = Cvar_Get("crosshaircolor",  "79", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&crosshair);
- CVAR_FIXME */
 	crosshair = Cvar_Get("crosshair",  "0", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&cl_crossx);
- CVAR_FIXME */
 	cl_crossx = Cvar_Get("cl_crossx",  "0", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&cl_crossy);
- CVAR_FIXME */
 	cl_crossy = Cvar_Get("cl_crossy",  "0", CVAR_ARCHIVE, "None");
 
-/* 	Cvar_RegisterVariable (&cl_rollspeed);
- CVAR_FIXME */
 	cl_rollspeed = Cvar_Get("cl_rollspeed",  "200", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_rollangle);
- CVAR_FIXME */
 	cl_rollangle = Cvar_Get("cl_rollangle",  "2.0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_bob);
- CVAR_FIXME */
+
 	cl_bob = Cvar_Get("cl_bob", "0.02", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_bobcycle);
- CVAR_FIXME */
 	cl_bobcycle = Cvar_Get("cl_bobcycle", "0.6", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_bobup);
- CVAR_FIXME */
 	cl_bobup = Cvar_Get("cl_bobup", "0.5", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&v_kicktime);
- CVAR_FIXME */
 	v_kicktime = Cvar_Get("v_kicktime",  "0.5", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&v_kickroll);
- CVAR_FIXME */
 	v_kickroll = Cvar_Get("v_kickroll",  "0.6", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&v_kickpitch);	
- CVAR_FIXME */
 	v_kickpitch = Cvar_Get("v_kickpitch",  "0.6", CVAR_NONE, "None");	
 
 	gl_cshiftpercent = Cvar_Get("gl_cshiftpercent", "100", CVAR_NONE, "None");
 
 	BuildGammaTable (1.0);	// no gamma yet
-/* 	Cvar_RegisterVariable (&v_gamma);
- CVAR_FIXME */
 	v_gamma = Cvar_Get("gamma",  "1", CVAR_ARCHIVE, "None");
 }

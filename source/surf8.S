@@ -1,7 +1,7 @@
 /*
 	surf8.S
 
-	(description)
+	Intel x86 assembly-language 8bpp surface block drawing code
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,12 +25,11 @@
 
 	$Id$
 */
-// surf8.s
-// x86 assembly-language 8 bpp surface block drawing code.
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
 #include "asm_i386.h"
 #include "quakeasm.h"
 #include "asm_draw.h"
