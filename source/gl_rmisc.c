@@ -231,10 +231,10 @@ R_Init_Cvars (void)
 	gl_fb_models = Cvar_Get ("gl_fb_models", "1", CVAR_ARCHIVE, "Toggles fullbright color support for models");
 	gl_fires = Cvar_Get ("gl_fires", "0", CVAR_ARCHIVE, "Toggles lavaball and rocket fireballs");
 	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_ARCHIVE, "Set to 1 to use a type of lighting faster on GL");
-	gl_keeptjunctions = Cvar_Get ("gl_keeptjunctions", "1", CVAR_ARCHIVE, "Set to 1 to turn off colinear vertexes upon level load");
+	gl_keeptjunctions = Cvar_Get ("gl_keeptjunctions", "1", CVAR_ARCHIVE, "Set to 0 to turn off colinear vertexes upon level load");
 	gl_lerp_anim = Cvar_Get ("gl_lerp_anim", "1", CVAR_ARCHIVE, "Toggles model animation interpolation");
 	gl_multitexture = Cvar_Get ("gl_multitexture", "0", CVAR_ARCHIVE, "Use multitexture when available");
-	gl_nocolors = Cvar_Get ("gl_nocolors", "0", CVAR_NONE, "Set to 1, turns off all player skins");
+	gl_nocolors = Cvar_Get ("gl_nocolors", "0", CVAR_NONE, "Set to 1, turns off all player colors");
 	gl_particles = Cvar_Get ("gl_particles", "1", CVAR_ARCHIVE, "whether or not to draw particles");
 	gl_playermip = Cvar_Get ("gl_playermip", "0", CVAR_NONE, "Detail of player skins. 0 best, 4 worst.");
 	gl_sky_clip = Cvar_Get ("gl_sky_clip", "0", CVAR_ARCHIVE, "controls whether sky is drawn first (0) or later (1)");
