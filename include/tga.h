@@ -34,8 +34,9 @@
 
 #ifndef __GNUC__
 # if defined (__DECC) && defined (__ALPHA)
-#  pragma nomember_alignment
+//  uses __unaligned
 # else
+#  define __unaligned
 #  if defined (__BORLANDC__) || defined (_MSC_VER)
 #   if (defined(__BORLANDC__) && (__BORLANDC__ < 0x550))
 #    pragma option -a1
@@ -47,21 +48,23 @@
 #   error do some data packing magic here (#pragma pack?)
 #  endif
 # endif
+#else
+# define __unaligned
 #endif
 
 typedef struct _TargaHeader {
-	unsigned char id_length __attribute__((packed));
-	unsigned char colormap_type __attribute__((packed));
-	unsigned char image_type __attribute__((packed));
-	unsigned short colormap_index __attribute__((packed));
-	unsigned short colormap_length __attribute__((packed));
-	unsigned char colormap_size __attribute__((packed));
-	unsigned short x_origin __attribute__((packed));
-	unsigned short y_origin __attribute__((packed));
-	unsigned short width __attribute__((packed));
-	unsigned short height __attribute__((packed));
-	unsigned char pixel_size __attribute__((packed));
-	unsigned char attributes __attribute__((packed));
+	__unaligned unsigned char id_length __attribute__((packed));
+	__unaligned unsigned char colormap_type __attribute__((packed));
+	__unaligned unsigned char image_type __attribute__((packed));
+	__unaligned unsigned short colormap_index __attribute__((packed));
+	__unaligned unsigned short colormap_length __attribute__((packed));
+	__unaligned unsigned char colormap_size __attribute__((packed));
+	__unaligned unsigned short x_origin __attribute__((packed));
+	__unaligned unsigned short y_origin __attribute__((packed));
+	__unaligned unsigned short width __attribute__((packed));
+	__unaligned unsigned short height __attribute__((packed));
+	__unaligned unsigned char pixel_size __attribute__((packed));
+	__unaligned unsigned char attributes __attribute__((packed));
 } TargaHeader;
 
 #if defined (__BORLANDC__) || defined (_MSC_VER)
@@ -69,10 +72,6 @@ typedef struct _TargaHeader {
 #  pragma option -a4
 # else
 #  pragma pack(pop, tgainclude)
-# endif
-#else
-# if defined (__DECC) && defined (__ALPHA)
-#  pragma member_alignment
 # endif
 #endif
 
