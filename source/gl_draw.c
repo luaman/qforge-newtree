@@ -110,81 +110,6 @@ typedef struct {
 static gltexture_t gltextures[MAX_GLTEXTURES];
 static int  numgltextures = 0;
 
-/*
-
-  scrap allocation
-
-  Allocate all the little status bar obejcts into a single texture
-  to crutch up stupid hardware / drivers
-
-  Note, this is a kluge, which may slow down sane cards..
-  As such its all contained in ifdefs..
-
-*/
-
-#undef gl_draw_scraps
-
-#ifdef gl_draw_scraps
-
-#define	MAX_SCRAPS		1
-#define	BLOCK_WIDTH		256
-#define	BLOCK_HEIGHT	256
-
-static int  scrap_allocated[MAX_SCRAPS][BLOCK_WIDTH];
-static byte scrap_texels[MAX_SCRAPS][BLOCK_WIDTH * BLOCK_HEIGHT * 4];
-static qboolean scrap_dirty;
-static int  scrap_texnum;
-
-// returns a texture number and the position inside it
-static int
-Scrap_AllocBlock (int w, int h, int *x, int *y)
-{
-	int         i, j;
-	int         best, best2;
-	int         texnum;
-
-	for (texnum = 0; texnum < MAX_SCRAPS; texnum++) {
-		best = BLOCK_HEIGHT;
-
-		for (i = 0; i < BLOCK_WIDTH - w; i++) {
-			best2 = 0;
-
-			for (j = 0; j < w; j++) {
-				if (scrap_allocated[texnum][i + j] >= best)
-					break;
-				if (scrap_allocated[texnum][i + j] > best2)
-					best2 = scrap_allocated[texnum][i + j];
-			}
-			if (j == w) {				// this is a valid spot
-				*x = i;
-				*y = best = best2;
-			}
-		}
-
-		if (best + h > BLOCK_HEIGHT)
-			continue;
-
-		for (i = 0; i < w; i++)
-			scrap_allocated[texnum][*x + i] = best + h;
-
-		scrap_dirty = true;
-		return texnum;
-	}
-
-	Sys_Error ("Scrap_AllocBlock: full");
-	return 0;
-}
-
-static void
-Scrap_Upload (void)
-{
-	glBindTexture (GL_TEXTURE_2D, scrap_texnum);
-	GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, false, true);
-	scrap_dirty = false;
-}
-
-#endif
-
 //=============================================================================
 /* Support Routines */
 
@@ -210,34 +135,11 @@ Draw_PicFromWad (char *name)
 	p = W_GetLumpName (name);
 	gl = (glpic_t *) p->data;
 
-#ifdef gl_draw_scraps
-	// load little ones into the scrap
-	if (p->width < 64 && p->height < 64) {
-		int         x, y;
-		int         i, j, k;
-		int         texnum;
-
-		texnum = Scrap_AllocBlock (p->width, p->height, &x, &y);
-		k = 0;
-		for (i = 0; i < p->height; i++)
-			for (j = 0; j < p->width; j++, k++)
-				scrap_texels[texnum][(y + i) * BLOCK_WIDTH + x + j] =
-					p->data[k];
-		texnum += scrap_texnum;
-		gl->texnum = texnum;
-		gl->sl = (x + 0.01) / (float) BLOCK_WIDTH;
-		gl->sh = (x + p->width - 0.01) / (float) BLOCK_WIDTH;
-		gl->tl = (y + 0.01) / (float) BLOCK_WIDTH;
-		gl->th = (y + p->height - 0.01) / (float) BLOCK_WIDTH;
-	} else
-#endif
-	{
-		gl->texnum = GL_LoadPicTexture (p);
-		gl->sl = 0;
-		gl->sh = 1;
-		gl->tl = 0;
-		gl->th = 1;
-	}
+	gl->texnum = GL_LoadPicTexture (p);
+	gl->sl = 0;
+	gl->sh = 1;
+	gl->tl = 0;
+	gl->th = 1;
 
 	return p;
 }
@@ -476,12 +378,6 @@ Draw_Init (void)
 	// save a texture slot for translated picture
 	translate_texture = texture_extension_number++;
 
-#ifdef gl_draw_scraps
-	// save slots for scraps
-	scrap_texnum = texture_extension_number;
-	texture_extension_number += MAX_SCRAPS;
-#endif
-
 	// 
 	// get the other pics we need
 	// 
@@ -640,10 +536,6 @@ Draw_Pic (int x, int y, qpic_t *pic)
 {
 	glpic_t    *gl;
 
-#ifdef gl_draw_scraps
-	if (scrap_dirty)
-		Scrap_Upload ();
-#endif
 	gl = (glpic_t *) pic->data;
 
 	glBindTexture (GL_TEXTURE_2D, gl->texnum);
@@ -667,10 +559,6 @@ Draw_SubPic (int x, int y, qpic_t *pic, int srcx, int srcy, int width,
 	float       newsl, newtl, newsh, newth;
 	float       oldglwidth, oldglheight;
 
-#ifdef gl_draw_scraps
-	if (scrap_dirty)
-		Scrap_Upload ();
-#endif
 	gl = (glpic_t *) pic->data;
 
 	oldglwidth = gl->sh - gl->sl;
@@ -1257,11 +1145,7 @@ GL_Upload8 (byte * data, int width, int height, qboolean mipmap, qboolean alpha)
 
 #if defined(GL_SHARED_TEXTURE_PALETTE_EXT) && defined(HAVE_GL_COLOR_INDEX8_EXT)
 
-# ifdef gl_draw_scraps
-	if (VID_Is8bit () && !alpha && (data != scrap_texels[0])) {
-# else
 	if (VID_Is8bit () && !alpha) {
-# endif
 		GL_Upload8_EXT (data, width, height, mipmap, alpha);
 	} else {
 #else
