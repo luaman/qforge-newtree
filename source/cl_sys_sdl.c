@@ -29,11 +29,8 @@
 
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
-
-#include <SDL\SDL.H>
-#include <SDL\SDL_main.H>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,7 +41,7 @@
 #include <io.h>
 #include <conio.h>
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <unistd.h>
 #include <stdarg.h>
 #include <string.h>
@@ -56,6 +53,9 @@
 #include <sys/mman.h>
 #endif
 
+#include <SDL.H>
+#include <SDL_main.H>
+
 #include "sys.h"
 #include "qargs.h"
 #include "qargs.h"
@@ -66,26 +66,25 @@ qboolean is_server = false;
 
 int		starttime;
 
-#ifdef WIN32
-#include "winquake.h"
-// fixme: minimized is not currently supported under SDL
+#ifdef _WIN32
+# include "winquake.h"
+						// fixme: minimized is not currently supported under SDL
 qboolean Minimized=false;
 void MaskExceptions (void);
 #endif
 
-#define BASEDIR "."
-
-void Sys_DebugLog(char *file, char *fmt, ...)
+void
+Sys_DebugLog (char *file, char *fmt, ...)
 {
-    va_list argptr;
-    static char data[1024];   // why static ?
-    int fd;
+    int 		fd;
+    static char data[1024]; 	// why static ?
+    va_list 	argptr;
 
     va_start (argptr, fmt);
-    vsnprintf (data, sizeof(data), fmt, argptr);
+    vsnprintf (data, sizeof (data), fmt, argptr);
     va_end (argptr);
     fd = open (file, O_WRONLY | O_CREAT | O_APPEND, 0666);
-    write (fd, data, strlen(data));
+    write (fd, data, strlen (data));
     close (fd);
 };
 
@@ -97,20 +96,18 @@ FILE IO
 ===============================================================================
 */
 
-int	Sys_FileTime (char *path)
+int
+Sys_FileTime (char *path)
 {
 	QFile	*f;
 	int		t, retval;
 
-	f = Qopen(path, "rb");
+	f = Qopen (path, "rb");
 
-	if (f)
-	{
+	if (f) {
 		Qclose(f);
 		retval = 1;
-	}
-	else
-        {
+	} else {
 		retval = -1;
 	}
 
@@ -131,29 +128,30 @@ SYSTEM IO
 Sys_MakeCodeWriteable
 ================
 */
-void Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
+void
+Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
 {
 
-#ifdef WIN32
-	DWORD  flOldProtect;
+#ifdef _WIN32
+	DWORD	flOldProtect;
 
-//@@@ copy on write or just read-write?
-	if (!VirtualProtect((LPVOID)startaddr, length, PAGE_READWRITE, &flOldProtect))
-   		Sys_Error("Protection change failed\n");
+	// copy on write or just read-write?
+	if (!VirtualProtect ((LPVOID) startaddr, length, PAGE_READWRITE, &flOldProtect))
+   		Sys_Error ("Protection change failed\n");
 #else
-	int r;
-	unsigned long addr;
-	int psize = getpagesize();
+	int 			r;
+	unsigned long	addr;
+	int 			psize = getpagesize ();
 
 	addr = (startaddr & ~(psize-1)) - psize;
 
 //	fprintf(stderr, "writable code %lx(%lx)-%lx, length=%lx\n", startaddr,
 //			addr, startaddr+length, length);
 
-	r = mprotect((char*)addr, length + startaddr - addr + psize, 7);
+	r = mprotect((char *) addr, length + startaddr - addr + psize, 7);
 
 	if (r < 0)
-    		Sys_Error("Protection change failed\n");
+    		Sys_Error ("Protection change failed\n");
 #endif
 }
 
@@ -163,7 +161,8 @@ void Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
 Sys_Init
 ================
 */
-void Sys_Init (void)
+void
+Sys_Init (void)
 {
 
 #ifdef WIN32
@@ -171,38 +170,36 @@ void Sys_Init (void)
 #endif
 
 #ifdef USE_INTEL_ASM
-#ifdef WIN32
+#ifdef _WIN32
 	MaskExceptions ();
 #endif
 	Sys_SetFPCW ();
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution
-	timeBeginPeriod( 1 );
+	timeBeginPeriod (1);
 
 	vinfo.dwOSVersionInfoSize = sizeof(vinfo);
 
 	if (!GetVersionEx (&vinfo))
 		Sys_Error ("Couldn't get OS info");
 
-	if ((vinfo.dwMajorVersion < 4) ||
-		(vinfo.dwPlatformId == VER_PLATFORM_WIN32s))
-	{
+	if ((vinfo.dwMajorVersion < 4) || (vinfo.dwPlatformId == VER_PLATFORM_WIN32s)) {
 		Sys_Error ("This version of " PROGRAM " requires at least Win95 or NT 4.0");
 	}
 #endif
-
 }
 
 
-void Sys_Error (char *error, ...)
+void
+Sys_Error (char *error, ...)
 {
 	va_list		argptr;
-	char		text[1024];//, text2[1024];
+	char		text[1024];
 
-#ifndef WIN32
+#ifndef _WIN32
         fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~O_NONBLOCK);
 #endif
 	va_start (argptr, error);
@@ -210,9 +207,9 @@ void Sys_Error (char *error, ...)
 	va_end (argptr);
 
 #ifdef WIN32
-	MessageBox(NULL, text, "Error", 0 /* MB_OK */ );
+	MessageBox (NULL, text, "Error", 0 /* MB_OK */ );
 #endif
-        fprintf(stderr, "Error: %s\n", text);
+        fprintf (stderr, "Error: %s\n", text);
 
         Host_Shutdown ();
 	exit (1);
