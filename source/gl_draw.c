@@ -114,6 +114,7 @@ typedef struct
 	int		texnum;
 	char	identifier[64];
 	int		width, height;
+	int		bytesperpixel;
 	qboolean	mipmap;
 	int		crc;	// not really a standard CRC, but it works
 } gltexture_t;
@@ -413,9 +414,9 @@ void Draw_Init (void)
 			draw_chars[i] = 255;	// proper transparent color
 
 	// now turn them into textures
-	char_texture = GL_LoadTexture ("charset", 128, 128, draw_chars, false, true);
+	char_texture = GL_LoadTexture ("charset", 128, 128, draw_chars, false, true, 1);
 //	Draw_CrosshairAdjust();
-	cs_texture = GL_LoadTexture ("crosshair", 8, 8, cs_data, false, true);
+	cs_texture = GL_LoadTexture ("crosshair", 8, 8, cs_data, false, true, 1);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -1321,7 +1322,7 @@ static	unsigned	trans[640*480];		// FIXME, temporary
 GL_LoadTexture
 ================
 */
-int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha)
+int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha, int bytesperpixel)
 {
 	int			i;
 	int			s;
@@ -1330,7 +1331,7 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 
 	// LordHavoc's cache check, not a standard crc but it works  --KB
 	lcrc = 0;
-	s = width*height; // size
+	s = width*height*bytesperpixel; // size
 	for (i = 0; i < 256; i++)
 		ltexcrctable[i] = i + 1;
 	for (i = 0; i < s; i++)
@@ -1345,7 +1346,8 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 			{
 				if (lcrc != glt->crc
 						|| width != glt->width
-						|| height != glt->height)
+						|| height != glt->height
+						|| bytesperpixel != glt->bytesperpixel)
 					goto SetupTexture;
 				else
 					return gltextures[i].texnum;
@@ -1364,14 +1366,27 @@ SetupTexture:
 	glt->crc = lcrc;
 	glt->width = width;
 	glt->height = height;
+	glt->bytesperpixel = bytesperpixel;
 	glt->mipmap = mipmap;
 
 	glBindTexture (GL_TEXTURE_2D, glt->texnum);
 
-	GL_Upload8 (data, width, height, mipmap, alpha);
+	switch (glt->bytesperpixel)
+	{
+		case 1:
+			GL_Upload8 (data, width, height, mipmap, alpha);
+			break;
+		case 4:
+			GL_Upload32 ((unsigned *)data, width, height, mipmap, alpha);
+			break;
+		default:
+			Sys_Error ("SetupTexture: unknown bytesperpixel %i",
+					glt->bytesperpixel);
+	}
 
 	return glt->texnum;
 }
+
 
 /*
 ================
@@ -1380,7 +1395,7 @@ GL_LoadPicTexture
 */
 int GL_LoadPicTexture (qpic_t *pic)
 {
-	return GL_LoadTexture ("", pic->width, pic->height, pic->data, false, true);
+	return GL_LoadTexture ("", pic->width, pic->height, pic->data, false, true, 1);
 }
 
 /****************************************/
