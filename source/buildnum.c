@@ -1,9 +1,11 @@
 /*
 	buildnum.c
 
-	(description)
+	build number (actually date) calculator
 
 	Copyright (C) 1996-1997  Id Software, Inc.
+	Copyright (C) 1999,2000  contributors of the QuakeForge project
+	Please see the file "AUTHORS" for a list of contributors
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -27,27 +29,26 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
 #include <stdlib.h>
 #include <string.h>
 
-#include <quakedef.h>
+//char *date = "Dec 21 1999";
+//char *time = "00:00:00";
+char *ddate = __DATE__ ;
+char *dtime = __TIME__ ;
 
-// char *date = "Oct 24 1996";
-// char *time = "13:22:52";
-char *date = __DATE__ ;
-char *time = __TIME__ ;
-
-char *mon[12] = 
+char *mon[12] =
 { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-char mond[12] = 
+char mond[12] =
 { 31,    28,    31,    30,    31,    30,    31,    31,    30,    31,    30,    31 };
 
-// returns days since Oct 24 1996
+// returns days since Dec 21 1999
 int build_number( void )
 {
-	int m = 0; 
+	int m = 0;
 	int d = 0;
 	int y = 0;
 	int hr, min;
@@ -58,14 +59,14 @@ int build_number( void )
 
 	for (m = 0; m < 11; m++)
 	{
-		if (_strnicmp( &date[0], mon[m], 3 ) == 0)
+		if (strncasecmp( &ddate[0], mon[m], 3 ) == 0)
 			break;
 		d += mond[m];
 	}
 
-	d += atoi( &date[4] ) - 1;
+	d += atoi( &ddate[4] ) - 1;
 
-	y = atoi( &date[7] ) - 1900;
+	y = atoi( &ddate[7] ) - 1900;
 
 	b = d + (int)((y - 1) * 365.25);
 
@@ -74,15 +75,14 @@ int build_number( void )
 		b += 1;
 	}
 
-	b -= 34995; // Oct 24 1996
+	b -= 36148; // Dec 21 1999
 
-	hr = (time[0] - '0') * 10 + (time[1] - '0');
-	min = (time[3] - '0') * 10 + (time[4] - '0');
-//	sec = (time[6] - '0') * 10 + (time[7] - '0');
+	hr = (dtime[0] - '0') * 10 + (dtime[1] - '0');
+	min = (dtime[3] - '0') * 10 + (dtime[4] - '0');
+//	sec = (dtime[6] - '0') * 10 + (dtime[7] - '0');
 
 	b *= 60*24;
 	b += hr * 60 + min;
 
 	return b;
 }
-
