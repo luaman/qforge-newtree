@@ -64,7 +64,7 @@ AC_CHECK_HEADERS(
 	dsound.h mmsystem.h initguid.h mme/mmsystem.h mme/mme_public.h \
 	sys/asoundlib.h string.h strings.h memory.h malloc.h \
 	errno.h sys/dir.h fnmatch.h \
-	mgraph.h
+	mgraph.h linux/joystick.h
 )
 
 

@@ -136,7 +136,7 @@ client_SOURCES= cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c cl_main.c \
 		cl_misc.c cl_parse.c cl_pred.c cl_tent.c cl_cam.c teamplay.c \
 		r_view.c wad.c model_alias.c model_sprite.c \
 		console.c keys.c menu.c nonintel.c skin.c sbar.c \
-                cl_slist.c $(client_ASM)
+		cl_slist.c $(client_ASM) joystick.c
 
 #
 # Software-rendering clients

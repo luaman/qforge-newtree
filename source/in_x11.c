@@ -60,6 +60,7 @@
 #include "client.h"
 #include "context_x11.h"
 #include "qargs.h"
+#include "joystick.h"
 
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
@@ -423,6 +424,8 @@ IN_Init(void)
 
 		XChangeWindowAttributes(x_disp, x_win, attribmask, &attribs_2);
 	}
+
+	joystick_init();
 
 	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
 	m_filter = Cvar_Get ("m_filter","0",CVAR_ARCHIVE,"None");
