@@ -97,11 +97,12 @@ netadr_t    net_from;
 sizebuf_t   net_message;
 int         net_socket;
 
+extern qboolean is_server;
+
 #define	MAX_UDP_PACKET	(MAX_MSGLEN*2)
 byte        net_message_buffer[MAX_UDP_PACKET];
 
 #ifdef _WIN32
-extern qboolean is_server;
 WSADATA     winsockdata;
 #endif
 
@@ -249,7 +250,6 @@ NET_GetPacket (void)
 	int         ret;
 	struct sockaddr_in from;
 	socklen_t   fromlen;
-	int i;
 
 	fromlen = sizeof (from);
 	ret =
