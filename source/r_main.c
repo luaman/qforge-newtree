@@ -43,6 +43,9 @@
 #include "cl_main.h"
 #include "console.h"
 #include "cmd.h"
+#include "locs.h"
+#include "mathlib.h"
+#include "r_dynamic.h"
 #include "r_local.h"
 #include "screen.h"
 #include "sound.h"
@@ -578,7 +581,33 @@ R_MarkLeaves (void)
 	}
 }
 
-
+ /*
+ =============
+ R_ShowNearestLoc
+ =============
+ */
+static void
+R_ShowNearestLoc (void)
+{
+	location_t *nearloc;
+	vec3_t trueloc;
+	dlight_t   *dl;
+	
+	if (r_drawentities->int_val)
+		return;
+	nearloc = locs_find (cl.simorg);
+	if (nearloc) {
+		dl = CL_AllocDlight (4096);
+		VectorCopy (nearloc->loc, dl->origin);
+		dl->radius = 200;
+		dl->die = cl.time + 0.1;
+		dl->color[1]=1;
+		
+		VectorCopy(nearloc->loc,trueloc);
+		R_RunParticleEffect(trueloc,252,10);
+	}
+}
+			
 /*
 =============
 R_DrawEntitiesOnList
@@ -596,8 +625,10 @@ R_DrawEntitiesOnList (void)
 	vec3_t      dist;
 	float       add;
 
-	if (!r_drawentities->int_val)
+	if (!r_drawentities->int_val) {
+		R_ShowNearestLoc();
 		return;
+	}
 
 	for (i = 0; i < cl_numvisedicts; i++) {
 		currententity = cl_visedicts[i];

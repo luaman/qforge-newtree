@@ -45,7 +45,9 @@
 #include "cl_main.h"
 #include "commdef.h"
 #include "console.h"
+#include "locs.h"
 #include "glquake.h"
+#include "mathlib.h"
 #include "qargs.h"
 #include "r_dynamic.h"
 #include "skin.h"
@@ -891,6 +893,33 @@ R_DrawAliasModel (entity_t *e)
 
 /*
 =============
+R_ShowNearestLoc
+=============
+*/
+static void
+R_ShowNearestLoc (void)
+{
+	location_t *nearloc;
+	vec3_t trueloc;
+	dlight_t   *dl;
+	
+	if (r_drawentities->int_val)
+		return;
+	nearloc = locs_find (cl.simorg);
+	if (nearloc) {
+		dl = CL_AllocDlight (4096);
+		VectorCopy (nearloc->loc, dl->origin);
+		dl->radius = 200;
+		dl->die = cl.time + 0.1;
+		dl->color[1]=1;
+									
+		VectorCopy(nearloc->loc,trueloc);
+		R_RunSpikeEffect(trueloc,7);
+	}
+}
+
+/*
+=============
 R_DrawEntitiesOnList
 =============
 */
@@ -899,8 +928,10 @@ R_DrawEntitiesOnList (void)
 {
 	int         i;
 
-	if (!r_drawentities->int_val)
+	if (!r_drawentities->int_val) {
+		R_ShowNearestLoc();
 		return;
+	}
 
 	// LordHavoc: split into 3 loops to simplify state changes
 	for (i = 0; i < cl_numvisedicts; i++) {
