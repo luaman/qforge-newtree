@@ -40,11 +40,7 @@
 #endif
 #ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
-# ifdef X_XF86VidModeSetClientVersion
-#  define VIDMODE_VERSION 2
-# else
-#  define VIDMODE_VERSION 0
-# endif
+# include <X11/extensions/xf86vmstr.h>
 #endif
 
 #include "dga_check.h"
@@ -111,7 +107,7 @@ VID_CheckVMode (Display * dpy, int *maj_ver, int *min_ver)
 	int 	event_base, error_base;
 	int 	dummy, dummy_major, dummy_minor;
 
-	if (!XQueryExtension (dpy, "XFree86-VidModeExtension", &dummy, &dummy, &dummy)) {
+	if (!XQueryExtension (dpy, XF86VIDMODENAME, &dummy, &dummy, &dummy)) {
 		return false;
 	}
 
@@ -127,11 +123,12 @@ VID_CheckVMode (Display * dpy, int *maj_ver, int *min_ver)
 	if (!XF86VidModeQueryVersion (dpy, maj_ver, min_ver))
 		return false;
 
-	if (maj_ver && min_ver)
-		printf("VidMode version:%d.%d\n", *maj_ver, *min_ver);
-	if ((!maj_ver) || (*maj_ver != VIDMODE_VERSION))
+	if ((!maj_ver) || (*maj_ver != XVIDMODE_MAJOR_VERSION)) {
+		Con_Printf ("VID: Incorrect VidMode version: %d.%d, \n", *maj_ver, *min_ver);
 		return false;
+	}
 
+	Con_Printf ("VID: VidMode version: %d.%d, \n", *maj_ver, *min_ver);
 	return true;
 #else
 	return false;
