@@ -1,4 +1,6 @@
 ## Process this file with automake to produce Makefile.in
+AUTOMAKE_OPTIONS=	foreign
+
 EXTRA_DIST=	changelog control copyright rules \
 		quakeforge.conf \
 		qf-client-3dfx.dirs qf-client-3dfx.docs qf-client-3dfx.files \

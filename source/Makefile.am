@@ -26,6 +26,7 @@
 #
 #	$Id$
 #
+AUTOMAKE_OPTIONS=	foreign
 
 #
 # Stuff that is common to both client and server
@@ -148,6 +149,9 @@ EXTRA_libqfcd_a_SOURCES= cd_dos.c cd_linux.c cd_sdl.c cd_sgi.c cd_win.c cd_null.
 #
 if JOYTYPE_LINUX
 libqfjs_a_SOURCES=	joy_linux.c
+endif
+if JOYTYPE_WIN32
+libqfjs_a_SOURCES=	joy_win.c
 endif
 if JOYTYPE_NULL
 libqfjs_a_SOURCES=	joy_null.c

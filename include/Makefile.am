@@ -1,4 +1,6 @@
 ## Process this file with automake to produce Makefile.in
+AUTOMAKE_OPTIONS=	foreign
+
 EXTRA_DIST = adivtab.h anorm_dots.h anorms.h asm_draw.h asm_i386.h block16.h \
 	block8.h bothdefs.h bspfile.h buildnum.h cdaudio.h checksum.h \
 	cl_cam.h cl_demo.h cl_ents.h cl_input.h cl_main.h cl_parse.h \
