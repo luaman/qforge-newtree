@@ -303,9 +303,9 @@ VID_AllocBuffers (int width, int height)
 	if (vid_surfcache) {
 		D_FlushCaches ();
 		free (vid_surfcache);
-		vid_surfcache = temp_sc;
-		temp_sc = NULL;
 	}
+	vid_surfcache = temp_sc;
+	temp_sc = NULL;
 
 	return true;
 }
@@ -2089,7 +2089,8 @@ void VID_ForceMode_f (void)
 }
 
 
-void	VID_Init (unsigned char *palette)
+void
+VID_Init (unsigned char *palette)
 {
 	int		i, bestmatch = 0, bestmatchmetric, t, dr, dg, db;
 	int		basenummodes;
