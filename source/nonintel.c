@@ -38,7 +38,7 @@ R_Surf8Patch
 ================
 */
 void
-R_Surf8Patch ()
+R_Surf8Patch (void)
 {
 	// we only patch code on Intel
 }
@@ -50,7 +50,7 @@ R_Surf16Patch
 ================
 */
 void
-R_Surf16Patch ()
+R_Surf16Patch (void)
 {
 	// we only patch code on Intel
 }

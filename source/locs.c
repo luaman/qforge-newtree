@@ -47,10 +47,10 @@ int         locations_count = 0;
 int         location_blocks = 0;
 int         locisgz = 0;
 
-void        locs_add (vec3_t location, char *name);
-void        locs_load (char *mapname);
-void        locs_free ();
-void        locs_more ();
+void locs_add (vec3_t location, char *name);
+void locs_load (char *mapname);
+void locs_free (void);
+void locs_more (void);
 
 location_t *
 locs_find (vec3_t target)
@@ -137,7 +137,7 @@ locs_load (char *mapname)
 }
 
 void
-locs_reset ()
+locs_reset (void)
 {
 	int         i;
 
@@ -154,7 +154,7 @@ locs_reset ()
 }
 
 void
-locs_more ()
+locs_more (void)
 {
 	size_t      size;
 
