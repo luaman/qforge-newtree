@@ -3,3 +3,4 @@
 qw-server
 qw-client-x11
 qw-client-svga
+qw-client-glx
