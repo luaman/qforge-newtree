@@ -65,7 +65,7 @@ R_LoadSkys (char *skyname)
 	QFile      *f;
 	char        name[64];
 
-	if (stricmp (skyname, "none") == 0) {
+	if (strcaseequal (skyname, "none")) {
 		skyloaded = false;
 		return;
 	}

@@ -120,11 +120,9 @@ ED_Parse_Extra_Fields (progs_t *pr, char *key, char *value)
 	// If skyname is set, we want to allow skyboxes and set what
 	// the skybox name should be.  "qlsky" is supported since
 	// at least one other map uses it already.  --KB
-	if (stricmp (key, "sky") == 0 ||		// LordHavoc: added "sky" key 
-											// (Quake2 and DarkPlaces use 
-											// this)
-		stricmp (key, "skyname") == 0 ||
-		stricmp (key, "qlsky") == 0) {
+	if (strcaseequal (key, "sky")
+			|| strcaseequal (key, "skyname")
+			|| strcaseequal (key, "qlsky")) {
 		Info_SetValueForKey (svs.info, "skybox",
 							 "1", MAX_SERVERINFO_STRING);
 		Cvar_Set (r_skyname, value);

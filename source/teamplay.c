@@ -346,64 +346,68 @@ Team_Init_Cvars (void)
 void
 locs_loc (void)
 {
-	char           *mapname; 
-	char           *desc = NULL;
-	char            locfile[MAX_OSPATH];
+	char	*mapname; 
+	char	*desc = NULL;
+	char	locfile[MAX_OSPATH];
 	
-	//FIXME checking needed to make sure you are actually in the game and a live.
+	// FIXME checking needed to make sure you are actually in the game and a live.
 	if (Cmd_Argc () == 1) {
 		Con_Printf ("loc <add|delete|rename|move|save|zsave> [<description>] :Modifies location data, add|rename take <description> parameter\n");
 		return;
 	}
+
 	if (Cmd_Argc () >= 3)
-		desc = Cmd_Args () + strlen(Cmd_Argv(1)) + 1;
-	mapname = malloc(sizeof(cl.worldmodel->name));
-	if (!mapname)
+		desc = Cmd_Args () + strlen (Cmd_Argv (1)) + 1;
+
+	if (!(mapname = malloc (sizeof (cl.worldmodel->name))))
 		Sys_Error ("Can't duplicate mapname!");
-	map_to_loc(cl.worldmodel->name,mapname);
+
+	map_to_loc (cl.worldmodel->name, mapname);
 	snprintf (locfile, sizeof (locfile), "%s/%s", com_gamedir, mapname);
-	free(mapname);
+	free (mapname);
 	
-	if (stricmp(Cmd_Argv(1),"save") == 0) {
+	if (strcaseequal (Cmd_Argv (1), "save")) {
 		if (Cmd_Argc () == 2) {
-			locs_save(locfile, false);
-		} else 
-			Con_Printf("loc save :saves locs from memory into a .loc file\n");
+			locs_save (locfile, false);
+		} else {
+			Con_Printf ("loc save :saves locs from memory into a .loc file\n");
+		}
 	}
 
-	if (stricmp(Cmd_Argv(1),"zsave") == 0) {
+	if (strcaseequal (Cmd_Argv (1), "zsave")) {
 		if (Cmd_Argc () == 2) {
-			locs_save(locfile, true);
-		} else
-			Con_Printf("loc save :saves locs from memory into a .loc file\n");
+			locs_save (locfile, true);
+		} else {
+			Con_Printf ("loc save :saves locs from memory into a .loc file\n");
+		}
 	}
 	
-	if (stricmp(Cmd_Argv(1),"add") == 0) {
+	if (strcaseequal (Cmd_Argv (1), "add")) {
 		if (Cmd_Argc () >= 3)
-			locs_mark(cl.simorg,desc);
+			locs_mark (cl.simorg, desc);
 		else
-			Con_Printf("loc add <description> :marks the current location with the description and records the information into a loc file.\n");
+			Con_Printf ("loc add <description> :marks the current location with the description and records the information into a loc file.\n");
 	}
 
-	if (stricmp(Cmd_Argv(1),"rename") == 0) {
+	if (strcaseequal (Cmd_Argv (1), "rename")) {
 		if (Cmd_Argc () >= 3)
-			locs_edit(cl.simorg,desc);
+			locs_edit (cl.simorg, desc);
 		else
-			Con_Printf("loc rename <description> :changes the description of the nearest location marker\n");
+			Con_Printf ("loc rename <description> :changes the description of the nearest location marker\n");
 	}
 	
-	if (stricmp(Cmd_Argv(1),"delete") == 0) {
+	if (strcaseequal (Cmd_Argv (1), "delete")) {
 		if (Cmd_Argc () == 2)
-			locs_del(cl.simorg);
+			locs_del (cl.simorg);
 		else
-			Con_Printf("loc delete :removes nearest location marker\n");
+			Con_Printf ("loc delete :removes nearest location marker\n");
 	}
 	
-	if (stricmp(Cmd_Argv(1),"move") == 0) {
+	if (strcaseequal (Cmd_Argv (1), "move")) {
 		if (Cmd_Argc () == 2)
-			locs_edit(cl.simorg,NULL);
+			locs_edit (cl.simorg, NULL);
 		else
-			Con_Printf("loc move :moves the nearest location marker to your current location\n");
+			Con_Printf ("loc move :moves the nearest location marker to your current location\n");
 	}
 }
 
