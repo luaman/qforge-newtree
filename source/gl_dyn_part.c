@@ -31,11 +31,12 @@
 #endif
 
 #include <stdlib.h>
+
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
 
 #include "cmd.h"
@@ -493,11 +494,11 @@ R_RocketTrail (int type, entity_t *ent)
 				pdie = cl.time + 1;
 				VectorCopy (ent->old_origin, porg);
 				break;
-			case 2:					// blood
 			case 4:					// slight blood
-				len -= 5;
+				len -= 3;
+			case 2:					// blood
+				len -= 3;
 				ptex = part_tex_dot;
-				pscale = .75;
 				pcolor = 68 + (rand () & 3);
 				pdie = cl.time + 2;
 				for (j = 0; j < 3; j++) {
