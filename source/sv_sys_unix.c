@@ -55,6 +55,7 @@
 
 
 cvar_t     *sys_extrasleep;
+cvar_t     *sys_dead_sleep;
 
 qboolean    is_server = true;
 qboolean    stdin_ready;
@@ -150,6 +151,10 @@ Sys_Init_Cvars (void)
 {
 	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, "None");
 	sys_extrasleep = Cvar_Get ("sys_extrasleep", "0", CVAR_NONE, "None");
+	sys_dead_sleep = Cvar_Get ("sys_dead_sleep", "1", CVAR_NONE,
+		"When set, the server gets NO cpu if no clients are connected"
+		"and there's no other activity. *MIGHT* cause problems with"
+		"some mods.");
 }
 
 void
@@ -210,7 +215,7 @@ main (int argc, char *argv[])
 
 		_timeout.tv_sec = 1;
 		_timeout.tv_usec = 0;
-		if (svs.num_clients)
+		if (svs.num_clients || !sys_dead_sleep->int_val)
 			timeout = &_timeout;
 
 		if (select (net_socket + 1, &fdset, NULL, NULL, timeout) == -1)
