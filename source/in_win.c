@@ -31,6 +31,9 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#ifdef __MINGW32__
+# define INITGUID
+#endif
 #include "quakedef.h"
 #include "winquake.h"
 #include <dinput.h>
