@@ -122,14 +122,14 @@ void CL_NewDlight (int key, float x, float y, float z, float radius, float time,
 	{
 		default:
 		case 0:
-			dl->color[0] = 0.2;
-			dl->color[1] = 0.1;
+			dl->color[0] = 0.4;
+			dl->color[1] = 0.2;
 			dl->color[2] = 0.05;
 			break;
 		case 1: // blue
 			dl->color[0] = 0.05;
 			dl->color[1] = 0.05;
-			dl->color[2] = 0.3;
+			dl->color[2] = 0.5;
 			break;
 		case 2: // red
 			dl->color[0] = 0.5;
@@ -139,7 +139,7 @@ void CL_NewDlight (int key, float x, float y, float z, float radius, float time,
 		case 3: // purple
 			dl->color[0] = 0.5;
 			dl->color[1] = 0.05;
-			dl->color[2] = 0.4;
+			dl->color[2] = 0.5;
 			break;
 	}
 }

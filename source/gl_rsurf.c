@@ -4,6 +4,7 @@
 	surface-related refresh code
 
 	Copyright (C) 1996-1997  Id Software, Inc.
+	Copyright (C) 2000       Joseph Carter <knghtbrd@debian.org>
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -63,11 +64,13 @@ int			skytexturenum;
 #endif
 
 
-int		lightmap_bytes;		// 1, 2, or 4
+int		lightmap_bytes;		// 1 or 4
 
 int		lightmap_textures;
 
-unsigned		blocklights[18*18];
+unsigned		blocklights[4][18*18];
+
+cvar_t		*gl_colorlights;
 
 #define	BLOCK_WIDTH		128
 #define	BLOCK_HEIGHT	128
@@ -110,6 +113,7 @@ void R_AddDynamicLights (msurface_t *surf)
 	int			i;
 	int			smax, tmax;
 	mtexinfo_t	*tex;
+	dlight_t	*dl;
 
 	smax = (surf->extents[0]>>4)+1;
 	tmax = (surf->extents[1]>>4)+1;
@@ -156,7 +160,13 @@ void R_AddDynamicLights (msurface_t *surf)
 				else
 					dist = td + (sd>>1);
 				if (dist < minlight)
-					blocklights[t*smax + s] += (rad - dist)*256;
+				{
+					dl = &cl_dlights[lnum];
+					blocklights[0][t*smax + s] += (rad - dist)*(dl->color[0]*256);;
+					blocklights[1][t*smax + s] += (rad - dist)*(dl->color[1]*256);;
+					blocklights[2][t*smax + s] += (rad - dist)*(dl->color[2]*256);;
+					blocklights[3][t*smax + s] += (rad - dist)*256;
+				}
 			}
 		}
 	}
@@ -178,7 +188,7 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 	byte		*lightmap;
 	unsigned	scale;
 	int			maps;
-	unsigned	*bl;
+	unsigned	*rbl, *gbl, *bbl, *bl;
 
 	surf->cached_dlight = (surf->dlightframe == r_framecount);
 
@@ -191,13 +201,19 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 	if (/* r_fullbright->value || */ !cl.worldmodel->lightdata)
 	{
 		for (i=0 ; i<size ; i++)
-			blocklights[i] = 255*256;
+			blocklights[0][i] =
+				blocklights[1][i] =
+				blocklights[2][i] =
+				blocklights[3][i] = 255*256;
 		goto store;
 	}
 
 // clear to no light
 	for (i=0 ; i<size ; i++)
-		blocklights[i] = 0;
+		blocklights[0][i] =
+			blocklights[1][i] =
+			blocklights[2][i] =
+			blocklights[3][i] = 0;
 
 // add all the lightmaps
 	if (lightmap)
@@ -207,7 +223,12 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 			scale = d_lightstylevalue[surf->styles[maps]];
 			surf->cached_light[maps] = scale;	// 8.8 fraction
 			for (i=0 ; i<size ; i++)
-				blocklights[i] += lightmap[i] * scale;
+			{
+				blocklights[0][i] += lightmap[i] * scale;
+				blocklights[1][i] += lightmap[i] * scale;
+				blocklights[2][i] += lightmap[i] * scale;
+				blocklights[3][i] += lightmap[i] * scale;
+			}
 			lightmap += size;	// skip to next lightmap
 		}
 
@@ -217,41 +238,34 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 
 // bound, invert, and shift
 store:
-	switch (gl_lightmap_format)
+	if (gl_colorlights->value)
 	{
-	case GL_RGBA:
 		stride -= (smax<<2);
-		bl = blocklights;
+		rbl = blocklights[0];
+		gbl = blocklights[1];
+		bbl = blocklights[2];
+		bl = blocklights[3];
 		for (i=0 ; i<tmax ; i++, dest += stride)
-		{
 			for (j=0 ; j<smax ; j++)
 			{
+				t = *rbl++;
+				dest[0] = 255 - min(t >> 7, 255);
+				t = *gbl++;
+				dest[1] = 255 - min(t >> 7, 255);
+				t = *bbl++;
+				dest[2] = 255 - min(t >> 7, 255);
 				t = *bl++;
-				t >>= 7;
-				t = min(t, 255);
-				dest[3] = 255-t;
+				dest[3] = 255 - min(t >> 7, 255);
 				dest += 4;
 			}
-		}
-		break;
-	case GL_ALPHA:
-	case GL_LUMINANCE:
-	case GL_INTENSITY:
-		bl = blocklights;
+	} else 	{
+		bl = blocklights[3];
 		for (i=0 ; i<tmax ; i++, dest += stride)
-		{
 			for (j=0 ; j<smax ; j++)
 			{
 				t = *bl++;
-				t >>= 7;
-				if (t > 255)
-					t = 255;
-				dest[j] = 255-t;
+				dest[j] = 255 - min(t >> 7, 255);
 			}
-		}
-		break;
-	default:
-		Sys_Error ("Bad lightmap format");
 	}
 }
 
@@ -416,7 +430,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 		speedscale = realtime*16;
 		speedscale -= (int)speedscale;
 		EmitSkyPolys (s);
-		if (gl_lightmap_format == GL_LUMINANCE)
+		if (!gl_colorlights->value)
 			glBlendFunc (GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 
 		glDisable (GL_BLEND);
@@ -712,14 +726,7 @@ void R_BlendLightmaps (void)
 
 	glDepthMask (0);		// don't bother writing Z
 
-	if (gl_lightmap_format == GL_LUMINANCE)
-		glBlendFunc (GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
-	else if (gl_lightmap_format == GL_INTENSITY)
-	{
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glColor4f (0,0,0,1);
-		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
+	glBlendFunc (GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 
 	if (!r_lightmap->value)
 	{
@@ -777,13 +784,9 @@ void R_BlendLightmaps (void)
 	}
 
 	glDisable (GL_BLEND);
-	if (gl_lightmap_format == GL_LUMINANCE)
-		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	else if (gl_lightmap_format == GL_INTENSITY)
-	{
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		glColor4f (1,1,1,1);
-	}
+
+	// Return to normal blending  --KB
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glDepthMask (1);		// back to normal Z buffering
 }
@@ -1650,31 +1653,16 @@ void GL_BuildLightmaps (void)
 		texture_extension_number += MAX_LIGHTMAPS;
 	}
 
-	gl_lightmap_format = GL_LUMINANCE;
-	if (COM_CheckParm ("-lm_1"))
-		gl_lightmap_format = GL_LUMINANCE;
-	if (COM_CheckParm ("-lm_a"))
-		gl_lightmap_format = GL_ALPHA;
-	if (COM_CheckParm ("-lm_i"))
-		gl_lightmap_format = GL_INTENSITY;
-	if (COM_CheckParm ("-lm_2"))
-		gl_lightmap_format = GL_RGBA4;
-	if (COM_CheckParm ("-lm_4"))
-		gl_lightmap_format = GL_RGBA;
+	gl_colorlights = Cvar_Get ("gl_colorlights", "1", CVAR_ROM,
+			"Whether to use RGBA lightmaps or not");
 
-	switch (gl_lightmap_format)
+	if (gl_colorlights->value)
 	{
-	case GL_RGBA:
+		gl_lightmap_format = GL_RGBA;
 		lightmap_bytes = 4;
-		break;
-	case GL_RGBA4:
-		lightmap_bytes = 2;
-		break;
-	case GL_LUMINANCE:
-	case GL_INTENSITY:
-	case GL_ALPHA:
+	} else {
+		gl_lightmap_format = GL_LUMINANCE;
 		lightmap_bytes = 1;
-		break;
 	}
 
 	for (j=1 ; j<MAX_MODELS ; j++)
@@ -1691,10 +1679,8 @@ void GL_BuildLightmaps (void)
 			GL_CreateSurfaceLightmap (m->surfaces + i);
 			if ( m->surfaces[i].flags & SURF_DRAWTURB )
 				continue;
-//#ifndef QUAKE2
 			if ( m->surfaces[i].flags & SURF_DRAWSKY )
 				continue;
-//#endif
 			BuildSurfaceDisplayList (m->surfaces + i);
 		}
 	}
