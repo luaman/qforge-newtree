@@ -454,59 +454,128 @@ locs_dumploc (void)
 }
 
 /*
+ * locs_search
+ *
+ * used by locs_delloc, locs_editloc, locs_moveloc
+ */
+int
+locs_search (vec3_t target)
+{
+	location_t *best = NULL, *cur;
+	float       best_distance = 9999999, distance;
+	int         i, j = -1;
+
+	for (i = 0; i < locations_count; i++) {
+		cur = locations[i];
+		distance = VectorDistance_fast (target, cur->loc);
+		if ((distance < best_distance) || !best) {
+			best = cur;
+			best_distance = distance;
+			j = i;
+		}
+	}
+	return (j);
+}
+
+/*
  * locs_delloc
  *
- * removes a loc mark from memory and file
+ * removes nearest location marker
  */
 void
 locs_delloc (void)
 {
 	vec3_t      loc;
-	location_t *best = NULL, *cur;
-	float       best_distance = 9999999, distance;
-	int         i, j=0;
+	int         i, j;
 	
+	if ((strncasecmp(Cmd_Argv(0),"delloc",6) == 0) && (Cmd_Argc () != 1)) {
+		Con_Printf("delloc :removes the nearest location marker\n");
+		return;
+	}
 	if (locations_count) {
-		if ((strncasecmp(Cmd_Argv(0),"editloc",7) == 0) && (Cmd_Argc () != 2)) {
-			Con_Printf("editloc <description> :changed the description of the nearest location marker\n");
-			return;
-		}
-		if ((strncasecmp(Cmd_Argv(0),"delloc",6) == 0) && (Cmd_Argc () != 1)) {
-			Con_Printf("delloc :removes the nearest location marker\n");
-			return;
-		}				
 		VectorCopy (cl.simorg, loc);
-		for (i = 0; i < locations_count; i++) {
-			cur = locations[i];
-			distance = VectorDistance_fast (loc, cur->loc);
-			if ((distance < best_distance) || !best) {
-				best = cur;
-				best_distance = distance;
-				j = i;
-			}
-		}
-		if (strncasecmp(Cmd_Argv(0),"delloc",6) == 0) {
-			Con_Printf("Removing Location Marker for %s\n",
-					locations[j]->name);
-			free ((void *) locations[j]->name);
-        		free ((void *) locations[j]);
-			locations_count--;
-			for (i = j; i < locations_count; i++)
-				locations[i] = locations[i+1];			
-			locations[locations_count] = NULL;
-		} else {
-			Con_Printf("Changing Location Marker from %s to %s\n",
-					locations[j]->name,
-					Cmd_Argv(1));
-			free ((void *) locations[j]->name);
-			locations[j]->name = strdup (Cmd_Argv(1));
-		}
+		i = locs_search(loc);
+		Con_Printf("Removing Location Marker for %s\n", locations[i]->name);
+		free ((void *) locations[i]->name);
+        	free ((void *) locations[i]);
+		locations_count--;
+		for (j = i; j < locations_count; j++)
+			locations[j] = locations[j+1];			
+		locations[locations_count] = NULL;
 #ifdef HAVE_ZLIB
 		if (locisgz)
 			Cmd_ExecuteString ("zdumploc");
 		else
 #endif
 			Cmd_ExecuteString ("dumploc");
+	} else {
+		Con_Printf("Error: No Location Markers to Delete\n");
+	}
+}
+
+/*
+ * locs_editloc
+ * 
+ * change the description of nearest location marker
+ */
+void
+locs_editloc (void)
+{
+	vec3_t          loc;
+	int             i;
+	
+	if ((strncasecmp(Cmd_Argv(0),"editloc",7) == 0) && 
+			(Cmd_Argc () != 2)) {
+		Con_Printf("editloc <description> :changed the description of the nearest location marker\n");
+		return;
+	}
+	if (locations_count) {
+		VectorCopy (cl.simorg, loc);
+		i = locs_search(loc);
+		Con_Printf("Changing location marker from %s to %s\n",
+				locations[i]->name, Cmd_Argv(1));
+		free ((void *) locations[i]->name);
+		locations[i]->name = strdup (Cmd_Argv(1));
+#ifdef HAVE_ZLIB
+		if (locisgz)
+			Cmd_ExecuteString ("zdumploc");
+		else
+#endif
+			Cmd_ExecuteString ("dumploc");
+	} else {
+		Con_Printf("Error: No Location Markers to Edit\n");
+	}
+}	
+
+/*
+ * locs_moveloc
+ *
+ * Move the nearest location marker to current position
+ */
+void
+locs_moveloc (void)
+{
+	vec3_t          loc;
+	int             i;
+
+	if ((strncasecmp(Cmd_Argv(0),"moveloc",7) == 0) &&
+			(Cmd_Argc () != 1)) {
+		Con_Printf("moveloc :Move the nearest location marker to your current location\n");
+		return;
+	}
+	if (locations_count) {
+		VectorCopy (cl.simorg, loc);
+		i = locs_search(loc);
+		Con_Printf("Moving location marker for %s to current location\n", locations[i]->name);
+		VectorCopy (cl.simorg,locations[i]->loc);
+#ifdef HAVE_ZLIB
+		if (locisgz)
+			Cmd_ExecuteString ("zdumploc");
+		else
+#endif
+			Cmd_ExecuteString ("dumploc");
+	} else {
+		Con_Printf("Error: No Location Markers to Move\n");
 	}
 }
 
@@ -519,5 +588,6 @@ Locs_Init (void)
 	Cmd_AddCommand ("zdumploc", locs_dumploc);
 #endif
 	Cmd_AddCommand ("delloc",locs_delloc);
-	Cmd_AddCommand ("editloc",locs_delloc);
+	Cmd_AddCommand ("editloc",locs_editloc);
+	Cmd_AddCommand ("moveloc",locs_moveloc);
 }
