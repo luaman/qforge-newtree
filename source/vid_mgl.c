@@ -2077,9 +2077,10 @@ VID_Init (unsigned char *palette)
 		startwindowed = 1;
 		vid_default = windowed_default;
 	}
-
+#ifdef SPLASH_SCREEN
 	if (hwnd_dialog)
 		DestroyWindow (hwnd_dialog);
+#endif
 
 // sound initialization has to go here, preceded by a windowed mode set,
 // so there's a window for DirectSound to work with but we're not yet
@@ -2132,6 +2133,12 @@ VID_Init_Cvars ()
 void
 VID_Shutdown (void)
 {
+
+#ifdef SPLASH_SCREEN
+                if (hwnd_dialog)
+                        DestroyWindow (hwnd_dialog);
+#endif
+
 	if (vid_initialized) {
 		if (modestate == MS_FULLDIB)
 			ChangeDisplaySettings (NULL, CDS_FULLSCREEN);
@@ -2144,9 +2151,6 @@ VID_Shutdown (void)
 		DestroyDIBWindow ();
 		DestroyFullscreenWindow ();
 		DestroyFullDIBWindow ();
-
-		if (hwnd_dialog)
-			DestroyWindow (hwnd_dialog);
 
 		if (mainwindow)
 			DestroyWindow (mainwindow);

@@ -427,7 +427,6 @@ HINSTANCE   global_hInstance;
 int         global_nCmdShow;
 char       *argv[MAX_NUM_ARGVS];
 static char *empty_string = "";
-HWND        hwnd_dialog;
 
 
 int WINAPI
@@ -486,6 +485,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 	host_parms.argc = com_argc;
 	host_parms.argv = com_argv;
 
+#ifdef SPLASH_SCREEN
 	hwnd_dialog =
 		CreateDialog (hInstance, MAKEINTRESOURCE (IDD_DIALOG1), NULL, NULL);
 
@@ -502,6 +502,8 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 		UpdateWindow (hwnd_dialog);
 		SetForegroundWindow (hwnd_dialog);
 	}
+#endif
+
 // take the greater of all the available memory or half the total memory,
 // but at least 8 Mb and no more than 16 Mb, unless they explicitly
 // request otherwise

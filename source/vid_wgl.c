@@ -92,12 +92,14 @@ const char *gl_renderer;
 const char *gl_version;
 const char *gl_extensions;
 
+// fixme: Only used by MGL ..
 qboolean    DDActive;
+
+// If you ever merge screen/gl_screen, don't forget this one
 qboolean    scr_skipupdate;
 
 static vmode_t modelist[MAX_MODE_LIST];
 static int  nummodes;
-static vmode_t *pcurrentmode;
 static vmode_t badmode;
 
 static DEVMODE gdevmode;
@@ -788,6 +790,10 @@ VID_Shutdown (void)
 	HDC         hDC;
 	int         i, temp[8192];
 
+#ifdef SPLASH_SCREEN
+        if(hwnd_dialog)
+                DestroyWindow (hwnd_dialog);
+#endif
 
 	if (vid_initialized) {
 		vid_canalttab = false;
@@ -798,7 +804,7 @@ VID_Shutdown (void)
 
 		// LordHavoc: free textures before closing (may help NVIDIA)
 		for (i = 0; i < 8192; i++)
-			temp[i] = i;
+                        temp[i] = i + 1;
 		glDeleteTextures (8192, temp);
 
 		if (hRC)
@@ -1124,7 +1130,6 @@ MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
                                 if (mainwindow)
                                         DestroyWindow (mainwindow);
-
 				PostQuitMessage (0);
 			}
 			break;
@@ -1716,7 +1721,10 @@ VID_Init (unsigned char *palette)
 	vid.colormap = host_colormap;
 	vid.fullbright = 256 - LittleLong (*((int *) vid.colormap + 2048));
 
-	DestroyWindow (hwnd_dialog);
+#ifdef SPLASH_SCREEN
+        if(hwnd_dialog)
+                DestroyWindow (hwnd_dialog);
+#endif
 
 	GL_CheckBrightness (palette);
 	VID_SetPalette (palette);
