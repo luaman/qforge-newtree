@@ -522,8 +522,6 @@ IN_Init (void)
 
 	JOY_Init ();
 
-	XAutoRepeatOff (x_disp);
-
 	if (COM_CheckParm ("-nomouse"))
 		return;
 
