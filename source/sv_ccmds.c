@@ -590,17 +590,14 @@ void SV_Serverinfo_f (void)
 	}
 	Info_SetValueForKey (svs.info, Cmd_Argv(1), Cmd_Argv(2), MAX_SERVERINFO_STRING);
 
-	// FIXME This sucks.
 	// if this is a cvar, change it too	
 	var = Cvar_FindVar (Cmd_Argv(1));
 	if (var)
-	{
-		free (var->string);	// free the old value string	
-		var->string = CopyString (Cmd_Argv(2));
-		var->value = atof (var->string);
-	}
+		Cvar_Set (var, Cmd_Argv(2));
 
-	SV_SendServerInfoChange(Cmd_Argv(1), Cmd_Argv(2));
+	if (!var || !(var->flags & CVAR_SERVERINFO))
+		// Cvar_Set will send the change if CVAR_SERVERINFO is set
+		SV_SendServerInfoChange(Cmd_Argv(1), Cmd_Argv(2));
 }
 
 
