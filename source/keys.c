@@ -410,7 +410,7 @@ no_lf:
 						i = MAXCMDLINE-1 - strlen(key_lines[edit_line]);
 					if (i > 0)
 					{	// insert the string
-						memcpy (key_lines[edit_line] + key_linepos + i,
+						memmove (key_lines[edit_line] + key_linepos + i,
 							key_lines[edit_line] + key_linepos, strlen(key_lines[edit_line]) - key_linepos + 1);
 						memcpy (key_lines[edit_line] + key_linepos, textCopied, i);
 						key_linepos += i;
