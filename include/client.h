@@ -275,6 +275,7 @@ typedef struct
 
 	char		levelname[40];	// for display on solo scoreboard
 	int			playernum;
+	int			stdver;
 
 // refresh related state
 	struct model_s	*worldmodel;	// cl_entitites[0].model
@@ -382,7 +383,7 @@ extern	lightstyle_t	cl_lightstyle[MAX_LIGHTSTYLES];
 extern	dlight_t		cl_dlights[MAX_DLIGHTS];
 
 extern	qboolean	nomaster;
-extern float	server_version;	// version of server we connected to
+extern char	*server_version;	// version of server we connected to
 
 //=============================================================================
 

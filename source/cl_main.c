@@ -203,7 +203,7 @@ jmp_buf 	host_abort;
 
 void Master_Connect_f (void);
 
-float	server_version = 0;	// version of server we connected to
+char	*server_version = NULL;	// version of server we connected to
 
 char emodel_name[] = 
 	{ 'e' ^ 0xff, 'm' ^ 0xff, 'o' ^ 0xff, 'd' ^ 0xff, 'e' ^ 0xff, 'l' ^ 0xff, 0 };
@@ -640,7 +640,6 @@ Sent by server when serverinfo changes
 void CL_FullServerinfo_f (void)
 {
 	char *p;
-	float v;
 
 	if (Cmd_Argc() != 2)
 	{
@@ -648,15 +647,28 @@ void CL_FullServerinfo_f (void)
 		return;
 	}
 
+	Con_DPrintf("Cmd_Argv(1): '%s'\n", Cmd_Argv(1));
 	strcpy (cl.serverinfo, Cmd_Argv(1));
+	Con_DPrintf("cl.serverinfo: '%s'\n", cl.serverinfo);
 
-	if ((p = Info_ValueForKey(cl.serverinfo, "*vesion")) && *p) {
-		v = Q_atof(p);
-		if (v) {
-			if (!server_version)
-				Con_Printf("Version %1.2f Server\n", v);
-			server_version = v;
-		}
+	if ((p = Info_ValueForKey(cl.serverinfo, "*version")) && *p)
+	{
+		if (server_version == NULL)
+			Con_Printf("QuakeForge Version %s Server\n", p);
+		server_version = strdup(p);
+	} else if ((p = Info_ValueForKey(cl.serverinfo, "*version")) && *p)
+	{
+		if (server_version == NULL)
+			Con_Printf("Version %s Server\n", p);
+		server_version = strdup(p);
+	}
+
+	if ((p = Info_ValueForKey(cl.serverinfo, "*qsg_standard")) && *p)
+	{
+		if ((cl.stdver = atoi (p)))
+			Con_Printf("QSG standards version %i\n", cl.stdver);
+		else
+			Con_Printf("Invalid standards version: %s", p);
 	}
 }
 

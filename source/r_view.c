@@ -763,7 +763,11 @@ void V_CalcRefdef (void)
 	int			i;
 	vec3_t		forward, right, up;
 	float		bob;
-	static float oldz = 0;
+	static float	oldz = 0;
+	int			zofs = 22;
+
+	if (cl.stdver)
+		zofs = cl.stats[STAT_VIEWHEIGHT];
 
 	V_DriftPitch ();
 
@@ -793,7 +797,7 @@ void V_CalcRefdef (void)
 	else if (view_message->flags & PF_DEAD)
 		r_refdef.vieworg[2] -= 16;	// corpse view height
 	else
-		r_refdef.vieworg[2] += 22;	// view height
+		r_refdef.vieworg[2] += zofs;	// view height
 
 	if (view_message->flags & PF_DEAD)		// PF_GIB will also set PF_DEAD
 		r_refdef.viewangles[ROLL] = 80;	// dead view angle
@@ -808,7 +812,7 @@ void V_CalcRefdef (void)
 	CalcGunAngle ();
 
 	VectorCopy (cl.simorg, view->origin);
-	view->origin[2] += 22;
+	view->origin[2] += zofs;
 
 	for (i=0 ; i<3 ; i++)
 	{
