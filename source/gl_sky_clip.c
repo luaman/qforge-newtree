@@ -415,6 +415,18 @@ process_corners (struct box_def *box)
 		break;
 	case 5:
 		if (max_visit > 1) {
+			// one vertex
+			vec3_t v;
+			for (i = 0; i < 4; i++) {
+				// don't need to check the 5th visit
+				if (visit[(i + 2) % 5].face == visit[(i + 4) % 5].face)
+					break;
+			}
+			find_cube_vertex (visit[i].face, visit[(i + 1) % 5].face, visit[(i + 2) % 5].face, v);
+			insert_cube_vertexen (box, visit[i].face, visit[i].leave + 1, 1, v);
+			insert_cube_vertexen (box, visit[(i + 1) % 5].face, visit[(i + 1) % 5].leave + 1, 1, v);
+			insert_cube_vertexen (box, visit[(i + 2) % 5].face, visit[(i + 4) % 5].leave + 1, 1, v);
+
 		} else {
 			unsigned int sel = (((abs (visit[2].face - visit[0].face) == 3) << 2)
 								| ((abs (visit[3].face - visit[1].face) == 3) << 1)
