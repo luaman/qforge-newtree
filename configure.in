@@ -566,13 +566,25 @@ if test "x$enable_alsa" != "xno"; then
 			[
 #include <sys/asoundlib.h>
 #if defined(SND_LIB_MAJOR) && defined(SND_LIB_MINOR)
-#if SND_LIB_MAJOR>0 || (SND_LIB_MAJOR==0 && SND_LIB_MINOR>=5)
+#if SND_LIB_MAJOR>0 || (SND_LIB_MAJOR==0 && SND_LIB_MINOR==5)
 QF_maGiC_VALUE
 #endif
 #endif
 			],
-			SNDTYPE="ALSA"
-			SOUND_LIBS="-lasound"
+			SNDTYPE="ALSA_0_5"
+			SOUND_LIBS="-lasound",
+			AC_EGREP_CPP([QF_maGiC_VALUE],
+				[
+#include <sys/asoundlib.h>
+#if defined(SND_LIB_MAJOR) && defined(SND_LIB_MINOR)
+#if SND_LIB_MAJOR>0 || (SND_LIB_MAJOR==0 && SND_LIB_MINOR>=6)
+QF_maGiC_VALUE
+#endif
+#endif
+				],
+				SNDTYPE="ALSA_0_6"
+				SOUND_LIBS="-lasound"
+			)
 		)
 	fi
 fi
@@ -649,18 +661,18 @@ else
 fi
 AC_SUBST(SOUND_LIBS)
 AC_SUBST(SOUND_CFLAGS)
-AM_CONDITIONAL(SNDTYPE_ALSA, test "$SNDTYPE" = "ALSA")
+AM_CONDITIONAL(SNDTYPE_ALSA_0_5, test "$SNDTYPE" = "ALSA_0_5")
+AM_CONDITIONAL(SNDTYPE_ALSA_0_6, test "$SNDTYPE" = "ALSA_0_6")
 AM_CONDITIONAL(SNDTYPE_MME, test "$SNDTYPE" = "MME")
 AM_CONDITIONAL(SNDTYPE_OSS, test "$SNDTYPE" = "OSS")
 AM_CONDITIONAL(SNDTYPE_SUN, test "$SNDTYPE" = "SUN")
 AM_CONDITIONAL(SNDTYPE_WIN32, test "$SNDTYPE" = "WIN32")
-AM_CONDITIONAL(SNDTYPE_NULL, test "$SNDTYPE" != "ALSA" -a "$SNDTYPE" != "MME" -a "$SNDTYPE" != "OSS" -a "$SNDTYPE" != "SUN" -a "$SNDTYPE" != "WIN32")
+AM_CONDITIONAL(SNDTYPE_NULL, test "$SNDTYPE" != "ALSA_0_5" -a "$SNDTYPE" != "ALSA_0_6" -a "$SNDTYPE" != "MME" -a "$SNDTYPE" != "OSS" -a "$SNDTYPE" != "SUN" -a "$SNDTYPE" != "WIN32")
 
 dnl ==================================================================
 dnl Checks for CD-ROM
 dnl ==================================================================
 
-SNDTYPE=""
 CD_LIBS=""
 CD_CFLAGS=""
 AC_MSG_CHECKING(for CD audio support)
@@ -994,4 +1006,5 @@ AC_MSG_RESULT([
 	System game data directory: $sharepath
 	Per-user game data directory: $userpath
 	Global configuration file: $globalconf
+	Sound sytem: $SNDTYPE
 ])

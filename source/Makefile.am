@@ -88,8 +88,11 @@ EXTRA_libqfsys_cl_a_SOURCES= cl_sys_unix.c cl_sys_win.c sys_win.c sys_unix.c fnm
 #
 # ... Digital audio
 #
-if SNDTYPE_ALSA
-libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_alsa.c
+if SNDTYPE_ALSA_0_5
+libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_5.c
+endif
+if SNDTYPE_ALSA_0_6
+libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_6.c
 endif
 if SNDTYPE_MME
 libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_mme.c
@@ -106,7 +109,8 @@ endif
 if SNDTYPE_NULL
 libqfsnd_a_SOURCES = snd_null.c
 endif
-EXTRA_libqfsnd_a_SOURCES = snd_dma.c snd_mem.c snd_mix.c snd_alsa.c snd_oss.c snd_sun.c snd_win.c snd_null.c
+EXTRA_libqfsnd_a_SOURCES= snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_5.c \
+			snd_alsa_0_6.c snd_oss.c snd_sun.c snd_win.c snd_null.c
 
 #
 # ... CD audio
