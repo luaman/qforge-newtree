@@ -30,14 +30,15 @@
 # include "config.h"
 #endif
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
 #ifndef WIN32
-#include <sys/signal.h>
+# include <sys/signal.h>
 #endif
+
 #include <SDL.h>
 
 #include "console.h"
@@ -48,19 +49,19 @@
 #include "sys.h"
 #include "va.h"
 
-#define	WARP_WIDTH	320
-#define	WARP_HEIGHT	200
-
-static qboolean vid_initialized = false;
-
-cvar_t     *vid_fullscreen;
-
 #ifdef WIN32
 /* fixme: this is evil hack to get full DirectSound support with SDL */
 #include <windows.h>
 #include <SDL_syswm.h>
 HWND 		mainwindow;
 #endif
+
+#define	WARP_WIDTH	320
+#define	WARP_HEIGHT	200
+
+static qboolean vid_initialized = false;
+
+cvar_t     *vid_fullscreen;
 
 int         VID_options_items = 1;
 int         modestate;

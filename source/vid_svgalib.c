@@ -34,10 +34,8 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <stdio.h>
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+# include <unistd.h>
 #endif
 #if defined(HAVE_SYS_IO_H)
 # include <sys/io.h>
@@ -45,17 +43,18 @@
 # include <asm/io.h>
 #endif
 
+#include <stdio.h>
 #include <vga.h>
 
-#include "host.h"
-#include "d_local.h"
-#include "cvar.h"
 #include "cmd.h"
-#include "sys.h"
 #include "console.h"
+#include "cvar.h"
+#include "d_local.h"
+#include "host.h"
 #include "input.h"
 #include "qargs.h"
 #include "qendian.h"
+#include "sys.h"
 
 void        VGA_UpdatePlanarScreen (void *srcbuffer);
 

@@ -30,8 +30,12 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <string.h>
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
 
 #ifdef _WIN32
 // must be BEFORE include gl/gl.h
@@ -59,7 +63,7 @@ cvar_t     *vid_mode;
 
 /*-----------------------------------------------------------------------*/
 
-int         texture_mode = GL_LINEAR;
+int         texture_mode = GL_LINEAR_MIPMAP_LINEAR; // DESPAIR: was GL_LINEAR
 int         texture_extension_number = 1;
 float       gldepthmin, gldepthmax;
 
@@ -228,8 +232,10 @@ GL_Init_Common (void)
 
 	glShadeModel (GL_FLAT);
 
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // DESPAIR: was GL_LINEAR
+	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 

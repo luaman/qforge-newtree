@@ -29,13 +29,13 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
 #include <SDL.h>
 
 #include "cvar.h"
@@ -46,6 +46,13 @@
 #include "va.h"
 #include "vid.h"
 
+#ifdef WIN32
+/* fixme: this is evil hack to get full DirectSound support with SDL */
+#include <windows.h>
+#include <SDL_syswm.h>
+HWND 		mainwindow;
+#endif
+
 // static float oldin_grab = 0;
 
 cvar_t     *vid_fullscreen;
@@ -54,13 +61,6 @@ unsigned short d_8to16table[256];
 
 int         modestate;					// fixme: just to avoid cross-comp.
                                                         // errors - remove later
-
-#ifdef WIN32
-/* fixme: this is evil hack to get full DirectSound support with SDL */
-#include <windows.h>
-#include <SDL_syswm.h>
-HWND 		mainwindow;
-#endif
 
 // The original defaults
 #define    BASEWIDTH    320
