@@ -22,4 +22,6 @@ o? fullbrights on models (yeah, we have to..)
 ?  wad loader should load wad3 and fall back to wad2 if necessary
 ?  better control over client console logging
 ?  ban reasons and expire times
-
+o  "proxy" cvars (cl_muzzleflash, v_bonusflash)
+o  teamplay messages ($location, $health; %L, %h?; cl_parsesay)
+o  triggers (f_respawn, f_death, f_took; cl_triggers)
