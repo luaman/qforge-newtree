@@ -1,7 +1,7 @@
 /*
 	snd_mem.c
 
-	@description@
+	sound caching
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
