@@ -206,7 +206,7 @@ void SV_FinalMessage (char *message)
 {
 	int			i;
 	client_t	*cl;
-	
+
 	SZ_Clear (&net_message);
 	MSG_WriteByte (&net_message, svc_print);
 	MSG_WriteByte (&net_message, PRINT_HIGH);
@@ -1278,10 +1278,10 @@ SV_ReadPackets
 */
 void SV_ReadPackets (void)
 {
-	int			i;
+	int		i;
 	client_t	*cl;
 	qboolean	good;
-	int			qport;
+	int		qport;
 
 	good = false;
 	while (NET_GetPacket ())
@@ -1296,6 +1296,12 @@ void SV_ReadPackets (void)
 		if (*(int *)net_message.data == -1)
 		{
 			SV_ConnectionlessPacket ();
+			continue;
+		}
+
+		if (net_message.cursize < 11)
+		{
+			Con_Printf ("%s: Runt packet\n",NET_AdrToString(net_from));
 			continue;
 		}
 
@@ -1333,7 +1339,7 @@ void SV_ReadPackets (void)
 
 		if (i != MAX_CLIENTS)
 			continue;
-	
+
 		// packet is not from a known client
 		//	Con_Printf ("%s:sequenced packet without connection\n"
 		// ,NET_AdrToString(net_from));
@@ -1772,7 +1778,7 @@ void SV_ExtractFromUserinfo (client_t *cl)
 			} else if (cl->lastnamecount++ > 4) {
 				SV_BroadcastPrintf (PRINT_HIGH, "%s was kicked for name spam\n", cl->name);
 				SV_ClientPrintf (cl, PRINT_HIGH, "You were kicked from the game for name spamming\n");
-				SV_DropClient (cl); 
+				SV_DropClient (cl);
 				return;
 			}
 		}
@@ -1782,7 +1788,7 @@ void SV_ExtractFromUserinfo (client_t *cl)
 	}
 
 
-	strncpy (cl->name, val, sizeof(cl->name)-1);	
+	strncpy (cl->name, val, sizeof(cl->name)-1);
 
 	// rate command
 	val = Info_ValueForKey (cl->userinfo, "rate");
@@ -1860,7 +1866,7 @@ void SV_Init (quakeparms_t *parms)
 	Sys_Init ();
 
 	Cbuf_Init ();
-	Cmd_Init ();	
+	Cmd_Init ();
 	SV_InitOperatorCommands	();
 
 	// execute +set as early as possible
