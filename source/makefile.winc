@@ -1,8 +1,14 @@
-include <win32.mak>
-#!include <winopt.mak>
-all:client.exe
-LIBS=winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib  comctl32.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib  ole32.lib oleaut32.lib uuid.lib   E:\quakesrc\q1src\libs\dinput.lib E:\quakesrc\q1src\libs\dxguid.lib E:\quakesrc\q1src\libs\mgllt.lib
-NCFLAGS=-c -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo -DWIN32 -D_WIN32 -D_MT -ML -IE:\quakesrc\q1src\incs -Ox -D_WINDOWS -DNoAsm -Zl -I..\include
+include <win32.mak>             # Microsoft VC6++
+#!include <winopt.mak>          # Use to compile with Intel's compiler
+
+all:glclient.exe
+
+INCPATH=E:\quakesrc\q1src\incs  # Path to other includes (mgl, etc)
+MGLPATH=E:\quakesrc\q1src\libs  # Path to other librarys (mgl)
+DXPATH=E:\quakesrc\q1src\libs   # Path to other librarys (DirectX)
+
+LIBS=winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib  comctl32.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib  ole32.lib oleaut32.lib uuid.lib   $(DXPATH)\dinput.lib $(DXPATH)\dxguid.lib $(MGLPATH)\mgllt.lib
+NCFLAGS=-c -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo -DWIN32 -D_WIN32 -D_MT -ML -I$(INCPATH) -Ox -D_WINDOWS -DNoAsm -Zl -I..\include
 COM_sources=\
   net_chan.obj \
   net_com.obj \
