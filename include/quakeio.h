@@ -27,8 +27,8 @@
 
 	$Id$
 */
-#ifndef __quake_io_h
-#define __quake_io_h
+#ifndef _QUAKEIO_H
+#define _QUAKEIO_H
 
 #include <stdio.h>
 
@@ -61,4 +61,4 @@ int Qflush(QFile *file);
 int Qeof(QFile *file);
 
 
-#endif /*__quake_io_h*/
+#endif /*_QUAKEIO_H*/
