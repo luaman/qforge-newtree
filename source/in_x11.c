@@ -343,6 +343,17 @@ event_button (XEvent * event)
 	}
 }
 
+static void
+event_focusout (XEvent * event)
+{
+	XAutoRepeatOn (x_disp);
+}
+
+static void
+event_focusin (XEvent * event)
+{
+	XAutoRepeatOff (x_disp);
+}
 
 static void
 center_pointer (void)
@@ -522,23 +533,22 @@ IN_Init (void)
 
 	JOY_Init ();
 
-	if (COM_CheckParm ("-nomouse"))
-		return;
-
-	dga_avail = VID_CheckDGA (x_disp, NULL, NULL, NULL);
-	if (vid_fullscreen->int_val) {
-		Cvar_Set (_windowed_mouse, "1");
-		_windowed_mouse->flags |= CVAR_ROM;
-	}
-
-	mouse_x = mouse_y = 0.0;
-	mouse_avail = 1;
-
 	X11_AddEvent (KeyPress, &event_key);
 	X11_AddEvent (KeyRelease, &event_key);
-	X11_AddEvent (ButtonPress, &event_button);
-	X11_AddEvent (ButtonRelease, &event_button);
-	X11_AddEvent (MotionNotify, &event_motion);
+	X11_AddEvent (FocusIn, &event_focusin);
+	X11_AddEvent (FocusOut, &event_focusout);
+
+	if (!COM_CheckParm ("-nomouse")) {
+		dga_avail = VID_CheckDGA (x_disp, NULL, NULL, NULL);
+		if (vid_fullscreen->int_val) {
+			Cvar_Set (_windowed_mouse, "1");
+			_windowed_mouse->flags |= CVAR_ROM;
+		}
+
+		X11_AddEvent (ButtonPress, &event_button);
+		X11_AddEvent (ButtonRelease, &event_button);
+		X11_AddEvent (MotionNotify, &event_motion);
+	}
 
 	Cmd_AddCommand ("force_centerview", Force_CenterView_f, "Force view of player to center");
 }

@@ -55,6 +55,9 @@
 #ifdef HAVE_WINSOCK_H
 # include <winsock.h>
 #endif
+#ifdef HAVE_RPC_TYPES_H
+# include <rpc/types.h>
+#endif
 
 #include <setjmp.h>
 

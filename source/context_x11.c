@@ -54,7 +54,6 @@
 #include <X11/extensions/XShm.h>
 #include <errno.h>
 #include <limits.h>
-#include <sys/poll.h>
 
 #ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
@@ -440,7 +439,7 @@ X11_ForceViewPort (void)
 	if (vidmode_active && vid_fullscreen->int_val) {
 		do {
 			XF86VidModeSetViewPort (x_disp, x_screen, 0, 0);
-			poll (0, 0, 50);
+			usleep (50);
 			XF86VidModeGetViewPort (x_disp, x_screen, &x, &y);
 		} while (x || y);
 	}

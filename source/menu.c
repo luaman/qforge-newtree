@@ -154,6 +154,8 @@ cvar_t	*contrast;
 
 void        M_ConfigureNetSubsystem (void);
 
+extern cvar_t *confirm_quit;
+
 //=============================================================================
 /* Support Routines */
 
@@ -997,6 +999,10 @@ M_Menu_Quit_f (void)
 {
 	if (m_state == m_quit)
 		return;
+	if (!confirm_quit->int_val) {
+		CL_Disconnect ();
+		Sys_Quit ();
+	}
 	wasInMenus = (key_dest == key_menu);
 	key_dest = key_menu;
 	m_quit_prevstate = m_state;
