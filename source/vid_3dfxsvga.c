@@ -41,17 +41,6 @@
 #include <glide/sst1vid.h>
 #include <sys/signal.h>
 
-#ifdef HAVE_DLFCN_H
-# include <dlfcn.h>
-#endif
-#ifndef RTLD_LAZY
-# ifdef DL_LAZY
-#  define RTLD_LAZY     DL_LAZY
-# else
-#  define RTLD_LAZY     0
-# endif
-#endif
-
 #include "console.h"
 #include "glquake.h"
 #include "qargs.h"
@@ -65,14 +54,15 @@
 #define WARP_WIDTH              320
 #define WARP_HEIGHT             200
 
-static fxMesaContext fc = NULL;
+// FIXME!!!!! This belongs in include/qfgl_ext.h -- deek
+typedef void (GLAPIENTRY *QF_3DfxSetDitherModeEXT) (GrDitherMode_t mode);
 
-static void *dlhand;
+static fxMesaContext fc = NULL;
 
 int	VID_options_items = 0;
 
-extern void GL_Init_Common(void);
-extern void VID_Init8bitPalette(void);
+extern void GL_Init_Common (void);
+extern void VID_Init8bitPalette (void);
 /*-----------------------------------------------------------------------*/
 
 void
@@ -95,7 +85,7 @@ signal_handler(int sig)
 }
 
 void
-InitSig(void)
+InitSig (void)
 {
 	signal(SIGHUP, signal_handler);
 	signal(SIGINT, signal_handler);
@@ -109,8 +99,6 @@ InitSig(void)
 	signal(SIGTERM, signal_handler);
 }
 
-typedef void (GLAPIENTRY *gl3DfxSetDitherModeEXT_FUNC) (GrDitherMode_t mode);
-
 /*
 ===============
 GL_Init
@@ -123,17 +111,10 @@ GL_Init (void)
 
 	Con_Printf ("Dithering: ");
 
-	dlhand = dlopen (NULL, RTLD_LAZY);
+	if (QFGL_ExtensionPresent ("3DFX_set_dither_mode")) {
+		QF_gl3DfxSetDitherModeEXT dither_select = NULL;
 
-	if (dlhand == NULL) {
-		Con_Printf ("unable to set.\n");
-		return;
-	}
-
-	if (strstr(gl_extensions, "3DFX_set_dither_mode")) {
-		gl3DfxSetDitherModeEXT_FUNC dither_select = NULL;
-
-		dither_select = (void *) dlsym(dlhand, "gl3DfxSetDitherModeEXT");
+		dither_select = QFGL_ExtensionAddress ("gl3DfxSetDitherModeEXT");
 
 		if (COM_CheckParm ("-dither_2x2")) {
 			dither_select(GR_DITHER_2x2);
@@ -146,19 +127,17 @@ GL_Init (void)
 			Con_Printf ("disabled.\n");
 		}
 	}
-	dlclose(dlhand);
-	dlhand = NULL;
 }
 
 void
 GL_EndRendering (void)
 {
-	glFlush();
-	fxMesaSwapBuffers();
+	glFlush ();
+	fxMesaSwapBuffers ();
 	Sbar_Changed ();
 }
 
-static int resolutions[][3]={
+static int resolutions[][3] = {
 	{ 320,	200,	GR_RESOLUTION_320x200 },
 	{ 320,	240,	GR_RESOLUTION_320x240 },
 	{ 400,	256,	GR_RESOLUTION_400x256 },
@@ -211,7 +190,7 @@ static int resolutions[][3]={
 
 
 static int
-findres(int *width, int *height)
+findres (int *width, int *height)
 {
 	int i;
 
@@ -229,12 +208,8 @@ findres(int *width, int *height)
 	return GR_RESOLUTION_640x480;
 }
 
-typedef void (GLAPIENTRY *glColorTableEXT_FUNC) (GLenum, GLenum, GLsizei, 
-		GLenum, GLenum, const GLvoid *);
-typedef void (GLAPIENTRY *gl3DfxSetPaletteEXT_FUNC) (GLuint *pal);
-
 void
-VID_Init(unsigned char *palette)
+VID_Init (unsigned char *palette)
 {
 	int i;
 	GLint attribs[32];
@@ -244,11 +219,11 @@ VID_Init(unsigned char *palette)
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.colormap = host_colormap;
-	vid.fullbright = 256 - LittleLong (*((int *)vid.colormap + 2048));
+	vid.fullbright = 256 - LittleLong (*((int *) vid.colormap + 2048));
 
-// interpret command-line params
+	// interpret command-line params
 
-// set vid parameters
+	// set vid parameters
 	attribs[0] = FXMESA_DOUBLEBUFFER;
 	attribs[1] = FXMESA_ALPHA_SIZE;
 	attribs[2] = 1;
@@ -256,49 +231,44 @@ VID_Init(unsigned char *palette)
 	attribs[4] = 1;
 	attribs[5] = FXMESA_NONE;
 
-	if ((i = COM_CheckParm("-conwidth")) != 0)
+	if ((i = COM_CheckParm ("-conwidth")))
 		vid.conwidth = atoi(com_argv[i+1]);
 	else
 		vid.conwidth = 640;
 
 	vid.conwidth &= 0xfff8; // make it a multiple of eight
 
-	if (vid.conwidth < 320)
-		vid.conwidth = 320;
+	vid.conwidth = max (vid.conwidth, 320);
 
 	// pick a conheight that matches with correct aspect
-	vid.conheight = vid.conwidth*3 / 4;
+	vid.conheight = vid.conwidth * 3 / 4;
 
 	if ((i = COM_CheckParm("-conheight")) != 0)
 		vid.conheight = atoi(com_argv[i+1]);
-	if (vid.conheight < 200)
-		vid.conheight = 200;
 
-	fc = fxMesaCreateContext(0, findres(&scr_width, &scr_height),
+	vid.conheight = max (vid.conheight, 200);
+
+	fc = fxMesaCreateContext (0, findres (&scr_width, &scr_height),
 				 GR_REFRESH_75Hz, attribs);
 	if (!fc)
-		Sys_Error("Unable to create 3DFX context.\n");
+		Sys_Error ("Unable to create 3DFX context.\n");
 
-	fxMesaMakeCurrent(fc);
+	fxMesaMakeCurrent (fc);
 
-	if (vid.conheight > scr_height)
-		vid.conheight = scr_height;
-	if (vid.conwidth > scr_width)
-		vid.conwidth = scr_width;
-	vid.width = vid.conwidth;
-	vid.height = vid.conheight;
+	vid.width = vid.conwidth = min (vid.conwidth, scr_width);
+	vid.height = vid.conheight = min (vid.conheight, scr_height);
 
-	vid.aspect = ((float)vid.height / (float)vid.width) * (320.0 / 240.0);
+	vid.aspect = ((float) vid.height / (float) vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
 
-	InitSig(); // trap evil signals
+	InitSig (); // trap evil signals
 
-	GL_Init();
+	GL_Init ();
 
-	VID_SetPalette(palette);
+	VID_SetPalette (palette);
 
 	// Check for 3DFX Extensions and initialize them.
-	VID_Init8bitPalette();
+	VID_Init8bitPalette ();
 
 	Con_Printf ("Video mode %dx%d initialized.\n", scr_width, scr_height);
 
@@ -306,18 +276,18 @@ VID_Init(unsigned char *palette)
 }
 
 void
-VID_Init_Cvars()
+VID_Init_Cvars (void)
 {
 }
 
 void
-VID_ExtraOptionDraw(unsigned int options_draw_cursor)
+VID_ExtraOptionDraw (unsigned int options_draw_cursor)
 {
 /* Port specific Options menu entrys */
 }
 
 void
-VID_ExtraOptionCmd(int option_cursor)
+VID_ExtraOptionCmd (int option_cursor)
 {
 /*
 	switch(option_cursor)
