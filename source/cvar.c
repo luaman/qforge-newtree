@@ -482,12 +482,13 @@ Cvar_Get (char *name, char *string, int cvarflags, char *description)
 		v->description = description;
 		v->value = atof (v->string);
 		v->int_val = atoi (v->string);
-		return v;
+	} else {
+		// Cvar does exist, so we update the flags and return.
+		v->flags &= ~CVAR_USER_CREATED;
+		v->flags |= cvarflags;
+		v->description = description;
 	}
-	// Cvar does exist, so we update the flags and return.
-	v->flags &= ~CVAR_USER_CREATED;
-	v->flags |= cvarflags;
-	v->description = description;
+	Cvar_Info (v);
 
 	return v;
 }
