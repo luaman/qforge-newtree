@@ -1092,10 +1092,21 @@ COM_Filesystem_Init (void)
 void
 COM_Filesystem_Init_Cvars (void)
 {
-	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH, CVAR_ROM,
-							 "location of shared (read only) game directories");
-	fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
-							"location of your game directories");
+	int t = COM_CheckParm("-basedir");
+	if (t && (t + 1) < com_argc)
+	{
+		fs_sharepath = Cvar_Get ("fs_sharepath", com_argv[t+1], CVAR_ROM,
+								 "location of shared (read only) game directories");
+		fs_userpath = Cvar_Get ("fs_userpath", com_argv[t+1], CVAR_ROM,
+								"location of your game directories");
+	}
+	else
+	{
+		fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH, CVAR_ROM,
+								 "location of shared (read only) game directories");
+		fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
+								"location of your game directories");
+	}
 	fs_basegame = Cvar_Get ("fs_basegame", BASEGAME, CVAR_ROM,
 							"game to use by default");
 }
