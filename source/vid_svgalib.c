@@ -68,6 +68,7 @@ static vga_modeinfo	*modes;
 static byte vid_current_palette[768];
 
 static int	svgalib_inited=0;
+static int	svgalib_backgrounded=0;
 static int	UseDisplay = 1;
 
 static cvar_t	*vid_mode;
@@ -90,7 +91,7 @@ D_BeginDirectRect (int x, int y, byte *pbitmap, int width, int height)
 {
 	int i, j, k, plane, reps, repshift, offset, vidpage, off;
 
-	if (!svgalib_inited || !vid.direct || !vga_oktowrite()) return;
+	if (!svgalib_inited || !vid.direct || svgalib_backgrounded || !vga_oktowrite()) return;
 
 	if (vid.aspect > 1.5) {
 		reps = 2;
@@ -150,7 +151,7 @@ D_EndDirectRect (int x, int y, int width, int height)
 {
 	int i, j, k, plane, reps, repshift, offset, vidpage, off;
 
-	if (!svgalib_inited || !vid.direct || !vga_oktowrite()) return;
+	if (!svgalib_inited || !vid.direct || svgalib_backgrounded || !vga_oktowrite()) return;
 
 	if (vid.aspect > 1.5) {
 		reps = 2;
@@ -444,7 +445,7 @@ VID_SetPalette(byte *palette)
 	int *tp;
 	int i;
 
-	if (!svgalib_inited) return;
+	if (!svgalib_inited || svgalib_backgrounded) return;
 
 	memcpy(vid_current_palette, palette, sizeof(vid_current_palette));
 
@@ -532,6 +533,18 @@ VID_SetMode (int modenum, unsigned char *palette)
 	return 1;
 }
 
+static void
+goto_background (void)
+{
+	svgalib_backgrounded = 1;
+}
+
+static void
+comefrom_background (void)
+{
+	svgalib_backgrounded = 0;
+}
+
 
 void
 VID_Init(unsigned char *palette)
@@ -551,6 +564,15 @@ VID_Init(unsigned char *palette)
 		err = vga_init();
 		if (err)
 			Sys_Error("SVGALib failed to allocate a new VC\n");
+
+		if (vga_runinbackground_version () == 1) {
+			Con_Printf ("SVGALIB background support detected\n");
+			vga_runinbackground (VGA_GOTOBACK, goto_background);
+			vga_runinbackground (VGA_COMEFROMBACK, comefrom_background);
+			vga_runinbackground (1);
+		} else {
+			vga_runinbackground (0);
+		}
 
 		VID_InitModes();
 
@@ -585,13 +607,7 @@ VID_Init(unsigned char *palette)
 		VID_SetMode(current_mode, palette);
 
 		VID_SetPalette(palette);
-
-		/* XoXus: Running in background is just plain bad... */
-		vga_runinbackground(0);
 	}
-
-	/* XoXus: Why was input initialised here?!? */
-	/* IN_Init(); */
 }
 
 void
@@ -607,7 +623,7 @@ VID_Init_Cvars ()
 void
 VID_Update(vrect_t *rects)
 {
-	if (!svgalib_inited) return;
+	if (!svgalib_inited || svgalib_backgrounded) return;
 
 	if (!vga_oktowrite()) {
 		/* Can't update screen if it's not active */
