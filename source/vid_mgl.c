@@ -47,6 +47,7 @@
 #include "sound.h"
 #include "cdaudio.h"
 #include "qargs.h"
+#include "host.h"
 
 #define	MINIMUM_MEMORY	0x550000
 

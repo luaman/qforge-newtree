@@ -45,6 +45,7 @@
 #include "cl_input.h"
 #include "view.h"
 //#include "dosisms.h"
+#include "host.h"
 
 #define DINPUT_BUFFERSIZE           16
 #define iDirectInputCreate(a,b,c,d)	pDirectInputCreate(a,b,c,d)

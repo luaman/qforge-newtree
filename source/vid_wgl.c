@@ -45,6 +45,7 @@
 #include "cdaudio.h"
 #include "console.h"
 #include "sbar.h"
+#include "host.h"
 
 extern void (*vid_menudrawfn)(void);
 extern void (*vid_menukeyfn)(int);

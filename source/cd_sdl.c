@@ -41,6 +41,7 @@
 #include "console.h"
 #include "cdaudio.h"
 #include "cmd.h"
+#include "host.h"
 
 extern  cvar_t  *bgmvolume;
 

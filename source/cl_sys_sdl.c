@@ -60,6 +60,7 @@
 #include "qargs.h"
 #include "qargs.h"
 #include "client.h"
+#include "host.h"
 
 qboolean is_server = false;
 
