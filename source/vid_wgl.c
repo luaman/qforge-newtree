@@ -910,6 +910,8 @@ AppActivate (BOOL fActive, BOOL minimize)
                                                 Sys_Error ("Couldn't set fullscreen DIB mode (try upgrading your video drivers)");
                                 }
                                 ShowWindow (mainwindow, SW_SHOWNORMAL);
+
+                                // Fix for alt-tab bug in NVidia drivers
                                 MoveWindow(mainwindow,0,0,gdevmode.dmPelsWidth,gdevmode.dmPelsHeight,false);
 			}
 		}
