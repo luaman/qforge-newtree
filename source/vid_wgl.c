@@ -1787,7 +1787,6 @@ void	VID_Init (unsigned char *palette)
 
 	DestroyWindow (hwnd_dialog);
 
-	GL_CheckGamma(palette);
 	VID_SetPalette (palette);
 
 	VID_SetMode (vid_default, palette);

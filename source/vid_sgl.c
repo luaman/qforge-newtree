@@ -405,7 +405,6 @@ VID_Init (unsigned char *palette)
 	snprintf(gldir, sizeof(gldir), "%s/glquake", com_gamedir);
 	Sys_mkdir (gldir);
 
-	GL_CheckGamma (palette);
 	VID_SetPalette (palette);
 
 	// Check for 3DFX Extensions and initialize them.
