@@ -80,8 +80,7 @@ byte	mod_novis[MAX_MAP_LEAFS/8];
 
 #define	MAX_MOD_KNOWN	512
 model_t	mod_known[MAX_MOD_KNOWN];
-int		mod_numknown;
-
+int             mod_numknown, bspversion;
 unsigned *model_checksum;
 texture_t *r_notexture_mip;
 cvar_t *gl_subdivide_size;
@@ -548,6 +547,9 @@ void Mod_LoadEntities (lump_t *l)
 	}
 	loadmodel->entities = Hunk_AllocName ( l->filelen, loadname);	
 	memcpy (loadmodel->entities, mod_base + l->fileofs, l->filelen);
+
+        if (bspversion > 29)
+                CL_ParseEntityLump(loadmodel->entities);
 }
 
 
@@ -802,10 +804,12 @@ void Mod_LoadFaces (lump_t *l)
 		for (i=0 ; i<MAXLIGHTMAPS ; i++)
 			out->styles[i] = in->styles[i];
 		i = LittleLong(in->lightofs);
-		if (i == -1)
-			out->samples = NULL;
-		else
-			out->samples = loadmodel->lightdata + (i * 3);
+                if (i == -1)
+                        out->samples = NULL;
+                else if (bspversion > 29)
+                        out->samples = loadmodel->lightdata + i;
+                else
+                        out->samples = loadmodel->lightdata + (i * 3);
 		
 	// set the drawing flags flag
 		
@@ -1172,8 +1176,10 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 	header = (dheader_t *)buffer;
 
 	i = LittleLong (header->version);
-	if (i != BSPVERSION)
+        if ((i != BSPVERSION) && (i != 30))
 		SV_Error ("Mod_LoadBrushModel: %s has wrong version number (%i should be %i)", mod->name, i, BSPVERSION);
+
+        bspversion = i;
 
 // swap all the lumps
 	mod_base = (byte *)header;
@@ -1199,11 +1205,17 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 
 // load into heap
 
+        Mod_LoadEntities (&header->lumps[LUMP_ENTITIES]);
 	Mod_LoadVertexes (&header->lumps[LUMP_VERTEXES]);
 	Mod_LoadEdges (&header->lumps[LUMP_EDGES]);
 	Mod_LoadSurfedges (&header->lumps[LUMP_SURFEDGES]);
-	Mod_LoadTextures (&header->lumps[LUMP_TEXTURES]);
-	Mod_LoadLighting (&header->lumps[LUMP_LIGHTING]);
+
+//        Mod_LoadTextures (&header->lumps[LUMP_TEXTURES]);
+//        Mod_LoadLighting (&header->lumps[LUMP_LIGHTING]);
+
+        HL_Mod_LoadTextures (&header->lumps[LUMP_TEXTURES]);
+        HL_Mod_LoadLighting (&header->lumps[LUMP_LIGHTING]);
+
 	Mod_LoadPlanes (&header->lumps[LUMP_PLANES]);
 	Mod_LoadTexinfo (&header->lumps[LUMP_TEXINFO]);
 	Mod_LoadFaces (&header->lumps[LUMP_FACES]);
@@ -1212,7 +1224,7 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 	Mod_LoadLeafs (&header->lumps[LUMP_LEAFS]);
 	Mod_LoadNodes (&header->lumps[LUMP_NODES]);
 	Mod_LoadClipnodes (&header->lumps[LUMP_CLIPNODES]);
-	Mod_LoadEntities (&header->lumps[LUMP_ENTITIES]);
+
 	Mod_LoadSubmodels (&header->lumps[LUMP_MODELS]);
 
 	Mod_MakeHull0 ();

@@ -152,6 +152,8 @@ typedef void (APIENTRY *lp3DFXFUNC) (int, int, int, int, int, const void*);
 lp3DFXFUNC glColorTableEXT;
 qboolean is8bit = false;
 qboolean isPermedia = false;
+int gl_mtex_enum = TEXTURE0_SGIS;
+qboolean gl_arb_mtex = false;
 qboolean gl_mtexable = false;
 
 //====================================
@@ -612,9 +614,9 @@ void CheckMultiTextureExtensions(void)
 	{
 		Con_Printf ("GL_ARB_multitexture\n");
 		qglMTexCoord2f =
-			(void *)wglGetProcAddress("glMTexCoord2fARB");
-		qglSelectTexture =
-			(void *)wglGetProcAddress("glSelectTextureARB");
+                        (void *)wglGetProcAddress("glMultiTexCoord2fARB");
+                qglSelectTexture =
+                          (void *) wglGetProcAddress("glActiveTextureARB");
 		gl_mtex_enum = GL_TEXTURE0_ARB;
 		gl_mtexable = true;
 		gl_arb_mtex = true;

@@ -1405,7 +1405,7 @@ void GL_SelectTexture (GLenum target)
 {
 	if (!gl_mtexable)
 		return;
-	qglSelectTexture (target + gl_mtex_enum);
+        qglSelectTexture(target+gl_mtex_enum);
 	if (target == oldtarget) 
 		return;
 	cnttextures[oldtarget] = currenttexture;
