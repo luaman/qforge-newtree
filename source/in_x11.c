@@ -535,7 +535,7 @@ IN_Init (void)
 	x11_add_event (ButtonRelease, &event_button);
 	x11_add_event (MotionNotify, &event_motion);
 
-	Cmd_AddCommand ("force_centerview", Force_CenterView_f, "No Description");
+	Cmd_AddCommand ("force_centerview", Force_CenterView_f, "Force view of player to center");
 }
 
 void

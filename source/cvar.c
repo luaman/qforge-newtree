@@ -471,11 +471,12 @@ Cvar_Init (void)
 {
 	developer = Cvar_Get ("developer", "0", 0, "set to enable extra debugging information");
 
-	Cmd_AddCommand ("set", Cvar_Set_f, "No Description");
-	Cmd_AddCommand ("setrom", Cvar_Setrom_f, "No Description");
-	Cmd_AddCommand ("toggle", Cvar_Toggle_f, "No Description");
-	Cmd_AddCommand ("help", Cvar_Help_f, "No Description");
-	Cmd_AddCommand ("cvarlist", Cvar_CvarList_f, "No Description");
+	Cmd_AddCommand ("set", Cvar_Set_f, "Set the selected variable, useful on the command line (+set variablename setting)");
+	Cmd_AddCommand ("setrom", Cvar_Setrom_f, "Set the selected variable and make it read only, useful on the command line. 
+(+setrom variablename setting)");
+	Cmd_AddCommand ("toggle", Cvar_Toggle_f, "Toggle a cvar on or off");
+	Cmd_AddCommand ("help", Cvar_Help_f, "Display quake help");
+	Cmd_AddCommand ("cvarlist", Cvar_CvarList_f, "List all cvars");
 }
 
 void

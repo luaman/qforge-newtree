@@ -150,10 +150,10 @@ SV_Progs_Init (void)
 	sv_pr_state.unlink = SV_UnlinkEdict;
 	sv_pr_state.flush = SV_FlushSignon;
 
-	Cmd_AddCommand ("edict", ED_PrintEdict_f, "No Description");
-	Cmd_AddCommand ("edicts", ED_PrintEdicts_f, "No Description");
-	Cmd_AddCommand ("edictcount", ED_Count_f, "No Description");
-	Cmd_AddCommand ("profile", PR_Profile_f, "No Description");
+	Cmd_AddCommand ("edict", ED_PrintEdict_f, "Report information on a given edict in the game. (edict (edict number))");
+	Cmd_AddCommand ("edicts", ED_PrintEdicts_f, "Display information on all edicts in the game.");
+	Cmd_AddCommand ("edictcount", ED_Count_f, "Display summary information on the edicts in the game.");
+	Cmd_AddCommand ("profile", PR_Profile_f, "FIXME: Report information about QuakeC Stuff (???) No Description");
 }
 
 void

@@ -265,7 +265,7 @@ IN_InitMouse (void)
 	char       *mousedev;
 	int         mouserate = MOUSE_DEFAULTSAMPLERATE;
 
-	Cmd_AddCommand ("force_centerview", Force_CenterView_f, "No Description");
+	Cmd_AddCommand ("force_centerview", Force_CenterView_f, "Force viewpoint of player to center");
 
 	mouse_buttons = 3;
 

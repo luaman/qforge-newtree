@@ -1603,13 +1603,14 @@ SV_InitLocal (void)
 	pausable = Cvar_Get ("pausable", "1", CVAR_NONE, "Toggle if server can be paused 1 is on, 0 is off");
 
 	// DoS protection
-	Cmd_AddCommand ("netdosexpire", SV_netDoSexpire_f, "No Description");
-	Cmd_AddCommand ("netdosvalues", SV_netDoSvalues_f, "No Description");
+	Cmd_AddCommand ("netdosexpire", SV_netDoSexpire_f, "FIXME: part of DoS protection obviously, but I don't know what it does. No Description");
+	Cmd_AddCommand ("netdosvalues", SV_netDoSvalues_f, "FIXME: part of DoS protection obviously, but I don't know what it does. No Description");
 
-	Cmd_AddCommand ("addip", SV_AddIP_f, "No Description");
-	Cmd_AddCommand ("removeip", SV_RemoveIP_f, "No Description");
-	Cmd_AddCommand ("listip", SV_ListIP_f, "No Description");
-	Cmd_AddCommand ("writeip", SV_WriteIP_f, "No Description");
+	Cmd_AddCommand ("addip", SV_AddIP_f, "Add a single IP or a domain of IPs to the IP list of the server.\n"
+		"Useful for banning people. (addip (ipnumber))");
+	Cmd_AddCommand ("removeip", SV_RemoveIP_f, "Remove an IP address from the server IP list. (removeip (ipnumber))");
+	Cmd_AddCommand ("listip", SV_ListIP_f, "Print out the current list of IPs on the server list.");
+	Cmd_AddCommand ("writeip", SV_WriteIP_f, "Record all IP addresses on the server IP list. The file name is listip.cfg");
 
 	for (i = 0; i < MAX_MODELS; i++)
 		snprintf (localmodels[i], sizeof (localmodels[i]), "*%i", i);

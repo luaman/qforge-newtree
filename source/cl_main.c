@@ -1139,46 +1139,54 @@ CL_Init (void)
 // register our commands
 //
 
-	Cmd_AddCommand ("version", CL_Version_f, "No Description");
+	Cmd_AddCommand ("version", CL_Version_f, "Report version information");
 
-	Cmd_AddCommand ("changing", CL_Changing_f, "No Description");
-	Cmd_AddCommand ("disconnect", CL_Disconnect_f, "No Description");
-	Cmd_AddCommand ("record", CL_Record_f, "No Description");
-	Cmd_AddCommand ("rerecord", CL_ReRecord_f, "No Description");
-	Cmd_AddCommand ("stop", CL_Stop_f, "No Description");
-	Cmd_AddCommand ("playdemo", CL_PlayDemo_f, "No Description");
-	Cmd_AddCommand ("timedemo", CL_TimeDemo_f, "No Description");
+	Cmd_AddCommand ("changing", CL_Changing_f, "Used when maps are changing");
+	Cmd_AddCommand ("disconnect", CL_Disconnect_f, "Disconnect from server");
+	Cmd_AddCommand ("record", CL_Record_f, "Record a demo 'record filename server'");
+	Cmd_AddCommand ("rerecord", CL_ReRecord_f, "Rerecord a demo on the same server");
+	Cmd_AddCommand ("stop", CL_Stop_f, "Stop recording a demo");
+	Cmd_AddCommand ("playdemo", CL_PlayDemo_f, "Play a recorded demo");
+	Cmd_AddCommand ("timedemo", CL_TimeDemo_f, "Play a demo as fast as your hardware can. Useful for benchmarking.");
 
-	Cmd_AddCommand ("maplist", COM_Maplist_f, "No Description");
+	Cmd_AddCommand ("maplist", COM_Maplist_f, "List maps available");
 
-	Cmd_AddCommand ("quit", CL_Quit_f, "No Description");
+	Cmd_AddCommand ("quit", CL_Quit_f, "Exit the program");
 
-	Cmd_AddCommand ("connect", CL_Connect_f, "No Description");
-	Cmd_AddCommand ("reconnect", CL_Reconnect_f, "No Description");
+	Cmd_AddCommand ("connect", CL_Connect_f, "Connect to a server 'connect hostname:port'");
+	Cmd_AddCommand ("reconnect", CL_Reconnect_f, "Reconnect to the last server");
 
-	Cmd_AddCommand ("rcon", CL_Rcon_f, "No Description");
-	Cmd_AddCommand ("packet", CL_Packet_f, "No Description");
-	Cmd_AddCommand ("user", CL_User_f, "No Description");
-	Cmd_AddCommand ("users", CL_Users_f, "No Description");
+	Cmd_AddCommand ("rcon", CL_Rcon_f, "Issue the set of commands to the server you are currently connected to or have set in rcon_address");
+	Cmd_AddCommand ("packet", CL_Packet_f, "Send a packet with specified contents to the destination");
+	Cmd_AddCommand ("user", CL_User_f, "Queries the user for his setinfo information");
+	Cmd_AddCommand ("users", CL_Users_f, "Report information on connected players and retrieve user ids");
+	Cmd_AddCommand ("setinfo", CL_SetInfo_f, "Sets information about your QuakeWorld user.\n"
+		"Used without a key it will list all of your current settings.\n"
+		"Specifying a non-existent key and a value will create the new key.\n"
 
-	Cmd_AddCommand ("setinfo", CL_SetInfo_f, "No Description");
-	Cmd_AddCommand ("fullinfo", CL_FullInfo_f, "No Description");
-	Cmd_AddCommand ("fullserverinfo", CL_FullServerinfo_f, "No Description");
+		"Special Keys:\n"
+		"b_switch - Determines the highest weapon that Quake should switch to upon a backpack pickup.\n"
+		"w_switch - Determines the highest weapon that Quake should switch to upon a weapon pickup.");
+		
+	Cmd_AddCommand ("fullinfo", CL_FullInfo_f, "Used by QuakeSpy and Qlist to set setinfo variables");
+	Cmd_AddCommand ("fullserverinfo", CL_FullServerinfo_f, "Used by QuakeSpy and Qlist to obtain server variables");
 
-	Cmd_AddCommand ("download", CL_Download_f, "No Description");
+	Cmd_AddCommand ("download", CL_Download_f, "Manually download a quake file from the server");
 
-	Cmd_AddCommand ("nextul", CL_NextUpload, "No Description");
-	Cmd_AddCommand ("stopul", CL_StopUpload, "No Description");
+	Cmd_AddCommand ("nextul", CL_NextUpload, "Tells the client to send the next upload");
+	Cmd_AddCommand ("stopul", CL_StopUpload, "Tells the client to stop uploading");
 
 //
 // forward to server commands
 //
-	Cmd_AddCommand ("kill", NULL, "No Description");
-	Cmd_AddCommand ("pause", NULL, "No Description");
-	Cmd_AddCommand ("say", NULL, "No Description");
-	Cmd_AddCommand ("say_team", NULL, "No Description");
-	Cmd_AddCommand ("serverinfo", NULL, "No Description");
+	Cmd_AddCommand ("kill", NULL, "Suicide :)");
+	Cmd_AddCommand ("pause", NULL, "Pause the game");
+	Cmd_AddCommand ("say", NULL, "Say something to all other players");
+	Cmd_AddCommand ("say_team", NULL, "Say something only to people on your team");
+	Cmd_AddCommand ("serverinfo", NULL, "Report the current server info");
+
 }
+
 
 
 void
@@ -1262,10 +1270,8 @@ CL_Init_Cvars (void)
 	cl_solid_players = Cvar_Get ("cl_solid_players", "1", CVAR_NONE,
 								 "Are players solid? If off, you can walk through them with difficulty");
 
-	/* Misty: FIXME: Nobody knows exactly what this does. Someone has to find 
-	   out, proboably me. */
 	localid = Cvar_Get ("localid", "", CVAR_NONE,
-						"FIXME: nobody knows what this does.");
+						"FIXME: This has something to do with client authentication. No Description");
 
 	// 
 	// info mirrors

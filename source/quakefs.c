@@ -1058,7 +1058,7 @@ COM_Filesystem_Init (void)
 {
 	int         i;
 
-	Cmd_AddCommand ("gamedir", COM_Gamedir_f, "No Description");
+	Cmd_AddCommand ("gamedir", COM_Gamedir_f, "Specifies the directory to be used while playing.");
 
 	// start up with basegame->string by default
 	COM_CreateGameDirectory (fs_basegame->string);

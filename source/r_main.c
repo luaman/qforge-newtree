@@ -238,9 +238,9 @@ R_Init (void)
 
 	R_InitTurb ();
 
-	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f, "No Description");
-	Cmd_AddCommand ("pointfile", R_ReadPointFile_f, "No Description");
-	Cmd_AddCommand ("loadsky", R_LoadSky_f, "No Description");
+	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f, "Tests the current refresh rate for the current location");
+	Cmd_AddCommand ("pointfile", R_ReadPointFile_f, "Load a pointfile to determine map leaks");
+	Cmd_AddCommand ("loadsky", R_LoadSky_f, "Load a skybox");
 
 	Cvar_SetValue (r_maxedges, (float) NUMSTACKEDGES);
 	Cvar_SetValue (r_maxsurfs, (float) NUMSTACKSURFACES);

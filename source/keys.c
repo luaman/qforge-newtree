@@ -752,9 +752,16 @@ Key_Init (void)
 //
 // register our functions
 //
-	Cmd_AddCommand ("bind", Key_Bind_f, "No Description");
-	Cmd_AddCommand ("unbind", Key_Unbind_f, "No Description");
-	Cmd_AddCommand ("unbindall", Key_Unbindall_f, "No Description");
+	Cmd_AddCommand ("bind", Key_Bind_f, "Assign a command or a set of commands to a key.\n"
+		"Note: To bind multiple commands to a key, enclose the commands in quotes and separate with semi-colons. \n"
+		"To bind to non-printable keys, use the key name.\n"
+		"Key Name List: Escape, F1-F12, pause, backspace, tab, semicolon, enter, shift, ctrl, alt, space, ins,\n"
+		"home, pgup, del, end, pgdn, uparrow, downarrow, leftarrow, rightarrow, mouse1-mouse3, aux1-aux9, joy1-joy4,\n"
+		"mwheelup, mwheeldown\n"
+		"Special: The escape, and ~ (tilde) keys can only be bound from an external configuration file.");
+
+	Cmd_AddCommand ("unbind", Key_Unbind_f, "Remove the bind from the the selected key");
+	Cmd_AddCommand ("unbindall", Key_Unbindall_f, "Remove all binds (USE CAUTIOUSLY!!!)");
 }
 
 void

@@ -188,10 +188,10 @@ R_Init (void)
 	allowskybox = false;				// server will decide if this is
 										// allowed  --KB
 
-	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f, "No Description");
-	Cmd_AddCommand ("envmap", R_Envmap_f, "No Description");
-	Cmd_AddCommand ("pointfile", R_ReadPointFile_f, "No Description");
-	Cmd_AddCommand ("loadsky", R_LoadSky_f, "No Description");
+	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f, "Tests the current refresh rate for the current location");
+	Cmd_AddCommand ("envmap", R_Envmap_f, "FIXME: What on earth does this do? No Description");
+	Cmd_AddCommand ("pointfile", R_ReadPointFile_f, "Load a pointfile to determine map leaks");
+	Cmd_AddCommand ("loadsky", R_LoadSky_f, "Load a skybox");
 
 	R_InitBubble ();
 

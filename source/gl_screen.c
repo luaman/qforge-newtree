@@ -411,10 +411,10 @@ SCR_Init (void)
 	//
 	// register our commands
 	//
-	Cmd_AddCommand ("screenshot", SCR_ScreenShot_f, "No Description");
-	Cmd_AddCommand ("snap", SCR_RSShot_f, "No Description");
-	Cmd_AddCommand ("sizeup", SCR_SizeUp_f, "No Description");
-	Cmd_AddCommand ("sizedown", SCR_SizeDown_f, "No Description");
+	Cmd_AddCommand ("screenshot", SCR_ScreenShot_f, "Take a screenshot, saves as qfxxx.tga in the current directory");
+	Cmd_AddCommand ("snap", SCR_RSShot_f, "Send a screenshot to someone");
+	Cmd_AddCommand ("sizeup", SCR_SizeUp_f, "Increases the screen size");
+	Cmd_AddCommand ("sizedown", SCR_SizeDown_f, "Decreases the screen size");
 
 	scr_ram = Draw_PicFromWad ("ram");
 	scr_net = Draw_PicFromWad ("net");

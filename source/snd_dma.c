@@ -203,11 +203,11 @@ S_Init (void)
 
 	Con_Printf("\nSound Initialization\n");
 
-	Cmd_AddCommand ("play", S_Play, "No Description");
-	Cmd_AddCommand ("playvol", S_PlayVol, "No Description");
-	Cmd_AddCommand ("stopsound", S_StopAllSoundsC, "No Description");
-	Cmd_AddCommand ("soundlist", S_SoundList, "No Description");
-	Cmd_AddCommand ("soundinfo", S_SoundInfo_f, "No Description");
+	Cmd_AddCommand ("play", S_Play, "Play selected sound effect (play pathto/sound.wav)");
+	Cmd_AddCommand ("playvol", S_PlayVol, "Play selected sound effect at selected volume (playvol pathto/sound.wav num");
+	Cmd_AddCommand ("stopsound", S_StopAllSoundsC, "Stops all sounds currently being played");
+	Cmd_AddCommand ("soundlist", S_SoundList, "Reports a list of sounds in the cache");
+	Cmd_AddCommand ("soundinfo", S_SoundInfo_f, "Report information on the sound system");
 
 	if (COM_CheckParm ("-nosound"))
 		return;

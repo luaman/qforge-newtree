@@ -276,11 +276,11 @@ Con_Init (void)
 //
 // register our commands
 //
-	Cmd_AddCommand ("toggleconsole", Con_ToggleConsole_f, "No Description");
-	Cmd_AddCommand ("togglechat", Con_ToggleChat_f, "No Description");
-	Cmd_AddCommand ("messagemode", Con_MessageMode_f, "No Description");
-	Cmd_AddCommand ("messagemode2", Con_MessageMode2_f, "No Description");
-	Cmd_AddCommand ("clear", Con_Clear_f, "No Description");
+	Cmd_AddCommand ("toggleconsole", Con_ToggleConsole_f, "Toggle the console up and down");
+	Cmd_AddCommand ("togglechat", Con_ToggleChat_f, "Toggle the console up and down");
+	Cmd_AddCommand ("messagemode", Con_MessageMode_f, "Prompt to send a message to everyone");
+	Cmd_AddCommand ("messagemode2", Con_MessageMode2_f, "Prompt to send a message to only people on your team");
+	Cmd_AddCommand ("clear", Con_Clear_f, "Clear the console");
 	con_initialized = true;
 }
 

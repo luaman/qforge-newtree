@@ -915,13 +915,15 @@ Cmd_Init (void)
 //
 // register our commands
 //
-	Cmd_AddCommand ("stuffcmds", Cmd_StuffCmds_f, "No Description");
-	Cmd_AddCommand ("exec", Cmd_Exec_f, "No Description");
-	Cmd_AddCommand ("echo", Cmd_Echo_f, "No Description");
-	Cmd_AddCommand ("alias", Cmd_Alias_f, "No Description");
-	Cmd_AddCommand ("unalias", Cmd_UnAlias_f, "No Description");
-	Cmd_AddCommand ("wait", Cmd_Wait_f, "No Description");
-	Cmd_AddCommand ("cmdlist", Cmd_CmdList_f, "No Description");
+	Cmd_AddCommand ("stuffcmds", Cmd_StuffCmds_f, "Execute the commands given at startup again");
+	Cmd_AddCommand ("exec", Cmd_Exec_f, "Execute a script file");
+	Cmd_AddCommand ("echo", Cmd_Echo_f, "Print text to console");
+	Cmd_AddCommand ("alias", Cmd_Alias_f, "Used to create a reference to a command or list of commands.\n"
+		"When used without parameters, displays all current aliases.\n"
+		"Note: Enclose multiple commands within quotes and seperate each command with a semi-colon.");
+	Cmd_AddCommand ("unalias", Cmd_UnAlias_f, "Remove the selected alias");
+	Cmd_AddCommand ("wait", Cmd_Wait_f, "Wait a game tic");
+	Cmd_AddCommand ("cmdlist", Cmd_CmdList_f, "List all commands");
 }
 
 

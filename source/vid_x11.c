@@ -506,7 +506,7 @@ VID_Init (unsigned char *palette)
 	VID_GetWindowSize (320, 200);
 
 //  plugin_load ("in_x11.so");
-//  Cmd_AddCommand ("gamma", VID_Gamma_f, "No Description");
+//  Cmd_AddCommand ("gamma", VID_Gamma_f, "Change brightness level");
 	for (i = 0; i < 256; i++)
 		vid_gamma[i] = i;
 

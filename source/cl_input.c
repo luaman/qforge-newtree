@@ -707,41 +707,41 @@ CL_InitInput
 void
 CL_Input_Init (void)
 {
-	Cmd_AddCommand ("+moveup", IN_UpDown, "No Description");
-	Cmd_AddCommand ("-moveup", IN_UpUp, "No Description");
-	Cmd_AddCommand ("+movedown", IN_DownDown, "No Description");
-	Cmd_AddCommand ("-movedown", IN_DownUp, "No Description");
-	Cmd_AddCommand ("+left", IN_LeftDown, "No Description");
-	Cmd_AddCommand ("-left", IN_LeftUp, "No Description");
-	Cmd_AddCommand ("+right", IN_RightDown, "No Description");
-	Cmd_AddCommand ("-right", IN_RightUp, "No Description");
-	Cmd_AddCommand ("+forward", IN_ForwardDown, "No Description");
-	Cmd_AddCommand ("-forward", IN_ForwardUp, "No Description");
-	Cmd_AddCommand ("+back", IN_BackDown, "No Description");
-	Cmd_AddCommand ("-back", IN_BackUp, "No Description");
-	Cmd_AddCommand ("+lookup", IN_LookupDown, "No Description");
-	Cmd_AddCommand ("-lookup", IN_LookupUp, "No Description");
-	Cmd_AddCommand ("+lookdown", IN_LookdownDown, "No Description");
-	Cmd_AddCommand ("-lookdown", IN_LookdownUp, "No Description");
-	Cmd_AddCommand ("+strafe", IN_StrafeDown, "No Description");
-	Cmd_AddCommand ("-strafe", IN_StrafeUp, "No Description");
-	Cmd_AddCommand ("+moveleft", IN_MoveleftDown, "No Description");
-	Cmd_AddCommand ("-moveleft", IN_MoveleftUp, "No Description");
-	Cmd_AddCommand ("+moveright", IN_MoverightDown, "No Description");
-	Cmd_AddCommand ("-moveright", IN_MoverightUp, "No Description");
-	Cmd_AddCommand ("+speed", IN_SpeedDown, "No Description");
-	Cmd_AddCommand ("-speed", IN_SpeedUp, "No Description");
-	Cmd_AddCommand ("+attack", IN_AttackDown, "No Description");
-	Cmd_AddCommand ("-attack", IN_AttackUp, "No Description");
-	Cmd_AddCommand ("+use", IN_UseDown, "No Description");
-	Cmd_AddCommand ("-use", IN_UseUp, "No Description");
-	Cmd_AddCommand ("+jump", IN_JumpDown, "No Description");
-	Cmd_AddCommand ("-jump", IN_JumpUp, "No Description");
-	Cmd_AddCommand ("impulse", IN_Impulse, "No Description");
-	Cmd_AddCommand ("+klook", IN_KLookDown, "No Description");
-	Cmd_AddCommand ("-klook", IN_KLookUp, "No Description");
-	Cmd_AddCommand ("+mlook", IN_MLookDown, "No Description");
-	Cmd_AddCommand ("-mlook", IN_MLookUp, "No Description");
+	Cmd_AddCommand ("+moveup", IN_UpDown, "When active the player is swimming up in a liquid");
+	Cmd_AddCommand ("-moveup", IN_UpUp, "When active the player is not swimming up in a liquid");
+	Cmd_AddCommand ("+movedown", IN_DownDown, "When active the player is swimming down in a liquid");
+	Cmd_AddCommand ("-movedown", IN_DownUp, "When active the player is not swimming down in a liquid");
+	Cmd_AddCommand ("+left", IN_LeftDown, "When active the player is turning left");
+	Cmd_AddCommand ("-left", IN_LeftUp, "When active the player is not turning left");
+	Cmd_AddCommand ("+right", IN_RightDown, "When active the player is turning right");
+	Cmd_AddCommand ("-right", IN_RightUp, "When active the player is not turning right");
+	Cmd_AddCommand ("+forward", IN_ForwardDown, "When active the player is moving forward");
+	Cmd_AddCommand ("-forward", IN_ForwardUp, "When active the player is not moving forward");
+	Cmd_AddCommand ("+back", IN_BackDown, "When active the player is moving backwards");
+	Cmd_AddCommand ("-back", IN_BackUp, "When active the player is not moving backwards");
+	Cmd_AddCommand ("+lookup", IN_LookupDown, "When active the player's view is looking up");
+	Cmd_AddCommand ("-lookup", IN_LookupUp, "When active the player's view is not looking up");
+	Cmd_AddCommand ("+lookdown", IN_LookdownDown, "When active the player's view is looking down");
+	Cmd_AddCommand ("-lookdown", IN_LookdownUp, "When active the player's view is not looking up");
+	Cmd_AddCommand ("+strafe", IN_StrafeDown, "When active, +left and +right function like +moveleft and +moveright");
+	Cmd_AddCommand ("-strafe", IN_StrafeUp, "When active, +left and +right stop functioning like +moveleft and +moveright");
+	Cmd_AddCommand ("+moveleft", IN_MoveleftDown, "When active the player is strafing left");
+	Cmd_AddCommand ("-moveleft", IN_MoveleftUp, "When active the player is not strafing left");
+	Cmd_AddCommand ("+moveright", IN_MoverightDown, "When active the player is strafing right");
+	Cmd_AddCommand ("-moveright", IN_MoverightUp, "When active the player is not strafing right");
+	Cmd_AddCommand ("+speed", IN_SpeedDown, "When active the player is running");
+	Cmd_AddCommand ("-speed", IN_SpeedUp, "When active the player is not running");
+	Cmd_AddCommand ("+attack", IN_AttackDown, "When active player is firing/using current weapon");
+	Cmd_AddCommand ("-attack", IN_AttackUp, "When active player is not firing/using current weapon");
+	Cmd_AddCommand ("+use", IN_UseDown, "Non-functional. Left over command for opening doors and triggering switches");
+	Cmd_AddCommand ("-use", IN_UseUp, "Non-functional. Left over command for opening doors and triggering switches");
+	Cmd_AddCommand ("+jump", IN_JumpDown, "When active the player is jumping");
+	Cmd_AddCommand ("-jump", IN_JumpUp, "When active the player is not jumping");
+	Cmd_AddCommand ("impulse", IN_Impulse, "Call a game function or QuakeC function.");
+	Cmd_AddCommand ("+klook", IN_KLookDown, "When active, +forward and +back perform +lookup and +lookdown");
+	Cmd_AddCommand ("-klook", IN_KLookUp, "When active, +forward and +back don't perform +lookup and +lookdown");
+	Cmd_AddCommand ("+mlook", IN_MLookDown, "When active moving the mouse or joystick forwards and backwards performs +lookup and +lookdown");
+	Cmd_AddCommand ("-mlook", IN_MLookUp, "When active moving the mouse or joystick forwards and backwards doesn't perform +lookup and +lookdown");
 }
 
 void

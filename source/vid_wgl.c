@@ -1471,10 +1471,11 @@ VID_Init (unsigned char *palette)
 
 	memset (&devmode, 0, sizeof (devmode));
 
-	Cmd_AddCommand ("vid_nummodes", VID_NumModes_f, "No Description");
-	Cmd_AddCommand ("vid_describecurrentmode", VID_DescribeCurrentMode_f, "No Description");
-	Cmd_AddCommand ("vid_describemode", VID_DescribeMode_f, "No Description");
-	Cmd_AddCommand ("vid_describemodes", VID_DescribeModes_f, "No Description");
+	Cmd_AddCommand ("vid_nummodes", VID_NumModes_f, "Reports the total number of video modes available");
+	Cmd_AddCommand ("vid_describecurrentmode", VID_DescribeCurrentMode_f, "Report current video mode.");
+	Cmd_AddCommand ("vid_describemode", VID_DescribeMode_f, "Report information on specified video mode, default is current.
+(vid_describemode (mode))");
+	Cmd_AddCommand ("vid_describemodes", VID_DescribeModes_f, "Report information on all video modes.");
 
 	hIcon = LoadIcon (global_hInstance, MAKEINTRESOURCE (IDI_ICON1));
 

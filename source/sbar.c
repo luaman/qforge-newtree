@@ -246,11 +246,11 @@ Sbar_Init (void)
 	sb_face_invis_invuln = Draw_PicFromWad ("face_inv2");
 	sb_face_quad = Draw_PicFromWad ("face_quad");
 
-	Cmd_AddCommand ("+showscores", Sbar_ShowScores, "No Description");
-	Cmd_AddCommand ("-showscores", Sbar_DontShowScores, "No Description");
+	Cmd_AddCommand ("+showscores", Sbar_ShowScores, "Display information on everyone playing");
+	Cmd_AddCommand ("-showscores", Sbar_DontShowScores, "Stop displaying information on everyone playing");
 
-	Cmd_AddCommand ("+showteamscores", Sbar_ShowTeamScores, "No Description");
-	Cmd_AddCommand ("-showteamscores", Sbar_DontShowTeamScores, "No Description");
+	Cmd_AddCommand ("+showteamscores", Sbar_ShowTeamScores, "Display information for your team");
+	Cmd_AddCommand ("-showteamscores", Sbar_DontShowTeamScores, "Stop displaying information for your team");
 
 	sb_sbar = Draw_PicFromWad ("sbar");
 	sb_ibar = Draw_PicFromWad ("ibar");

@@ -774,9 +774,12 @@ V_Init
 void
 V_Init (void)
 {
-	Cmd_AddCommand ("v_cshift", V_cshift_f, "No Description");
-	Cmd_AddCommand ("bf", V_BonusFlash_f, "No Description");
-	Cmd_AddCommand ("centerview", V_StartPitchDrift, "No Description");
+	Cmd_AddCommand ("v_cshift", V_cshift_f, "This adjusts all of the colors currently being displayed.\n"
+		"Used when you are underwater, hit, have the Ring of Shadows, or Quad Damage. (v_cshift r g b intensity)");
+		
+	Cmd_AddCommand ("bf", V_BonusFlash_f, "Background flash, used when you pick up an item");
+	Cmd_AddCommand ("centerview", V_StartPitchDrift, "Centers the player's view ahead after +lookup or +lookdown \n"
+		"Will not work while mlook is active or freelook is 1.");
 
 	BuildGammaTable (1.0, 1.0);			// no gamma yet
 }

@@ -851,30 +851,72 @@ SV_InitOperatorCommands (void)
 								 MAX_SERVERINFO_STRING);
 	}
 
-	Cmd_AddCommand ("logfile", SV_Logfile_f, "No Description");
-	Cmd_AddCommand ("fraglogfile", SV_Fraglogfile_f, "No Description");
+	Cmd_AddCommand ("logfile", SV_Logfile_f, "Toggles logging of console text to qconsole.log");
+	Cmd_AddCommand ("fraglogfile", SV_Fraglogfile_f, "Enables logging of kills to frag_##.log");
 
-	Cmd_AddCommand ("snap", SV_Snap_f, "No Description");
-	Cmd_AddCommand ("snapall", SV_SnapAll_f, "No Description");
-	Cmd_AddCommand ("kick", SV_Kick_f, "No Description");
-	Cmd_AddCommand ("status", SV_Status_f, "No Description");
+	Cmd_AddCommand ("snap", SV_Snap_f, "FIXME: Take a screenshot of userid? No Description");
+	Cmd_AddCommand ("snapall", SV_SnapAll_f, "FIXME: No Description");
+	Cmd_AddCommand ("kick", SV_Kick_f, "Remove a user from the server (kick userid)");
+	Cmd_AddCommand ("status", SV_Status_f, "Report information on the current connected clients and the server - displays userids");
 
-	Cmd_AddCommand ("map", SV_Map_f, "No Description");
-	Cmd_AddCommand ("setmaster", SV_SetMaster_f, "No Description");
+	Cmd_AddCommand ("map", SV_Map_f, "Change to a new map (map mapname)");
+	Cmd_AddCommand ("setmaster", SV_SetMaster_f, "Lists the server with up to eight masters.\n"
+		"When a server is listed with a master, the master is aware of the server's IP address and port and it is added to the\n"
+		"list of current servers connected to a master. A heartbeat is sent to the master from the server to indicated that the\n"
+		"server is still running and alive.\n"
+   "\n"
+		"Examples:\n"
+		"setmaster 192.246.40.12:27002\n"
+		"setmaster 192.246.40.12:27002 192.246.40.12:27004");
 
-	Cmd_AddCommand ("say", SV_ConSay_f, "No Description");
-	Cmd_AddCommand ("heartbeat", SV_Heartbeat_f, "No Description");
-	Cmd_AddCommand ("quit", SV_Quit_f, "No Description");
-	Cmd_AddCommand ("god", SV_God_f, "No Description");
-	Cmd_AddCommand ("give", SV_Give_f, "No Description");
-	Cmd_AddCommand ("noclip", SV_Noclip_f, "No Description");
-	Cmd_AddCommand ("serverinfo", SV_Serverinfo_f, "No Description");
-	Cmd_AddCommand ("localinfo", SV_Localinfo_f, "No Description");
-	Cmd_AddCommand ("user", SV_User_f, "No Description");
-	Cmd_AddCommand ("sv_gamedir", SV_Gamedir, "No Description");
-	Cmd_AddCommand ("floodprot", SV_Floodprot_f, "No Description");
-	Cmd_AddCommand ("floodprotmsg", SV_Floodprotmsg_f, "No Description");
-	Cmd_AddCommand ("maplist", COM_Maplist_f, "No Description");
+	Cmd_AddCommand ("say", SV_ConSay_f, "Say something to everyone on the server, will show up as the name 'console' in game");
+	Cmd_AddCommand ("heartbeat", SV_Heartbeat_f, "Force a heartbeat to be sent to the master server.\n"
+		"A heartbeat tells the Master the server's IP address and that it is still alive.");
+	Cmd_AddCommand ("quit", SV_Quit_f, "Shut down the server");
+	Cmd_AddCommand ("god", SV_God_f, "Toggle god cheat to userid (god userid) Requires cheats are enabled");
+	Cmd_AddCommand ("give", SV_Give_f, "Give userid items, or health.\n"
+		"Items: 1 Axe, 2 Shotgun, 3 Double-Barrelled Shotgun, 4 Nailgun, 5 Super Nailgun, 6 Grenade Launcher, 7 Rocket Launcher,\n"
+		"8 ThunderBolt, C Cells, H Health, N Nails, R Rockets, S Shells.	Requires cheats are enabled. (give userid item amount)");
+	Cmd_AddCommand ("noclip", SV_Noclip_f, "Toggle no clipping cheat for userid. Requires cheats are enabled. (noclip userid)");
+	Cmd_AddCommand ("serverinfo", SV_Serverinfo_f, "Reports or sets information about server.\n"
+		"The information stored in this space is broadcast on the network to all players.\n"
+		"Values:\n"
+		"dq - Drop Quad Damage when a player dies.\n"
+		"dr - Drop Ring of Shadows when a player dies.\n"
+		"rj - Sets the multiplier rate for splash damage kick.\n"
+		"needpass - Displays the passwords enabled on the server.\n"
+		"watervis - Toggle the use of r_watervis by OpenGL clients.\n"
+		"Note: Keys with (*) in front cannot be changed. Maximum key size cannot exceed 64-bytes.\n"
+		"Maximum size for all keys cannot exceed 512-bytes.\n"
+		"(serverinfo key value)");
+		
+	Cmd_AddCommand ("localinfo", SV_Localinfo_f, "Shows or sets localinfo variables.\n"
+		"Useful for mod programmers who need to allow the admin to change settings.\n"
+		"This is an alternative storage space to the serverinfo space for mod variables.\n"
+		"The variables stored in this space are not broadcast on the network.\n"
+		"This space also has a 32-kilobyte limit which is much greater then the 512-byte limit on the serverinfo space.\n"
+		"Special Keys: (current map) (next map) - Using this combination will allow the creation of a custom map cycle without editing code.\n"
+		"\n"
+		"Example:\n"
+		"localinfo dm2 dm4\n"
+		"localinfo dm4 dm6\n"
+		"localinfo dm6 dm2\n"
+		"(localinfo key value)");
+
+	Cmd_AddCommand ("user", SV_User_f, "Report information about the user (user userid)");
+	Cmd_AddCommand ("sv_gamedir", SV_Gamedir, "Displays or determines the value of the serverinfo *gamedir variable.\n"
+		"Note: Useful when the physical gamedir directory has a different name than the widely accepted gamedir directory.\n"
+		"Example:\n"
+		"gamedir tf2_5; sv_gamedir fortress\n"
+		"gamedir ctf4_2; sv_gamedir ctf\n"
+		"(sv_gamedir dirname)");
+
+	Cmd_AddCommand ("floodprot", SV_Floodprot_f, "Sets the options for flood protection.\n"
+		"Default: 4 4 10\n"
+		"(floodprot (number of messages) (number of seconds) (silence time in seconds))");
+
+	Cmd_AddCommand ("floodprotmsg", SV_Floodprotmsg_f, "Sets the message displayed after flood protection is invoked (floodprotmsg message)");
+	Cmd_AddCommand ("maplist", COM_Maplist_f, "List all maps on the server");
 
 	cl_warncmd =
 		Cvar_Get ("cl_warncmd", "1", CVAR_NONE, "Toggles the display of error messages for unknown commands"); 

@@ -433,7 +433,7 @@ IN_Init
 void
 IN_Init (void)
 {
-	Cmd_AddCommand ("force_centerview", Force_CenterView_f, "No Description");
+	Cmd_AddCommand ("force_centerview", Force_CenterView_f, "Force view of player to center");
 
 	uiWheelMessage = RegisterWindowMessage ("MSWHEEL_ROLLMSG");
 

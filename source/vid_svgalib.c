@@ -552,7 +552,7 @@ VID_Init (unsigned char *palette)
 		return;
 
 #if 0
-	Cmd_AddCommand ("gamma", VID_Gamma_f, "No Description");
+	Cmd_AddCommand ("gamma", VID_Gamma_f, "Brightness level");
 #endif
 
 	if (UseDisplay) {
@@ -571,10 +571,11 @@ VID_Init (unsigned char *palette)
 
 		VID_InitModes ();
 
-		Cmd_AddCommand ("vid_nummodes", VID_NumModes_f, "No Description");
-		Cmd_AddCommand ("vid_describemode", VID_DescribeMode_f, "No Description");
-		Cmd_AddCommand ("vid_describemodes", VID_DescribeModes_f, "No Description");
-		Cmd_AddCommand ("vid_debug", VID_Debug_f, "No Description");
+		Cmd_AddCommand ("vid_nummodes", VID_NumModes_f, "Reports the total number of video modes available.");
+		Cmd_AddCommand ("vid_describemode", VID_DescribeMode_f, "Report information on specified video mode, default is current.
+(vid_describemode (mode))");
+		Cmd_AddCommand ("vid_describemodes", VID_DescribeModes_f, "Report information on all video modes.");
+		Cmd_AddCommand ("vid_debug", VID_Debug_f, "FIXME: No Description");
 
 		/* Interpret command-line params */
 		w = h = d = 0;
