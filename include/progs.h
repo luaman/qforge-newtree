@@ -99,6 +99,8 @@ void ED_ParseGlobals (char *data);
 
 void ED_LoadFromFile (char *data);
 
+ddef_t *ED_FindField (char *name);
+
 //define EDICT_NUM(n) ((edict_t *)(sv.edicts+ (n)*pr_edict_size))
 //define NUM_FOR_EDICT(e) (((byte *)(e) - sv.edicts)/pr_edict_size)
 

@@ -566,25 +566,23 @@ void SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 
 // Ender: EXTEND (QSG - Begin)
         {
+		int tmp;
          eval_t  *val;
          state->glowsize  = 0;
          state->glowcolor = 254;
          state->colormod  = 0;
 
-                if (val = GETEDICTFIELDVALUE(ent, eval_glowsize)) {
-                   state->glowsize = (int) val->_float >> 3;
-                   if (state->glowsize > 127)
-                        state->glowsize = 127;
-                   if (state->glowsize < -128)
-                        state->glowsize = -128;
+                if ((val = GETEDICTFIELDVALUE(ent, eval_glowsize))) {
+			tmp = (int)val->_float >> 3;
+			state->glowsize = bound(-128, tmp, 127);
                  }
                     
-                 if (val = GETEDICTFIELDVALUE(ent, eval_glowcolor)) {
+                 if ((val = GETEDICTFIELDVALUE(ent, eval_glowcolor))) {
                   if (val->_float != 0)
                    state->glowcolor = (int) val->_float;
                  }
 
-                 if (val = GETEDICTFIELDVALUE(ent, eval_colormod)) {
+                 if ((val = GETEDICTFIELDVALUE(ent, eval_colormod))) {
                   if (val->vector[0] != 0 || val->vector[1] != 0 || val->vector[2] != 0) {
                    int modred, modgreen, modblue;
                    Con_Printf("Setting colormod! :)\n");
@@ -616,3 +614,4 @@ void SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 	// now add the specialized nail update
 	SV_EmitNailUpdate (msg);
 }
+

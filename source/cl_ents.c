@@ -260,7 +260,7 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 
         if (bits & U_COLORMOD) {
          to->colormod = MSG_ReadByte();
-         Con_Printf("CM: %d\n)", (float) to->colormod);
+         Con_DPrintf("CM: %f\n)", (float) to->colormod);
         }
 
 	if (bits & U_SOLID)
@@ -528,7 +528,7 @@ void CL_LinkPacketEntities (void)
          ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
          ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
          ent->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
-         Con_Printf("Colormod: %d %d %d\n", ent->colormod[0], ent->colormod[1], ent->colormod[2]);
+         Con_DPrintf("Colormod: %f %f %f\n", ent->colormod[0], ent->colormod[1], ent->colormod[2]);
         } else {
          ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 0;
         }

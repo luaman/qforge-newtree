@@ -57,6 +57,9 @@
 #include "console.h"
 #include "glquake.h"
 
+// FIXME: Do this right..
+void LoadTGA (FILE *fin);
+
 extern  byte            *host_basepal;
 extern unsigned char d_15to8table[65536];
 extern cvar_t *crosshair, *cl_crossx, *cl_crossy, *crosshaircolor;
@@ -96,6 +99,7 @@ static byte cs_data[64] = {
 typedef struct
 {
 	int		texnum;
+	int		bytesperpixel;
 	float	sl, tl, sh, th;
 } glpic_t;
 
