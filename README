@@ -1,7 +1,6 @@
 QuakeForge - Release Notes
-Copyright (C) 1996-1997  Id Software, Inc.
-Copyright (C) 1999,2000  contributors of the QuakeForge Project
-Please see the file "AUTHORS" for a list of contributors
+Copyright (C) 1996-1997 Id Software, Inc.
+Copyright (C) 1999-2001 contributors to the QuakeForge Project
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -22,10 +21,8 @@ along with this program; if not, write to:
 
 See file COPYING for license details.
 
-Quake(R) and QuakeWorld(R) are registered trademarks of Id Software,
-Inc. The NIN logo is a registered trademark licensed to Nothing
-Interactive, Inc. All other trademarks are the property of their
-respective owners
+Quake and QuakeWorld are registered trademarks of Id Software, Inc. All
+other trademarks are the property of their respective owners.
 
 
 Table of Contents
@@ -46,9 +43,10 @@ Table of Contents
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The QuakeForge Project would like to thank Id Software, Inc. for writing
-and releasing Quake under the GNU GPL.  We'd like to thank John Carmack
-and Dave Kirsch in particular for the support they have provided to us
-and to the Free Software community as a whole.
+and releasing Quake under the GNU General Public License (GPL).  We'd
+like to thank John Carmack and Dave "Zoid" Kirsch in particular for the
+support they have provided to us and to the Free Software community as a
+whole.
 
 We would also like to thank the following organizations for their
 contributions to QuakeForge:
@@ -62,9 +60,6 @@ other support to the QuakeForge project.
 
 Without all of you, we would not be where we are right now.
 
-Id Software, Inc. thanks MPath Interactive and Gandalf Technology for
-their help and support.
-
 If you'd like to contribute in any way to the QuakeForge project, please
 contact our mailing list at quake-devel@lists.sourceforge.net.
 
@@ -72,9 +67,9 @@ contact our mailing list at quake-devel@lists.sourceforge.net.
 2	System Requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* A Raster capable display. ;-)
+* A raster-capable display. ;-)
 * 16 megabytes of memory beyond operating system footprint.
-* A Floating-point processor. While not strictly required, QuakeForge
+* A Floating-point processor (FPU). While not strictly required, QuakeForge
   uses a lot of floating-point math, so a FPU is highly recommended.
 * 10MB of free hard disk space to build all targets. In addition to the
   base system, you will require game data files. For the default game
@@ -101,56 +96,32 @@ files.
 4	Platform-Specific Issues
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This section discusses issues that affect only certain operating
-platforms.
+This section discusses issues that affect only certain platforms.
 
-4.1	DOS
+4.1	Linux/Unix
 
-If you experience page faults while running Quarterdeck's QDPMI DPMI
-server, this is caused by a bug in QDPMI.  Workarounds:  Remove QDPMI
-from CONFIG.SYS, issue the command QDPMI OFF before running QuakeForge,
-or get the update patch for QDPMI from Quarterdeck.  You may be running
-QDPMI without knowing it if you have QEMM installed, because it can be
-installed as part of the QEMM installation.
+SVGALib-using targets (-svga and -3dfx) can't be started from within the
+X Window System. We are aware of the problem, and if you can figure out
+the reason, we'd appreciate a patch, PLEASE! As a workaround, you can
+use "open" to start those targets from within X.
+(example: "open -s -- qf-client-svga")
 
-4.2	Linux
+4.2	Windows 95/98/Me
 
-SVGALib-using targets (-svga and -3dfx) can't be started from within X.
-We are aware of the problem, and if you can figure out the reason, we'd
-appreciate a patch, PLEASE! As a workaround, you can use "open" to start
-those targets from within X.  (e.g. "open -s -- qw-client-svga")
+The MGL-using Windows target (qf-client-win) is unable to use the Alt
+and F10 keys. This is caused by a bug in the SciTech MGL library, which
+intercepts these key events before the client gets to see them. The
+SDL-using targets (currently available from the Borland-compiled
+distribution only) do not exhibit this problem, but may have other
+issues themselves that we are unaware of.
 
-Some 3Dfx Voodoo-based 3D accelerators may have issues with the way
-QuakeForge uses the "3dfxgl" minidriver to interface to the Glide
-library.
-
-Video boards based on the Riva
-128/128ZX/TNT/TNT2/TNT2 Ultra/Vanta/GeForce 256 chipsets from nVidia
-Corp. using the latest (as of 13 Jan 2000) nVidia OpenGL drivers may
-have problems with transparency. Under some conditions, these drivers
-may lock the X Window System server, possibly rendering the system
-unusable. The currently-recommended drivers for video cards with Riva
-128/128ZX/TNT/TNT2/TNT2 Ultra chipsets are those from the Utah GLX
-project, located at http://utah-glx.sourceforge.net/ -- for the Vanta
-and GeForce 256 chipsets, there is no suggested hardware-accelerated
-OpenGL alternative at this time. We believe the bug to be in nVidia's
-drivers, because our code seems to work under other OpenGL
-implementations.
-
-4.4	Windows 95/98/Millennium
-
-Currently, we are unable to determine the status of the Windows-based
-targets of QuakeForge. Because of our move to GNU Autoconf and the
-dearth of "proper" GNU tools available on the Windows platform, our
-build system may not work properly on Windows. We are working on
-solutions for this problem.
-
-4.5	Windows NT/2000
+4.2	Windows NT/2000
 
 For the most part, issues for Windows 9x-based operating environments
 will be similar. However, because of numerous differences in the way
 Windows NT and Windows 9x operate, these systems may have specific
 issues.
+
 
 5	Errata and Known Bugs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -158,30 +129,6 @@ issues.
 Problem:  After running the X11 target my keyboard repeat turns off! How
           do I turn it back on?
 Solution: xset r on
-
-Problem:  The screen flickers once about every other frame when using GL
-Solution: Not all GL implementations support a performance hack which is
-          used by the GL renderer allowing it to avoid clearing the
-	  Z-buffer.  The console command "gl_ztrick 0" fixes this
-	  problem.
-
-Problem:  Zombies can sometimes get "stuck" in the ground.  They can be
-	  heard but not killed making it impossible to get 100% on the
-	  current level.
-Solution: None found yet.
-
-Problem:  It is possible for players to sometimes get stuck in a room or
-	  wall, much like the zombies mentioned above.
-Solution: The "kill" console command will un-stick you, but it has the
-	  unfortunate side effect of killing you in the process (hence
-	  the command's name.)  It is a good idea to save your games
-	  often.
-
-Problem:  Sometimes during a game the player's view will not center
-	  properly.  The end result is that the player view is looking
-	  up toward the ceiling while walking.
-Solution: Use of freelook (mouse or keyboard) may solve this problem, as
-	  will exiting the level or the "kill" console command.
 
 
 6	Troubleshooting
@@ -228,12 +175,12 @@ If you have a joystick plugged in, but do not wish QuakeForge to try to
 use it, just add the -nojoy option to the QuakeForge command line.
 
 You may disable joystick reads from the QuakeForge console with the 
-"joystick 0" command.
+"joy_enable 0" command.
 
 There are default configuration bindings for joystick buttons.
 
 If your joystick or interface card reports three or four buttons and you
-only have two, use the QuakeForge console command "joybuttons 2".
+only have two, use the QuakeForge console command "joy_buttons 2".
 
 The "mlook" and "sidestep" commands work with a joystick exactly as they
 do for a mouse, as does the "invert mouse up/down" menu option.
@@ -264,6 +211,7 @@ Operating systems tested:
    Compaq/Digital Tru64 Unix
    Windows 98
    Windows NT
+   Windows 2000
 
 Video cards tested (On Intel-based systems):
    3Dfx Voodoo Graphics (Linux)
