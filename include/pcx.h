@@ -35,8 +35,8 @@ typedef struct
     char	version;
     char	encoding;
     char	bits_per_pixel;
-    unsigned short	xmin,ymin,xmax,ymax;
-    unsigned short	hres,vres;
+    unsigned short	xmin, ymin, xmax, ymax;
+    unsigned short	hres, vres;
     unsigned char	palette[48];
     char	reserved;
     char	color_planes;

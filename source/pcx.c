@@ -32,6 +32,7 @@
 
 #include "console.h"
 #include "pcx.h"
+#include "qendian.h"
 #include "qtypes.h"
 #include "quakefs.h"
 
@@ -52,9 +53,18 @@ void LoadPCX (QFile *f)
 	//
 	// parse the PCX file
 	//
-	Qread (f, &pcxbuf, sizeof(pcxbuf));
+	Qread (f, &pcxbuf, sizeof (pcxbuf));
 
 	pcx = &pcxbuf;
+
+	pcx->xmax = LittleShort (pcx->xmax);
+	pcx->xmin = LittleShort (pcx->xmin);
+	pcx->ymax = LittleShort (pcx->ymax);
+	pcx->ymin = LittleShort (pcx->ymin);
+	pcx->hres = LittleShort (pcx->hres);
+	pcx->vres = LittleShort (pcx->vres);
+	pcx->bytes_per_line = LittleShort (pcx->bytes_per_line);
+	pcx->palette_type = LittleShort (pcx->palette_type);
 
 	if (pcx->manufacturer != 0x0a
 		|| pcx->version != 5
@@ -70,27 +80,27 @@ void LoadPCX (QFile *f)
 	Qseek (f, -768, SEEK_END);
 	Qread (f, palette, 768);
 
-	Qseek (f, sizeof(pcxbuf) - 4, SEEK_SET);
+	Qseek (f, sizeof (pcxbuf) - 4, SEEK_SET);
 
-	count = (pcx->xmax+1) * (pcx->ymax+1);
-	pcx_rgb = malloc( count * 4);
+	count = (pcx->xmax + 1) * (pcx->ymax + 1);
+	pcx_rgb = malloc (count * 4);
 
-	for (y=0 ; y<=pcx->ymax ; y++) {
+	for (y = 0; y <= pcx->ymax; y++) {
 		pix = pcx_rgb + 4*y*(pcx->xmax+1);
-		for (x=0 ; x<=pcx->ymax ; ) {
-			dataByte = Qgetc(f);
+		for (x = 0; x <= pcx->ymax;) {
+			dataByte = Qgetc (f);
 
 			if((dataByte & 0xC0) == 0xC0) {
 				runLength = dataByte & 0x3F;
-				dataByte = Qgetc(f);
-			}
-			else
+				dataByte = Qgetc (f);
+			} else {
 				runLength = 1;
+			}
 
-			while(runLength-- > 0) {
-				pix[0] = palette[dataByte*3];
-				pix[1] = palette[dataByte*3+1];
-				pix[2] = palette[dataByte*3+2];
+			while (runLength-- > 0) {
+				pix[0] = palette[dataByte * 3];
+				pix[1] = palette[dataByte * 3 + 1];
+				pix[2] = palette[dataByte * 3 + 2];
 				pix[3] = 255;
 				pix += 4;
 				x++;
