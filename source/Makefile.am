@@ -47,7 +47,7 @@ common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
 		mdfour.c mathlib.c cvar.c crc.c cmd.c qargs.c qendian.c \
 		quakefs.c quakeio.c msg.c sizebuf.c info.c checksum.c \
 		link.c buildnum.c va.c com.c model.c model_brush.c locs.c \
-		qdl.c $(math_ASM)
+		$(math_ASM)
 
 #
 # Server builds
