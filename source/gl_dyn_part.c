@@ -73,7 +73,7 @@ static short r_numparticles, numparticles;
 
 extern qboolean lighthalf;
 
-extern void GDT_Init ();
+extern void GDT_Init (void);
 extern int  part_tex_smoke[8];
 extern int  part_tex_dot;
 
