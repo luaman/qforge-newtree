@@ -46,6 +46,8 @@
 extern qboolean skyloaded;
 extern vec5_t skyvec[6][4];
 
+#define BOX_WIDTH 2056
+
 /* cube face to sky texture offset conversion */
 static const int skytex_offs[] = { 3, 0, 4, 1, 2, 5 };
 
@@ -227,28 +229,28 @@ set_vertex (struct box_def *box, int face, int ind, vec3_t v)
 	VectorAdd (v, r_refdef.vieworg, box->face[face].poly.verts[ind]);
 	switch (face) {
 		case 0:
-			box->face[face].poly.verts[ind][3] = (1024 - v[1]) / 2048;
-			box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+			box->face[face].poly.verts[ind][3] = (1024 - v[1] + 4) / BOX_WIDTH;
+			box->face[face].poly.verts[ind][4] = (1024 - v[2] + 4) / BOX_WIDTH;
 			break;
 		case 1:
-			box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
-			box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+			box->face[face].poly.verts[ind][3] = (1024 + v[0] + 4) / BOX_WIDTH;
+			box->face[face].poly.verts[ind][4] = (1024 - v[2] + 4) / BOX_WIDTH;
 			break;
 		case 2:
-			box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
-			box->face[face].poly.verts[ind][4] = (1024 + v[1]) / 2048;
+			box->face[face].poly.verts[ind][3] = (1024 + v[0] + 4) / BOX_WIDTH;
+			box->face[face].poly.verts[ind][4] = (1024 + v[1] + 4) / BOX_WIDTH;
 			break;
 		case 3:
-			box->face[face].poly.verts[ind][3] = (1024 + v[1]) / 2048;
-			box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+			box->face[face].poly.verts[ind][3] = (1024 + v[1] + 4) / BOX_WIDTH;
+			box->face[face].poly.verts[ind][4] = (1024 - v[2] + 4) / BOX_WIDTH;
 			break;
 		case 4:
-			box->face[face].poly.verts[ind][3] = (1024 - v[0]) / 2048;
-			box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+			box->face[face].poly.verts[ind][3] = (1024 - v[0] + 4) / BOX_WIDTH;
+			box->face[face].poly.verts[ind][4] = (1024 - v[2] + 4) / BOX_WIDTH;
 			break;
 		case 5:
-			box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
-			box->face[face].poly.verts[ind][4] = (1024 - v[1]) / 2048;
+			box->face[face].poly.verts[ind][3] = (1024 + v[0] + 4) / BOX_WIDTH;
+			box->face[face].poly.verts[ind][4] = (1024 - v[1] + 4) / BOX_WIDTH;
 			break;
 	}
 }
