@@ -588,6 +588,7 @@ fi
 
 AM_CONDITIONAL(CDTYPE_WIN32, test "$CDTYPE" = "WIN32")
 AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "LINUX")
+AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "WIN32" -a "$CDTYPE" != "LINUX")
 
 
 dnl ==================================================================

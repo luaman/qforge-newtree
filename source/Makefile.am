@@ -22,25 +22,23 @@ EXTRA_libqfsys_sv_a_SOURCES = sv_sys_unix.c sv_sys_win.c sys_win.c sys_unix.c fn
 
 if SNDTYPE_WIN32
 libqfsnd_a_SOURCES = snd_win.c
-else
+endif
 if SNDTYPE_OSS
 libqfsnd_a_SOURCES = snd_oss.c
-else
+endif
 if SNDTYPE_ALSA
 libqfsnd_a_SOURCES = snd_alsa.c
-endif
-endif
 endif
 EXTRA_libqfsnd_a_SOURCES = snd_win.c snd_oss.c snd_alsa.c
 
 if CDTYPE_WIN32
 libqfcd_a_SOURCES = cd_win.c
-else
+endif
 if CDTYPE_LINUX
 libqfcd_a_SOURCES = cd_linux.c
-else
-libqfcd_a_SOURCES = cd_null.c
 endif
+if CDTYPE_NULL
+libqfcd_a_SOURCES = cd_null.c
 endif
 EXTRA_libqfcd_a_SOURCES = cd_win.c cd_linux.c cd_null.c
 
