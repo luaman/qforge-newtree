@@ -1870,8 +1870,8 @@ void	VID_Init (unsigned char *palette)
 	strcpy (badmode.modedesc, "Bad mode");
 	vid_canalttab = true;
 
-	if (COM_CheckParm("-fullsbar"))
-		fullsbardraw = true;
+        if (COM_CheckParm("-nofullsbar"))
+                fullsbardraw = false;
 }
 
 
