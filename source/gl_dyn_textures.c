@@ -62,9 +62,9 @@ GDT_InitDotParticleTexture (void)
 
 	for (x = 0; x < 16; x++) {
 		for (y = 0; y < 16; y++) {
-			data[y][x][0] = 244;
-			data[y][x][1] = 244;
-			data[y][x][2] = 244;
+			data[y][x][0] = 255;
+			data[y][x][1] = 255;
+			data[y][x][2] = 255;
 			dx = x - 8;
 			dy = y - 8;
 			d = 255 - 4 * (dx * dx + dy * dy);
