@@ -260,9 +260,6 @@
 /* Define if you want the QSG standards */
 #define QSG_VERSION "1"
 
-/* Define what the base path should be */
-#define FS_BASEPATH "."
-
 /* Define the name of the global config file */
 #define GLOBAL_CFG_FILE ".\\qforge.cfg"
 
@@ -271,12 +268,6 @@
 
 /* Define if we've scitech MGL library and mgraph.h */
 #define HAVE_MGRAPH_H 1
-
-/* Dir used for shared game data */
-#define FS_SHAREPATH "."
-
-/* Dir used for shared game data */
-#define FS_USERPATH "."
 
 #define FS_GLOBALCFG ".\\qforge.cfg"
 

@@ -632,31 +632,6 @@ else
 	AC_DEFINE_UNQUOTED(FS_GLOBALCFG,	$globalconf)
 fi
 
-AC_ARG_WITH(sharepath,
-[  --with-sharepath=DIR    Use DIR for shared game data, defaults to
-                          \${datadir}/games/quakeforge],
-SHAREPATH=$withval, SHAREPATH="auto")
-if test "x$SHAREPATH" = "xauto" -o "x$SHAREPATH" = "xyes" -o "x$SHAREPATH" = "x"; then
-	eval foo="$datadir"
-	AC_DEFINE_UNQUOTED(FS_SHAREPATH, "$foo/games/quakeforge")
-elif test "x$SHAREPATH" = xno; then
-	AC_DEFINE_UNQUOTED(FS_SHAREPATH, ".")
-else
-	AC_DEFINE_UNQUOTED(FS_SHAREPATH, "$SHAREPATH")
-fi
-
-AC_ARG_WITH(userpath,
-[  --with-userpath=DIR     Use DIR for unshared game data, defaults to
-                          \${HOME}/.quakeforge],
-USERPATH=$withval, USERPATH="auto")
-if test "x$USERPATH" = "xauto" -o "x$USERPATH" = "xyes" -o "x$USERPATH" = "x"; then
-	AC_DEFINE_UNQUOTED(FS_USERPATH, "~/.quakeforge")
-elif test "x$USERPATH" = xno; then
-   AC_DEFINE_UNQUOTED(FS_USERPATH, ".")
-else
-   AC_DEFINE_UNQUOTED(FS_USERPATH, "$USERPATH")
-fi
-
 dnl CFLAGS for release and devel versions
 AC_ARG_ENABLE(release,
 	[  --enable-release        compile release (with optimizations)],
