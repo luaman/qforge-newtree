@@ -63,7 +63,7 @@
 #define X_DISPLAY_MISSING
 
 /* Version string */
-#include "version.h"
+#include "..\version.h"
 
 /* Define if you want to use QF-style defaults instead of Id-style */
 #undef NEWSTYLE
@@ -242,6 +242,7 @@
 
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
+
 
 /* Define if you want the QSG standards */
 #define QSG_VERSION "1.0"
