@@ -31,6 +31,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
 #include <ctype.h>
 #include <qtypes.h>
 
@@ -50,42 +51,46 @@ int			(*LittleLong) (int l);
 float		(*BigFloat) (float l);
 float		(*LittleFloat) (float l);
 
-short   ShortSwap (short l)
+short
+ShortSwap (short l)
 {
-	byte    b1,b2;
+	byte    b1, b2;
 
-	b1 = l&255;
-	b2 = (l>>8)&255;
+	b1 = l & 255;
+	b2 = (l >> 8)&255;
 
-	return (b1<<8) + b2;
+	return (b1 << 8) + b2;
 }
 
-short	ShortNoSwap (short l)
+short
+ShortNoSwap (short l)
 {
 	return l;
 }
 
-int    LongSwap (int l)
+int
+LongSwap (int l)
 {
-	byte    b1,b2,b3,b4;
+	byte    b1, b2, b3, b4;
 
-	b1 = l&255;
-	b2 = (l>>8)&255;
-	b3 = (l>>16)&255;
-	b4 = (l>>24)&255;
+	b1 = l & 255;
+	b2 = (l >> 8) & 255;
+	b3 = (l >> 16) & 255;
+	b4 = (l >> 24) & 255;
 
-	return ((int)b1<<24) + ((int)b2<<16) + ((int)b3<<8) + b4;
+	return ((int) b1 << 24) + ((int) b2 << 16) + ((int) b3 << 8) + b4;
 }
 
-int	LongNoSwap (int l)
+int
+LongNoSwap (int l)
 {
 	return l;
 }
 
-float FloatSwap (float f)
+float
+FloatSwap (float f)
 {
-	union
-	{
+	union {
 		float	f;
 		byte	b[4];
 	} dat1, dat2;
@@ -99,7 +104,8 @@ float FloatSwap (float f)
 	return dat2.f;
 }
 
-float FloatNoSwap (float f)
+float
+FloatNoSwap (float f)
 {
 	return f;
 }
