@@ -62,8 +62,8 @@ int			skytexturenum;
 #define	GL_RGBA4	0
 #endif
 
-extern vec3_t  shadecolor; // Ender (Extend) Colormod
-int		lightmap_bytes;		// 1 or 4
+extern vec3_t shadecolor; // Ender (Extend) Colormod
+int		lightmap_bytes;		// 1 or 3
 
 int		lightmap_textures;
 
@@ -74,7 +74,8 @@ cvar_t		*gl_colorlights;
 #define	BLOCK_WIDTH		128
 #define	BLOCK_HEIGHT	128
 
-#define	MAX_LIGHTMAPS	64
+// LordHavoc: since lightmaps are now allocated only as needed, allow a ridiculous number :)
+#define	MAX_LIGHTMAPS	1024
 int			active_lightmaps;
 
 typedef struct glRect_s {
@@ -89,7 +90,8 @@ int			allocated[MAX_LIGHTMAPS][BLOCK_WIDTH];
 
 // the lightmap texture data needs to be kept in
 // main memory so texsubimage can update properly
-byte		lightmaps[4*MAX_LIGHTMAPS*BLOCK_WIDTH*BLOCK_HEIGHT];
+// LordHavoc: changed to be allocated at runtime (typically lower memory usage)
+byte		*lightmaps[MAX_LIGHTMAPS];
 
 // For gl_texsort 0
 msurface_t  *skychain = NULL;
@@ -97,10 +99,38 @@ msurface_t  *waterchain = NULL;
 
 void R_RenderDynamicLightmaps (msurface_t *fa);
 
+extern qboolean lighthalf;
+
+// LordHavoc: place for gl_rsurf setup code
+void glrsurf_init()
+{
+	memset(&lightmaps, 0, sizeof(lightmaps));
+}
+
+void recursivelightupdate(mnode_t *node)
+{
+	int c;
+	msurface_t *surf;
+	if (node->children[0]->contents >= 0)
+		recursivelightupdate(node->children[0]);
+	if (node->children[1]->contents >= 0)
+		recursivelightupdate(node->children[1]);
+	if (c = node->numsurfaces)
+		for (surf = cl.worldmodel->surfaces + node->firstsurface; c ; c--, surf++)
+			surf->cached_dlight = true;
+}
+
+// LordHavoc: function to force all lightmaps to be updated
+void R_ForceLightUpdate()
+{
+	if (cl.worldmodel && cl.worldmodel->nodes && cl.worldmodel->nodes->contents >= 0)
+		recursivelightupdate(cl.worldmodel->nodes);
+}
+
 /*
 	R_AddDynamicLights
 
-	LordHavoc's redesigned this function completely
+	LordHavoc's lighting
 */
 void
 R_AddDynamicLights (msurface_t *surf)
@@ -247,33 +277,67 @@ store:
 	{
 		stride -= smax * 3;
 		bl = blocklights;
-		for (i = 0; i < tmax; i++, dest += stride)
-			for (j=0 ; j<smax ; j++)
-			{
-				t = (int) *bl++ >> 8;
-				*dest++ = bound(0, t, 255);
-				t = (int) *bl++ >> 8;
-				*dest++ = bound(0, t, 255);
-				t = (int) *bl++ >> 8;
-				*dest++ = bound(0, t, 255);
-			}
+		if (lighthalf)
+		{
+			for (i = 0; i < tmax; i++, dest += stride)
+				for (j=0 ; j<smax ; j++)
+				{
+					t = (int) *bl++ >> 8;
+					*dest++ = bound(0, t, 255);
+					t = (int) *bl++ >> 8;
+					*dest++ = bound(0, t, 255);
+					t = (int) *bl++ >> 8;
+					*dest++ = bound(0, t, 255);
+				}
+		}
+		else
+		{
+			for (i = 0; i < tmax; i++, dest += stride)
+				for (j=0 ; j<smax ; j++)
+				{
+					t = (int) *bl++ >> 7;
+					*dest++ = bound(0, t, 255);
+					t = (int) *bl++ >> 7;
+					*dest++ = bound(0, t, 255);
+					t = (int) *bl++ >> 7;
+					*dest++ = bound(0, t, 255);
+				}
+		}
 	}
 	else
 	{
 		stride -= smax;
 		bl = blocklights;
-		for (i = 0; i < tmax; i++, dest += stride)
-			for (j=0 ; j<smax ; j++)
-			{
-				t = (int) *bl++ >> 8;
-				t2 = bound(0, t, 255);
-				t = (int) *bl++ >> 8;
-				t2 += bound(0, t, 255);
-				t = (int) *bl++ >> 8;
-				t2 += bound(0, t, 255);
-				t2 *= (1.0/3.0);
-				*dest++ = t2;
-			}
+		if (lighthalf)
+		{
+			for (i = 0; i < tmax; i++, dest += stride)
+				for (j=0 ; j<smax ; j++)
+				{
+					t = (int) *bl++ >> 8;
+					t2 = bound(0, t, 255);
+					t = (int) *bl++ >> 8;
+					t2 += bound(0, t, 255);
+					t = (int) *bl++ >> 8;
+					t2 += bound(0, t, 255);
+					t2 *= (1.0/3.0);
+					*dest++ = t2;
+				}
+		}
+		else
+		{
+			for (i = 0; i < tmax; i++, dest += stride)
+				for (j=0 ; j<smax ; j++)
+				{
+					t = (int) *bl++ >> 7;
+					t2 = bound(0, t, 255);
+					t = (int) *bl++ >> 7;
+					t2 += bound(0, t, 255);
+					t = (int) *bl++ >> 7;
+					t2 += bound(0, t, 255);
+					t2 *= (1.0/3.0);
+					*dest++ = t2;
+				}
+		}
 	}
 }
 
@@ -599,8 +663,7 @@ dynamic:
 				theRect->w = (fa->light_s-theRect->l)+smax;
 			if ((theRect->h + theRect->t) < (fa->light_t + tmax))
 				theRect->h = (fa->light_t-theRect->t)+tmax;
-			base = lightmaps + fa->lightmaptexturenum*lightmap_bytes*BLOCK_WIDTH*BLOCK_HEIGHT;
-			base += fa->light_t * BLOCK_WIDTH * lightmap_bytes + fa->light_s * lightmap_bytes;
+			base = lightmaps[fa->lightmaptexturenum] + fa->light_t * BLOCK_WIDTH * lightmap_bytes + fa->light_s * lightmap_bytes;
 			R_BuildLightMap (fa, base, BLOCK_WIDTH*lightmap_bytes);
 		}
 	}
@@ -657,8 +720,7 @@ dynamic:
 				theRect->w = (fa->light_s-theRect->l)+smax;
 			if ((theRect->h + theRect->t) < (fa->light_t + tmax))
 				theRect->h = (fa->light_t-theRect->t)+tmax;
-			base = lightmaps + fa->lightmaptexturenum*lightmap_bytes*BLOCK_WIDTH*BLOCK_HEIGHT;
-			base += fa->light_t * BLOCK_WIDTH * lightmap_bytes + fa->light_s * lightmap_bytes;
+			base = lightmaps[fa->lightmaptexturenum] + fa->light_t * BLOCK_WIDTH * lightmap_bytes + fa->light_s * lightmap_bytes;
 			R_BuildLightMap (fa, base, BLOCK_WIDTH*lightmap_bytes);
 		}
 	}
@@ -698,13 +760,12 @@ void R_DrawWaterSurfaces (void)
 
 	glLoadMatrixf (r_world_matrix);
 
-	if (r_wateralpha->value < 1.0)
-	{
-		glColor4f (0.5, 0.5, 0.5, r_wateralpha->value);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	}
+	if (lighthalf)
+		glColor4f(0.5,0.5,0.5, r_wateralpha->value);
 	else
-		glColor3f (0.5, 0.5, 0.5);
+		glColor4f(1,1,1, r_wateralpha->value);
+	if (r_wateralpha->value < 1.0)
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	if (!gl_texsort->value)
 	{
@@ -745,8 +806,7 @@ void R_DrawWaterSurfaces (void)
 
 	}
 
-	if (r_wateralpha->value < 1.0)
-		glColor3f (0.5, 0.5, 0.5);
+	glColor3f(1,1,1);
 }
 
 
@@ -1147,6 +1207,10 @@ int AllocBlock (int w, int h, int *x, int *y)
 		if (best + h > BLOCK_HEIGHT)
 			continue;
 
+		// LordHavoc: allocate lightmaps only as needed
+		if (!lightmaps[texnum])
+			lightmaps[texnum] = calloc(BLOCK_WIDTH * BLOCK_HEIGHT, 3);
+
 		for (i=0 ; i<w ; i++)
 			allocated[texnum][*x + i] = best + h;
 
@@ -1294,8 +1358,7 @@ void GL_CreateSurfaceLightmap (msurface_t *surf)
 	tmax = (surf->extents[1]>>4)+1;
 
 	surf->lightmaptexturenum = AllocBlock (smax, tmax, &surf->light_s, &surf->light_t);
-	base = lightmaps + surf->lightmaptexturenum*lightmap_bytes*BLOCK_WIDTH*BLOCK_HEIGHT;
-	base += (surf->light_t * BLOCK_WIDTH + surf->light_s) * lightmap_bytes;
+	base = lightmaps[surf->lightmaptexturenum] + (surf->light_t * BLOCK_WIDTH + surf->light_s) * lightmap_bytes;
 	R_BuildLightMap (surf, base, BLOCK_WIDTH*lightmap_bytes);
 }
 

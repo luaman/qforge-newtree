@@ -74,6 +74,7 @@ vec3_t			r_pright, r_pup, r_ppn;
 
 fire_t		r_fires[MAX_FIRES];
 extern cvar_t	*gl_fires;
+extern qboolean lighthalf;
 
 /*
 ===============
@@ -580,7 +581,10 @@ void R_DrawParticles (void)
 //			theAlpha = 255*(8-p->ramp)/8;
 		else
 			theAlpha = 255;
-		glColor4ub (*at, *(at+1), *(at+2), theAlpha);
+		if (lighthalf)
+			glColor4ub((byte) ((int) at[0] >> 1), (byte) ((int) at[1] >> 1), (byte) ((int) at[2] >> 1), theAlpha);
+		else
+			glColor4ub(at[0], at[1], at[2], theAlpha);
 //		glColor3ubv (at);
 //		glColor3ubv ((byte *)&d_8to24table[(int)p->color]);
 		glTexCoord2f (0,0);
@@ -766,7 +770,10 @@ R_DrawFire (fire_t *f)
 
 	// we're not - draw it
 	glBegin (GL_TRIANGLE_FAN);
-	glColor3fv (f->color);
+	if (lighthalf)
+		glColor3f(f->color[0]*0.5,f->color[1]*0.5,f->color[2]*0.5);
+	else
+		glColor3fv(f->color);
 	for (i=0 ; i<3 ; i++)
 		vec[i] = f->origin[i] - vpn[i] * radius;
 	glVertex3fv (vec);

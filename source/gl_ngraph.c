@@ -55,6 +55,7 @@
 
 
 extern byte		*draw_chars;				// 8*8 graphic characters
+extern qboolean lighthalf;
 
 int	netgraphtexture;	// netgraph texture
 
@@ -159,7 +160,10 @@ void R_NetGraph (void)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	x = 8;
-	glColor3f (0.5, 0.5, 0.5);
+	if (lighthalf)
+		glColor3f(0.5,0.5,0.5);
+	else
+		glColor3f(1,1,1);
 	glBegin (GL_QUADS);
 	glTexCoord2f (0, 0);
 	glVertex2f (x, y);

@@ -1114,6 +1114,9 @@ void SCR_TileClear (void)
 }
 
 float oldsbar = 0;
+extern void R_ForceLightUpdate();
+qboolean lighthalf;
+extern cvar_t *gl_lightmode, *brightness, *contrast;
 
 /*
 ==================
@@ -1129,6 +1132,7 @@ needs almost the entire 256k of stack space!
 void SCR_UpdateScreen (void)
 {
 	double	time1 = 0, time2;
+	float	f;
 
 	if (block_drawing)
 		return;
@@ -1182,6 +1186,14 @@ void SCR_UpdateScreen (void)
 //
 // do 3D refresh drawing, and then update the screen
 //
+
+	// LordHavoc: set lighthalf based on gl_lightmode cvar
+	if (lighthalf != (gl_lightmode->value != 0))
+	{
+		lighthalf = gl_lightmode->value != 0;
+		R_ForceLightUpdate();
+	}
+
 	SCR_SetUpToDrawConsole ();
 
 	V_RenderView ();
@@ -1233,19 +1245,59 @@ void SCR_UpdateScreen (void)
 		M_Draw ();
 	}
 
-	// LordHavoc's lighting fix
-	glDisable (GL_TEXTURE_2D);
-	glColor3f (1.0, 1.0, 1.0);
-	glBlendFunc (GL_DST_COLOR, GL_ONE);
-	glBegin (GL_QUADS);
-	glVertex2f (0,0);
-	glVertex2f (vid.width, 0);
-	glVertex2f (vid.width, vid.height);
-	glVertex2f (0, vid.height);
-	glEnd ();
+// LordHavoc: adjustable brightness and contrast,
+//            also makes polyblend apply to whole screen
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	brightness->value = bound(1, brightness->value, 5);
+	if (lighthalf) // LordHavoc: render was done at half brightness
+		f = brightness->value * 2;
+	else
+		f = brightness->value;
+	if (f > 1)
+	{
+		glBlendFunc (GL_DST_COLOR, GL_ONE);
+		glBegin (GL_QUADS);
+		while (f > 1)
+		{
+			if (f >= 2)
+				glColor3f (1, 1, 1);
+			else
+				glColor3f (f-1, f-1, f-1);
+			glVertex2f (0,0);
+			glVertex2f (vid.width, 0);
+			glVertex2f (vid.width, vid.height);
+			glVertex2f (0, vid.height);
+			f *= 0.5;
+		}
+		glEnd ();
+	}
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_TEXTURE_2D);
+	contrast->value = bound(0.2, contrast->value, 1.0);
+	if ((gl_polyblend->value && v_blend[3]) || contrast->value < 1)
+	{
+		glBegin (GL_QUADS);
+		if (contrast->value < 1)
+		{
+			glColor4f (1, 1, 1, 1-contrast->value);
+			glVertex2f (0,0);
+			glVertex2f (vid.width, 0);
+			glVertex2f (vid.width, vid.height);
+			glVertex2f (0, vid.height);
+		}
+		if (gl_polyblend->value && v_blend[3])
+		{
+			glColor4fv (v_blend);
+			glVertex2f (0,0);
+			glVertex2f (vid.width, 0);
+			glVertex2f (vid.width, vid.height);
+			glVertex2f (0, vid.height);
+		}
+		glEnd ();
+	}
 
+	glDisable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
 
 	V_UpdatePalette ();
 

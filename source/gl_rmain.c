@@ -126,7 +126,13 @@ cvar_t	*r_skyname;
 extern	cvar_t	*scr_fov;
 
 extern byte gammatable[256];
+extern qboolean lighthalf;
 static float vid_gamma = 1.0;
+
+// LordHavoc: place for gl_rmain setup code
+void glrmain_init()
+{
+};
 
 /*
 	GL_CheckGamma
@@ -288,7 +294,10 @@ void R_DrawSpriteModel (entity_t *e)
 		right = vright;
 	}
 
-	glColor4f (0.5, 0.5, 0.5, 1);
+	if (lighthalf)
+		glColor4f(0.5,0.5,0.5,1);
+	else
+		glColor4f(1,1,1,1);
 
 	GL_DisableMultitexture();
 
@@ -370,15 +379,6 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 	verts = (trivertx_t *)((byte *)paliashdr + paliashdr->posedata);
 	verts += posenum * paliashdr->poseverts;
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
-
-	if (modelalpha == 0)
-		modelalpha = 1;
-	if (shadecolor[0] == 0)
-		shadecolor[0] = 1;
-	if (shadecolor[1] == 0)
-		shadecolor[1] = 1;
-	if (shadecolor[2] == 0)
-		shadecolor[2] = 1;
 
 	if (modelalpha != 1.0)
 		glDepthMask(0);
@@ -545,6 +545,12 @@ void R_DrawAliasModel (entity_t *e)
 	shadecolor[0] = currententity->colormod[0];
 	shadecolor[1] = currententity->colormod[1];
 	shadecolor[2] = currententity->colormod[2];
+	if (lighthalf)
+	{
+		shadecolor[0] *= 0.5;
+		shadecolor[1] *= 0.5;
+		shadecolor[2] *= 0.5;
+	}
 
 	VectorCopy (currententity->origin, r_entorigin);
 	VectorSubtract (r_origin, r_entorigin, modelorg);
@@ -747,50 +753,6 @@ void R_DrawViewModel (void)
 	R_DrawAliasModel (currententity);
 	glDepthRange (gldepthmin, gldepthmax);
 }
-
-
-/*
-============
-R_PolyBlend
-============
-*/
-void R_PolyBlend (void)
-{
-	if (!gl_polyblend->value)
-		return;
-	if (!v_blend[3])
-		return;
-
-//Con_Printf("R_PolyBlend(): %4.2f %4.2f %4.2f %4.2f\n",v_blend[0], v_blend[1],	v_blend[2],	v_blend[3]);
-
- 	GL_DisableMultitexture();
-
-	glEnable (GL_BLEND);
-	glDisable (GL_DEPTH_TEST);
-	glDisable (GL_TEXTURE_2D);
-
-	glLoadIdentity ();
-
-	glRotatef (-90,  1, 0, 0);	    // put Z going up
-	glRotatef (90,  0, 0, 1);	    // put Z going up
-
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE);
-	// software alpha is about GL alpha squared  --KB
-//	v_blend[3] = sqrt(v_blend[3]);
-	
-	glColor4fv (v_blend);
-
-	glBegin (GL_QUADS);
-	glVertex3f (10, 100, 100);
-	glVertex3f (10, -100, 100);
-	glVertex3f (10, -100, -100);
-	glVertex3f (10, 100, -100);
-	glEnd ();
-
-	glEnable (GL_TEXTURE_2D);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
-
 
 int SignbitsForPlane (mplane_t *out)
 {
@@ -1128,6 +1090,4 @@ void R_RenderView (void)
 
 	// render mirror view
 //	R_Mirror ();
-
-	R_PolyBlend ();
 }
