@@ -107,6 +107,9 @@ void locs_load(char *mapname)
 	}
 
 	while ((line = Qgetline(file))) {
+		if (line[0] == '#')
+			continue;
+
 		loc[0] = strtol(line, &t1, 0) * (1.0/8);
 		loc[1] = strtol(t1, &t2, 0) * (1.0/8);
 		loc[2] = strtol(t2, &t1, 0) * (1.0/8);
