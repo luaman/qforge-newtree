@@ -29,7 +29,11 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "qargs.h"
+#include "cvar.h"
+#include "server.h"
+#include "sys.h"
+
 #include <winsock.h>
 #include <conio.h>
 
@@ -226,11 +230,11 @@ int main (int argc, char **argv)
 
 	if ((t = COM_CheckParm ("-heapsize")) != 0 &&
 		t + 1 < com_argc)
-		parms.memsize = Q_atoi (com_argv[t + 1]) * 1024;
+		parms.memsize = atoi (com_argv[t + 1]) * 1024;
 
 	if ((t = COM_CheckParm ("-mem")) != 0 &&
 		t + 1 < com_argc)
-		parms.memsize = Q_atoi (com_argv[t + 1]) * 1024 * 1024;
+		parms.memsize = atoi (com_argv[t + 1]) * 1024 * 1024;
 
 	parms.membase = malloc (parms.memsize);
 
