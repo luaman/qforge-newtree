@@ -34,10 +34,14 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <qdefs.h>
+#include <compat.h>
 
 #define MAX_QPATH	64
 
+#ifndef _DEF_BYTE_
+# define _DEF_BYTE_
 typedef unsigned char byte;
+#endif
 
 // KJB Undefined true and false defined in SciTech's DEBUG.H header
 #undef true
