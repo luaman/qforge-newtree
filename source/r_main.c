@@ -244,8 +244,8 @@ void R_Init (void)
 	r_aliastransadj = Cvar_Get("r_aliastransadj",  "100", CVAR_NONE, "None");
 	gl_flashblend = Cvar_Get("gl_flashblend",  "0", CVAR_NONE, "None");  // FIXME: remove this!  --KB
 
-	r_maxedges->value = (float)NUMSTACKEDGES;
-	r_maxsurfs->value = (float)NUMSTACKSURFACES;
+	Cvar_SetValue (r_maxedges, (float)NUMSTACKEDGES);
+	Cvar_SetValue (r_maxsurfs, (float)NUMSTACKSURFACES);
 
 	view_clipplanes[0].leftedge = true;
 	view_clipplanes[1].rightedge = true;

@@ -479,14 +479,13 @@ void R_SetupFrame (void)
 	vrect_t			vrect;
 	float			w, h;
 
-// don't allow cheats in multiplayer
-r_draworder->value = 0;
-r_fullbright->value = 0;
-r_ambient->value = 0;
-r_drawflat->value = 0;
+	// don't allow cheats in multiplayer
+	Cvar_SetValue(r_draworder, 0);
+	Cvar_SetValue(r_fullbright, 0);
+	Cvar_SetValue(r_ambient, 0);
+	Cvar_SetValue(r_drawflat, 0);
 
-	if (r_numsurfs->value)
-	{
+	if (r_numsurfs->value) {
 		if ((surface_p - surfaces) > r_maxsurfsseen)
 			r_maxsurfsseen = surface_p - surfaces;
 
@@ -494,8 +493,7 @@ r_drawflat->value = 0;
 				surf_max - surfaces, r_maxsurfsseen);
 	}
 
-	if (r_numedges->value)
-	{
+	if (r_numedges->value) {
 		edgecount = edge_p - r_edges;
 
 		if (edgecount > r_maxedgesseen)
@@ -505,13 +503,9 @@ r_drawflat->value = 0;
 				r_numallocatededges, r_maxedgesseen);
 	}
 
-	r_refdef.ambientlight = r_ambient->value;
+	r_refdef.ambientlight = max(r_ambient->value, 0);
 
-	if (r_refdef.ambientlight < 0)
-		r_refdef.ambientlight = 0;
-
-//	if (!sv.active)
-		r_draworder->value = 0;	// don't let cheaters look behind walls
+	Cvar_SetValue(r_draworder, 0);
 		
 	R_CheckVariables ();
 	
@@ -521,23 +515,23 @@ r_drawflat->value = 0;
 
 	numbtofpolys = 0;
 
-// debugging
+	// debugging
 #if 0
-r_refdef.vieworg[0]=  80;
-r_refdef.vieworg[1]=      64;
-r_refdef.vieworg[2]=      40;
-r_refdef.viewangles[0]=    0;
-r_refdef.viewangles[1]=    46.763641357;
-r_refdef.viewangles[2]=    0;
+	r_refdef.vieworg[0] = 80;
+	r_refdef.vieworg[1] = 64;
+	r_refdef.vieworg[2] = 40;
+	r_refdef.viewangles[0] = 0;
+	r_refdef.viewangles[1] = 46.763641357;
+	r_refdef.viewangles[2] = 0;
 #endif
 
-// build the transformation matrix for the given view angles
+	// build the transformation matrix for the given view angles
 	VectorCopy (r_refdef.vieworg, modelorg);
 	VectorCopy (r_refdef.vieworg, r_origin);
 
 	AngleVectors (r_refdef.viewangles, vpn, vright, vup);
 
-// current viewleaf
+	// current viewleaf
 	r_oldviewleaf = r_viewleaf;
 	r_viewleaf = Mod_PointInLeaf (r_origin, cl.worldmodel);
 

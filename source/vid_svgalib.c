@@ -405,22 +405,22 @@ VID_SetPalette(byte *palette)
 
 
 int
-VID_SetMode(int modenum, unsigned char *palette)
+VID_SetMode (int modenum, unsigned char *palette)
 {
 	int bsize, zsize, tsize;
 	int err;
 
-	if ((modenum >= num_modes) || (modenum < 0) || !modes[modenum].width){
-		vid_mode->value = (float)current_mode;
+	if ((modenum >= num_modes) || (modenum < 0) || !modes[modenum].width) {
+		Cvar_SetValue(vid_mode, current_mode);
 
 		Con_Printf("No such video mode: %d\n",modenum);
 
 		return 0;
 	}
 
-	vid_mode->value = (float)modenum;
+	Cvar_SetValue (vid_mode, modenum);
 
-	current_mode=modenum;
+	current_mode = modenum;
 
 	vid.width = modes[current_mode].width;
 	vid.height = modes[current_mode].height;

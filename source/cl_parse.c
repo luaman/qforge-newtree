@@ -1105,7 +1105,7 @@ void CL_MuzzleFlash (void)
 }
 
 
-#define SHOWNET(x) if(cl_shownet->value==2)Con_Printf ("%3i:%s\n", msg_readcount-1, x);
+#define SHOWNET(x) if (cl_shownet->value == 2) Con_Printf ("%3i:%s\n", msg_readcount-1, x);
 /*
 =====================
 CL_ParseServerMessage

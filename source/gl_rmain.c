@@ -834,8 +834,8 @@ R_SetupFrame
 static void R_SetupFrame (void)
 {
 // don't allow cheats in multiplayer
-	r_fullbright->value = 0;
-	r_lightmap->value = 0;
+	Cvar_SetValue (r_fullbright, 0);
+	Cvar_SetValue (r_lightmap, 0);
 	if (!atoi(Info_ValueForKey(cl.serverinfo, "watervis")))
 		Cvar_SetValue(r_wateralpha, 1);
 

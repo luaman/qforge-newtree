@@ -594,6 +594,7 @@ void SV_Serverinfo_f (void)
 	}
 	Info_SetValueForKey (svs.info, Cmd_Argv(1), Cmd_Argv(2), MAX_SERVERINFO_STRING);
 
+	// FIXME This sucks.
 	// if this is a cvar, change it too	
 	var = Cvar_FindVar (Cmd_Argv(1));
 	if (var)

@@ -122,7 +122,7 @@ byte	*Skin_Cache (skin_t *skin)
 	if (cls.downloadtype == dl_skin)
 		return NULL;		// use base until downloaded
 
-	if (noskins->value==1) // JACK: So NOSKINS > 1 will show skins, but
+	if (noskins->value == 1) // JACK: So NOSKINS > 1 will show skins, but
 		return NULL;	  // not download new ones.
 
 	if (skin->failedload)

@@ -127,7 +127,7 @@ void Netchan_Init (void)
 	showpackets = Cvar_Get("showpackets",  "0", CVAR_NONE, "None");
 	showdrop = Cvar_Get("showdrop",  "0", CVAR_NONE, "None");
 	qport = Cvar_Get("qport",  "0", CVAR_NONE, "None");
-	qport->value = port;
+	Cvar_SetValue (qport, port);
 }
 
 /*

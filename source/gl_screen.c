@@ -310,16 +310,10 @@ static void SCR_CalcRefdef (void)
 //========================================
 	
 // bound viewsize
-	if (scr_viewsize->value < 30)
-		Cvar_Set (scr_viewsize,"30");
-	if (scr_viewsize->value > 120)
-		Cvar_Set (scr_viewsize,"120");
+	Cvar_SetValue (scr_viewsize, bound (30, scr_viewsize->value, 120);
 
 // bound field of view
-	if (scr_fov->value < 10)
-		Cvar_Set (scr_fov,"10");
-	if (scr_fov->value > 170)
-		Cvar_Set (scr_fov,"170");
+	Cvar_Set (scr_fov, bound (10, scr_fov->value, 170);
 
 // intermission is always full screen   
 	if (cl.intermission)
@@ -1240,7 +1234,7 @@ void SCR_UpdateScreen (void)
 //            also makes polyblend apply to whole screen
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
-	brightness->value = bound(1, brightness->value, 5);
+	Cvar_SetValue (brightness, bound (1, brightness->value, 5));
 	if (lighthalf) // LordHavoc: render was done at half brightness
 		f = brightness->value * 2;
 	else
@@ -1264,7 +1258,7 @@ void SCR_UpdateScreen (void)
 		glEnd ();
 	}
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	contrast->value = bound(0.1, contrast->value, 1.0);
+	Cvar_SetValue (contrast, bound (0.1, contrast->value, 1));
 	if ((gl_polyblend->value && v_blend[3]) || contrast->value < 1)
 	{
 		glBegin (GL_QUADS);

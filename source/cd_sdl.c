@@ -130,16 +130,12 @@ void CDAudio_Resume()
 void CDAudio_Update()
 {
 	if(!cd_id || !enabled) return;
-	if(bgmvolume->value != cdvolume)
-	{
-		if(cdvolume)
-		{
-			bgmvolume->value = 0.0;
+	if(bgmvolume->value != cdvolume) {
+		if(cdvolume) {
+			Cvar_SetValue (bgmvolume, 0.0);
 			CDAudio_Pause();
-		}
-		else
-		{
-			bgmvolume->value = 1.0;
+		} else {
+			Cvar_SetValue (bgmvolume, 1.0);
 			CDAudio_Resume();
 		}
 		cdvolume = bgmvolume->value;

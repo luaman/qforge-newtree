@@ -812,7 +812,7 @@ void R_DrawBrushModel (entity_t *e)
 
 	// LordHavoc: anyone without multitexture won't want texsort 0 anyway...
 	if (!gl_mtexable)
-		gl_texsort->value = 1;
+		Cvar_SetValue (gl_texsort, 1);
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
@@ -997,7 +997,7 @@ void R_DrawWorld (void)
 
 	// LordHavoc: anyone without multitexture won't want texsort 0 anyway...
 	if (!gl_mtexable)
-		gl_texsort->value = 1;
+		Cvar_SetValue (gl_texsort, 1);
 
 	glColor3f (1.0, 1.0, 1.0);
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));

@@ -1096,20 +1096,16 @@ void VID_CheckModedescFixup (int mode)
 {
 	int		x, y, stretch;
 
-	if (mode == MODE_SETTABLE_WINDOW)
-	{
-		modelist[mode].stretched = (int)vid_stretch_by_2->value;
+	if (mode == MODE_SETTABLE_WINDOW) {
+		modelist[mode].stretched = (int) vid_stretch_by_2->value;
 		stretch = modelist[mode].stretched;
 
-		if (vid_config_x->value < (320 << stretch))
-			vid_config_x->value = 320 << stretch;
+		Cvar_SetValue (vid_config_x, max (vid_config_x, 320 << stretch));
+		Cvar_SetValue (vid_config_y, max (vid_config_y, 200 << stretch));
 
-		if (vid_config_y->value < (200 << stretch))
-			vid_config_y->value = 200 << stretch;
-
-		x = (int)vid_config_x->value;
-		y = (int)vid_config_y->value;
-                snprintf (modelist[mode].modedesc, sizeof(modelist[mode].modedesc), "%dx%d", x, y);
+		x = (int) vid_config_x->value;
+		y = (int) vid_config_y->value;
+		snprintf (modelist[mode].modedesc, sizeof(modelist[mode].modedesc), "%dx%d", x, y);
 		modelist[mode].width = x;
 		modelist[mode].height = y;
 	}
@@ -1134,12 +1130,9 @@ char *VID_GetModeDescriptionMemCheck (int mode)
 	pv = VID_GetModePtr (mode);
 	pinfo = pv->modedesc;
 
-	if (VID_CheckAdequateMem (pv->width, pv->height))
-	{
+	if (VID_CheckAdequateMem (pv->width, pv->height)) {
 		return pinfo;
-	}
-	else
-	{
+	} else {
 		return NULL;
 	}
 }
