@@ -690,10 +690,6 @@ void R_BlendLightmaps (void)
 void R_RenderBrushPolyTransparent (msurface_t *fa)
 {
 	texture_t	*t;
-	byte		*base;
-	int			maps;
-	glRect_t    *theRect;
-	int smax, tmax;
 
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GEQUAL, 0.05f);

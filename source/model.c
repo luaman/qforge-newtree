@@ -36,6 +36,7 @@
 #include "quakefs.h"
 #include "qendian.h"
 #include "checksum.h"
+#include "sys.h"
 
 #include <math.h>
 #include <string.h>

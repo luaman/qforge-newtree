@@ -60,6 +60,7 @@
 #include "glquake.h"
 #include "quakefs.h"
 #include "checksum.h"
+#include "hl.h"
 
 void SV_Error (char *error, ...);
 

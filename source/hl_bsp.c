@@ -38,6 +38,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
 #include "qendian.h"
@@ -63,6 +64,7 @@
 #include "glquake.h"
 #include "quakefs.h"
 #include "checksum.h"
+#include "hl.h"
 
 
 int		image_width;
@@ -131,12 +133,14 @@ byte* loadimagepixels (char* filename, qboolean complain, int matchwidth, int ma
 	sprintf (name, "%s.tga", basename);
 	COM_FOpenFile (name, &f);
 	if (f)
-		return LoadTGA (f, matchwidth, matchheight);
+		return LoadTGA (f);
+		//return LoadTGA (f, matchwidth, matchheight);
 	sprintf (name, "%s.pcx", basename);
 	COM_FOpenFile (name, &f);
 	if (f)
-		return LoadPCX (f, matchwidth, matchheight);
-	if (image_rgba = W_GetTexture(basename, matchwidth, matchheight))
+		return LoadPCX (f);
+		//return LoadPCX (f, matchwidth, matchheight);
+	if ((image_rgba = W_GetTexture(basename, matchwidth, matchheight)))
 		return image_rgba;
 	if (complain)
 		Con_Printf ("Couldn't load %s.tga or .pcx\n", filename);
@@ -145,7 +149,7 @@ byte* loadimagepixels (char* filename, qboolean complain, int matchwidth, int ma
 
 void HL_Mod_LoadTextures (lump_t *l)
 {
-        int             i, j, pixels, num, max, altmax, freeimage, transparent, bytesperpixel;
+	int             i, j, num, max, altmax, freeimage, transparent, bytesperpixel;
 	miptex_t	*mt;
 	texture_t	*tx, *tx2;
 	texture_t	*anims[10];
@@ -192,17 +196,17 @@ void HL_Mod_LoadTextures (lump_t *l)
 		strcpy(imagename, "textures/");
 		strcat(imagename, mt->name);
 
-		freeimage = TRUE;
-                transparent = FALSE;
+		freeimage = true;
+                transparent = false;
                 bytesperpixel = 4;
-		data = loadimagepixels(imagename, FALSE, tx->width, tx->height);
+		data = loadimagepixels(imagename, false, tx->width, tx->height);
 		if (!data) // no external texture found
 		{
 			strcpy(imagename, mt->name);
-			data = loadimagepixels(imagename, FALSE, tx->width, tx->height);
+			data = loadimagepixels(imagename, false, tx->width, tx->height);
 			if (!data) // no external texture found
 			{
-				freeimage = FALSE;
+				freeimage = false;
                                 bytesperpixel = 1;
 				if (mt->offsets[0]) // texture included
 					data = (byte *)((int) mt + mt->offsets[0]);
@@ -217,7 +221,7 @@ void HL_Mod_LoadTextures (lump_t *l)
 				for (j = 0;j < image_width*image_height;j++)
 					if (data[j*4+3] < 255)
 					{
-						transparent = TRUE;
+						transparent = true;
 						break;
 					}
 			}
@@ -227,14 +231,14 @@ void HL_Mod_LoadTextures (lump_t *l)
 			for (j = 0;j < image_width*image_height;j++)
 				if (data[j*4+3] < 255)
 				{
-					transparent = TRUE;
+					transparent = true;
 					break;
 				}
 		}
                 if (!strncmp(mt->name,"sky",3)) 
 		{
-			tx->transparent = FALSE;
-                        R_InitSky (data, bytesperpixel);
+			tx->transparent = false;
+                        R_InitSky_32 (data);
 		}
 		else
 		{
@@ -407,7 +411,7 @@ void CL_ParseEntityLump(char *entdata)
 						strcpy(wadname, "textures/");
                                                 Con_DPrintf("Wad: %s\n", &value[j]);
 						strcat(wadname, &value[j]);
-						W_LoadTextureWadFile (wadname, FALSE);
+						W_LoadTextureWadFile (wadname, false);
 						j = i+1;                                                
 						if (!k)
 							break;
@@ -426,8 +430,7 @@ GL_LoadTexture
 int lhcsumtable2[256];
 int HL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha)
 {
-	qboolean	noalpha;
-	int			i, p, s, lhcsum;
+	int			i, s, lhcsum;
 	gltexture_t	*glt;
 
 	// LordHavoc: do a checksum to confirm the data really is the same as previous
@@ -470,7 +473,7 @@ HL_LoadTexture_setup:
 	glt->mipmap = mipmap;
 
         GL_Bind(glt->texnum);
-        GL_Upload32 (data, width, height, mipmap, true);
+        GL_Upload32 ((unsigned *) data, width, height, mipmap, true);
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	return glt->texnum;

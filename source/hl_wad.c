@@ -30,10 +30,13 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#include <stdlib.h>
+
 #include "sys.h"
 #include "wad.h"
 #include "quakefs.h"
 #include "qendian.h"
+#include "console.h"
 
 
 #define TEXWAD_MAXIMAGES 8192
@@ -59,7 +62,6 @@ void W_LoadTextureWadFile (char *filename, int complain)
 	int				infotableofs;
 	FILE			*file;
 	int				numlumps;
-	int				temp;
 
 	
 	COM_FOpenFile (filename, &file);

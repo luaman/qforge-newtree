@@ -265,6 +265,8 @@ void R_DrawSkyChain (msurface_t *s);
 void R_LoadSkys (char *);
 void R_ClearSkyBox (void);
 void R_DrawSkyBox (void);
+byte *LoadTGA (FILE *fin);
+byte *LoadPCX (FILE *f);
 
 //
 // gl_draw.c
