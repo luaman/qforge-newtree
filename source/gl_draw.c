@@ -79,7 +79,7 @@ int			ltexcrctable[256];  // cache mismatch checking  --KB
 
 int			translate_texture;
 int			char_texture;
-int			cs_texture; // crosshair texture
+int			cs_texture; // crosshair texturea
 
 static byte cs_data[64] = {
 	0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff,
@@ -202,13 +202,14 @@ void Scrap_Upload (void)
 typedef struct cachepic_s
 {
 	char		name[MAX_QPATH];
+	qboolean	dirty;
 	qpic_t		pic;
 	byte		padding[32];	// for appended glpic
 } cachepic_t;
 
 #define	MAX_CACHED_PICS		128
-cachepic_t	menu_cachepics[MAX_CACHED_PICS];
-int			menu_numcachepics;
+cachepic_t	cachepics[MAX_CACHED_PICS];
+int			numcachepics;
 
 byte		menuplyr_pixels[4096];
 
@@ -257,6 +258,15 @@ qpic_t *Draw_PicFromWad (char *name)
 	return p;
 }
 
+void
+Draw_ClearCache (void)
+{
+	cachepic_t	*pic;
+	int			i;
+
+	for (pic=cachepics, i=0 ; i<numcachepics ; pic++, i++)
+		pic->dirty = true;
+}
 
 /*
 ================
@@ -270,14 +280,19 @@ qpic_t	*Draw_CachePic (char *path)
 	qpic_t		*dat;
 	glpic_t		*gl;
 
-	for (pic=menu_cachepics, i=0 ; i<menu_numcachepics ; pic++, i++)
+	for (pic=cachepics, i=0 ; i<numcachepics ; pic++, i++)
 		if (!strcmp (path, pic->name))
-			return &pic->pic;
+			break;
 
-	if (menu_numcachepics == MAX_CACHED_PICS)
-		Sys_Error ("menu_numcachepics == MAX_CACHED_PICS");
-	menu_numcachepics++;
-	strcpy (pic->name, path);
+	if (i == numcachepics)
+	{
+		if (numcachepics == MAX_CACHED_PICS)
+			Sys_Error ("menu_numcachepics == MAX_CACHED_PICS");
+		numcachepics++;
+		strcpy (pic->name, path);
+	}
+	else if (!pic->dirty)
+		return &pic->pic;
 
 //
 // load the pic from disk
@@ -295,6 +310,7 @@ qpic_t	*Draw_CachePic (char *path)
 
 	pic->pic.width = dat->width;
 	pic->pic.height = dat->height;
+	pic->dirty = false;
 
 	gl = (glpic_t *)pic->pic.data;
 	gl->texnum = GL_LoadPicTexture (dat);
@@ -517,7 +533,8 @@ void Draw_Crosshair(void)
 	extern vrect_t		scr_vrect;
 	unsigned char *pColor;
 
-	if (crosshair->value == 2) {
+	if (crosshair->value == 2)
+	{
 		x = scr_vrect.x + scr_vrect.width/2 - 3 + cl_crossx->value; 
 		y = scr_vrect.y + scr_vrect.height/2 - 3 + cl_crossy->value;
 
@@ -535,8 +552,8 @@ void Draw_Crosshair(void)
 		glTexCoord2f (0, 1);
 		glVertex2f (x - 4, y+12);
 		glEnd ();
-		
-	} else if (crosshair->value)
+	}
+	else if (crosshair->value)
 		Draw_Character8 (scr_vrect.x + scr_vrect.width/2-4 + cl_crossx->value, 
 			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy->value, '+');
 }
@@ -886,11 +903,6 @@ Call before beginning any disc IO.
 */
 void Draw_BeginDisc (void)
 {
-	if (!draw_disc)
-		return;
-	glDrawBuffer  (GL_FRONT);
-	Draw_Pic (vid.width - 24, 0, draw_disc);
-	glDrawBuffer  (GL_BACK);
 }
 
 

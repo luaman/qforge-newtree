@@ -542,6 +542,8 @@ void CL_StopUpload(void)
 =====================================================================
 */
 
+void Draw_ClearCache (void);
+
 /*
 ==================
 CL_ParseServerData
@@ -578,6 +580,7 @@ void CL_ParseServerData (void)
 		// save current config
 		Host_WriteConfiguration (); 
 		cflag = true;
+		Draw_ClearCache ();
 	}
 
 	COM_Gamedir(str);

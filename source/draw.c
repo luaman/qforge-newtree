@@ -76,6 +76,16 @@ qpic_t	*Draw_PicFromWad (char *name)
 }
 
 /*
+	Draw_ClearCache
+
+	This is a no-op in software targets
+*/
+void
+Draw_ClearCache (void)
+{
+}
+
+/*
 ================
 Draw_CachePic
 ================
