@@ -137,6 +137,7 @@ DEPEND = \
    $(OBJS)\fractalnoise.obj\
    $(OBJS)\gl_dyn_textures.obj\
    $(OBJS)\gl_sky.obj\
+   $(OBJS)\gl_sky_clip.obj\
    $(OBJS)\gl_dyn_fires.obj\
    $(OBJS)\gl_dyn_part.obj\
    $(OBJS)\locs.obj\
@@ -230,6 +231,7 @@ $(OBJS)\tga.obj+
 $(OBJS)\fractalnoise.obj+
 $(OBJS)\gl_dyn_textures.obj+
 $(OBJS)\gl_sky.obj+
+$(OBJS)\gl_sky_clip.obj+
 $(OBJS)\gl_dyn_fires.obj+
 $(OBJS)\gl_dyn_part.obj+
 $(OBJS)\locs.obj+
@@ -344,6 +346,11 @@ $(OBJS)\gl_dyn_textures.obj :  $(QFROOT)\source\gl_dyn_textures.c
 $(OBJS)\gl_sky.obj :  $(QFROOT)\source\gl_sky.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_sky.c
+
+|
+$(OBJS)\gl_sky_clip.obj :  $(QFROOT)\source\gl_sky_clip.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_sky_clip.c
 
 |
 $(OBJS)\gl_dyn_fires.obj :  $(QFROOT)\source\gl_dyn_fires.c

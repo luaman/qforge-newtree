@@ -126,6 +126,11 @@ SOURCE=.\gl_sky.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\gl_sky_clip.c
+# PROP Exclude_From_Build 1
+# End Source File
+# Begin Source File
+
 SOURCE=.\info.c
 # End Source File
 # Begin Source File

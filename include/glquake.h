@@ -127,6 +127,7 @@ extern	PROC glVertexPointerEXT;
 #define SKYSHIFT		7
 #define	SKYSIZE			(1 << SKYSHIFT)
 #define SKYMASK			(SKYSIZE - 1)
+#define SKY_TEX			2000	// Quake 2 environment sky
 
 #define BACKFACE_EPSILON	0.01
 

@@ -854,6 +854,25 @@ SOURCE=.\gl_sky.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\gl_sky_clip.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\gl_trans.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
