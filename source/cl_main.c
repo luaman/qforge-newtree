@@ -1592,6 +1592,7 @@ void Host_Init (void)
 
 	Cbuf_Init ();
 	Cmd_Init ();
+	Locs_Init ();
 
 	// execute +set as early as possible
 	Cmd_StuffCmds_f ();

@@ -26,6 +26,9 @@
 	$Id$
 */
 
+#ifndef __teamplay_h
+#define __teamplay_h
+
 #include "cvar.h"
 
 extern cvar_t	*cl_deadbodyfilter;
@@ -38,3 +41,6 @@ void Team_BestWeaponImpulse (void);
 void Team_Dead (void);
 void Team_NewMap (void);
 char *Team_ParseSay (char *);
+void Locs_Init (void);
+
+#endif // __teamplay_h

@@ -26,6 +26,9 @@
 	$Id$
 */
 
+#ifndef __locs_h
+#define __locs_h
+
 #include "qtypes.h"
 
 typedef struct
@@ -37,3 +40,6 @@ typedef struct
 location_t *locs_find(vec3_t target);
 void locs_load(char *mapname);
 void locs_reset();
+void locs_add(vec3_t location, char *name);
+
+#endif // __locs_h

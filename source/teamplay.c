@@ -27,6 +27,7 @@
 */
 
 #include <string.h>
+#include <errno.h>
 
 #include "bothdefs.h"
 #include "cmd.h"
@@ -34,6 +35,8 @@
 #include "teamplay.h"
 #include "locs.h"
 #include "sys.h"
+#include "console.h"
+#include "quakefs.h"
 
 extern cvar_t	*skin;
 cvar_t	*cl_deadbodyfilter;
@@ -306,3 +309,57 @@ void Team_Init_Cvars (void)
 	cl_parsesay = Cvar_Get("cl_parsesay", "0", CVAR_NONE, "None");
 	cl_nofake = Cvar_Get("cl_nofake", "0", CVAR_NONE, "Unhide fake messages");
 }
+
+/*
+ * locs_markloc
+ *
+ * Record the current co-ords plus description into a loc file for current map
+ *     */
+
+// FIXME: No gzip'd loc file support
+
+void locs_markloc()
+{
+	vec3_t loc;
+	char *mapname, *t1;
+	QFile *locfd;
+	char locfile[MAX_OSPATH];
+	
+	if (Cmd_Argc() != 2) {
+		Con_Printf("markloc <description> :marks the current location with the description and records the information into a loc file.\n");
+		return;
+	}
+	VectorCopy(cl.simorg,loc);
+        locs_add(loc,Cmd_Argv(1));
+	loc[0] *= 8;
+	loc[1] *= 8;
+	loc[2] *= 8;
+	mapname = strdup(cl.worldmodel->name);
+	if (!mapname)
+		Sys_Error("Can't duplicate mapname!");
+	t1 = strrchr(mapname, '.');
+	if (!t1)
+		Sys_Error("Can't find / or .!");
+	t1++;   // skip over /
+	t1[0] = 'l';
+	t1[1] = 'o';
+	t1[2] = 'c';
+	snprintf(locfile, sizeof(locfile), "%s/%s",com_gamedir,mapname);
+	locfd = Qopen(locfile,"a+");
+	if (locfd == 0) {
+		Qopen(locfile,"w+");
+		if (locfd == 0) {
+			Con_Printf("ERROR: Unable to open %s : %s\n",mapname,strerror(errno));
+			free(mapname);
+			return;
+		}
+	}
+	Qprintf(locfd,"%.0f %.0f %.0f %s\n",loc[0],loc[1],loc[2],Cmd_Argv(1));
+	Qclose(locfd);
+	free(mapname);
+}
+                                                                                void Locs_Init()
+{
+	Cmd_AddCommand("markloc",locs_markloc);
+}
+                                                                               
