@@ -90,7 +90,7 @@ int gl_mtex_enum = TEXTURE0_SGIS;
 qboolean gl_arb_mtex = false;
 qboolean gl_mtexable = false;
 
-qboolean is8bit = false;
+static qboolean is8bit = false;
 cvar_t *vid_use8bit;
 
 /*-----------------------------------------------------------------------*/
@@ -374,16 +374,13 @@ VID_Init8bitPalette (void)
 
 	Con_Printf ("8-bit OpenGL extension: ");
 
-	if (COM_CheckParm ("-no8bit")) {
-		Con_Printf ("disabled.\n");
-		return;
-	}
 #ifdef HAVE_DLOPEN
 	if (!(dlhand = dlopen (NULL, RTLD_LAZY))) {
 		Con_Printf ("unable to check.\n");
 		return;
 	}
 #endif
+
 	if (vid_use8bit->int_val) {
 #ifdef HAVE_TDFXGL
 		3dfx_Init8bitPalette ();
@@ -394,7 +391,10 @@ VID_Init8bitPalette (void)
 		if (!is8bit) {
 			Con_Printf ("not found.\n");
 		}
+	} else {
+		Con_Printf ("disabled.\n");
 	}
+
 #ifdef HAVE_DLOPEN
 	dlclose (dlhand);
 	dlhand = NULL;
