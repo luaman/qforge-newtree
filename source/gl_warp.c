@@ -689,7 +689,7 @@ R_DrawSkyLayer (float s)
 		a2y = -bubble_sintable[a+1];
 
 		glBegin (GL_TRIANGLE_STRIP);
-		for (b = 0; b <= 32; b++)
+		for (b = 0; b <= 16; b++)
 		{
 			x = bubble_costable[b];
 			y = -bubble_sintable[b];
