@@ -1148,11 +1148,9 @@ void SCR_UpdateScreen (void)
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	Cvar_SetValue (contrast, bound (0.1, contrast->value, 1));
-	if ((gl_polyblend->int_val && v_blend[3]) || contrast->value < 0.999) // epsilon
-	{
+	if (v_blend[3] || contrast->value < 0.999) { // epsilon
 		glBegin (GL_QUADS);
-		if (contrast->value < 0.999) // epsilon
-		{
+		if (contrast->value < 0.999) { // epsilon
 			glColor4f (1, 1, 1, (1 - contrast->value));
 			glVertex2f (0,0);
 			glVertex2f (vid.width, 0);
@@ -1160,8 +1158,7 @@ void SCR_UpdateScreen (void)
 			glVertex2f (0, vid.height);
 		}
 		
-		if (gl_polyblend->int_val && v_blend[3])
-		{
+		if (v_blend[3]) {
 			glColor4fv (v_blend);
 			glVertex2f (0,0);
 			glVertex2f (vid.width, 0);

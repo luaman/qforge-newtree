@@ -252,7 +252,6 @@ void R_Init (void)
 	gl_smooth = Cvar_Get("gl_smooth", "1", CVAR_NONE, "None");
 	gl_smoothdlights = Cvar_Get("gl_smoothdlights", "1", CVAR_NONE, "None");
 	gl_affinemodels = Cvar_Get("gl_affinemodels", "0", CVAR_NONE, "None");
-	gl_polyblend = Cvar_Get("gl_polyblend", "1", CVAR_NONE, "None");
 	gl_flashblend = Cvar_Get("gl_flashblend",  "0", CVAR_NONE, "None");
 	gl_playermip = Cvar_Get("gl_playermip", "0", CVAR_NONE, "None");
 	gl_nocolors = Cvar_Get("gl_nocolors", "0", CVAR_NONE, "None");
