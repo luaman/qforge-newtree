@@ -1873,10 +1873,13 @@ void SV_Init (quakeparms_t *parms)
 	fs_globalcfg = Cvar_Get("fs_globalcfg", FS_GLOBALCFG,
 							   CVAR_ROM, "global configuration file");
 	Cmd_Exec_File (fs_globalcfg->string);
+
+	// execute sets again after the config file has been parsed ..
 	Cbuf_Execute_Sets ();
 
+	// and now reprocess the cmdline's sets for overrides
 	Cmd_StuffCmds_f ();
-	Cbuf_Execute ();
+	Cbuf_Execute_Sets ();
 
 	COM_Init ();
 	

@@ -124,7 +124,6 @@ void
 Qclose(FILE *file)
 {
 	fclose(file);
-	free(file);
 }
 
 int
