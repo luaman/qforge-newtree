@@ -526,7 +526,6 @@ void VID_Init(unsigned char *palette)
 	int i;
 	GLint attribs[32];
 	char	gldir[MAX_OSPATH];
-	int width = 640, height = 480;
 
 	VID_GetWindowSize (640, 480);
 
@@ -563,17 +562,17 @@ void VID_Init(unsigned char *palette)
 	if (vid.conheight < 200)
 		vid.conheight = 200;
 
-	fc = fxMesaCreateContext(0, findres(&width, &height), GR_REFRESH_75Hz,
+	fc = fxMesaCreateContext(0, findres(&scr_width, &scr_height), GR_REFRESH_75Hz,
 		attribs);
 	if (!fc)
 		Sys_Error("Unable to create 3DFX context.\n");
 
 	fxMesaMakeCurrent(fc);
 
-	if (vid.conheight > height)
-		vid.conheight = height;
-	if (vid.conwidth > width)
-		vid.conwidth = width;
+	if (vid.conheight > scr_height)
+		vid.conheight = scr_height;
+	if (vid.conwidth > scr_width)
+		vid.conwidth = scr_width;
 	vid.width = vid.conwidth;
 	vid.height = vid.conheight;
 
@@ -592,7 +591,7 @@ void VID_Init(unsigned char *palette)
 	// Check for 3DFX Extensions and initialize them.
 	VID_Init8bitPalette();
 
-	Con_Printf ("Video mode %dx%d initialized.\n", width, height);
+	Con_Printf ("Video mode %dx%d initialized.\n", scr_width, scr_height);
 
 	vid.recalc_refdef = 1;				// force a surface cache flush
 }
