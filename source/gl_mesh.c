@@ -340,26 +340,28 @@ GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr, void *_m, int _s)
 		memset (d2, 0, sizeof (d2));
 		Qread (f, &nc, 4);
 		Qread (f, &no, 4);
-		Qread (f, &c, nc * sizeof (c[0]));
-		Qread (f, &vo, no * sizeof (vo[0]));
-		Qread (f, d1, MDFOUR_DIGEST_BYTES);
-		Qread (f, d2, MDFOUR_DIGEST_BYTES);
-		Qclose (f);
+		if (nc <= 8192 && no <= 8192) {
+			Qread (f, &c, nc * sizeof (c[0]));
+			Qread (f, &vo, no * sizeof (vo[0]));
+			Qread (f, d1, MDFOUR_DIGEST_BYTES);
+			Qread (f, d2, MDFOUR_DIGEST_BYTES);
+			Qclose (f);
 
-		mdfour_begin (&md);
-		mdfour_update (&md, (unsigned char*)&nc, 4);
-		mdfour_update (&md, (unsigned char*)&no, 4);
-		mdfour_update (&md, (unsigned char*)&c, nc * sizeof (c[0]));
-		mdfour_update (&md, (unsigned char*)&vo, no * sizeof (vo[0]));
-		mdfour_update (&md, d1, MDFOUR_DIGEST_BYTES);
-		mdfour_result (&md, mesh_digest);
+			mdfour_begin (&md);
+			mdfour_update (&md, (unsigned char*)&nc, 4);
+			mdfour_update (&md, (unsigned char*)&no, 4);
+			mdfour_update (&md, (unsigned char*)&c, nc * sizeof (c[0]));
+			mdfour_update (&md, (unsigned char*)&vo, no * sizeof (vo[0]));
+			mdfour_update (&md, d1, MDFOUR_DIGEST_BYTES);
+			mdfour_result (&md, mesh_digest);
 
-		if (memcmp (d2, mesh_digest, MDFOUR_DIGEST_BYTES) == 0 && memcmp (d1, model_digest, MDFOUR_DIGEST_BYTES) == 0) {
-			remesh = false;
-			numcommands = nc;
-			numorder = no;
-			memcpy (commands, c, numcommands * sizeof (c[0]));
-			memcpy (vertexorder, vo, numorder * sizeof (vo[0]));
+			if (memcmp (d2, mesh_digest, MDFOUR_DIGEST_BYTES) == 0 && memcmp (d1, model_digest, MDFOUR_DIGEST_BYTES) == 0) {
+				remesh = false;
+				numcommands = nc;
+				numorder = no;
+				memcpy (commands, c, numcommands * sizeof (c[0]));
+				memcpy (vertexorder, vo, numorder * sizeof (vo[0]));
+			}
 		}
 	}
 	if (remesh) {
