@@ -379,22 +379,15 @@ static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 	if (modelalpha != 1.0)
 		glDepthMask(0);
 
-	while (1)
-	{
+	while ((count = *order++)) {
 		// get the vertex count and primitive type
-		count = *order++;
-		if (!count)
-			break;		// done
-		if (count < 0)
-		{
+		if (count < 0) {
 			count = -count;
 			glBegin (GL_TRIANGLE_FAN);
-		}
-		else
+		} else
 			glBegin (GL_TRIANGLE_STRIP);
 
-		do
-		{
+		do {
 			// texture coordinates come from the draw list
 			glTexCoord2f (((float *)order)[0], ((float *)order)[1]);
 			order += 2;
@@ -659,10 +652,6 @@ static void R_DrawAliasModel (entity_t *e)
 	// This block is GL fullbright support for objects...
 	if (clmodel->hasfullbrights && gl_fb_models->value &&
 			paliashdr->gl_fb_texturenum[currententity->skinnum][anim]) {
-		/*
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		*/
-
 		glBindTexture (GL_TEXTURE_2D, paliashdr->gl_fb_texturenum[currententity->skinnum][anim]);
 		R_SetupAliasFrame (currententity->frame, paliashdr, true);
 	}

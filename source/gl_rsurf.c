@@ -474,6 +474,7 @@ dynamic:
 		fullbright_polys[texture->gl_fb_texturenum] = s->polys;
 	}
 	glColor3ubv(lighthalf_v);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
 /*
@@ -487,7 +488,7 @@ void R_BlendLightmaps (void)
 	glpoly_t	*p;
 	float		*v;
 
-	glDepthMask (0);		// don't bother writing Z
+	glDepthMask(GL_FALSE);		// don't bother writing Z
 
 	glBlendFunc (GL_ZERO, GL_SRC_COLOR);
 	glColor3f(1,1,1);
@@ -520,7 +521,7 @@ void R_BlendLightmaps (void)
 	glColor3ubv(lighthalf_v);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glDepthMask (1);		// back to normal Z buffering
+	glDepthMask(GL_TRUE);		// back to normal Z buffering
 }
 
 /*
@@ -634,18 +635,16 @@ dynamic:
 void GL_WaterSurface(msurface_t *s)
 {
 	int i;
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	i = s->texinfo->texture->gl_texturenum;
 	glBindTexture (GL_TEXTURE_2D, i);
 	if (r_wateralpha->value < 1.0)
 	{
-		glDepthMask(0);
+		glDepthMask(GL_FALSE);
 		EmitWaterPolys (s);
-		glDepthMask(1);
+		glDepthMask(GL_TRUE);
 	}
 	else
 		EmitWaterPolys (s);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
 
 /*
@@ -665,9 +664,8 @@ void R_DrawWaterSurfaces (void)
 
 	glLoadMatrixf (r_world_matrix);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	if (r_wateralpha->value < 1.0)
-		glDepthMask(0);
+		glDepthMask(GL_FALSE);
 
 	i = -1;
 	for (s = waterchain;s;s = s->texturechain)
@@ -683,7 +681,7 @@ void R_DrawWaterSurfaces (void)
 	waterchain = NULL;
 
 	if (r_wateralpha->value < 1.0)
-		glDepthMask(1);
+		glDepthMask(GL_TRUE);
 }
 
 

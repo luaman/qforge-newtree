@@ -961,7 +961,6 @@ void GL_Set2D (void)
 	glDisable (GL_CULL_FACE);
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	glColor3ubv(lighthalf_v);
 }

@@ -522,7 +522,7 @@ void R_DrawParticles (void)
 
 	glBindTexture (GL_TEXTURE_2D, particletexture);
 	// LordHavoc: particles should not affect zbuffer
-	glDepthMask(0);
+	glDepthMask(GL_FALSE);
 	alphaTestEnabled = glIsEnabled(GL_ALPHA_TEST);
 
 	if (alphaTestEnabled)
@@ -653,7 +653,7 @@ void R_DrawParticles (void)
 	glColor3ubv(lighthalf_v);
 	if (alphaTestEnabled)
 		glEnable(GL_ALPHA_TEST);
-	glDepthMask(1);
+	glDepthMask(GL_TRUE);
 }
 
 /*
@@ -811,7 +811,7 @@ R_UpdateFires (void)
 	if (!gl_fires->value)
 		return;
 
-	glDepthMask (0);
+	glDepthMask(GL_FALSE);
 	glDisable (GL_TEXTURE_2D);
 	glShadeModel (GL_SMOOTH);
 	glBlendFunc (GL_ONE, GL_ONE);
@@ -827,7 +827,7 @@ R_UpdateFires (void)
 
 	glEnable (GL_TEXTURE_2D);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthMask (1);
+	glDepthMask(GL_TRUE);
 }
 
 void
