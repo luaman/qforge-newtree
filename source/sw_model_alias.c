@@ -292,9 +292,10 @@ Mod_LoadAliasGroup (void *pin, maliasframedesc_t *frame)
 	ptemp = (void *) pin_intervals;
 
 	for (i = 0; i < numframes; i++) {
-		ptemp =
-			Mod_LoadAliasFrame (ptemp,
-								(maliasframedesc_t *) &paliasgroup->frames[i]);
+		maliasframedesc_t temp_frame;
+		ptemp = Mod_LoadAliasFrame (ptemp, &temp_frame);
+		memcpy (&paliasgroup->frames[i], &temp_frame,
+				sizeof(paliasgroup->frames[i]));
 	}
 
 	return ptemp;
