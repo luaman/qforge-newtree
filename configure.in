@@ -71,7 +71,7 @@ AC_CHECK_HEADERS(
 	sys/soundcard.h linux/soundcard.h machine/soundcard.h sys/audioio.h \
 	dsound.h mmsystem.h initguid.h mme/mmsystem.h mme/mme_public.h \
 	sys/asoundlib.h string.h strings.h memory.h malloc.h \
-	errno.h sys/dir.h \
+	errno.h sys/dir.h fnmatch.h \
 	mgraph.h
 )
 
