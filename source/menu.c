@@ -406,41 +406,38 @@ void M_AdjustSliders (int dir)
 
 	switch (options_cursor) {
 		case 3:	// screen size
-			Cvar_Set(scr_viewsize, va("%d",
-					bound(30, (int)scr_viewsize->value + (dir * 10), 120)));
+			Cvar_SetValue(scr_viewsize, bound(30, (int)scr_viewsize->value + (dir * 10), 120));
 			break;
 		case 4:	// gamma
-			Cvar_Set(v_gamma, va("%f",
-					bound(0.5, v_gamma->value - (dir * 0.05), 1)));
+			Cvar_SetValue(v_gamma, bound(0.5, v_gamma->value - (dir * 0.05), 1));
 			break;
 		case 5:	// mouse speed
-			Cvar_Set(sensitivity, va("%f",
-					bound(1, sensitivity->value + dir, 25)));
+			Cvar_SetValue(sensitivity, bound(1, sensitivity->value + dir, 25));
 			break;
 		case 6:	// music volume
-			Cvar_Set(bgmvolume, va("%f",
+			Cvar_SetValue(bgmvolume,
 #ifdef _WIN32
-					bound(0, bgmvolume->value + dir, 1)));
+					bound(0, bgmvolume->value + dir, 1));
 #else
-					bound(0, bgmvolume->value + (dir * 0.1), 1)));
+					bound(0, bgmvolume->value + (dir * 0.1), 1));
 #endif
 			break;
 		case 7:	// sfx volume
-			Cvar_Set(volume, va("%f",	bound(0, volume->value + (dir * 0.1), 1)));
+			Cvar_SetValue(volume, bound(0, volume->value + (dir * 0.1), 1));
 			break;
 
 		case 8:	// allways run
 			if (cl_forwardspeed->value > 200) {
-				Cvar_Set(cl_forwardspeed, va("%d", 200));
-				Cvar_Set(cl_backspeed, va("%d", 200));
+				Cvar_SetValue(cl_forwardspeed, 200);
+				Cvar_SetValue(cl_backspeed, 200);
 			} else {
-				Cvar_Set(cl_forwardspeed, va("%d", 400));
-				Cvar_Set(cl_backspeed, va("%d", 400));
+				Cvar_SetValue(cl_forwardspeed, 400);
+				Cvar_SetValue(cl_backspeed, 400);
 			}
 			break;
 
 		case 9:	// invert mouse
-			Cvar_Set(m_pitch, va("%f", -m_pitch->value));
+			Cvar_SetValue(m_pitch, -m_pitch->value);
 			break;
 
 		case 10:	// lookspring
