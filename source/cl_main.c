@@ -661,10 +661,17 @@ CL_AddQFInfoKeys ()
 	char cap[100] = "";		// max of 98 or so flags
 	// set the capabilities info. single char flags (possibly with
 	// modifiefs)
-	// defined capabilities:
+	// defined capabilities (* = not implemented):
 	//  z   client can accept gzipped files.
+	//	h	* http transfers
+	//	f	* ftp transfers
+	//	a	* audio channel (voice chat)
+	//	i	* irc
+	//	p	pogo stick control
+	//	t	team messages
+	strncpy (cap, "pt", sizeof (cap));
 #ifdef HAVE_ZLIB
-	strcat (cap, "z");
+	strncat (cap, "z", sizeof (cap) - strlen (cap) - 1);
 #endif
 	Info_SetValueForStarKey (cls.userinfo, "*cap", cap, MAX_INFO_STRING);
 	Info_SetValueForStarKey (cls.userinfo, "*qsg_version", QSG_VERSION,
