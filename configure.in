@@ -237,8 +237,8 @@ AC_TYPE_SIGNAL
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(
 	connect dlopen fcntl ftime getaddrinfo gethostname gethostbyname \
-	getnameinfo gettimeofday mkdir select socket snprintf stat strerror \
-	strstr snprintf vsnprintf
+	getnameinfo gettimeofday mkdir select socket stat strerror \
+	strstr snprintf vsnprintf _snprintf _vsnprintf
 )
 
 dnl Checks for stricmp/strcasecmp
