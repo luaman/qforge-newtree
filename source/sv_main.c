@@ -1845,8 +1845,10 @@ SV_Init (void)
 	fs_globalcfg = Cvar_Get ("fs_globalcfg", FS_GLOBALCFG,
 							 CVAR_ROM, "global configuration file");
 	Cmd_Exec_File (fs_globalcfg->string);
+	Cbuf_Execute_Sets ();
 
-	// execute sets again after the config file has been parsed ..
+	// execute +set again to override the config file
+	Cmd_StuffCmds_f ();
 	Cbuf_Execute_Sets ();
 
 	COM_Filesystem_Init_Cvars ();

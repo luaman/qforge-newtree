@@ -1606,6 +1606,10 @@ void Host_Init (void)
 	Cmd_Exec_File (fs_globalcfg->string);
 	Cbuf_Execute_Sets ();
 
+	// execute +set again to override the config file
+	Cmd_StuffCmds_f ();
+	Cbuf_Execute_Sets ();
+
 	CL_Cam_Init_Cvars ();
 	CL_Input_Init_Cvars ();
 	CL_Init_Cvars ();
