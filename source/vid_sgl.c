@@ -62,6 +62,12 @@ extern cvar_t   *in_dga_mouseaccel;
 cvar_t          *_windowed_mouse;
 cvar_t          *m_filter;
 
+#ifdef WIN32
+/* fixme: this is evil hack */
+#include <windows.h>
+HWND 		mainwindow;
+#endif
+
 unsigned short	d_8to16table[256];
 unsigned	d_8to24table[256];
 unsigned char   d_15to8table[65536];
@@ -417,7 +423,12 @@ void	VID_Init (unsigned char *palette)
 			width, height);
 
 	vid_initialized = true;
-
+#ifdef WIN32
+        // fixme: EVIL thing - but needed for win32 until we get
+        // SDL_sound ready - without this DirectSound fails.
+        // could replace this with SDL_SysWMInfo
+	mainwindow=GetActiveWindow();
+#endif
 	vid.recalc_refdef = 1;	  // force a surface cache flush
 }
 

@@ -68,6 +68,12 @@ int old_windowed_mouse;
 extern viddef_t    vid;                // global video state
 unsigned short  d_8to16table[256];
 
+#ifdef WIN32
+// fixme: this is evil...
+#include <windows.h>
+HWND 		mainwindow;
+#endif
+
 int modestate; // fixme: just to avoid cross-comp. errors - remove later
                                                         
 // The original defaults
@@ -173,6 +179,14 @@ void    VID_Init (unsigned char *palette)
 
     // initialize the mouse
     SDL_ShowCursor(0);
+
+#ifdef WIN32
+        // fixme: EVIL thing - but needed for win32 until we get
+        // SDL_sound ready - without this DirectSound fails.
+        // could replace this with SDL_SysWMInfo
+	mainwindow=GetActiveWindow();
+#endif
+
 }
 
 void    VID_Shutdown (void)
