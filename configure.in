@@ -977,25 +977,12 @@ if test "x$optimize" = xyes; then
 	if test "x$GCC" = xyes; then
 		CFLAGS="$CFLAGS -O6 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations"
 		AC_MSG_CHECKING(for special compiler settings)
-		case "${host}" in
-			i386-*-*)
-				MORE_CFLAGS="-malign-loops=2 -malign-jumps=2 -malign-functions=2"
-				;;
-			i486-*-*)
-				MORE_CFLAGS="-m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2"
-				;;
-			i586-*-*)
+		case "${host_cpu}" in
+			i?86)
 				if test "x$HAVE_AMD" = "xyes"; then
 					MORE_CFLAGS="-march=k6 -malign-loops=2 -malign-jumps=2 -malign-functions=2"
 				else
-					MORE_CFLAGS="-mpentium -march=pentium -malign-loops=2 -malign-jumps=2 -malign-functions=2"
-				fi
-				;;
-			i686-*-*)
-				if test "x$HAVE_AMD" = "xyes"; then
-					MORE_CFLAGS="-march=k6 -malign-loops=2 -malign-jumps=2 -malign-functions=2"
-				else
-					MORE_CFLAGS="-mpentiumpro -march=pentiumpro -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+					MORE_CFLAGS="-march=${host_cpu} -malign-loops=2 -malign-jumps=2 -malign-functions=2"
 				fi
 				;;
 			*)
