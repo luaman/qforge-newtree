@@ -36,11 +36,6 @@
 #include "console.h"
 #include "sound.h"
 
-// fixme: Damn crappy complier doesn't allow me to UNDEF _win32 on command line!
-#ifdef WIN32SDL
-#undef _WIN32
-#endif
-
 #ifdef _WIN32
 #include "winquake.h"
 #else
@@ -90,43 +85,15 @@ S_TransferStereo16 (int endtime)
 	int         lpaintedtime;
 	DWORD      *pbuf;
 
-#ifdef _WIN32
-	int         reps;
-	DWORD       dwSize, dwSize2;
-	DWORD      *pbuf2;
-	HRESULT     hresult;
-#endif
-
 	snd_vol = volume->value * 256;
 
 	snd_p = (int *) paintbuffer;
 	lpaintedtime = paintedtime;
 
 #ifdef _WIN32
-	if (pDSBuf) {
-		reps = 0;
-
-		while ((hresult = pDSBuf->lpVtbl->Lock (pDSBuf, 0, gSndBufSize,
-												(LPVOID *) & pbuf, &dwSize,
-												(LPVOID *) & pbuf2, &dwSize2,
-												0)) != DS_OK) {
-			if (hresult != DSERR_BUFFERLOST) {
-				Con_Printf
-					("S_TransferStereo16: DS::Lock Sound Buffer Failed\n");
-				S_Shutdown ();
-				S_Startup ();
-				return;
-			}
-
-			if (++reps > 10000) {
-				Con_Printf
-					("S_TransferStereo16: DS: couldn't restore buffer\n");
-				S_Shutdown ();
-				S_Startup ();
-				return;
-			}
-		}
-	} else
+	// fixme: should check for NULL pbuf value
+	if (pDSBuf) pbuf=DSOUND_LockBuffer(true);
+	else
 #endif
 	{
 		pbuf = (DWORD *) shm->buffer;
@@ -152,8 +119,7 @@ S_TransferStereo16 (int endtime)
 	}
 
 #ifdef _WIN32
-	if (pDSBuf)
-		pDSBuf->lpVtbl->Unlock (pDSBuf, pbuf, dwSize, NULL, 0);
+	if (pDSBuf) DSOUND_LockBuffer(false);
 #endif
 }
 
@@ -169,13 +135,6 @@ S_TransferPaintBuffer (int endtime)
 	int         snd_vol;
 	DWORD      *pbuf;
 
-#ifdef _WIN32
-	int         reps;
-	DWORD       dwSize, dwSize2;
-	DWORD      *pbuf2;
-	HRESULT     hresult;
-#endif
-
 	if (shm->samplebits == 16 && shm->channels == 2) {
 		S_TransferStereo16 (endtime);
 		return;
@@ -189,30 +148,9 @@ S_TransferPaintBuffer (int endtime)
 	snd_vol = volume->value * 256;
 
 #ifdef _WIN32
-	if (pDSBuf) {
-		reps = 0;
-
-		while ((hresult = pDSBuf->lpVtbl->Lock (pDSBuf, 0, gSndBufSize,
-												(LPVOID *) & pbuf, &dwSize,
-												(LPVOID *) & pbuf2, &dwSize2,
-												0)) != DS_OK) {
-			if (hresult != DSERR_BUFFERLOST) {
-				Con_Printf
-					("S_TransferPaintBuffer: DS::Lock Sound Buffer Failed\n");
-				S_Shutdown ();
-				S_Startup ();
-				return;
-			}
-
-			if (++reps > 10000) {
-				Con_Printf
-					("S_TransferPaintBuffer: DS: couldn't restore buffer\n");
-				S_Shutdown ();
-				S_Startup ();
-				return;
-			}
-		}
-	} else
+	// fixme: should check for NULL pbuf value
+	if (pDSBuf) pbuf=DSOUND_LockBuffer(true);
+	else
 #endif
 	{
 		pbuf = (DWORD *) shm->buffer;
@@ -246,20 +184,7 @@ S_TransferPaintBuffer (int endtime)
 		}
 	}
 #ifdef _WIN32
-	if (pDSBuf) {
-		DWORD       dwNewpos, dwWrite;
-		int         il = paintedtime;
-		int         ir = endtime - paintedtime;
-
-		ir += il;
-
-		pDSBuf->lpVtbl->Unlock (pDSBuf, pbuf, dwSize, NULL, 0);
-
-		pDSBuf->lpVtbl->GetCurrentPosition (pDSBuf, &dwNewpos, &dwWrite);
-
-//      if ((dwNewpos >= il) && (dwNewpos <= ir))
-//          Con_Printf("%d-%d p %d c\n", il, ir, dwNewpos);
-	}
+	if (pDSBuf) DSOUND_LockBuffer(false);
 #endif
 }
 

@@ -103,6 +103,10 @@ void CenterWindow(HWND hWndCenter, int width, int height, BOOL lefttopjustify);
 void S_BlockSound (void);
 void S_UnblockSound (void);
 
+DWORD *DSOUND_LockBuffer(qboolean lockit);
+void DSOUND_ClearBuffer(int clear);
+void DSOUND_Restore(void);
+
 void VID_SetDefaultMode (void);
 
 int (PASCAL FAR *pWSAStartup)(WORD wVersionRequired, LPWSADATA lpWSAData);

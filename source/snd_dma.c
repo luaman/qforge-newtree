@@ -38,11 +38,6 @@
 #include "sys.h"
 #include "sound.h"
 
-// fixme: Damn crappy complier doesn't allow me to UNDEF _win32 on command line!
-#ifdef WIN32SDL
-#undef _WIN32
-#endif
-
 #ifdef _WIN32
 #include "winquake.h"
 #include "in_win.h"
@@ -620,35 +615,8 @@ S_ClearBuffer (void)
 		clear = 0;
 
 #ifdef _WIN32
-	if (pDSBuf) {
-		DWORD       dwSize;
-		DWORD      *pData;
-		int         reps;
-		HRESULT     hresult;
-
-		reps = 0;
-
-		while ((hresult = pDSBuf->lpVtbl->Lock (pDSBuf, 0, gSndBufSize,
-												(LPVOID *) & pData, &dwSize,
-												NULL, NULL, 0)) != DS_OK) {
-			if (hresult != DSERR_BUFFERLOST) {
-				Con_Printf ("S_ClearBuffer: DS::Lock Sound Buffer Failed\n");
-				S_Shutdown ();
-				return;
-			}
-
-			if (++reps > 10000) {
-				Con_Printf ("S_ClearBuffer: DS: couldn't restore buffer\n");
-				S_Shutdown ();
-				return;
-			}
-		}
-
-		memset (pData, clear, shm->samples * shm->samplebits / 8);
-
-		pDSBuf->lpVtbl->Unlock (pDSBuf, pData, dwSize, NULL, 0);
-
-	} else
+	if (pDSBuf) DSOUND_ClearBuffer(clear);
+	else
 #endif
 	{
 		memset (shm->buffer, clear, shm->samples * shm->samplebits / 8);
@@ -909,21 +877,7 @@ S_Update_ (void)
 		endtime = soundtime + samps;
 
 #ifdef _WIN32
-// if the buffer was lost or stopped, restore it and/or restart it
-	{
-		DWORD       dwStatus;
-
-		if (pDSBuf) {
-			if (pDSBuf->lpVtbl->GetStatus (pDSBuf, &dwStatus) != DD_OK)
-				Con_Printf ("Couldn't get sound buffer status\n");
-
-			if (dwStatus & DSBSTATUS_BUFFERLOST)
-				pDSBuf->lpVtbl->Restore (pDSBuf);
-
-			if (!(dwStatus & DSBSTATUS_PLAYING))
-				pDSBuf->lpVtbl->Play (pDSBuf, 0, 0, DSBPLAY_LOOPING);
-		}
-	}
+	if(pDSBuf) DSOUND_Restore();
 #endif
 
 	S_PaintChannels (endtime);

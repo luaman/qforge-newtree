@@ -37,8 +37,7 @@
 #define iDirectSoundCreate(a,b,c)	pDirectSoundCreate(a,b,c)
 
 HRESULT (WINAPI * pDirectSoundCreate) (GUID FAR * lpGUID,
-									   LPDIRECTSOUND FAR * lplpDS,
-									   IUnknown FAR * pUnkOuter);
+	   LPDIRECTSOUND FAR * lplpDS,IUnknown FAR * pUnkOuter);
 
 // 64K is > 1 second at 16-bit, 22050 Hz
 #define	WAV_BUFFERS				64
@@ -56,7 +55,6 @@ static qboolean primary_format_set;
 
 static int  sample16;
 static int  snd_sent, snd_completed;
-
 
 /* 
  * Global variables. Must be visible to window-procedure function 
@@ -692,3 +690,77 @@ SNDDMA_Shutdown (void)
 {
 	FreeSound ();
 }
+
+DWORD *
+DSOUND_LockBuffer(qboolean lockit)
+{
+	int         reps;
+
+	static DWORD 	dwSize;
+	static DWORD 	dwSize2;
+	static DWORD	*pbuf1;
+	static DWORD	*pbuf2;
+	HRESULT     	hresult;
+
+	if (!pDSBuf) return;
+
+	if (lockit) {
+		reps = 0;
+		while ((hresult = pDSBuf->lpVtbl->Lock (pDSBuf, 0, gSndBufSize,
+		(LPVOID *) & pbuf1, &dwSize,
+		(LPVOID *) & pbuf2, &dwSize2,0)) != DS_OK) {
+			if (hresult != DSERR_BUFFERLOST) {
+				Con_Printf
+					("S_TransferStereo16: DS::Lock Sound Buffer Failed\n");
+				S_Shutdown ();
+				S_Startup ();
+				return;
+			}
+
+			if (++reps > 10000) {
+				Con_Printf
+					("S_TransferStereo16: DS: couldn't restore buffer\n");
+				S_Shutdown ();
+				S_Startup ();
+				return;
+			}
+		}
+	} else {
+		pDSBuf->lpVtbl->Unlock (pDSBuf, pbuf1, dwSize, NULL, 0);
+		pbuf1=NULL;
+		pbuf2=NULL;
+		dwSize=0;
+		dwSize2=0;
+	}
+	return(pbuf1);
+}
+
+void DSOUND_ClearBuffer(int clear)
+{
+	DWORD *pData;
+
+// fixme: this should be called with 2nd pbuf2 = NULL, dwsize =0
+	pData=DSOUND_LockBuffer(true);
+	memset (pData, clear, shm->samples * shm->samplebits / 8);
+	DSOUND_LockBuffer(false);
+}
+
+void DSOUND_Restore(void)
+{
+// if the buffer was lost or stopped, restore it and/or restart it
+        DWORD       dwStatus;
+
+        if (!pDSBuf) return;
+
+	if (pDSBuf->lpVtbl->GetStatus (pDSBuf, &dwStatus) != DD_OK)
+        	Con_Printf ("Couldn't get sound buffer status\n");
+
+	if (dwStatus & DSBSTATUS_BUFFERLOST)
+		pDSBuf->lpVtbl->Restore (pDSBuf);
+
+	if (!(dwStatus & DSBSTATUS_PLAYING))
+		pDSBuf->lpVtbl->Play (pDSBuf, 0, 0, DSBPLAY_LOOPING);
+
+        return;
+}
+
