@@ -31,6 +31,7 @@
 #endif
 
 #include <string.h>
+#include <stdarg.h>
 
 #include "console.h"
 #include "glquake.h"
@@ -61,15 +62,27 @@ static const int face_axis[] = {0, 1, 2, 0, 1, 2};
 /* offset on the axis the cube face cuts */
 static const vec_t face_offset[] = {1024, 1024, 1024, -1024, -1024, -1024};
 
-/* our cube */
-struct box_def {
+/* cube face */
+struct face_def {
 	int			tex;					// texture to bind to
-	int			enter_face;				// cube face this face was entered from
-	int			leave_face;				// cube face departed to
-	int			enter_vertex;			// vertex number entered on
-	int			leave_vertex;			// vertex number left on
 	glpoly_t	poly;					// describe the polygon of this face
 	float		verts[32][VERTEXSIZE];
+};
+
+struct visit_def {
+	int face;				// face being visited
+	int enter;				// vertex entered through
+	int leave;				// vertex departed through
+};
+
+/* our cube */
+struct box_def {
+	/* keep track of which cube faces we visit and in what order */
+	struct visit_def visited_faces [9];
+	int face_visits [6];
+	int face_count;
+	/* the cube faces */
+	struct face_def face[6];
 };
 
 /*
@@ -164,58 +177,6 @@ find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 }
 
 /*
-	set_vertex
-
-	add the vertex to the polygon describing the face of the cube. Offsets
-	the vertex relative to r_refdef.vieworg so the cube is always centered
-	on the player and also calculates the texture coordinates of the vertex
-	(wish I could find a cleaner way of calculating s and t).
-*/
-static void
-set_vertex (struct box_def *box, int face, int ind, vec3_t v)
-{
-	VectorCopy (v, box[face].poly.verts[ind]);
-	VectorAdd (v, r_refdef.vieworg, box[face].poly.verts[ind]);
-	switch (face) {
-	case 0:
-		box[face].poly.verts[ind][3] = (1024 - v[1]) / 2048;
-		box[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
-		break;
-	case 1:
-		box[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
-		box[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
-		break;
-	case 2:
-		box[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
-		box[face].poly.verts[ind][4] = (1024 + v[1]) / 2048;
-		break;
-	case 3:
-		box[face].poly.verts[ind][3] = (1024 + v[1]) / 2048;
-		box[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
-		break;
-	case 4:
-		box[face].poly.verts[ind][3] = (1024 - v[0]) / 2048;
-		box[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
-		break;
-	case 5:
-		box[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
-		box[face].poly.verts[ind][4] = (1024 - v[1]) / 2048;
-		break;
-	}
-}
-
-/*
- 	add_vertex
-
-	append a vertex to the poly vertex list.
-*/
-static void
-add_vertex (struct box_def *box, int face, vec3_t v)
-{
-	set_vertex (box, face, box[face].poly.numverts++, v);
-}
-
-/*
 	find_cube_vertex
 
 	get the coords of the vertex common to the three specified faces of the
@@ -233,43 +194,240 @@ find_cube_vertex (int face1, int face2, int face3, vec3_t v)
 }
 
 /*
-	enter_face
+	set_vertex
 
-	if we left this face on an adjoining face with a common vertex, add
-	that vertex to the cube face polygon.
+	add the vertex to the polygon describing the face of the cube. Offsets
+	the vertex relative to r_refdef.vieworg so the cube is always centered
+	on the player and also calculates the texture coordinates of the vertex
+	(wish I could find a cleaner way of calculating s and t).
 */
 static void
-enter_face (struct box_def *box, int prev_face, int face)
+set_vertex (struct box_def *box, int face, int ind, vec3_t v)
 {
-	if (box[face].leave_face >=0 && (box[face].leave_face % 3) != (prev_face % 3)) {
-		vec3_t t;
-		find_cube_vertex (prev_face, face, box[face].leave_face, t);
-		add_vertex(box, face, t);
-		box[face].enter_face = -1;
-	} else {
-		box[face].enter_face = prev_face;
+	VectorCopy (v, box->face[face].poly.verts[ind]);
+	VectorAdd (v, r_refdef.vieworg, box->face[face].poly.verts[ind]);
+	switch (face) {
+	case 0:
+		box->face[face].poly.verts[ind][3] = (1024 - v[1]) / 2048;
+		box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+		break;
+	case 1:
+		box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
+		box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+		break;
+	case 2:
+		box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
+		box->face[face].poly.verts[ind][4] = (1024 + v[1]) / 2048;
+		break;
+	case 3:
+		box->face[face].poly.verts[ind][3] = (1024 + v[1]) / 2048;
+		box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+		break;
+	case 4:
+		box->face[face].poly.verts[ind][3] = (1024 - v[0]) / 2048;
+		box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+		break;
+	case 5:
+		box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
+		box->face[face].poly.verts[ind][4] = (1024 - v[1]) / 2048;
+		break;
 	}
-	box[face].leave_face = -1;
 }
 
 /*
-	leave_face
+ 	add_vertex
 
-	if we entered this face on an adjoining face with a common vertex, add
-	that vertex to the cube face polygon.
+	append a vertex to the poly vertex list.
 */
 static void
-leave_face (struct box_def *box, int prev_face, int face)
+add_vertex (struct box_def *box, int face, vec3_t v)
 {
-	if (box[prev_face].enter_face >=0 && (box[prev_face].enter_face) % 3 != (face % 3)) {
-		vec3_t t;
-		find_cube_vertex (prev_face, face, box[prev_face].enter_face, t);
-		add_vertex(box, prev_face, t);
-		box[prev_face].leave_face = -1;
-	} else {
-		box[prev_face].leave_face = face;
+	set_vertex (box, face, box->face[face].poly.numverts++, v);
+}
+
+/*
+	insert_cube_vertexen
+
+	insert the given cube vertexen into the vertex list of the poly in the
+	correct location.
+*/
+static void
+insert_cube_vertexen (struct box_def *box, int face, int ind, int count, ...)
+{
+	int i;
+	vec3_t **v;
+	va_list args;
+
+	va_start (args, count);
+	v = (vec3_t**)alloca (count * sizeof (vec3_t*));
+	for (i = 0; i < count; i++) {
+		v[i] = va_arg (args, vec3_t*);
 	}
-	box[prev_face].enter_face = -1;
+	va_end (args);
+
+	if (ind == box->face[face].poly.numverts) {
+		// the vertex the sky poly left this cube fase through is very
+		// conveniently the last vertex of the face poly. this means we
+		// can just append the two vetexen
+		for (i = 0; i < count; i++)
+			add_vertex (box, face, *v[i]);
+	} else {
+		// we have to insert the cube vertexen into the face poly
+		// vertex list
+		glpoly_t *p = &box->face[face].poly;
+		int c = p->numverts - ind;
+		const int vert_size = sizeof (p->verts[0]);
+		memmove (p->verts[ind + count], p->verts[ind], c * vert_size);
+		p->numverts += count;
+		for (i = 0; i < count; i++)
+			set_vertex (box, face, ind + i, *v[i]);
+	}
+}
+
+/*
+	cross_cube_edge
+
+	add the vertex formed by the poly edge crossing the cube edge to the
+	polygon for the two faces on that edge. Actually, the two faces define
+	the edge :). The poly edge is going from face 1 to face 2 (for
+	enter/leave purposes).
+*/
+static void
+cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
+				 vec3_t v2)
+{
+	vec3_t l;
+	int axis;
+	int face = -1;
+
+	axis = find_intersect (face1, v1, face2, v2, l);
+	if (l[axis] > 1024)
+		face = axis;
+	else if (l[axis] < -1024)
+		face = axis + 3;
+	if (face > 0) {
+		vec3_t x;
+		VectorAdd (v1, v2, x);
+		VectorScale (x, 0.5, x);
+		cross_cube_edge (box, face1, v1, face, x);
+		cross_cube_edge (box, face, x, face2, v2);
+	} else {
+		struct visit_def *visit = box->visited_faces;
+		visit[box->face_count - 1].leave = box->face[face1].poly.numverts;
+		visit[box->face_count].face = face2;
+		visit[box->face_count].enter = box->face[face2].poly.numverts;
+		box->face_count++;
+		box->face_visits[face2]++;
+
+		add_vertex(box, face1, l);
+		add_vertex(box, face2, l);
+	}
+}
+
+/*
+	process_corners
+
+	egad, veddy complicated :)
+*/
+static void
+process_corners (struct box_def *box)
+{
+	struct visit_def *visit = box->visited_faces;
+	int max_visit = 0;
+	int i;
+	int center = -1;
+
+	if (visit[box->face_count - 1].face == visit[0].face) {
+		visit[0].enter = visit[box->face_count - 1].enter;
+		box->face_count--;
+	}
+
+	for (i = 0; i < 6; i++) {
+		if (max_visit < box->face_visits[i]) {
+			max_visit = box->face_visits[i];
+			center = i;
+		}
+	}
+
+	switch (box->face_count) {
+	case 1:
+	case 2:
+	case 8:
+		// no corners
+		return;
+	case 3:
+		// one corner, no edges
+		{
+			vec3_t v;
+			find_cube_vertex (visit[0].face, visit[1].face, visit[2].face, v);
+			insert_cube_vertexen (box, visit[0].face, visit[0].leave + 1, 1, v);
+			insert_cube_vertexen (box, visit[1].face, visit[1].leave + 1, 1, v);
+			insert_cube_vertexen (box, visit[2].face, visit[2].leave + 1, 1, v);
+		}
+		break;
+	case 4:
+		if (max_visit > 1)
+			return;
+		if (abs (visit[2].face - visit[0].face) == 3
+			&& abs (visit[3].face - visit[1].face) == 3) {
+			int sum, diff;
+			vec3_t v[4];
+
+			sum = visit[0].face + visit[1].face + visit[2].face + visit[3].face;
+			diff = visit[1].face - visit[0].face;
+			sum %= 3;
+			diff = (diff + 6) % 6;
+
+			center = faces_table[sum][diff];
+			for (i=0; i < 4; i++) {
+				find_cube_vertex (visit[i].face, visit[(i + 1) & 3].face, center, v[i]);
+				add_vertex (box, center, v[i]);
+			}
+			for (i=0; i < 4; i++)
+				insert_cube_vertexen (box, visit[i].face, visit[i].leave + 1, 2,
+									  v[i], v[(i - 1) & 3]);
+		} else {
+			int l_f, t_f, r_f, b_f;
+			vec3_t v_l, v_r;
+
+			if (abs (visit[2].face - visit[0].face) == 3) {
+				l_f = 0;
+				t_f = 1;
+				r_f = 2;
+				b_f = 3;
+			} else if (abs (visit[3].face - visit[1].face) == 3) {
+				l_f = 1;
+				t_f = 2;
+				r_f = 3;
+				b_f = 0;
+			} else {
+				return;
+			}
+			find_cube_vertex (visit[l_f].face, visit[t_f].face, visit[b_f].face, v_l);
+			find_cube_vertex (visit[r_f].face, visit[t_f].face, visit[b_f].face, v_r);
+
+			insert_cube_vertexen (box, visit[t_f].face, visit[t_f].leave + 1, 2, v_r, v_l);
+			insert_cube_vertexen (box, visit[b_f].face, visit[b_f].leave + 1, 2, v_l, v_r);
+
+			insert_cube_vertexen (box, visit[l_f].face, visit[l_f].leave + 1, 1, v_l);
+			insert_cube_vertexen (box, visit[r_f].face, visit[r_f].leave + 1, 1, v_r);
+		}
+		break;
+	case 5:
+		if (max_visit > 1) {
+		} else {
+			unsigned int sel = (((abs (visit[2].face - visit[0].face) == 3) << 2)
+								| ((abs (visit[3].face - visit[1].face) == 3) << 1)
+								| ((abs (visit[5].face - visit[2].face) == 3) << 0));
+			center = visit[((sel * 3) - 6) % 5].face;
+		}
+		break;
+	case 6:
+		if (max_visit > 2)
+			return;
+		break;
+	case 7:
+	}
 }
 
 /*
@@ -283,151 +441,15 @@ render_box (struct box_def *box)
 	int i,j;
 
 	for (i = 0; i < 6; i++) {
-		if (box[i].poly.numverts <= 2)
+		if (box->face[i].poly.numverts <= 2)
 			continue;
-		glBindTexture (GL_TEXTURE_2D, box[i].tex);
+		glBindTexture (GL_TEXTURE_2D, box->face[i].tex);
 		glBegin (GL_POLYGON);
-		for (j=0; j < box[i].poly.numverts; j++) {
-			glTexCoord2fv (box[i].poly.verts[j]+3);
-			glVertex3fv (box[i].poly.verts[j]);
+		for (j=0; j < box->face[i].poly.numverts; j++) {
+			glTexCoord2fv (box->face[i].poly.verts[j]+3);
+			glVertex3fv (box->face[i].poly.verts[j]);
 		}
 		glEnd ();
-	}
-}
-
-/*
-	insert_cube_vertexen
-
-	insert the given cube vertexen into the vertex list of the poly in the
-	correct location.
-*/
-static void
-insert_cube_vertexen (struct box_def *box, int face, vec3_t v1, vec3_t v2)
-{
-	if (box[face].leave_vertex == box[face].poly.numverts - 1) {
-		// the vertex the sky poly left this cube fase through is very
-		// conveniently the last vertex of the face poly. this means we
-		// can just append the two vetexen
-		add_vertex (box, face, v1);
-		add_vertex (box, face, v2);
-	} else {
-		// we have to insert the two cube vertexen into the face poly
-		// vertex list
-		glpoly_t *p = &box[face].poly;
-		int insert = box[face].leave_vertex + 1;
-		int count = p->numverts - insert;
-		const int vert_size = sizeof (p->verts[0]);
-		memmove (p->verts[insert + 2], p->verts[insert], count * vert_size);
-		p->numverts += 2;
-		set_vertex (box, face, insert, v1);
-		set_vertex (box, face, insert + 1, v2);
-	}
-}
-
-/*
-	fixup_center_face
-
-	add the vertexen of the cube face that should be draw but was not
-	clipped by the sky polygon because it was fully enclosed by the
-	polygon. Also adds the missing vertexen to the surrounding cube faces.
-*/
-static void
-fixup_center_face (struct box_def *box, int c_face)
-{
-	vec3_t v[4];
-	int i;
-
-	for (i = 0; i < 4; i++) {
-		find_cube_vertex (c_face, face_loop[c_face][i],
-						  face_loop[c_face][i + 1], v[i]);
-		add_vertex(box, c_face, v[i]);
-	}
-	for (i = 0; i < 4; i++) {
-		int ind = face_loop[c_face][i];
-		insert_cube_vertexen (box, ind, v[i], v[(i - 1) & 3]);
-	}
-}
-
-/*
-	cross_cube_edge
-
-	add the vertex formed by the poly edge crossing the cube edge to the
-	polygon for the two faces on that edge. Actually, the two faces define
-	the edge :). The poly edge is going from face 1 to face 2 (for
-	enter/leave purposes).
-*/
-static int
-cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
-				 vec3_t v2)
-{
-	vec3_t l;
-	int axis;
-
-	axis = find_intersect (face1, v1, face2, v2, l);
-	if (l[axis] > 1024)
-		return axis;
-	else if (l[axis] < -1024)
-		return axis + 3;
-
-	box[face1].leave_vertex = box[face1].poly.numverts;
-	add_vertex(box, face1, l);
-	leave_face (box, face1, face2);
-	enter_face (box, face1, face2);
-	box[face2].enter_vertex = box[face2].poly.numverts;
-	add_vertex(box, face2, l);
-
-	return -1;
-}
-
-static void
-fix_missed_vertexen (struct box_def *box, int *faces, int face_count)
-{
-	if (face_count == 4) {
-		if (abs (faces[2] - faces[0]) == 3
-			&& abs (faces[3] - faces[1]) == 3) {
-			int framed_face;
-			int sum, diff;
-			sum = faces[0] + faces[1] + faces[2] + faces[3];
-			diff = faces[1] - faces[0];
-			sum %= 3;
-			diff = (diff + 6) % 6;
-			framed_face = faces_table[sum][diff];
-			if (box[framed_face].poly.numverts == 0)
-				fixup_center_face (box, framed_face);
-			else
-				printf ("email bill@taniwha.org re framed face > 0 verts\n");
-		} else {
-			int l_f, t_f, r_f, b_f;
-			vec3_t v_l, v_r;
-
-			if (abs (faces[2] - faces[0]) == 3) {
-				l_f = faces[0];
-				t_f = faces[1];
-				r_f = faces[2];
-				b_f = faces[3];
-			} else if (abs (faces[3] - faces[1]) == 3) {
-				l_f = faces[1];
-				t_f = faces[2];
-				r_f = faces[3];
-				b_f = faces[0];
-			} else {
-				return;
-			}
-			find_cube_vertex (l_f, t_f, b_f, v_l);
-			find_cube_vertex (r_f, t_f, b_f, v_r);
-
-			insert_cube_vertexen (box, t_f, v_r, v_l);
-			insert_cube_vertexen (box, b_f, v_l, v_r);
-		}
-	}
-}
-
-static void
-visit_cube_face(int *visited_faces, int *faces_flags, int *face_count, int face)
-{
-	if (!faces_flags[face]) {
-		faces_flags[face] = 1;
-		visited_faces[(*face_count)++] = face;
 	}
 }
 
@@ -435,23 +457,17 @@ void
 R_DrawSkyBoxPoly (glpoly_t *poly)
 {
 	int i;
-	struct box_def box[6];
+	struct box_def box;
 	/* projected vertex and face of the previous sky poly vertex */
 	vec3_t last_v;
 	int prev_face;
 	/* projected vertex and face of the current sky poly vertex */
 	vec3_t v;
 	int face;
-	/* keep track of which cube faces we visit and in what order */
-	int visited_faces [6];
-	int faces_flags [6];
-	int face_count = 0;
 
-	memset (box, 0, sizeof (box));
-	memset (faces_flags, 0, sizeof faces_flags);
+	memset (&box, 0, sizeof (box));
 	for (i = 0; i < 6; i++) {
-		box[i].tex = SKY_TEX + skytex_offs[i];
-		box[i].enter_face = box[i].leave_face = -1;
+		box.face[i].tex = SKY_TEX + skytex_offs[i];
 	}
 
 	if (poly->numverts>=32) {
@@ -461,55 +477,37 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 	VectorSubtract (poly->verts[poly->numverts - 1], r_refdef.vieworg, last_v);
 	prev_face = determine_face (last_v);
 
+	box.visited_faces[0].face = prev_face;
+	box.visited_faces[0].enter = -1;
+	box.face_count = 1;
+
 	for (i=0; i< poly->numverts; i++) {
 		VectorSubtract (poly->verts[i], r_refdef.vieworg, v);
 		face = determine_face (v);
 		if (face != prev_face) {
-			int x_face = -1;
-			if ((face % 3) == (prev_face % 3)
-				|| (x_face = cross_cube_edge (box, prev_face, last_v,
-											  face, v)) >= 0) {
-				vec3_t x, y;
-				int y_face;
+			if ((face % 3) == (prev_face % 3)) {
+				int x_face;
+				vec3_t x;
 
 				VectorAdd (v, last_v, x);
 				VectorScale (x, 0.5, x);
-				if (x_face == -1) {
-					x_face = determine_face (x);
-				}
+				x_face = determine_face (x);
 
-				if ((y_face = cross_cube_edge (box, prev_face, last_v,
-											   x_face, x)) >= 0) {
-					VectorAdd (last_v, x, y);
-					VectorScale (y, 0.5, y);
-					cross_cube_edge (box, prev_face, last_v, y_face, y);
-					cross_cube_edge (box, y_face, y, x_face, x);
-
-					visit_cube_face (visited_faces, faces_flags, &face_count, y_face);
-				}
-
-				visit_cube_face (visited_faces, faces_flags, &face_count, x_face);
-
-				if ((y_face = cross_cube_edge (box, x_face, x, face, v)) >= 0) {
-					VectorAdd (x, v, y);
-					VectorScale (y, 0.5, y);
-					cross_cube_edge (box, x_face, x, y_face, y);
-					cross_cube_edge (box, y_face, y, face, v);
-
-					visit_cube_face (visited_faces, faces_flags, &face_count, y_face);
-				}
+				cross_cube_edge (&box, prev_face, last_v, x_face, x);
+				cross_cube_edge (&box, x_face, x, face, v);
+			} else {
+				cross_cube_edge (&box, prev_face, last_v, face, v);
 			}
 		}
-		visit_cube_face (visited_faces, faces_flags, &face_count, face);
-		add_vertex(box, face, v);
+		add_vertex(&box, face, v);
 
 		VectorCopy (v, last_v);
 		prev_face = face;
 	}
 
-	fix_missed_vertexen (box, visited_faces, face_count);
+	process_corners (&box);
 
-	render_box (box);
+	render_box (&box);
 }
 
 void
