@@ -33,24 +33,21 @@
 #include <time.h>
 #include <string.h>
 
-#include "client.h"
+#include "cl_parse.h"
 #include "cmd.h"
 #include "console.h"
-#include "cvar.h"
+#include "d_iface.h"
 #include "draw.h"
 #include "keys.h"
 #include "menu.h"
-#include "msg.h"
 #include "pcx.h"
 #include "qendian.h"
 #include "quakedef.h"
-#include "r_local.h"
 #include "sbar.h"
+#include "skin.h"
 #include "sys.h"
 #include "vid.h"
-#include "skin.h"
 #include "view.h"
-#include "cl_parse.h"
 
 /*
 
@@ -117,7 +114,11 @@ cvar_t		*scr_showram;
 cvar_t		*scr_showturtle;
 cvar_t		*scr_showpause;
 cvar_t		*scr_printspeed;
-cvar_t		*scr_allowsnap;
+cvar_t		*crosshair;
+cvar_t		*crosshaircolor;
+cvar_t		*cl_crossx;
+cvar_t		*cl_crossy;
+
 
 qboolean	scr_initialized;		// ready to draw
 
@@ -177,8 +178,7 @@ void SCR_CenterPrint (char *str)
 
 // count the number of lines for centering
 	scr_center_lines = 1;
-	while (*str)
-	{
+	while (*str) {
 		if (*str == '\n')
 			scr_center_lines++;
 		str++;
@@ -226,15 +226,13 @@ void SCR_DrawCenterString (void)
 	else
 		y = 48;
 
-	do	
-	{
+	do	{
 	// scan the width of the line
 		for (l=0 ; l<40 ; l++)
 			if (start[l] == '\n' || !start[l])
 				break;
 		x = (vid.width - l*8)/2;
-		for (j=0 ; j<l ; j++, x+=8)
-		{
+		for (j=0 ; j<l ; j++, x+=8) {
 			Draw_Character8 (x, y, start[j]);	
 			if (!remaining--)
 				return;
@@ -333,12 +331,12 @@ static void SCR_CalcRefdef (void)
 
         r_refdef.vrect.height = vid.height * size;
 // bound field of view
-	if (scr_fov->value < 10)
+	if (scr_fov->int_val < 10)
 		Cvar_Set (scr_fov,"10");
-	if (scr_fov->value > 170)
+	if (scr_fov->int_val > 170)
 		Cvar_Set (scr_fov,"170");
 
-	r_refdef.fov_x = scr_fov->value;
+	r_refdef.fov_x = scr_fov->int_val;
 	r_refdef.fov_y = CalcFov (r_refdef.fov_x, r_refdef.vrect.width, r_refdef.vrect.height);
 
 // these calculations mirror those in R_Init() for r_refdef, but take no
@@ -406,7 +404,11 @@ void SCR_Init_Cvars (void)
 	scr_showpause = Cvar_Get("showpause", "1", CVAR_NONE, "None");
 	scr_centertime = Cvar_Get("scr_centertime", "2", CVAR_NONE, "None");
 	scr_printspeed = Cvar_Get("scr_printspeed", "8", CVAR_NONE, "None");
-	scr_allowsnap = Cvar_Get("scr_allowsnap",  "1", CVAR_NONE, "None");
+
+	crosshaircolor = Cvar_Get("crosshaircolor",  "79", CVAR_ARCHIVE, "None");
+	crosshair = Cvar_Get("crosshair",  "0", CVAR_ARCHIVE, "None");
+	cl_crossx = Cvar_Get("cl_crossx",  "0", CVAR_ARCHIVE, "None");
+	cl_crossy = Cvar_Get("cl_crossy",  "0", CVAR_ARCHIVE, "None");
 }
 
 void
@@ -420,9 +422,9 @@ SCR_Init (void)
 	Cmd_AddCommand ("sizeup",SCR_SizeUp_f);
 	Cmd_AddCommand ("sizedown",SCR_SizeDown_f);
 
-	scr_ram = W_GetLumpName ("ram");
-	scr_net = W_GetLumpName ("net");
-	scr_turtle = W_GetLumpName ("turtle");
+	scr_ram = Draw_PicFromWad ("ram");
+	scr_net = Draw_PicFromWad ("net");
+	scr_turtle = Draw_PicFromWad ("turtle");
 
 	scr_initialized = true;
 }
@@ -858,13 +860,6 @@ void SCR_RSShot_f (void)
 	if (cls.state < ca_onserver)
 		return; // gotta be connected
 
-	if (!scr_allowsnap->int_val) {
-		MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
-		SZ_Print (&cls.netchan.message, "snap\n");
-		Con_Printf("Refusing remote screen shot request.\n");
-		return;
-	}
-
 	Con_Printf("Remote screen shot requested.\n");
 
 #if 0
@@ -1043,9 +1038,9 @@ void SCR_UpdateScreen (void)
 //
 // check for vid changes
 //
-	if (oldfov != scr_fov->value)
+	if (oldfov != scr_fov->int_val)
 	{
-		oldfov = scr_fov->value;
+		oldfov = scr_fov->int_val;
 		vid.recalc_refdef = true;
 	}
 	

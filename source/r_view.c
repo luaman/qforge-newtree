@@ -71,12 +71,6 @@ cvar_t	*v_ipitch_level;
 
 cvar_t	*v_idlescale;
 
-cvar_t	*crosshair;
-cvar_t	*crosshaircolor;
-
-cvar_t  *cl_crossx;
-cvar_t  *cl_crossy;
-
 cvar_t  *v_contentblend;
 
 float	v_dmg_time, v_dmg_roll, v_dmg_pitch;
@@ -807,11 +801,6 @@ void V_Init_Cvars (void)
 	v_contentblend = Cvar_Get("v_contentblend",  "1", CVAR_NONE, "None");
 
 	v_idlescale = Cvar_Get("v_idlescale",  "0", CVAR_NONE, "None");
-
-	crosshaircolor = Cvar_Get("crosshaircolor",  "79", CVAR_ARCHIVE, "None");
-	crosshair = Cvar_Get("crosshair",  "0", CVAR_ARCHIVE, "None");
-	cl_crossx = Cvar_Get("cl_crossx",  "0", CVAR_ARCHIVE, "None");
-	cl_crossy = Cvar_Get("cl_crossy",  "0", CVAR_ARCHIVE, "None");
 
 	cl_rollspeed = Cvar_Get("cl_rollspeed",  "200", CVAR_NONE, "None");
 	cl_rollangle = Cvar_Get("cl_rollangle",  "2.0", CVAR_NONE, "None");

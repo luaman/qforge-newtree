@@ -33,6 +33,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "cl_parse.h"
 #include "cmd.h"
 #include "console.h"
 #include "draw.h"
@@ -42,9 +43,8 @@
 #include "pcx.h"
 #include "qendian.h"
 #include "sbar.h"
-#include "sys.h"
-#include "cl_parse.h"
 #include "skin.h"
+#include "sys.h"
 #include "view.h"
 
 /*
@@ -115,7 +115,10 @@ cvar_t			*scr_showturtle;
 cvar_t			*scr_showpause;
 cvar_t			*scr_printspeed;
 cvar_t			*gl_triplebuffer;
-extern cvar_t	*crosshair;
+cvar_t			*crosshair;
+cvar_t			*crosshaircolor;
+cvar_t			*cl_crossx;
+cvar_t			*cl_crossy;
 
 qboolean		scr_initialized;                // ready to draw
 
@@ -384,6 +387,11 @@ void SCR_Init_Cvars (void)
 	scr_centertime = Cvar_Get("scr_centertime", "2", CVAR_NONE, "None");
 	scr_printspeed = Cvar_Get("scr_printspeed", "8", CVAR_NONE, "None");
 	gl_triplebuffer = Cvar_Get("gl_triplebuffer",  "1", CVAR_ARCHIVE, "None");
+
+	crosshaircolor = Cvar_Get("crosshaircolor",  "79", CVAR_ARCHIVE, "None");
+	crosshair = Cvar_Get("crosshair",  "0", CVAR_ARCHIVE, "None");
+	cl_crossx = Cvar_Get("cl_crossx",  "0", CVAR_ARCHIVE, "None");
+	cl_crossy = Cvar_Get("cl_crossy",  "0", CVAR_ARCHIVE, "None");
 }
 
 void
