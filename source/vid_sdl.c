@@ -1,5 +1,5 @@
 /*
-	vid_sdl.h
+        vid_sdl.c
 
 	Video driver for Sam Lantinga's Simple DirectMedia Layer
 
@@ -98,7 +98,7 @@ void    VID_Init (unsigned char *palette)
 
 
     // Load the SDL library
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_CDROM)<0) //|SDL_INIT_AUDIO|SDL_INIT_CDROM) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO)<0) //|SDL_INIT_AUDIO|SDL_INIT_CDROM) < 0)
         Sys_Error("VID: Couldn't load SDL: %s", SDL_GetError());
 
     // Set up display mode (width and height)
@@ -482,4 +482,10 @@ void
 VID_UnlockBuffer ( void )
 {       
 }       
+
+void
+VID_SetCaption (char *text)
+{
+        SDL_WM_SetCaption(text, NULL);
+}
 
