@@ -43,6 +43,7 @@
 #include "quakedef.h"
 #include "pmove.h"
 #include "view.h"
+#include "teamplay.h"
 
 extern	cvar_t	*cl_predict_players;
 extern	cvar_t	*cl_predict_players2;
@@ -488,6 +489,8 @@ void CL_LinkPacketEntities (void)
 	int					i;
 	int					pnum;
 	dlight_t			*dl;
+	extern int			cl_playerindex;
+	extern int			cl_h_playerindex, cl_gib1index, cl_gib2index, cl_gib3index;
 
 	pack = &cl.frames[cls.netchan.incoming_sequence&UPDATE_MASK].packet_entities;
 
@@ -514,6 +517,15 @@ void CL_LinkPacketEntities (void)
 
 		// if set to invisible, skip
 		if (!s1->modelindex)
+			continue;
+
+		// Hack hack hack
+		if (cl_deadbodyfilter->value && s1->modelindex == cl_playerindex
+			&& ( (i=s1->frame)==49 || i==60 || i==69 || i==84 || i==93 || i==102) )
+			continue;
+		if (cl_gibfilter->value &&
+			(s1->modelindex == cl_h_playerindex || s1->modelindex == cl_gib1index
+			|| s1->modelindex == cl_gib2index || s1->modelindex == cl_gib3index))
 			continue;
 
 		// create a new entity

@@ -58,6 +58,7 @@
 #include "draw.h"
 #include "qargs.h"
 #include "cdaudio.h"
+#include "teamplay.h"
 
 #ifdef __sun
 /* Sun's model_t in sys/model.h conflicts w/ Quake's model_t */
@@ -1554,6 +1555,7 @@ void Host_Init (quakeparms_t *parms)
 	SCR_InitCvars ();
 	VID_InitCvars ();
 	COM_Init ();
+	CL_InitTeamplay ();
 
 	// reparse the command line for + commands other than set
 	// (sets still done, but it doesn't matter)

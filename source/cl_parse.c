@@ -132,6 +132,7 @@ int	parsecountmod;
 double	parsecounttime;
 
 int		cl_spikeindex, cl_playerindex, cl_flagindex;
+int		cl_h_playerindex, cl_gib1index, cl_gib2index, cl_gib3index;
 
 //=============================================================================
 
@@ -317,6 +318,8 @@ void Sound_NextDownload (void)
 	cl_playerindex = -1;
 	cl_spikeindex = -1;
 	cl_flagindex = -1;
+	cl_h_playerindex = -1;
+	cl_gib1index = cl_gib2index = cl_gib3index = -1;
 	MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
 //	MSG_WriteString (&cls.netchan.message, va("modellist %i 0", cl.servercount));
 	MSG_WriteString (&cls.netchan.message, va(modellist_name, cl.servercount, 0));
@@ -735,10 +738,19 @@ void CL_ParseModellist (void)
 
 		if (!strcmp(cl.model_name[nummodels],"progs/spike.mdl"))
 			cl_spikeindex = nummodels;
-		if (!strcmp(cl.model_name[nummodels],"progs/player.mdl"))
+		else if (!strcmp(cl.model_name[nummodels],"progs/player.mdl"))
 			cl_playerindex = nummodels;
-		if (!strcmp(cl.model_name[nummodels],"progs/flag.mdl"))
+		else if (!strcmp(cl.model_name[nummodels],"progs/flag.mdl"))
 			cl_flagindex = nummodels;
+		// for deadbodyfilter &gibfilter
+		else if (!strcmp(cl.model_name[nummodels],"progs/h_player.mdl"))
+			cl_h_playerindex = nummodels;
+		else if (!strcmp(cl.model_name[nummodels],"progs/gib1.mdl"))
+			cl_gib1index = nummodels;
+		else if (!strcmp(cl.model_name[nummodels],"progs/gib2.mdl"))
+			cl_gib2index = nummodels;
+		else if (!strcmp(cl.model_name[nummodels],"progs/gib3.mdl"))
+			cl_gib3index = nummodels;
 	}
 
 	n = MSG_ReadByte();
