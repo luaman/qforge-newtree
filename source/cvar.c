@@ -191,7 +191,8 @@ void Cvar_Set (cvar_t *var, char *value)
 {
 	if (!var)
 		return;
-	if(var->flags&CVAR_ROM)
+
+	if(var->flags & CVAR_ROM)
 		return;
 
 	free (var->string);   // free the old value string
