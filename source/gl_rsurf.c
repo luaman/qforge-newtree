@@ -254,15 +254,23 @@ R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 	if (!cl.worldmodel->lightdata) {
 		bl = blocklights;
 		for (i=0 ; i<size ; i++) {
-			*bl++ = 255*256;
-			*bl++ = 255*256;
-			*bl++ = 255*256;
+			*bl++ = 255 << 8;
+			*bl++ = 255 << 8;
+			*bl++ = 255 << 8;
 		}
 		goto store;
 	}
 
-	// add all the lightmaps
+	// clear to no light
 	bl = blocklights;
+	for (i=0; i < size; i++) {
+		*bl++ = 0;
+		*bl++ = 0;
+		*bl++ = 0;
+	}
+	bl = blocklights;
+
+	// add all the lightmaps
 	if (lightmap) {
 		for (maps = 0;
 				maps < MAXLIGHTMAPS && surf->styles[maps] != 255;
@@ -271,16 +279,10 @@ R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 			surf->cached_light[maps] = scale;	// 8.8 fraction
 			bl = blocklights;
 			for (i = 0; i < size; i++) {
-				*bl++ = *lightmap++ * scale;
-				*bl++ = *lightmap++ * scale;
-				*bl++ = *lightmap++ * scale;
+				*bl++ += *lightmap++ * scale;
+				*bl++ += *lightmap++ * scale;
+				*bl++ += *lightmap++ * scale;
 			}
-		}
-	} else {
-		for (i = 0; i < size; i++) {
-			*bl++ = 0;
-			*bl++ = 0;
-			*bl++ = 0;
 		}
 	}
 
