@@ -41,5 +41,9 @@ location_t *locs_find(vec3_t target);
 void locs_load(char *mapname);
 void locs_reset();
 void locs_add(vec3_t location, char *name);
-
+extern location_t **locations;
+extern int locations_count;
+#ifdef HAVE_ZLIB
+extern int locisgz;
+#endif
 #endif // __locs_h

@@ -45,6 +45,7 @@ location_t **locations = NULL;
 int         locations_alloced = 0;
 int         locations_count = 0;
 int         location_blocks = 0;
+int         locisgz = 0;
 
 void        locs_add (vec3_t location, char *name);
 void        locs_load (char *mapname);
@@ -99,14 +100,23 @@ locs_load (char *mapname)
 	char       *line, *t1, *t2;
 	vec3_t      loc;
 	char        tmp[PATH_MAX];
-
+	char        foundname[MAX_OSPATH];
+	char       *tmpfndnme;
+	int         templength = 0;
+	
 	snprintf (tmp, sizeof (tmp), "maps/%s.loc", mapname);
-	COM_FOpenFile (tmp, &file);
+	templength = _COM_FOpenFile (tmp, &file, foundname, 1);
 	if (!file) {
 		Con_Printf ("Couldn't load %s\n", tmp);
 		return;
 	}
-
+#ifdef HAVE_ZLIB
+	tmpfndnme = foundname;
+	if (strncmp(tmpfndnme + strlen(foundname) - 3,".gz",3) == 0) 
+		locisgz = 1;
+	else 
+		locisgz = 0;
+#endif
 	while ((line = Qgetline (file))) {
 		if (line[0] == '#')
 			continue;

@@ -46,7 +46,6 @@ cvar_t     *cl_nofake;
 static qboolean died = false, recorded_location = false;
 static vec3_t death_location, last_recorded_location;
 
-
 void
 Team_BestWeaponImpulse (void)
 {
@@ -116,7 +115,7 @@ Team_ParseSay (char *s)
 	i = 0;
 
 	while (*s && (i <= sizeof (buf))) {
-		if (*s == '$') {
+		if ((*s == '$') && (s[1] != '\0')) {
 			c = 0;
 			switch (s[1]) {
 				case '\\':
@@ -147,7 +146,7 @@ Team_ParseSay (char *s)
 				s += 2;
 				continue;
 			}
-		} else if (*s == '%') {
+		} else if ((*s == '%') && (s[1] != '\0')) {
 			t1 = NULL;
 			memset (t2, '\0', sizeof (t2));
 			memset (t3, '\0', sizeof (t3));
@@ -336,9 +335,7 @@ Team_Init_Cvars (void)
  * locs_markloc
  *
  * Record the current co-ords plus description into a loc file for current map
- *     */
-
-// FIXME: No gzip'd loc file support
+ */
 
 void
 locs_markloc ()
@@ -355,6 +352,12 @@ locs_markloc ()
 	}
 	VectorCopy (cl.simorg, loc);
 	locs_add (loc, Cmd_Argv (1));
+#ifdef HAVE_ZLIB
+	if(locisgz) {
+		Cmd_ExecuteString ("zdumploc");
+		return;
+	}
+#endif
 	loc[0] *= 8;
 	loc[1] *= 8;
 	loc[2] *= 8;
@@ -363,15 +366,15 @@ locs_markloc ()
 		Sys_Error ("Can't duplicate mapname!");
 	t1 = strrchr (mapname, '.');
 	if (!t1)
-		Sys_Error ("Can't find / or .!");
-	t1++;								// skip over /
+		Sys_Error ("Can't find .!");
+	t1++;						// skip over .
 	t1[0] = 'l';
 	t1[1] = 'o';
 	t1[2] = 'c';
 	snprintf (locfile, sizeof (locfile), "%s/%s", com_gamedir, mapname);
 	locfd = Qopen (locfile, "a+");
 	if (locfd == 0) {
-		Qopen (locfile, "w+");
+		locfd = Qopen (locfile, "w+");
 		if (locfd == 0) {
 			Con_Printf ("ERROR: Unable to open %s : %s\n", mapname,
 						strerror (errno));
@@ -382,11 +385,129 @@ locs_markloc ()
 	Qprintf (locfd, "%.0f %.0f %.0f %s\n", loc[0], loc[1], loc[2],
 			 Cmd_Argv (1));
 	Qclose (locfd);
+	Con_Printf("Marked Current Location: %s\n",Cmd_Argv(1));
 	free (mapname);
+}
+
+/*
+ * locs_dumploc
+ *
+ * copies the entire loc data from memory to disk
+ * supports zgip files via zdumploc
+ */
+void 
+locs_dumploc ()
+{
+	char       *mapname, *t1;
+	QFile      *locfd;
+	char        locfile[MAX_OSPATH];
+	int         i;
+	if (Cmd_Argc () != 1) {
+		Con_Printf
+			("markloc <description> :marks the current location with the description and records the information into a loc file.\n");
+		return;
+	}
+	mapname = strdup (cl.worldmodel->name);
+	if (!mapname)
+		Sys_Error ("Can't duplicate mapname!");
+	t1 = strrchr (mapname, '.');
+	if (!t1)
+		Sys_Error ("Can't find .!");
+	t1++;                                                  // skip over .
+	t1[0] = 'l';
+	t1[1] = 'o';
+	t1[2] = 'c';
+	if (strncasecmp(Cmd_Argv(0),"dumploc",7) == 0) {
+		snprintf (locfile, sizeof (locfile), "%s/%s", com_gamedir, mapname);
+		locfd = Qopen (locfile, "w+");
+#ifdef HAVE_ZLIB
+	} else {
+		snprintf (locfile, sizeof (locfile), "%s/%s.gz", com_gamedir, mapname);
+		locfd = Qopen (locfile, "z9w+");
+#endif
+	}
+
+	if (locfd == 0) {
+		Con_Printf ("ERROR: Unable to open %s : %s\n", mapname,
+			strerror (errno));
+		free (mapname);
+		return;
+	}
+	for(i=0; i < locations_count ;i++)
+		Qprintf (locfd, "%.0f %.0f %.0f %s\n", 
+				locations[i]->loc[0] * 8,
+				locations[i]->loc[1] * 8,
+				locations[i]->loc[2] * 8,
+				locations[i]->name);
+	Qclose (locfd);
+	free(mapname);
+}
+
+/*
+ * locs_delloc
+ *
+ * removes a loc mark from memory and file
+ */
+void
+locs_delloc ()
+{
+	vec3_t      loc;
+	location_t *best = NULL, *cur;
+	float       best_distance = 9999999, distance;
+	int         i, j=0;
+	
+	if (locations_count) {
+		if ((strncasecmp(Cmd_Argv(0),"editloc",7) == 0) && (Cmd_Argc () != 2)) {
+			Con_Printf("editloc <description> :changed the description of the nearest location marker\n");
+			return;
+		}
+		if ((strncasecmp(Cmd_Argv(0),"delloc",6) == 0) && (Cmd_Argc () != 1)) {
+			Con_Printf("delloc :removes the nearest location marker\n");
+			return;
+		}				
+		VectorCopy (cl.simorg, loc);
+		for (i = 0; i < locations_count; i++) {
+			cur = locations[i];
+			distance = VectorDistance_fast (loc, cur->loc);
+			if ((distance < best_distance) || !best) {
+				best = cur;
+				best_distance = distance;
+				j = i;
+			}
+		}
+		if (strncasecmp(Cmd_Argv(0),"delloc",6) == 0) {
+			Con_Printf("Removing Location Marker for %s\n",
+					locations[j]->name);
+			free ((void *) locations[j]->name);
+        		free ((void *) locations[j]);
+			locations_count--;
+			for (i = j; i < locations_count; i++)
+				locations[i] = locations[i+1];			
+			locations[locations_count] = NULL;
+		} else {
+			Con_Printf("Changing Location Marker from %s to %s\n",
+					locations[j]->name,
+					Cmd_Argv(1));
+			free ((void *) locations[j]->name);
+			locations[j]->name = strdup (Cmd_Argv(1));
+		}
+#ifdef HAVE_ZLIB
+		if (locisgz)
+			Cmd_ExecuteString ("zdumploc");
+		else
+#endif
+			Cmd_ExecuteString ("dumploc");
+	}
 }
 
 void
 Locs_Init ()
 {
 	Cmd_AddCommand ("markloc", locs_markloc);
+	Cmd_AddCommand ("dumploc", locs_dumploc);
+#ifdef HAVE_ZLIB
+	Cmd_AddCommand ("zdumploc", locs_dumploc);
+#endif
+	Cmd_AddCommand ("delloc",locs_delloc);
+	Cmd_AddCommand ("editloc",locs_delloc);
 }
