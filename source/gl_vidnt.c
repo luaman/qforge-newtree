@@ -29,6 +29,7 @@
 
 #include "quakedef.h"
 #include "winquake.h"
+#include "sys.h"
 #include "resource.h"
 #include "glquake.h"
 #include "in_win.h"
