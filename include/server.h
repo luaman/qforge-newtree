@@ -381,6 +381,7 @@ extern	cvar_t	*fraglimit;
 extern	cvar_t	*timelimit;
 
 extern	server_static_t	svs;				// persistant server info
+extern	char	*svs_info;					// evil memory saving hack :)
 extern	server_t		sv;					// local server
 
 extern	client_t	*host_client;

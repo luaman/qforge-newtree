@@ -51,6 +51,7 @@
 
 int         noconinput = 0;
 qboolean    is_server = false;
+char       *svs_info;
 
 #ifdef PACKET_LOGGING
 void Net_LogStop (void);

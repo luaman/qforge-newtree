@@ -59,6 +59,8 @@ cvar_t     *sys_dead_sleep;
 
 qboolean    is_server = true;
 qboolean    stdin_ready;
+server_static_t svs;
+char       *svs_info = svs.info;
 
 
 /*

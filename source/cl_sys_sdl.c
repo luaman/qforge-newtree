@@ -63,6 +63,7 @@
 #include "host.h"
 
 qboolean    is_server = false;
+char       *svs_info;
 
 int         starttime;
 

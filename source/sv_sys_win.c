@@ -43,6 +43,8 @@
 
 qboolean    is_server = true;
 qboolean    WinNT;
+server_static_t svs;
+char       *svs_info = svs.info;
 
 extern cvar_t *sys_nostdout;
 cvar_t     *sys_sleep;

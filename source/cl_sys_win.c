@@ -49,6 +49,7 @@
 #include "vid.h"
 
 qboolean    is_server = false;
+char       *svs_info;
 
 #define MINIMUM_WIN_MEMORY	0x0c00000
 #define MAXIMUM_WIN_MEMORY	0x1000000

@@ -1031,7 +1031,7 @@ COM_Gamedir_f (void)
 	COM_Gamedir (dir);
 
 	if (is_server) {
-		Info_SetValueForStarKey (svs.info, "*gamedir", dir,
+		Info_SetValueForStarKey (svs_info, "*gamedir", dir,
 								 MAX_SERVERINFO_STRING);
 	}
 }
