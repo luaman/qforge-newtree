@@ -55,6 +55,7 @@ vec3_t	player_maxs = {16, 16, 32};
 // #define	PM_WATERFRICTION	1
 
 void PM_InitBoxHull (void);
+void PM_CategorizePosition (void);
 
 void Pmove_Init (void)
 {
@@ -559,6 +560,7 @@ void PM_AirMove (void)
 	float		fmove, smove;
 	vec3_t		wishdir;
 	float		wishspeed;
+	vec3_t		original;
 
 	fmove = pmove.cmd.forwardmove;
 	smove = pmove.cmd.sidemove;
@@ -604,8 +606,24 @@ void PM_AirMove (void)
 		// add gravity
 		pmove.velocity[2] -= movevars.entgravity * movevars.gravity * frametime;
 
-		PM_FlyMove ();
-
+		if ( ! PM_FlyMove() )
+		{
+			// the move didn't get blocked
+			PM_CategorizePosition ();
+			if (onground != -1)		// but we're on ground now
+			{
+			// This is a hack to fix the jumping bug
+				VectorCopy (pmove.origin, original);
+				// Calculate correct velocity
+				if ( ! PM_FlyMove() )
+				{
+					// This shouldn't probably happen (?)
+					if (pmove.velocity[2] < 0)
+						pmove.velocity[2] = 0;
+				}
+				VectorCopy (original, pmove.origin);
+			}
+		}
 	}
 
 //Con_Printf("airmove:vec: %4.2f %4.2f %4.2f\n",
@@ -622,10 +640,10 @@ void PM_AirMove (void)
 
 /*
 =============
-PM_CatagorizePosition
+PM_CategorizePosition
 =============
 */
-void PM_CatagorizePosition (void)
+void PM_CategorizePosition (void)
 {
 	vec3_t		point;
 	int			cont;
@@ -929,7 +947,7 @@ void PlayerMove (void)
 	VectorCopy (pmove.cmd.angles, pmove.angles);
 
 	// set onground, watertype, and waterlevel
-	PM_CatagorizePosition ();
+	PM_CategorizePosition ();
 
 	if (waterlevel == 2)
 		CheckWaterJump ();
@@ -952,6 +970,6 @@ void PlayerMove (void)
 		PM_AirMove ();
 
 	// set onground, watertype, and waterlevel for final spot
-	PM_CatagorizePosition ();
+	PM_CategorizePosition ();
 }
 
