@@ -805,6 +805,18 @@ int gettoken (void)
 			return LINE_DONE;
 	} while (stat == WHITESPACE);
 
+	if (c == '#')
+	{
+		do
+		{
+			if  ((c = getchar()) == EOF)
+				return FILE_DONE;
+		} while (whitespace(c) != LINE_DONE);
+
+		return LINE_DONE;
+	}
+
+
 	token[0] = c;
 	count = 1;
 
