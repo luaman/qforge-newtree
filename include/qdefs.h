@@ -31,9 +31,6 @@
 #ifndef _QDEFS_H
 #define _QDEFS_H
 
-#include <stdio.h>
-#include <sys/types.h>
-
 #define MAX_QPATH		64
 #define MAX_CL_STATS	32
 #define NUM_CSHIFTS		4

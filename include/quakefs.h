@@ -57,6 +57,8 @@ void COM_FileBase (char *in, char *out);
 void COM_DefaultExtension (char *path, char *extension);
 char *COM_SkipPath (char *pathname);
 void COM_StripExtension (char *in, char *out);
+int COM_NextFilename (char *filename, const char *prefix, const char *ext);
+
 
 byte *COM_LoadStackFile (char *path, void *buffer, int bufsize);
 byte *COM_LoadTempFile (char *path);

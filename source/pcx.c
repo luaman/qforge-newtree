@@ -30,11 +30,13 @@
 # include "config.h"
 #endif
 
+#include "cl_parse.h"
 #include "console.h"
 #include "pcx.h"
 #include "qendian.h"
 #include "qtypes.h"
 #include "quakefs.h"
+#include "zone.h"
 
 byte       *pcx_rgb;
 
@@ -105,4 +107,72 @@ LoadPCX (QFile *f)
 			}
 		}
 	}
+}
+
+/* 
+	WritePCXfile 
+*/
+void
+WritePCXfile (char *filename, byte * data, int width, int height,
+			  int rowbytes, byte * palette, qboolean upload, qboolean flip)
+{
+	int         i, j, length;
+	pcx_t      *pcx;
+	byte       *pack;
+
+	pcx = Hunk_TempAlloc (width * height * 2 + 1000);
+	if (pcx == NULL) {
+		Con_Printf ("WritePCXfile: not enough memory\n");
+		return;
+	}
+
+	pcx->manufacturer = 0x0a;			// PCX id
+	pcx->version = 5;					// 256 color
+	pcx->encoding = 1;					// uncompressed
+	pcx->bits_per_pixel = 8;			// 256 color
+	pcx->xmin = 0;
+	pcx->ymin = 0;
+	pcx->xmax = LittleShort ((short) (width - 1));
+	pcx->ymax = LittleShort ((short) (height - 1));
+	pcx->hres = LittleShort ((short) width);
+	pcx->vres = LittleShort ((short) height);
+	memset (pcx->palette, 0, sizeof (pcx->palette));
+	pcx->color_planes = 1;				// chunky image
+	pcx->bytes_per_line = LittleShort ((short) width);
+	pcx->palette_type = LittleShort (2);	// not a grey scale
+	memset (pcx->filler, 0, sizeof (pcx->filler));
+
+	// pack the image
+	pack = &pcx->data;
+
+	if (flip)
+		data += rowbytes * (height - 1);
+
+	for (i = 0; i < height; i++) {
+		for (j = 0; j < width; j++) {
+			if ((*data & 0xc0) != 0xc0)
+				*pack++ = *data++;
+			else {
+				*pack++ = 0xc1;
+				*pack++ = *data++;
+			}
+		}
+
+		data += rowbytes - width;
+		if (flip)
+			data -= rowbytes * 2;
+	}
+
+	// write the palette
+	*pack++ = 0x0c;						// palette ID byte
+	for (i = 0; i < 768; i++)
+		*pack++ = *palette++;
+
+	// write output file 
+	length = pack - (byte *) pcx;
+
+	if (upload)
+		CL_StartUpload ((void *) pcx, length);
+	else
+		COM_WriteFile (filename, pcx, length);
 }

@@ -1143,3 +1143,30 @@ COM_DefaultExtension (char *path, char *extension)
 
 	strncat (path, extension, MAX_OSPATH - strlen (path));
 }
+
+/*
+	COM_NextFileName
+*/
+int
+COM_NextFilename (char *filename, const char *prefix, const char *ext)
+{
+	char *digits;
+	char checkname [MAX_OSPATH];
+	int i;
+
+	strncpy (filename, prefix, MAX_OSPATH - 4);
+	filename [MAX_OSPATH - 4] = 0;
+	digits = filename + strlen (filename);
+	strcat (filename, "000");
+	strncat (filename, ext, MAX_OSPATH - strlen (filename));
+
+	for (i = 0; i <= 999; i++) {
+		digits[0] = i / 100 + '0';
+		digits[1] = i / 10 % 10 + '0';
+		digits[2] = i % 10 + '0';
+		snprintf (checkname, sizeof (checkname), "%s/%s", com_gamedir, filename);
+		if (Sys_FileTime (checkname) == -1)
+			return 1;					// file doesn't exist
+	}
+	return 0;
+}

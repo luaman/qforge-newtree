@@ -29,6 +29,8 @@
 #ifndef __pcx_h
 #define __pcx_h
 
+#include "quakeio.h"
+
 typedef struct
 {
     char	manufacturer;
@@ -45,5 +47,10 @@ typedef struct
     char	filler[58];
     unsigned char	data;			// unbounded
 } pcx_t;
+
+void WritePCXfile (char *filename, byte * data, int width, int height,
+				   int rowbytes, byte * palette, qboolean upload,
+				   qboolean flip);
+void LoadPCX (QFile *f);
 
 #endif // __pcx_h
