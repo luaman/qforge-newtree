@@ -30,6 +30,8 @@
 # include "config.h"
 #endif
 
+#include "protocol.h"
+
 void
 IN_Init (void)
 {
