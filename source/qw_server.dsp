@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /c
+# ADD CPP /nologo /W1 /GX /O2 /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /c
 # ADD BASE RSC /l 0x419 /d "NDEBUG"
 # ADD RSC /l 0x419 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -66,7 +66,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /GZ /c
+# ADD CPP /nologo /W1 /Gm /GX /ZI /Od /I "../include" /I "../include/win32/vc" /I "../include/win32" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D USE_INTEL_ASM=1 /D HAVE_CONFIG_H=1 /YX /FD /GZ /c
 # ADD BASE RSC /l 0x419 /d "_DEBUG"
 # ADD RSC /l 0x419 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -87,11 +87,19 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\buildnum.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\checksum.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\cmd.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\common.c
+SOURCE=.\com.c
 # End Source File
 # Begin Source File
 
@@ -100,6 +108,22 @@ SOURCE=.\crc.c
 # Begin Source File
 
 SOURCE=.\cvar.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\dirent.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\fnmatch.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\info.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\link.c
 # End Source File
 # Begin Source File
 
@@ -112,6 +136,10 @@ SOURCE=.\mdfour.c
 # Begin Source File
 
 SOURCE=.\model.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\msg.c
 # End Source File
 # Begin Source File
 
@@ -144,6 +172,26 @@ SOURCE=.\pr_edict.c
 # Begin Source File
 
 SOURCE=.\pr_exec.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\qargs.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\qendian.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\quakefs.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\quakeio.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sizebuf.c
 # End Source File
 # Begin Source File
 
@@ -200,6 +248,10 @@ SOURCE=.\sv_user.c
 # Begin Source File
 
 SOURCE=.\sys_win.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\va.c
 # End Source File
 # Begin Source File
 
