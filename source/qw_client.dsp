@@ -55,7 +55,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 dxguid.lib mglfx.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libcmt" /out:"Release/qw-client-win.exe"
+# ADD LINK32 dxguid.lib mglfx.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libcmt" /out:"Release/qf-client-win.exe"
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
 
@@ -81,7 +81,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 dxguid.lib mglfx.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcmt" /out:"Debug/qw-client-win.exe" /pdbtype:sept
+# ADD LINK32 dxguid.lib mglfx.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcmt" /out:"Debug/qf-client-win.exe" /pdbtype:sept
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
 
@@ -108,7 +108,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 dxguid.lib ..\scitech\lib\win32\vc\mgllt.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 comctl32.lib opengl32.lib glu32.lib dxguid.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /out:"Debug/qw-client-wgl.exe" /pdbtype:sept
+# ADD LINK32 comctl32.lib opengl32.lib glu32.lib dxguid.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /out:"Debug/qf-client-wgl.exe" /pdbtype:sept
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
 
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 dxguid.lib ..\scitech\lib\win32\vc\mgllt.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 comctl32.lib opengl32.lib glu32.lib dxguid.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386 /out:"Release/qw-client-wgl.exe"
+# ADD LINK32 comctl32.lib opengl32.lib glu32.lib dxguid.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386 /out:"Release/qf-client-wgl.exe"
 
 !ENDIF 
 
@@ -210,6 +210,10 @@ SOURCE=.\cl_parse.c
 # Begin Source File
 
 SOURCE=.\cl_pred.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\cl_slist.c
 # End Source File
 # Begin Source File
 
@@ -754,25 +758,6 @@ SOURCE=.\gl_trans.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\gl_vidnt.c
-
-!IF  "$(CFG)" == "qw_client - Win32 Release"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=.\gl_view.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
@@ -1188,6 +1173,25 @@ SOURCE=.\sw_view.c
 # Begin Source File
 
 SOURCE=.\sys_win.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\vid_wgl.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
