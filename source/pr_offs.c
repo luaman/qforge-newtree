@@ -1,7 +1,7 @@
 /*
-        pr_offs.c
+	pr_offs.c
 
-        Quick QuakeC offset access
+	Quick QuakeC offset access
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -23,7 +23,7 @@
 		59 Temple Place - Suite 330
 		Boston, MA  02111-1307, USA
 
-        $Id$
+	$Id$
 */
 
 #ifdef HAVE_CONFIG_H
@@ -32,14 +32,12 @@
 
 #include "progs.h"
 
-int         eval_alpha, eval_scale, eval_glowsize, eval_glowcolor,
-
-	eval_colormod;
+int eval_alpha, eval_scale, eval_glowsize, eval_glowcolor, eval_colormod;
 
 int
 FindFieldOffset (char *field)
 {
-	ddef_t     *d;
+	ddef_t	*d;
 
 	d = ED_FindField (field);
 	if (!d)
@@ -48,8 +46,7 @@ FindFieldOffset (char *field)
 	return d->ofs * 4;
 }
 
-
-eval_t     *
+eval_t *
 GETEDICTFIELDVALUE (edict_t *ed, int fieldoffset)
 {
 	if (!fieldoffset)
@@ -59,7 +56,7 @@ GETEDICTFIELDVALUE (edict_t *ed, int fieldoffset)
 }
 
 void
-FindEdictFieldOffsets ()
+FindEdictFieldOffsets (void)
 {
 	eval_alpha = FindFieldOffset ("alpha");
 	eval_scale = FindFieldOffset ("scale");

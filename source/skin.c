@@ -113,7 +113,7 @@ Skin_Cache
 Returns a pointer to the skin bitmap, or NULL to use the default
 ==========
 */
-byte       *
+byte *
 Skin_Cache (skin_t *skin)
 {
 	char        name[1024];
@@ -138,9 +138,7 @@ Skin_Cache (skin_t *skin)
 	if (out)
 		return out;
 
-//
-// load the pic from disk
-//
+	// load the pic from disk
 	snprintf (name, sizeof (name), "skins/%s.pcx", skin->name);
 	raw = COM_LoadTempFile (name);
 	if (!raw) {
@@ -152,9 +150,8 @@ Skin_Cache (skin_t *skin)
 			return NULL;
 		}
 	}
-//
-// parse the PCX file
-//
+
+	// parse the PCX file
 	pcx = (pcx_t *) raw;
 	raw = &pcx->data;
 

@@ -146,7 +146,7 @@ R_SetupAndDrawSprite
 ================
 */
 void
-R_SetupAndDrawSprite ()
+R_SetupAndDrawSprite (void)
 {
 	int         i, nump;
 	float       dot, scale, *pv;
