@@ -82,6 +82,9 @@
 /* Define if you have the dlopen function.  */
 #undef HAVE_DLOPEN
 
+/* Define if you have zlib */
+#undef HAS_ZLIB
+
 /* Define if you have pthread support. */
 #undef HAVE_LIBPTHREAD
 

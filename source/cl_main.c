@@ -493,7 +493,7 @@ void CL_Disconnect (void)
 	Cam_Reset();
 
 	if (cls.download) {
-		fclose(cls.download);
+		Qclose(cls.download);
 		cls.download = NULL;
 	}
 
@@ -1099,7 +1099,7 @@ void CL_Download_f (void)
 	}
 
 	strncpy (cls.downloadtempname, cls.downloadname, sizeof(cls.downloadtempname));
-	cls.download = fopen (cls.downloadname, "wb");
+	cls.download = Qopen (cls.downloadname, "wb");
 	cls.downloadtype = dl_single;
 
 	MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
@@ -1128,7 +1128,7 @@ CL_Init
 */
 void CL_Init (void)
 {
-	FILE	*servlist;
+	QFile	*servlist;
 	char	st[80];
 	char	e_path[MAX_OSPATH];
 
@@ -1151,9 +1151,9 @@ void CL_Init (void)
 	Pmove_Init ();
 	
 	Qexpand_squiggle(fs_userpath->string, e_path);
-	if ((servlist = fopen(va("%s/servers.txt", e_path), "r"))) {
+	if ((servlist = Qopen(va("%s/servers.txt", e_path), "r"))) {
 		slist = SL_LoadF(servlist,slist);
-		fclose(servlist);
+		Qclose(servlist);
 	}
 	
 
@@ -1342,11 +1342,11 @@ Writes key bindings and archived cvars to config.cfg
 */
 void Host_WriteConfiguration (void)
 {
-	FILE	*f;
+	QFile	*f;
 
 	if (host_initialized)
 	{
-		f = fopen (va("%s/config.cfg",com_gamedir), "w");
+		f = Qopen (va("%s/config.cfg",com_gamedir), "w");
 		if (!f)
 		{
 			Con_Printf ("Couldn't write config.cfg.\n");
@@ -1356,7 +1356,7 @@ void Host_WriteConfiguration (void)
 		Key_WriteBindings (f);
 		Cvar_WriteVariables (f);
 
-		fclose (f);
+		Qclose (f);
 	}
 }
 

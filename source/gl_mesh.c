@@ -319,7 +319,7 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 	int			*cmds;
 	trivertx_t	*verts;
 	char	cache[MAX_QPATH], fullpath[MAX_OSPATH];
-	FILE	*f;
+	QFile	*f;
 
 	aliasmodel = m;
 	paliashdr = hdr;	// (aliashdr_t *)Mod_Extradata (m);
@@ -334,11 +334,11 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 	COM_FOpenFile (cache, &f);	
 	if (f)
 	{
-		fread (&numcommands, 4, 1, f);
-		fread (&numorder, 4, 1, f);
-		fread (&commands, numcommands * sizeof(commands[0]), 1, f);
-		fread (&vertexorder, numorder * sizeof(vertexorder[0]), 1, f);
-		fclose (f);
+		Qread (f, &numcommands, 4);
+		Qread (f, &numorder, 4);
+		Qread (f, &commands, numcommands * sizeof(commands[0]));
+		Qread (f, &vertexorder, numorder * sizeof(vertexorder[0]));
+		Qclose (f);
 	}
 	else
 	{
@@ -353,22 +353,22 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 		// save out the cached version
 		//
 		snprintf (fullpath, sizeof(fullpath), "%s/%s", com_gamedir, cache);
-		f = fopen (fullpath, "wb");
+		f = Qopen (fullpath, "wb");
 		if (!f) {
 			char gldir[MAX_OSPATH];
 
 			snprintf (gldir, sizeof(gldir), "%s/glquake", com_gamedir);
 			Sys_mkdir (gldir);
-			f = fopen (fullpath, "wb");
+			f = Qopen (fullpath, "wb");
 		}
 
 		if (f)
 		{
-			fwrite (&numcommands, 4, 1, f);
-			fwrite (&numorder, 4, 1, f);
-			fwrite (&commands, numcommands * sizeof(commands[0]), 1, f);
-			fwrite (&vertexorder, numorder * sizeof(vertexorder[0]), 1, f);
-			fclose (f);
+			Qwrite (f, &numcommands, 4);
+			Qwrite (f, &numorder, 4);
+			Qwrite (f, &commands, numcommands * sizeof(commands[0]));
+			Qwrite (f, &vertexorder, numorder * sizeof(vertexorder[0]));
+			Qclose (f);
 		}
 	}
 

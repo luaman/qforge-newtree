@@ -137,7 +137,7 @@ int SL_Len (server_entry_t *start) {
 	return i;
   }
   
-server_entry_t *SL_LoadF (FILE *f,server_entry_t *start) { // This could get messy
+server_entry_t *SL_LoadF (QFile *f,server_entry_t *start) { // This could get messy
   	char line[256]; /* Long lines get truncated. */
   	int c = ' ';    /* int so it can be compared to EOF properly*/
   	int len;
@@ -150,7 +150,7 @@ server_entry_t *SL_LoadF (FILE *f,server_entry_t *start) { // This could get mes
 		i = 0;
 		c = ' ';
 		while (c != '\n' && c != EOF) {
-			c = getc(f);
+			c = Qgetc(f);
 			if (i < 255) {
 				line[i] = c;
 				i++;
@@ -174,23 +174,23 @@ server_entry_t *SL_LoadF (FILE *f,server_entry_t *start) { // This could get mes
   	}
 }
 
- void SL_SaveF (FILE *f,server_entry_t *start) {
+ void SL_SaveF (QFile *f,server_entry_t *start) {
  	do {
- 		fprintf(f,"%s   %s\n",start->server,start->desc);
+ 		Qprintf(f,"%s   %s\n",start->server,start->desc);
  		start = start->next;
  
  	} while (start);
  }
  
  void SL_Shutdown (server_entry_t *start) {
- 	FILE	*f;
+ 	QFile	*f;
 	char	e_path[MAX_OSPATH];
 	
  	if (start) {
 		Qexpand_squiggle(fs_userpath->string, e_path);
- 		if ((f = fopen(va("%s/servers.txt", e_path),"w"))) {
+ 		if ((f = Qopen(va("%s/servers.txt", e_path),"w"))) {
  			SL_SaveF(f,start);
- 			fclose(f);
+ 			Qclose(f);
  		}
  		SL_Del_All (start);
   	}

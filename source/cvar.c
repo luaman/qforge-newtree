@@ -282,13 +282,13 @@ Writes lines containing "set variable value" for all variables
 with the archive flag set to true.
 ============
 */
-void Cvar_WriteVariables (FILE *f)
+void Cvar_WriteVariables (QFile *f)
 {
 	cvar_t	*var;
 
 	for (var = cvar_vars ; var ; var = var->next)
 		if (var->flags&CVAR_ARCHIVE)
-			fprintf (f, "%s \"%s\"\n", var->name, var->string);
+			Qprintf (f, "%s \"%s\"\n", var->name, var->string);
 }
 
 void Cvar_Set_f(void)

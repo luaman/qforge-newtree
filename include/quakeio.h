@@ -30,26 +30,39 @@
 #ifndef _QUAKEIO_H
 #define _QUAKEIO_H
 
-#include "gcc_attr.h"
-#include <stdio.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-#include <config.h>
+#include <stdio.h>
+#ifdef HAS_ZLIB
+#include <zlib.h>
+#endif
+
+#include "gcc_attr.h"
+
+typedef struct {
+	FILE *file;
+#ifdef HAS_ZLIB
+	gzFile *gzfile;
+#endif
+} QFile;
 
 void Qexpand_squiggle(const char *path, char *dest);
 int Qrename(const char *old, const char *new);
-FILE *Qopen(const char *path, const char *mode);
-FILE *Qdopen(int fd, const char *mode);
-void Qclose(FILE *file);
-int Qread(FILE *file, void *buf, int count);
-int Qwrite(FILE *file, void *buf, int count);
-int Qprintf(FILE *file, const char *fmt, ...) __attribute__((format(printf,2,3)));
-char *Qgets(FILE *file, char *buf, int count);
-int Qgetc(FILE *file);
-int Qputc(FILE *file, int c);
-int Qseek(FILE *file, long offset, int whence);
-long Qtell(FILE *file);
-int Qflush(FILE *file);
-int Qeof(FILE *file);
+QFile *Qopen(const char *path, const char *mode);
+QFile *Qdopen(int fd, const char *mode);
+void Qclose(QFile *file);
+int Qread(QFile *file, void *buf, int count);
+int Qwrite(QFile *file, void *buf, int count);
+int Qprintf(QFile *file, const char *fmt, ...) __attribute__((format(printf,2,3)));
+char *Qgets(QFile *file, char *buf, int count);
+int Qgetc(QFile *file);
+int Qputc(QFile *file, int c);
+int Qseek(QFile *file, long offset, int whence);
+long Qtell(QFile *file);
+int Qflush(QFile *file);
+int Qeof(QFile *file);
 
 
 #endif /*_QUAKEIO_H*/

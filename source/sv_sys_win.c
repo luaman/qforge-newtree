@@ -54,12 +54,12 @@ Sys_FileTime
 */
 int	Sys_FileTime (char *path)
 {
-	FILE	*f;
+	QFile	*f;
 	
-	f = fopen(path, "rb");
+	f = Qopen(path, "rb");
 	if (f)
 	{
-		fclose(f);
+		Qclose(f);
 		return 1;
 	}
 	

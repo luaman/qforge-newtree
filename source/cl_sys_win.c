@@ -100,15 +100,15 @@ FILE IO
 wfilelength
 ================
 */
-int wfilelength (FILE *f)
+int wfilelength (QFile *f)
 {
 	int		pos;
 	int		end;
 
-	pos = ftell (f);
-	fseek (f, 0, SEEK_END);
-	end = ftell (f);
-	fseek (f, pos, SEEK_SET);
+	pos = Qtell (f);
+	Qseek (f, 0, SEEK_END);
+	end = Qtell (f);
+	Qseek (f, pos, SEEK_SET);
 
 	return end;
 }
@@ -116,16 +116,16 @@ int wfilelength (FILE *f)
 
 int	Sys_FileTime (char *path)
 {
-	FILE	*f;
+	QFile	*f;
 	int		t, retval;
 
 	t = VID_ForceUnlockedAndReturnState ();
 	
-	f = fopen(path, "rb");
+	f = Qopen(path, "rb");
 
 	if (f)
 	{
-		fclose(f);
+		Qclose(f);
 		retval = 1;
 	}
 	else

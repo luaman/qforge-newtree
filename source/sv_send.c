@@ -152,7 +152,7 @@ void Con_Printf (char *fmt, ...)
         	if (msgcount>0) {
 			Sys_Printf ("Last message repeated %d times\n", msgcount);
 			if (sv_logfile)
-				fprintf (sv_logfile, "Last message repeated %d times\n", msgcount);
+				Qprintf (sv_logfile, "Last message repeated %d times\n", msgcount);
 		        msgcount=0;
                 }
         }
@@ -179,7 +179,7 @@ void Con_Printf (char *fmt, ...)
 
 	Sys_Printf ("%s", msg2);	// also echo to debugging console
 	if (sv_logfile)
-		fprintf (sv_logfile, "%s", msg2);
+		Qprintf (sv_logfile, "%s", msg2);
 }
 
 /*
