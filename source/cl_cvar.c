@@ -43,8 +43,9 @@ Cvar_Info (cvar_t *var)
 							 MAX_INFO_STRING);
 		if (cls.state >= ca_connected) {
 			MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
-			SZ_Print (&cls.netchan.message,
-					  va ("setinfo \"%s\" \"%s\"\n", var->name, var->string));
+			MSG_WriteString (&cls.netchan.message,
+							 va ("setinfo \"%s\" \"%s\"\n", var->name,
+								 var->string));
 		}
 	}
 }
