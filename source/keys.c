@@ -27,7 +27,7 @@
 */
 
 #include "quakedef.h"
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include <windows.h>
 #endif
 /*
