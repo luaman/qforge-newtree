@@ -590,19 +590,8 @@ CL_LinkPacketEntities (void)
 			continue;
 
 		// No trail if too far.
-		for (i = 0; i < 3; i++)
-		{
-			if (abs ((*ent)->old_origin[i] - (*ent)->origin[i]) > 128)
-			{
-				// if too far
-				VectorCopy ((*ent)->origin, (*ent)->old_origin);
-				break;
-			}
-		}
-/* FIXME: If swapped with above for loop, particle trails go away
-		if (VectorDistance_fast((*ent)->old_origin, (*ent)->origin) > (128^2))
+		if (VectorDistance_fast((*ent)->old_origin, (*ent)->origin) > (256*256))
 			VectorCopy ((*ent)->origin, (*ent)->old_origin);
- */
 
 		if (model->flags & EF_ROCKET) {
 			dl = CL_AllocDlight (-(*ent)->keynum);
