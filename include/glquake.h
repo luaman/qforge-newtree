@@ -281,11 +281,6 @@ extern qboolean lighthalf;
 extern unsigned char lighthalf_v[3];
 
 //
-// gl_mesh.c
-//
-void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr);
-
-//
 // gl_rsurf.c
 //
 void R_DrawBrushModel (entity_t *e);
