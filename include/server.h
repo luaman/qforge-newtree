@@ -120,7 +120,8 @@ typedef enum
 	cs_zombie,		// client has been disconnected, but don't reuse
 					// connection for a couple seconds
 	cs_connected,	// has been assigned to a client_t, but not in game yet
-	cs_spawned		// client is fully in game
+	cs_prespawned,   // has sent both prespawn and spawn commands
+	cs_spawned		// client is fully in game (issued begin command)
 } sv_client_state_t;
 
 typedef struct

@@ -336,6 +336,13 @@ SV_Spawn_f (void)
 		Con_Printf ("Spawn not valid -- allready spawned\n");
 		return;
 	}
+
+	if (!host_client->checksum) {
+		Con_Printf ("Did not prespawn -- dropping client\n");
+		SV_DropClient (host_client);
+		return;
+	}
+
 // handle the case of a level changing while a client was connecting
 	if (atoi (Cmd_Argv (1)) != svs.spawncount) {
 		Con_Printf ("SV_Spawn_f from different level\n");
@@ -415,6 +422,9 @@ SV_Spawn_f (void)
 	// when that is completed, a begin command will be issued
 	ClientReliableWrite_Begin (host_client, svc_stufftext, 8);
 	ClientReliableWrite_String (host_client, "skins\n");
+
+	// Now ready for begin command
+	host_client->state = cs_prespawned;
 }
 
 /*
@@ -452,6 +462,11 @@ SV_Begin_f (void)
 
 	if (host_client->state == cs_spawned)
 		return;							// don't begin again
+	if (host_client->state != cs_prespawned) {
+		Con_Printf("Did not spawn before begin command -- dropping client\n");
+		SV_DropClient (host_client);
+		return;
+	}
 
 	host_client->state = cs_spawned;
 
