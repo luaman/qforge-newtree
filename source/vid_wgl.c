@@ -129,6 +129,9 @@ HDC         maindc;
 glvert_t    glv;
 
 HWND WINAPI InitializeWindow (HINSTANCE hInstance, int nCmdShow);
+LONG	CDAudio_MessageHandler (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+extern void CL_ClearStates ();
 
 extern viddef_t vid;					// global video state
 
@@ -491,9 +494,11 @@ VID_UpdateWindowStatus (void)
 
 
 
+
 void
 CheckArrayExtensions (void)
 {
+// fixme: inactive code for vertex arrays
 	char       *tmp;
 
 	/* check for texture extension */
@@ -626,7 +631,9 @@ GL_Init (void)
 
 	glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
+
 #if 0
+// fixme: inactive code for vertex arrays
 	CheckArrayExtensions ();
 
 	glEnable (GL_VERTEX_ARRAY_EXT);
@@ -651,13 +658,7 @@ GL_BeginRendering (int *x, int *y, int *width, int *height)
 	*x = *y = 0;
 	*width = WindowRect.right - WindowRect.left;
 	*height = WindowRect.bottom - WindowRect.top;
-
-//    if (!wglMakeCurrent( maindc, baseRC ))
-//      Sys_Error ("wglMakeCurrent failed");
-
-//  glViewport (*x, *y, *width, *height);
 }
-
 
 void
 GL_EndRendering (void)
@@ -724,7 +725,7 @@ VID_SetPalette (unsigned char *palette)
 	d_8to24table[255] &= 0;				// 255 is transparent
 
 	// JACK: 3D distance calcs - k is last closest, l is the distance.
-	// FIXME: Precalculate this and cache to disk.
+
 	if (palflag)
 		return;
 	palflag = true;
@@ -763,18 +764,10 @@ VID_SetPalette (unsigned char *palette)
 	}
 }
 
-BOOL        gammaworks;
-
 void
 VID_ShiftPalette (unsigned char *palette)
 {
-	extern byte ramps[3][256];
-
-//  VID_SetPalette (palette);
-
-//  gammaworks = SetDeviceGammaRamp (maindc, ramps);
 }
-
 
 void
 VID_SetDefaultMode (void)
@@ -945,7 +938,6 @@ MAIN WINDOW
 ===================================================================
 */
 
-extern void CL_ClearStates ();
 
 /*
 ================
@@ -987,7 +979,7 @@ AppActivate (BOOL fActive, BOOL minimize)
 		sound_active = true;
 	}
 
-	if (fActive) {
+        if (fActive) {
 		if (modestate == MS_FULLDIB) {
 			IN_ActivateMouse ();
 			IN_HideMouse ();
@@ -1002,9 +994,8 @@ AppActivate (BOOL fActive, BOOL minimize)
 			IN_ActivateMouse ();
 			IN_HideMouse ();
 		}
-	}
 
-	if (!fActive) {
+        } else {
 		if (modestate == MS_FULLDIB) {
 			IN_DeactivateMouse ();
 			IN_ShowMouse ();
@@ -1020,9 +1011,6 @@ AppActivate (BOOL fActive, BOOL minimize)
 }
 
 
-LONG        CDAudio_MessageHandler (HWND hWnd, UINT uMsg, WPARAM wParam,
-
-									LPARAM lParam);
 /* main window procedure */
 LONG WINAPI
 MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -1035,7 +1023,7 @@ MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		uMsg = WM_MOUSEWHEEL;
 
 	switch (uMsg) {
-		case WM_KILLFOCUS:
+			case WM_KILLFOCUS:
 			if (modestate == MS_FULLDIB)
 				ShowWindow (mainwindow, SW_SHOWMINNOACTIVE);
 			break;
@@ -1119,7 +1107,6 @@ MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			fActive = LOWORD (wParam);
 			fMinimized = (BOOL) HIWORD (wParam);
 			AppActivate (!(fActive == WA_INACTIVE), fMinimized);
-
 			// fix the leftover Alt from any Alt-Tab or the like that
 			// switched us away
 			ClearAllStates ();
@@ -1558,6 +1545,7 @@ VID_Init (unsigned char *palette)
 
 	hIcon = LoadIcon (global_hInstance, MAKEINTRESOURCE (IDI_ICON1));
 
+// fixme: If you put these back, remember commctrl.h
 //        InitCommonControls ();
 
 	VID_InitDIB (global_hInstance);
