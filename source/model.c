@@ -42,6 +42,8 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer);
 void Mod_LoadAliasModel (model_t *mod, void *buffer);
 model_t *Mod_LoadModel (model_t *mod, qboolean crash);
 void R_InitSky(struct texture_s *mt);
+void GL_SubdivideSurface (msurface_t *fa);
+void Mod_LoadMMNearest(miptex_t *mx, texture_t	*tx);
 
 byte	mod_novis[MAX_MAP_LEAFS/8];
 
@@ -348,6 +350,10 @@ void Mod_LoadTextures (lump_t *l)
 
 		if (!Q_strncmp(mt->name,"sky",3))	
 			R_InitSky (tx);
+		else
+		{
+			Mod_LoadMMNearest(mt, tx);
+		}
 	}
 
 //
@@ -756,6 +762,9 @@ void Mod_LoadFaces (lump_t *l)
 		if (!Q_strncmp(out->texinfo->texture->name,"sky",3))	// sky
 		{
 			out->flags |= (SURF_DRAWSKY | SURF_DRAWTILED);
+#ifndef QUAKE2
+			GL_SubdivideSurface (out);	// cut up polygon for warps
+#endif
 			continue;
 		}
 		
@@ -767,6 +776,7 @@ void Mod_LoadFaces (lump_t *l)
 				out->extents[i] = 16384;
 				out->texturemins[i] = -8192;
 			}
+			GL_SubdivideSurface (out);	// cut up polygon for warps
 			continue;
 		}
 	}
