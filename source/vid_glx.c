@@ -638,7 +638,7 @@ void VID_Init(unsigned char *palette)
 	Window root;
 	XVisualInfo *visinfo;
 
-	S_Init();
+//	S_Init();
 
 	Cvar_RegisterVariable (&vid_mode);
 	Cvar_RegisterVariable (&gl_ztrick);
