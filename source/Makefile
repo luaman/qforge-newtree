@@ -12,7 +12,7 @@ CL_X11_libs=-lX11 -lXext
 DIRECTORIES=
 vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
 
-CPPFLAGS=-I . -I ../include -DELF -Did386=1 -MMD -Dstricmp=strcasecmp -DSERVERONLY
+CPPFLAGS=-I . -I ../include -DELF -Did386=1 -MMD -Dstricmp=strcasecmp
 CFLAGS=-Wall -Werror
 CXXFLAGS=-Wall -Werror
 LDFLAGS=-L/usr/X11R6/lib 
