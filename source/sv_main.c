@@ -140,8 +140,8 @@ void SV_Error (char *error, ...)
 
 	inerror = true;
 
-	va_start (argptr,error);
-	vsprintf (string,error,argptr);
+	va_start (argptr, error);
+	vsnprintf (string, sizeof(string), error, argptr);
 	va_end (argptr);
 
 	Con_Printf ("SV_Error: %s\n",string);
@@ -307,7 +307,7 @@ void SV_FullClientUpdate (client_t *client, sizebuf_t *buf)
 	MSG_WriteByte (buf, i);
 	MSG_WriteFloat (buf, realtime - client->connection_started);
 
-	strcpy (info, client->userinfo);
+	strncpy (info, client->userinfo, sizeof(info));
 	Info_RemovePrefixedKeys (info, '_');	// server passwords, etc
 
 	MSG_WriteByte (buf, svc_updateuserinfo);
@@ -436,8 +436,11 @@ void SVC_Log (void)
 
 	Con_DPrintf ("sending log %i to %s\n", svs.logsequence-1, NET_AdrToString(net_from));
 
-	sprintf (data, "stdlog %i\n", svs.logsequence-1);
-	strcat (data, (char *)svs.log_buf[((svs.logsequence-1)&1)]);
+	//sprintf (data, "stdlog %i\n", svs.logsequence-1);
+	//strcat (data, (char *)svs.log_buf[((svs.logsequence-1)&1)]);
+	snprintf (data, sizeof(data), "stdlog %i\n%s", 
+            svs.logsequence-1, 
+            (char *)svs.log_buf[((svs.logsequence-1)&1)]);
 
 	NET_SendPacket (strlen(data)+1, data, net_from);
 }
@@ -719,6 +722,12 @@ void SVC_DirectConnect (void)
 	else
 		Con_DPrintf ("Client %s connected\n", newcl->name);
 	newcl->sendinfo = true;
+
+    // QuakeForge stuff.
+    newcl->msecs = 0;
+    newcl->msec_cheating = 0;
+    newcl->last_check = realtime;
+
 }
 
 int Rcon_Validate (void)
@@ -1012,7 +1021,7 @@ void SV_WriteIP_f (void)
 	byte	b[4];
 	int		i;
 
-	sprintf (name, "%s/listip.cfg", com_gamedir);
+	snprintf (name, sizeof(name), "%s/listip.cfg", com_gamedir);
 
 	Con_Printf ("Writing %s.\n", name);
 
@@ -1379,7 +1388,7 @@ void SV_InitLocal (void)
 	Cmd_AddCommand ("writeip", SV_WriteIP_f);
 
 	for (i=0 ; i<MAX_MODELS ; i++)
-		sprintf (localmodels[i], "*%i", i);
+		snprintf (localmodels[i], sizeof(localmodels[i]), "*%i", i);
 
 	Info_SetValueForStarKey (svs.info, "*version", QW_VERSION,
 			MAX_SERVERINFO_STRING);
@@ -1436,7 +1445,7 @@ void Master_Heartbeat (void)
 			active++;
 
 	svs.heartbeat_sequence++;
-	sprintf (string, "%c\n%i\n%i\n", S2M_HEARTBEAT,
+	snprintf (string, sizeof(string), "%c\n%i\n%i\n", S2M_HEARTBEAT,
 		svs.heartbeat_sequence, active);
 
 
@@ -1461,7 +1470,7 @@ void Master_Shutdown (void)
 	char		string[2048];
 	int			i;
 
-	sprintf (string, "%c\n", S2M_SHUTDOWN);
+	snprintf (string, sizeof(string), "%c\n", S2M_SHUTDOWN);
 
 	// send to group master
 	for (i=0 ; i<MAX_MASTERS ; i++)
@@ -1545,7 +1554,7 @@ void SV_ExtractFromUserinfo (client_t *cl)
 					p = val + 4;
 			}
 
-			sprintf(newname, "(%d)%-.40s", dupc++, p);
+			snprintf(newname, sizeof(newname), "(%d)%-.40s", dupc++, p);
 			Info_SetValueForKey (cl->userinfo, "name", newname, MAX_INFO_STRING);
 			val = Info_ValueForKey (cl->userinfo, "name");
 		} else
@@ -1631,8 +1640,8 @@ SV_Init
 void SV_Init (quakeparms_t *parms)
 {
 	COM_InitArgv (parms->argc, parms->argv);
-	COM_AddParm ("-game");
-	COM_AddParm ("qw");
+	//COM_AddParm ("-game");
+	//COM_AddParm ("qw");
 
 	if (COM_CheckParm ("-minmemory"))
 		parms->memsize = MINIMUM_MEMORY;

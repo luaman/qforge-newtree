@@ -1216,7 +1216,7 @@ char	*va(char *format, ...)
 	static char		string[1024];
 	
 	va_start (argptr, format);
-	vsprintf (string, format,argptr);
+	vsnprintf (string, sizeof(string), format, argptr);
 	va_end (argptr);
 
 	return string;	
@@ -1361,7 +1361,7 @@ void COM_WriteFile (char *filename, void *data, int len)
 	FILE	*f;
 	char	name[MAX_OSPATH];
 	
-	sprintf (name, "%s/%s", com_gamedir, filename);
+	snprintf (name, sizeof(name), "%s/%s", com_gamedir, filename);
 	
 	f = fopen (name, "wb");
 	if (!f) {
@@ -1489,7 +1489,7 @@ int COM_FOpenFile (char *filename, FILE **file)
 					continue;
 			}
 			
-			sprintf (netpath, "%s/%s",search->filename, filename);
+			snprintf (netpath, sizeof(netpath), "%s/%s", search->filename, filename);
 			
 			findtime = Sys_FileTime (netpath);
 			if (findtime == -1)
@@ -1703,7 +1703,7 @@ void COM_AddGameDirectory (char *dir)
 //
 	for (i=0 ; ; i++)
 	{
-		sprintf (pakfile, "%s/pak%i.pak", dir, i);
+		snprintf (pakfile, sizeof(pakfile), "%s/pak%i.pak", dir, i);
 		pak = COM_LoadPackFile (pakfile);
 		if (!pak)
 			break;
@@ -1764,7 +1764,7 @@ void COM_Gamedir (char *dir)
 	if (!strcmp(dir,"id1") || !strcmp(dir, "qw"))
 		return;
 
-	sprintf (com_gamedir, "%s/%s", com_basedir, dir);
+	snprintf (com_gamedir, sizeof(com_gamedir), "%s/%s", com_basedir, dir);
 
 	//
 	// add the directory to the search path
@@ -1779,7 +1779,7 @@ void COM_Gamedir (char *dir)
 	//
 	for (i=0 ; ; i++)
 	{
-		sprintf (pakfile, "%s/pak%i.pak", com_gamedir, i);
+		snprintf (pakfile, sizeof(pakfile), "%s/pak%i.pak", com_gamedir, i);
 		pak = COM_LoadPackFile (pakfile);
 		if (!pak)
 			break;
@@ -1975,7 +1975,7 @@ void Info_RemovePrefixedKeys (char *start, char prefix)
 
 void Info_SetValueForStarKey (char *s, char *key, char *value, int maxsize)
 {
-	char	new[1024], *v;
+	char	newstr[1024], *v;
 	int		c, is_name, is_team;
 
 	if (strstr (key, "\\") || strstr (value, "\\") )
@@ -2009,9 +2009,9 @@ void Info_SetValueForStarKey (char *s, char *key, char *value, int maxsize)
 	if (!value || !strlen(value))
 		return;
 
-	sprintf (new, "\\%s\\%s", key, value);
+	snprintf (newstr, sizeof(newstr), "\\%s\\%s", key, value);
 
-	if ((int)(strlen(new) + strlen(s)) > maxsize)
+	if ((int)(strlen(newstr) + strlen(s)) > maxsize)
 	{
 		Con_Printf ("Info string length exceeded\n");
 		return;
@@ -2019,7 +2019,7 @@ void Info_SetValueForStarKey (char *s, char *key, char *value, int maxsize)
 
 	// only copy ascii values
 	s += strlen(s);
-	v = new;
+	v = newstr;
 	is_name = stricmp(key, "name") == 0;
 	is_team = stricmp(key, "team") == 0;
 	while (*v)

@@ -231,7 +231,7 @@ void CL_SendConnectPacket (void)
 	//Info_SetValueForStarKey (cls.userinfo, "*ip", NET_AdrToString(adr), MAX_INFO_STRING);
 
 //	Con_Printf ("Connecting to %s...\n", cls.servername);
-	sprintf (data, "%c%c%c%cconnect %i %i %i \"%s\"\n",
+	snprintf (data, sizeof(data), "%c%c%c%cconnect %i %i %i \"%s\"\n",
 		255, 255, 255, 255,	PROTOCOL_VERSION, cls.qport, cls.challenge, cls.userinfo);
 	NET_SendPacket (strlen(data), data, adr);
 }
@@ -748,7 +748,7 @@ void CL_NextDemo (void)
 		}
 	}
 
-	sprintf (str,"playdemo %s\n", cls.demos[cls.demonum]);
+	snprintf (str, sizeof(str), "playdemo %s\n", cls.demos[cls.demonum]);
 	Cbuf_InsertText (str);
 	cls.demonum++;
 }
@@ -1021,7 +1021,7 @@ void CL_Download_f (void)
 		return;
 	}
 
-	sprintf (cls.downloadname, "%s/%s", com_gamedir, Cmd_Argv(1));
+	snprintf (cls.downloadname, sizeof(cls.downloadname), "%s/%s", com_gamedir, Cmd_Argv(1));
 
 	p = cls.downloadname;
 	for (;;) {
@@ -1034,7 +1034,7 @@ void CL_Download_f (void)
 			break;
 	}
 
-	strcpy(cls.downloadtempname, cls.downloadname);
+	strncpy (cls.downloadtempname, cls.downloadname, sizeof(cls.downloadtempname));
 	cls.download = fopen (cls.downloadname, "wb");
 	cls.downloadtype = dl_single;
 
@@ -1042,7 +1042,7 @@ void CL_Download_f (void)
 	SZ_Print (&cls.netchan.message, va("download %s\n",Cmd_Argv(1)));
 }
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include <windows.h>
 /*
 =================
@@ -1188,7 +1188,7 @@ void CL_Init (void)
 //
 //  Windows commands
 //
-#ifdef _WINDOWS
+#ifdef _WIN32
 	Cmd_AddCommand ("windows", CL_Windows_f);
 #endif
 }
@@ -1206,8 +1206,8 @@ void Host_EndGame (char *message, ...)
 	va_list		argptr;
 	char		string[1024];
 	
-	va_start (argptr,message);
-	vsprintf (string,message,argptr);
+	va_start (argptr, message);
+	vsnprintf (string, sizeof(string), message, argptr);
 	va_end (argptr);
 	Con_Printf ("\n===========================\n");
 	Con_Printf ("Host_EndGame: %s\n",string);
@@ -1236,7 +1236,7 @@ void Host_Error (char *error, ...)
 	inerror = true;
 	
 	va_start (argptr,error);
-	vsprintf (string,error,argptr);
+	vsnprintf (string, sizeof(string), error, argptr);
 	va_end (argptr);
 	Con_Printf ("Host_Error: %s\n",string);
 	

@@ -156,7 +156,7 @@ void CL_PredictMove (void)
 		char		text[1024];
 
 		cls.state = ca_active;
-		sprintf (text, "QuakeForge: %s", cls.servername);
+		snprintf (text, sizeof(text), "QuakeForge: %s", cls.servername);
 #ifdef _WIN32
 		SetWindowText (mainwindow, text);
 #endif
