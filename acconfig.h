@@ -100,5 +100,8 @@
 /* Define this to something appropriate for declaring 0 length arrays */
 #undef ZERO_LENGTH_ARRAY
 
+/* Define this if you want to have packet logging */
+#undef PACKET_LOGGING
+
 @BOTTOM@
 #endif // __config_h_
