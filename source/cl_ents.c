@@ -132,39 +132,42 @@ CL_NewDlight
 ===============
 */
 void
-CL_NewDlight (int key, float x, float y, float z, float radius, float time, int type)
+CL_NewDlight (int key, vec3_t org, int effects)
 {
-	dlight_t   *dl;
+	static vec3_t normal = {0.4, 0.2, 0.05};
+	static vec3_t red = {0.5, 0.05, 0.05};
+	static vec3_t blue = {0.05, 0.05, 0.5};
+	static vec3_t purple = {0.5, 0.05, 0.5};
 
+	dlight_t   *dl;
+	float       radius;
+
+	if (!(effects & (EF_BLUE | EF_RED | EF_BRIGHTLIGHT | EF_DIMLIGHT)))
+		return;
+
+	radius = 200 + (rand () & 31);
 	dl = CL_AllocDlight (key);
-	dl->origin[0] = x;
-	dl->origin[1] = y;
-	dl->origin[2] = z;
-	dl->radius = radius;
-	dl->die = cl.time + time;
-	switch (type) {
+	VectorCopy (org, dl->origin);
+	dl->die = cl.time + 0.1;
+	switch (effects & (EF_BLUE | EF_RED)) {
+		case EF_BLUE | EF_RED:
+			VectorCopy (purple, dl->color);
+			break;
+		case EF_BLUE:
+			VectorCopy (blue, dl->color);
+			break;
+		case EF_RED:
+			VectorCopy (red, dl->color);
+			break;
 		default:
-		case 0:
-			dl->color[0] = 0.4;
-			dl->color[1] = 0.2;
-			dl->color[2] = 0.05;
-			break;
-		case 1:						// blue
-			dl->color[0] = 0.05;
-			dl->color[1] = 0.05;
-			dl->color[2] = 0.5;
-			break;
-		case 2:						// red
-			dl->color[0] = 0.5;
-			dl->color[1] = 0.05;
-			dl->color[2] = 0.05;
-			break;
-		case 3:						// purple
-			dl->color[0] = 0.5;
-			dl->color[1] = 0.05;
-			dl->color[2] = 0.5;
+			VectorCopy (normal, dl->color);
 			break;
 	}
+	if (effects & EF_BRIGHTLIGHT) {
+		radius += 200;
+		dl->origin[2] += 16;
+	}
+	dl->radius = radius;
 }
 
 
@@ -487,26 +490,7 @@ CL_LinkPacketEntities (void)
 		s1 = &pack->entities[pnum];
 
 		// spawn light flashes, even ones coming from invisible objects
-		if ((s1->effects & (EF_BLUE | EF_RED)) == (EF_BLUE | EF_RED))
-			CL_NewDlight (s1->number,
-						  s1->origin[0], s1->origin[1], s1->origin[2],
-						  200 + (rand () & 31), 0.1, 3);
-		else if (s1->effects & EF_BLUE)
-			CL_NewDlight (s1->number,
-						  s1->origin[0], s1->origin[1], s1->origin[2],
-						  200 + (rand () & 31), 0.1, 1);
-		else if (s1->effects & EF_RED)
-			CL_NewDlight (s1->number,
-						  s1->origin[0], s1->origin[1], s1->origin[2],
-						  200 + (rand () & 31), 0.1, 2);
-		else if (s1->effects & EF_BRIGHTLIGHT)
-			CL_NewDlight (s1->number,
-						  s1->origin[0], s1->origin[1], s1->origin[2] + 16,
-						  400 + (rand () & 31), 0.1, 0);
-		else if (s1->effects & EF_DIMLIGHT)
-			CL_NewDlight (s1->number,
-						  s1->origin[0], s1->origin[1], s1->origin[2],
-						  200 + (rand () & 31), 0.1, 0);
+		CL_NewDlight (s1->number, s1->origin, s1->effects);
 
 		// if set to invisible, skip
 		if (!s1->modelindex)
@@ -903,21 +887,7 @@ CL_LinkPlayers (void)
 		} else
 			VectorCopy (state->origin, org);
 
-		if ((state->effects & (EF_BLUE | EF_RED)) == (EF_BLUE | EF_RED))
-			CL_NewDlight (j, org[0], org[1], org[2], 200 + (rand () & 31),
-						  0.1, 3);
-		else if (state->effects & EF_BLUE)
-			CL_NewDlight (j, org[0], org[1], org[2], 200 + (rand () & 31),
-						  0.1, 1);
-		else if (state->effects & EF_RED)
-			CL_NewDlight (j, org[0], org[1], org[2], 200 + (rand () & 31),
-						  0.1, 2);
-		else if (state->effects & EF_BRIGHTLIGHT)
-			CL_NewDlight (j, org[0], org[1], org[2] + 16,
-						  400 + (rand () & 31), 0.1, 0);
-		else if (state->effects & EF_DIMLIGHT)
-			CL_NewDlight (j, org[0], org[1], org[2], 200 + (rand () & 31),
-						  0.1, 0);
+		CL_NewDlight (j, org, state->effects);
 
 		// the player object never gets added
 		if (j == cl.playernum)
