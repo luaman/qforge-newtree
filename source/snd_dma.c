@@ -37,6 +37,11 @@
 #include "qargs.h"
 #include "quakedef.h"
 
+// fixme: Damn crappy complier doesn't allow me to UNDEF _win32 on command line!
+#ifdef WIN32SDL
+#undef _WIN32
+#endif
+
 #ifdef _WIN32
 #include "winquake.h"
 #include "in_win.h"
