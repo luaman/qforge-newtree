@@ -898,7 +898,5 @@ void SV_InitOperatorCommands (void)
 	Cmd_AddCommand ("floodprot", SV_Floodprot_f);
 	Cmd_AddCommand ("floodprotmsg", SV_Floodprotmsg_f);
 
-/* 	cl_warncmd.value = 1;
- CVAR_FIXME */
-	cl_warncmd->value = 1;
+	cl_warncmd = Cvar_Get ("cl_warncmd", "1", CVAR_NONE, "dunno. equiv to sh -x?");  // FIXME poor description
 }
