@@ -673,6 +673,25 @@ R_DrawSkyChain (msurface_t *sky_chain)
 			sc = sc->texturechain;
 		}
 	}
+#if 0
+	// seems to work, but this is the wrong place to do it.
+	glColor4f (1,1,1,0);
+	sc = sky_chain;
+	while (sc) {
+		glpoly_t   *p = sc->polys;
+
+		while (p) {
+			int i;
+			glBegin (GL_POLYGON);
+			for (i = 0; i < p->numverts; i++) {
+				glVertex3fv (p->verts[i]);
+			}
+			glEnd ();
+			p = p->next;
+		}
+		sc = sc->texturechain;
+	}
+#endif
 	glColor3ubv (lighthalf_v);
 #if 0
 	glDisable (GL_TEXTURE_2D);
