@@ -326,7 +326,7 @@ void
 }
 #endif
 
-#ifdef GL_SHARED_TEXTURE_PALETTE_EXT
+#ifdef HAVE_GL_GLEXT_H
 
 //#ifndef PFNGLCOLORTABLEEXTPROC
 //typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid *table);
@@ -390,7 +390,7 @@ VID_Init8bitPalette (void)
 #ifdef HAVE_TDFXGL
 		3dfx_Init8bitPalette();
 #else
-# ifdef GL_SHARED_TEXTURE_PALETTE_EXT
+# ifdef HAVE_GL_GLEXT_H
 		Shared_Init8bitPalette();
 # endif
 #endif
