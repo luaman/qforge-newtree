@@ -444,6 +444,7 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 					vec3_t t;
 					find_cube_vertex (prev_face, face, box[face].enter, t);
 					set_vertex(&box[prev_face].poly, t, prev_face);
+					box[prev_face].enter = -1;
 				} else {
 					box[prev_face].enter = -1;
 					box[prev_face].leave = face;
@@ -452,6 +453,7 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 					vec3_t t;
 					find_cube_vertex (prev_face, face, box[face].leave, t);
 					set_vertex(&box[face].poly, t, face);
+					box[face].leave = -1;
 				} else {
 					box[face].enter = prev_face;
 					box[face].leave = -1;
@@ -476,28 +478,6 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		}
 		glEnd ();
 	}
-	glDisable (GL_TEXTURE_2D);
-	glColor3f (1, 1, 1);
-	glBegin (GL_LINES);
-	for (i=0; i<poly->numverts; i++) {
-		glVertex3fv (poly->verts[i]);
-	}
-	glVertex3fv (poly->verts[0]);
-	glEnd();
-	glColor3f (1, 0, 0);
-	for (i=0; i<6; i++) {
-		glBegin (GL_LINES);
-		for (j=0; j<4; j++) {
-			vec3_t v;
-			memcpy (v, &skyvec[i][j][2], sizeof(v));
-			VectorAdd (v, r_refdef.vieworg, v);
-			glVertex3fv (v);
-		}
-		glVertex3fv (&skyvec[i][0][2]);
-		glEnd ();
-	}
-	glColor3ubv (lighthalf_v);
-	glEnable (GL_TEXTURE_2D);
 }
 
 void
@@ -513,13 +493,6 @@ R_DrawSkyDomePoly (glpoly_t *poly)
 		glVertex3fv (poly->verts[i]);
 	}
 	glEnd ();
-	glColor3f (1, 1, 1);
-	glBegin (GL_LINES);
-	for (i=0; i<poly->numverts; i++) {
-		glVertex3fv (poly->verts[i]);
-	}
-	glVertex3fv (poly->verts[0]);
-	glEnd ();
 	glEnable (GL_TEXTURE_2D);
 	glEnable (GL_BLEND);
 }
@@ -527,25 +500,61 @@ R_DrawSkyDomePoly (glpoly_t *poly)
 void
 R_DrawSkyChain (msurface_t *sky_chain)
 {
+	msurface_t *sc = sky_chain;
 	if (skyloaded) {
-		while (sky_chain) {
-			glpoly_t *p = sky_chain->polys;
+		while (sc) {
+			glpoly_t *p = sc->polys;
 			while (p) {
 				R_DrawSkyBoxPoly (p);
 				p = p->next;
 			}
-			sky_chain = sky_chain->texturechain;
+			sc = sc->texturechain;
 		}
 	} else {
-		while (sky_chain) {
-			glpoly_t *p = sky_chain->polys;
+		while (sc) {
+			glpoly_t *p = sc->polys;
 			while (p) {
 				R_DrawSkyDomePoly (p);
 				p = p->next;
 			}
-			sky_chain = sky_chain->texturechain;
+			sc = sc->texturechain;
 		}
 	}
+#if 1
+	glDisable (GL_TEXTURE_2D);
+	glColor3f (1, 1, 1);
+	while (sky_chain) {
+		glpoly_t *p = sky_chain->polys;
+		while (p) {
+			int i;
+			glBegin (GL_LINES);
+			for (i=0; i<p->numverts; i++) {
+				glVertex3fv (p->verts[i]);
+			}
+			glVertex3fv (p->verts[0]);
+			glEnd();
+			p = p->next;
+		}
+		sky_chain = sky_chain->texturechain;
+	}
+	if (skyloaded) {
+		int i,j;
+		glColor3f (1, 0, 0);
+		for (i=0; i<6; i++) {
+			glBegin (GL_LINES);
+			for (j=0; j<4; j++) {
+				vec3_t v;
+				memcpy (v, &skyvec[i][j][2], sizeof(v));
+				VectorAdd (v, r_refdef.vieworg, v);
+				glVertex3fv (v);
+			}
+			glVertex3fv (&skyvec[i][0][2]);
+			glEnd ();
+		}
+	}
+	glColor3ubv (lighthalf_v);
+	glEnable (GL_TEXTURE_2D);
+#endif
 }
 
 
