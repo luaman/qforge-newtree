@@ -288,7 +288,7 @@ void PR_RunError (char *error, ...)
 ============================================================================
 PR_ExecuteProgram
 
-The interpretation main loop                                                            /*
+The interpretation main loop
 ============================================================================
 */
 
