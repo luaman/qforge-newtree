@@ -50,7 +50,8 @@ UNDER BORLAND C++ 5.02 and 5.5
 don't need to install sources and demo's, just libraries and includes.
 
 2) If you want to compile SDL/SGL targets, you also need to get SDL sdk
-(http://www.libsdl.org)
+(http://www.libsdl.org). If you don't know what SDL means, you don't
+need this.
 
 3) Get and install Dirext-X 7.0 libraries and header files
 (headers http://www.microsoft.com/downloads/release.asp?ReleaseID=12471)
@@ -60,23 +61,27 @@ don't need to install sources and demo's, just libraries and includes.
 FREE Borland C++ complier 5.5.
 (http://www.borland.com/bcppbuilder/freecompiler/)
 
-5) For GL targets, you'll need to have import library for OPENGL stuffs
-one coming with Borland C++ itself is screwed! 
-
-implib -c -f opengl32.lib c:\windows\system\opengl32.dll
-
-6) If you want to compile SDL/SGL, you HAVE to run:
-
-implib -a -c sdl.lib sdl.dll (in sdlsdk directory where sdl.dll is located)
-
-7) Borland preprocessor can't process quake .S files. You need to get
+5) Borland preprocessor can't process quake .S files. You need to get
 .ASM files or use some other complier to preprocess them. .ASM files
 must be placed on SOURCE dir.
 (http://www.saunalahti.fi/~mipes/qf-asms.zip)
 
-8) You need to have either MASM or TASM to compile ASM files.
+6) You need to have either MASM or TASM to compile ASM files.
 (For MASM: http://www.microsoft.com/ddk/download/98/BINS_DDK.EXE)
 (MASM patch: http://support.microsoft.com/support/kb/articles/Q228/4/54.asp)
+
+You only need to extract BINS_DDK.EXE and get two files, ML.EXE and ML.ERR
+from it. Then get and run patch to upgrade ML.EXE to version 6.14. Put
+ML.EXE and ML.ERR in some directory which is included in your %path.
+
+7) For GL targets, you'll need to have import library for OPENGL stuffs
+one coming with Borland C++ itself is screwed! 
+
+implib -c -f opengl32.lib c:\windows\system\opengl32.dll
+
+8) If you want to compile SDL/SGL, you HAVE to run: 
+
+implib -a -c sdl.lib sdl.dll (in sdlsdk directory where sdl.dll is located)
 
 9) Check all paths in all makefiles and correct them to suit your system.
 
@@ -88,10 +93,20 @@ make -fqf-client-wgl
 ...
 and you should be on your way.
 
------------------------------------------------------------------------
 
-For BC 5.5 complier and linker options or for using BC 5.5 under 5.02 IDE:
-http://nextera.sirma.bg/knowledgebase/
+qf-server.mak           Makefile for QuakeWorld server for windows
+
+qf-client-win.mak       Makefile for QuakeWorld client, software renderer
+
+qf-client-wgl.mak       Makefile for QuakeWorld client, OpenGL renderer
+
+qf-client-sdl.mak       Makefile for QuakeWorld client, software SDL renderer
+                        Requires SDL SDK (www.libsdl.org)
+
+qf-client-sgl.mak       Makefile for QuakeWorld client, SDL opengl wrapper
+                        Requires SDL SDK (www.libsdl.org)
+
+-----------------------------------------------------------------------
 
 For FREE IDE for your BC 5.5:
 http://www.objectcentral.com/vide.htm
