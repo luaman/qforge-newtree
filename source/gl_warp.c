@@ -640,7 +640,7 @@ void R_LoadSkys (char * skyname)
 	for (i=0 ; i<6 ; i++)
 	{
 		GL_Bind (SKY_TEX + i);
-		sprintf (name, "env/%s%s.tga", skyname, suf[i]);
+                snprintf (name, sizeof(name),"env/%s%s.tga", skyname, suf[i]);
 		COM_FOpenFile (name, &f);
 		if (!f)
 		{

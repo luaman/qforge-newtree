@@ -67,7 +67,11 @@ void Sys_Printf (char *fmt, ...)
 	char		text[1024];
 	
 	va_start (argptr,fmt);
-	vsprintf (text,fmt,argptr);
+#ifdef HAVE_VSNPRINTF
+        vsnprintf (text,sizeof(text),fmt,argptr);
+#else
+        vsprintf (text,fmt,argptr);
+#endif
 	va_end (argptr);
 	fprintf(stderr, "%s", text);
 	
@@ -85,7 +89,11 @@ void Sys_Printf (char *fmt, ...)
         return;
 
     va_start (argptr,fmt);
+#ifdef HAVE_VSNPRINTF
+    vsnprintf (text,sizeof(text),fmt,argptr);
+#else
     vsprintf (text,fmt,argptr);
+#endif
     va_end (argptr);
 
     l = strlen(text);
