@@ -57,6 +57,7 @@
 char        outputbuf[8000];
 
 redirect_t  sv_redirected;
+int         con_printf_no_log;
 
 extern cvar_t *sv_phs;
 extern cvar_t *sv_timestamps;
@@ -146,29 +147,31 @@ Con_Printf (char *fmt, ...)
 			SV_FlushRedirect ();
 		strncat (outputbuf, msg, sizeof (outputbuf) - strlen (outputbuf));
 	}
-	// We want to output to console and maybe logfile
-	if (sv_timestamps && sv_timefmt && sv_timefmt->string
-		&& sv_timestamps->int_val && !pending)
-		timestamps = true;
+	if (!con_printf_no_log) {
+		// We want to output to console and maybe logfile
+		if (sv_timestamps && sv_timefmt && sv_timefmt->string
+			&& sv_timestamps->int_val && !pending)
+			timestamps = true;
 
-	if (timestamps) {
-		mytime = time (NULL);
-		local = localtime (&mytime);
-		strftime (msg3, sizeof (msg3), sv_timefmt->string, local);
+		if (timestamps) {
+			mytime = time (NULL);
+			local = localtime (&mytime);
+			strftime (msg3, sizeof (msg3), sv_timefmt->string, local);
 
-		snprintf (msg2, sizeof (msg2), "%s%s", msg3, msg);
-	} else {
-		snprintf (msg2, sizeof (msg2), "%s", msg);
+			snprintf (msg2, sizeof (msg2), "%s%s", msg3, msg);
+		} else {
+			snprintf (msg2, sizeof (msg2), "%s", msg);
+		}
+		if (msg2[strlen (msg2) - 1] != '\n') {
+			pending = 1;
+		} else {
+			pending = 0;
+		}
+
+		Sys_Printf ("%s", msg2);		// also echo to debugging console
+		if (sv_logfile)
+			Qprintf (sv_logfile, "%s", msg2);
 	}
-	if (msg2[strlen (msg2) - 1] != '\n') {
-		pending = 1;
-	} else {
-		pending = 0;
-	}
-
-	Sys_Printf ("%s", msg2);		// also echo to debugging console
-	if (sv_logfile)
-		Qprintf (sv_logfile, "%s", msg2);
 }
 
 /*

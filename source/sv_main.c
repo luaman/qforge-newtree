@@ -465,11 +465,14 @@ SVC_Status (void)
 	int         ping;
 	int         top, bottom;
 
+	extern int  con_printf_no_log;
+
 	if (!sv_allow_status->int_val)
 		return;
 	if (CheckForFlood (FLOOD_STATUS))
 		return;
 
+	con_printf_no_log = 1;
 	Cmd_TokenizeString ("status");
 	SV_BeginRedirect (RD_PACKET);
 	Con_Printf ("%s\n", svs.info);
@@ -490,6 +493,7 @@ SVC_Status (void)
 		}
 	}
 	SV_EndRedirect ();
+	con_printf_no_log = 0;
 }
 
 /*
