@@ -88,7 +88,8 @@ static int  p_mouse_x, p_mouse_y;
 
 #define KEY_MASK (KeyPressMask | KeyReleaseMask)
 #define MOUSE_MASK (ButtonPressMask | ButtonReleaseMask | PointerMotionMask)
-#define INPUT_MASK (KEY_MASK | MOUSE_MASK)
+#define FOCUS_MASK (FocusChangeMask)
+#define INPUT_MASK (KEY_MASK | MOUSE_MASK | FOCUS_MASK)
 
 static int
 XLateKey (XKeyEvent * ev, qboolean modified)
