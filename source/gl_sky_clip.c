@@ -37,11 +37,12 @@
 #include "glquake.h"
 #include "sys.h"
 
-extern qboolean    skyloaded;
-extern vec5_t      skyvec[6][4];
+extern qboolean skyloaded;
+extern vec5_t skyvec[6][4];
 
 /* cube face to sky texture offset conversion */
-static const int skytex_offs[] = {3, 0, 4, 1, 2, 5};
+static const int skytex_offs[] = { 3, 0, 4, 1, 2, 5 };
+
 /* clockwise loop through the cube faces adjoining the current face */
 static const int face_loop[6][5] = {
 	{1, 2, 4, 5, 1},
@@ -51,37 +52,41 @@ static const int face_loop[6][5] = {
 	{0, 2, 3, 5, 0},
 	{0, 4, 3, 1, 0},
 };
+
 /* convert axis and face distance into face */
 static const int faces_table[3][6] = {
 	{-1, 0, 0, -1, 3, 3},
 	{-1, 4, 4, -1, 1, 1},
 	{-1, 2, 2, -1, 5, 5},
 };
+
 /* convert face magic bit mask to index into visit array */
-static const int faces_bit_magic[] = {2, 1, -1, 0, 3, -1, 4, -1};
+static const int faces_bit_magic[] = { 2, 1, -1, 0, 3, -1, 4, -1 };
+
 /* axis the cube face cuts (also index into vec3_t and n % 3 for 0 <= n < 6) */
-static const int face_axis[] = {0, 1, 2, 0, 1, 2};
+static const int face_axis[] = { 0, 1, 2, 0, 1, 2 };
+
 /* offset on the axis the cube face cuts */
-static const vec_t face_offset[] = {1024, 1024, 1024, -1024, -1024, -1024};
+static const vec_t face_offset[] = { 1024, 1024, 1024, -1024, -1024, -1024 };
 
 /* cube face */
 struct face_def {
-	int			tex;					// texture to bind to
-	glpoly_t	poly;					// describe the polygon of this face
-	float		verts[32][VERTEXSIZE];
+	int         tex;					// texture to bind to
+	glpoly_t    poly;					// describe the polygon of this face
+	float       verts[32][VERTEXSIZE];
 };
 
 struct visit_def {
-	int face;				// face being visited
-	int leave;				// vertex departed through
+	int         face;					// face being visited
+	int         leave;					// vertex departed through
 };
 
 /* our cube */
 struct box_def {
 	/* keep track of which cube faces we visit and in what order */
-	struct visit_def visited_faces [9];
-	int face_visits [6];
-	int face_count;
+	struct visit_def visited_faces[9];
+	int         face_visits[6];
+	int         face_count;
 	/* the cube faces */
 	struct face_def face[6];
 };
@@ -101,9 +106,9 @@ struct box_def {
 static int
 determine_face (vec3_t v)
 {
-	float a[3];
-	float m;
-	int i=0;
+	float       a[3];
+	float       m;
+	int         i = 0;
 
 	m = a[0] = fabs (v[0]);
 	a[1] = fabs (v[1]);
@@ -121,7 +126,7 @@ determine_face (vec3_t v)
 	}
 	if (v[i] < 0)
 		i += 3;
-	VectorScale (v, 1024/m, v);
+	VectorScale (v, 1024 / m, v);
 	return i;
 }
 
@@ -152,14 +157,18 @@ determine_face (vec3_t v)
 static int
 find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 {
-	vec3_t n;					// normal to the plane formed by the eye and
-								// the two points on the cube.
-	vec3_t x = {0, 0, 0};		// point on cube edge of adjoining faces.
-								// always on an axis plane.
-	vec3_t v = {0, 0, 0};		// direction vector of cube edge. always +ve
-	vec_t x_n, v_n;				// x.n and v.n
-	int axis;
-	vec3_t t;
+	vec3_t      n;						// normal to the plane formed by the
+										// eye and the two points on the cube.
+
+	vec3_t      x = { 0, 0, 0 };		// point on cube edge of adjoining
+										// faces. always on an axis plane.
+
+	vec3_t      v = { 0, 0, 0 };		// direction vector of cube edge.
+										// always +ve
+
+	vec_t       x_n, v_n;				// x.n and v.n
+	int         axis;
+	vec3_t      t;
 
 	x[face1 % 3] = 1024 * (1 - 2 * (face1 / 3));
 	x[face2 % 3] = 1024 * (1 - 2 * (face2 / 3));
@@ -247,39 +256,42 @@ add_vertex (struct box_def *box, int face, vec3_t v)
 }
 
 /*
-	insert_cube_vertexen
+	insert_cube_vertices
 
-	insert the given cube vertexen into the vertex list of the poly in the
+	insert the given cube vertices into the vertex list of the poly in the
 	correct location.
 */
 static void
-insert_cube_vertexen (struct box_def *box, struct visit_def visit, int count, ...)
+insert_cube_vertices (struct box_def *box, struct visit_def visit, int count,
+					  ...)
 {
-	int i;
-	vec3_t **v;
-	va_list args;
-	int face = visit.face;
-	int ind = visit.leave + 1;
+	int         i;
+	vec3_t    **v;
+	va_list     args;
+	int         face = visit.face;
+	int         ind = visit.leave + 1;
 
 	va_start (args, count);
-	v = (vec3_t**)alloca (count * sizeof (vec3_t*));
+	v = (vec3_t **) alloca (count * sizeof (vec3_t *));
+
 	for (i = 0; i < count; i++) {
-		v[i] = va_arg (args, vec3_t*);
+		v[i] = va_arg (args, vec3_t *);
 	}
 	va_end (args);
 
 	if (ind == box->face[face].poly.numverts) {
 		// the vertex the sky poly left this cube fase through is very
 		// conveniently the last vertex of the face poly. this means we
-		// can just append the two vetexen
+		// can just append the vetexen
 		for (i = 0; i < count; i++)
 			add_vertex (box, face, *v[i]);
 	} else {
-		// we have to insert the cube vertexen into the face poly
+		// we have to insert the cube vertices into the face poly
 		// vertex list
-		glpoly_t *p = &box->face[face].poly;
-		int c = p->numverts - ind;
-		const int vert_size = sizeof (p->verts[0]);
+		glpoly_t   *p = &box->face[face].poly;
+		int         c = p->numverts - ind;
+		const int   vert_size = sizeof (p->verts[0]);
+
 		memmove (p->verts[ind + count], p->verts[ind], c * vert_size);
 		p->numverts += count;
 		for (i = 0; i < count; i++)
@@ -299,9 +311,9 @@ static void
 cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
 				 vec3_t v2)
 {
-	vec3_t l;
-	int axis;
-	int face = -1;
+	vec3_t      l;
+	int         axis;
+	int         face = -1;
 
 	axis = find_intersect (face1, v1, face2, v2, l);
 	if (l[axis] > 1024)
@@ -309,20 +321,22 @@ cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
 	else if (l[axis] < -1024)
 		face = axis + 3;
 	if (face > 0) {
-		vec3_t x;
+		vec3_t      x;
+
 		VectorAdd (v1, v2, x);
 		VectorScale (x, 0.5, x);
 		cross_cube_edge (box, face1, v1, face, x);
 		cross_cube_edge (box, face, x, face2, v2);
 	} else {
 		struct visit_def *visit = box->visited_faces;
+
 		visit[box->face_count - 1].leave = box->face[face1].poly.numverts;
 		visit[box->face_count].face = face2;
 		box->face_count++;
 		box->face_visits[face2]++;
 
-		add_vertex(box, face1, l);
-		add_vertex(box, face2, l);
+		add_vertex (box, face1, l);
+		add_vertex (box, face2, l);
 	}
 }
 
@@ -335,9 +349,9 @@ static void
 process_corners (struct box_def *box)
 {
 	struct visit_def *visit = box->visited_faces;
-	int max_visit = 0;
-	int i;
-	int center = -1;
+	int         max_visit = 0;
+	int         i;
+	int         center = -1;
 
 	if (visit[box->face_count - 1].face == visit[0].face) {
 		box->face_count--;
@@ -359,11 +373,12 @@ process_corners (struct box_def *box)
 	case 3:
 		// one corner, no edges
 		{
-			vec3_t v;
+			vec3_t      v;
+
 			find_cube_vertex (visit[0].face, visit[1].face, visit[2].face, v);
-			insert_cube_vertexen (box, visit[0], 1, v);
-			insert_cube_vertexen (box, visit[1], 1, v);
-			insert_cube_vertexen (box, visit[2], 1, v);
+			insert_cube_vertices (box, visit[0], 1, v);
+			insert_cube_vertices (box, visit[1], 1, v);
+			insert_cube_vertices (box, visit[2], 1, v);
 		}
 		break;
 	case 4:
@@ -371,9 +386,9 @@ process_corners (struct box_def *box)
 			return;
 		if (abs (visit[2].face - visit[0].face) == 3
 			&& abs (visit[3].face - visit[1].face) == 3) {
-			// 4 vertexen
-			int sum, diff;
-			vec3_t v[4];
+			// 4 vertices
+			int         sum, diff;
+			vec3_t      v[4];
 
 			sum = visit[0].face + visit[1].face + visit[2].face + visit[3].face;
 			diff = visit[1].face - visit[0].face;
@@ -381,16 +396,17 @@ process_corners (struct box_def *box)
 			diff = (diff + 6) % 6;
 
 			center = faces_table[sum][diff];
-			for (i=0; i < 4; i++) {
-				find_cube_vertex (visit[i].face, visit[(i + 1) & 3].face, center, v[i]);
+			for (i = 0; i < 4; i++) {
+				find_cube_vertex (visit[i].face, visit[(i + 1) & 3].face,
+								  center, v[i]);
 				add_vertex (box, center, v[i]);
 			}
-			for (i=0; i < 4; i++)
-				insert_cube_vertexen (box, visit[i], 2, v[i], v[(i - 1) & 3]);
+			for (i = 0; i < 4; i++)
+				insert_cube_vertices (box, visit[i], 2, v[i], v[(i - 1) & 3]);
 		} else {
-			// 2 vertexen
-			int l_f, t_f, r_f, b_f;
-			vec3_t v_l, v_r;
+			// 2 vertices
+			int         l_f, t_f, r_f, b_f;
+			vec3_t      v_l, v_r;
 
 			if (abs (visit[2].face - visit[0].face) == 3) {
 				l_f = 0;
@@ -405,45 +421,54 @@ process_corners (struct box_def *box)
 			} else {
 				return;
 			}
-			find_cube_vertex (visit[l_f].face, visit[t_f].face, visit[b_f].face, v_l);
-			find_cube_vertex (visit[r_f].face, visit[t_f].face, visit[b_f].face, v_r);
+			find_cube_vertex (visit[l_f].face, visit[t_f].face, visit[b_f].face,
+							  v_l);
+			find_cube_vertex (visit[r_f].face, visit[t_f].face, visit[b_f].face,
+							  v_r);
 
-			insert_cube_vertexen (box, visit[t_f], 2, v_r, v_l);
-			insert_cube_vertexen (box, visit[b_f], 2, v_l, v_r);
+			insert_cube_vertices (box, visit[t_f], 2, v_r, v_l);
+			insert_cube_vertices (box, visit[b_f], 2, v_l, v_r);
 
-			insert_cube_vertexen (box, visit[l_f], 1, v_l);
-			insert_cube_vertexen (box, visit[r_f], 1, v_r);
+			insert_cube_vertices (box, visit[l_f], 1, v_l);
+			insert_cube_vertices (box, visit[r_f], 1, v_r);
 		}
 		break;
 	case 5:
 		if (max_visit > 1) {
 			// one vertex
-			vec3_t v;
+			vec3_t      v;
+
 			for (i = 0; i < 4; i++) {
 				// don't need to check the 5th visit
 				if (visit[(i + 2) % 5].face == visit[(i + 4) % 5].face)
 					break;
 			}
-			find_cube_vertex (visit[i].face, visit[(i + 1) % 5].face, visit[(i + 2) % 5].face, v);
-			insert_cube_vertexen (box, visit[i], 1, v);
-			insert_cube_vertexen (box, visit[(i + 1) % 5], 1, v);
-			insert_cube_vertexen (box, visit[(i + 4) % 5], 1, v);
+			find_cube_vertex (visit[i].face, visit[(i + 1) % 5].face,
+							  visit[(i + 2) % 5].face, v);
+			insert_cube_vertices (box, visit[i], 1, v);
+			insert_cube_vertices (box, visit[(i + 1) % 5], 1, v);
+			insert_cube_vertices (box, visit[(i + 4) % 5], 1, v);
 
 		} else {
-			// 3 vertexen
-			unsigned int sel = (((abs (visit[2].face - visit[0].face) == 3) << 2)
-								| ((abs (visit[3].face - visit[1].face) == 3) << 1)
-								| ((abs (visit[4].face - visit[2].face) == 3) << 0));
-			vec3_t v[3];
+			// 3 vertices
+			unsigned int sel =
+				(((abs (visit[2].face - visit[0].face) == 3) << 2) |
+				 ((abs (visit[3].face - visit[1].face) == 3) << 1)
+				 | ((abs (visit[4].face - visit[2].face) == 3) << 0));
+			vec3_t      v[3];
+
 			center = faces_bit_magic[sel];
-			printf ("%02o %d  %d %d %d %d %d\n", sel, center, visit[0].face, visit[1].face, visit[2].face, visit[3].face, visit[4].face);
+			printf ("%02o %d  %d %d %d %d %d\n", sel, center, visit[0].face,
+					visit[1].face, visit[2].face, visit[3].face, visit[4].face);
 			for (i = 0; i < 3; i++)
-				find_cube_vertex (visit[center].face, visit[(center + 1 + i) % 5].face, visit[(center + 2 + i) % 5].face, v[i]);
-			insert_cube_vertexen (box, visit[center], 3, v[0], v[1], v[2]);
-			insert_cube_vertexen (box, visit[(center + 1) % 5], 1, v[0]);
-			insert_cube_vertexen (box, visit[(center + 2) % 5], 2, v[1], v[0]);
-			insert_cube_vertexen (box, visit[(center + 3) % 5], 2, v[2], v[1]);
-			insert_cube_vertexen (box, visit[(center + 4) % 5], 1, v[2]);
+				find_cube_vertex (visit[center].face,
+								  visit[(center + 1 + i) % 5].face,
+								  visit[(center + 2 + i) % 5].face, v[i]);
+			insert_cube_vertices (box, visit[center], 3, v[0], v[1], v[2]);
+			insert_cube_vertices (box, visit[(center + 1) % 5], 1, v[0]);
+			insert_cube_vertices (box, visit[(center + 2) % 5], 2, v[1], v[0]);
+			insert_cube_vertices (box, visit[(center + 3) % 5], 2, v[2], v[1]);
+			insert_cube_vertices (box, visit[(center + 4) % 5], 1, v[2]);
 		}
 		break;
 	case 6:
@@ -451,53 +476,59 @@ process_corners (struct box_def *box)
 			return;
 		for (i = 0; i < 5; i++) {
 			// don't need to check the last point
-			if (visit[(i + 3) % 6].face == visit[(i + 5) % 6].face 
+			if (visit[(i + 3) % 6].face == visit[(i + 5) % 6].face
 				|| visit[(i + 2) % 6].face == visit[(i + 5) % 6].face)
 				break;
 		}
 		if (visit[(i + 3) % 6].face == visit[(i + 5) % 6].face) {
-			// adjacant vertexen
-			vec3_t v[2];
+			// adjacant vertices
+			vec3_t      v[2];
 
-			find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face, visit[(i + 2) % 6].face, v[0]);
-			find_cube_vertex (visit[(i + 1) % 6].face, visit[(i + 2) % 6].face, visit[(i + 3) % 6].face, v[1]);
+			find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face,
+							  visit[(i + 2) % 6].face, v[0]);
+			find_cube_vertex (visit[(i + 1) % 6].face, visit[(i + 2) % 6].face,
+							  visit[(i + 3) % 6].face, v[1]);
 
-			insert_cube_vertexen (box, visit[(i + 5) % 6], 2, v[2], v[1]);
+			insert_cube_vertices (box, visit[(i + 5) % 6], 2, v[2], v[1]);
 
-			insert_cube_vertexen (box, visit[i], 1, v[0]);
-			insert_cube_vertexen (box, visit[(i + 1) % 6], 2, v[1], v[0]);
-			insert_cube_vertexen (box, visit[(i + 2) % 6], 1, v[1]);
+			insert_cube_vertices (box, visit[i], 1, v[0]);
+			insert_cube_vertices (box, visit[(i + 1) % 6], 2, v[1], v[0]);
+			insert_cube_vertices (box, visit[(i + 2) % 6], 1, v[1]);
 		} else {
-			// opposing vertexen
-			vec3_t v[2];
+			// opposing vertices
+			vec3_t      v[2];
 
-			find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face, visit[(i + 2) % 6].face, v[0]);
-			find_cube_vertex (visit[(i + 3) % 6].face, visit[(i + 4) % 6].face, visit[(i + 5) % 6].face, v[1]);
+			find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face,
+							  visit[(i + 2) % 6].face, v[0]);
+			find_cube_vertex (visit[(i + 3) % 6].face, visit[(i + 4) % 6].face,
+							  visit[(i + 5) % 6].face, v[1]);
 
-			insert_cube_vertexen (box, visit[i], 1, v[0]);
-			insert_cube_vertexen (box, visit[(i + 1) % 6], 1, v[0]);
+			insert_cube_vertices (box, visit[i], 1, v[0]);
+			insert_cube_vertices (box, visit[(i + 1) % 6], 1, v[0]);
 
-			insert_cube_vertexen (box, visit[(i + 3) % 6], 1, v[1]);
-			insert_cube_vertexen (box, visit[(i + 4) % 6], 1, v[1]);
+			insert_cube_vertices (box, visit[(i + 3) % 6], 1, v[1]);
+			insert_cube_vertices (box, visit[(i + 4) % 6], 1, v[1]);
 
-			insert_cube_vertexen (box, visit[(i + 2) % 6], 1, v[1]);
-			insert_cube_vertexen (box, visit[(i + 5) % 6], 1, v[0]);
+			insert_cube_vertices (box, visit[(i + 2) % 6], 1, v[1]);
+			insert_cube_vertices (box, visit[(i + 5) % 6], 1, v[0]);
 		}
 		break;
 	case 7:
 		for (i = 0; i < 6; i++) {
 			// don't need to check the last point
-			if (visit[(i + 2) % 6].face == visit[(i + 4) % 6].face 
+			if (visit[(i + 2) % 6].face == visit[(i + 4) % 6].face
 				&& visit[(i + 4) % 6].face == visit[(i + 6) % 6].face)
 				break;
 		}
 		{
-			vec3_t v;
-			find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face, visit[(i + 2) % 6].face, v);
+			vec3_t      v;
 
-			insert_cube_vertexen (box, visit[i], 1, v);
-			insert_cube_vertexen (box, visit[(i + 1) % 7], 1, v);
-			insert_cube_vertexen (box, visit[(i + 6) % 7], 1, v);
+			find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face,
+							  visit[(i + 2) % 6].face, v);
+
+			insert_cube_vertices (box, visit[i], 1, v);
+			insert_cube_vertices (box, visit[(i + 1) % 7], 1, v);
+			insert_cube_vertices (box, visit[(i + 6) % 7], 1, v);
 		}
 		break;
 	}
@@ -506,20 +537,20 @@ process_corners (struct box_def *box)
 /*
 	render_box
 
-	draws all faces of the cube with 3 or more vertexen.
+	draws all faces of the cube with 3 or more vertices.
 */
 static void
 render_box (struct box_def *box)
 {
-	int i,j;
+	int         i, j;
 
 	for (i = 0; i < 6; i++) {
 		if (box->face[i].poly.numverts <= 2)
 			continue;
 		glBindTexture (GL_TEXTURE_2D, box->face[i].tex);
 		glBegin (GL_POLYGON);
-		for (j=0; j < box->face[i].poly.numverts; j++) {
-			glTexCoord2fv (box->face[i].poly.verts[j]+3);
+		for (j = 0; j < box->face[i].poly.numverts; j++) {
+			glTexCoord2fv (box->face[i].poly.verts[j] + 3);
 			glVertex3fv (box->face[i].poly.verts[j]);
 		}
 		glEnd ();
@@ -529,21 +560,23 @@ render_box (struct box_def *box)
 void
 R_DrawSkyBoxPoly (glpoly_t *poly)
 {
-	int i;
+	int         i;
 	struct box_def box;
+
 	/* projected vertex and face of the previous sky poly vertex */
-	vec3_t last_v;
-	int prev_face;
+	vec3_t      last_v;
+	int         prev_face;
+
 	/* projected vertex and face of the current sky poly vertex */
-	vec3_t v;
-	int face;
+	vec3_t      v;
+	int         face;
 
 	memset (&box, 0, sizeof (box));
 	for (i = 0; i < 6; i++) {
 		box.face[i].tex = SKY_TEX + skytex_offs[i];
 	}
 
-	if (poly->numverts>=32) {
+	if (poly->numverts >= 32) {
 		Sys_Error ("too many verts!");
 	}
 
@@ -553,13 +586,13 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 	box.visited_faces[0].face = prev_face;
 	box.face_count = 1;
 
-	for (i=0; i< poly->numverts; i++) {
+	for (i = 0; i < poly->numverts; i++) {
 		VectorSubtract (poly->verts[i], r_refdef.vieworg, v);
 		face = determine_face (v);
 		if (face != prev_face) {
 			if ((face % 3) == (prev_face % 3)) {
-				int x_face;
-				vec3_t x;
+				int         x_face;
+				vec3_t      x;
 
 				VectorAdd (v, last_v, x);
 				VectorScale (x, 0.5, x);
@@ -571,7 +604,7 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 				cross_cube_edge (&box, prev_face, last_v, face, v);
 			}
 		}
-		add_vertex(&box, face, v);
+		add_vertex (&box, face, v);
 
 		VectorCopy (v, last_v);
 		prev_face = face;
@@ -585,13 +618,13 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 void
 R_DrawSkyDomePoly (glpoly_t *poly)
 {
-	int i;
+	int         i;
 
 	glDisable (GL_BLEND);
 	glDisable (GL_TEXTURE_2D);
 	glColor3f (0, 0, 0);
 	glBegin (GL_POLYGON);
-	for (i=0; i<poly->numverts; i++) {
+	for (i = 0; i < poly->numverts; i++) {
 		glVertex3fv (poly->verts[i]);
 	}
 	glEnd ();
@@ -603,10 +636,12 @@ void
 R_DrawSkyChain (msurface_t *sky_chain)
 {
 	msurface_t *sc = sky_chain;
+
 	if (skyloaded) {
 		glDepthRange (gldepthmax, gldepthmax);
 		while (sc) {
-			glpoly_t *p = sc->polys;
+			glpoly_t   *p = sc->polys;
+
 			while (p) {
 				R_DrawSkyBoxPoly (p);
 				p = p->next;
@@ -616,7 +651,8 @@ R_DrawSkyChain (msurface_t *sky_chain)
 		glDepthRange (gldepthmin, gldepthmax);
 	} else {
 		while (sc) {
-			glpoly_t *p = sc->polys;
+			glpoly_t   *p = sc->polys;
+
 			while (p) {
 				R_DrawSkyDomePoly (p);
 				p = p->next;
@@ -629,14 +665,16 @@ R_DrawSkyChain (msurface_t *sky_chain)
 	sc = sky_chain;
 	glColor3f (1, 1, 1);
 	while (sc) {
-		glpoly_t *p = sc->polys;
+		glpoly_t   *p = sc->polys;
+
 		while (p) {
-			int i;
+			int         i;
+
 			glBegin (GL_LINE_LOOP);
-			for (i=0; i<p->numverts; i++) {
+			for (i = 0; i < p->numverts; i++) {
 				glVertex3fv (p->verts[i]);
 			}
-			glEnd();
+			glEnd ();
 			p = p->next;
 		}
 		sc = sc->texturechain;
@@ -645,15 +683,17 @@ R_DrawSkyChain (msurface_t *sky_chain)
 	glColor3f (0, 1, 0);
 	glBegin (GL_POINTS);
 	while (sc) {
-		glpoly_t *p = sc->polys;
+		glpoly_t   *p = sc->polys;
+
 		while (p) {
-			int i;
-			vec3_t x, c = {0, 0, 0};
-			for (i=0; i<p->numverts; i++) {
+			int         i;
+			vec3_t      x, c = { 0, 0, 0 };
+
+			for (i = 0; i < p->numverts; i++) {
 				VectorSubtract (p->verts[i], r_refdef.vieworg, x);
 				VectorAdd (x, c, c);
 			}
-			VectorScale (c, 1.0/p->numverts, c);
+			VectorScale (c, 1.0 / p->numverts, c);
 			VectorAdd (c, r_refdef.vieworg, c);
 			glVertex3fv (c);
 			p = p->next;
@@ -662,13 +702,15 @@ R_DrawSkyChain (msurface_t *sky_chain)
 	}
 	glEnd ();
 	if (skyloaded) {
-		int i,j;
+		int         i, j;
+
 		glColor3f (1, 0, 0);
-		for (i=0; i<6; i++) {
-			vec3_t v;
+		for (i = 0; i < 6; i++) {
+			vec3_t      v;
+
 			glBegin (GL_LINE_LOOP);
-			for (j=0; j<4; j++) {
-				memcpy (v, &skyvec[i][j][2], sizeof(v));
+			for (j = 0; j < 4; j++) {
+				memcpy (v, &skyvec[i][j][2], sizeof (v));
 				VectorAdd (v, r_refdef.vieworg, v);
 				glVertex3fv (v);
 			}
