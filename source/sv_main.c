@@ -1447,7 +1447,6 @@ void SV_InitLocal (void)
  CVAR_FIXME */
 	extern	cvar_t	*sv_waterfriction;
 
-	SV_InitOperatorCommands	();
 	SV_UserInit ();
 	
 /* 	Cvar_RegisterVariable (&rcon_password);
@@ -1861,6 +1860,7 @@ void SV_Init (quakeparms_t *parms)
 
 	Cbuf_Init ();
 	Cmd_Init ();	
+	SV_InitOperatorCommands	();
 
 	// execute +set as early as possible
 	Cmd_StuffCmds_f ();

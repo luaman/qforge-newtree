@@ -1692,6 +1692,7 @@ void Host_Init (quakeparms_t *parms)
 	Memory_Init (parms->membase, parms->memsize);
 	Cvar_Init ();
 	Sys_Init();
+	CL_InitCvars ();
 
 	Cbuf_Init ();
 	Cmd_Init ();
@@ -1714,7 +1715,6 @@ void Host_Init (quakeparms_t *parms)
 	Cbuf_Execute ();
 
 	V_Init ();
-	CL_InitCvars ();
 	SCR_InitCvars ();
 	VID_InitCvars ();
 	COM_Init ();
