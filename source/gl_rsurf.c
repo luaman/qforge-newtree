@@ -439,10 +439,12 @@ void R_DrawMultitexturePoly (msurface_t *s)
 
 	i = s->lightmaptexturenum;
 
+	glColor3f(1,1,1);
 	// Binds world to texture env 0
 	qglSelectTexture (gl_mtex_enum+0);
 	glBindTexture (GL_TEXTURE_2D, R_TextureAnimation (s->texinfo->texture)->gl_texturenum);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glEnable(GL_TEXTURE_2D);
 	// Binds lightmap to texenv 1
 	qglSelectTexture (gl_mtex_enum+1);
 	glBindTexture (GL_TEXTURE_2D, lightmap_textures + i);
@@ -476,6 +478,7 @@ dynamic:
 	glEnd ();
 	glDisable(GL_TEXTURE_2D);
 	qglSelectTexture (gl_mtex_enum+0);
+	glEnable(GL_TEXTURE_2D);
 }
 
 /*
