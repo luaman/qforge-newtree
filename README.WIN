@@ -50,15 +50,16 @@ UNDER BORLAND C++ 5.02 and 5.5
 don't need to install sources and demo's, just libraries and includes.
 
 2) If you want to compile SDL/SGL targets, you also need to get SDL sdk
-(http://www.libsdl.org). If you don't know what SDL means, you don't
-need this.
+(http://www.libsdl.org). Also take win32 runtime dll stuffs. If you don't
+know what SDL means, you don't need this. Extract runtime to lib subdir
+under sdlsdk main directory.
 
 3) Get and install Dirext-X 7.0 libraries and header files
 (headers http://www.microsoft.com/downloads/release.asp?ReleaseID=12471)
 (borland lib: http://www.microsoft.com/downloads/release.asp?ReleaseID=17051)
 
-4) If you don't have Borland complier (5.02 or 5.5), get and install
-FREE Borland C++ complier 5.5.
+4) If you don't have Borland complier (5.02 or 5.5, or C++ Builder 5),
+get and install FREE Borland C++ complier 5.5.
 (http://www.borland.com/bcppbuilder/freecompiler/)
 
 Make sure you install latest Borland C++ free complier service packs for
@@ -72,7 +73,9 @@ http://www.borland.com/devsupport/bcppbuilder/patches/bcc55/bcc55sp2.exe
 ASM files must be placed on newtree SOURCE dir.
 (http://www.saunalahti.fi/~mipes/qf-asms.zip)
 
-6) You need to have either MASM or TASM to compile ASM files.
+6) You need to have either MASM or TASM to compile ASM files. If you've
+TASM32, you need to uncomment it in makefiles.
+
 (For MASM: http://www.microsoft.com/ddk/download/98/BINS_DDK.EXE)
 (MASM patch: http://support.microsoft.com/support/kb/articles/Q228/4/54.asp)
 
