@@ -148,6 +148,9 @@ void Sys_Init_Cvars (void)
 void
 Sys_Init (void)
 {
+#ifdef USE_INTEL_ASM
+	Sys_SetFPCW();
+#endif
 }
 
 /*

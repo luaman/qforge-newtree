@@ -43,7 +43,7 @@ EXTRA_PROGRAMS= qf-server \
 noinst_LIBRARIES= libqfcd.a libqfjs.a libqfsnd.a libqfsys_cl.a libqfsys_sv.a
 
 if ASM_ARCH
-math_ASM = math.S
+math_ASM = math.S sys_x86.S
 endif
 common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c info.c link.c \
 		locs.c mathlib.c mdfour.c model.c model_brush.c msg.c \
@@ -144,7 +144,7 @@ EXTRA_libqfjs_a_SOURCES = joy_linux.c joy_null.c
 CLIENT_LIBS=	-L. -lqfsys_cl -lqfsnd -lqfcd -lqfjs $(SOUND_LIBS) $(NET_LIBS) $(JOY_LIBS) $(Z_LIBS)
 
 if ASM_ARCH
-client_ASM=	snd_mixa.S cl_math.S sys_x86.S
+client_ASM=	snd_mixa.S cl_math.S
 endif
 
 client_SOURCES= cl_cam.c cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c \

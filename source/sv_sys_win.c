@@ -162,6 +162,9 @@ void Sys_Init (void)
 {
 	OSVERSIONINFO	vinfo;
 
+#ifdef USE_INTEL_ASM
+	Sys_SetFPCW();
+#endif
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution
 	timeBeginPeriod( 1 );
