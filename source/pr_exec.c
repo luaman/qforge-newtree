@@ -397,6 +397,8 @@ void PR_ExecuteProgram (func_t fnum)
 	
 while (1)
 {
+    int ofsa, ofsb, ofsc;
+
 	s++;	// next statement
 
 	st = &pr_statements[s];
