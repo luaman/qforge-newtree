@@ -31,10 +31,18 @@
 
 #include "client.h"
 
+typedef struct skin_s
+{
+	char		name[16];
+	qboolean	failedload;		// the name isn't a valid skin
+	cache_user_t	cache;
+} skin_t;
+
 extern byte player_8bit_texels[320 * 200];
 struct tex_s;
+struct player_info_s;
 
-void	Skin_Find (player_info_t *sc);
+void	Skin_Find (struct player_info_s *sc);
 byte	*Skin_Cache (skin_t *skin);
 void	Skin_Skins_f (void);
 void	Skin_AllSkins_f (void);
@@ -42,7 +50,7 @@ void	Skin_NextDownload (void);
 void	Skin_Init (void);
 void	Skin_Init_Cvars (void);
 void	Skin_Init_Translation (void);
-void	Skin_Set_Translate (player_info_t *player);
+void	Skin_Set_Translate (struct player_info_s *player);
 void	Skin_Do_Translation (player_info_t *player);
 void	Skin_Process (skin_t *skin, struct tex_s *);
 

@@ -37,13 +37,6 @@
 #include "vid.h"
 #include "zone.h"
 
-typedef struct
-{
-	char		name[16];
-	qboolean	failedload;		// the name isn't a valid skin
-	cache_user_t	cache;
-} skin_t;
-
 // player_state_t is the information needed by a player entity
 // to do move prediction and to generate a drawable entity
 typedef struct player_state_s {
@@ -94,7 +87,7 @@ typedef struct player_info_s
 
 	int		spectator;
 	byte	translations[VID_GRADES*256];
-	skin_t	*skin;
+	struct skin_s	*skin;
 } player_info_t;
 
 
