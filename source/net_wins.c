@@ -210,6 +210,8 @@ qboolean NET_GetPacket (void)
 
 //=============================================================================
 
+extern qboolean is_server;
+
 void NET_SendPacket (int length, void *data, netadr_t to)
 {
 	int ret;
@@ -226,11 +228,9 @@ void NET_SendPacket (int length, void *data, netadr_t to)
         if (err == WSAEWOULDBLOCK)
 	        return;
 
-#ifndef SERVERONLY
-		if (err == WSAEADDRNOTAVAIL)
+		if (err == WSAEADDRNOTAVAIL && is_server)
 			Con_DPrintf("NET_SendPacket Warning: %i\n", err);
 		else
-#endif
 			Con_Printf ("NET_SendPacket ERROR: %i\n", errno);
 	}
 }
