@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // x86 assembly-language Win-dependent routines.
 
 #include "asm_i386.h"
-#include "quakeasm.h"
+// #include "quakeasm.h"
 
 //@@@ should be id386-dependent, and have an equivalent C path
 

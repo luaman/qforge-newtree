@@ -29,7 +29,7 @@
 // x86 assembly-language math routines.
 
 #include "asm_i386.h"
-#include "quakeasm.h"
+// #include "quakeasm.h"
 
 
 #if id386
@@ -41,6 +41,8 @@ Ljmptab:	.long	Lcase0, Lcase1, Lcase2, Lcase3
 			.long	Lcase4, Lcase5, Lcase6, Lcase7
 
 	.text
+
+	.extern C(BOPS_Error)
 
 
 #define EMINS	4+4

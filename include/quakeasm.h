@@ -247,13 +247,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	.extern pz
 	.extern spr8entryvec_table
 
-	.extern C(snd_scaletable)
-	.extern C(paintbuffer)
-	.extern C(snd_linear_count)
-	.extern C(snd_p)
-	.extern C(snd_vol)
-	.extern C(snd_out)
 	.extern C(vright)
 	.extern C(vup)
 	.extern C(vpn)
-	.extern C(BOPS_Error)

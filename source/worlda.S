@@ -29,7 +29,7 @@
 // x86 assembly-language server testing stuff
 
 #include "asm_i386.h"
-#include "quakeasm.h"
+//#include "quakeasm.h"
 //include "d_ifacea.h"
 
 #if id386

@@ -29,11 +29,18 @@
 // x86 assembly-language sound code
 
 #include "asm_i386.h"
-#include "quakeasm.h"
+// #include "quakeasm.h"
 
 #if	id386
 
 	.text
+
+	.extern C(snd_scaletable)
+	.extern C(paintbuffer)
+	.extern C(snd_linear_count)
+	.extern C(snd_p)
+	.extern C(snd_vol)
+	.extern C(snd_out)
 
 //----------------------------------------------------------------------
 // 8-bit sound-mixing code
