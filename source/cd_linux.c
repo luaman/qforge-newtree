@@ -29,23 +29,26 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include <sys/file.h>
-#include <sys/types.h>
+
 #include <fcntl.h>
-#include <string.h>
-#include <time.h>
+#ifdef HAVE_STRING_H
+#include "string.h"
+#endif
+#ifdef HAVE_STRINGS_H
+#include "strings.h"
+#endif
 #include <errno.h>
-
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
+#endif
 #include <linux/cdrom.h>
+#include <time.h>
 
-#include "qargs.h"
-#include "cmd.h"
 #include "cdaudio.h"
+#include "cmd.h"
 #include "console.h"
+#include "cvar.h"
+#include "qargs.h"
 #include "sound.h"
 
 static qboolean cdValid = false;

@@ -29,15 +29,8 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include "client.h"
-#include "server.h"
-#include "crc.h"
-#include "msg.h"
-#include "world.h"
-#include "commdef.h"
-#include "cmd.h"
-#include "sys.h"
-#include "pmove.h"
 
 client_static_t cls;
 

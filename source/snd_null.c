@@ -29,8 +29,8 @@
 	$Id$
 */
 
-#include <qtypes.h>
-#include <sound.h>
+#include "qtypes.h"
+#include "sound.h"
 
 // =======================================================================
 // Various variables also defined in snd_dma.c

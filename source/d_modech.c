@@ -29,8 +29,9 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
+
 #include "d_local.h"
+#include "sys.h"
 
 int         d_vrectx, d_vrecty, d_vrectright_particle, d_vrectbottom_particle;
 

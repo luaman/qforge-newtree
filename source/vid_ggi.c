@@ -36,7 +36,12 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include <ggi/ggi.h>
 
 #include "bothdefs.h"					// needed by: common.h, net.h,

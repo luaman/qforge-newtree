@@ -32,18 +32,21 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #ifndef WIN32
 #include <sys/signal.h>
 #endif
 #include <SDL.h>
 
 #include "console.h"
+#include "glquake.h"
 #include "host.h"
 #include "qargs.h"
 #include "qendian.h"
 #include "sys.h"
 #include "va.h"
-#include "glquake.h"
 
 #define	WARP_WIDTH	320
 #define	WARP_HEIGHT	200

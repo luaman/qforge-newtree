@@ -33,10 +33,10 @@
 #include <limits.h>
 #include <dmedia/audio.h>
 
+#include "console.h"
 #include "qtypes.h"
 #include "qargs.h"
 #include "sound.h"
-#include "console.h"
 
 static int  snd_inited = 0;
 static ALconfig alc;

@@ -30,22 +30,23 @@
 # include "config.h"
 #endif
 
-#include "host.h"
-#include "sys.h"
-#include "ctype.h"
-#include "render.h"
-#include "protocol.h"
-#include "client.h"
-#include "msg.h"
-#include "console.h"
-#include "r_dynamic.h"
-#include "cl_main.h"
-
 #include <math.h>
 #include <stdlib.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
+#include "cl_ents.h"
+#include "cl_main.h"
+#include "cl_tent.h"
+#include "client.h"
+#include "console.h"
+#include "host.h"
+#include "msg.h"
+#include "r_dynamic.h"
 
 #define	MAX_BEAMS	8
 #define MAX_BEAM_ENTS 20

@@ -29,11 +29,12 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
+
 #include "console.h"
 #include "d_ifacea.h"
 #include "r_local.h"
 #include "skin.h"
+#include "sys.h"
 
 #define LIGHT_MIN	5					// lowest light value we'll allow, to 
 										// avoid the

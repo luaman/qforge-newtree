@@ -30,11 +30,12 @@
 # include "config.h"
 #endif
 #include <windows.h>
-#include "qargs.h"
-#include "console.h"
+
 #include "cdaudio.h"
 #include "cmd.h"
-#include "host.h"
+#include "console.h"
+#include "qargs.h"
+
 extern HWND mainwindow;
 extern cvar_t *bgmvolume;
 

@@ -1,5 +1,5 @@
 /*
-	cl_model.c
+	sw_model_sprite.c
 
 	model loading and caching
 
@@ -33,10 +33,10 @@
 # include "config.h"
 #endif
 
-#include "model.h"
-#include "server.h"
 #include "d_iface.h"
+#include "model.h"
 #include "qendian.h"
+#include "server.h"
 
 extern model_t *loadmodel;
 extern char loadname[];

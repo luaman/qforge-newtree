@@ -29,8 +29,9 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
+
 #include "r_local.h"
+#include "sys.h"
 
 drawsurf_t  r_drawsurf;
 

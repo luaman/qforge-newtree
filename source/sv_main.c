@@ -32,8 +32,9 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
-
+#endif
 #ifdef HAVE_STRINGS_H
 # include <strings.h>
 #endif
@@ -41,8 +42,8 @@
 #include "bothdefs.h"
 #include "buildnum.h"
 #include "cmd.h"
-#include "commdef.h"
-#include "crc.h"
+#include "model.h"
+#include "net.h"
 #include "msg.h"
 #include "pmove.h"
 #include "qargs.h"
@@ -51,7 +52,7 @@
 #include "sys.h"
 #include "va.h"
 #include "ver_check.h"
-#include "world.h"
+#include "zone.h"
 
 quakeparms_t host_parms;
 qboolean    host_initialized;			// true if into command execution

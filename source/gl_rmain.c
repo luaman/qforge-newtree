@@ -31,23 +31,25 @@
 #endif
 
 #include <math.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "qargs.h"
 #include "bothdefs.h"
+#include "cl_cam.h"
+#include "cl_main.h"
 #include "commdef.h"
 #include "console.h"
 #include "glquake.h"
-#include "model.h"
-#include "render.h"
-#include "sys.h"
+#include "qargs.h"
 #include "r_dynamic.h"
 #include "skin.h"
-#include "cl_main.h"
-#include "cl_cam.h"
-#include "va.h"
+#include "sys.h"
 #include "view.h"
 
 entity_t	r_worldentity;

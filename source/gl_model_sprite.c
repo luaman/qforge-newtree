@@ -40,9 +40,9 @@
 #include <strings.h>
 #endif
 
+#include "glquake.h"
 #include "model.h"
 #include "qendian.h"
-#include "glquake.h"
 
 extern model_t *loadmodel;
 extern char loadname[];

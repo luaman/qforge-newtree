@@ -29,20 +29,16 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "server.h"
-#include "crc.h"
-#include "msg.h"
-#include "world.h"
-#include "commdef.h"
-#include "cmd.h"
-#include "sys.h"
-#include "pmove.h"
-#include "bothdefs.h"
 
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+
+#include "bothdefs.h"
+#include "msg.h"
+#include "server.h"
+#include "sys.h"
 
 #define CHAN_AUTO   0
 #define CHAN_WEAPON 1

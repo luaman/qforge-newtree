@@ -33,14 +33,16 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "host.h"
-#include "view.h"
 #include "bothdefs.h"
-#include "screen.h"
+#include "client.h"
 #include "cmd.h"
-#include "r_local.h"
+#include "cvar.h"
+#include "host.h"
 #include "msg.h"
-#include "commdef.h"
+#include "pmove.h"
+#include "screen.h"
+#include "vid.h"
+#include "view.h"
 
 /*
 

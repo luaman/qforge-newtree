@@ -30,9 +30,11 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include "r_local.h"
 #include "d_local.h"
 #include "bothdefs.h"
+
 // TODO: put in span spilling to shrink list size
 // !!! if this is changed, it must be changed in d_polysa.s too !!!
 #define DPS_MAXSPANS			MAXHEIGHT+1

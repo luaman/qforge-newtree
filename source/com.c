@@ -29,14 +29,15 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
+
+#include <ctype.h>
+
+#include "cmd.h"
+#include "console.h"
 #include "cvar.h"
 #include "qendian.h"
 #include "quakefs.h"
-#include "cmd.h"
-#include "console.h"
-
-#include <ctype.h>
+#include "sys.h"
 
 cvar_t     *registered;
 

@@ -35,11 +35,10 @@
 
 #include <dmedia/cdaudio.h>
 
-#include "qtypes.h"
+#include "cdaudio.h"
+#include "cmd.h"
 #include "console.h"
 #include "qargs.h"
-#include "cmd.h"
-#include "cdaudio.h"
 #include "sound.h"
 
 static qboolean initialized = false;

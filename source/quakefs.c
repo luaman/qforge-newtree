@@ -32,7 +32,12 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include <ctype.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -55,30 +60,23 @@
 #define _POSIX_
 #endif
 #include <limits.h>
-#include "qtypes.h"
 
-#include "quakefs.h"
-#include "sys.h"
-#include "console.h"
-#include "draw.h"
 #include "cmd.h"
-#include "cvar.h"
 #include "commdef.h"
-#include "qendian.h"
+#include "console.h"
+#include "cvar.h"
+#include "draw.h"
 #include "info.h"
-#include "server.h"
-#include "va.h"
 #include "qargs.h"
-
-// LordHavoc: win32 would not compile without this
-#ifndef __const
-#define __const const
-#endif
+#include "qendian.h"
+#include "qtypes.h"
+#include "quakefs.h"
+#include "server.h"
+#include "sys.h"
+#include "va.h"
 
 #ifndef HAVE_FNMATCH_PROTO
-int         fnmatch (__const char *__pattern, __const char *__string,
-
-					 int __flags);
+int         fnmatch (const char *__pattern, const char *__string, int __flags);
 #endif
 
 

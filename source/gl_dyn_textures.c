@@ -30,10 +30,10 @@
 # include "config.h"
 #endif
 
-#include "glquake.h"
-#include "fractalnoise.h"
-
 #include <stdlib.h>
+
+#include "fractalnoise.h"
+#include "glquake.h"
 
 static void GDT_InitDotParticleTexture (void);
 static void GDT_InitSmokeParticleTexture (void);

@@ -29,14 +29,19 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "server.h"
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #include "crc.h"
 #include "msg.h"
-#include "world.h"
-#include "commdef.h"
 #include "quakefs.h"
-
-#include <string.h>
+#include "server.h"
+#include "world.h"
 
 server_t    sv;							// local server
 

@@ -29,7 +29,9 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include <dpmi.h>
+
 #include "dosisms.h"
 
 extern cvar_t *bgmvolume;

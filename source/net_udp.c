@@ -30,10 +30,6 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
-#include "net.h"
-#include "qargs.h"
-#include "console.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -68,14 +64,19 @@
 # include <sys/filio.h>
 #endif
 
-#ifdef _WIN32
-# include <winquake.h>
-# undef EWOULDBLOCK
-# define EWOULDBLOCK    WSAEWOULDBLOCK
-#endif
-
 #ifdef NeXT
 #include <libc.h>
+#endif
+
+#include "console.h"
+#include "net.h"
+#include "sys.h"
+#include "qargs.h"
+
+#ifdef _WIN32
+# include "winquake.h"
+# undef EWOULDBLOCK
+# define EWOULDBLOCK    WSAEWOULDBLOCK
 #endif
 
 #ifndef MAXHOSTNAMELEN

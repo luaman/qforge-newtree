@@ -43,14 +43,13 @@
 #include <strings.h>
 #endif
 
-#include "cvar.h"
-#include "client.h"
-#include "pmove.h"
-#include "msg.h"
-#include "sbar.h"
-#include "console.h"
-#include "commdef.h"
 #include "cl_cam.h"
+#include "client.h"
+#include "commdef.h"
+#include "console.h"
+#include "msg.h"
+#include "pmove.h"
+#include "sbar.h"
 
 #define	PM_SPECTATORMAXSPEED	500
 #define	PM_STOPSPEED	100

@@ -36,12 +36,10 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#include "qtypes.h"
-#include "quakeio.h"
+#include "msg.h"
 #include "net.h"
 #include "protocol.h"
-#include "msg.h"
-
+#include "quakeio.h"
 #include "server.h"
 
 cvar_t     *netlogger;

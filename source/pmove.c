@@ -29,13 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "compat.h"
-#include "qtypes.h"
-#include "client.h"
-#include "pmove.h"
-#include "cvar.h"
 
 #include <math.h>
+
+#include "client.h"
+#include "compat.h"
+#include "cvar.h"
+#include "pmove.h"
+#include "qtypes.h"
 
 cvar_t     *no_pogo_stick;
 movevars_t  movevars;

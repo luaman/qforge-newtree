@@ -30,15 +30,15 @@
 # include "config.h"
 #endif
 
-#include "host.h"
-#include "sys.h"
 #include "console.h"
 #include "cmd.h"
-#include "sbar.h"
-#include "r_local.h"
-#include "draw.h"
-#include "menu.h"
 #include "cl_parse.h"
+#include "draw.h"
+#include "host.h"
+#include "menu.h"
+#include "r_local.h"
+#include "sbar.h"
+#include "sys.h"
 
 qboolean    allowskybox;				// whether or not to allow skyboxes
 

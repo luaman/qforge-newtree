@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include "r_local.h"
 
 int         r_dlightframecount;

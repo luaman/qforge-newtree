@@ -29,15 +29,20 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
-#include "qtypes.h"
-#include "zone.h"
-#include "console.h"
-#include "cmd.h"
-#include "qargs.h"
 
-#include <string.h>
 #include <stdlib.h>
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
+#include "cmd.h"
+#include "console.h"
+#include "qargs.h"
+#include "sys.h"
+#include "zone.h"
 
 #define	DYNAMIC_SIZE	0x20000
 #define	ZONEID			0x1d4a11

@@ -29,12 +29,18 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <string.h>
+#endif
+#include <math.h>
+
 #include "console.h"
 #include "r_local.h"
-
-#include <string.h>
-#include <math.h>
+#include "sys.h"
 
 static int  clip_current;
 static vec5_t clip_verts[2][MAXWORKINGVERTS];

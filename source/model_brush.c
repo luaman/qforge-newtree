@@ -32,14 +32,20 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include <math.h>
-#include <string.h>
 
+#include <math.h>
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
+#include "checksum.h"
 #include "cvar.h"
 #include "model.h"
 #include "qendian.h"
 #include "server.h"
-#include "checksum.h"
 
 extern model_t *loadmodel;
 extern char loadname[];

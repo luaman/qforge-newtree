@@ -26,17 +26,26 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include <errno.h>
 
 #include "bothdefs.h"
+#include "console.h"
 #include "cmd.h"
 #include "client.h"
-#include "teamplay.h"
 #include "locs.h"
-#include "sys.h"
-#include "console.h"
 #include "quakefs.h"
+#include "sys.h"
+#include "teamplay.h"
 
 extern cvar_t *skin;
 cvar_t     *cl_deadbodyfilter;

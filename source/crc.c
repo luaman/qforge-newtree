@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include "crc.h"
 
 // this is a 16 bit, non-reflected CRC using the polynomial 0x1021

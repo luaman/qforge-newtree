@@ -29,15 +29,19 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include <math.h>
-#include "qtypes.h"
+
 #include "mathlib.h"
 #include "model.h"
-
-void        Sys_Error (char *error, ...);
+#include "qtypes.h"
+#include "sys.h"
 
 vec3_t      vec3_origin = { 0, 0, 0 };
 int         nanmask = 255 << 23;
@@ -563,7 +567,7 @@ FloorDivMod (double numer, double denom, int *quotient, int *rem)
 
 #ifndef PARANOID
 	if (denom <= 0.0)
-		Sys_Error ("FloorDivMod: bad denominator %d\n", denom);
+		Sys_Error ("FloorDivMod: bad denominator %f\n", denom);
 
 //  if ((floor(numer) != numer) || (floor(denom) != denom))
 //      Sys_Error ("FloorDivMod: non-integer numer or denom %f %f\n",

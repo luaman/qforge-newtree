@@ -31,13 +31,18 @@
 #endif
 
 #include <limits.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
 #include "client.h"
+#include "console.h"
+#include "locs.h"
 #include "qtypes.h"
 #include "sys.h"
-#include "locs.h"
-#include "console.h"
 
 #define LOCATION_BLOCK	128				// 128 locations per block.
 

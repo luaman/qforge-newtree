@@ -31,19 +31,24 @@
 #endif
 
 #include <stdarg.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
-#include "input.h"
-#include "sys.h"
-#include "console.h"
-#include "keys.h"
 #include "client.h"
-#include "draw.h"
-#include "commdef.h"
-#include "qargs.h"
 #include "cmd.h"
-#include "va.h"
+#include "commdef.h"
+#include "console.h"
+#include "draw.h"
+#include "input.h"
+#include "keys.h"
+#include "qargs.h"
 #include "screen.h"
+#include "sys.h"
+#include "va.h"
 
 int         con_ormask;
 console_t   con_main;

@@ -55,10 +55,10 @@
 # include <machine/soundcard.h>
 #endif
 
+#include "cmd.h"
 #include "console.h"
 #include "qargs.h"
 #include "sound.h"
-#include "cmd.h"
 
 #ifndef MAP_FAILED
 # define MAP_FAILED ((void *) -1)

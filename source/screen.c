@@ -31,9 +31,15 @@
 #endif
 
 #include <time.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
 #include "cl_parse.h"
+#include "client.h"
 #include "cmd.h"
 #include "console.h"
 #include "d_iface.h"
@@ -42,7 +48,6 @@
 #include "keys.h"
 #include "menu.h"
 #include "pcx.h"
-#include "qendian.h"
 #include "sbar.h"
 #include "skin.h"
 #include "sys.h"

@@ -37,7 +37,6 @@
 
 #include "console.h"
 #include "qargs.h"
-#include "qtypes.h"
 #include "sound.h"
 #include "va.h"
 

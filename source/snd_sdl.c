@@ -1,5 +1,5 @@
 /*
-	snd_oss.c
+	snd_sdl.c
 
 	(description)
 
@@ -32,10 +32,10 @@
 #include <SDL_audio.h>
 #include <SDL_byteorder.h>
 
+#include "cmd.h"
 #include "console.h"
 #include "qargs.h"
 #include "sound.h"
-#include "cmd.h"
 
 static dma_t the_shm;
 static int  snd_inited;

@@ -30,21 +30,23 @@
 # include "config.h"
 #endif
 
-#include <string.h>
 #include <ctype.h>
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
 
-#include "sys.h"
-#include "cmd.h"
-#include "compat.h"
 #include "cvar.h"
-#include "sizebuf.h"
+#include "cmd.h"
 #include "console.h"
+#include "host.h"
 #include "qargs.h"
+#include "qendian.h"
 #include "quakefs.h"
-#include "commdef.h"
+#include "sizebuf.h"
+#include "sys.h"
 #include "zone.h"
 
 void        Cmd_ForwardToServer (void);

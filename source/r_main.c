@@ -29,20 +29,24 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
+#include <math.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
-#include "sys.h"
-#include "cmd.h"
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #include "bothdefs.h"
-#include "screen.h"
-#include "console.h"
-#include "r_local.h"
 #include "cl_cam.h"
 #include "cl_main.h"
+#include "console.h"
+#include "cmd.h"
+#include "r_local.h"
+#include "screen.h"
+#include "sys.h"
 #include "view.h"
-
-#include <math.h>
 
 //define    PASSAGES
 

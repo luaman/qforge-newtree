@@ -29,11 +29,10 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "cvar.h"
-#include "sizebuf.h"
-#include "msg.h"
+
 #include "client.h"
-#include "commdef.h"
+#include "cvar.h"
+#include "msg.h"
 #include "va.h"
 
 void

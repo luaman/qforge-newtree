@@ -29,13 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "cvar.h"
-#include "client.h"
-#include "pmove.h"
+
 #include "bothdefs.h"
-#include "console.h"
-#include "commdef.h"
 #include "cl_ents.h"
+#include "client.h"
+#include "commdef.h"
+#include "console.h"
+#include "cvar.h"
+#include "pmove.h"
 
 #ifdef _WIN32
 #include "winquake.h"

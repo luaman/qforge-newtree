@@ -29,17 +29,13 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "server.h"
-#include "crc.h"
-#include "msg.h"
-#include "world.h"
-#include "commdef.h"
-#include "cmd.h"
-#include "sys.h"
-#include "pmove.h"
 
 #include <stdlib.h>
 #include <math.h>
+
+#include "pmove.h"
+#include "server.h"
+#include "world.h"
 
 #define	STEPSIZE	18
 

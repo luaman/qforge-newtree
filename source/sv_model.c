@@ -30,14 +30,9 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "server.h"
-#include "crc.h"
-#include "msg.h"
-#include "world.h"
-#include "commdef.h"
-#include "cmd.h"
-#include "sys.h"
-#include "pmove.h"
+
+#include "cvar.h"
+#include "model.h"
 
 const int   mod_lightmap_bytes = 1;
 mplane_t    frustum[4];

@@ -29,11 +29,12 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
-#include "console.h"
-#include "r_local.h"
 
 #include <math.h>
+
+#include "console.h"
+#include "r_local.h"
+#include "sys.h"
 
 //
 // current entity info

@@ -32,19 +32,24 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "string.h"
-#include "ctype.h"
-#include "stdlib.h"
-#include "qtypes.h"
-#include "crc.h"
-#include "sys.h"
-#include "cmd.h"
-#include "console.h"
-#include "client.h"
-#include "assert.h"
-#include "commdef.h"
 
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+#include <ctype.h>
+#include <stdlib.h>
+#include <assert.h>
+
+#include "client.h"
+#include "commdef.h"
+#include "console.h"
+#include "cmd.h"
+#include "crc.h"
+#include "qtypes.h"
+#include "sys.h"
 
 usercmd_t   nullcmd;					// guarenteed to be zero
 

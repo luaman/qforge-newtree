@@ -29,21 +29,26 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sbar.h"
-#include "screen.h"
-#include "vid.h"
-#include "wad.h"
-#include "commdef.h"
-#include "draw.h"
-#include "cmd.h"
-#include "client.h"
-#include "bothdefs.h"
-#include "va.h"
-#include "msg.h"
-#include "cl_cam.h"
 
 #include <stdlib.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
+#include "bothdefs.h"
+#include "cl_cam.h"
+#include "client.h"
+#include "cmd.h"
+#include "commdef.h"
+#include "draw.h"
+#include "msg.h"
+#include "sbar.h"
+#include "screen.h"
+#include "va.h"
+#include "vid.h"
 
 int         sb_updates;					// if >= vid.numpages, no update
 

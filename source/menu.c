@@ -33,35 +33,33 @@
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-
-#include "host.h"
-#include "sys.h"
-#ifdef _WIN32
-#include "winquake.h"
-#endif
-#include "cl_slist.h"
-#include "keys.h"
-#include "menu.h"
-#include "vid.h"
-#include "va.h"
-#include "draw.h"
-#include "cmd.h"
-#include "screen.h"
-#include "client.h"
-#include "console.h"
-#include "input.h"
-#include "view.h"
-#include "cl_main.h"
-#include "cl_input.h"
-#include "net.h"
-
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
+
+#include "cl_input.h"
+#include "cl_main.h"
+#include "cl_slist.h"
+#include "client.h"
+#include "cmd.h"
+#include "commdef.h"
+#include "console.h"
+#include "cvar.h"
+#include "draw.h"
+#include "host.h"
+#include "input.h"
+#include "keys.h"
+#include "menu.h"
+#include "protocol.h"
+#include "screen.h"
+#include "sound.h"
+#include "sys.h"
+#include "va.h"
+#include "vid.h"
+#include "view.h"
 
 void        (*vid_menudrawfn) (void);
 void        (*vid_menukeyfn) (int key);

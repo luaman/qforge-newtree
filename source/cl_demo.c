@@ -30,20 +30,16 @@
 # include "config.h"
 #endif
 
-#include "host.h"
-#include "sys.h"
-#include "cvar.h"
-#include "sizebuf.h"
-#include "msg.h"
-#include "client.h"
-#include "commdef.h"
-#include "cmd.h"
 #include "console.h"
-#include "qendian.h"
-#include "va.h"
-#include "quakefs.h"
-#include "pmove.h"
 #include "cl_main.h"
+#include "client.h"
+#include "cmd.h"
+#include "host.h"
+#include "msg.h"
+#include "pmove.h"
+#include "qendian.h"
+#include "sys.h"
+#include "va.h"
 
 void        CL_FinishTimeDemo (void);
 

@@ -29,12 +29,13 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
-#include "console.h"
+
 #include "bothdefs.h"
-#include "r_local.h"
 #include "cl_main.h"
 #include "cl_tent.h"
+#include "console.h"
+#include "r_local.h"
+#include "sys.h"
 
 mnode_t    *r_pefragtopnode;
 

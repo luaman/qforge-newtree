@@ -30,18 +30,6 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include <sys/types.h>
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
-#include "qargs.h"
-#include "cvar.h"
-#include "server.h"
-#include "sys.h"
-
-#ifdef NeXT
-#include <libc.h>
-#endif
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -49,10 +37,22 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <sys/types.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
+#include "cvar.h"
+#include "qargs.h"
+#include "server.h"
+#include "sys.h"
+
+#ifdef NeXT
+#include <libc.h>
+#endif
 
 cvar_t     *sys_extrasleep;
 cvar_t     *sys_dead_sleep;

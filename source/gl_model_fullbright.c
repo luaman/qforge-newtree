@@ -33,12 +33,12 @@
 # include "config.h"
 #endif
 
+#include "checksum.h"
+#include "console.h"
+#include "glquake.h"
+#include "qendian.h"
 #include "r_local.h"
 #include "sys.h"
-#include "console.h"
-#include "qendian.h"
-#include "checksum.h"
-#include "glquake.h"
 
 int
 Mod_Fullbright (byte * skin, int width, int height, char *name)

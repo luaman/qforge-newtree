@@ -40,11 +40,11 @@
 #include <strings.h>
 #endif
 
+#include "console.h"
+#include "glquake.h"
 #include "model.h"
 #include "qendian.h"
 #include "server.h"
-#include "console.h"
-#include "glquake.h"
 
 extern model_t *loadmodel;
 

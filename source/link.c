@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include "link.h"
 
 // ClearLink is used for new headnodes

@@ -28,11 +28,9 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
 # include "config.h"
-#include <qtypes.h>
-#include <sound.h>
-#include <qargs.h>
-#include <console.h>
+#endif 
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -47,6 +45,11 @@
 #include <stdio.h>
 #include <sys/audioio.h>
 #include <errno.h>
+
+#include "qtypes.h"
+#include "sound.h"
+#include "qargs.h"
+#include "console.h"
 
 int         audio_fd;
 int         snd_inited;

@@ -37,8 +37,9 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifdef HAVE_STRING_H
 #include <string.h>
-
+#endif
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
@@ -55,24 +56,20 @@
 #include <X11/extensions/xf86dga.h>
 #endif
 
-#include "dga_check.h"
-#include "d_local.h"
-#include "host.h"
-#include "sound.h"
-#include "keys.h"
-#include "cvar.h"
-#include "sys.h"
-#include "cmd.h"
-#include "draw.h"
-#include "console.h"
+#include "cl_input.h"
 #include "client.h"
+#include "console.h"
 #include "context_x11.h"
+#include "cvar.h"
+#include "dga_check.h"
+#include "host.h"
 #include "input.h"
 #include "joystick.h"
+#include "keys.h"
 #include "qargs.h"
-#include "cl_input.h"
+#include "sys.h"
+#include "vid.h"
 #include "view.h"
-
 
 cvar_t     *_windowed_mouse;
 cvar_t     *m_filter;

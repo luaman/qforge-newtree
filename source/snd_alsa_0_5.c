@@ -31,11 +31,6 @@
 # include "config.h"
 #endif
 
-#include <qtypes.h>
-#include <sound.h>
-#include <qargs.h>
-#include <console.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
@@ -58,6 +53,10 @@
 #endif
 
 #include <sys/asoundlib.h>
+
+#include "console.h"
+#include "qargs.h"
+#include "sound.h"
 
 #ifndef MAP_FAILED
 # define MAP_FAILED ((void*)-1)

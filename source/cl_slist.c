@@ -33,20 +33,23 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_STRING_H
 #include <string.h>
-
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
-#include "cl_slist.h"
 #include "bothdefs.h"
-#include "console.h"
+#include "cl_slist.h"
 #include "commdef.h"
+#include "console.h"
 #include "quakefs.h"
 #include "va.h"
 

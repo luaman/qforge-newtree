@@ -30,7 +30,12 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include <time.h>
 
 #include "cl_parse.h"
@@ -42,7 +47,6 @@
 #include "keys.h"
 #include "menu.h"
 #include "pcx.h"
-#include "qendian.h"
 #include "sbar.h"
 #include "skin.h"
 #include "sys.h"

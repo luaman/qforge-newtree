@@ -29,26 +29,29 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "va.h"
-#include "server.h"
-#include "crc.h"
-#include "console.h"
-#include "msg.h"
-#include "world.h"
-#include "commdef.h"
-#include "cmd.h"
-#include "sys.h"
-#include "pmove.h"
-#include "compat.h"
-#include "bothdefs.h"
-#include "quakefs.h"
-#include "checksum.h"
 
 #include <math.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+#include "bothdefs.h"
+#include "checksum.h"
+#include "cmd.h"
+#include "cvar.h"
+#include "msg.h"
+#include "pmove.h"
+#include "quakefs.h"
+#include "server.h"
+#include "sys.h"
+#include "va.h"
+#include "world.h"
 
 edict_t    *sv_player;
 

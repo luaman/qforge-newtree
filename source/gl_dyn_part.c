@@ -30,15 +30,15 @@
 # include "config.h"
 #endif
 
-#include "host.h"
-#include "glquake.h"
-#include "cmd.h"
-#include "qargs.h"
-#include "console.h"
-#include "sys.h"
-#include "r_dynamic.h"
-
 #include <stdlib.h>
+
+#include "cmd.h"
+#include "console.h"
+#include "glquake.h"
+#include "host.h"
+#include "r_dynamic.h"
+#include "qargs.h"
+#include "sys.h"
 
 #define MAX_PARTICLES			2048	// default max # of particles at one
 										// time

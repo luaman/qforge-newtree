@@ -29,26 +29,24 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "server.h"
-#include "crc.h"
-#include "msg.h"
-#include "world.h"
-#include "commdef.h"
-#include "cmd.h"
-#include "sys.h"
-#include "pmove.h"
-#include "compat.h"
-#include "va.h"
-#include "quakefs.h"
-#include "bothdefs.h"
-#include "qendian.h"
-#include "qargs.h"
 
 #include <stdlib.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
+
+#include "bothdefs.h"
+#include "cmd.h"
+#include "msg.h"
+#include "qargs.h"
+#include "qendian.h"
+#include "quakefs.h"
+#include "server.h"
+#include "sys.h"
+#include "va.h"
 
 qboolean    sv_allow_cheats;
 

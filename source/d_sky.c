@@ -29,8 +29,9 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "r_local.h"
+
 #include "d_local.h"
+#include "r_local.h"
 
 #define SKY_SPAN_SHIFT	5
 #define SKY_SPAN_MAX	(1 << SKY_SPAN_SHIFT)

@@ -40,15 +40,16 @@
 #include <strings.h>
 #endif
 
-#include "r_local.h"
-#include "sys.h"
-#include "console.h"
-#include "qendian.h"
-#include "checksum.h"
-#include "crc.h"
-#include "server.h"
-#include "msg.h"
 #include "cl_main.h"
+#include "client.h"
+#include "crc.h"
+#include "info.h"
+#include "model.h"
+#include "msg.h"
+#include "qendian.h"
+#include "quakefs.h"
+#include "r_local.h"
+#include "server.h"
 
 extern char loadname[];
 extern model_t *loadmodel;

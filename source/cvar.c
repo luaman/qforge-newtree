@@ -33,19 +33,21 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #include "commdef.h"
 #include "cvar.h"
 #include "console.h"
 #include "qargs.h"
 #include "cmd.h"
 #include "commdef.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
 
 cvar_t     *cvar_vars;
 char       *cvar_null_string = "";

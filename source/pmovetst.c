@@ -29,14 +29,19 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
-#include "sys.h"
-#include "qtypes.h"
-#include "pmove.h"
-#include "model.h"
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #include "console.h"
+#include "model.h"
+#include "pmove.h"
+#include "qtypes.h"
+#include "sys.h"
 
 static hull_t box_hull;
 static dclipnode_t box_clipnodes[6];

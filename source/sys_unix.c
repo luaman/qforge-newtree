@@ -38,11 +38,11 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 
-#include "sys.h"
-#include "qargs.h"
-#include "host.h"
 #include "cvar.h"
+#include "host.h"
+#include "qargs.h"
 #include "server.h"
+#include "sys.h"
 
 /* This is unused in the client, but we need the symbol there too. */
 server_static_t svs;

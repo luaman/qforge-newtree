@@ -29,16 +29,21 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "sys.h"
-#include "draw.h"
-#include "vid.h"
-#include "d_iface.h"
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
+#include "client.h"
 #include "console.h"
+#include "d_iface.h"
+#include "draw.h"
 #include "quakefs.h"
 #include "sound.h"
-#include "client.h"
-
-#include <string.h>
+#include "sys.h"
 
 typedef struct {
 	vrect_t     rect;

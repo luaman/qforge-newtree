@@ -43,17 +43,16 @@
 #include <vgakeyboard.h>
 #include <vgamouse.h>
 
-#include "host.h"
-#include "client.h"
 #include "cl_input.h"
+#include "client.h"
 #include "cmd.h"
 #include "console.h"
 #include "cvar.h"
+#include "host.h"
 #include "input.h"
 #include "joystick.h"
 #include "keys.h"
 #include "qargs.h"
-#include "qtypes.h"
 #include "sys.h"
 #include "view.h"
 

@@ -29,17 +29,17 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
-#include "server.h"
-#include "crc.h"
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #include "msg.h"
-#include "world.h"
-#include "commdef.h"
-#include "cmd.h"
+#include "server.h"
 #include "sys.h"
-#include "pmove.h"
 
 // LordHavoc: added and removed certain eval_ items
 // Ender Extends (QSG - Begin)

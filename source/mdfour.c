@@ -30,15 +30,16 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include <string.h>						/* XoXus: needed for memset call */
 
-#ifndef _UINT32_H
-#include <uint32.h>
-#endif // _UINT32_H
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
-#ifndef _MDFOUR_H
-#include <mdfour.h>
-#endif // _MDFOUR_H
+#include "mdfour.h"
+#include "uint32.h"
 
 /* NOTE: This code makes no attempt to be fast!
 

@@ -30,18 +30,22 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
-#include "client.h"
-#include "cmd.h"
+#include "cl_parse.h"
 #include "console.h"
+#include "cmd.h"
 #include "msg.h"
 #include "pcx.h"
-#include "sys.h"
 #include "qendian.h"
-#include "va.h"
 #include "skin.h"
-#include "cl_parse.h"
+#include "sys.h"
+#include "va.h"
 
 cvar_t     *baseskin;
 cvar_t     *noskins;

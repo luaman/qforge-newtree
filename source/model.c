@@ -40,11 +40,11 @@
 #include <strings.h>
 #endif
 
-#include "model.h"
-#include "quakefs.h"
 #include "cvar.h"
-#include "server.h"
+#include "model.h"
 #include "qendian.h"
+#include "quakefs.h"
+#include "server.h"
 
 void        Mod_LoadAliasModel (model_t *mod, void *buf);
 void        Mod_LoadSpriteModel (model_t *mod, void *buf);

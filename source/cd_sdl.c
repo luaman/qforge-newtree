@@ -32,16 +32,20 @@
 #ifdef HAVE_WINDOWS_H
 # include <windows.h>
 #endif
+#ifdef HAVE_STRING_H
+#include "string.h"
+#endif
+#ifdef HAVE_STRINGS_H
+#include "strings.h"
+#endif
 
 #include <SDL.h>
 
-#include "qargs.h"
-#include "console.h"
 #include "cdaudio.h"
 #include "cmd.h"
-#include "host.h"
-
-extern cvar_t *bgmvolume;
+#include "console.h"
+#include "qargs.h"
+#include "sound.h"
 
 static qboolean cdValid = false;
 static qboolean initialized = false;

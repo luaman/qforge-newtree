@@ -32,7 +32,8 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include <mdfour.h>
+
+#include "mdfour.h"
 
 unsigned int
 Com_BlockChecksum (void *buffer, int length)

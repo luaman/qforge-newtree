@@ -30,10 +30,10 @@
 # include "config.h"
 #endif
 
-#include "host.h"
-#include "sys.h"
-#include "protocol.h"
 #include "glquake.h"
+#include "host.h"
+#include "protocol.h"
+#include "sys.h"
 
 /*
 =====================

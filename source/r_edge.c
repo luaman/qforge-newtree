@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include "d_ifacea.h"
 #include "r_local.h"
 

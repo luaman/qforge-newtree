@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include "d_local.h"
 
 viddef_t    vid;						// global video state

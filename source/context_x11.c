@@ -57,16 +57,16 @@
 #endif
 
 #include "commdef.h"
+#include "console.h"
 #include "context_x11.h"
+#include "cvar.h"
 #include "dga_check.h"
-#include "va.h"
+#include "input.h"
 #include "qargs.h"
 #include "qtypes.h"
-#include "vid.h"
 #include "sys.h"
-#include "console.h"
-#include "cvar.h"
-#include "input.h"
+#include "va.h"
+#include "vid.h"
 
 static void (*event_handlers[LASTEvent]) (XEvent *);
 qboolean    oktodraw = false;

@@ -30,15 +30,17 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
 
+#include "client.h"
 #include "host.h"
 #include "sys.h"
 #include "vid.h"
-#include "client.h"
 
 /*
 =====================

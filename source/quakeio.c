@@ -37,7 +37,12 @@
 #endif
 #include <stdarg.h>
 #include <stdlib.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #ifdef WIN32
 # include <io.h>
 # include <fcntl.h>
@@ -52,8 +57,8 @@
 #endif
 #include <limits.h>
 
-#include "quakeio.h"
 #include "quakefs.h"
+#include "quakeio.h"
 
 #ifdef WIN32
 # ifndef __BORLANDC__

@@ -30,13 +30,18 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
-#include "sys.h"
-#include "sound.h"
+#include "console.h"
 #include "qendian.h"
 #include "quakefs.h"
-#include "console.h"
+#include "sound.h"
+#include "sys.h"
 
 int         cache_full_cycle;
 

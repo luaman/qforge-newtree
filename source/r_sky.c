@@ -29,8 +29,8 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include "r_local.h"
-#include "d_local.h"
 
 
 int         iskyspeed = 8;
