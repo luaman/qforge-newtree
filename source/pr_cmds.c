@@ -760,6 +760,14 @@ void PF_cvar_set (void)
 	var_name = G_STRING(OFS_PARM0);
 	val = G_STRING(OFS_PARM1);
 	var = Cvar_FindVar(var_name);	
+	if (!var)
+		var = Cvar_FindAlias(var_name);
+	if (!var)
+	{
+		// FIXME: make Con_DPrint?
+		Con_Printf ("PF_cvar_set: variable %s not found\n", var_name);
+		return;
+	}
 
 	Cvar_Set (var, val);
 }
