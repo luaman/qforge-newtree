@@ -54,7 +54,7 @@
 extern	double	realtime;
 extern	model_t	*loadmodel;
 
-int		skytexturenum;
+extern	int		skytexturenum;
 
 int		solidskytexture;
 int		alphaskytexture;
