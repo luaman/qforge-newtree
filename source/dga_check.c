@@ -34,9 +34,11 @@
 
 #include <stdlib.h>
 #include <X11/Xlib.h>
+#include <X11/Xproto.h>
 
 #ifdef HAVE_DGA
 # include <X11/extensions/xf86dga.h>
+# include <X11/extensions/xf86dgastr.h>
 #endif
 #ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
@@ -59,7 +61,7 @@ VID_CheckDGA (Display * dpy, int *maj_ver, int *min_ver, int *hasvideo)
 	int 	event_base, error_base, dgafeat;
 	int 	dummy, dummy_major, dummy_minor, dummy_video;
 
-	if (!XQueryExtension (dpy, "XFree86-DGA", &dummy, &dummy, &dummy)) {
+	if (!XQueryExtension (dpy, XF86DGANAME, &dummy, &dummy, &dummy)) {
 		return false;
 	}
 
@@ -75,6 +77,12 @@ VID_CheckDGA (Display * dpy, int *maj_ver, int *min_ver, int *hasvideo)
 	if (!XF86DGAQueryVersion (dpy, maj_ver, min_ver)) {
 		return false;
 	}
+
+	if ((!maj_ver) || (*maj_ver != XDGA_MAJOR_VERSION)) {
+		Con_Printf ("VID: Incorrect DGA version: %d.%d, \n", *maj_ver, *min_ver);
+		return false;
+	}
+	Con_Printf ("VID: DGA version: %d.%d\n", *maj_ver, *min_ver);
 
 	if (!hasvideo)
 		hasvideo = &dummy_video;
@@ -125,11 +133,11 @@ VID_CheckVMode (Display * dpy, int *maj_ver, int *min_ver)
 		return false;
 
 	if ((!maj_ver) || (*maj_ver != XF86VIDMODE_MAJOR_VERSION)) {
-		Con_Printf ("VID: Incorrect VidMode version: %d.%d, \n", *maj_ver, *min_ver);
+		Con_Printf ("VID: Incorrect VidMode version: %d.%d\n", *maj_ver, *min_ver);
 		return false;
 	}
 
-	Con_Printf ("VID: VidMode version: %d.%d, \n", *maj_ver, *min_ver);
+	Con_Printf ("VID: VidMode version: %d.%d\n", *maj_ver, *min_ver);
 	return true;
 #else
 	return false;
