@@ -955,7 +955,18 @@ SV_Pause_f
 */
 void SV_Pause_f (void)
 {
+	static double lastpausetime;
+        double currenttime;
 	char st[sizeof(host_client->name) + 32];
+
+        currenttime=Sys_DoubleTime();
+
+	if (lastpausetime+1>currenttime) {
+		SV_ClientPrintf (host_client, PRINT_HIGH, "Pause flood not allowed.\n");
+		return;
+        }
+
+        lastpausetime=currenttime;
 
 	if (!pausable->value) {
 		SV_ClientPrintf (host_client, PRINT_HIGH, "Pause not allowed.\n");
