@@ -297,6 +297,7 @@ VID_AllocBuffers (int width, int height)
 	if (!d_pzbuffer) {
 		free (vid.buffer);
 		Sys_Error ("Not enough memory for video mode\n");
+		return false;
 	}
 
 	// Allocate the new surface cache; free the z-buffer if we fail
@@ -305,6 +306,7 @@ VID_AllocBuffers (int width, int height)
 		free (d_pzbuffer);
 		d_pzbuffer = NULL;
 		Sys_Error ("Not enough memory for video mode\n");
+		return false;
 	}
 	vid_surfcachesize = cachesize;
 
