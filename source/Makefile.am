@@ -315,7 +315,7 @@ qf_client_wgl_DEPENDENCIES=libqfnet.a libqfsys_cl.a libqfsnd.a libqfcd.a libqfjs
 # Stuff that doesn't get linked into an executable NEEDS to be mentioned here,
 # or it won't be distributed with 'make dist'
 #
-EXTRA_DIST=	makefile.win \
+EXTRA_DIST=	makefile.mgw makefile.win \
 		qf-server.mak qw_server.dsp \
 		qf-client-sdl.mak qf-client-win.mak qw_client.dsp \
 		qf-client-sgl.mak qf-client-wgl.mak qf-client-win.mak

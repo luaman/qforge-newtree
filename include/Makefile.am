@@ -17,6 +17,7 @@ EXTRA_DIST = adivtab.h anorm_dots.h anorms.h asm_draw.h asm_i386.h block16.h \
 	winquake.h world.h zone.h \
 	\
 	win32/fnmatch.h win32/version.h win32/version.h.in \
+	win32/mingw/config.h \
 	win32/resources/icon1.ico win32/resources/resource.h \
 	win32/resources/quakeforge.rc win32/bc/borland.c win32/bc/config.h \
 	win32/vc/config.h win32/vc/dirent.h
