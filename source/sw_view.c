@@ -108,8 +108,7 @@ void V_UpdatePalette (void)
 void
 BuildGammaTable (float b, float c)
 {
-	int		i, j;
-	int 	inf = 0;
+	int		i, inf;
 	
 	if ((b == 1.0) && (c == 1.0)) {
 		for (i = 0; i < 256; i++)
@@ -117,19 +116,10 @@ BuildGammaTable (float b, float c)
 		return;
 	}
 	
-	for (i=0 ; i<256 ; i++) {
-		if (!(i == 128)) {
-			if (i < 128) {
-				j = i + (int) ((128 - i) * (1 - c));
-			} else {
-				j = i + (int) ((i - 128) * (1 - c));
-			}
-		} else {
-			j = i;
-		}
-		inf = (j * b);	// gamma is brightness now, and positive
-		inf = bound(0, inf, 255);
-		gammatable[i] = inf;
+	for (i=0 ; i<256 ; i++) {	 // weighted average toward the median, 127
+		inf = (i * b);	// gamma is brightness now, and positive
+		inf = bound (0, inf, 255);
+		gammatable[i] = inf + (int) ((127 - inf) * (1 - c));
 	}
 }
 
