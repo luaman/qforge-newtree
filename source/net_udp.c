@@ -366,6 +366,8 @@ UDP_OpenSocket (int port)
 #endif
 	int         i;
 
+	memset (&address, 0, sizeof(address));
+
 	if ((newsocket = socket (PF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
 		Sys_Error ("UDP_OpenSocket: socket:%s", strerror (errno));
 	if (ioctl (newsocket, FIONBIO, &_true) == -1)
