@@ -32,14 +32,12 @@
 
 #include "progs.h"
 
-int eval_alpha, eval_scale, eval_glowsize, eval_glowcolor, eval_colormod;
-
 int
-FindFieldOffset (char *field)
+FindFieldOffset (progs_t *pr, char *field)
 {
 	ddef_t	*d;
 
-	d = ED_FindField (field);
+	d = ED_FindField (pr, field);
 	if (!d)
 		return 0;
 
@@ -54,13 +52,3 @@ GETEDICTFIELDVALUE (edict_t *ed, int fieldoffset)
 
 	return (eval_t *) ((char *) &ed->v + fieldoffset);
 }
-
-void
-FindEdictFieldOffsets (void)
-{
-	eval_alpha = FindFieldOffset ("alpha");
-	eval_scale = FindFieldOffset ("scale");
-	eval_glowsize = FindFieldOffset ("glow_size");
-	eval_glowcolor = FindFieldOffset ("glow_color");
-	eval_colormod = FindFieldOffset ("colormod");
-};

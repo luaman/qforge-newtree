@@ -63,83 +63,69 @@ typedef struct edict_s
 } edict_t;
 #define	EDICT_FROM_AREA(l) STRUCT_FROM_LINK(l,edict_t,area)
 
-//============================================================================
-
-extern	dprograms_t		*progs;
-extern	dfunction_t		*pr_functions;
-extern	char			*pr_strings;
-extern	ddef_t			*pr_globaldefs;
-extern	ddef_t			*pr_fielddefs;
-extern	dstatement_t	*pr_statements;
-extern	globalvars_t	*pr_global_struct;
-extern	float			*pr_globals;			// same as pr_global_struct
-
-extern	int				pr_edict_size;	// in bytes
-extern  int                             pr_edictareasize; // LordHavoc: for bounds checking
+struct progs_s;
 
 //============================================================================
 
 void PR_Init (void);
 
-void PR_ExecuteProgram (func_t fnum);
-void PR_LoadProgs (void);
+void PR_ExecuteProgram (struct progs_s *pr, func_t fnum);
+void PR_LoadProgs (struct progs_s *pr);
 
 void PR_Profile_f (void);
 
-edict_t *ED_Alloc (void);
-void ED_Free (edict_t *ed);
+edict_t *ED_Alloc (struct progs_s *pr);
+void ED_Free (struct progs_s *pr, edict_t *ed);
 
-char	*ED_NewString (char *string);
+char	*ED_NewString (struct progs_s *pr, char *string);
 // returns a copy of the string allocated from the server's string heap
 
-void ED_Print (edict_t *ed);
-void ED_Write (QFile *f, edict_t *ed);
-char *ED_ParseEdict (char *data, edict_t *ent);
+void ED_Print (struct progs_s *pr, edict_t *ed);
+void ED_Write (struct progs_s *pr, QFile *f, edict_t *ed);
+char *ED_ParseEdict (struct progs_s *pr, char *data, edict_t *ent);
 
-void ED_WriteGlobals (QFile *f);
-void ED_ParseGlobals (char *data);
+void ED_WriteGlobals (struct progs_s *pr, QFile *f);
+void ED_ParseGlobals (struct progs_s *pr, char *data);
 
-void ED_LoadFromFile (char *data);
+void ED_LoadFromFile (struct progs_s *pr, char *data);
 
-ddef_t *ED_FindField (char *name);
+ddef_t *ED_FindField (struct progs_s *pr, char *name);
+dfunction_t *ED_FindFunction (struct progs_s *pr, char *name);
 
-//define EDICT_NUM(n) ((edict_t *)(sv.edicts+ (n)*pr_edict_size))
-//define NUM_FOR_EDICT(e) (((byte *)(e) - sv.edicts)/pr_edict_size)
 
-edict_t *EDICT_NUM(int n);
-int NUM_FOR_EDICT(edict_t *e);
+//define EDICT_NUM(p,n) ((edict_t *)(sv.edicts+ (n)*(p)->pr_edict_size))
+//define NUM_FOR_EDICT(p,e) (((byte *)(e) - sv.edicts)/(p)->pr_edict_size)
 
-#define	NEXT_EDICT(e) ((edict_t *)( (byte *)e + pr_edict_size))
+edict_t *EDICT_NUM(struct progs_s *pr, int n);
+int NUM_FOR_EDICT(struct progs_s *pr, edict_t *e);
+
+#define	NEXT_EDICT(p,e) ((edict_t *)( (byte *)e + (p)->pr_edict_size))
 
 #define	EDICT_TO_PROG(e) ((byte *)e - (byte *)sv.edicts)
 #define PROG_TO_EDICT(e) ((edict_t *)((byte *)sv.edicts + e))
 
 //============================================================================
 
-#define	G_FLOAT(o) (pr_globals[o])
-#define	G_INT(o) (*(int *)&pr_globals[o])
-#define	G_EDICT(o) ((edict_t *)((byte *)sv.edicts+ *(int *)&pr_globals[o]))
-#define G_EDICTNUM(o) NUM_FOR_EDICT(G_EDICT(o))
-#define	G_VECTOR(o) (&pr_globals[o])
-#define	G_STRING(o) (PR_GetString(*(string_t *)&pr_globals[o]))
-#define	G_FUNCTION(o) (*(func_t *)&pr_globals[o])
+#define	G_FLOAT(p,o) ((p)->pr_globals[o])
+#define	G_INT(p,o) (*(int *)&(p)->pr_globals[o])
+#define	G_EDICT(p,o) ((edict_t *)((byte *)sv.edicts+ *(int *)&(p)->pr_globals[o]))
+#define G_EDICTNUM(p,o) NUM_FOR_EDICT(p,G_EDICT(p, o))
+#define	G_VECTOR(p,o) (&(p)->pr_globals[o])
+#define	G_STRING(p,o) (PR_GetString(pr,*(string_t *)&(p)->pr_globals[o]))
+#define	G_FUNCTION(p,o) (*(func_t *)&(p)->pr_globals[o])
 
 #define	E_FLOAT(e,o) (((float*)&e->v)[o])
 #define	E_INT(e,o) (*(int *)&((float*)&e->v)[o])
 #define	E_VECTOR(e,o) (&((float*)&e->v)[o])
-#define	E_STRING(e,o) (PR_GetString(*(string_t *)&((float*)&e->v)[o]))
+#define	E_STRING(e,o) (PR_GetString(pr,*(string_t *)&((float*)&e->v)[o]))
 
 extern	int		type_size[8];
 
-typedef void (*builtin_t) (void);
+typedef void (*builtin_t) (struct progs_s *pr);
 extern	builtin_t *pr_builtins;
 extern int pr_numbuiltins;
 
-extern int		pr_argc;
-
-extern	qboolean	pr_trace;
-extern	dfunction_t	*pr_xfunction;
-extern	int			pr_xstatement;
+int FindFieldOffset (struct progs_s *pr, char *field);
 
 extern func_t	EndFrame;	// 2000-01-02 EndFrame function by Maddes/FrikaC
 
@@ -147,22 +133,58 @@ extern func_t SpectatorConnect;
 extern func_t SpectatorThink;
 extern func_t SpectatorDisconnect;
 
-void PR_RunError (char *error, ...) __attribute__((format(printf,1,2)));
+void PR_RunError (struct progs_s *pr, char *error, ...) __attribute__((format(printf,2,3)));
 
-void ED_PrintEdicts (void);
-void ED_PrintNum (int ent);
+void ED_PrintEdicts (struct progs_s *pr);
+void ED_PrintNum (struct progs_s *pr, int ent);
 
-eval_t *GetEdictFieldValue(edict_t *ed, char *field);
+eval_t *GetEdictFieldValue(struct progs_s *pr, edict_t *ed, char *field);
 
 //
 // PR STrings stuff
 //
 #define MAX_PRSTR 1024
 
-extern char *pr_strtbl[MAX_PRSTR];
-extern int num_prstr;
+char *PR_GetString(struct progs_s *pr, int num);
+int PR_SetString(struct progs_s *pr, char *s);
 
-char *PR_GetString(int num);
-int PR_SetString(char *s);
+//============================================================================
+
+#define MAX_STACK_DEPTH		32
+#define LOCALSTACK_SIZE		2048
+
+typedef struct {
+	int         s;
+	dfunction_t *f;
+} prstack_t;
+
+typedef struct progs_s {
+	dprograms_t		*progs;
+	dfunction_t		*pr_functions;
+	char			*pr_strings;
+	ddef_t			*pr_globaldefs;
+	ddef_t			*pr_fielddefs;
+	dstatement_t	*pr_statements;
+	globalvars_t	*pr_global_struct;
+	float			*pr_globals;			// same as pr_global_struct
+
+	int				pr_edict_size;	// in bytes
+	int				pr_edictareasize; // LordHavoc: for bounds checking
+
+	int				pr_argc;
+
+	qboolean		pr_trace;
+	dfunction_t		*pr_xfunction;
+	int				pr_xstatement;
+
+	char			*pr_strtbl[MAX_PRSTR];
+	int				num_prstr;
+
+	prstack_t		pr_stack[MAX_STACK_DEPTH];
+	int				pr_depth;
+
+	int				localstack[LOCALSTACK_SIZE];
+	int				localstack_used;
+} progs_t;
 
 #endif // _PROGS_H

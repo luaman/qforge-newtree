@@ -397,6 +397,8 @@ extern	QFile		*sv_fraglogfile;
 
 extern	double		sv_frametime;
 
+extern	progs_t		sv_progs;
+
 //===========================================================
 // FIXME: declare exported functions in their own relevant .h
 
@@ -423,7 +425,8 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink);
 
 void SV_WriteClientdataToMessage (client_t *client, sizebuf_t *msg);
 
-void SV_MoveToGoal (void);
+struct progs_s;
+void SV_MoveToGoal (struct progs_s *pr);
 
 void SV_SaveSpawnparms (void);
 

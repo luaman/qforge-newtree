@@ -1,0 +1,70 @@
+/*
+	sv_progs.c
+
+	Quick QuakeC server code
+
+	Copyright (C) 1996-1997  Id Software, Inc.
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+	See the GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to:
+
+		Free Software Foundation, Inc.
+		59 Temple Place - Suite 330
+		Boston, MA  02111-1307, USA
+
+	$Id$
+*/
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include "progs.h"
+
+int eval_alpha, eval_scale, eval_glowsize, eval_glowcolor, eval_colormod;
+progs_t	sv_progs;
+
+func_t	EndFrame;
+func_t	SpectatorConnect;
+func_t	SpectatorDisconnect;
+func_t	SpectatorThink;
+
+void
+FindEdictFieldOffsets (progs_t *pr)
+{
+	dfunction_t *f;
+
+	if (pr == &sv_progs) {
+		// Zoid, find the spectator functions
+		SpectatorConnect = SpectatorThink = SpectatorDisconnect = 0;
+
+		if ((f = ED_FindFunction (&sv_progs, "SpectatorConnect")) != NULL)
+			SpectatorConnect = (func_t) (f - sv_progs.pr_functions);
+		if ((f = ED_FindFunction (&sv_progs, "SpectatorThink")) != NULL)
+			SpectatorThink = (func_t) (f - sv_progs.pr_functions);
+		if ((f = ED_FindFunction (&sv_progs, "SpectatorDisconnect")) != NULL)
+			SpectatorDisconnect = (func_t) (f - sv_progs.pr_functions);
+
+		// 2000-01-02 EndFrame function by Maddes/FrikaC
+		EndFrame = 0;
+		if ((f = ED_FindFunction (&sv_progs, "EndFrame")) != NULL)
+			EndFrame = (func_t) (f - sv_progs.pr_functions);
+
+		eval_alpha = FindFieldOffset (&sv_progs, "alpha");
+		eval_scale = FindFieldOffset (&sv_progs, "scale");
+		eval_glowsize = FindFieldOffset (&sv_progs, "glow_size");
+		eval_glowcolor = FindFieldOffset (&sv_progs, "glow_color");
+		eval_colormod = FindFieldOffset (&sv_progs, "colormod");
+	}
+};

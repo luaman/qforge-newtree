@@ -397,17 +397,17 @@ SV_MoveToGoal
 ======================
 */
 void
-SV_MoveToGoal (void)
+SV_MoveToGoal (progs_t *pr)
 {
 	edict_t    *ent, *goal;
 	float       dist;
 
-	ent = PROG_TO_EDICT (pr_global_struct->self);
+	ent = PROG_TO_EDICT (sv_progs.pr_global_struct->self);
 	goal = PROG_TO_EDICT (ent->v.goalentity);
-	dist = G_FLOAT (OFS_PARM0);
+	dist = G_FLOAT (&sv_progs, OFS_PARM0);
 
 	if (!((int) ent->v.flags & (FL_ONGROUND | FL_FLY | FL_SWIM))) {
-		G_FLOAT (OFS_RETURN) = 0;
+		G_FLOAT (&sv_progs, OFS_RETURN) = 0;
 		return;
 	}
 // if the next step hits the enemy, return immediately

@@ -373,7 +373,7 @@ SV_EmitPacketEntities (client_t *client, packet_entities_t *to, sizebuf_t *msg)
 
 		if (newnum < oldnum) {			// this is a new entity, send it from 
 										// the baseline
-			ent = EDICT_NUM (newnum);
+			ent = EDICT_NUM (&sv_progs, newnum);
 //Con_Printf ("baseline %i\n", newnum);
 			SV_WriteDelta (&ent->baseline, &to->entities[newindex], msg, true,
 						   client->stdver);
@@ -550,10 +550,10 @@ SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 
 	numnails = 0;
 
-	for (e = MAX_CLIENTS + 1, ent = EDICT_NUM (e); e < sv.num_edicts;
-		 e++, ent = NEXT_EDICT (ent)) {
+	for (e = MAX_CLIENTS + 1, ent = EDICT_NUM (&sv_progs, e); e < sv.num_edicts;
+		 e++, ent = NEXT_EDICT (&sv_progs, ent)) {
 		// ignore ents without visible models
-		if (!ent->v.modelindex || !*PR_GetString (ent->v.model))
+		if (!ent->v.modelindex || !*PR_GetString (&sv_progs, ent->v.model))
 			continue;
 
 		// ignore if not touching a PV leaf

@@ -313,16 +313,16 @@ SV_TouchLinks (edict_t *ent, areanode_t *node)
 			|| ent->v.absmax[2] < touch->v.absmin[2])
 			continue;
 
-		old_self = pr_global_struct->self;
-		old_other = pr_global_struct->other;
+		old_self = sv_progs.pr_global_struct->self;
+		old_other = sv_progs.pr_global_struct->other;
 
-		pr_global_struct->self = EDICT_TO_PROG (touch);
-		pr_global_struct->other = EDICT_TO_PROG (ent);
-		pr_global_struct->time = sv.time;
-		PR_ExecuteProgram (touch->v.touch);
+		sv_progs.pr_global_struct->self = EDICT_TO_PROG (touch);
+		sv_progs.pr_global_struct->other = EDICT_TO_PROG (ent);
+		sv_progs.pr_global_struct->time = sv.time;
+		PR_ExecuteProgram (&sv_progs, touch->v.touch);
 
-		pr_global_struct->self = old_self;
-		pr_global_struct->other = old_other;
+		sv_progs.pr_global_struct->self = old_self;
+		sv_progs.pr_global_struct->other = old_other;
 	}
 
 // recurse down both sides
@@ -912,8 +912,8 @@ SV_TestPlayerPosition (edict_t *ent, vec3_t origin)
 	VectorAdd (origin, ent->v.mins, boxmins);
 	VectorAdd (origin, ent->v.maxs, boxmaxs);
 
-	check = NEXT_EDICT (sv.edicts);
-	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (check)) {
+	check = NEXT_EDICT (&sv_progs, sv.edicts);
+	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (&sv_progs, check)) {
 		if (check->free)
 			continue;
 		if (check->v.solid != SOLID_BSP &&

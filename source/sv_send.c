@@ -422,7 +422,7 @@ SV_StartSound (edict_t *entity, int channel, char *sample, int volume,
 		return;
 	}
 
-	ent = NUM_FOR_EDICT (entity);
+	ent = NUM_FOR_EDICT (&sv_progs, entity);
 
 	if ((channel & 8) || !sv_phs->int_val)	// no PHS flag
 	{
@@ -572,7 +572,7 @@ SV_UpdateClientStats (client_t *client)
 		ent = svs.clients[client->spec_track - 1].edict;
 
 	stats[STAT_HEALTH] = ent->v.health;
-	stats[STAT_WEAPON] = SV_ModelIndex (PR_GetString (ent->v.weaponmodel));
+	stats[STAT_WEAPON] = SV_ModelIndex (PR_GetString (&sv_progs, ent->v.weaponmodel));
 	stats[STAT_AMMO] = ent->v.currentammo;
 	stats[STAT_ARMOR] = ent->v.armorvalue;
 	stats[STAT_SHELLS] = ent->v.ammo_shells;
@@ -583,7 +583,7 @@ SV_UpdateClientStats (client_t *client)
 		stats[STAT_ACTIVEWEAPON] = ent->v.weapon;
 	// stuff the sigil bits into the high bits of items for sbar
 	stats[STAT_ITEMS] =
-		(int) ent->v.items | ((int) pr_global_struct->serverflags << 28);
+		(int) ent->v.items | ((int) sv_progs.pr_global_struct->serverflags << 28);
 
 	// Extensions to the QW 2.40 protocol for Mega2k  --KB
 	stats[STAT_VIEWHEIGHT] = (int) ent->v.view_ofs[2];
@@ -693,13 +693,13 @@ SV_UpdateToReliableMessages (void)
 		// maxspeed/entgravity changes
 		ent = host_client->edict;
 
-		val = GetEdictFieldValue (ent, "gravity");
+		val = GetEdictFieldValue (&sv_progs, ent, "gravity");
 		if (val && host_client->entgravity != val->_float) {
 			host_client->entgravity = val->_float;
 			ClientReliableWrite_Begin (host_client, svc_entgravity, 5);
 			ClientReliableWrite_Float (host_client, host_client->entgravity);
 		}
-		val = GetEdictFieldValue (ent, "maxspeed");
+		val = GetEdictFieldValue (&sv_progs, ent, "maxspeed");
 		if (val && host_client->maxspeed != val->_float) {
 			host_client->maxspeed = val->_float;
 			ClientReliableWrite_Begin (host_client, svc_maxspeed, 5);

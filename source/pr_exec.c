@@ -38,27 +38,6 @@
 #include "server.h"
 #include "sys.h"
 
-typedef struct {
-	int         s;
-	dfunction_t *f;
-} prstack_t;
-
-#define	MAX_STACK_DEPTH		32
-prstack_t   pr_stack[MAX_STACK_DEPTH];
-int         pr_depth;
-
-#define	LOCALSTACK_SIZE		2048
-int         localstack[LOCALSTACK_SIZE];
-int         localstack_used;
-
-
-qboolean    pr_trace;
-dfunction_t *pr_xfunction;
-int         pr_xstatement;
-
-
-int         pr_argc;
-
 char       *pr_opnames[] = {
 	"DONE",
 
@@ -157,7 +136,7 @@ char       *PR_GlobalStringNoContents (int ofs);
 	PR_PrintStatement
 */
 void
-PR_PrintStatement (dstatement_t *s)
+PR_PrintStatement (progs_t *pr, dstatement_t *s)
 {
 	int         i;
 
@@ -192,34 +171,34 @@ PR_PrintStatement (dstatement_t *s)
 	PR_StackTrace
 */
 void
-PR_StackTrace (void)
+PR_StackTrace (progs_t *pr)
 {
 	dfunction_t *f;
 	int         i;
 
-	if (pr_depth == 0) {
+	if (pr->pr_depth == 0) {
 		Con_Printf ("<NO STACK>\n");
 		return;
 	}
 
-	pr_stack[pr_depth].f = pr_xfunction;
-	for (i = pr_depth; i >= 0; i--) {
-		f = pr_stack[i].f;
+	pr->pr_stack[pr->pr_depth].f = pr->pr_xfunction;
+	for (i = pr->pr_depth; i >= 0; i--) {
+		f = pr->pr_stack[i].f;
 
 		if (!f) {
 			Con_Printf ("<NO FUNCTION>\n");
 		} else
-			Con_Printf ("%12s : %s\n", PR_GetString (f->s_file),
-						PR_GetString (f->s_name));
+			Con_Printf ("%12s : %s\n", PR_GetString (pr, f->s_file),
+						PR_GetString (pr, f->s_name));
 	}
 }
 
 
 /*
-	PR_Profile_f
+	PR_Profile
 */
 void
-PR_Profile_f (void)
+PR_Profile (progs_t *pr)
 {
 	dfunction_t *f, *best;
 	int         max;
@@ -230,8 +209,8 @@ PR_Profile_f (void)
 	do {
 		max = 0;
 		best = NULL;
-		for (i = 0; i < progs->numfunctions; i++) {
-			f = &pr_functions[i];
+		for (i = 0; i < pr->progs->numfunctions; i++) {
+			f = &pr->pr_functions[i];
 			if (f->profile > max) {
 				max = f->profile;
 				best = f;
@@ -240,11 +219,16 @@ PR_Profile_f (void)
 		if (best) {
 			if (num < 10)
 				Con_Printf ("%7i %s\n", best->profile,
-							PR_GetString (best->s_name));
+							PR_GetString (pr, best->s_name));
 			num++;
 			best->profile = 0;
 		}
 	} while (best);
+}
+
+void
+PR_Profile_f (void)
+{
 }
 
 
@@ -254,7 +238,7 @@ PR_Profile_f (void)
 	Aborts the currently executing function
 */
 void
-PR_RunError (char *error, ...)
+PR_RunError (progs_t *pr, char *error, ...)
 {
 	va_list     argptr;
 	char        string[1024];
@@ -263,11 +247,11 @@ PR_RunError (char *error, ...)
 	vsnprintf (string, sizeof (string), error, argptr);
 	va_end (argptr);
 
-	PR_PrintStatement (pr_statements + pr_xstatement);
-	PR_StackTrace ();
+	PR_PrintStatement (pr, pr->pr_statements + pr->pr_xstatement);
+	PR_StackTrace (pr);
 	Con_Printf ("%s\n", string);
 
-	pr_depth = 0;						// dump the stack so SV_Error can
+	pr->pr_depth = 0;						// dump the stack so SV_Error can
 	// shutdown functions
 
 	SV_Error ("Program error");
@@ -285,36 +269,36 @@ PR_RunError (char *error, ...)
 	Returns the new program statement counter
 */
 int
-PR_EnterFunction (dfunction_t *f)
+PR_EnterFunction (progs_t *pr, dfunction_t *f)
 {
 	int         i, j, c, o;
 
-	pr_stack[pr_depth].s = pr_xstatement;
-	pr_stack[pr_depth].f = pr_xfunction;
-	pr_depth++;
-	if (pr_depth >= MAX_STACK_DEPTH)
-		PR_RunError ("stack overflow");
+	pr->pr_stack[pr->pr_depth].s = pr->pr_xstatement;
+	pr->pr_stack[pr->pr_depth].f = pr->pr_xfunction;
+	pr->pr_depth++;
+	if (pr->pr_depth >= MAX_STACK_DEPTH)
+		PR_RunError (pr, "stack overflow");
 
 // save off any locals that the new function steps on
 	c = f->locals;
-	if (localstack_used + c > LOCALSTACK_SIZE)
-		PR_RunError ("PR_ExecuteProgram: locals stack overflow\n");
+	if (pr->localstack_used + c > LOCALSTACK_SIZE)
+		PR_RunError (pr, "PR_ExecuteProgram: locals stack overflow\n");
 
 	for (i = 0; i < c; i++)
-		localstack[localstack_used + i] =
-			((int *) pr_globals)[f->parm_start + i];
-	localstack_used += c;
+		pr->localstack[pr->localstack_used + i] =
+			((int *) pr->pr_globals)[f->parm_start + i];
+	pr->localstack_used += c;
 
 // copy parameters
 	o = f->parm_start;
 	for (i = 0; i < f->numparms; i++) {
 		for (j = 0; j < f->parm_size[i]; j++) {
-			((int *) pr_globals)[o] = ((int *) pr_globals)[OFS_PARM0 + i * 3 + j];
+			((int *) pr->pr_globals)[o] = ((int *) pr->pr_globals)[OFS_PARM0 + i * 3 + j];
 			o++;
 		}
 	}
 
-	pr_xfunction = f;
+	pr->pr_xfunction = f;
 	return f->first_statement - 1;		// offset the s++
 }
 
@@ -322,28 +306,28 @@ PR_EnterFunction (dfunction_t *f)
 	PR_LeaveFunction
 */
 int
-PR_LeaveFunction (void)
+PR_LeaveFunction (progs_t *pr)
 {
 	int         i, c;
 
-	if (pr_depth <= 0)
+	if (pr->pr_depth <= 0)
 		SV_Error ("prog stack underflow");
 
 // restore locals from the stack
-	c = pr_xfunction->locals;
-	localstack_used -= c;
-	if (localstack_used < 0)
-		PR_RunError ("PR_ExecuteProgram: locals stack underflow\n");
+	c = pr->pr_xfunction->locals;
+	pr->localstack_used -= c;
+	if (pr->localstack_used < 0)
+		PR_RunError (pr, "PR_ExecuteProgram: locals stack underflow\n");
 
 	for (i = 0; i < c; i++)
 
-		((int *) pr_globals)[pr_xfunction->parm_start + i] =
-			localstack[localstack_used + i];
+		((int *) pr->pr_globals)[pr->pr_xfunction->parm_start + i] =
+			pr->localstack[pr->localstack_used + i];
 
 // up stack
-	pr_depth--;
-	pr_xfunction = pr_stack[pr_depth].f;
-	return pr_stack[pr_depth].s;
+	pr->pr_depth--;
+	pr->pr_xfunction = pr->pr_stack[pr->pr_depth].f;
+	return pr->pr_stack[pr->pr_depth].s;
 }
 
 
@@ -351,14 +335,14 @@ PR_LeaveFunction (void)
 	PR_ExecuteProgram
 */
 // LordHavoc: optimized
-#define OPA ((eval_t *)&pr_globals[(unsigned short) st->a])
-#define OPB ((eval_t *)&pr_globals[(unsigned short) st->b])
-#define OPC ((eval_t *)&pr_globals[(unsigned short) st->c])
+#define OPA ((eval_t *)&pr->pr_globals[(unsigned short) st->a])
+#define OPB ((eval_t *)&pr->pr_globals[(unsigned short) st->b])
+#define OPC ((eval_t *)&pr->pr_globals[(unsigned short) st->c])
 
 extern cvar_t *pr_boundscheck;
 
 void
-PR_ExecuteProgram (func_t fnum)
+PR_ExecuteProgram (progs_t *pr, func_t fnum)
 {
 	dstatement_t *st;
 	dfunction_t *f, *newf;
@@ -367,20 +351,20 @@ PR_ExecuteProgram (func_t fnum)
 	eval_t     *ptr;
 	int         profile, startprofile;
 
-	if (!fnum || fnum >= progs->numfunctions) {
-		if (pr_global_struct->self)
-			ED_Print (PROG_TO_EDICT (pr_global_struct->self));
+	if (!fnum || fnum >= pr->progs->numfunctions) {
+		if (pr->pr_global_struct->self)
+			ED_Print (pr, PROG_TO_EDICT (pr->pr_global_struct->self));
 		SV_Error ("PR_ExecuteProgram: NULL function");
 	}
 
-	f = &pr_functions[fnum];
+	f = &pr->pr_functions[fnum];
 
-	pr_trace = false;
+	pr->pr_trace = false;
 
 // make a stack frame
-	exitdepth = pr_depth;
+	exitdepth = pr->pr_depth;
 
-	st = &pr_statements[PR_EnterFunction (f)];
+	st = &pr->pr_statements[PR_EnterFunction (pr, f)];
 	startprofile = profile = 0;
 
 	while (1) {
@@ -388,12 +372,12 @@ PR_ExecuteProgram (func_t fnum)
 		if (++profile > 1000000)		// LordHavoc: increased runaway loop
 			// limit 10x
 		{
-			pr_xstatement = st - pr_statements;
-			PR_RunError ("runaway loop error");
+			pr->pr_xstatement = st - pr->pr_statements;
+			PR_RunError (pr, "runaway loop error");
 		}
 
-		if (pr_trace)
-			PR_PrintStatement (st);
+		if (pr->pr_trace)
+			PR_PrintStatement (pr, st);
 
 		switch (st->op) {
 			case OP_ADD_F:
@@ -466,7 +450,7 @@ PR_ExecuteProgram (func_t fnum)
 					&& !OPA->vector[2];
 				break;
 			case OP_NOT_S:
-				OPC->_float = !OPA->string || !*PR_GetString (OPA->string);
+				OPC->_float = !OPA->string || !*PR_GetString (pr, OPA->string);
 				break;
 			case OP_NOT_FNC:
 				OPC->_float = !OPA->function;
@@ -484,8 +468,8 @@ PR_ExecuteProgram (func_t fnum)
 				break;
 			case OP_EQ_S:
 				OPC->_float =
-					!strcmp (PR_GetString (OPA->string),
-							 PR_GetString (OPB->string));
+					!strcmp (PR_GetString (pr, OPA->string),
+							 PR_GetString (pr, OPB->string));
 				break;
 			case OP_EQ_E:
 				OPC->_float = OPA->_int == OPB->_int;
@@ -503,8 +487,8 @@ PR_ExecuteProgram (func_t fnum)
 				break;
 			case OP_NE_S:
 				OPC->_float =
-					strcmp (PR_GetString (OPA->string),
-							PR_GetString (OPB->string));
+					strcmp (PR_GetString (pr, OPA->string),
+							PR_GetString (pr, OPB->string));
 				break;
 			case OP_NE_E:
 				OPC->_float = OPA->_int != OPB->_int;
@@ -533,18 +517,18 @@ PR_ExecuteProgram (func_t fnum)
 			case OP_STOREP_S:
 			case OP_STOREP_FNC:		// pointers
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0 || OPB->_int + 4 > pr_edictareasize)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPB->_int < 0 || OPB->_int + 4 > pr->pr_edictareasize)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to write to an out of bounds edict\n");
+						(pr, "Progs attempted to write to an out of bounds edict\n");
 					return;
 				}
-				if (pr_boundscheck->int_val && (OPB->_int % pr_edict_size <
+				if (pr_boundscheck->int_val && (OPB->_int % pr->pr_edict_size <
 												((byte *) & sv.edicts->v -
 												 (byte *) sv.edicts))) {
-					pr_xstatement = st - pr_statements;
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to write to an engine edict field\n");
+						(pr, "Progs attempted to write to an engine edict field\n");
 					return;
 				}
 				ptr = (eval_t *) ((byte *) sv.edicts + OPB->_int);
@@ -552,10 +536,10 @@ PR_ExecuteProgram (func_t fnum)
 				break;
 			case OP_STOREP_V:
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0 || OPB->_int + 12 > pr_edictareasize)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPB->_int < 0 || OPB->_int + 12 > pr->pr_edictareasize)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to write to an out of bounds edict\n");
+						(pr, "Progs attempted to write to an out of bounds edict\n");
 					return;
 				}
 				ptr = (eval_t *) ((byte *) sv.edicts + OPB->_int);
@@ -565,23 +549,23 @@ PR_ExecuteProgram (func_t fnum)
 				break;
 			case OP_ADDRESS:
 				if (pr_boundscheck->int_val
-					&& (OPA->edict < 0 || OPA->edict >= pr_edictareasize)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPA->edict < 0 || OPA->edict >= pr->pr_edictareasize)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to address an out of bounds edict\n");
+						(pr, "Progs attempted to address an out of bounds edict\n");
 					return;
 				}
 				if (pr_boundscheck->int_val
 					&& (OPA->edict == 0 && sv.state == ss_active)) {
-					pr_xstatement = st - pr_statements;
-					PR_RunError ("assignment to world entity");
+					pr->pr_xstatement = st - pr->pr_statements;
+					PR_RunError (pr, "assignment to world entity");
 					return;
 				}
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0 || OPB->_int >= progs->entityfields)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPB->_int < 0 || OPB->_int >= pr->progs->entityfields)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to address an invalid field in an edict\n");
+						(pr, "Progs attempted to address an invalid field in an edict\n");
 					return;
 				}
 				ed = PROG_TO_EDICT (OPA->edict);
@@ -594,17 +578,17 @@ PR_ExecuteProgram (func_t fnum)
 			case OP_LOAD_S:
 			case OP_LOAD_FNC:
 				if (pr_boundscheck->int_val
-					&& (OPA->edict < 0 || OPA->edict >= pr_edictareasize)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPA->edict < 0 || OPA->edict >= pr->pr_edictareasize)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to read an out of bounds edict number\n");
+						(pr, "Progs attempted to read an out of bounds edict number\n");
 					return;
 				}
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0 || OPB->_int >= progs->entityfields)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPB->_int < 0 || OPB->_int >= pr->progs->entityfields)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to read an invalid field in an edict\n");
+						(pr, "Progs attempted to read an invalid field in an edict\n");
 					return;
 				}
 				ed = PROG_TO_EDICT (OPA->edict);
@@ -612,17 +596,17 @@ PR_ExecuteProgram (func_t fnum)
 				break;
 			case OP_LOAD_V:
 				if (pr_boundscheck->int_val
-					&& (OPA->edict < 0 || OPA->edict >= pr_edictareasize)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPA->edict < 0 || OPA->edict >= pr->pr_edictareasize)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to read an out of bounds edict number\n");
+						(pr, "Progs attempted to read an out of bounds edict number\n");
 					return;
 				}
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0 || OPB->_int + 2 >= progs->entityfields)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPB->_int < 0 || OPB->_int + 2 >= pr->progs->entityfields)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to read an invalid field in an edict\n");
+						(pr, "Progs attempted to read an invalid field in an edict\n");
 					return;
 				}
 				ed = PROG_TO_EDICT (OPA->edict);
@@ -654,40 +638,40 @@ PR_ExecuteProgram (func_t fnum)
 			case OP_CALL6:
 			case OP_CALL7:
 			case OP_CALL8:
-				pr_xfunction->profile += profile - startprofile;
+				pr->pr_xfunction->profile += profile - startprofile;
 				startprofile = profile;
-				pr_xstatement = st - pr_statements;
-				pr_argc = st->op - OP_CALL0;
+				pr->pr_xstatement = st - pr->pr_statements;
+				pr->pr_argc = st->op - OP_CALL0;
 				if (!OPA->function)
-					PR_RunError ("NULL function");
-				newf = &pr_functions[OPA->function];
+					PR_RunError (pr, "NULL function");
+				newf = &pr->pr_functions[OPA->function];
 				if (newf->first_statement < 0) {	// negative
 					// statements are
 					// built in functions
 					int         i = -newf->first_statement;
 
 					if (i >= pr_numbuiltins)
-						PR_RunError ("Bad builtin call number");
-					pr_builtins[i] ();
+						PR_RunError (pr, "Bad builtin call number");
+					pr_builtins[i] (pr);
 					break;
 				}
 
-				st = &pr_statements[PR_EnterFunction (newf)];
+				st = &pr->pr_statements[PR_EnterFunction (pr, newf)];
 				break;
 			case OP_DONE:
 			case OP_RETURN:
-				pr_globals[OFS_RETURN] = pr_globals[(unsigned short) st->a];
-				pr_globals[OFS_RETURN + 1] =
-					pr_globals[(unsigned short) st->a + 1];
-				pr_globals[OFS_RETURN + 2] =
-					pr_globals[(unsigned short) st->a + 2];
-				st = &pr_statements[PR_LeaveFunction ()];
-				if (pr_depth == exitdepth)
+				pr->pr_globals[OFS_RETURN] = pr->pr_globals[(unsigned short) st->a];
+				pr->pr_globals[OFS_RETURN + 1] =
+					pr->pr_globals[(unsigned short) st->a + 1];
+				pr->pr_globals[OFS_RETURN + 2] =
+					pr->pr_globals[(unsigned short) st->a + 2];
+				st = &pr->pr_statements[PR_LeaveFunction (pr)];
+				if (pr->pr_depth == exitdepth)
 					return;				// all done
 				break;
 			case OP_STATE:
-				ed = PROG_TO_EDICT (pr_global_struct->self);
-				ed->v.nextthink = pr_global_struct->time + 0.1;
+				ed = PROG_TO_EDICT (pr->pr_global_struct->self);
+				ed->v.nextthink = pr->pr_global_struct->time + 0.1;
 				ed->v.frame = OPA->_float;
 				ed->v.think = OPB->function;
 				break;
@@ -847,18 +831,18 @@ PR_ExecuteProgram (func_t fnum)
 				break;
 			case OP_STOREP_I:
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0 || OPB->_int + 4 > pr_edictareasize)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPB->_int < 0 || OPB->_int + 4 > pr->pr_edictareasize)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to write to an out of bounds edict\n");
+						(pr, "Progs attempted to write to an out of bounds edict\n");
 					return;
 				}
 				if (pr_boundscheck->int_val
-					&& (OPB->_int % pr_edict_size <
+					&& (OPB->_int % pr->pr_edict_size <
 						((byte *) & sv.edicts->v - (byte *) sv.edicts))) {
-					pr_xstatement = st - pr_statements;
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to write to an engine edict field\n");
+						(pr, "Progs attempted to write to an engine edict field\n");
 					return;
 				}
 				ptr = (eval_t *) ((byte *) sv.edicts + OPB->_int);
@@ -866,17 +850,17 @@ PR_ExecuteProgram (func_t fnum)
 				break;
 			case OP_LOAD_I:
 				if (pr_boundscheck->int_val
-					&& (OPA->edict < 0 || OPA->edict >= pr_edictareasize)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPA->edict < 0 || OPA->edict >= pr->pr_edictareasize)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to read an out of bounds edict number\n");
+						(pr, "Progs attempted to read an out of bounds edict number\n");
 					return;
 				}
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0 || OPB->_int >= progs->entityfields)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPB->_int < 0 || OPB->_int >= pr->progs->entityfields)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to read an invalid field in an edict\n");
+						(pr, "Progs attempted to read an invalid field in an edict\n");
 					return;
 				}
 				ed = PROG_TO_EDICT (OPA->edict);
@@ -890,37 +874,37 @@ PR_ExecuteProgram (func_t fnum)
 			case OP_GSTOREP_S:
 			case OP_GSTOREP_FNC:	// pointers
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0 || OPB->_int >= pr_globaldefs)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPB->_int < 0 || OPB->_int >= pr->pr_globaldefs)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to write to an invalid indexed global\n");
+						(pr, "Progs attempted to write to an invalid indexed global\n");
 					return;
 				}
-				pr_globals[OPB->_int] = OPA->_float;
+				pr->pr_globals[OPB->_int] = OPA->_float;
 				break;
 			case OP_GSTOREP_V:
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0 || OPB->_int + 2 >= pr_globaldefs)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPB->_int < 0 || OPB->_int + 2 >= pr->pr_globaldefs)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to write to an invalid indexed global\n");
+						(pr, "Progs attempted to write to an invalid indexed global\n");
 					return;
 				}
-				pr_globals[OPB->_int] = OPA->vector[0];
-				pr_globals[OPB->_int + 1] = OPA->vector[1];
-				pr_globals[OPB->_int + 2] = OPA->vector[2];
+				pr->pr_globals[OPB->_int] = OPA->vector[0];
+				pr->pr_globals[OPB->_int + 1] = OPA->vector[1];
+				pr->pr_globals[OPB->_int + 2] = OPA->vector[2];
 				break;
 
 			case OP_GADDRESS:
 				i = OPA->_int + (int) OPB->_float;
 				if (pr_boundscheck->int_val
-					&& (i < 0 || i >= pr_globaldefs)) {
-					pr_xstatement = st - pr_statements;
+					&& (i < 0 || i >= pr->pr_globaldefs)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to address an out of bounds global\n");
+						(pr, "Progs attempted to address an out of bounds global\n");
 					return;
 				}
-				OPC->_float = pr_globals[i];
+				OPC->_float = pr->pr_globals[i];
 				break;
 
 			case OP_GLOAD_I:
@@ -930,33 +914,33 @@ PR_ExecuteProgram (func_t fnum)
 			case OP_GLOAD_S:
 			case OP_GLOAD_FNC:
 				if (pr_boundscheck->int_val
-					&& (OPA->_int < 0 || OPA->_int >= pr_globaldefs)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPA->_int < 0 || OPA->_int >= pr->pr_globaldefs)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to read an invalid indexed global\n");
+						(pr, "Progs attempted to read an invalid indexed global\n");
 					return;
 				}
-				OPC->_float = pr_globals[OPA->_int];
+				OPC->_float = pr->pr_globals[OPA->_int];
 				break;
 
 			case OP_GLOAD_V:
 				if (pr_boundscheck->int_val
-					&& (OPA->_int < 0 || OPA->_int + 2 >= pr_globaldefs)) {
-					pr_xstatement = st - pr_statements;
+					&& (OPA->_int < 0 || OPA->_int + 2 >= pr->pr_globaldefs)) {
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs attempted to read an invalid indexed global\n");
+						(pr, "Progs attempted to read an invalid indexed global\n");
 					return;
 				}
-				OPC->vector[0] = pr_globals[OPA->_int];
-				OPC->vector[1] = pr_globals[OPA->_int + 1];
-				OPC->vector[2] = pr_globals[OPA->_int + 2];
+				OPC->vector[0] = pr->pr_globals[OPA->_int];
+				OPC->vector[1] = pr->pr_globals[OPA->_int + 1];
+				OPC->vector[2] = pr->pr_globals[OPA->_int + 2];
 				break;
 
 			case OP_BOUNDCHECK:
 				if (OPA->_int < 0 || OPA->_int >= st->b) {
-					pr_xstatement = st - pr_statements;
+					pr->pr_xstatement = st - pr->pr_statements;
 					PR_RunError
-						("Progs boundcheck failed at line number %d, value is < 0 or >= %d\n",
+						(pr, "Progs boundcheck failed at line number %d, value is < 0 or >= %d\n",
 						 st->b, st->c);
 					return;
 				}
@@ -964,41 +948,39 @@ PR_ExecuteProgram (func_t fnum)
 
 */
 			default:
-				pr_xstatement = st - pr_statements;
-				PR_RunError ("Bad opcode %i", st->op);
+				pr->pr_xstatement = st - pr->pr_statements;
+				PR_RunError (pr, "Bad opcode %i", st->op);
 		}
 	}
 }
 
-char       *pr_strtbl[MAX_PRSTR];
-int         num_prstr;
 char       *
-PR_GetString (int num)
+PR_GetString (progs_t *pr, int num)
 {
 	if (num < 0) {
-		// Con_DPrintf("GET:%d == %s\n", num, pr_strtbl[-num]);
-		return pr_strtbl[-num];
+		// Con_DPrintf("GET:%d == %s\n", num, pr->pr_strtbl[-num]);
+		return pr->pr_strtbl[-num];
 	}
-	return pr_strings + num;
+	return pr->pr_strings + num;
 }
 
 int
-PR_SetString (char *s)
+PR_SetString (progs_t *pr, char *s)
 {
 	int         i;
 
-	if (s - pr_strings < 0) {
-		for (i = 0; i <= num_prstr; i++)
-			if (pr_strtbl[i] == s)
+	if (s - pr->pr_strings < 0) {
+		for (i = 0; i <= pr->num_prstr; i++)
+			if (pr->pr_strtbl[i] == s)
 				break;
-		if (i < num_prstr)
+		if (i < pr->num_prstr)
 			return -i;
-		if (num_prstr == MAX_PRSTR - 1)
+		if (pr->num_prstr == MAX_PRSTR - 1)
 			Sys_Error ("MAX_PRSTR");
-		num_prstr++;
-		pr_strtbl[num_prstr] = s;
-		// Con_DPrintf("SET:%d == %s\n", -num_prstr, s);
-		return -num_prstr;
+		pr->num_prstr++;
+		pr->pr_strtbl[pr->num_prstr] = s;
+		// Con_DPrintf("SET:%d == %s\n", -pr->num_prstr, s);
+		return -pr->num_prstr;
 	}
-	return (int) (s - pr_strings);
+	return (int) (s - pr->pr_strings);
 }
