@@ -39,10 +39,15 @@ AC_PROG_LN_S
 
 set $CC
 if test "$1" = gcc; then
+	shift
+	args="$*"
 	AC_MSG_CHECKING(for fubared gcc)
 	if test `gcc --version` = 2.96; then
 		AC_MSG_RESULT(yes. you poor sod. Hope you have egcs)
-		CC=egcs
+		CC="egcs $args"
+		set $CPP
+		shift
+		CPP="egcs $*"
 	else
 		AC_MSG_RESULT(no. good)
 	fi
