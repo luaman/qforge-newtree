@@ -358,7 +358,7 @@ static void Draw_TextureMode_f (void)
 				Con_Printf ("%s\n", modes[i].name);
 				return;
 			}
-		Con_Printf ("current filter is unknown???\n");
+		Con_Printf ("current filter is unknown?\n");
 		return;
 	}
 

@@ -751,7 +751,7 @@ void M_Keys_Draw (void)
 		
 		if (keys[0] == -1)
 		{
-			M_Print (140, y, "???");
+			M_Print (140, y, "?" "?" "?"); //avoid any possibility of trigraphs
 		}
 		else
 		{

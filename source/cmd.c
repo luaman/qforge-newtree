@@ -378,7 +378,7 @@ void Cmd_Exec_f (void)
 		return;
 	}
 
-	// FIXME: is this safe freeing the hunk here???
+	// FIXME: is this safe freeing the hunk here?
 	mark = Hunk_LowMark ();
 	f = (char *)COM_LoadHunkFile (Cmd_Argv(1));
 	if (!f)

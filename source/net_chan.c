@@ -176,7 +176,7 @@ Sends a text message in an out-of-band datagram
 void Netchan_OutOfBandPrint (netadr_t adr, char *format, ...)
 {
 	va_list		argptr;
-	static char		string[8192];		// ??? why static?
+	static char		string[8192];		// ?? why static?
 	
 	va_start (argptr, format);
 	vsnprintf (string, sizeof(string), format, argptr);
