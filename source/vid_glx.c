@@ -288,6 +288,11 @@ void	VID_SetPalette (unsigned char *palette)
 	}
 }
 
+void
+CheckMultiTextureExtensions ( void )
+{
+	gl_mtexable = false;
+}
 
 /*
 ===============
@@ -307,6 +312,8 @@ void GL_Init (void)
 	Con_Printf ("GL_EXTENSIONS: %s\n", gl_extensions);
 
 //	Con_Printf ("%s %s\n", gl_renderer, gl_version);
+
+	CheckMultiTextureExtensions ();
 
 	glClearColor (0,0,0,0);
 	glCullFace(GL_FRONT);

@@ -341,10 +341,8 @@ extern	float	speedscale;		// for top sky and bottom sky
 void DrawGLWaterPoly (glpoly_t *p);
 void DrawGLWaterPolyLightmap (glpoly_t *p);
 
-#ifdef _WIN32
 lpMTexFUNC qglMTexCoord2fSGIS = NULL;
 lpSelTexFUNC qglSelectTextureSGIS = NULL;
-#endif
 
 qboolean mtexenabled = false;
 
@@ -382,8 +380,8 @@ void R_DrawSequentialPoly (msurface_t *s)
 	float		*v;
 	int			i;
 	texture_t	*t;
-//	vec3_t		nv;
-//	glRect_t	*theRect;
+	vec3_t		nv;
+	glRect_t	*theRect;
 
 	//
 	// normal lightmaped poly
@@ -392,9 +390,9 @@ void R_DrawSequentialPoly (msurface_t *s)
 	if (! (s->flags & (SURF_DRAWSKY|SURF_DRAWTURB|SURF_UNDERWATER) ) )
 	{
 		R_RenderDynamicLightmaps (s);
-		if (0) //gl_mtexable)
+		if (gl_mtexable)
 		{
-/*			p = s->polys;
+			p = s->polys;
 
 			t = R_TextureAnimation (s->texinfo->texture);
 			// Binds world to texture env 0
@@ -427,7 +425,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 				glVertex3fv (v);
 			}
 			glEnd ();
-			return; */
+			return;
 		} else {
 			p = s->polys;
 
@@ -491,9 +489,9 @@ void R_DrawSequentialPoly (msurface_t *s)
 	// underwater warped with lightmap
 	//
 	R_RenderDynamicLightmaps (s);
-	if (0) //gl_mtexable)
+	if (gl_mtexable)
 	{
-/*		p = s->polys;
+		p = s->polys;
 
 		t = R_TextureAnimation (s->texinfo->texture);
 		GL_SelectTexture(TEXTURE0_SGIS);
@@ -528,7 +526,6 @@ void R_DrawSequentialPoly (msurface_t *s)
 			glVertex3fv (nv);
 		}
 		glEnd ();
-*/
 	} else {
 		p = s->polys;
 

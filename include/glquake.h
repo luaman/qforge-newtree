@@ -239,12 +239,10 @@ void GL_Bind (int texnum);
 #define    TEXTURE0_SGIS				0x835E
 #define    TEXTURE1_SGIS				0x835F
 
-#ifdef _WIN32
 typedef void (GLAPIENTRY *lpMTexFUNC) (GLenum, GLfloat, GLfloat);
 typedef void (GLAPIENTRY *lpSelTexFUNC) (GLenum);
 extern lpMTexFUNC qglMTexCoord2fSGIS;
 extern lpSelTexFUNC qglSelectTextureSGIS;
-#endif
 
 extern qboolean gl_mtexable;
 
