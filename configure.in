@@ -951,13 +951,31 @@ if test "x$profile" = xyes; then
 	fi
 fi
 
+check_pipe=no
 if test "x$GCC" = xyes; then
 	dnl Check for -pipe vs -save-temps.
 	AC_MSG_CHECKING(for -pipe vs -save-temps)
 	AC_ARG_ENABLE(save-temps,
 		[  --enable-save-temps        save temporay files],
 		AC_MSG_RESULT(-save-temps); CFLAGS="$CFLAGS -save-temps"; BUILD_TYPE="$BUILD_TYPE Save-temps",
-		AC_MSG_RESULT(-pipe); CFLAGS="$CFLAGS -pipe")
+		AC_MSG_RESULT(-pipe); check_pipe=yes)
+fi
+if test "x$check_pipe" = xyes; then
+	AC_MSG_CHECKING(whether -pipe works)
+	save_CFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -pipe"
+	pipe_ok=no
+	AC_TRY_COMPILE(
+		[],
+		[],
+		pipe_ok=yes
+		AC_MSG_RESULT(yes),
+		AC_MSG_RESULT(no)
+	)
+	CFLAGS="$save_CFLAGS"
+	if test "x$pipe_ok" = xyes; then
+		CFLAGS="$CFLAGS -pipe"
+	fi
 fi
 
 dnl QuakeForge uses lots of BCPL-style (//) comments, which can cause problems

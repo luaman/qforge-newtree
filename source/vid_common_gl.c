@@ -352,7 +352,7 @@ Shared_Init8bitPalette()
 	}
 	is8bit = true;
 
-	if strstr(gl_renderer, "Mesa Glide") {
+	if (strstr(gl_renderer, "Mesa Glide") {
 #ifdef HAVE_TDFXGL
 		load_texture(GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
 #endif
