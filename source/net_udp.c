@@ -266,6 +266,10 @@ NET_GetPacket (void)
 						NET_AdrToString (net_from));
 			return false;
 		}
+		if (err == 10054) {
+			Con_DPrintf ("error 10054 from %s\n", NET_AdrToString (net_from));
+			return false;
+		}
 #else /* _WIN32 */
 		int         err = errno;
 
