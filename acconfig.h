@@ -106,5 +106,8 @@
 /* Define this if you want to have packet logging */
 #undef PACKET_LOGGING
 
+/* Define this if you have fnmatch.h */
+#undef HAVE_FNMATCH_H
+
 @BOTTOM@
 #endif // __config_h_

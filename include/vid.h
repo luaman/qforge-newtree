@@ -97,6 +97,8 @@ void VID_UnlockBuffer (void);
 
 qboolean VID_Is8bit (void);
 
+void VID_RaiseWindow (void);
+void VID_MinimiseWindow (void);
 void VID_SetCaption (char *text);
 // used to set window caption
 

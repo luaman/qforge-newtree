@@ -35,10 +35,13 @@ AC_LANG_C
 endian=""
 case "$host_os" in
 	mingw32*)
+		mingw=yes
 		CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include/win32"
 		CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include/win32/resources"
-		CC=i386-mingw32msvc-gcc
-		endian="little"
+		if test $host != $build; then
+			CC=$host_cpu-$host_os-gcc
+			endian="little"
+		fi
 		;;
 esac
 
@@ -98,7 +101,13 @@ AC_CHECK_HEADERS(
 	sys/time.h sys/types.h sys/wait.h time.h unistd.h vga.h \
 	vgakeyboard.h vgamouse.h windows.h winsock.h zlib.h
 )
-
+if test "x$mingw" = xyes; then
+	AC_MSG_CHECKING(for fnmatch.h)
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(HAVE_FNMATCH_H)
+else
+	AC_CHECK_HEADERS(fnmatch.h)
+fi
 
 dnl ==================================================================
 dnl Checks for typedefs, structures, and compiler characteristics

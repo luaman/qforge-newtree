@@ -45,6 +45,9 @@
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
+#endif
 
 #include "cl_input.h"
 #include "cl_main.h"
@@ -66,7 +69,6 @@
 #include "va.h"
 #include "vid.h"
 #include "view.h"
-#include "winquake.h"
 
 void        (*vid_menudrawfn) (void);
 void        (*vid_menukeyfn) (int key);
@@ -589,14 +591,14 @@ M_Options_Draw (void)
 		M_Print (16, 152, "         Video Options");
 
 #ifdef _WIN32
-	if (modestate == MS_WINDOWED) {
+	//FIXMEif (modestate == MS_WINDOWED) {
 #endif
 		if (_windowed_mouse) {
 			M_Print (16, 160, "             Use Mouse");
 			M_DrawCheckbox (220, 160, _windowed_mouse->int_val);
 		}
 #ifdef _WIN32
-	}
+	//FIXME}
 #endif
 
 // cursor
@@ -642,9 +644,9 @@ M_Options_Key (int k)
 			if (options_cursor < 0)
 				options_cursor = OPTIONS_ITEMS - 1;
 #ifdef _WIN32
-			if (options_cursor == 16
-				&& (!(_windowed_mouse)
-					|| (modestate != MS_WINDOWED))) options_cursor--;
+			//FIXMEif (options_cursor == 16
+				//FIXME&& (!(_windowed_mouse)
+					//FIXME|| (modestate != MS_WINDOWED))) options_cursor--;
 #endif
 			if (options_cursor == 15 && !(vid_menudrawfn))
 				options_cursor--;
@@ -656,8 +658,8 @@ M_Options_Key (int k)
 			if (options_cursor == 15 && !(vid_menudrawfn))
 				options_cursor++;
 #ifdef _WIN32
-			if (options_cursor == 16 && (!(_windowed_mouse) || (modestate != MS_WINDOWED)))	// ARGH!!!!!
-				options_cursor++;
+			//FIXMEif (options_cursor == 16 && (!(_windowed_mouse) || (modestate != MS_WINDOWED)))	// ARGH!!!!!
+				//FIXMEoptions_cursor++;
 #endif
 			if (options_cursor >= OPTIONS_ITEMS)
 				options_cursor = 0;

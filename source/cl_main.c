@@ -67,9 +67,6 @@
 #include "cvar.h"
 #include "draw.h"
 #include "host.h"
-#ifdef _WIN32
-# include "in_win.h"
-#endif
 #include "input.h"
 #include "keys.h"
 #include "menu.h"
@@ -89,7 +86,6 @@
 #include "vid.h"
 #include "view.h"
 #include "va.h"
-#include "winquake.h"
 
 #ifdef __sun
 /* Sun's model_t in sys/model.h conflicts w/ Quake's model_t */
@@ -927,8 +923,7 @@ CL_ConnectionlessPacket (void)
 			return;
 		}
 #ifdef _WIN32
-		ShowWindow (mainwindow, SW_RESTORE);
-		SetForegroundWindow (mainwindow);
+		VID_RaiseWindow ();
 #endif
 		s = MSG_ReadString ();
 
@@ -1160,10 +1155,7 @@ CL_Minimize_f
 void
 CL_Windows_f (void)
 {
-//  if (modestate == MS_WINDOWED)
-//      ShowWindow(mainwindow, SW_MINIMIZE);
-//  else
-	SendMessage (mainwindow, WM_SYSKEYUP, VK_TAB, 1 | (0x0F << 16) | (1 << 29));
+	VID_MinimiseWindow ();
 }
 #endif
 

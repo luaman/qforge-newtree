@@ -75,7 +75,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-//# include "winquake.h"
 # undef EWOULDBLOCK
 # define EWOULDBLOCK    WSAEWOULDBLOCK
 #endif

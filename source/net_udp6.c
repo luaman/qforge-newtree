@@ -51,7 +51,7 @@
 #define model_t quakeforgemodel_t
 
 #ifdef _WIN32
-# include <winquake.h>
+# include <windows.h>
 # undef EWOULDBLOCK
 # define EWOULDBLOCK	WSAEWOULDBLOCK
 #endif

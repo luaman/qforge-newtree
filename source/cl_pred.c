@@ -30,6 +30,8 @@
 # include "config.h"
 #endif
 
+#include <math.h>
+
 #include "bothdefs.h"
 #include "cl_ents.h"
 #include "client.h"
@@ -37,12 +39,6 @@
 #include "console.h"
 #include "cvar.h"
 #include "pmove.h"
-
-#ifdef _WIN32
-#include "winquake.h"
-#endif
-
-#include <math.h>
 
 cvar_t     *cl_nopred;
 cvar_t     *cl_pushlatency;
