@@ -28,6 +28,9 @@
 /* Define this to the base game for the engine to load */
 #undef BASEGAME
 
+/* Define this to the base directory for the client to download skins to */
+#undef SKINBASE
+
 /* Define this to use experimental code */
 #undef _EXPERIMENTAL_
 

@@ -937,6 +937,7 @@ if test "x$newstyle" = xyes -o "x$newstyle" = "x"; then
 	AC_MSG_RESULT([new style])
 	AC_DEFINE(NEWSTYLE)
 	AC_DEFINE(BASEGAME, "base")
+	AC_DEFINE(SKINBASE, "base")
 	default_globalconf="/etc/$PACKAGE.conf"
 	eval foo="$datadir"
 	default_sharepath="$foo/games/$PACKAGE"
@@ -944,6 +945,7 @@ if test "x$newstyle" = xyes -o "x$newstyle" = "x"; then
 else
 	AC_MSG_RESULT([old style (id Software defaults)])
 	AC_DEFINE(BASEGAME, "id1")
+	AC_DEFINE(SKINBASE, "qw")
 	if test "x$SYSTYPE" = xWIN32; then
 		default_globalconf="%WINDIR%/$PACKAGE.conf"
 	else

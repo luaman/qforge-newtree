@@ -121,6 +121,7 @@ char        gamedirfile[MAX_OSPATH];
 cvar_t     *fs_userpath;
 cvar_t     *fs_sharepath;
 cvar_t     *fs_basegame;
+cvar_t     *fs_skinbase;
 
 int         com_filesize;
 
@@ -984,9 +985,7 @@ COM_Gamedir (char *dir)
 	// 
 	Cache_Flush ();
 
-	if (strcmp (dir, fs_basegame->string) == 0)
-		return;
-	if (strcmp (dir, "qw") == 0 && strcmp (fs_basegame->string, "id1") == 0)
+	if (strcmp (dir, fs_skinbase->string) == 0)
 		return;
 
 	COM_AddGameDirectory (dir);
@@ -1056,8 +1055,8 @@ COM_Filesystem_Init (void)
 	COM_CreateGameDirectory (fs_basegame->string);
 
 	// If we're dealing with id1, use qw too
-	if (stricmp (fs_basegame->string, "id1") == 0) {
-		COM_CreateGameDirectory ("qw");
+	if (!strequal (fs_basegame->string, fs_skinbase->string) == 0) {
+		COM_CreateGameDirectory (fs_skinbase->string);
 	}
 
 	if ((i = COM_CheckParm ("-game")) && i < com_argc - 1) {
@@ -1085,6 +1084,8 @@ COM_Filesystem_Init_Cvars (void)
 							"location of your game directories");
 	fs_basegame = Cvar_Get ("fs_basegame", BASEGAME, CVAR_ROM,
 							"game to use by default");
+	fs_skinbase= Cvar_Get ("fs_skinbase", SKINBASE, CVAR_ROM,
+							"location of skins dir for downloads");
 }
 
 /*

@@ -448,8 +448,8 @@ CL_ParseDownload (void)
 			snprintf (name, sizeof (name), "%s/%s", com_gamedir,
 					  cls.downloadtempname);
 		else
-			snprintf (name, sizeof (name), "%s/qw/%s", fs_userpath->string,
-					  cls.downloadtempname);
+			snprintf (name, sizeof (name), "%s/%s/%s", fs_userpath->string,
+					  fs_skinbase->string, cls.downloadtempname);
 
 		COM_CreatePath (name);
 
@@ -501,10 +501,10 @@ CL_ParseDownload (void)
 				snprintf (newn, sizeof (newn), "%s/%s", com_gamedir,
 						  cls.downloadname);
 			} else {
-				snprintf (oldn, sizeof (oldn), "%s/qw/%s", fs_userpath->string,
-						  cls.downloadtempname);
-				snprintf (newn, sizeof (newn), "%s/qw/%s", fs_userpath->string,
-						  cls.downloadname);
+				snprintf (oldn, sizeof (oldn), "%s/%s/%s", fs_userpath->string,
+						  fs_skinbase->string, cls.downloadtempname);
+				snprintf (newn, sizeof (newn), "%s/%s/%s", fs_userpath->string,
+						  fs_skinbase->string, cls.downloadname);
 			}
 			r = Qrename (oldn, newn);
 			if (r)
