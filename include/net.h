@@ -39,7 +39,7 @@ typedef struct
 {
 	byte	ip[4];
 	unsigned short	port;
-	unsigned short	pad;
+	unsigned short	family;	// used to be pad, before IPV6
 } netadr_t;
 
 extern	netadr_t	net_local_adr;

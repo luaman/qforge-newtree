@@ -236,6 +236,24 @@ if test "x$enable_zlib" != "xno"; then
   fi
 fi
 
+
+AC_ARG_WITH(ipv6,
+[  --with-ipv6             enable IPv6 support. Optional argument specifies
+                          location of inet6 libraries.],
+	if test "x$withval" = xno ; then
+		NETTYPE_IPV6=no
+	else
+		AC_DEFINE(HAVE_IPV6)
+		NETTYPE_IPV6=yes
+		if test "x$withval" != xyes ; then
+			LIBS="$LIBS -L${withval}"
+		fi
+	fi
+,
+	NETTYPE_IPV6=no
+)
+AM_CONDITIONAL(NETTYPE_IPV6, test "x$NETTYPE_IPV6" = "xyes")
+
 dnl Checks for MGL support
 AC_ARG_WITH(mgl,
 [  --with-mgl[=DIR]        use MGL found in DIR],
@@ -1267,6 +1285,7 @@ AC_MSG_RESULT([
 	Server support: $SV_TARGETS
 	Client support:$CL_TARGETS
 	Sound system: $SNDTYPE
+	IPv6 networking: $NETTYPE_IPV6
 
 	Shared game data directory: $sharepath
 	Per-user game data directory: $userpath
