@@ -1076,14 +1076,13 @@ void SCR_UpdateScreen (void)
 //
 
 	// LordHavoc: set lighthalf based on gl_lightmode cvar
-	if (lighthalf != (gl_lightmode->value != 0))
+	if (lighthalf != gl_lightmode->int_val)
 	{
-		lighthalf = gl_lightmode->value != 0;
-		if (lighthalf) {
+		lighthalf = gl_lightmode->int_val;
+		if (lighthalf)
 			lighthalf_v[0] = lighthalf_v[1] = lighthalf_v[2] = 128;
-		} else {
+		else
 			lighthalf_v[0] = lighthalf_v[1] = lighthalf_v[2] = 255;
-		}
 		R_ForceLightUpdate();
 	}
 
@@ -1128,11 +1127,11 @@ void SCR_UpdateScreen (void)
 		f = brightness->value * 2;
 	else
 		f = brightness->value;
-	if (f > 1)
+	if (f >= 1.005) // epsilon
 	{
 		glBlendFunc (GL_DST_COLOR, GL_ONE);
 		glBegin (GL_QUADS);
-		while (f > 1)
+		while (f >= 1.005) // epsilon
 		{
 			if (f >= 2)
 				glColor3f (1, 1, 1);
@@ -1149,10 +1148,11 @@ void SCR_UpdateScreen (void)
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	Cvar_SetValue (contrast, bound (0.1, contrast->value, 1));
-	if ((gl_polyblend->value && v_blend[3]) || contrast->value < 1)
+	if ((gl_polyblend->value && v_blend[3]) || contrast->value < 0.999) // epsilon
 	{
 		glBegin (GL_QUADS);
-		if (contrast->value < 1) {
+		if (contrast->value < 0.999) // epsilon
+		{
 			glColor4f (1, 1, 1, (1 - contrast->value));
 			glVertex2f (0,0);
 			glVertex2f (vid.width, 0);
@@ -1160,7 +1160,8 @@ void SCR_UpdateScreen (void)
 			glVertex2f (0, vid.height);
 		}
 		
-		if (gl_polyblend->value && v_blend[3]) {
+		if (gl_polyblend->value && v_blend[3])
+		{
 			glColor4fv (v_blend);
 			glVertex2f (0,0);
 			glVertex2f (vid.width, 0);
