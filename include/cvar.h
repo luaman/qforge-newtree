@@ -68,12 +68,12 @@ typedef struct cvar_alias_s
 #define CVAR_NORESTART		1024	// do not clear when a cvar_restart is issued
 #define CVAR_LATCH			2048	// will only change when C code next does
 									// a Cvar_Get(), so it can't be changed
-#define CVAR_TEMP			4906	// can be set even when cheats are
+#define CVAR_TEMP			4096	// can be set even when cheats are
 									// disabled, but is not archived
 
-// Zoid| A good CVAR_ROM example is basepath.  The code should read "cvar_t
-// *fs_basepath = CvarGet("fs_basepath", ".", CVAR_ROM);  The user can
-// override that with +set fs_basepath <blah> since the command line +set gets
+// Zoid| A good CVAR_ROM example is userpath.  The code should read "cvar_t
+// *fs_userpath = CvarGet("fs_userpath", ".", CVAR_ROM);  The user can
+// override that with +set fs_userpath <blah> since the command line +set gets
 // created _before_ the C code for fs_basepath setup is called.  The code goes
 // "look, the user made fs_basepath already", uses the users value, but sets
 // CVAR_ROM as per the call.

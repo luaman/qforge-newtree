@@ -74,27 +74,27 @@ extern qboolean      is_server;
 
 
 /*
-All of Quake's data access is through a hierchal file system, but the
-contents of the file system can be transparently merged from several
-sources.
+	All of Quake's data access is through a hierchical file system, but the
+	contents of the file system can be transparently merged from several
+	sources.
 
-The "base directory" is the path to the directory holding the quake.exe
-and all game directories.  The sys_* files pass this to host_init in
-quakeparms_t->basedir.  This can be overridden with the "-basedir"
-command line parm to allow code debugging in a different directory.
-The base directory is only used during filesystem initialization.
+	The "user directory" is the path to the directory holding the quake.exe
+	and all game directories.  The sys_* files pass this to host_init in
+	quakeparms_t->basedir.  This can be overridden with the "-basedir"
+	command line parm to allow code debugging in a different directory.
+	The base directory is only used during filesystem initialization.
 
-The "game directory" is the first tree on the search path and directory
-that all generated files (savegames, screenshots, demos, config files)
-will be saved to.  This can be overridden with the "-game" command line
-parameter.  The game directory can never be changed while quake is
-executing.  This is a precacution against having a malicious server
-instruct clients to write files over areas they shouldn't.
+	The "game directory" is the first tree on the search path and directory
+	that all generated files (savegames, screenshots, demos, config files)
+	will be saved to.  This can be overridden with the "-game" command line
+	parameter.  The game directory can never be changed while quake is
+	executing.  This is a precacution against having a malicious server
+	instruct clients to write files over areas they shouldn't.
 
-The "cache directory" is only used during development to save network
-bandwidth, especially over ISDN / T1 lines.  If there is a cache directory
-specified, when a file is found by the normal search path, it will be
-mirrored into the cache directory, then opened there.
+	The "cache directory" is only used during development to save network
+	bandwidth, especially over ISDN / T1 lines.  If there is a cache directory
+	specified, when a file is found by the normal search path, it will be
+	mirrored into the cache directory, then opened there.
 */
 
 /*
@@ -107,7 +107,7 @@ QUAKE FILESYSTEM
 
 char    gamedirfile[MAX_OSPATH];
 
-cvar_t	*fs_basepath;
+cvar_t	*fs_userpath;
 cvar_t	*fs_sharepath;
 
 #ifdef GENERATIONS
@@ -930,7 +930,7 @@ COM_AddDirectory (char *dir)
 		strcpy (com_gamedir, dir);
 	} else {
 		strcpy (gamedirfile, dir);
-		strcpy (com_gamedir, va("%s/%s", fs_basepath->string, dir));
+		strcpy (com_gamedir, va("%s/%s", fs_userpath->string, dir));
 	}
 
 //
@@ -962,9 +962,9 @@ COM_AddGameDirectory (char *dir)
 	Con_DPrintf ("COM_AddGameDirectory (\"%s/%s\")\n",
 			fs_sharepath->string, dir);
 
-	if (strcmp (fs_sharepath->string, fs_basepath->string) != 0)
+	if (strcmp (fs_sharepath->string, fs_userpath->string) != 0)
 		COM_AddDirectory (va("%s/%s", fs_sharepath->string, dir));
-	COM_AddDirectory (va("%s/%s", fs_basepath->string, dir));
+	COM_AddDirectory (va("%s/%s", fs_userpath->string, dir));
 }
 
 /*
@@ -1064,7 +1064,7 @@ void COM_Gamedir_f (void)
 void
 COM_InitFilesystem ( void )
 {
-	fs_basepath = Cvar_Get ("fs_basepath", FS_USERPATH, CVAR_ROM,
+	fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
 			"the location of your game directories");
 	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH,
 			CVAR_ROM, "read-only game directories");
