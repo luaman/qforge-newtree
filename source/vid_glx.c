@@ -649,7 +649,7 @@ void VID_Init(unsigned char *palette)
 	vid.aspect = ((float)vid.height / (float)vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
 
-	InitSig(); // trap evil signals
+	//InitSig(); // trap evil signals
 
 	GL_Init();
 

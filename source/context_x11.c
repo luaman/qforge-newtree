@@ -119,18 +119,19 @@ x11_process_events(void)
 // ========================================================================
 
 static void
-TragicDeath(int signal_num)
+TragicDeath(int sig)
 {
+	printf("Received signal %d, exiting...\n", sig);
+	Sys_Quit();
+	exit(sig);
 	//XCloseDisplay(x_disp);
 	//VID_Shutdown();
-	Sys_Error("This death brought to you by the number %d\n", signal_num);
+	//Sys_Error("This death brought to you by the number %d\n", signal_num);
 }
 
 void
 x11_open_display( void )
 {
-	struct sigaction sa;
-
 	if ( !x_disp ) {
 		x_disp = XOpenDisplay( NULL );
 		if ( !x_disp ) {
@@ -138,11 +139,16 @@ x11_open_display( void )
 		}
 
 		// catch signals
-		sigaction(SIGINT, 0, &sa);
-		sigaction(SIGTERM, 0, &sa);
-		sa.sa_handler = TragicDeath;
-		sigaction(SIGINT, &sa, 0);
-		sigaction(SIGTERM, &sa, 0);
+		signal(SIGHUP, TragicDeath);
+		signal(SIGINT, TragicDeath);
+		signal(SIGQUIT, TragicDeath);
+		signal(SIGILL, TragicDeath);
+		signal(SIGTRAP, TragicDeath);
+		signal(SIGIOT, TragicDeath);
+		signal(SIGBUS, TragicDeath);
+		/*	signal(SIGFPE, TragicDeath); */
+		signal(SIGSEGV, TragicDeath);
+		signal(SIGTERM, TragicDeath);
 
 		// for debugging only
 		XSynchronize( x_disp, True );
