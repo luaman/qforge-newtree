@@ -1120,7 +1120,7 @@ zlib_paths="$withval", zlib_paths="")
 if test "x$need_abs_libz" = "xyes"; then
 	AC_MSG_CHECKING(for location of libz.a or libz.so)
 	zlib_location="unknown"
-	for d in $zlib_paths /usr/local/lib /usr/lib; do
+	for d in $zlib_paths /usr/local/lib /usr/lib /lib; do
 		for f in libz.so libz.a; do
 			if test -f $d/$f; then
 			zlib_location=$d/$f
@@ -1130,7 +1130,7 @@ if test "x$need_abs_libz" = "xyes"; then
 	done
 	AC_MSG_RESULT($zlib_location)
 	if test "$zlib_location" = unknown; then
-		echo need to specify zlib location with --with-zlib
+		echo need to specify zlib location with --with-libz
 		exit 1
 	fi
 	Z_LIBS="$zlib_location"
