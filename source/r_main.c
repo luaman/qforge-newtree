@@ -262,7 +262,7 @@ void R_Init_Cvars (void)
 	r_clearcolor = Cvar_Get("r_clearcolor", "2", CVAR_NONE, "None");
 	r_waterwarp = Cvar_Get("r_waterwarp", "1", CVAR_NONE, "None");
 	r_drawentities = Cvar_Get("r_drawentities", "1", CVAR_NONE, "None");
-	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_NONE, "None");
+	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_ARCHIVE, "None");
 	r_aliasstats = Cvar_Get("r_polymodelstats", "0", CVAR_NONE, "None");
 	r_dspeeds = Cvar_Get("r_dspeeds", "0", CVAR_NONE, "None");
 	r_reportsurfout = Cvar_Get("r_reportsurfout",  "0", CVAR_NONE, "None");

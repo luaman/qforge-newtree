@@ -210,7 +210,7 @@ void R_Init_Cvars (void)
 {
 	r_norefresh = Cvar_Get("r_norefresh", "0", CVAR_NONE, "None");
 	r_drawentities = Cvar_Get("r_drawentities", "1", CVAR_NONE, "None");
-	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_NONE, "None");
+	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_ARCHIVE, "None");
 	r_shadows = Cvar_Get("r_shadows", "0", CVAR_NONE, "None");
 	r_wateralpha = Cvar_Get("r_wateralpha", "1", CVAR_NONE, "None");
 	r_waterripple = Cvar_Get ("r_waterripple", "0", CVAR_NONE, "None");
