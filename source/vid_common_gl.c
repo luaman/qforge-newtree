@@ -29,7 +29,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
+#ifdef WIN32
+#include "winquake.h"
+#endif
 #include <GL/gl.h>
 
 #ifdef HAVE_GL_GLEXT_H
