@@ -29,6 +29,11 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
+#ifdef __sun
+/* Sun's model_t in sys/model.h conflicts w/ Quake's model_t */
+# define model_t sunmodel_t
+#endif
 #ifdef HAVE_STRING_H
 # include <string.h>
 #endif
@@ -48,6 +53,10 @@
 #endif
 
 #include <setjmp.h>
+
+#ifdef __sun
+# undef model_t
+#endif
 
 #include "bothdefs.h"
 #include "buildnum.h"
@@ -86,15 +95,6 @@
 #include "vid.h"
 #include "view.h"
 #include "va.h"
-
-#ifdef __sun
-/* Sun's model_t in sys/model.h conflicts w/ Quake's model_t */
-# define model_t sunmodel_t
-#endif
-
-#ifdef __sun
-# undef model_t
-#endif
 
 void        CL_RemoveQFInfoKeys ();
 
