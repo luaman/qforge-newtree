@@ -49,6 +49,9 @@
 /* Define this if you have GLX */
 #undef HAVE_GLX
 
+/* Define this if you have 3dfx */
+#undef HAVE_TDFXGL
+
 /* Define this if you have GL_COLOR_INDEX8_EXT in GL/gl.h */
 #undef HAVE_GL_COLOR_INDEX8_EXT
 

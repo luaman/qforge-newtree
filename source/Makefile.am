@@ -1,11 +1,11 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES=	-I$(top_srcdir)/include $(MGL_CFLAGS) $(GGI_CFLAGS) $(SVGA_CFLAGS) $(X_CFLAGS) $(GLX_CFLAGS)
+INCLUDES=	-I$(top_srcdir)/include $(MGL_CFLAGS) $(GGI_CFLAGS) $(SVGA_CFLAGS) $(X_CFLAGS) $(GLX_CFLAGS) $(TDFXGL_CFLAGS)
 
 bin_PROGRAMS =	@TARGETS@
 
 EXTRA_PROGRAMS= qf-server qf-client-mgl qf-client-ggi qf-client-svga \
-		qf-client-x11 qf-client-glx qf-client-wgl
+		qf-client-x11 qf-client-glx qf-client-wgl qf-client-3dfx
 
 noinst_LIBRARIES = libqfsys_cl.a libqfsys_sv.a libqfsnd.a libqfcd.a
 
@@ -88,6 +88,7 @@ svga_SOURCES=	d_copy.S vid_svgalib.c in_svgalib.c
 x11_SOURCES=	vid_x11.c in_x11.c context_x11.c dga_check.c
 glx_SOURCES=	vid_glx.c in_x11.c context_x11.c dga_check.c
 wgl_SOURCES=	vid_wgl.c
+tdfx_SOURCES=	vid_3dfxsvga.c in_svgalib.c
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
 qf_client_mgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(mgl_SOURCES)
@@ -95,6 +96,7 @@ qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(ggi
 qf_client_svga_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(svga_SOURCES)
 qf_client_x11_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(x11_SOURCES)
 qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
+qf_client_3dfx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(tdfx_SOURCES)
 qf_client_wgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(wgl_SOURCES)
 
 CLIENT_LIBS = -L. -lqfsys_cl -lqfsnd -lqfcd $(SOUND_LIBS) $(NET_LIBS)
@@ -105,6 +107,7 @@ qf_client_ggi_LDADD=	$(GGI_LIBS) $(CLIENT_LIBS)
 qf_client_svga_LDADD=	$(SVGA_LIBS) $(CLIENT_LIBS)
 qf_client_x11_LDADD=	$(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB) $(CLIENT_LIBS)
 qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(VIDMODE_LIBS) $(DGA_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
+qf_client_3dfx_LDADD=	$(TDFXGL_LIBS) $(SVGA_LIBS) $(CLIENT_LIBS) $(DL_LIBS)
 qf_client_wgl_LDADD=	$(CLIENT_LIBS)
 
 qf_server_DEPENDENCIES=libqfsys_sv.a
@@ -113,7 +116,7 @@ qf_client_ggi_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 qf_client_svga_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 qf_client_x11_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 qf_client_glx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
-qf_client_glx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
+qf_client_3dfx_DEPENDENCIES=libqfsys_cl.a libqfsnd.a libqfcd.a
 
 EXTRA_DIST = makefile.winc makefile.wingl makefile.wins \
 	qw_client.dsp qw_server.dsp

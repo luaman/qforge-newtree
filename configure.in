@@ -332,6 +332,26 @@ if test "x$HAVE_DGA" != xno; then
 fi
 AC_SUBST(DGA_LIBS)
 
+dnl Checks for GLIDE support
+AC_ARG_WITH(glide,
+[  --with-glide=DIR        use the GLIDE 2.x SDK found in DIR],
+HAS_GLIDE=$withval, HAS_GLIDE=auto)
+if test "x$HAS_GLIDE" != xno; then
+   if test "x$HAS_GLIDE" != xauto; then
+      GLIDE_CFLAGS="$GLIDE_CFLAGS -I$withval/include"
+      GLIDE_LIBS="$GLIDE_LIBS -L$withval/lib"
+   else
+      GLIDE_CFLAGS="$GLIDE_CFLAGS -I/usr/include/glide -I/usr/local/include/glide"
+   fi
+   save_CPPFLAGS="$CPPFLAGS"
+   CPPFLAGS="$CPPFLAGS $GLIDE_CFLAGS"
+   AC_CHECK_HEADER(glide.h, HAS_GLIDE=yes, HAS_GLIDE=no)
+   if test "x$HAS_GLIDE" != xyes; then
+        HAS_GLIDE=no
+   fi
+   CPPFLAGS="$save_CPPFLAGS"
+fi
+
 dnl Checks for GLX support
 AC_ARG_WITH(glx,
 [  --with-glx[=DIR]        use GLX with libraries found in DIR],
@@ -383,18 +403,18 @@ if test "x$glx_libraries" != xauto -a "x$glx_libraries" != xno -a "x$glx_librari
 		HAVE_GLX=no
 		AC_CHECK_LIB(GL, glColor4f,
 			HAVE_GLX=yes
-			GLX_NAME=GL,,
+			OGL_NAME=GL,,
 			[ -L$glx_libraries ]
 		)
 		if test "x$HAVE_GLX" != xyes; then
 			AC_CHECK_LIB(MesaGL, glColor4f,
 				HAVE_GLX=yes
-				GLX_NAME=MesaGL,,
+				OGL_NAME=MesaGL,,
 				[ -L$glx_libraries ]
 			)
 		fi
 		if test "x$HAVE_GLX" = xyes -a "x$have_dynload" != xyes; then
-			AC_CHECK_LIB($GLX_NAME, XMesaSetFXmode,
+			AC_CHECK_LIB($OGL_NAME, XMesaSetFXmode,
 				AC_DEFINE(HAVE_XMESA),,
 				[ -L$glx_libraries ]
 			)
@@ -411,18 +431,18 @@ else
 		HAVE_GLX=no
 		AC_CHECK_LIB(GL, glColor4f,
 			HAVE_GLX=yes
-			GLX_NAME=GL,,
+			OGL_NAME=GL,,
 			[ $X_LIBS ]
 		)
 		if test "x$HAVE_GLX" != xyes; then
 			AC_CHECK_LIB(MesaGL, glColor4f,
 				HAVE_GLX=yes
-				GLX_NAME=MesaGL,,
+				OGL_NAME=MesaGL,,
 				[ $X_LIBS ]
 			)
 		fi
 		if test "x$HAVE_GLX" = xyes -a "x$have_dynload" != xyes; then
-			AC_CHECK_LIB($GLX_NAME, XMesaSetFXmode,
+			AC_CHECK_LIB($OGL_NAME, XMesaSetFXmode,
 				AC_DEFINE(HAVE_XMESA),,
 				[ $X_LIBS ]
 			)
@@ -433,7 +453,7 @@ fi
 if test "x$HAVE_GLX" = xyes; then
 	test "x$GLX_CFLAGS" != x &&	GLX_CFLAGS="-I$GLX_CFLAGS"
 	test "x$glx_libraries" != x && GLX_LIBS="-L$glx_libraries"
-	GLX_LIBS="$GLX_LIBS -l$GLX_NAME"
+	GLX_LIBS="$GLX_LIBS -l$OGL_NAME"
 	AC_DEFINE(HAVE_GLX)
 else
 	GLX_CFLAGS=""
@@ -441,6 +461,47 @@ else
 fi
 AC_SUBST(GLX_CFLAGS)
 AC_SUBST(GLX_LIBS)
+
+# 3Dfx stuff..
+
+# First we see if we can use mesa with glide support..
+# if not then try the MiniGL..
+
+TDFXGL_NAME=""
+AC_ARG_WITH(3dfx,
+[  --with-3dfx             support 3Dfx output for the V1/V2, if a argument
+                          is specified it will be used as the GL wrapper lib
+                          for glide.],
+   HAS_3dfx=$withval, HAS_3dfx=auto)
+if test "x$HAS_3dfx" != "xno" -a "x$HAS_SVGA" != "xno" \
+        -a "x$HAS_GLIDE" != "xno"; then
+   if test "x$HAS_3dfx" != "xauto" -a "x$HAS_3dfx" != "xyes"; then
+      TDFXGL_NAME="$HAS_3dfx"
+   fi
+   if test -z "$TDFXGL_NAME"; then
+       dnl Check in reverse order of preference
+       for a in 3dfxgl $OGL_NAME; do
+          AC_CHECK_LIB($a, fxMesaCreateContext, TDFXGL_NAME=$a, qwfoo=qwfoo,
+          [$GLIDE_LIBS $TDFXGL_LIBS])
+       done
+   fi
+fi
+AC_MSG_CHECKING(for 3Dfx support)
+if test -n "$TDFXGL_NAME"; then
+   TDFXGL_CFLAGS="$GLIDE_CFLAGS"
+   TDFXGL_LIBS="$GLIDE_LIBS -l$TDFXGL_NAME"
+   HAVE_TDFXGL="yes"
+   AC_MSG_RESULT(yes (using $TDFXGL_NAME))
+else
+   TDFXGL_CFLAGS=""
+   TDFXGL_NAME=""
+   TDFXGL_LIBS=""
+   AC_MSG_RESULT(no)
+fi
+AC_SUBST(TDFXGL_CFLAGS)
+AC_SUBST(TDFXGL_LIBS)
+
+
 
 dnl ==================================================================
 dnl Checks for system type
@@ -876,6 +937,10 @@ if test "x$HAVE_X" = xyes; then
 		TARGETS="$TARGETS qf-client-glx\$(EXEEXT)"
 		CL_TARGETS="$CL_TARGETS GLX"
 	fi
+fi
+if test "x$HAVE_TDFXGL" = xyes ; then
+	TARGETS="$TARGETS qf-client-3dfx\$(EXEEXT)"
+	CL_TARGETS="$CL_TARGETS 3dfx"
 fi
 AC_SUBST(TARGETS)
 
