@@ -30,6 +30,9 @@
 # include "config.h"
 #endif
 
+#include <sys/time.h>
+#include <unistd.h>
+
 #include "host.h"
 #include "sys.h"
 #ifdef _WIN32
@@ -49,6 +52,8 @@
 #include "view.h"
 #include "cl_main.h"
 #include "cl_input.h"
+#include "net.h"
+#include <netinet/in.h>
 
 void        (*vid_menudrawfn) (void);
 void        (*vid_menukeyfn) (int key);
@@ -1048,10 +1053,13 @@ M_SinglePlayer_Key (key)
 #define STAT_X 50
 #define STAT_Y 122
 
-int         m_multip_cursor = 0;
-int         m_multip_mins = 0;
-int         m_multip_maxs = 10;
-int         m_multip_horiz;
+static int m_multip_cursor = 0;
+static int m_multip_mins = 0;
+static int m_multip_maxs = 10;
+static int m_multip_horiz;
+
+static server_entry_t *pingupdate = 0;
+static server_entry_t *statusupdate = 0;
 
 void
 M_Menu_MultiPlayer_f (void)
@@ -1070,7 +1078,9 @@ M_MultiPlayer_Draw (void)
 	server_entry_t *cp;
 	qpic_t     *p;
 
-	// int f;
+	static double lastping = 0;
+
+	int f;
 
 	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp"));
 	p = Draw_CachePic ("gfx/p_multi.lmp");
@@ -1082,27 +1092,96 @@ M_MultiPlayer_Draw (void)
 		M_PrintWhite (140, 13 * 8, "found.");
 		return;
 	}
-	M_DrawTextBox (STAT_X, STAT_Y, 23, 4);
-	M_DrawTextBox (STAT_X, STAT_Y + 38, 23, 3);
+	M_DrawTextBox (STAT_X, STAT_Y, 23, 7);
+	//M_DrawTextBox (STAT_X, STAT_Y + 38, 23, 3);
 	M_DrawTextBox (MENU_X, MENU_Y, 23, (m_multip_maxs - m_multip_mins) + 1);
-	for (serv = m_multip_mins; serv <= m_multip_maxs && serv < SL_Len (slist);
-		 serv++) {
+	for (serv = m_multip_mins; serv <= m_multip_maxs && serv < SL_Len (slist); serv++) {
 		cp = SL_Get_By_Num (slist, serv);
 		M_Print (MENU_X + 18, line * 8 + MENU_Y,
-				 va ("%1.21s",
+				 va ("%1.22s",
 					 strlen (cp->desc) <=
 					 m_multip_horiz ? "" : cp->desc + m_multip_horiz));
 		line++;
 	}
 	cp = SL_Get_By_Num (slist, m_multip_cursor);
-	M_PrintWhite (STAT_X + 18, STAT_Y + 16, "IP/Hostname:");
-	M_Print (STAT_X + 18, STAT_Y + 24, cp->server);
-	M_DrawCharacter (MENU_X + 8,
-					 (m_multip_cursor - m_multip_mins + 1) * 8 + MENU_Y,
-					 12 + ((int) (realtime * 4) & 1));
-	// f = (int)(realtime * 10) % 6;
-	// M_PrintWhite(STAT_X+118,STAT_Y+58,"uakeforge!");
-	// M_DrawTransPic(STAT_X+105,STAT_Y+48,Draw_CachePic(va("gfx/menudot%i.lmp",f+1)));
+	M_PrintWhite (STAT_X + 10, STAT_Y + 8, "IP/Hostname:");
+	M_Print (STAT_X + 10, STAT_Y + 16, cp->server);
+	if (pingupdate && realtime - lastping >= .25)
+	{
+		netadr_t addy;
+		char data[6];
+
+		data[0] = '\377';
+		data[1] = '\377';
+		data[2] = '\377';
+		data[3] = '\377';
+		data[4] = A2A_PING;
+		data[5] = 0;
+	
+		NET_StringToAdr (pingupdate->server, &addy);
+	
+		if (!addy.port)
+			addy.port = ntohs (27500);
+
+		gettimeofday(&(pingupdate->pingsent), 0);
+		pingupdate->pongback.tv_sec = 0;
+		pingupdate->pongback.tv_usec = 0;
+		NET_SendPacket (6, data, addy);
+		pingupdate = pingupdate->next;
+		lastping = realtime;
+	}
+	if (statusupdate && realtime - lastping >= .25)
+	{
+		netadr_t addy;
+		char data[] = "\377\377\377\377status";	
+	
+		NET_StringToAdr (statusupdate->server, &addy);
+	
+		if (!addy.port)
+			addy.port = ntohs (27500);
+
+		NET_SendPacket (strlen(data) + 1, data, addy);
+		statusupdate->waitstatus = 1;
+		statusupdate = statusupdate->next;
+		lastping = realtime;
+	}
+
+	if (!pingupdate && !statusupdate)
+	{
+		int playercount = 0, i;
+		M_PrintWhite (STAT_X + 10, STAT_Y + 24, "Ping:");
+		M_PrintWhite (STAT_X + 10, STAT_Y + 32, "Game:");
+		M_PrintWhite (STAT_X + 10, STAT_Y + 40, "Map:");
+		M_PrintWhite (STAT_X + 10, STAT_Y + 48, "Players:");
+		if (cp->pongback.tv_usec || cp->pongback.tv_sec)
+			M_Print (STAT_X + 58, STAT_Y + 24, va("%i", (int)(cp->pongback.tv_sec * 1000 + cp->pongback.tv_usec / 1000)));
+		else
+			M_Print (STAT_X + 58, STAT_Y + 24, "N/A");
+		if (cp->status)
+		{
+			for (i = 0; i < strlen(cp->status); i++)
+				if (cp->status[i] == '\n')
+					playercount++;
+			M_Print (STAT_X + 58, STAT_Y + 32, Info_ValueForKey (cp->status, "*gamedir"));
+			M_Print (STAT_X + 50, STAT_Y + 40, Info_ValueForKey (cp->status, "map"));
+			M_Print (STAT_X + 82, STAT_Y + 48, va("%i/%s", playercount, Info_ValueForKey(cp->status, "maxclients")));
+		}
+		else
+		{
+			M_Print (STAT_X + 58, STAT_Y + 32, "N/A");
+			M_Print (STAT_X + 50, STAT_Y + 40, "N/A");
+			M_Print (STAT_X + 82, STAT_Y + 48, "N/A");
+		}
+	}
+	else
+	{
+		M_PrintWhite (STAT_X + 10, STAT_Y + 24, "Updating...");
+		f = (int)(realtime * 10) % 6;
+		M_PrintWhite(STAT_X+118,STAT_Y+48,"uakeforge!");
+		M_DrawTransPic(STAT_X+105,STAT_Y+38,Draw_CachePic(va("gfx/menudot%i.lmp",f+1)));
+	}
+
+	M_DrawCharacter (MENU_X + 8, (m_multip_cursor - m_multip_mins + 1) * 8 + MENU_Y, 12 + ((int) (realtime * 4) & 1));
 }
 
 void
@@ -1161,7 +1240,37 @@ M_MultiPlayer_Key (key)
 		case 'E':
 			M_Menu_SEdit_f ();
 			break;
+		case 'p':
+		case 'P':
+			if (pingupdate || statusupdate)
+				break;
+			pingupdate = slist;
+			for (temp = slist; temp; temp = temp->next)
+				temp->pingsent.tv_sec = temp->pingsent.tv_usec = temp->pongback.tv_sec = temp->pongback.tv_usec = 0;
+			break;
+		case 's':
+		case 'S':
+			if (pingupdate || statusupdate)
+				break;
+			statusupdate = slist;
+			for (temp = slist; temp; temp = temp->next)
+				temp->waitstatus = 0;
+			break;
+		case 'u':
+		case 'U':
+			if (pingupdate || statusupdate)
+				break;
+			pingupdate = slist;
+			statusupdate = slist;
+			for (temp = slist; temp; temp = temp->next)
+			{
+				temp->pingsent.tv_sec = temp->pingsent.tv_usec = temp->pongback.tv_sec = temp->pongback.tv_usec = 0;
+				temp->waitstatus = 0;
+			}
+			break;	
 		case K_INS:
+			if (pingupdate || statusupdate)
+				break;
 			S_LocalSound ("misc/menu2.wav");
 			if (!slist) {
 				m_multip_cursor = 0;
@@ -1172,6 +1281,8 @@ M_MultiPlayer_Key (key)
 			}
 			break;
 		case K_DEL:
+			if (pingupdate || statusupdate)
+				break;
 			S_LocalSound ("misc/menu2.wav");
 			if (SL_Len (slist) > 0) {
 				slist = SL_Del (slist, SL_Get_By_Num (slist, m_multip_cursor));
@@ -1181,6 +1292,8 @@ M_MultiPlayer_Key (key)
 			break;
 		case ']':
 		case '}':
+			if (pingupdate || statusupdate)
+				break;
 			S_LocalSound ("misc/menu1.wav");
 			if (m_multip_cursor != SL_Len (slist) - 1) {
 				SL_Swap (SL_Get_By_Num (slist, m_multip_cursor),
@@ -1190,6 +1303,8 @@ M_MultiPlayer_Key (key)
 			break;
 		case '[':
 		case '{':
+			if (pingupdate || statusupdate)
+				break;
 			S_LocalSound ("misc/menu1.wav");
 			if (m_multip_cursor) {
 				SL_Swap (SL_Get_By_Num (slist, m_multip_cursor),

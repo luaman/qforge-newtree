@@ -34,6 +34,8 @@
 #endif
 
 #include <string.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 #include "cl_slist.h"
 #include "bothdefs.h"
@@ -73,7 +75,6 @@ SL_Add (server_entry_t *start, char *ip, char *desc)
 
 	strcpy (p->next->server, ip);
 	strcpy (p->next->desc, desc);
-	p->next->next = 0;
 
 	return (start);
 }
@@ -95,6 +96,8 @@ SL_Del (server_entry_t *start, server_entry_t *del)
 
 	free (del->server);
 	free (del->desc);
+	if (del->status)
+		free (del->status);
 	if (del->prev)
 		del->prev->next = del->next;
 	if (del->next)
@@ -129,14 +132,25 @@ SL_InsB (server_entry_t *start, server_entry_t *place, char *ip, char *desc)
 void
 SL_Swap (server_entry_t *swap1, server_entry_t *swap2)
 {
-	char       *p;
+	server_entry_t *next1, *next2, *prev1, *prev2;
+	int i;
+	
+	next1 = swap1->next;
+	next2 = swap2->next;
+	prev1 = swap1->prev;
+	prev2 = swap2->prev;
 
-	p = swap1->server;
-	swap1->server = swap2->server;
-	swap2->server = p;
-	p = swap1->desc;
-	swap1->desc = swap2->desc;
-	swap2->desc = p;
+	for (i = 0; i < sizeof(server_entry_t); i++)
+	{
+		((char *)swap1)[i] ^= ((char *)swap2)[i];
+		((char *)swap2)[i] ^= ((char *)swap1)[i];
+		((char *)swap1)[i] ^= ((char *)swap2)[i];
+	}
+
+	swap1->next = next1;
+	swap2->next = next2;
+	swap1->prev = prev1;
+	swap2->prev = prev2;
 }
 
 server_entry_t *
@@ -236,6 +250,8 @@ SL_Del_All (server_entry_t *start)
 		n = start->next;
 		free (start->server);
 		free (start->desc);
+		if (start->status)
+			free (start->status);
 		free (start);
 		start = n;
 	}
@@ -286,4 +302,15 @@ gettoklen (char *str, int req, char delim)
 		len++;
 	}
 	return len;
+}
+
+void timepassed (struct timeval *time1, struct timeval *time2)
+{
+	if (time2->tv_usec < time1->tv_usec)
+	{
+		time2->tv_usec = time2->tv_usec + 1000000;
+		time2->tv_sec--;
+	}
+	time2->tv_sec -= time1->tv_sec;
+	time2->tv_usec -= time1->tv_usec;
 }

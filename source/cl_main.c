@@ -30,6 +30,8 @@
 # include "config.h"
 #endif
 #include <ctype.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 #include "host.h"
 #include "bothdefs.h"
@@ -1002,9 +1004,30 @@ CL_ConnectionlessPacket (void)
 	}
 	// print command from somewhere
 	if (c == A2C_PRINT) {
-		Con_Printf ("print\n");
-
+		netadr_t addy;
+		server_entry_t *temp;
 		s = MSG_ReadString ();
+		for (temp = slist; temp; temp = temp->next)
+			if (temp->waitstatus)
+			{
+				NET_StringToAdr (temp->server, &addy);
+				if (NET_CompareBaseAdr (net_from, addy))
+				{
+					int i;
+					temp->status = realloc(temp->status, strlen(s) + 1);
+					strcpy(temp->status, s);
+					temp->waitstatus = 0;
+					for (i = 0; i < strlen(temp->status); i++)
+						if (temp->status[i] == '\n')
+						{
+							temp->status[i] = '\\';
+							break;
+						}
+					Con_Printf("status response\n");
+					return;
+				}
+			} 
+		Con_Printf ("print\n");
 		Con_Print (s);
 		return;
 	}
@@ -1048,6 +1071,23 @@ CL_ConnectionlessPacket (void)
 	Con_Printf ("unknown:  %c\n", c);
 }
 
+void
+CL_PingPacket (void)
+{
+	server_entry_t *temp;
+	netadr_t addy;
+	MSG_ReadByte ();;
+	for (temp = slist; temp; temp = temp->next)
+		if ((temp->pingsent.tv_sec || temp->pingsent.tv_usec) && !temp->pongback.tv_sec && !temp->pongback.tv_usec)
+		{
+			NET_StringToAdr (temp->server, &addy);
+			if (NET_CompareBaseAdr (net_from, addy))
+			{
+				gettimeofday(&(temp->pongback), 0);
+				timepassed(&(temp->pingsent), &(temp->pongback));
+			}
+		} 
+}		
 
 /*
 =================
@@ -1061,12 +1101,16 @@ CL_ReadPackets (void)
 	while (CL_GetMessage ()) {
 		// 
 		// remote command packet
-		// 
+		//
 		if (*(int *) net_message.data == -1) {
 			CL_ConnectionlessPacket ();
 			continue;
 		}
-
+		if (*(char *) net_message.data == A2A_ACK)
+		{
+			CL_PingPacket ();
+			continue;
+		}
 		if (net_message.cursize < 8) {
 			Con_Printf ("%s: Runt packet\n", NET_AdrToString (net_from));
 			continue;
