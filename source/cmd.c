@@ -130,6 +130,7 @@ Adds a \n to the text
 FIXME: actually change the command buffer to do less copying
 ============
 */
+#if 0	// Tonik
 void Cbuf_InsertText (char *text)
 {
 	char	*temp;
@@ -156,6 +157,35 @@ void Cbuf_InsertText (char *text)
 		free (temp);
 	}
 }
+#else
+void Cbuf_InsertText (char *text)
+{
+	int		textlen;
+
+	textlen = strlen(text);
+	if (cmd_text.cursize + 1 + textlen >= cmd_text.maxsize)
+	{
+		Con_Printf ("Cbuf_InsertText: overflow\n");
+		return;
+	}
+
+	if (!cmd_text.cursize)
+	{
+		memcpy (cmd_text.data, text, textlen);
+		cmd_text.cursize = textlen;
+		return;
+	}
+
+	// Move up to make room for inserted text
+	memmove (cmd_text.data + textlen + 1, cmd_text.data, cmd_text.cursize);
+	cmd_text.cursize += textlen + 1;
+
+	// Insert new text
+	memcpy (cmd_text.data, text, textlen);
+	cmd_text.data[textlen] = '\n';
+}
+#endif
+
 
 static void
 extract_line(char *line)
