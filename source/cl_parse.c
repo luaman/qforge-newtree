@@ -31,7 +31,16 @@
 # include <config.h>
 #endif
 #include "sys.h"
+#include "client.h"
+#include "cmd.h"
+#include "screen.h"
+#include "cdaudio.h"
 #include "quakedef.h"
+#include "bothdefs.h"
+#include "console.h"
+#include "msg.h"
+#include "pmove.h"
+#include "sbar.h"
 
 /* extern     cvar_t  gl_flashblend;
  CVAR_FIXME */
@@ -170,7 +179,7 @@ to start a download from the server.
 */
 qboolean	CL_CheckOrDownloadFile (char *filename)
 {
-	FILE	*f;
+	QFile	*f;
 
 	if (strstr (filename, ".."))
 	{
@@ -181,7 +190,7 @@ qboolean	CL_CheckOrDownloadFile (char *filename)
 	COM_FOpenFile (filename, &f);
 	if (f)
 	{	// it exists, no need to download
-		fclose (f);
+		Qclose (f);
 		return true;
 	}
 
@@ -369,7 +378,7 @@ void CL_ParseDownload (void)
 		if (cls.download)
 		{
 			Con_Printf ("cls.download shouldn't have been set\n");
-			fclose (cls.download);
+			Qclose (cls.download);
 			cls.download = NULL;
 		}
 		CL_RequestNextDownload ();
@@ -386,7 +395,7 @@ void CL_ParseDownload (void)
 
 		COM_CreatePath (name);
 
-		cls.download = fopen (name, "wb");
+		cls.download = Qopen (name, "wb");
 		if (!cls.download)
 		{
 			msg_readcount += size;
@@ -396,7 +405,7 @@ void CL_ParseDownload (void)
 		}
 	}
 
-	fwrite (net_message.data + msg_readcount, 1, size, cls.download);
+	Qwrite (cls.download, net_message.data + msg_readcount, size);
 	msg_readcount += size;
 
 	if (percent != 100)
@@ -425,7 +434,7 @@ void CL_ParseDownload (void)
 		Con_Printf ("100%%\n");
 #endif
 
-		fclose (cls.download);
+		Qclose (cls.download);
 
 		// rename the temp file to it's final name
 		if (strcmp(cls.downloadtempname, cls.downloadname)) {
@@ -540,7 +549,7 @@ CL_ParseServerData
 void CL_ParseServerData (void)
 {
 	char	*str;
-	FILE	*f;
+	QFile	*f;
 	char	fn[MAX_OSPATH];
 	qboolean	cflag = false;
 	extern	char	gamedirfile[MAX_OSPATH];
@@ -576,8 +585,8 @@ void CL_ParseServerData (void)
 	//if it exists
 	if (cflag) {
 		snprintf (fn, sizeof(fn), "%s/%s", com_gamedir, "config.cfg");
-		if ((f = fopen(fn, "r")) != NULL) {
-			fclose(f);
+		if ((f = Qopen(fn, "r")) != NULL) {
+			Qclose(f);
 			Cbuf_AddText ("cl_warncmd 0\n");
 			Cbuf_AddText("exec config.cfg\n");
 			Cbuf_AddText("exec frontend.cfg\n");
@@ -1152,8 +1161,8 @@ void CL_ParseServerMessage (void)
 			i = MSG_ReadByte ();
 			if (i >= MAX_LIGHTSTYLES)
 				Sys_Error ("svc_lightstyle > MAX_LIGHTSTYLES");
-			Q_strcpy (cl_lightstyle[i].map,  MSG_ReadString());
-			cl_lightstyle[i].length = Q_strlen(cl_lightstyle[i].map);
+			strcpy (cl_lightstyle[i].map,  MSG_ReadString());
+			cl_lightstyle[i].length = strlen(cl_lightstyle[i].map);
 			break;
 			
 		case svc_sound:

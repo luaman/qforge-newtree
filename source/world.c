@@ -30,7 +30,13 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "world.h"
+#include "server.h"
+#include "crc.h"
+#include "commdef.h"
+#include "console.h"
+
+#include <stdio.h>
 
 /*
 

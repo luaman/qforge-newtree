@@ -29,8 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # include "config.h"
 #endif
 
-#include "common.h"
-//#include "var.h"
+#include "cvar.h"
 
 /* The host system specifies the base of the directory tree, the
    command line parms passed to the program, and the amount of memory
@@ -57,5 +56,9 @@ extern	qboolean	host_initialized;	/* True if into command execution. */
 extern	double		host_frametime;
 extern	double		realtime;			/* Not bounded in any way, changed at
 										   start of every frame, never reset */
+extern qboolean		standard_quake, rogue, hipnotic;
+
+char	*va(char *format, ...);
+// does a varargs printf into a temp buffer
 
 #endif /* __QF_COMMDEF_H */

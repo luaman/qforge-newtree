@@ -29,7 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "server.h"
+#include "crc.h"
+#include "msg.h"
+#include "world.h"
+#include "commdef.h"
+#include "quakefs.h"
+
+#include <string.h>
 
 server_static_t	svs;				// persistant server info
 server_t		sv;					// local server

@@ -30,13 +30,16 @@
 	$Id$
 */
 
-#include <cl_slist.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+#include "cl_slist.h"
+#include "bothdefs.h"
+#include "console.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <bothdefs.h>
-#include <common.h>
-#include <console.h>
 
 //Better watch out for buffer overflows
 server_entry_t	slist[MAX_SERVER_LIST];
@@ -53,13 +56,13 @@ void Server_List_Init(void) { // Do this or everything else will sig11
 
 void Server_List_Shutdown(void) {  // I am the liberator of memory.
 	int i;
-	FILE *f;
-	if (!(f = fopen("./servers.txt","w"))) {
+	QFile *f;
+	if (!(f = Qopen("./servers.txt","w"))) {
 		Con_Printf("Couldn't open servers.txt.\n");
 		return;
 	}
 	Server_List_Save(f);
-	fclose(f);
+	Qclose(f);
 	for(i=0;i < MAX_SERVER_LIST;i++) {
 		if (slist[i].server)
 			free(slist[i].server);
@@ -123,7 +126,7 @@ int Server_List_Len (void) {
 	return i;
 }
 
-int Server_List_Load (FILE *f) { // This could get messy
+int Server_List_Load (QFile *f) { // This could get messy
 	int serv = 0;
 	char line[256]; /* Long lines get truncated. */
 	int c = ' ';    /* int so it can be compared to EOF properly*/
@@ -140,7 +143,7 @@ int Server_List_Load (FILE *f) { // This could get messy
 		i = 0;
 		c = ' ';
 		while (c != '\n' && c != EOF) {
-			c = getc(f);
+			c = Qgetc(f);
 			if (i < 255) {
 				line[i] = c;
 				i++;
@@ -166,11 +169,11 @@ int Server_List_Load (FILE *f) { // This could get messy
 	return 0;
 }
 
-int Server_List_Save(FILE *f) {
+int Server_List_Save(QFile *f) {
 	int i;
 	for(i=0;i < MAX_SERVER_LIST;i++) {
 		if (slist[i].server)
-			fprintf(f,"%s        %s\n",
+			Qprintf(f,"%s        %s\n",
 				slist[i].server,
 				slist[i].description);
 	}

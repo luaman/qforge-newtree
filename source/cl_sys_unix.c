@@ -45,6 +45,7 @@
 #include <sys/mman.h>
 
 #include "sys.h"
+#include "qargs.h"
 #include "quakedef.h"
 
 int noconinput = 0;
@@ -233,7 +234,7 @@ int main (int c, char **v)
 
 	j = COM_CheckParm("-mem");
 	if (j)
-		parms.memsize = (int) (Q_atof(com_argv[j+1]) * 1024 * 1024);
+		parms.memsize = (int) (atof(com_argv[j+1]) * 1024 * 1024);
 	parms.membase = malloc (parms.memsize);
 	if (!parms.membase) {
 		printf("Can't allocate memroy for zone.\n");

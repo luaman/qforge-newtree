@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <stdio.h>
 
-#include "common.h"
+#include "info.h"
 #include "mathlib.h"
 #include "protocol.h"
 #include "zone.h"
@@ -37,6 +37,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "sound.h"
 #include "render.h"
 #include "cvar.h"
+#include "quakefs.h"
 
 typedef struct
 {
@@ -191,7 +192,7 @@ typedef struct
 
 	int			qport;
 
-	FILE		*download;		// file transfer from server
+	QFile		*download;		// file transfer from server
 	char		downloadtempname[MAX_OSPATH];
 	char		downloadname[MAX_OSPATH];
 	int			downloadnumber;
@@ -207,7 +208,7 @@ typedef struct
 	qboolean	demorecording;
 	qboolean	demoplayback;
 	qboolean	timedemo;
-	FILE		*demofile;
+	QFile		*demofile;
 	float		td_lastframe;		// to meter out one message a frame
 	int			td_startframe;		// host_framecount at start
 	float		td_starttime;		// realtime at second frame of timedemo

@@ -31,8 +31,12 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "net.h"
+#include "qargs.h"
+#include "console.h"
 
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <errno.h>
 

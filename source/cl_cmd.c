@@ -31,7 +31,12 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+#include "client.h"
+#include "console.h"
+#include "cmd.h"
+#include "msg.h"
+
+#include <string.h>
 
 /*
 ===================
@@ -71,7 +76,7 @@ void Cmd_ForwardToServer_f (void)
 		return;
 	}
 
-	if (Q_strcasecmp(Cmd_Argv(1), "snap") == 0) {
+	if (strcasecmp(Cmd_Argv(1), "snap") == 0) {
 		Cbuf_InsertText ("snap\n");
 		return;
 	}

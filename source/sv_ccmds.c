@@ -29,7 +29,22 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "server.h"
+#include "crc.h"
+#include "msg.h"
+#include "world.h"
+#include "commdef.h"
+#include "cmd.h"
+#include "sys.h"
+#include "pmove.h"
+#include "compat.h"
+#include "quakefs.h"
+#include "bothdefs.h"
+#include "qendian.h"
+#include "qargs.h"
+
+#include <stdlib.h>
+#include <string.h>
 
 qboolean	sv_allow_cheats;
 
@@ -112,14 +127,14 @@ void SV_Logfile_f (void)
 	if (sv_logfile)
 	{
 		Con_Printf ("File logging off.\n");
-		fclose (sv_logfile);
+		Qclose (sv_logfile);
 		sv_logfile = NULL;
 		return;
 	}
 
 	snprintf (name, sizeof(name), "%s/qconsole.log", com_gamedir);
 	Con_Printf ("Logging text to %s.\n", name);
-	sv_logfile = fopen (name, "w");
+	sv_logfile = Qopen (name, "w");
 	if (!sv_logfile)
 		Con_Printf ("failed.\n");
 }
@@ -138,7 +153,7 @@ void SV_Fraglogfile_f (void)
 	if (sv_fraglogfile)
 	{
 		Con_Printf ("Frag file logging off.\n");
-		fclose (sv_fraglogfile);
+		Qclose (sv_fraglogfile);
 		sv_fraglogfile = NULL;
 		return;
 	}
@@ -147,15 +162,15 @@ void SV_Fraglogfile_f (void)
 	for (i=0 ; i<1000 ; i++)
 	{
 		snprintf (name, sizeof(name), "%s/frag_%i.log", com_gamedir, i);
-		sv_fraglogfile = fopen (name, "r");
+		sv_fraglogfile = Qopen (name, "r");
 		if (!sv_fraglogfile)
 		{	// can't read it, so create this one
-			sv_fraglogfile = fopen (name, "w");
+			sv_fraglogfile = Qopen (name, "w");
 			if (!sv_fraglogfile)
 				i=1000;	// give error
 			break;
 		}
-		fclose (sv_fraglogfile);
+		Qclose (sv_fraglogfile);
 	}
 	if (i==1000)
 	{
@@ -317,7 +332,7 @@ void SV_Map_f (void)
 {
 	char	level[MAX_QPATH];
 	char	expanded[MAX_QPATH];
-	FILE	*f;
+	QFile	*f;
 
 	if (Cmd_Argc() != 2)
 	{
@@ -339,7 +354,7 @@ void SV_Map_f (void)
 			Cbuf_AddText (va("map %s", curlevel));
 		return;
 	}
-	fclose (f);
+	Qclose (f);
 
 	SV_BroadcastCommand ("changing\n");
 	SV_SendMessagesToAll ();
@@ -506,16 +521,16 @@ void SV_ConSay_f(void)
 	if (Cmd_Argc () < 2)
 		return;
 
-	Q_strcpy (text, "console: ");
+	strcpy (text, "console: ");
 	p = Cmd_Args();
 
 	if (*p == '"')
 	{
 		p++;
-		p[Q_strlen(p)-1] = 0;
+		p[strlen(p)-1] = 0;
 	}
 
-	Q_strcat(text, p);
+	strcat(text, p);
 
 	for (j = 0, client = svs.clients; j < MAX_CLIENTS; j++, client++)
 	{
@@ -584,7 +599,7 @@ void SV_Serverinfo_f (void)
 	{
 		Z_Free (var->string);	// free the old value string	
 		var->string = CopyString (Cmd_Argv(2));
-		var->value = Q_atof (var->string);
+		var->value = atof (var->string);
 	}
 
 	SV_SendServerInfoChange(Cmd_Argv(1), Cmd_Argv(2));

@@ -22,13 +22,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _VID_H
 #define _VID_H
 
-#include "common.h"
+#include "qtypes.h"
 
 #define VID_CBITS	6
 #define VID_GRADES	(1 << VID_CBITS)
-
-// a pixel can be one, two, or four bytes
-typedef byte pixel_t;
 
 typedef struct vrect_s
 {

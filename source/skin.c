@@ -30,7 +30,13 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "cmd.h"
+#include "msg.h"
+#include "client.h"
+#include "console.h"
+#include "commdef.h"
+
+#include <string.h>
 
 /* cvar_t		baseskin = {"baseskin", "base"};
  CVAR_FIXME */

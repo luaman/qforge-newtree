@@ -30,6 +30,10 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#include "sys.h"
+#include "qargs.h"
+#include "cvar.h"
+#include "server.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,7 +49,6 @@
 /* cvar_t	sys_nostdout = {"sys_nostdout","0"};
  CVAR_FIXME */
 cvar_t	*sys_nostdout;
-
 
 /* The translation table between the graphical font and plain ASCII  --KB */
 static char qfont_table[256] =

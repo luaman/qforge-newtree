@@ -28,7 +28,6 @@
 #ifndef _IN_WIN_H
 #define _IN_WIN_H
 
-#include "common.h"
 #include "protocol.h"
 
 extern qboolean      mouseactive;

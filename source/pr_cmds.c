@@ -29,7 +29,21 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "pr_comp.h"
+#include "progs.h"
+#include "console.h"
+#include "server.h"
+#include "world.h"
+#include "msg.h"
+#include "cmd.h"
+#include "commdef.h"
+#include "info.h"
+
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+
+void SV_Error (char *error, ...);
 
 #define	RETURN_EDICT(e) (((int *)pr_globals)[OFS_RETURN] = EDICT_TO_PROG(e))
 #define	RETURN_STRING(s) (((int *)pr_globals)[OFS_RETURN] = PR_SetString(s))
@@ -1562,8 +1576,8 @@ void PF_logfrag (void)
 
 	SZ_Print (&svs.log[svs.logsequence&1], s);
 	if (sv_fraglogfile) {
-		fprintf (sv_fraglogfile, s);
-		fflush (sv_fraglogfile);
+		Qprintf (sv_fraglogfile, s);
+		Qflush (sv_fraglogfile);
 	}
 }
 

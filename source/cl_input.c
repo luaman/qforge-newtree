@@ -30,8 +30,22 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
 #include "in_win.h"
+#include "sys.h"
+#include "sys.h"
+#include "cvar.h"
+#include "sizebuf.h"
+#include "msg.h"
+#include "client.h"
+#include "commdef.h"
+#include "cmd.h"
+#include "console.h"
+#include "qendian.h"
+#include "quakefs.h"
+#include "quakedef.h"
+#include "pmove.h"
+#include "view.h"
+#include "checksum.h"
 
 /* cvar_t	cl_nodelta = {"cl_nodelta","0"};
  CVAR_FIXME */
@@ -171,7 +185,7 @@ void IN_UseUp (void) {KeyUp(&in_use);}
 void IN_JumpDown (void) {KeyDown(&in_jump);}
 void IN_JumpUp (void) {KeyUp(&in_jump);}
 
-void IN_Impulse (void) {in_impulse=Q_atoi(Cmd_Argv(1));}
+void IN_Impulse (void) {in_impulse=atoi(Cmd_Argv(1));}
 
 /*
 ===============

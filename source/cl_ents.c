@@ -31,7 +31,19 @@
 # include <config.h>
 #endif
 #include "sys.h"
+#include "sys.h"
+#include "cvar.h"
+#include "sizebuf.h"
+#include "msg.h"
+#include "client.h"
+#include "commdef.h"
+#include "cmd.h"
+#include "console.h"
+#include "qendian.h"
+#include "quakefs.h"
 #include "quakedef.h"
+#include "pmove.h"
+#include "view.h"
 
 /* extern	cvar_t	cl_predict_players;
  CVAR_FIXME */

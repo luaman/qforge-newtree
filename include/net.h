@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _NET_H
 #define _NET_H
 
-#include "common.h"
+#include "sizebuf.h"
 #include "cvar.h"
 
 #define	PORT_ANY	-1
@@ -38,8 +38,6 @@ extern	netadr_t	net_local_adr;
 extern	netadr_t	net_from;		// address of who sent the packet
 extern	sizebuf_t	net_message;
 
-/* extern	cvar_t	hostname;
- CVAR_FIXME */
 extern	cvar_t	*hostname;
 
 extern	int		net_socket;

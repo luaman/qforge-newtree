@@ -31,7 +31,8 @@
 # include <config.h>
 #endif
 #include <math.h>
-#include "quakedef.h"
+#include "qtypes.h"
+#include "mathlib.h"
 
 void Sys_Error (char *error, ...);
 

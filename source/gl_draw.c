@@ -34,7 +34,6 @@
 
 #include "bothdefs.h"	// needed by: common.h, net.h, client.h
 
-#include "common.h"
 #include "bspfile.h"	// needed by: glquake.h
 #include "vid.h"
 #include "sys.h"
@@ -388,7 +387,7 @@ void Draw_TextureMode_f (void)
 
 	for (i=0 ; i< 6 ; i++)
 	{
-		if (!Q_strcasecmp (modes[i].name, Cmd_Argv(1) ) )
+		if (!strcasecmp (modes[i].name, Cmd_Argv(1) ) )
 			break;
 	}
 	if (i == 6)
@@ -441,8 +440,8 @@ void Draw_Init (void)
 	cl_verstring = Cvar_Get("cl_verstring", PROGRAM " " VERSION, CVAR_NONE, "None");
 
 	// 3dfx can only handle 256 wide textures
-	if (!Q_strncasecmp ((char *)gl_renderer, "3dfx",4) ||
-		!Q_strncasecmp ((char *)gl_renderer, "Mesa",4))
+	if (!strncasecmp ((char *)gl_renderer, "3dfx",4) ||
+		!strncasecmp ((char *)gl_renderer, "Mesa",4))
 		Cvar_Set (gl_max_size, "256");
 
 	Cmd_AddCommand ("gl_texturemode", &Draw_TextureMode_f);

@@ -34,7 +34,16 @@
 #ifdef _WIN32
 #include "winquake.h"
 #endif
-#include <cl_slist.h>
+#include "cl_slist.h"
+#include "keys.h"
+#include "menu.h"
+#include "vid.h"
+#include "draw.h"
+#include "cmd.h"
+#include "screen.h"
+#include "client.h"
+#include "console.h"
+#include "view.h"
 
 void (*vid_menudrawfn)(void);
 void (*vid_menukeyfn)(int key);

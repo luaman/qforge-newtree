@@ -36,6 +36,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <signal.h>
+#include <stdlib.h>
+#include <math.h>
 
 #include <asm/io.h>
 
@@ -44,8 +46,15 @@
 #include "vgakeyboard.h"
 #include "vgamouse.h"
 
-#include "quakedef.h"
+#include "vid.h"
+#include "cmd.h"
+#include "keys.h"
+#include "client.h"
 #include "d_local.h"
+#include "quakedef.h"
+#include "qendian.h"
+#include "console.h"
+#include "qargs.h"
 
 #define stringify(m) { #m, m }
 
@@ -269,7 +278,7 @@ void VID_Gamma_f (void)
 
 	if (Cmd_Argc () == 2)
 	{
-		gamma = Q_atof (Cmd_Argv(1));
+		gamma = atof (Cmd_Argv(1));
 
 		for (i=0 ; i<768 ; i++)
 		{
@@ -292,7 +301,7 @@ void VID_DescribeMode_f (void)
 {
 	int modenum;
 	
-	modenum = Q_atoi (Cmd_Argv(1));
+	modenum = atoi (Cmd_Argv(1));
 	if ((modenum >= num_modes) || (modenum < 0 ) || !modes[modenum].width)
 		Con_Printf("Invalid video mode: %d!\n",modenum);
 	Con_Printf("%d: %d x %d - ",modenum,modes[modenum].width,modes[modenum].height);
@@ -357,7 +366,7 @@ void VID_InitModes(void)
 	for (i=0 ; i<num_modes ; i++)
 	{
 		if (vga_hasmode(i))
-			Q_memcpy(&modes[i], vga_getmodeinfo(i), sizeof (vga_modeinfo));
+			memcpy(&modes[i], vga_getmodeinfo(i), sizeof (vga_modeinfo));
 		else
 			modes[i].width = 0; // means not available
 	}
@@ -630,11 +639,11 @@ void VID_Init(unsigned char *palette)
 			|| COM_CheckParm("-d"))
 		{
 			if (COM_CheckParm("-w"))
-				w = Q_atoi(com_argv[COM_CheckParm("-w")+1]);
+				w = atoi(com_argv[COM_CheckParm("-w")+1]);
 			if (COM_CheckParm("-h"))
-				h = Q_atoi(com_argv[COM_CheckParm("-h")+1]);
+				h = atoi(com_argv[COM_CheckParm("-h")+1]);
 			if (COM_CheckParm("-d"))
-				d = Q_atoi(com_argv[COM_CheckParm("-d")+1]);
+				d = atoi(com_argv[COM_CheckParm("-d")+1]);
 			current_mode = get_mode(0, w, h, d);
 		}
 		else

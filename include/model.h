@@ -23,12 +23,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _MODEL_H
 #define _MODEL_H
 
-#include "common.h"
-#include "mathlib.h"
+#include "qtypes.h"
 #include "render.h"
 #include "bspfile.h"
-#include "modelgen.h"
 #include "spritegn.h"
+#include "modelgen.h"
+#include "zone.h"
 
 /*
 
@@ -69,7 +69,6 @@ typedef struct
 #define	SIDE_FRONT	0
 #define	SIDE_BACK	1
 #define	SIDE_ON		2
-
 
 // plane_t structure
 // !!! if this is changed, it must be changed in asm_i386.h too !!!

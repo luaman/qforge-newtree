@@ -33,7 +33,15 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "model.h"
+#include "quakefs.h"
+#include "qendian.h"
+#include "checksum.h"
+
+#include <math.h>
+#include <string.h>
+
+void SV_Error (char *error, ...);
 
 extern int texture_mode;
 
@@ -355,7 +363,7 @@ void Mod_LoadTextures (lump_t *l)
 		// the pixels immediately follow the structures
 		memcpy ( tx+1, mt+1, pixels);
 
-		if (!Q_strncmp(mt->name,"sky",3))	
+		if (!strncmp(mt->name,"sky",3))	
 			R_InitSky (tx);
 		else
 		{
@@ -766,7 +774,7 @@ void Mod_LoadFaces (lump_t *l)
 		
 	// set the drawing flags flag
 		
-		if (!Q_strncmp(out->texinfo->texture->name,"sky",3))	// sky
+		if (!strncmp(out->texinfo->texture->name,"sky",3))	// sky
 		{
 			out->flags |= (SURF_DRAWSKY | SURF_DRAWTILED);
 #ifndef QUAKE2
@@ -775,7 +783,7 @@ void Mod_LoadFaces (lump_t *l)
 			continue;
 		}
 		
-		if (!Q_strncmp(out->texinfo->texture->name,"*",1))		// turbulent
+		if (!strncmp(out->texinfo->texture->name,"*",1))		// turbulent
 		{
 			out->flags |= (SURF_DRAWTURB | SURF_DRAWTILED);
 			for (i=0 ; i<2 ; i++)

@@ -22,11 +22,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _SERVER_H
 #define _SERVER_H
 
-#include "common.h"
+#include "commdef.h"
+#include "net.h"
 #include "cvar.h"
 #include "protocol.h"
 #include "model.h"
 #include "progs.h"
+#include "sizebuf.h"
+#include "info.h"
+#include "quakeio.h"
 
 #define	QW_SERVER
 
@@ -175,7 +179,7 @@ typedef struct client_s
 
 	client_frame_t	frames[UPDATE_BACKUP];	// updates can be deltad from here
 
-	FILE			*download;			// file being downloaded
+	QFile			*download;			// file being downloaded
 	int				downloadsize;		// total bytes
 	int				downloadcount;		// bytes sent
 
@@ -187,7 +191,7 @@ typedef struct client_s
 
 	qboolean		upgradewarn;		// did we warn him?
 
-	FILE			*upload;
+	QFile			*upload;
 	char			uploadfn[MAX_QPATH];
 	netadr_t		snap_from;
 	qboolean		remote_snap;
@@ -351,11 +355,17 @@ extern	char		localmodels[MAX_MODELS][5];	// inline model names for precache
 extern	char		localinfo[MAX_LOCALINFO_STRING+1];
 
 extern	int			host_hunklevel;
-extern	FILE		*sv_logfile;
-extern	FILE		*sv_fraglogfile;
+extern	QFile		*sv_logfile;
+extern	QFile		*sv_fraglogfile;
 
 //===========================================================
 // FIXME: declare exported functions in their own relevant .h
+
+void SV_Error (char *error, ...);
+void SV_Init (quakeparms_t *parms);
+
+void Con_Printf (char *fmt, ...);
+void Con_DPrintf (char *fmt, ...);
 
 //
 // sv_main.c
@@ -364,7 +374,6 @@ void SV_Shutdown (void);
 void SV_Frame (float time);
 void SV_FinalMessage (char *message);
 void SV_DropClient (client_t *drop);
-
 int SV_CalcPing (client_t *cl);
 void SV_FullClientUpdate (client_t *client, sizebuf_t *buf);
 

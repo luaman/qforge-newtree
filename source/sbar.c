@@ -30,8 +30,19 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+#include "sbar.h"
+#include "screen.h"
+#include "vid.h"
+#include "wad.h"
+#include "commdef.h"
+#include "draw.h"
+#include "cmd.h"
+#include "client.h"
+#include "bothdefs.h"
+#include "msg.h"
 
+#include <stdlib.h>
+#include <string.h>
 
 int			sb_updates;		// if >= vid.numpages, no update needed
 

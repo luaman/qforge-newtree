@@ -30,7 +30,14 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "server.h"
+#include "crc.h"
+#include "msg.h"
+#include "world.h"
+#include "commdef.h"
+#include "cmd.h"
+#include "sys.h"
+#include "pmove.h"
 
 // check to see if client block will fit, if not, rotate buffers
 void ClientReliableCheckBlock(client_t *cl, int maxsize)

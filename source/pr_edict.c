@@ -30,7 +30,23 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "pr_comp.h"
+#include "progs.h"
+#include "console.h"
+#include "server.h"
+#include "world.h"
+#include "msg.h"
+#include "cmd.h"
+#include "commdef.h"
+#include "crc.h"
+#include "qendian.h"
+#include "quakefs.h"
+
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+
+void SV_Error (char *error, ...);
 
 dprograms_t		*progs;
 dfunction_t		*pr_functions;
@@ -561,7 +577,7 @@ void ED_PrintEdict_f (void)
 {
 	int		i;
 	
-	i = Q_atoi (Cmd_Argv(1));
+	i = atoi (Cmd_Argv(1));
 	Con_Printf ("\n EDICT %i:\n",i);
 	ED_PrintNum (i);
 }

@@ -29,7 +29,7 @@
 
 	$Id$
 */
-#include <stdio.h>
+#include "quakeio.h"
 #define MAX_SERVER_LIST 256
 
 typedef struct {
@@ -47,7 +47,7 @@ int Server_List_Reset_NoFree(int i);
 int Server_List_Reset(int i);
 void Server_List_Switch(int a,int b);
 int Server_List_Len(void);
-int Server_List_Load(FILE *f);
-int Server_List_Save(FILE *f);
+int Server_List_Load(QFile *f);
+int Server_List_Save(QFile *f);
 char *gettokstart (char *str, int req, char delim);
 int gettoklen(char *str, int req, char delim);

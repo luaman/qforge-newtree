@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
 
-#include "common.h"
 #include "bspfile.h"    // needed by: glquake.h
 #include "vid.h"
 #include "sys.h"

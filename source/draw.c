@@ -32,7 +32,12 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "draw.h"
+#include "vid.h"
+#include "d_iface.h"
+#include "console.h"
+#include "quakefs.h"
+#include "sound.h"
 
 typedef struct {
 	vrect_t	rect;
@@ -398,7 +403,7 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 
 		for (v=0 ; v<pic->height ; v++)
 		{
-			Q_memcpy (dest, source, pic->width);
+			memcpy (dest, source, pic->width);
 			dest += vid.rowbytes;
 			source += pic->width;
 		}
@@ -449,7 +454,7 @@ void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int h
 
 		for (v=0 ; v<height ; v++)
 		{
-			Q_memcpy (dest, source, width);
+			memcpy (dest, source, width);
 			dest += vid.rowbytes;
 			source += pic->width;
 		}

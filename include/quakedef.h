@@ -40,39 +40,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <setjmp.h>
 #include <time.h>
 
-#include "bothdefs.h"
-
-#include "common.h"
-#include "bspfile.h"
-#include "vid.h"
-//#include "sys.h"
-#include "zone.h"
-#include "mathlib.h"
-#include "wad.h"
-#include "draw.h"
+#include "qtypes.h"
 #include "cvar.h"
-#include "screen.h"
-#include "net.h"
-#include "protocol.h"
-#include "cmd.h"
-#include "sbar.h"
-#include "sound.h"
-#include "render.h"
-#include "client.h"
-
-#include "model.h"
-#include "d_iface.h"
-
-#include "input.h"
-#include "keys.h"
-#include "console.h"
-#include "view.h"
-#include "menu.h"
-#include "crc.h"
-#include "cdaudio.h"
-#include "pmove.h"
-
-#include "compat.h"
 #include "commdef.h"
 
 #define MAX_NUM_ARGVS	50

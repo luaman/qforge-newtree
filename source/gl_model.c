@@ -37,8 +37,8 @@
 #include <stdio.h>
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
-
-#include "common.h"
+#include "qendian.h"
+#include "msg.h"
 #include "bspfile.h"    // needed by: glquake.h
 #include "vid.h"
 #include "sys.h"
@@ -584,7 +584,7 @@ void * Mod_LoadSpriteFrame (void * pin, mspriteframe_t **ppframe, int framenum)
 
 	pspriteframe = Hunk_AllocName (sizeof (mspriteframe_t),loadname);
 
-	Q_memset (pspriteframe, 0, sizeof (mspriteframe_t));
+	memset (pspriteframe, 0, sizeof (mspriteframe_t));
 
 	*ppframe = pspriteframe;
 

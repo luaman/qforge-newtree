@@ -31,7 +31,8 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "console.h"
+#include "d_ifacea.h"
 #include "r_local.h"
 #include "d_local.h"	// FIXME: shouldn't be needed (is needed for patch
 						// right now, but that should move)

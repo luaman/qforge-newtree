@@ -34,7 +34,6 @@
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
 
-#include "common.h"
 #include "bspfile.h"    // needed by: glquake.h
 #include "vid.h"
 #include "sys.h"

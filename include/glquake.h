@@ -35,10 +35,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "common.h"
 #include "model.h"
 #include "render.h"
 #include "cvar.h"
+#include "wad.h"
+#include "client.h"
 
 // Ender: HackHackHack
 #ifndef GLAPIENTRY

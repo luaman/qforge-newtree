@@ -29,7 +29,19 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "server.h"
+#include "crc.h"
+#include "msg.h"
+#include "world.h"
+#include "commdef.h"
+#include "cmd.h"
+#include "sys.h"
+#include "pmove.h"
+#include "bothdefs.h"
+
+#include <stdarg.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define CHAN_AUTO   0
 #define CHAN_WEAPON 1
@@ -135,7 +147,7 @@ void Con_Printf (char *fmt, ...)
 
 	Sys_Printf ("%s", msg);	// also echo to debugging console
 	if (sv_logfile)
-		fprintf (sv_logfile, "%s", msg);
+		Qprintf (sv_logfile, "%s", msg);
 }
 
 /*

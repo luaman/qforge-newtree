@@ -29,7 +29,12 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+#include "compat.h"
+#include "qtypes.h"
+#include "client.h"
+#include "pmove.h"
+
+#include <math.h>
 
 
 movevars_t		movevars;

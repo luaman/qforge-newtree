@@ -31,7 +31,16 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "cmd.h"
+#include "cvar.h"
+#include "sizebuf.h"
+#include "zone.h"
+#include "console.h"
+#include "qargs.h"
+#include "quakefs.h"
+#include "commdef.h"
+
+#include <string.h>
 
 void Cmd_ForwardToServer (void);
 
@@ -101,14 +110,14 @@ void Cbuf_AddText (char *text)
 {
 	int		l;
 	
-	l = Q_strlen (text);
+	l = strlen (text);
 
 	if (cmd_text.cursize + l >= cmd_text.maxsize)
 	{
 		Con_Printf ("Cbuf_AddText: overflow\n");
 		return;
 	}
-	SZ_Write (&cmd_text, text, Q_strlen (text));
+	SZ_Write (&cmd_text, text, strlen (text));
 }
 
 
@@ -131,7 +140,7 @@ void Cbuf_InsertText (char *text)
 	if (templen)
 	{
 		temp = Z_Malloc (templen);
-		Q_memcpy (temp, cmd_text.data, templen);
+		memcpy (temp, cmd_text.data, templen);
 		SZ_Clear (&cmd_text);
 	}
 	else
@@ -190,7 +199,7 @@ void Cbuf_Execute (void)
 		{
 			i++;
 			cmd_text.cursize -= i;
-			Q_memcpy (text, text+i, cmd_text.cursize);
+			memcpy (text, text+i, cmd_text.cursize);
 		}
 
 // execute the command line
@@ -235,7 +244,7 @@ void Cmd_StuffCmds_f (void)
 	{
 		if (!com_argv[i])
 			continue;		// NEXTSTEP nulls out -NXHost
-		s += Q_strlen (com_argv[i]) + 1;
+		s += strlen (com_argv[i]) + 1;
 	}
 	if (!s)
 		return;
@@ -246,9 +255,9 @@ void Cmd_StuffCmds_f (void)
 	{
 		if (!com_argv[i])
 			continue;		// NEXTSTEP nulls out -NXHost
-		Q_strcat (text,com_argv[i]);
+		strcat (text,com_argv[i]);
 		if (i != com_argc-1)
-			Q_strcat (text, " ");
+			strcat (text, " ");
 	}
 	
 // pull out the commands
@@ -267,8 +276,8 @@ void Cmd_StuffCmds_f (void)
 			c = text[j];
 			text[j] = 0;
 			
-			Q_strcat (build, text+i);
-			Q_strcat (build, "\n");
+			strcat (build, text+i);
+			strcat (build, "\n");
 			text[j] = c;
 			i = j-1;
 		}
@@ -511,8 +520,8 @@ void Cmd_TokenizeString (char *text)
 
 		if (cmd_argc < MAX_ARGS)
 		{
-			cmd_argv[cmd_argc] = Z_Malloc (Q_strlen(com_token)+1);
-			Q_strcpy (cmd_argv[cmd_argc], com_token);
+			cmd_argv[cmd_argc] = Z_Malloc (strlen(com_token)+1);
+			strcpy (cmd_argv[cmd_argc], com_token);
 			cmd_argc++;
 		}
 	}
@@ -542,7 +551,7 @@ void	Cmd_AddCommand (char *cmd_name, xcommand_t function)
 // fail if the command already exists
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
 	{
-		if (!Q_strcmp (cmd_name, cmd->name))
+		if (!strcmp (cmd_name, cmd->name))
 		{
 			Con_Printf ("Cmd_AddCommand: %s already defined\n", cmd_name);
 			return;
@@ -567,7 +576,7 @@ qboolean	Cmd_Exists (char *cmd_name)
 
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
 	{
-		if (!Q_strcmp (cmd_name,cmd->name))
+		if (!strcmp (cmd_name,cmd->name))
 			return true;
 	}
 
@@ -587,7 +596,7 @@ char *Cmd_CompleteCommand (char *partial)
 	int				len;
 	cmdalias_t		*a;
 	
-	len = Q_strlen(partial);
+	len = strlen(partial);
 	
 	if (!len)
 		return NULL;
@@ -633,7 +642,7 @@ void	Cmd_ExecuteString (char *text)
 // check functions
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
 	{
-		if (!Q_strcasecmp (cmd_argv[0],cmd->name))
+		if (!strcasecmp (cmd_argv[0],cmd->name))
 		{
 			if (!cmd->function)
 				Cmd_ForwardToServer ();
@@ -646,7 +655,7 @@ void	Cmd_ExecuteString (char *text)
 // check alias
 	for (a=cmd_alias ; a ; a=a->next)
 	{
-		if (!Q_strcasecmp (cmd_argv[0], a->name))
+		if (!strcasecmp (cmd_argv[0], a->name))
 		{
 			Cbuf_InsertText (a->value);
 			return;
@@ -679,7 +688,7 @@ int Cmd_CheckParm (char *parm)
 		Sys_Error ("Cmd_CheckParm: NULL");
 
 	for (i = 1; i < Cmd_Argc (); i++)
-		if (! Q_strcasecmp (parm, Cmd_Argv (i)))
+		if (! strcasecmp (parm, Cmd_Argv (i)))
 			return i;
 			
 	return 0;
@@ -716,3 +725,71 @@ void Cmd_Init (void)
 	Cmd_AddCommand ("cmdlist", Cmd_CmdList_f);
 }
 
+
+char		com_token[1024];
+
+/*
+==============
+COM_Parse
+
+Parse a token out of a string
+==============
+*/
+char *COM_Parse (char *data)
+{
+	int		c;
+	int		len;
+	
+	len = 0;
+	com_token[0] = 0;
+	
+	if (!data)
+		return NULL;
+		
+// skip whitespace
+skipwhite:
+	while ( (c = *data) <= ' ')
+	{
+		if (c == 0)
+			return NULL;			// end of file;
+		data++;
+	}
+	
+// skip // comments
+	if (c=='/' && data[1] == '/')
+	{
+		while (*data && *data != '\n')
+			data++;
+		goto skipwhite;
+	}
+	
+
+// handle quoted strings specially
+	if (c == '\"')
+	{
+		data++;
+		while (1)
+		{
+			c = *data++;
+			if (c=='\"' || !c)
+			{
+				com_token[len] = 0;
+				return data;
+			}
+			com_token[len] = c;
+			len++;
+		}
+	}
+
+// parse a regular word
+	do
+	{
+		com_token[len] = c;
+		data++;
+		len++;
+		c = *data;
+	} while (c>32);
+	
+	com_token[len] = 0;
+	return data;
+}

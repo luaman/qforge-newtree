@@ -30,7 +30,17 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "console.h"
+#include "keys.h"
+#include "client.h"
+#include "draw.h"
+#include "commdef.h"
+#include "qargs.h"
+#include "cmd.h"
+#include "screen.h"
+
+#include <stdarg.h>
+#include <string.h>
 
 int			con_ormask;
 console_t	con_main;
@@ -118,8 +128,8 @@ Con_Clear_f
 */
 void Con_Clear_f (void)
 {
-	Q_memset (con_main.text, ' ', CON_TEXTSIZE);
-	Q_memset (con_chat.text, ' ', CON_TEXTSIZE);
+	memset (con_main.text, ' ', CON_TEXTSIZE);
+	memset (con_chat.text, ' ', CON_TEXTSIZE);
 }
 
 						
@@ -180,7 +190,7 @@ void Con_Resize (console_t *con)
 		width = 38;
 		con_linewidth = width;
 		con_totallines = CON_TEXTSIZE / con_linewidth;
-		Q_memset (con->text, ' ', CON_TEXTSIZE);
+		memset (con->text, ' ', CON_TEXTSIZE);
 	}
 	else
 	{
@@ -198,8 +208,8 @@ void Con_Resize (console_t *con)
 		if (con_linewidth < numchars)
 			numchars = con_linewidth;
 
-		Q_memcpy (tbuf, con->text, CON_TEXTSIZE);
-		Q_memset (con->text, ' ', CON_TEXTSIZE);
+		memcpy (tbuf, con->text, CON_TEXTSIZE);
+		memset (con->text, ' ', CON_TEXTSIZE);
 
 		for (i=0 ; i<numlines ; i++)
 		{
@@ -275,7 +285,7 @@ void Con_Linefeed (void)
 	if (con->display == con->current)
 		con->display++;
 	con->current++;
-	Q_memset (&con->text[(con->current%con_totallines)*con_linewidth]
+	memset (&con->text[(con->current%con_totallines)*con_linewidth]
 	, ' ', con_linewidth);
 }
 

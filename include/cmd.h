@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _CMD_H
 #define _CMD_H
 
+#include "qtypes.h"
+
 //===========================================================================
 
 /*
@@ -109,5 +111,8 @@ void	Cmd_ForwardToServer (void);
 // so when they are typed in at the console, they will need to be forwarded.
 
 void Cmd_StuffCmds_f (void);
+
+extern	char		com_token[1024];
+char *COM_Parse (char *data);
 
 #endif // _CMD_H

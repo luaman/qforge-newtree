@@ -1,7 +1,14 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "server.h"
+#include "crc.h"
+#include "msg.h"
+#include "world.h"
+#include "commdef.h"
+#include "cmd.h"
+#include "sys.h"
+#include "pmove.h"
 
 void Mod_LoadBrushModel (model_t *mod, void *buffer);
 

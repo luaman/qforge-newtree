@@ -31,10 +31,33 @@
 # include "config.h"
 #endif
 #include <ctype.h>
-
+#include "bothdefs.h"
+#include "in_win.h"
 #include "sys.h"
+#include "sys.h"
+#include "cvar.h"
+#include "sizebuf.h"
+#include "msg.h"
+#include "client.h"
+#include "commdef.h"
+#include "cmd.h"
+#include "console.h"
+#include "qendian.h"
+#include "quakefs.h"
 #include "quakedef.h"
-
+#include "pmove.h"
+#include "view.h"
+#include "checksum.h"
+#include "sys.h"
+#include "menu.h"
+#include "compat.h"
+#include "build.h"
+#include "keys.h"
+#include "screen.h"
+#include "sbar.h"
+#include "draw.h"
+#include "qargs.h"
+#include "cdaudio.h"
 #ifdef _WIN32
 #include "winquake.h"
 #include "winsock.h"
@@ -522,7 +545,7 @@ void CL_Disconnect (void)
 	Cam_Reset();
 
 	if (cls.download) {
-		fclose(cls.download);
+		Qclose(cls.download);
 		cls.download = NULL;
 	}
 
@@ -1132,7 +1155,7 @@ void CL_Download_f (void)
 	}
 
 	strncpy (cls.downloadtempname, cls.downloadname, sizeof(cls.downloadtempname));
-	cls.download = fopen (cls.downloadname, "wb");
+	cls.download = Qopen (cls.downloadname, "wb");
 	cls.downloadtype = dl_single;
 
 	MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
@@ -1161,7 +1184,7 @@ CL_Init
 */
 void CL_Init (void)
 {
-	FILE *servlist;
+	QFile *servlist;
 	char st[80];
 
 	cls.state = ca_disconnected;
@@ -1182,9 +1205,9 @@ void CL_Init (void)
 	Pmove_Init ();
 	Server_List_Init (); //Init server list
 
-	if ((servlist = fopen("./servers.txt","r"))) {
+	if ((servlist = Qopen("./servers.txt","r"))) {
 		Server_List_Load(servlist);
-		fclose(servlist);
+		Qclose(servlist);
 	}
 	
 
@@ -1459,11 +1482,11 @@ Writes key bindings and archived cvars to config.cfg
 */
 void Host_WriteConfiguration (void)
 {
-	FILE	*f;
+	QFile	*f;
 
 	if (host_initialized)
 	{
-		f = fopen (va("%s/config.cfg",com_gamedir), "w");
+		f = Qopen (va("%s/config.cfg",com_gamedir), "w");
 		if (!f)
 		{
 			Con_Printf ("Couldn't write config.cfg.\n");
@@ -1473,7 +1496,7 @@ void Host_WriteConfiguration (void)
 		Key_WriteBindings (f);
 		Cvar_WriteVariables (f);
 
-		fclose (f);
+		Qclose (f);
 	}
 }
 

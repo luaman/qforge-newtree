@@ -30,7 +30,10 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "qtypes.h"
+#include "pmove.h"
+#include "model.h"
+#include "console.h"
 
 static	hull_t		box_hull;
 static	dclipnode_t	box_clipnodes[6];

@@ -29,18 +29,20 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+#include "cvar.h"
+#include "sizebuf.h"
+#include "msg.h"
+#include "client.h"
+#include "commdef.h"
 
 void
 Cvar_Info(cvar_t *var)
 {
-        if (var->flags & CVAR_USERINFO)
-        {
-                Info_SetValueForKey (cls.userinfo, var->name, var->string, MAX_INFO_STRING);
-                if (cls.state >= ca_connected)
-                {
-                        MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
-                        SZ_Print (&cls.netchan.message, va("setinfo \"%s\" \"%s\"\n", var->name, var->string));
-                }
-        }
+	if (var->flags & CVAR_USERINFO) {
+		Info_SetValueForKey (cls.userinfo, var->name, var->string, MAX_INFO_STRING);
+		if (cls.state >= ca_connected) {
+			MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
+			SZ_Print (&cls.netchan.message, va("setinfo \"%s\" \"%s\"\n", var->name, var->string));
+		}
+	}
 }

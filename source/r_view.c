@@ -30,8 +30,16 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+#include "view.h"
+#include "bothdefs.h"
+#include "screen.h"
+#include "cmd.h"
 #include "r_local.h"
+#include "msg.h"
+#include "commdef.h"
+
+#include <stdlib.h>
+#include <math.h>
 
 /*
 

@@ -39,7 +39,11 @@
 #include <sys/wait.h>
 #include <linux/soundcard.h>
 #include <stdio.h>
-#include "quakedef.h"
+
+#include "console.h"
+#include "qargs.h"
+#include "sound.h"
+#include "cmd.h"
 
 #ifndef MAP_FAILED
 # define MAP_FAILED ((void *) -1)

@@ -29,12 +29,11 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "cvar.h"
+#include "server.h"
 
 void SV_SendServerInfoChange(char *key, char *value);
 
-/* extern cvar_t sv_highchars; 
-   CVAR_FIXME */ 
 extern cvar_t *sv_highchars; 
 
 /*

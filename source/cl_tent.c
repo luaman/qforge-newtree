@@ -31,8 +31,15 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "ctype.h"
+#include "render.h"
+#include "protocol.h"
+#include "client.h"
+#include "msg.h"
+#include "console.h"
 
+#include <math.h>
+#include <stdlib.h>
 
 #define	MAX_BEAMS	8
 typedef struct

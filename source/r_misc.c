@@ -30,8 +30,13 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "console.h"
+#include "cmd.h"
+#include "sbar.h"
 #include "r_local.h"
+#include "draw.h"
+#include "menu.h"
+#include "quakedef.h"
 
 qboolean	allowskybox;	// whether or not to allow skyboxes  --KB
 

@@ -32,6 +32,7 @@
 #endif
 #include "sys.h"
 #include "quakedef.h"
+#include "protocol.h"
 #include "glquake.h"
 
 /*

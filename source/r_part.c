@@ -29,8 +29,13 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+#include "qargs.h"
 #include "r_local.h"
+#include "console.h"
+#include "quakefs.h"
+#include "quakedef.h"
+
+#include <stdlib.h>
 
 #define MAX_PARTICLES			2048	// default max # of particles at one
 										//  time
@@ -62,7 +67,7 @@ void R_InitParticles (void)
 
 	if (i)
 	{
-		r_numparticles = (int)(Q_atoi(com_argv[i+1]));
+		r_numparticles = (int)(atoi(com_argv[i+1]));
 		if (r_numparticles < ABSOLUTE_MIN_PARTICLES)
 			r_numparticles = ABSOLUTE_MIN_PARTICLES;
 	}
@@ -96,12 +101,13 @@ void R_ClearParticles (void)
 
 void R_ReadPointFile_f (void)
 {
-	FILE	*f;
+	QFile	*f;
 	vec3_t	org;
 	int		r;
 	int		c;
 	particle_t	*p;
 	char	name[MAX_OSPATH];
+	char    buf[256];
 	
 // FIXME	sprintf (name,"maps/%s.pts", sv.name);
 
@@ -116,7 +122,9 @@ void R_ReadPointFile_f (void)
 	c = 0;
 	for ( ;; )
 	{
-		r = fscanf (f,"%f %f %f\n", &org[0], &org[1], &org[2]);
+		if (!Qgets(f,buf,sizeof(buf)))
+			break;
+		r = sscanf (buf,"%f %f %f\n", &org[0], &org[1], &org[2]);
 		if (r != 3)
 			break;
 		c++;
@@ -138,7 +146,7 @@ void R_ReadPointFile_f (void)
 		VectorCopy (org, p->org);
 	}
 
-	fclose (f);
+	Qclose (f);
 	Con_Printf ("%i points read\n", c);
 }
 	

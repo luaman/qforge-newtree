@@ -33,8 +33,18 @@
 #include <windows.h>
 #endif
 
+#include "qtypes.h"
 #include "sys.h"
-#include "quakedef.h"
+#include "keys.h"
+#include "menu.h"
+#include "cmd.h"
+#include "zone.h"
+#include "console.h"
+#include "cvar.h"
+#include "screen.h"
+#include "client.h"
+
+#include <string.h>
 
 /*
 
@@ -235,8 +245,8 @@ void CompleteCommand (void)
 	if (cmd)
 	{
 		key_lines[edit_line][1] = '/';
-		Q_strcpy (key_lines[edit_line]+2, cmd);
-		key_linepos = Q_strlen(cmd)+2;
+		strcpy (key_lines[edit_line]+2, cmd);
+		key_linepos = strlen(cmd)+2;
 		key_lines[edit_line][key_linepos] = ' ';
 		key_linepos++;
 		key_lines[edit_line][key_linepos] = 0;
@@ -307,8 +317,8 @@ void Key_Console (int key)
 				&& !key_lines[history_line][1]);
 		if (history_line == edit_line)
 			history_line = (edit_line+1)&31;
-		Q_strcpy(key_lines[edit_line], key_lines[history_line]);
-		key_linepos = Q_strlen(key_lines[edit_line]);
+		strcpy(key_lines[edit_line], key_lines[history_line]);
+		key_linepos = strlen(key_lines[edit_line]);
 		return;
 	}
 
@@ -328,8 +338,8 @@ void Key_Console (int key)
 		}
 		else
 		{
-			Q_strcpy(key_lines[edit_line], key_lines[history_line]);
-			key_linepos = Q_strlen(key_lines[edit_line]);
+			strcpy(key_lines[edit_line], key_lines[history_line]);
+			key_linepos = strlen(key_lines[edit_line]);
 		}
 		return;
 	}
@@ -475,7 +485,7 @@ int Key_StringToKeynum (char *str)
 
 	for (kn=keynames ; kn->name ; kn++)
 	{
-		if (!Q_strcasecmp(str,kn->name))
+		if (!strcasecmp(str,kn->name))
 			return kn->keynum;
 	}
 	return -1;
@@ -533,9 +543,9 @@ void Key_SetBinding (int keynum, char *binding)
 	}
 			
 // allocate memory for new binding
-	l = Q_strlen (binding);	
+	l = strlen (binding);	
 	new = Z_Malloc (l+1);
-	Q_strcpy (new, binding);
+	strcpy (new, binding);
 	new[l] = 0;
 	keybindings[keynum] = new;	
 }
@@ -627,13 +637,13 @@ Key_WriteBindings
 Writes lines containing "bind key value"
 ============
 */
-void Key_WriteBindings (FILE *f)
+void Key_WriteBindings (QFile *f)
 {
 	int		i;
 
 	for (i=0 ; i<256 ; i++)
 		if (keybindings[i])
-			fprintf (f, "bind %s \"%s\"\n", Key_KeynumToString(i), keybindings[i]);
+			Qprintf (f, "bind %s \"%s\"\n", Key_KeynumToString(i), keybindings[i]);
 }
 
 

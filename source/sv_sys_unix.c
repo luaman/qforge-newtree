@@ -31,12 +31,16 @@
 # include <config.h>
 #endif
 #include <sys/types.h>
-#include "qwsvdef.h"
+#include "qargs.h"
+#include "cvar.h"
+#include "server.h"
+#include "sys.h"
 
 #ifdef NeXT
 #include <libc.h>
 #endif
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -165,7 +169,7 @@ int main(int argc, char *argv[])
 
 	j = COM_CheckParm("-mem");
 	if (j)
-		parms.memsize = (int) (Q_atof(com_argv[j+1]) * 1024 * 1024);
+		parms.memsize = (int) (atof(com_argv[j+1]) * 1024 * 1024);
 	if ((parms.membase = malloc (parms.memsize)) == NULL)
 		Sys_Error("Can't allocate %ld\n", parms.memsize);
 

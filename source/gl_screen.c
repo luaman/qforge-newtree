@@ -36,8 +36,7 @@
 #include <time.h>
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
-
-#include "common.h"
+#include "qendian.h"
 #include "bspfile.h"    // needed by: glquake.h
 #include "vid.h"
 #include "sys.h"
@@ -810,11 +809,11 @@ void WritePCXfile (char *filename, byte *data, int width, int height,
 	pcx->ymax = LittleShort((short)(height-1));
 	pcx->hres = LittleShort((short)width);
 	pcx->vres = LittleShort((short)height);
-	Q_memset (pcx->palette,0,sizeof(pcx->palette));
+	memset (pcx->palette,0,sizeof(pcx->palette));
 	pcx->color_planes = 1;		// chunky image
 	pcx->bytes_per_line = LittleShort((short)width);
 	pcx->palette_type = LittleShort(2);		// not a grey scale
-	Q_memset (pcx->filler,0,sizeof(pcx->filler));
+	memset (pcx->filler,0,sizeof(pcx->filler));
 
 // pack the image
 	pack = &pcx->data;

@@ -30,8 +30,10 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "console.h"
 #include "r_local.h"
+
+#include <math.h>
 
 //
 // current entity info

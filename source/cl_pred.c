@@ -29,8 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
-#include "winquake.h"
+#include "cvar.h"
+#include "client.h"
+#include "pmove.h"
+#include "bothdefs.h"
+#include "console.h"
+#include "commdef.h"
+
+#include <math.h>
 
 /* cvar_t	cl_nopred = {"cl_nopred","0"};
  CVAR_FIXME */

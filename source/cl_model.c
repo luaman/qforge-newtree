@@ -33,7 +33,11 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+#include "model.h"
+#include "crc.h"
+#include "msg.h"
+#include "console.h"
+#include "qendian.h"
 #include "r_local.h"
 
 void SV_Error (char *error, ...);
@@ -239,7 +243,7 @@ void * Mod_LoadAliasSkin (void * pin, int *pskinindex, int skinsize,
 
 	if (r_pixbytes == 1)
 	{
-		Q_memcpy (pskin, pinskin, skinsize);
+		memcpy (pskin, pinskin, skinsize);
 	}
 	else if (r_pixbytes == 2)
 	{
@@ -590,7 +594,7 @@ void * Mod_LoadSpriteFrame (void * pin, mspriteframe_t **ppframe)
 	pspriteframe = Hunk_AllocName (sizeof (mspriteframe_t) + size*r_pixbytes,
 								   loadname);
 
-	Q_memset (pspriteframe, 0, sizeof (mspriteframe_t) + size);
+	memset (pspriteframe, 0, sizeof (mspriteframe_t) + size);
 	*ppframe = pspriteframe;
 
 	pspriteframe->width = width;
@@ -605,7 +609,7 @@ void * Mod_LoadSpriteFrame (void * pin, mspriteframe_t **ppframe)
 
 	if (r_pixbytes == 1)
 	{
-		Q_memcpy (&pspriteframe->pixels[0], (byte *)(pinframe + 1), size);
+		memcpy (&pspriteframe->pixels[0], (byte *)(pinframe + 1), size);
 	}
 	else if (r_pixbytes == 2)
 	{

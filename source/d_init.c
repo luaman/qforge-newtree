@@ -30,7 +30,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "quakedef.h"
+#include "bothdefs.h"
 #include "d_local.h"
 
 #define NUM_MIPS	4

@@ -38,9 +38,8 @@
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
 
-#include <quakedef.h>
+#include "quakedef.h"
 
-#include "common.h"
 #include "bspfile.h"    // needed by: glquake.h
 #include "vid.h"
 #include "sys.h"
@@ -61,6 +60,9 @@
 #include "model.h"   // needed by: glquake.h
 #include "console.h"
 #include "glquake.h"
+#include "qendian.h"
+#include "qargs.h"
+#include "compat.h"
 
 #include <GL/glx.h>
 
@@ -477,7 +479,7 @@ void	VID_SetPalette (unsigned char *palette)
 	int		k;
 	unsigned short i;
 	unsigned	*table;
-	FILE *f;
+	QFile *f;
 	char s[255];
 	float dist, bestdist;
 	static qboolean palflag = false;
@@ -511,8 +513,8 @@ void	VID_SetPalette (unsigned char *palette)
 
 	COM_FOpenFile("glquake/15to8.pal", &f);
 	if (f) {
-		fread(d_15to8table, 1<<15, 1, f);
-		fclose(f);
+		Qread(f, d_15to8table, 1<<15);
+		Qclose(f);
 	} else {
 		for (i=0; i < (1<<15); i++) {
 			/* Maps
@@ -540,9 +542,9 @@ void	VID_SetPalette (unsigned char *palette)
 		snprintf (s, sizeof(s), "%s/glquake", com_gamedir);
  		Sys_mkdir (s);
 		snprintf (s, sizeof(s), "%s/glquake/15to8.pal", com_gamedir);
-		if ((f = fopen(s, "wb")) != NULL) {
-			fwrite(d_15to8table, 1<<15, 1, f);
-			fclose(f);
+		if ((f = Qopen(s, "wb")) != NULL) {
+			Qwrite(f, d_15to8table, 1<<15);
+			Qclose(f);
 		}
 	}
 }
@@ -722,7 +724,7 @@ void VID_Init(unsigned char *palette)
 		height = atoi(com_argv[i+1]);
 
 	if ((i = COM_CheckParm("-conwidth")) != 0)
-		vid.conwidth = Q_atoi(com_argv[i+1]);
+		vid.conwidth = atoi(com_argv[i+1]);
 	else
 		vid.conwidth = width;
 
@@ -734,7 +736,7 @@ void VID_Init(unsigned char *palette)
 	vid.conheight = vid.conwidth*3 / 4;
 
 	if ((i = COM_CheckParm("-conheight")) != 0)
-		vid.conheight = max(Q_atoi(com_argv[i+1]), 200);
+		vid.conheight = max(atoi(com_argv[i+1]), 200);
 
 	if (!(x_disp = XOpenDisplay(NULL))) {
 		fprintf(stderr, "Error couldn't open the X display\n");

@@ -21,8 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _KEYS_H
 #define _KEYS_H
 
-#include <stdio.h>
-#include "common.h"
+#include "quakeio.h"
 
 // these are the key numbers that should be passed to Key_Event
 
@@ -167,7 +166,7 @@ extern	qboolean	chat_team;
 
 void Key_Event (int key, qboolean down);
 void Key_Init (void);
-void Key_WriteBindings (FILE *f);
+void Key_WriteBindings (QFile *f);
 void Key_SetBinding (int keynum, char *binding);
 void Key_ClearStates (void);
 

@@ -30,7 +30,8 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "console.h"
+#include "bothdefs.h"
 #include "r_local.h"
 
 mnode_t	*r_pefragtopnode;

@@ -31,9 +31,11 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "qargs.h"
 #include "d_local.h"
 #include "r_local.h"
+
+#include <stdlib.h>
 
 float           surfscale;
 qboolean        r_cache_thrash;         // set if surface cache is thrashing
@@ -50,7 +52,7 @@ int     D_SurfaceCacheForRes (int width, int height)
 
 	if (COM_CheckParm ("-surfcachesize"))
 	{
-		size = Q_atoi(com_argv[COM_CheckParm("-surfcachesize")+1]) * 1024;
+		size = atoi(com_argv[COM_CheckParm("-surfcachesize")+1]) * 1024;
 		return size;
 	}
 	

@@ -29,7 +29,22 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "qwsvdef.h"
+#include "server.h"
+#include "crc.h"
+#include "msg.h"
+#include "world.h"
+#include "commdef.h"
+#include "cmd.h"
+#include "sys.h"
+#include "pmove.h"
+#include "quakefs.h"
+#include "qargs.h"
+#include "bothdefs.h"
+#include "build.h"
+
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
 
 quakeparms_t host_parms;
 
@@ -146,8 +161,8 @@ cvar_t	*watervis;
  CVAR_FIXME */
 cvar_t	*hostname;
 
-FILE	*sv_logfile;
-FILE	*sv_fraglogfile;
+QFile	*sv_logfile;
+QFile	*sv_fraglogfile;
 
 void SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
 void Master_Shutdown (void);
@@ -171,12 +186,12 @@ void SV_Shutdown (void)
 	Master_Shutdown ();
 	if (sv_logfile)
 	{
-		fclose (sv_logfile);
+		Qclose (sv_logfile);
 		sv_logfile = NULL;
 	}
 	if (sv_fraglogfile)
 	{
-		fclose (sv_fraglogfile);
+		Qclose (sv_fraglogfile);
 		sv_logfile = NULL;
 	}
 	NET_Shutdown ();
@@ -281,12 +296,12 @@ void SV_DropClient (client_t *drop)
 
 	if (drop->download)
 	{
-		fclose (drop->download);
+		Qclose (drop->download);
 		drop->download = NULL;
 	}
 	if (drop->upload)
 	{
-		fclose (drop->upload);
+		Qclose (drop->upload);
 		drop->upload = NULL;
 	}
 	*drop->uploadfn = 0;
@@ -1093,7 +1108,7 @@ SV_WriteIP_f
 */
 void SV_WriteIP_f (void)
 {
-	FILE	*f;
+	QFile	*f;
 	char	name[MAX_OSPATH];
 	byte	b[4];
 	int		i;
@@ -1102,7 +1117,7 @@ void SV_WriteIP_f (void)
 
 	Con_Printf ("Writing %s.\n", name);
 
-	f = fopen (name, "wb");
+	f = Qopen (name, "wb");
 	if (!f)
 	{
 		Con_Printf ("Couldn't open %s\n", name);
@@ -1112,10 +1127,10 @@ void SV_WriteIP_f (void)
 	for (i=0 ; i<numipfilters ; i++)
 	{
 		*(unsigned *)b = ipfilters[i].compare;
-		fprintf (f, "addip %i.%i.%i.%i\n", b[0], b[1], b[2], b[3]);
+		Qprintf (f, "addip %i.%i.%i.%i\n", b[0], b[1], b[2], b[3]);
 	}
 	
-	fclose (f);
+	Qclose (f);
 }
 
 /*

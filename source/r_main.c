@@ -30,8 +30,13 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "cmd.h"
+#include "bothdefs.h"
+#include "screen.h"
+#include "console.h"
 #include "r_local.h"
+
+#include <math.h>
 
 //define	PASSAGES
 

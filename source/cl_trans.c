@@ -31,7 +31,10 @@
 # include <config.h>
 #endif
 #include "sys.h"
-#include "quakedef.h"
+#include "vid.h"
+#include "client.h"
+
+#include <string.h>
 
 /*
 =====================
