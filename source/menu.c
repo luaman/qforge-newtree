@@ -164,7 +164,7 @@ void M_PrintWhite (int cx, int cy, char *str)
 
 void M_DrawTransPic (int x, int y, qpic_t *pic)
 {
-	Draw_TransPic (x + ((vid.width - 320)>>1), y, pic);
+	Draw_Pic (x + ((vid.width - 320)>>1), y, pic);
 }
 
 void M_DrawPic (int x, int y, qpic_t *pic)
@@ -786,7 +786,7 @@ void M_Keys_Key (int k)
 		}
 		else if (k != '`')
 		{
-                        snprintf (cmd, sizeof(cmd), "bind %s \"%s\"\n", Key_KeynumToString (k), bindnames[keys_cursor][0]);            
+			snprintf (cmd, sizeof(cmd), "bind %s \"%s\"\n", Key_KeynumToString (k), bindnames[keys_cursor][0]);
 			Cbuf_InsertText (cmd);
 		}
 		

@@ -666,24 +666,6 @@ void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int h
 
 /*
 =============
-Draw_TransPic
-=============
-*/
-void Draw_TransPic (int x, int y, qpic_t *pic)
-{
-
-	if (x < 0 || (unsigned int)(x + pic->width) > vid.width || y < 0 ||
-		 (unsigned int)(y + pic->height) > vid.height)
-	{
-		Sys_Error ("Draw_TransPic: bad coordinates");
-	}
-		
-	Draw_Pic (x, y, pic);
-}
-
-
-/*
-=============
 Draw_TransPicTranslate
 
 Only used for the player color selection menu
@@ -952,11 +934,11 @@ void GL_Set2D (void)
 	glViewport (glx, gly, glwidth, glheight);
 
 	glMatrixMode(GL_PROJECTION);
-    glLoadIdentity ();
+	glLoadIdentity ();
 	glOrtho  (0, vid.width, vid.height, 0, -99999, 99999);
 
 	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity ();
+	glLoadIdentity ();
 
 	glDisable (GL_DEPTH_TEST);
 	glDisable (GL_CULL_FACE);
@@ -1151,7 +1133,7 @@ static void GL_Upload32 (unsigned int *data, int width, int height, qboolean mip
 void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha) 
 {
 #ifdef HAVE_GL_COLOR_INDEX8_EXT
-    byte	*scaled;
+	byte	*scaled;
 	int		scaled_width, scaled_height;
 
 	// Snap the height and width to a power of 2.
