@@ -764,8 +764,7 @@ R_DrawBrushModel (entity_t *e)
 
 	psurf = &clmodel->surfaces[clmodel->firstmodelsurface];
 
-	// calculate dynamic lighting for bmodel if it's not an
-	// instanced model
+	// calculate dynamic lighting for bmodel if it's not an instanced model
 	if (clmodel->firstmodelsurface != 0 && !gl_flashblend->int_val) {
 		vec3_t      lightorigin;
 
@@ -784,13 +783,7 @@ R_DrawBrushModel (entity_t *e)
 	R_RotateForEntity (e);
 	e->angles[0] = -e->angles[0];		// stupid quake bug
 
-	// LordHavoc: anyone without multitexture won't want texsort 0 anyway...
-	if (!gl_mtex_capable)
-		Cvar_SetValue (gl_texsort, 1);
-
-	// 
 	// draw texture
-	// 
 	for (i = 0; i < clmodel->nummodelsurfaces; i++, psurf++) {
 		// find which side of the node we are on
 		pplane = psurf->plane;
@@ -807,15 +800,15 @@ R_DrawBrushModel (entity_t *e)
 				psurf->texturechain = sky_chain;
 				sky_chain = psurf;
 				return;
-			} else if (gl_texsort->int_val) {
-				R_RenderBrushPoly (psurf);
-			} else {
+			} else if (gl_mtex_active) {
 				R_DrawMultitexturePoly (psurf);
+			} else {
+				R_RenderBrushPoly (psurf);
 			}
 		}
 	}
 
-	if (gl_texsort->int_val)
+	if (!gl_mtex_active)
 		R_BlendLightmaps ();
 
 	if (gl_fb_bmodels->int_val)
@@ -857,7 +850,7 @@ R_RecursiveWorldNode (mnode_t *node)
 	if (R_CullBox (node->minmaxs, node->minmaxs + 3))
 		return;
 
-// if a leaf node, draw stuff
+	// if a leaf node, draw stuff
 	if (node->contents < 0) {
 		pleaf = (mleaf_t *) node;
 
@@ -874,9 +867,9 @@ R_RecursiveWorldNode (mnode_t *node)
 
 		return;
 	}
-// node is just a decision point, so go down the apropriate sides
+	// node is just a decision point, so go down the apropriate sides
 
-// find which side of the node we are on
+	// find which side of the node we are on
 	plane = node->plane;
 
 	switch (plane->type) {
@@ -896,7 +889,7 @@ R_RecursiveWorldNode (mnode_t *node)
 
 	side = dot < 0;
 
-// recurse down the children, front side first
+	// recurse down the children, front side first
 	// LordHavoc: save a stack frame by avoiding a call
 	if (node->children[side]->contents != CONTENTS_SOLID
 		&& node->children[side]->visframe == r_visframecount
@@ -904,7 +897,7 @@ R_RecursiveWorldNode (mnode_t *node)
 					   node->children[side]->minmaxs + 3))
 		R_RecursiveWorldNode (node->children[side]);
 
-// draw stuff
+	// draw stuff
 	if ((c = node->numsurfaces)) {
 		surf = cl.worldmodel->surfaces + node->firstsurface;
 
@@ -928,15 +921,15 @@ R_RecursiveWorldNode (mnode_t *node)
 				surf->texturechain = sky_chain;
 				sky_chain = surf;
 				continue;
-			} else if (gl_texsort->int_val) {
+			} else if (gl_mtex_active) {
+				R_DrawMultitexturePoly (surf);
+			} else {
 				surf->texturechain = surf->texinfo->texture->texturechain;
 				surf->texinfo->texture->texturechain = surf;
-			} else {
-				R_DrawMultitexturePoly (surf);
 			}
 		}
 	}
-// recurse down the back side
+	// recurse down the back side
 	// LordHavoc: save a stack frame by avoiding a call
 	side = !side;
 	if (node->children[side]->contents != CONTENTS_SOLID
@@ -965,10 +958,6 @@ R_DrawWorld (void)
 
 	currententity = &ent;
 
-	// LordHavoc: anyone without multitexture won't want texsort 0 anyway...
-	if (!gl_mtex_capable)
-		Cvar_SetValue (gl_texsort, 1);
-
 	memset (lightmap_polys, 0, sizeof (lightmap_polys));
 	memset (fullbright_polys, 0, sizeof (fullbright_polys));
 	if (gl_sky_clip->int_val) {
@@ -982,7 +971,7 @@ R_DrawWorld (void)
 
 	DrawTextureChains ();
 
-	if (gl_texsort->int_val)
+	if (!gl_mtex_active)
 		R_BlendLightmaps ();
 
 	if (gl_fb_bmodels->int_val)
@@ -1266,12 +1255,10 @@ GL_BuildLightmaps (void)
 		}
 	}
 
-	if (gl_mtex_capable && !gl_texsort->int_val)
+	if (gl_mtex_active)
 		qglActiveTexture (gl_mtex_enum + 1);
 
-	// 
 	// upload all lightmaps that were filled
-	// 
 	for (i = 0; i < MAX_LIGHTMAPS; i++) {
 		if (!allocated[i][0])
 			break;						// no more used
@@ -1288,6 +1275,6 @@ GL_BuildLightmaps (void)
 					  GL_UNSIGNED_BYTE, lightmaps[i]);
 	}
 
-	if (gl_mtex_capable && !gl_texsort->int_val)
+	if (gl_mtex_active)
 		qglActiveTexture (gl_mtex_enum + 0);
 }

@@ -113,7 +113,6 @@ cvar_t	*r_netgraph;
 
 cvar_t	*gl_clear;
 cvar_t	*gl_cull;
-cvar_t	*gl_texsort;
 cvar_t	*gl_smooth;
 cvar_t	*gl_smoothdlights;
 cvar_t	*gl_affinemodels;
@@ -123,14 +122,15 @@ cvar_t	*gl_nocolors;
 cvar_t	*gl_keeptjunctions;
 cvar_t	*gl_particles;
 cvar_t	*gl_lerp_anim;
+cvar_t	*gl_fb_models;
+cvar_t	*gl_fb_bmodels;
+cvar_t	*gl_texsort;
+cvar_t	*gl_multitexture;
 
 cvar_t	*r_skyname;
 cvar_t	*gl_skymultipass;
 cvar_t	*gl_sky_clip;
 cvar_t	*gl_sky_divide;
-
-cvar_t	*gl_fb_models;
-cvar_t	*gl_fb_bmodels;
 
 cvar_t	*brighten;
 

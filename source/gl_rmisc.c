@@ -208,57 +208,40 @@ void
 R_Init_Cvars (void)
 {
 	r_norefresh = Cvar_Get ("r_norefresh", "0", CVAR_NONE, "Set to 1 to disable display refresh");
-	r_drawentities = Cvar_Get ("r_drawentities", "1", CVAR_NONE, "Set to 0 to disable drawing entities");
-	r_drawviewmodel = Cvar_Get ("r_drawviewmodel", "1", CVAR_ARCHIVE, "Set to 0 to disable drawing your weapon");
-	r_shadows = Cvar_Get ("r_shadows", "0", CVAR_NONE, "Set to 1 to enable shadows for entities");
-	r_wateralpha = Cvar_Get ("r_wateralpha", "1", CVAR_NONE, "Determine opacity of liquids. 1 is solid,"
-		".75, .50, and .25 are partially transparent, and 0 is transparent.");
+	r_drawentities = Cvar_Get ("r_drawentities", "1", CVAR_NONE, "Toggles drawing of entities (almost everything but the world)");
+	r_drawviewmodel = Cvar_Get ("r_drawviewmodel", "1", CVAR_ARCHIVE, "Toggles drawing of view models (your weapons)");
+	r_shadows = Cvar_Get ("r_shadows", "0", CVAR_ARCHIVE, "Set to 1 to enable shadows for entities");
+	r_wateralpha = Cvar_Get ("r_wateralpha", "1", CVAR_NONE, "Determine opacity of liquids. 1 = solid, 0 = transparent, otherwise translucent.");
 	/* FIXME what does r_waterripple use for units? */
 	r_waterripple = Cvar_Get ("r_waterripple", "0", CVAR_NONE, "Set to make liquids ripple, a good setting is 5");
-	r_dynamic = Cvar_Get ("r_dynamic", "1", CVAR_NONE, "Set to 0 to disable all dynamic lighting - unless gl_flashblend is set to 1");
-	r_novis = Cvar_Get ("r_novis", "0", CVAR_NONE, "Set to 1 to enable transparency of liquids on unvised maps");
+	r_dynamic = Cvar_Get ("r_dynamic", "1", CVAR_NONE, "Set to 0 to disable lightmap changes");
+	r_novis = Cvar_Get ("r_novis", "0", CVAR_NONE, "Set to 1 to enable runtime visibility checking (SLOW)");
 	r_speeds = Cvar_Get ("r_speeds", "0", CVAR_NONE, "Display drawing time and statistics of what is being viewed");
 
 	r_netgraph = Cvar_Get ("r_netgraph", "0", CVAR_ARCHIVE, "Graph network stats");
 	r_netgraph_alpha = Cvar_Get ("r_netgraph_alpha", "0.5", CVAR_ARCHIVE, "Net graph translucency");
-	r_netgraph_box = Cvar_Get ("r_netgraph_box", "1", CVAR_ARCHIVE, "Draw box around net graph?");
+	r_netgraph_box = Cvar_Get ("r_netgraph_box", "1", CVAR_ARCHIVE, "Draw box around net graph");
 
+	r_skyname = Cvar_Get ("r_skyname", "none", CVAR_NONE, "name of the current skybox");
+
+	gl_affinemodels = Cvar_Get ("gl_affinemodels", "0", CVAR_ARCHIVE, "Makes texture rendering quality better if set to 1");
 	gl_clear = Cvar_Get ("gl_clear", "0", CVAR_NONE, "Set to 1 to make background black. Useful for removing HOM effect");
-	gl_texsort = Cvar_Get ("gl_texsort", "1", CVAR_NONE, "Set to 0 to enable multitexture");
-
-	gl_cull = Cvar_Get ("gl_cull", "1", CVAR_NONE, "If set to 1, does not render things that do not need to be");
-	gl_smooth = Cvar_Get ("gl_smooth", "1", CVAR_NONE, "Set to 0 to NOT smooth lighted models");
-	gl_smoothdlights = Cvar_Get ("gl_smoothdlights", "1", CVAR_NONE, "Set to 0 to NOT smooth lights");
-	gl_affinemodels = Cvar_Get ("gl_affinemodels", "0", CVAR_NONE, "Makes texture rendering quality better if set to 1");
-	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_NONE, "Set to 1 to use a type of lighting faster on GL");
-	gl_playermip = Cvar_Get ("gl_playermip", "0", CVAR_NONE, "Detail of player skins. 0 best, 2 worst.");
+	gl_cull = Cvar_Get ("gl_cull", "1", CVAR_ARCHIVE, "If set to 1, does not render things that do not need to be");
+	gl_fb_bmodels = Cvar_Get ("gl_fb_bmodels", "1", CVAR_ARCHIVE, "Toggles fullbright color support for bmodels");
+	gl_fb_models = Cvar_Get ("gl_fb_models", "1", CVAR_ARCHIVE, "Toggles fullbright color support for models");
+	gl_fires = Cvar_Get ("gl_fires", "0", CVAR_ARCHIVE, "Toggles lavaball and rocket fireballs");
+	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_ARCHIVE, "Set to 1 to use a type of lighting faster on GL");
+	gl_keeptjunctions = Cvar_Get ("gl_keeptjunctions", "1", CVAR_ARCHIVE, "Set to 1 to turn off colinear vertexes upon level load");
+	gl_lerp_anim = Cvar_Get ("gl_lerp_anim", "1", CVAR_ARCHIVE, "Toggles model animation interpolation");
+	gl_multitexture = Cvar_Get ("gl_multitexture", "0", CVAR_ARCHIVE, "Use multitexture when available");
 	gl_nocolors = Cvar_Get ("gl_nocolors", "0", CVAR_NONE, "Set to 1, turns off all player skins");
-
-	gl_fires = Cvar_Get ("gl_fires", "0", CVAR_ARCHIVE,
-						 "Toggles lavaball and rocket fireballs");
-
-	gl_particles = Cvar_Get ("gl_particles", "1", CVAR_ARCHIVE,
-							 "whether or not to draw particles");
-
-	gl_fb_models = Cvar_Get ("gl_fb_models", "1", CVAR_ARCHIVE,
-							 "Toggles fullbright color support for models..  "
-							 "This is very handy, but costs me 2 FPS.. (=:]");
-	gl_fb_bmodels = Cvar_Get ("gl_fb_bmodels", "1", CVAR_ARCHIVE,
-							  "Toggles fullbright color support for bmodels");
-
-	gl_keeptjunctions = Cvar_Get ("gl_keeptjunctions", "1", CVAR_NONE, "Set to 1 to turn off colinear vertexes upon level load");
-
-	gl_lerp_anim = Cvar_Get ("gl_lerp_anim", "1", CVAR_ARCHIVE,
-								"Toggles model animation interpolation");
-
-	r_skyname = Cvar_Get ("r_skyname", "none", CVAR_NONE,
-						  "name of the current skybox");
-	gl_skymultipass = Cvar_Get ("gl_skymultipass", "1", CVAR_NONE,
-								"controls whether the skydome is single or double pass");
-	gl_sky_clip = Cvar_Get ("gl_sky_clip", "0", CVAR_NONE,
-							"controls whether sky is drawn first (0) or later (1)");
-	gl_sky_divide = Cvar_Get ("gl_sky_divide", "1", CVAR_ARCHIVE,
-							  "subdivide sky polys");
+	gl_particles = Cvar_Get ("gl_particles", "1", CVAR_ARCHIVE, "whether or not to draw particles");
+	gl_playermip = Cvar_Get ("gl_playermip", "0", CVAR_NONE, "Detail of player skins. 0 best, 2 worst.");
+	gl_sky_clip = Cvar_Get ("gl_sky_clip", "0", CVAR_ARCHIVE, "controls whether sky is drawn first (0) or later (1)");
+	gl_sky_divide = Cvar_Get ("gl_sky_divide", "1", CVAR_ARCHIVE, "subdivide sky polys");
+	gl_skymultipass = Cvar_Get ("gl_skymultipass", "1", CVAR_ARCHIVE, "controls whether the skydome is single or double pass");
+	gl_smooth = Cvar_Get ("gl_smooth", "1", CVAR_ARCHIVE, "Smooth lighting on models");
+	gl_smoothdlights = Cvar_Get ("gl_smoothdlights", "1", CVAR_ARCHIVE, "Smooth dynamic lights");
 }
 
 /*
@@ -311,8 +294,7 @@ R_TranslatePlayerSkin (int playernum)
 			translate[i] = i;
 
 		for (i = 0; i < 16; i++) {
-			if (top < 128)				// the artists made some backwards
-										// ranges.  sigh.
+			if (top < 128)	// the artists made some backwards ranges.  sigh.
 				translate[TOP_RANGE + i] = top + i;
 			else
 				translate[TOP_RANGE + i] = top + 15 - i;
@@ -323,12 +305,9 @@ R_TranslatePlayerSkin (int playernum)
 				translate[BOTTOM_RANGE + i] = bottom + 15 - i;
 		}
 
-		// 
 		// locate the original skin pixels
-		// 
-		// real model width
-		tinwidth = 296;
-		tinheight = 194;
+		tinwidth = 296;		// real model width
+		tinheight = 194;	// real model height
 
 		if (!player->skin)
 			Skin_Find (player);
@@ -342,27 +321,9 @@ R_TranslatePlayerSkin (int playernum)
 			inheight = 194;
 		}
 
-
 		// because this happens during gameplay, do it fast
-		// instead of sending it through gl_upload 8
+		// instead of sending it through GL_Upload8()
 		glBindTexture (GL_TEXTURE_2D, playertextures + playernum);
-
-#if 0
-		s = 320 * 200;
-		byte        translated[320 * 200];
-
-		for (i = 0; i < s; i += 4) {
-			translated[i] = translate[original[i]];
-			translated[i + 1] = translate[original[i + 1]];
-			translated[i + 2] = translate[original[i + 2]];
-			translated[i + 3] = translate[original[i + 3]];
-		}
-
-
-		// don't mipmap these, because it takes too long
-		GL_Upload8 (translated, paliashdr->skinwidth, paliashdr->skinheight,
-					false, false, true);
-#endif
 
 		// FIXME deek: This 512x256 limit sucks!
 		scaled_width = min (gl_max_size->int_val, 512);
@@ -373,7 +334,7 @@ R_TranslatePlayerSkin (int playernum)
 		scaled_height >>= gl_playermip->int_val;
 
 		if (VID_Is8bit ()) {			// 8bit texture upload
-			byte       *out2;
+			byte	*out2;
 
 			out2 = (byte *) pixels;
 			memset (pixels, 0, sizeof (pixels));
