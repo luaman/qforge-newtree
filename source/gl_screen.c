@@ -61,12 +61,6 @@
 #include "console.h"
 #include "glquake.h"
 
-// FIXME: include quakedef.h instead
-#ifdef _WIN32
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#endif
-
 /*
 
 background clear

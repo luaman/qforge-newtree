@@ -34,10 +34,6 @@
 #endif
 #include "quakedef.h"
 
-#if !defined(HAVE_SNPRINTF) && defined(HAVE__SNPRINTF)
-# define snprintf _snprintf
-#endif
-
 cvar_t	*cvar_vars;
 char	*cvar_null_string = "";
 cvar_t	*developer;
