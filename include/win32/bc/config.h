@@ -264,27 +264,31 @@
 #define strcasecmp(s1, s2) stricmp((s1), (s2))
 #define strncasecmp(s1, s2, n) strnicmp((s1), (s2), (n))
 
+/* Define if you have the <fnmatch.h> header file.  */
+#define HAVE_FNMATCH_H 1
+
+/* Experimental 3DNOW support */
 #ifdef HAVE_3DNOW_ASM
-#	define atan  _atan
-#	define atan2 _atan2
-#	define acos _acos
-#	define asin _asin
-#	define log _log
-#       define log10 _log10
-#       define pow _pow
-#	define exp _exp
-#	define sqrt _sqrt
-#	define fabs _fabs
-#	define ceil _ceil
-#	define floor  _floor
-#	define frexp _frexp
-#	define ldexp _ldexp
-#	define modf _modf
-#	define fmod _fmod
-#	define sincos _sincos
-#	define sin _sin
-#	define cos _cos
-#	define tan _tan
+        #define atan  _atan
+        #define atan2 _atan2
+        #define acos _acos
+        #define asin _asin
+        #define log _log
+        #define log10 _log10
+        #define pow _pow
+        #define exp _exp
+        #define sqrt _sqrt
+        #define fabs _fabs
+        #define ceil _ceil
+        #define floor  _floor
+        #define frexp _frexp
+        #define ldexp _ldexp
+        #define modf _modf
+        #define fmod _fmod
+        #define sincos _sincos
+        #define sin _sin
+        #define cos _cos
+        #define tan _tan
 #endif
 
 #endif	// _CONFIG_H
