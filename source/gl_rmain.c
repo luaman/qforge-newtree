@@ -910,7 +910,9 @@ R_ShowNearestLoc (void)
 		VectorCopy (nearloc->loc, dl->origin);
 		dl->radius = 200;
 		dl->die = cl.time + 0.1;
+		dl->color[0]=0;
 		dl->color[1]=1;
+		dl->color[2]=0;
 									
 		VectorCopy(nearloc->loc,trueloc);
 		R_RunSpikeEffect(trueloc,7);
