@@ -271,18 +271,20 @@ byte        gammatable[256];			// palette is sent through this
 qboolean
 V_CheckGamma (void)
 {
-	static float oldbrightness;
-	static float oldcontrast;
+	//static float oldbrightness;
+	//static float oldcontrast;
 	static float oldgamma;
 
-	if (oldgamma != vid_gamma->value)
+	if (oldgamma != vid_gamma->value) {
+		oldgamma = vid_gamma->value;
 		VID_UpdateGamma (vid_gamma);
-	if ((brightness->value == oldbrightness) && contrast->value == oldcontrast)
-		return false;
-	oldbrightness = brightness->value;
-	oldcontrast = contrast->value;
+	}
+	//if ((brightness->value == oldbrightness) && contrast->value == oldcontrast)
+	//	return false;
+	//oldbrightness = brightness->value;
+	//oldcontrast = contrast->value;
 
-	BuildGammaTable (brightness->value, contrast->value);
+	//BuildGammaTable (brightness->value, contrast->value);
 	vid.recalc_refdef = 1;				// force a surface cache flush
 
 	return true;
