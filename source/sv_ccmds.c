@@ -598,7 +598,7 @@ void SV_Serverinfo_f (void)
 	var = Cvar_FindVar (Cmd_Argv(1));
 	if (var)
 	{
-		Z_Free (var->string);	// free the old value string	
+		free (var->string);	// free the old value string	
 		var->string = CopyString (Cmd_Argv(2));
 		var->value = atof (var->string);
 	}

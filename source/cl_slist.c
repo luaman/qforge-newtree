@@ -36,7 +36,6 @@
 #include "bothdefs.h"
 #include "console.h"
 #include "commdef.h"
-#include "zone.h"
 #include "quakefs.h"
 #include <string.h>
 
@@ -46,11 +45,11 @@ server_entry_t *SL_Add (server_entry_t *start, char *ip, char *desc) {
 	server_entry_t *p;
 	p = start;
 	if (!start) { //Nothing at beginning of list, create it
-		start = Z_Malloc(sizeof(server_entry_t));
+		start = malloc(sizeof(server_entry_t));
 		start->prev = 0;
 		start->next = 0;
-		start->server = Z_Malloc(strlen(ip) + 1);
-		start->desc = Z_Malloc(strlen(desc) + 1);
+		start->server = malloc(strlen(ip) + 1);
+		start->desc = malloc(strlen(desc) + 1);
 		strcpy(start->server,ip);
 		strcpy(start->desc,desc);
 		return (start);
@@ -58,10 +57,10 @@ server_entry_t *SL_Add (server_entry_t *start, char *ip, char *desc) {
 
 	for(p=start;p->next;p=p->next); //Get to end of list
 
-	p->next = Z_Malloc(sizeof(server_entry_t));
+	p->next = malloc(sizeof(server_entry_t));
 	p->next->prev = p;
-	p->next->server = Z_Malloc(strlen(ip) + 1);
-	p->next->desc = Z_Malloc(strlen(desc) + 1);
+	p->next->server = malloc(strlen(ip) + 1);
+	p->next->desc = malloc(strlen(desc) + 1);
 
 	strcpy(p->next->server,ip);
 	strcpy(p->next->desc,desc);
@@ -73,22 +72,22 @@ server_entry_t *SL_Add (server_entry_t *start, char *ip, char *desc) {
 server_entry_t *SL_Del(server_entry_t *start, server_entry_t *del) {
 	server_entry_t *n;
 	if (del == start) {
-		Z_Free(start->server);
-		Z_Free(start->desc);
+		free(start->server);
+		free(start->desc);
 		n = start->next;
 		if (n)
 			n->prev = 0;
-		Z_Free(start);
+		free(start);
 		return (n);
 	}
 	
-	Z_Free(del->server); 
-	Z_Free(del->desc);
+	free(del->server); 
+	free(del->desc);
 	if (del->prev)
 		del->prev->next = del->next;
 	if (del->next)
 		del->next->prev = del->prev;
-	Z_Free(del);
+	free(del);
 	return (start);
 }
 
@@ -96,9 +95,9 @@ server_entry_t *SL_InsB (server_entry_t *start, server_entry_t *place, char *ip,
 		server_entry_t *new;
 		server_entry_t *other;
 	
-		new = Z_Malloc(sizeof(server_entry_t));
-		new->server = Z_Malloc(strlen(ip) + 1);
-		new->desc = Z_Malloc(strlen(desc) + 1);
+		new = malloc(sizeof(server_entry_t));
+		new->server = malloc(strlen(ip) + 1);
+		new->desc = malloc(strlen(desc) + 1);
 		strcpy(new->server,ip);
 		strcpy(new->desc,desc);
 		other = place->prev;
@@ -160,7 +159,7 @@ server_entry_t *SL_LoadF (FILE *f,server_entry_t *start) { // This could get mes
 		line[i - 1] = '\0'; // Now we can parse it
  		if ((st = gettokstart(line,1,' ')) != NULL) {
   			len = gettoklen(line,1,' ');
-  			addr = Z_Malloc(len + 1);
+  			addr = malloc(len + 1);
   			strncpy(addr,&line[0],len);
   			addr[len] = '\0';
  			if ((st = gettokstart(line,2,' '))) {
@@ -201,9 +200,9 @@ server_entry_t *SL_LoadF (FILE *f,server_entry_t *start) { // This could get mes
  	server_entry_t *n;
  	while (start) {
  		n = start->next;
- 		Z_Free(start->server);
- 		Z_Free(start->desc);
- 		Z_Free(start);
+ 		free(start->server);
+ 		free(start->desc);
+ 		free(start);
  		start = n;
  	}
  }

@@ -38,7 +38,6 @@
 #include "info.h"
 #include "mathlib.h"
 #include "protocol.h"
-#include "zone.h"
 #include "net.h"
 #include "model.h"
 #include "sound.h"

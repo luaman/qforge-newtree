@@ -35,7 +35,6 @@
 
 #include "commdef.h"
 #include "cvar.h"
-#include "zone.h"
 #include "console.h"
 #include "qargs.h"
 #include "cmd.h"
@@ -195,9 +194,9 @@ void Cvar_Set (cvar_t *var, char *value)
 	if(var->flags&CVAR_ROM)
 		return;
 
-	Z_Free (var->string);   // free the old value string
+	free (var->string);   // free the old value string
 
-	var->string = Z_Malloc (strlen(value)+1);
+	var->string = malloc (strlen(value)+1);
 	strcpy (var->string, value);
 	var->value = atof (var->string);
 
@@ -215,9 +214,9 @@ void Cvar_SetROM (cvar_t *var, char *value)
 	if (!var)
 		return;
 
-	Z_Free (var->string);   // free the old value string
+	free (var->string);   // free the old value string
 
-	var->string = Z_Malloc (strlen(value)+1);
+	var->string = malloc (strlen(value)+1);
 	strcpy (var->string, value);
 	var->value = atof (var->string);
 
@@ -413,7 +412,7 @@ void Cvar_Shutdown (void)
 	{
 		next = var->next;
 		free(var->description);
-		Z_Free(var->string);
+		free(var->string);
 		free(var->name);
 		free(var);
 		var = next;
@@ -448,7 +447,7 @@ cvar_t *Cvar_Get(char *name, char *string, int cvarflags, char *description)
 		v->next = cvar_vars;
 		cvar_vars = v;
 		v->name = strdup(name);
-		v->string = Z_Malloc (strlen(string)+1);
+		v->string = malloc (strlen(string)+1);
 		strcpy (v->string, string);
 		v->flags = cvarflags;
 		v->description = strdup(description);

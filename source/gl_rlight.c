@@ -39,7 +39,6 @@
 #include "bspfile.h"    // needed by: glquake.h
 #include "vid.h"
 #include "sys.h"
-#include "zone.h"       // needed by: client.h, gl_model.h
 #include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
                         //  modelgen.h, glmodel.h
 #include "wad.h"

@@ -33,11 +33,11 @@
 #include "cmd.h"
 #include "cvar.h"
 #include "sizebuf.h"
-#include "zone.h"
 #include "console.h"
 #include "qargs.h"
 #include "quakefs.h"
 #include "commdef.h"
+#include "zone.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -139,7 +139,7 @@ void Cbuf_InsertText (char *text)
 	templen = cmd_text.cursize;
 	if (templen)
 	{
-		temp = Z_Malloc (templen);
+		temp = malloc (templen);
 		memcpy (temp, cmd_text.data, templen);
 		SZ_Clear (&cmd_text);
 	}
@@ -153,7 +153,7 @@ void Cbuf_InsertText (char *text)
 	if (templen)
 	{
 		SZ_Write (&cmd_text, temp, templen);
-		Z_Free (temp);
+		free (temp);
 	}
 }
 
@@ -264,7 +264,7 @@ void Cmd_StuffCmds_f (void)
 		return;
 
 // pull out the commands
-	build = Z_Malloc (s+1);
+	build = malloc (s+1);
 	build[0] = 0;
 
 	for (i=0 ; i<s-1 ; i++)
@@ -293,7 +293,7 @@ void Cmd_StuffCmds_f (void)
 	if (build[0])
 		Cbuf_InsertText (build);
 
-	Z_Free (build);
+	free (build);
 }
 
 /*
@@ -386,7 +386,7 @@ char *CopyString (char *in)
 {
 	char	*out;
 
-	out = Z_Malloc (strlen(in)+1);
+	out = malloc (strlen(in)+1);
 	strcpy (out, in);
 	return out;
 }
@@ -418,14 +418,14 @@ void Cmd_Alias_f (void)
 	{
 		if (!strcmp(s, a->name))
 		{
-			Z_Free (a->value);
+			free (a->value);
 			break;
 		}
 	}
 
 	if (!a)
 	{
-		a = Z_Malloc (sizeof(cmdalias_t));
+		a = malloc (sizeof(cmdalias_t));
 		a->next = cmd_alias;
 		cmd_alias = a;
 	}
@@ -468,11 +468,11 @@ void Cmd_UnAlias_f (void)
 	{
 		if (!strcmp(s, a->name))
 		{
-			Z_Free (a->value);
+			free (a->value);
 			prev->next = a->next;
 			if (a == cmd_alias)
 				cmd_alias = a->next;
-			Z_Free (a);
+			free (a);
 			return;
 		}
 		prev = a;
@@ -557,7 +557,7 @@ void Cmd_TokenizeString (char *text)
 
 // clear the args from the last string
 	for (i=0 ; i<cmd_argc ; i++)
-		Z_Free (cmd_argv[i]);
+		free (cmd_argv[i]);
 
 	cmd_argc = 0;
 	cmd_args = NULL;
@@ -588,7 +588,7 @@ void Cmd_TokenizeString (char *text)
 
 		if (cmd_argc < MAX_ARGS)
 		{
-			cmd_argv[cmd_argc] = Z_Malloc (strlen(com_token)+1);
+			cmd_argv[cmd_argc] = malloc (strlen(com_token)+1);
 			strcpy (cmd_argv[cmd_argc], com_token);
 			cmd_argc++;
 		}

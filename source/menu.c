@@ -1242,10 +1242,10 @@ void M_SEdit_Key (int key) {
 			break;
 		case K_ENTER:
 			c = SL_Get_By_Num(slist,m_multip_cursor);
-			Z_Free(c->server);
-			Z_Free(c->desc);
-			c->server = Z_Malloc(strlen(serv) + 1);
-			c->desc = Z_Malloc(strlen(desc) + 1);
+			free(c->server);
+			free(c->desc);
+			c->server = malloc(strlen(serv) + 1);
+			c->desc = malloc(strlen(desc) + 1);
 			strcpy(c->server,serv);
 			strcpy(c->desc,desc);
 			M_Menu_MultiPlayer_f ();

@@ -31,8 +31,8 @@
 #define _SOUND_H
 
 #include "mathlib.h"
-#include "zone.h"
 #include "cvar.h"
+#include "zone.h"
 
 // !!! if this is changed, it much be changed in asm_i386.h too !!!
 typedef struct

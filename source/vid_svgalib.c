@@ -306,7 +306,7 @@ VID_InitModes(void)
 
 	/* Get complete information on all modes */
 	num_modes = vga_lastmodenumber()+1;
-	modes = Z_Malloc(num_modes * sizeof(vga_modeinfo));
+	modes = malloc(num_modes * sizeof(vga_modeinfo));
 	for (i=0 ; i<num_modes ; i++) {
 		if (vga_hasmode(i)) {
 			memcpy(&modes[i], vga_getmodeinfo(i),
