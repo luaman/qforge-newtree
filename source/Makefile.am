@@ -61,12 +61,12 @@ endif
 EXTRA_libqfcd_a_SOURCES = cd_audio.c cd_win.c cd_linux.c cd_null.c
 
 common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
-		mdfour.c mathlib.c cvar.c crc.c model.c cmd.c \
+		mdfour.c mathlib.c cvar.c crc.c cmd.c \
 		qargs.c qendian.c quakefs.c quakeio.c msg.c sizebuf.c info.c \
 		checksum.c link.c buildnum.c va.c com.c $(MATH_ASM)
 server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c sv_init.c sv_main.c sv_misc.c \
 		sv_model.c sv_nchan.c sv_ents.c sv_send.c sv_move.c sv_phys.c \
-		sv_user.c sv_ccmds.c world.c sv_cvar.c $(WORLDA_ASM)
+		sv_user.c sv_ccmds.c world.c sv_cvar.c model.c $(WORLDA_ASM)
 client_SOURCES= cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c cl_main.c \
 		cl_misc.c cl_parse.c cl_pred.c cl_tent.c cl_cam.c \
 		r_view.c wad.c \
@@ -77,7 +77,7 @@ soft_SOURCES=	cl_model.c cl_trans.c d_edge.c d_fill.c d_init.c d_modech.c \
 		d_vars.c d_zpoint.c draw.c r_aclip.c r_alias.c r_bsp.c \
 		r_draw.c r_edge.c r_efrag.c r_light.c r_main.c r_misc.c \
 		r_part.c r_sky.c r_sprite.c r_surf.c r_vars.c sw_view.c \
-		screen.c $(SOFT_ASM)
+		screen.c model.c $(SOFT_ASM)
 ogl_SOURCES=	gl_draw.c gl_mesh.c gl_model.c gl_ngraph.c gl_part.c \
 		gl_refrag.c gl_rlight.c gl_rmain.c gl_rmisc.c gl_rsurf.c \
 		gl_screen.c gl_trans.c gl_view.c gl_warp.c
