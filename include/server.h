@@ -400,7 +400,7 @@ extern	double		sv_frametime;
 // FIXME: declare exported functions in their own relevant .h
 
 void SV_Error (char *error, ...) __attribute__((format(printf,1,2)));
-void SV_Init (quakeparms_t *parms);
+void SV_Init (void);
 
 void Con_Printf (char *fmt, ...) __attribute__((format(printf,1,2)));
 void Con_DPrintf (char *fmt, ...) __attribute__((format(printf,1,2)));
