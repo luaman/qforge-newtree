@@ -1209,7 +1209,7 @@ ucmd_t      ucmds[] = {
 // issued by hand at client consoles    
 	{"rate", SV_Rate_f},
 	{"kill", SV_Kill_f, 1},
-	{"pause", SV_Pause_f},
+	{"pause", SV_Pause_f, 1},
 	{"msg", SV_Msg_f},
 
 	{"say", SV_Say_f, 1},
