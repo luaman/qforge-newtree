@@ -354,6 +354,7 @@ VID_Init (unsigned char *pal)
 		}
 	}
 
+	VID_InitGamma (palette);
 	VID_SetPalette (pal);
 
 	usedbuf = havedbuf = 0;

@@ -114,4 +114,6 @@ double VID_GetGamma (void);
 qboolean VID_SetGamma (double);
 void VID_UpdateGamma (struct cvar_s *);
 
+extern struct cvar_s *vid_gamma;
+
 #endif	// __vid_h_

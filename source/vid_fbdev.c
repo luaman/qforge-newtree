@@ -617,6 +617,7 @@ VID_Init (unsigned char *palette)
 		VID_SetMode (current_mode.name, palette);
 		Con_CheckResize (); // Now that we have a window size, fix console
 
+		VID_InitGamma (palette);
 		VID_SetPalette (palette);
 	}
 }

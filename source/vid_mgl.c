@@ -2062,6 +2062,7 @@ VID_Init (unsigned char *palette)
 
 	vid_realmode = vid_modenum;
 
+	VID_InitGamma (palette);
 	VID_SetPalette (palette);
 
 	vid_menudrawfn = VID_MenuDraw;

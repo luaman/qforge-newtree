@@ -302,38 +302,6 @@ D_EndDirectRect (int x, int y, int width, int height)
 }
 
 
-/*
-	VID_Gamma_f
-
-	Keybinding command
-*/
-
-byte        vid_gamma[256];
-
-void
-VID_Gamma_f (void)
-{
-
-	float       g, f, inf;
-	int         i;
-
-	if (Cmd_Argc () == 2) {
-		g = atof (Cmd_Argv (1));
-
-		for (i = 0; i < 255; i++) {
-			f = pow ((i + 1) / 256.0, g);
-			inf = f * 255 + 0.5;
-			inf = bound (0, inf, 255);
-			vid_gamma[i] = inf;
-		}
-
-		VID_SetPalette (current_palette);
-
-		vid.recalc_refdef = 1;			// force a surface cache flush
-	}
-}
-
-
 static void
 ResetFrameBuffer (void)
 {
@@ -501,8 +469,6 @@ VID_Init (unsigned char *palette)
 
 //  plugin_load ("in_x11.so");
 //  Cmd_AddCommand ("gamma", VID_Gamma_f, "Change brightness level");
-	for (i = 0; i < 256; i++)
-		vid_gamma[i] = i;
 
 	vid.width = vid_width->int_val;
 	vid.height = vid_height->int_val;
@@ -575,6 +541,8 @@ VID_Init (unsigned char *palette)
 	/* Invisible cursor */
 	X11_CreateNullCursor ();
 
+	VID_InitGamma (palette);
+	VID_SetPalette (palette);
 	if (x_visinfo->depth == 8) {
 		/* Create and upload the palette */
 		if (x_visinfo->class == PseudoColor) {
@@ -677,9 +645,9 @@ VID_SetPalette (unsigned char *palette)
 		for (i = 0; i < 256; i++) {
 			colors[i].pixel = i;
 			colors[i].flags = DoRed | DoGreen | DoBlue;
-			colors[i].red = vid_gamma[palette[i * 3]] * 256;
-			colors[i].green = vid_gamma[palette[i * 3 + 1]] * 256;
-			colors[i].blue = vid_gamma[palette[i * 3 + 2]] * 256;
+			colors[i].red = gammatable[palette[i * 3]] * 256;
+			colors[i].green = gammatable[palette[i * 3 + 1]] * 256;
+			colors[i].blue = gammatable[palette[i * 3 + 2]] * 256;
 		}
 		XStoreColors (x_disp, x_cmap, colors, 256);
 	}

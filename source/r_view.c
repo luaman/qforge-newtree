@@ -273,7 +273,10 @@ V_CheckGamma (void)
 {
 	static float oldbrightness;
 	static float oldcontrast;
+	static float oldgamma;
 
+	if (oldgamma != vid_gamma->value)
+		VID_UpdateGamma (vid_gamma);
 	if ((brightness->value == oldbrightness) && contrast->value == oldcontrast)
 		return false;
 	oldbrightness = brightness->value;

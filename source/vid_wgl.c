@@ -1613,6 +1613,7 @@ VID_Init (unsigned char *palette)
 #endif
 
 	GL_CheckBrightness (palette);
+	VID_InitGamma (palette);
 	VID_SetPalette (palette);
 
 	VID_SetMode (vid_default, palette);

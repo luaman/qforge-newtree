@@ -201,6 +201,7 @@ VID_Init (unsigned char *palette)
 	GL_Init ();
 
 	GL_CheckBrightness (palette);
+	VID_InitGamma (palette);
 	VID_SetPalette (palette);
 
 	// Check for 3DFX Extensions and initialize them.
