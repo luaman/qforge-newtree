@@ -279,7 +279,7 @@ void R_NetGraph (void)
 		R_LineGraph (x+w-1-a, y, packet_latency[i]);
 	}
 	sprintf(st, "%3i%% packet loss", lost);
-	Draw_String(8, y2, st);
+	Draw_String8 (8, y2, st);
 }
 
 /*

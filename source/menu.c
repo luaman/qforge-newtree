@@ -135,7 +135,7 @@ Draws one solid graphics character
 */
 void M_DrawCharacter (int cx, int line, int num)
 {
-	Draw_Character ( cx + ((vid.width - 320)>>1), line, num);
+	Draw_Character8 ( cx + ((vid.width - 320)>>1), line, num);
 }
 
 void M_Print (int cx, int cy, char *str)

@@ -143,14 +143,14 @@ void Draw_Init (void)
 
 /*
 ================
-Draw_Character
+Draw_Character8
 
 Draws one 8*8 graphics character with 0 being transparent.
 It can be clipped to the top of the screen to allow the console to be
 smoothly scrolled off.
 ================
 */
-void Draw_Character (int x, int y, int num)
+void Draw_Character8 (int x, int y, int num)
 {
 	byte			*dest;
 	byte			*source;
@@ -241,14 +241,14 @@ void Draw_Character (int x, int y, int num)
 
 /*
 ================
-Draw_String
+Draw_String8
 ================
 */
-void Draw_String (int x, int y, char *str)
+void Draw_String8 (int x, int y, char *str)
 {
 	while (*str)
 	{
-		Draw_Character (x, y, *str);
+		Draw_Character8 (x, y, *str);
 		str++;
 		x += 8;
 	}
@@ -256,14 +256,14 @@ void Draw_String (int x, int y, char *str)
 
 /*
 ================
-Draw_Alt_String
+Draw_AltString8
 ================
 */
-void Draw_Alt_String (int x, int y, char *str)
+void Draw_AltString8 (int x, int y, char *str)
 {
 	while (*str)
 	{
-		Draw_Character (x, y, (*str) | 0x80);
+		Draw_Character8 (x, y, (*str) | 0x80);
 		str++;
 		x += 8;
 	}
@@ -307,7 +307,7 @@ void Draw_Crosshair(void)
 		Draw_Pixel(x, y + 1, c);
 		Draw_Pixel(x, y + 3, c);
 	} else if (crosshair->value)
-		Draw_Character (
+		Draw_Character8 (
 			scr_vrect.x + scr_vrect.width/2-4 + cl_crossx->value, 
 			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy->value, 
 			'+');
@@ -703,7 +703,7 @@ void Draw_ConsoleBackground (int lines)
 		}
 	}
 
-	Draw_Alt_String (vid.conwidth - strlen(cl_verstring->string)*8 - 11,
+	Draw_AltString8 (vid.conwidth - strlen(cl_verstring->string)*8 - 11,
 			lines-14, cl_verstring->string);
 	
 }

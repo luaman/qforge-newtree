@@ -792,8 +792,9 @@ void R_PolyBlend (void)
 	glRotatef (-90,  1, 0, 0);	    // put Z going up
 	glRotatef (90,  0, 0, 1);	    // put Z going up
 
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 	// software alpha is about GL alpha squared  --KB
-	v_blend[3] = sqrt(v_blend[3]);
+//	v_blend[3] = sqrt(v_blend[3]);
 	
 	glColor4fv (v_blend);
 
@@ -805,6 +806,7 @@ void R_PolyBlend (void)
 	glEnd ();
 
 	glEnable (GL_TEXTURE_2D);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 

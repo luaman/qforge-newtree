@@ -253,7 +253,7 @@ void SCR_DrawCenterString (void)
 		x = (vid.width - l*8)/2;
 		for (j=0 ; j<l ; j++, x+=8)
 		{
-			Draw_Character (x, y, start[j]);	
+			Draw_Character8 (x, y, start[j]);	
 			if (!remaining--)
 				return;
 		}
@@ -570,8 +570,7 @@ void SCR_DrawFPS (void)
 	sprintf(st, "%3d FPS", lastfps);
 	x = vid.width - strlen(st) * 8 - 8;
 	y = vid.height - sb_lines - 8;
-//	Draw_TileClear(x, y, strlen(st) * 8, 8);
-	Draw_String(x, y, st);
+	Draw_String8 (x, y, st);
 }
 
 /*
@@ -1025,7 +1024,7 @@ void SCR_DrawNotifyString (void)
 				break;
 		x = (vid.width - l*8)/2;
 		for (j=0 ; j<l ; j++, x+=8)
-			Draw_Character (x, y, start[j]);	
+			Draw_Character8 (x, y, start[j]);	
 			
 		y += 8;
 

@@ -146,7 +146,7 @@ void R_NetGraph (void)
 	y += 8;
 
 	sprintf(st, "%3i%% packet loss", lost);
-	Draw_String(8, y, st);
+	Draw_String8 (8, y, st);
 	y += 8;
 	
     GL_Bind(netgraphtexture);
