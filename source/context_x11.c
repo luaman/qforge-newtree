@@ -92,6 +92,7 @@ static int  nummodes;
 static int	hasvidmode = 0;
 
 cvar_t	*vid_fullscreen;
+qboolean vid_fullscreen_active;
 
 static int xss_timeout;
 static int xss_interval;
@@ -168,9 +169,9 @@ void
 x11_open_display (void)
 {
 	if ( !x_disp ) {
-		x_disp = XOpenDisplay( NULL );
+		x_disp = XOpenDisplay (NULL);
 		if ( !x_disp ) {
-			Sys_Error("x11_open_display: Could not open display [%s]\n", XDisplayName( NULL ));
+			Sys_Error ("x11_open_display: Could not open display [%s]\n", XDisplayName( NULL ));
 		}
 
 		x_screen = DefaultScreen (x_disp);
@@ -201,11 +202,12 @@ void
 x11_close_display (void)
 {
 	if (nullcursor != None) {
-		XFreeCursor(x_disp, nullcursor);
+		XFreeCursor (x_disp, nullcursor);
 		nullcursor = None;
 	}
+
 	if (!--x_disp_ref_count) {
-		XCloseDisplay( x_disp );
+		XCloseDisplay (x_disp);
 		x_disp = 0;
 	}
 }
@@ -218,33 +220,36 @@ x11_close_display (void)
 void
 x11_create_null_cursor (void)
 {
-	Pixmap cursormask;
-	XGCValues xgc;
-	GC gc;
-	XColor dummycolour;
+	Pixmap		cursormask;
+	XGCValues	xgc;
+	GC			gc;
+	XColor		dummycolour;
 
-	if (nullcursor != None) return;
+	if (nullcursor != None)
+		return;
 
-	cursormask = XCreatePixmap(x_disp, x_root, 1, 1, 1/*depth*/);
+	cursormask = XCreatePixmap (x_disp, x_root, 1, 1, 1);
 	xgc.function = GXclear;
-	gc =  XCreateGC(x_disp, cursormask, GCFunction, &xgc);
-	XFillRectangle(x_disp, cursormask, gc, 0, 0, 1, 1);
+	
+	gc =  XCreateGC (x_disp, cursormask, GCFunction, &xgc);
+	
+	XFillRectangle (x_disp, cursormask, gc, 0, 0, 1, 1);
+	
 	dummycolour.pixel = 0;
 	dummycolour.red = 0;
 	dummycolour.flags = 04;
-	nullcursor = XCreatePixmapCursor(x_disp, cursormask, cursormask,
-									&dummycolour,&dummycolour, 0,0);
-	XFreePixmap(x_disp,cursormask);
-	XFreeGC(x_disp,gc);
-	XDefineCursor(x_disp, x_win, nullcursor);
+	nullcursor = XCreatePixmapCursor (x_disp, cursormask, cursormask,
+										&dummycolour,&dummycolour, 0, 0);
+	XFreePixmap (x_disp,cursormask);
+	XFreeGC (x_disp,gc);
+	XDefineCursor (x_disp, x_win, nullcursor);
 }
 
 void
-x11_set_vidmode(int width, int height)
+x11_set_vidmode (int width, int height)
 {
 	const char *str = getenv("MESA_GLX_FX");
-
-	if (str != NULL && *str != 'd') {
+	if (str && *str != 'd') {
 		if (tolower(*str) == 'w') {
 			Cvar_Set (vid_fullscreen, "0");
 		} else {
@@ -355,8 +360,8 @@ x11_create_window (int width, int height)
 	
 	if (vid_fullscreen->int_val) {
 		XMoveWindow (x_disp, x_win, 0, 0);
-		XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
-					 vid.width+2, vid.height+2);
+		XWarpPointer (x_disp, None, x_win, 0, 0, 0, 0,
+						vid.width+2, vid.height+2);
 		x11_force_view_port ();
 	}
 
@@ -368,13 +373,12 @@ void
 x11_restore_vidmode (void)
 {
 	XSetScreenSaver (x_disp, xss_timeout, xss_interval, xss_blanking,
-					xss_exposures);
+						xss_exposures);
 
 #ifdef HAVE_VIDMODE
 	if (hasvidmode) {
-		XF86VidModeSwitchToMode (x_disp, x_screen,
-								 vidmodes[0]);
-		XFree(vidmodes);
+		XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[0]);
+		XFree (vidmodes);
 	}
 #endif
 }
@@ -384,8 +388,8 @@ x11_grab_keyboard (void)
 {
 #ifdef HAVE_VIDMODE
 	if (hasvidmode && vid_fullscreen->int_val) {
-		XGrabKeyboard(x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
-					  CurrentTime);
+		XGrabKeyboard (x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
+						CurrentTime);
 	}
 #endif
 }
