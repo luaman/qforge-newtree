@@ -125,8 +125,8 @@ extern int  sv_nailmodel, sv_supernailmodel, sv_playermodel;
 qboolean
 SV_AddNailUpdate (edict_t *ent)
 {
-	if (ent->v.modelindex != sv_nailmodel
-		&& ent->v.modelindex != sv_supernailmodel) return false;
+	if (ent->v.v.modelindex != sv_nailmodel
+		&& ent->v.v.modelindex != sv_supernailmodel) return false;
 	if (numnails == MAX_NAILS)
 		return true;
 	nails[numnails] = ent;
@@ -150,11 +150,11 @@ SV_EmitNailUpdate (sizebuf_t *msg)
 
 	for (n = 0; n < numnails; n++) {
 		ent = nails[n];
-		x = (int) (ent->v.origin[0] + 4096) >> 1;
-		y = (int) (ent->v.origin[1] + 4096) >> 1;
-		z = (int) (ent->v.origin[2] + 4096) >> 1;
-		p = (int) (16 * ent->v.angles[0] / 360) & 15;
-		yaw = (int) (256 * ent->v.angles[1] / 360) & 255;
+		x = (int) (ent->v.v.origin[0] + 4096) >> 1;
+		y = (int) (ent->v.v.origin[1] + 4096) >> 1;
+		z = (int) (ent->v.v.origin[2] + 4096) >> 1;
+		p = (int) (16 * ent->v.v.angles[0] / 360) & 15;
+		yaw = (int) (256 * ent->v.v.angles[1] / 360) & 255;
 
 		bits[0] = x;
 		bits[1] = (x >> 8) | (y << 4);
@@ -432,18 +432,18 @@ SV_WritePlayersToClient (client_t *client, edict_t *clent, byte * pvs,
 
 		pflags = PF_MSEC | PF_COMMAND;
 
-		if (ent->v.modelindex != sv_playermodel)
+		if (ent->v.v.modelindex != sv_playermodel)
 			pflags |= PF_MODEL;
 		for (i = 0; i < 3; i++)
-			if (ent->v.velocity[i])
+			if (ent->v.v.velocity[i])
 				pflags |= PF_VELOCITY1 << i;
-		if (ent->v.effects)
+		if (ent->v.v.effects)
 			pflags |= PF_EFFECTS;
-		if (ent->v.skin)
+		if (ent->v.v.skin)
 			pflags |= PF_SKINNUM;
-		if (ent->v.health <= 0)
+		if (ent->v.v.health <= 0)
 			pflags |= PF_DEAD;
-		if (ent->v.mins[2] != -24)
+		if (ent->v.v.mins[2] != -24)
 			pflags |= PF_GIB;
 
 		if (cl->spectator) {			// only sent origin and velocity to
@@ -452,21 +452,21 @@ SV_WritePlayersToClient (client_t *client, edict_t *clent, byte * pvs,
 		} else if (ent == clent) {		// don't send a lot of data on
 										// personal entity
 			pflags &= ~(PF_MSEC | PF_COMMAND);
-			if (ent->v.weaponframe)
+			if (ent->v.v.weaponframe)
 				pflags |= PF_WEAPONFRAME;
 		}
 
 		if (client->spec_track && client->spec_track - 1 == j &&
-			ent->v.weaponframe) pflags |= PF_WEAPONFRAME;
+			ent->v.v.weaponframe) pflags |= PF_WEAPONFRAME;
 
 		MSG_WriteByte (msg, svc_playerinfo);
 		MSG_WriteByte (msg, j);
 		MSG_WriteShort (msg, pflags);
 
 		for (i = 0; i < 3; i++)
-			MSG_WriteCoord (msg, ent->v.origin[i]);
+			MSG_WriteCoord (msg, ent->v.v.origin[i]);
 
-		MSG_WriteByte (msg, ent->v.frame);
+		MSG_WriteByte (msg, ent->v.v.frame);
 
 		if (pflags & PF_MSEC) {
 			msec = 1000 * (sv.time - cl->localtime);
@@ -478,10 +478,10 @@ SV_WritePlayersToClient (client_t *client, edict_t *clent, byte * pvs,
 		if (pflags & PF_COMMAND) {
 			cmd = cl->lastcmd;
 
-			if (ent->v.health <= 0) {	// don't show the corpse looking
+			if (ent->v.v.health <= 0) {	// don't show the corpse looking
 										// around...
 				cmd.angles[0] = 0;
-				cmd.angles[1] = ent->v.angles[1];
+				cmd.angles[1] = ent->v.v.angles[1];
 				cmd.angles[0] = 0;
 			}
 
@@ -493,19 +493,19 @@ SV_WritePlayersToClient (client_t *client, edict_t *clent, byte * pvs,
 
 		for (i = 0; i < 3; i++)
 			if (pflags & (PF_VELOCITY1 << i))
-				MSG_WriteShort (msg, ent->v.velocity[i]);
+				MSG_WriteShort (msg, ent->v.v.velocity[i]);
 
 		if (pflags & PF_MODEL)
-			MSG_WriteByte (msg, ent->v.modelindex);
+			MSG_WriteByte (msg, ent->v.v.modelindex);
 
 		if (pflags & PF_SKINNUM)
-			MSG_WriteByte (msg, ent->v.skin);
+			MSG_WriteByte (msg, ent->v.v.skin);
 
 		if (pflags & PF_EFFECTS)
-			MSG_WriteByte (msg, ent->v.effects);
+			MSG_WriteByte (msg, ent->v.v.effects);
 
 		if (pflags & PF_WEAPONFRAME)
-			MSG_WriteByte (msg, ent->v.weaponframe);
+			MSG_WriteByte (msg, ent->v.v.weaponframe);
 	}
 }
 
@@ -537,7 +537,7 @@ SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 
 	// find the client's PVS
 	clent = client->edict;
-	VectorAdd (clent->v.origin, clent->v.view_ofs, org);
+	VectorAdd (clent->v.v.origin, clent->v.v.view_ofs, org);
 	pvs = SV_FatPVS (org);
 
 	// send over the players in the PVS
@@ -553,7 +553,7 @@ SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 	for (e = MAX_CLIENTS + 1, ent = EDICT_NUM (&sv_pr_state, e); e < sv.num_edicts;
 		 e++, ent = NEXT_EDICT (&sv_pr_state, ent)) {
 		// ignore ents without visible models
-		if (!ent->v.modelindex || !*PR_GetString (&sv_pr_state, ent->v.model))
+		if (!ent->v.v.modelindex || !*PR_GetString (&sv_pr_state, ent->v.v.model))
 			continue;
 
 		// ignore if not touching a PV leaf
@@ -576,13 +576,13 @@ SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 
 		state->number = e;
 		state->flags = 0;
-		VectorCopy (ent->v.origin, state->origin);
-		VectorCopy (ent->v.angles, state->angles);
-		state->modelindex = ent->v.modelindex;
-		state->frame = ent->v.frame;
-		state->colormap = ent->v.colormap;
-		state->skinnum = ent->v.skin;
-		state->effects = ent->v.effects;
+		VectorCopy (ent->v.v.origin, state->origin);
+		VectorCopy (ent->v.v.angles, state->angles);
+		state->modelindex = ent->v.v.modelindex;
+		state->frame = ent->v.v.frame;
+		state->colormap = ent->v.v.colormap;
+		state->skinnum = ent->v.v.skin;
+		state->effects = ent->v.v.effects;
 
 		// LordHavoc: cleaned up Endy's coding style, shortened the code,
 		// and implemented missing effects

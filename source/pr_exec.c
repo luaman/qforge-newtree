@@ -667,9 +667,9 @@ PR_ExecuteProgram (progs_t *pr, func_t fnum)
 				break;
 			case OP_STATE:
 				ed = PROG_TO_EDICT (pr, pr->pr_global_struct->self);
-				ed->v.nextthink = pr->pr_global_struct->time + 0.1;
-				ed->v.frame = OPA->_float;
-				ed->v.think = OPB->function;
+				ed->v.v.nextthink = pr->pr_global_struct->time + 0.1;
+				ed->v.v.frame = OPA->_float;
+				ed->v.v.think = OPB->function;
 				break;
 // LordHavoc: to be enabled when Progs version 7 (or whatever it will be numbered) is finalized
 /*

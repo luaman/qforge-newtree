@@ -46,6 +46,13 @@ typedef union eval_s
 	int				edict;
 } eval_t;	
 
+typedef union pr_type_u {
+	float	float_var;
+	int		int_var;
+	string_t string_t_var;
+	func_t	func_t_var;
+} pr_type_t;
+
 #define	MAX_ENT_LEAFS	16
 typedef struct edict_s
 {
@@ -58,7 +65,10 @@ typedef struct edict_s
 	entity_state_t	baseline;
 	
 	float		freetime;			// sv.time when the object was freed
-	entvars_t	v;					// C exported fields from progs
+	union {
+		entvars_t	v;				// C exported fields from progs
+		pr_type_t   vv[1];
+	} v;
 // other fields from progs come immediately after
 } edict_t;
 #define	EDICT_FROM_AREA(l) STRUCT_FROM_LINK(l,edict_t,area)
@@ -112,13 +122,6 @@ int NUM_FOR_EDICT(progs_t *pr, edict_t *e);
 
 //============================================================================
 
-typedef union pr_type_u {
-	float	float_var;
-	int		int_var;
-	string_t string_t_var;
-	func_t	func_t_var;
-} pr_type_t;
-
 #define G_var(p,o,t)	((p)->pr_globals[o].t##_var)
 
 #define	G_FLOAT(p,o)	G_var (p, o, float)
@@ -129,7 +132,7 @@ typedef union pr_type_u {
 #define	G_STRING(p,o)	PR_GetString (p, G_var (p, o, string_t))
 #define	G_FUNCTION(p,o)	G_var (p, o, func_t)
 
-#define E_var(e,o,t)	(((pr_type_t*)&(e)->v)[o].t##_var)
+#define E_var(e,o,t)	((e)->v.vv[o].t##_var)
 
 #define	E_FLOAT(e,o)	E_var (e, o, float)
 #define	E_INT(e,o)		E_var (e, o, int)

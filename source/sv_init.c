@@ -116,23 +116,23 @@ SV_CreateBaseline (void)
 			continue;
 		// create baselines for all player slots,
 		// and any other edict that has a visible model
-		if (entnum > MAX_CLIENTS && !svent->v.modelindex)
+		if (entnum > MAX_CLIENTS && !svent->v.v.modelindex)
 			continue;
 
 		// 
 		// create entity baseline
 		// 
-		VectorCopy (svent->v.origin, svent->baseline.origin);
-		VectorCopy (svent->v.angles, svent->baseline.angles);
-		svent->baseline.frame = svent->v.frame;
-		svent->baseline.skinnum = svent->v.skin;
+		VectorCopy (svent->v.v.origin, svent->baseline.origin);
+		VectorCopy (svent->v.v.angles, svent->baseline.angles);
+		svent->baseline.frame = svent->v.v.frame;
+		svent->baseline.skinnum = svent->v.v.skin;
 		if (entnum > 0 && entnum <= MAX_CLIENTS) {
 			svent->baseline.colormap = entnum;
 			svent->baseline.modelindex = SV_ModelIndex ("progs/player.mdl");
 		} else {
 			svent->baseline.colormap = 0;
 			svent->baseline.modelindex =
-				SV_ModelIndex (PR_GetString (&sv_pr_state, svent->v.model));
+				SV_ModelIndex (PR_GetString (&sv_pr_state, svent->v.v.model));
 		}
 		// LordHavoc: setup baseline to include new effects
 		svent->baseline.alpha = 255;
@@ -401,10 +401,10 @@ SV_SpawnServer (char *server)
 
 	ent = EDICT_NUM (&sv_pr_state, 0);
 	ent->free = false;
-	ent->v.model = PR_SetString (&sv_pr_state, sv.worldmodel->name);
-	ent->v.modelindex = 1;				// world model
-	ent->v.solid = SOLID_BSP;
-	ent->v.movetype = MOVETYPE_PUSH;
+	ent->v.v.model = PR_SetString (&sv_pr_state, sv.worldmodel->name);
+	ent->v.v.modelindex = 1;				// world model
+	ent->v.v.solid = SOLID_BSP;
+	ent->v.v.movetype = MOVETYPE_PUSH;
 
 	sv_pr_state.pr_global_struct->mapname = PR_SetString (&sv_pr_state, sv.name);
 	// serverflags are for cross level information (sigils)

@@ -138,16 +138,16 @@ ED_Free (progs_t *pr, edict_t *ed)
 		pr->unlink (ed);				// unlink from world bsp
 
 	ed->free = true;
-	ed->v.model = 0;
-	ed->v.takedamage = 0;
-	ed->v.modelindex = 0;
-	ed->v.colormap = 0;
-	ed->v.skin = 0;
-	ed->v.frame = 0;
-	VectorCopy (vec3_origin, ed->v.origin);
-	VectorCopy (vec3_origin, ed->v.angles);
-	ed->v.nextthink = -1;
-	ed->v.solid = 0;
+	ed->v.v.model = 0;
+	ed->v.v.takedamage = 0;
+	ed->v.v.modelindex = 0;
+	ed->v.v.colormap = 0;
+	ed->v.v.skin = 0;
+	ed->v.v.frame = 0;
+	VectorCopy (vec3_origin, ed->v.v.origin);
+	VectorCopy (vec3_origin, ed->v.v.angles);
+	ed->v.v.nextthink = -1;
+	ed->v.v.solid = 0;
 
 	ed->freetime = *(pr)->time;
 }
@@ -557,11 +557,11 @@ ED_Count (progs_t *pr)
 		if (ent->free)
 			continue;
 		active++;
-		if (ent->v.solid)
+		if (ent->v.v.solid)
 			solid++;
-		if (ent->v.model)
+		if (ent->v.v.model)
 			models++;
-		if (ent->v.movetype == MOVETYPE_STEP)
+		if (ent->v.v.movetype == MOVETYPE_STEP)
 			step++;
 	}
 
@@ -875,7 +875,7 @@ ED_LoadFromFile (progs_t *pr, char *data)
 		data = ED_ParseEdict (pr, data, ent);
 
 // remove things from different skill levels or deathmatch
-		if (((int) ent->v.spawnflags & SPAWNFLAG_NOT_DEATHMATCH)) {
+		if (((int) ent->v.v.spawnflags & SPAWNFLAG_NOT_DEATHMATCH)) {
 			ED_Free (pr, ent);
 			inhibit++;
 			continue;
@@ -883,14 +883,14 @@ ED_LoadFromFile (progs_t *pr, char *data)
 //
 // immediately call spawn function
 //
-		if (!ent->v.classname) {
+		if (!ent->v.v.classname) {
 			Con_Printf ("No classname for:\n");
 			ED_Print (pr, ent);
 			ED_Free (pr, ent);
 			continue;
 		}
 		// look for the spawn function
-		func = ED_FindFunction (pr, PR_GetString (pr, ent->v.classname));
+		func = ED_FindFunction (pr, PR_GetString (pr, ent->v.v.classname));
 
 		if (!func) {
 			Con_Printf ("No spawn function for:\n");
