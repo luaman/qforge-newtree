@@ -112,25 +112,31 @@ GL_Init
 void
 GL_Init (void)
 {
+	QF_3DfxSetDitherModeEXT dither_select = NULL;
+	int p;
+	
 	GL_Init_Common ();
+
+	if (!(QFGL_ExtensionPresent ("3DFX_set_dither_mode")))
+		return;
+
+	if (!(dither_select = QFGL_ExtensionAddress ("gl3DfxSetDitherModeEXT")))
+		return;
 
 	Con_Printf ("Dithering: ");
 
-	if (QFGL_ExtensionPresent ("3DFX_set_dither_mode")) {
-		QF_3DfxSetDitherModeEXT dither_select = NULL;
-
-		dither_select = QFGL_ExtensionAddress ("gl3DfxSetDitherModeEXT");
-
-		if (COM_CheckParm ("-dither_2x2")) {
+	if ((p = COM_CheckParm ("-dither") && p < com_argc)) {
+		if (strequal (com_argv[p+1], "2x2") {
 			dither_select (GR_DITHER_2x2);
 			Con_Printf ("2x2.\n");
-		} else if (COM_CheckParm ("-dither_4x4")) {
+		}
+		if (strequal (com_argv[p+1], "4x4") {
 			dither_select (GR_DITHER_4x4);
 			Con_Printf ("4x4.\n");
-		} else {
-			glDisable (GL_DITHER);
-			Con_Printf ("disabled.\n");
 		}
+	} else {
+		glDisable (GL_DITHER);
+		Con_Printf ("disabled.\n");
 	}
 }
 
