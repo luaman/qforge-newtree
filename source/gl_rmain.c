@@ -990,15 +990,15 @@ void R_SetupGL (void)
 	// set drawing parms
 	//
 	if (gl_cull->value)
-		glEnable(GL_CULL_FACE);
+		glEnable (GL_CULL_FACE);
 	else
-		glDisable(GL_CULL_FACE);
+		glDisable (GL_CULL_FACE);
 
-	glEnable(GL_BLEND);
-	glDisable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.5);
-	glEnable(GL_DEPTH_TEST);
-	glShadeModel(GL_SMOOTH);
+	glEnable (GL_BLEND);
+	glDisable (GL_ALPHA_TEST);
+	glAlphaFunc (GL_GREATER, 0.5);
+	glEnable (GL_DEPTH_TEST);
+	glShadeModel (GL_SMOOTH);
 }
 
 /*
