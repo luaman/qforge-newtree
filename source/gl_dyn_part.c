@@ -568,43 +568,44 @@ void R_DrawParticles (void)
 		maxparticle = k;
 		activeparticles++;
 
-		if (DotProduct(part->org, vpn) < minparticledist)
-			continue;
+		// Don't render particles too close to us.
+		// Note, we must still do physics and such on them.
+		if (!(DotProduct(part->org, vpn) < minparticledist)) {
+			at = (byte *)&d_8to24table[(byte)part->color];
+			alpha = part->alpha;
 
-		at = (byte *)&d_8to24table[(byte)part->color];
-		alpha = part->alpha;
+			if (lighthalf)
+				glColor4ub((byte) ((int) at[0] >> 1), (byte) ((int) at[1] >> 1), (byte) ((int) at[2] >> 1), alpha);
+			else
+				glColor4ub(at[0], at[1], at[2], alpha);
 
-		if (lighthalf)
-			glColor4ub((byte) ((int) at[0] >> 1), (byte) ((int) at[1] >> 1), (byte) ((int) at[2] >> 1), alpha);
-		else
-			glColor4ub(at[0], at[1], at[2], alpha);
+			scale = part->scale * 0.75;
+			scale2 = part->scale * -0.75;
 
-		scale = part->scale * 0.75;
-		scale2 = part->scale * -0.75;
+			glBindTexture(GL_TEXTURE_2D, part->tex);
+			glBegin (GL_QUADS);
+			glTexCoord2f(0,1);
+			glVertex3f((part->org[0] + up[0]*scale + right[0]*scale),
+					(part->org[1] + up[1]*scale + right[1]*scale),
+					(part->org[2] + up[2]*scale + right[2]*scale));
 
-		glBindTexture(GL_TEXTURE_2D, part->tex);
-		glBegin (GL_QUADS);
-		glTexCoord2f(0,1);
-		glVertex3f((part->org[0] + up[0]*scale + right[0]*scale),
-				(part->org[1] + up[1]*scale + right[1]*scale),
-				(part->org[2] + up[2]*scale + right[2]*scale));
+			glTexCoord2f(0,0);
+			glVertex3f((part->org[0] + up[0]*scale2 + right[0]*scale),
+					(part->org[1] + up[1]*scale2 + right[1]*scale),
+					(part->org[2] + up[2]*scale2 + right[2]*scale));
 
-		glTexCoord2f(0,0);
-		glVertex3f((part->org[0] + up[0]*scale2 + right[0]*scale),
-				(part->org[1] + up[1]*scale2 + right[1]*scale),
-				(part->org[2] + up[2]*scale2 + right[2]*scale));
+			glTexCoord2f(1,0);
+			glVertex3f((part->org[0] + up[0]*scale2 + right[0]*scale2),
+					(part->org[1] + up[1]*scale2 + right[1]*scale2),
+					(part->org[2] + up[2]*scale2 + right[2]*scale2));
 
-		glTexCoord2f(1,0);
-		glVertex3f((part->org[0] + up[0]*scale2 + right[0]*scale2),
-				(part->org[1] + up[1]*scale2 + right[1]*scale2),
-				(part->org[2] + up[2]*scale2 + right[2]*scale2));
+			glTexCoord2f(1,1);
+			glVertex3f((part->org[0] + up[0]*scale + right[0]*scale2),
+					(part->org[1] + up[1]*scale + right[1]*scale2),
+					(part->org[2] + up[2]*scale + right[2]*scale2));
 
-		glTexCoord2f(1,1);
-		glVertex3f((part->org[0] + up[0]*scale + right[0]*scale2),
-				(part->org[1] + up[1]*scale + right[1]*scale2),
-				(part->org[2] + up[2]*scale + right[2]*scale2));
-
-		glEnd();
+			glEnd();
+		}
 
 		for (i=0 ; i<3 ; i++)
 			part->org[i] += part->vel[i]*host_frametime;
