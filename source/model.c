@@ -1133,8 +1133,10 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 	header = (dheader_t *)buffer;
 
 	i = LittleLong (header->version);
-	if (i != BSPVERSION)
+        if ((i != BSPVERSION) && (i != 30))
 		SV_Error ("Mod_LoadBrushModel: %s has wrong version number (%i should be %i)", mod->name, i, BSPVERSION);
+        if ((!isServer) && (i == 30))
+                Sys_Error ("Mod_LoadBrushModel: Software cannot load Half-Life maps.");
 
 // swap all the lumps
 	mod_base = (byte *)header;
