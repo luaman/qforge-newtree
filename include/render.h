@@ -18,10 +18,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-// refresh.h -- public interface to refresh functions
+// render.h -- public interface to refresh functions
 
 #ifndef _RENDER_H
 #define _RENDER_H
+
+#include "common.h"
+#include "mathlib.h"
+#include "cvar.h"
+#include "vid.h"
+//#include "model.h" 
+//now we know why (struct model_s *) is used here instead of model_t
+//damn circular reference ! same with player_info_s -- yan
 
 #define	TOP_RANGE		16			// soldier uniform colors
 #define	BOTTOM_RANGE	96
@@ -35,7 +43,6 @@ typedef struct efrag_s
 	struct entity_s		*entity;
 	struct efrag_s		*entnext;
 } efrag_t;
-
 
 typedef struct entity_s
 {
@@ -97,12 +104,10 @@ typedef struct
 	int			ambientlight;
 } refdef_t;
 
-
 //
 // refresh
 //
 extern	int		reinit_surfcache;
-
 
 extern	refdef_t	r_refdef;
 extern vec3_t	r_origin, vpn, vright, vup;
@@ -139,7 +144,6 @@ void R_InitParticles (void);
 void R_ClearParticles (void);
 void R_DrawParticles (void);
 void R_DrawWaterSurfaces (void);
-
 
 //
 // surface cache related

@@ -22,6 +22,22 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _CLIENT_H
 #define _CLIENT_H
 
+// since all headers are circular-protected with #ifdef _xxx_H
+// try to get them self-sufficient by including whatever other 
+// headers they might need
+
+#include <stdio.h>
+
+#include "common.h"
+#include "mathlib.h"
+#include "protocol.h"
+#include "zone.h"
+#include "net.h"
+#include "model.h"
+#include "sound.h"
+#include "render.h"
+#include "cvar.h"
+
 typedef struct
 {
 	char		name[16];

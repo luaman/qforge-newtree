@@ -19,15 +19,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // quakedef.h -- primary header for client
 
+#ifndef _QUAKEDEF_H
+#define _QUAKEDEF_H
+
 #define	QUAKE_GAME			// as opposed to utilities
 
 //define	PARANOID			// speed sapping error checking
-
 
 #ifdef _WIN32
 #pragma warning( disable : 4244 4127 4201 4214 4514 4305 4115 4018)
 #endif
 
+// FIXME: clean those includes -- yan
 
 #include <math.h>
 #include <string.h>
@@ -72,24 +75,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "compat.h"
 #include "commdef.h"
 
-
 #define MAX_NUM_ARGVS	50
-
 
 extern qboolean noclip_anglehack;
 
+extern cvar_t	*sys_ticrate;
+extern cvar_t	*password;
 
-/* extern	cvar_t		sys_ticrate;
- CVAR_FIXME */
-extern	cvar_t		*sys_ticrate;
+extern byte		*host_basepal;
+extern byte		*host_colormap;
+extern int		host_framecount;	// incremented every frame, never reset
 
-/* extern	cvar_t	password;
- CVAR_FIXME */
-extern	cvar_t	*password;
-
-extern	byte		*host_basepal;
-extern	byte		*host_colormap;
-extern	int			host_framecount;	// incremented every frame, never reset
+extern qboolean	msg_suppress_1;		// Suppresses resolution and cache size console 
+									// output and fullscreen DIB focus gain/loss
 
 void Host_ServerFrame (void);
 void Host_InitCommands (void);
@@ -103,6 +101,4 @@ void Host_Quit_f (void);
 void Host_ClientCommands (char *fmt, ...);
 void Host_ShutdownServer (qboolean crash);
 
-extern qboolean		msg_suppress_1;		/* Suppresses resolution and cache
-										   size console output and
-										   fullscreen DIB focus gain/loss */
+#endif // _QUAKEDEH_H

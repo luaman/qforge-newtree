@@ -19,6 +19,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // server.h
 
+#ifndef _SERVER_H
+#define _SERVER_H
+
+#include "common.h"
+#include "cvar.h"
+#include "protocol.h"
+#include "model.h"
+#include "progs.h"
+
 #define	QW_SERVER
 
 #define	MAX_MASTERS	8				// max recipients for heartbeat packets
@@ -90,7 +99,6 @@ typedef struct
 	byte		signon_buffers[MAX_SIGNON_BUFFERS][MAX_DATAGRAM];
 } server_t;
 
-
 #define	NUM_SPAWN_PARMS			16
 
 typedef enum
@@ -149,10 +157,10 @@ typedef struct client_s
 	byte			datagram_buf[MAX_DATAGRAM];
 
 	// back buffers for client reliable data
-	sizebuf_t	backbuf;
-	int			num_backbuf;
-	int			backbuf_size[MAX_BACK_BUFFERS];
-	byte		backbuf_data[MAX_BACK_BUFFERS][MAX_MSGLEN];
+	sizebuf_t		backbuf;
+	int				num_backbuf;
+	int				backbuf_size[MAX_BACK_BUFFERS];
+	byte			backbuf_data[MAX_BACK_BUFFERS][MAX_MSGLEN];
 
 	double			connection_started;	// or time of disconnect for zombies
 	qboolean		send_message;		// set on frames a datagram arived on
@@ -165,7 +173,6 @@ typedef struct client_s
 	
 	int				stats[MAX_CL_STATS];
 
-
 	client_frame_t	frames[UPDATE_BACKUP];	// updates can be deltad from here
 
 	FILE			*download;			// file being downloaded
@@ -175,7 +182,7 @@ typedef struct client_s
 	int				spec_track;			// entnum of player tracking
 
 	double			whensaid[10];       // JACK: For floodprots
- 	int			whensaidhead;       // Head value for floodprots
+ 	int				whensaidhead;       // Head value for floodprots
  	double			lockedtill;
 
 	qboolean		upgradewarn;		// did we warn him?
@@ -189,14 +196,12 @@ typedef struct client_s
 	int				chokecount;
 	int				delta_sequence;		// -1 = no compression
 	netchan_t		netchan;
-        int                     msecs, msec_cheating;
-        double                  last_check;
+	int				msecs, msec_cheating;
+	double			last_check;
 } client_t;
 
 // a client can leave the server in one of four ways:
 // dropping properly by quiting or disconnecting
-/* // timing out if no valid messages are received for timeout.value seconds
- CVAR_FIXME */
 // timing out if no valid messages are received for timeout->value seconds
 // getting kicked off by the server operator
 // a program error, like an overflowed reliable buffer
@@ -320,30 +325,17 @@ extern client_state_t cls;
 #define	MULTICAST_PVS_R			5
 
 //============================================================================
+// FIXME: declare exported variables in their own relevant .h
 
-/* extern	cvar_t	sv_mintic, sv_maxtic;
- CVAR_FIXME */
 extern	cvar_t	*sv_mintic, *sv_maxtic;
-/* extern	cvar_t	sv_maxspeed;
- CVAR_FIXME */
 extern	cvar_t	*sv_maxspeed;
 
 extern	netadr_t	master_adr[MAX_MASTERS];	// address of the master server
 
-/* extern	cvar_t	spawn;
- CVAR_FIXME */
 extern	cvar_t	*spawn;
-/* extern	cvar_t	teamplay;
- CVAR_FIXME */
 extern	cvar_t	*teamplay;
-/* extern	cvar_t	deathmatch;
- CVAR_FIXME */
 extern	cvar_t	*deathmatch;
-/* extern	cvar_t	fraglimit;
- CVAR_FIXME */
 extern	cvar_t	*fraglimit;
-/* extern	cvar_t	timelimit;
- CVAR_FIXME */
 extern	cvar_t	*timelimit;
 
 extern	server_static_t	svs;				// persistant server info
@@ -362,6 +354,7 @@ extern	FILE		*sv_logfile;
 extern	FILE		*sv_fraglogfile;
 
 //===========================================================
+// FIXME: declare exported functions in their own relevant .h
 
 //
 // sv_main.c
@@ -438,7 +431,6 @@ void SV_ExecuteClientMessage (client_t *cl);
 void SV_UserInit (void);
 void SV_TogglePause (const char *msg);
 
-
 //
 // svonly.c
 //
@@ -459,7 +451,6 @@ void SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg);
 //
 // sv_nchan.c
 //
-
 void ClientReliableCheckBlock(client_t *cl, int maxsize);
 void ClientReliable_FinishWrite(client_t *cl);
 void ClientReliableWrite_Begin(client_t *cl, int c, int maxsize);
@@ -474,3 +465,4 @@ void ClientReliableWrite_Short(client_t *cl, int c);
 void ClientReliableWrite_String(client_t *cl, char *s);
 void ClientReliableWrite_SZ(client_t *cl, void *data, int len);
 
+#endif // _SERVER_H

@@ -19,6 +19,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // screen.h
 
+#ifndef _SCREEN_H
+#define _SCREEN_H
+
+#include "common.h"
+#include "cvar.h"
+
 void SCR_InitCvars (void);
 void SCR_Init (void);
 
@@ -56,3 +62,5 @@ extern	int			scr_copyeverything;
 extern qboolean        scr_skipupdate;
 
 extern qboolean        block_drawing;
+
+#endif // _SCREEN_H

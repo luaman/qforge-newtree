@@ -29,6 +29,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # include "config.h"
 #endif
 
+#include "common.h"
+//#include "var.h"
 
 /* The host system specifies the base of the directory tree, the
    command line parms passed to the program, and the amount of memory

@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _BSPFILE_H
 #define _BSPFILE_H
 
+#include "common.h"
+
 // upper design bounds
 
 #define	MAX_MAP_HULLS		4
@@ -263,7 +265,6 @@ extern	unsigned short	dmarksurfaces[MAX_MAP_MARKSURFACES];
 
 extern	int			numsurfedges;
 extern	int			dsurfedges[MAX_MAP_SURFEDGES];
-
 
 
 void	LoadBSPFile (char *filename);

@@ -18,18 +18,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-//
+#ifndef _MENU_H
+#define _MENU_H
+
+#include "wad.h"
+
 // the net drivers should just set the apropriate bits in m_activenet,
 // instead of having the menu code look through their internal tables
-//
+
 #define	MNET_IPX		1
 #define	MNET_TCP		2
 
 extern	int	m_activenet;
 
-//
 // menus
-//
+
 void M_Init (void);
 void M_Keydown (int key);
 void M_Draw (void);
@@ -38,4 +41,4 @@ qpic_t	*M_CachePic (char *path);
 void M_DrawTextBox (int x, int y, int width, int lines);
 void M_Menu_Quit_f (void);
 
-
+#endif // _MENU_H

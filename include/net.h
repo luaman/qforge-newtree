@@ -22,6 +22,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _NET_H
 #define _NET_H
 
+#include "common.h"
+#include "cvar.h"
+
 #define	PORT_ANY	-1
 
 typedef struct

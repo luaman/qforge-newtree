@@ -19,6 +19,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // input.h -- external (non-keyboard) input devices
 
+#ifndef _INPUT_H
+#define _INPUT_H
+
+#include "protocol.h"
+
 void IN_Init (void);
 
 void IN_Shutdown (void);
@@ -32,3 +37,4 @@ void IN_Move (usercmd_t *cmd);
 void IN_ModeChanged (void);
 // called whenever screen dimensions change
 
+#endif // _INPUT_H

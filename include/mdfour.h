@@ -27,12 +27,12 @@
 	$Id$
 */
 
+#ifndef _MDFOUR_H
+#define _MDFOUR_H
+
 #ifndef _UINT32_H
 #include	<uint32.h>
 #endif
-
-#ifndef _MDFOUR_H
-#define _MDFOUR_H
 
 struct mdfour {
 	uint32 A, B, C, D;

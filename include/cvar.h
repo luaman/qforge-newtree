@@ -31,7 +31,6 @@
 #ifndef _CVAR_H
 #define _CVAR_H
 
-
 typedef struct cvar_s
 {
 	char    *name;
@@ -49,26 +48,25 @@ typedef struct cvar_alias_s
 	struct cvar_alias_s	*next;
 } cvar_alias_t;
 
-#define CVAR_NONE		0
-#define	CVAR_ARCHIVE		1	// set to cause it to be saved to vars.rc
-								// used for system variables, not for player
-								// specific configurations
-#define	CVAR_USERINFO		2	// sent to server on connect or change
-#define	CVAR_SERVERINFO		4	// sent in response to front end requests
-#define	CVAR_SYSTEMINFO		8	// these cvars will be duplicated on all clients
-#define	CVAR_INIT			16	// don't allow change from console at all,
-								// but can be set from the command line
-#define	CVAR_NOTIFY			32	// Will notify players when changed.
-
-#define	CVAR_ROM			64	// display only, cannot be set by user at all
-#define	CVAR_USER_CREATED	128	// created by a set command
-#define	CVAR_HEAP			256	// allocated off the heap, safe to free
-#define CVAR_CHEAT			512	// can not be changed if cheats are disabled
+#define CVAR_NONE			0
+#define	CVAR_ARCHIVE		1		// set to cause it to be saved to vars.rc
+									// used for system variables, not for player
+									// specific configurations
+#define	CVAR_USERINFO		2		// sent to server on connect or change
+#define	CVAR_SERVERINFO		4		// sent in response to front end requests
+#define	CVAR_SYSTEMINFO		8		// these cvars will be duplicated on all clients
+#define	CVAR_INIT			16		// don't allow change from console at all,
+									// but can be set from the command line
+#define	CVAR_NOTIFY			32		// Will notify players when changed.
+#define	CVAR_ROM			64		// display only, cannot be set by user at all
+#define	CVAR_USER_CREATED	128		// created by a set command
+#define	CVAR_HEAP			256		// allocated off the heap, safe to free
+#define CVAR_CHEAT			512		// can not be changed if cheats are disabled
 #define CVAR_NORESTART		1024	// do not clear when a cvar_restart is issued
-#define CVAR_LATCH		2048	// will only change when C code next does
-					// a Cvar_Get(), so it can't be changed
-#define CVAR_TEMP		4906	// can be set even when cheats are
-					// disabled, but is not archived
+#define CVAR_LATCH			2048	// will only change when C code next does
+									// a Cvar_Get(), so it can't be changed
+#define CVAR_TEMP			4906	// can be set even when cheats are
+									// disabled, but is not archived
 
 // Zoid| A good CVAR_ROM example is basepath.  The code should read "cvar_t
 // *fs_basepath = CvarGet("fs_basepath", ".", CVAR_ROM);  The user can
@@ -109,5 +107,7 @@ cvar_t *Cvar_FindVar (char *var_name);
 void Cvar_Init();
 
 void Cvar_Shutdown();
+
 extern cvar_t	*cvar_vars;
+
 #endif // _CVAR_H

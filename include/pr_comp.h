@@ -20,11 +20,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // this file is shared by quake and qcc
 
+#ifndef _PR_COMP_H
+#define _PR_COMP_H
+
 typedef int	func_t;
 typedef int	string_t;
 
 typedef enum {ev_void, ev_string, ev_float, ev_vector, ev_entity, ev_field, ev_function, ev_pointer} etype_t;
-
 
 #define	OFS_NULL		0
 #define	OFS_RETURN		1
@@ -37,7 +39,6 @@ typedef enum {ev_void, ev_string, ev_float, ev_vector, ev_entity, ev_field, ev_f
 #define	OFS_PARM6		22
 #define	OFS_PARM7		25
 #define	RESERVED_OFS	28
-
 
 enum {
 	OP_DONE,
@@ -117,7 +118,6 @@ enum {
 	OP_BITOR
 };
 
-
 typedef struct statement_s
 {
 	unsigned short	op;
@@ -131,6 +131,7 @@ typedef struct
 	unsigned short	ofs;
 	int			s_name;
 } ddef_t;
+
 #define	DEF_SAVEGLOBAL	(1<<15)
 
 #define	MAX_PARMS	8
@@ -150,8 +151,8 @@ typedef struct
 	byte	parm_size[MAX_PARMS];
 } dfunction_t;
 
-
 #define	PROG_VERSION	6
+
 typedef struct
 {
 	int		version;
@@ -178,3 +179,4 @@ typedef struct
 	int		entityfields;
 } dprograms_t;
 
+#endif // _PR_COMP_H

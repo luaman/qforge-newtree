@@ -19,7 +19,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_local.h -- private refresh defs
 
+#ifndef _R_LOCAL_H
+#define _R_LOCAL_H
 
+#include "common.h"
+#include "mathlib.h"
+#include "cvar.h"
+#include "vid.h"
+#include "client.h"
+#include "model.h"
+#include "pmove.h"
 #include "r_shared.h"
 
 #define ALIAS_BASE_SIZE_RATIO		(1.0 / 11.0)
@@ -352,3 +361,4 @@ void R_MarkLights (dlight_t *light, int bit, mnode_t *node);
 
 void R_LoadSkys (char *);
 
+#endif // _R_LOCAL_H

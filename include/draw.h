@@ -18,12 +18,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#ifndef _DRAW_H
-#define _DRAW_H
 // draw.h -- these are the only functions outside the refresh allowed
 // to touch the vid buffer
 
-extern	qpic_t		*draw_disc;	// also used on sbar
+#ifndef _DRAW_H
+#define _DRAW_H
+
+#include "wad.h"
+
+extern qpic_t *draw_disc; // also used on sbar
 
 void Draw_Init (void);
 void Draw_Character (int x, int y, int num);

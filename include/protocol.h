@@ -22,6 +22,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _PROTOCOL_H
 #define _PROTOCOL_H
 
+#include "common.h"
+#include "mathlib.h"
+
 #define	PROTOCOL_VERSION	28
 
 #define QW_CHECK_HASH 0x5157

@@ -19,6 +19,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // d_iface.h: interface header file for rasterization driver modules
 
+#ifndef _D_IFACE_H
+#define _D_IFACE_H
+
+#include "common.h"
+#include "mathlib.h"
+#include "model.h"
+#include "cvar.h"
+
 #define WARP_WIDTH		320
 #define WARP_HEIGHT		200
 
@@ -231,3 +239,4 @@ extern vrect_t	scr_vrect;
 
 extern byte		*r_warpbuffer;
 
+#endif // _D_IFACE_H

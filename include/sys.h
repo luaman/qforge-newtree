@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // sys.h -- non-portable functions
 
-#ifndef __SYS_H
-#define __SYS_H
+#ifndef _SYS_H
+#define _SYS_H
 
 //
 // file IO
@@ -77,5 +77,5 @@ void Sys_Printf (char *fmt, ...);
 
 void Sys_Init (void);
 
-#endif // __SYS_H
+#endif // _SYS_H
 

@@ -19,8 +19,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // sound.h -- client sound i/o functions
 
-#ifndef __SOUND__
-#define __SOUND__
+#ifndef _SOUND_H
+#define _SOUND_H
+
+#include "common.h"
+#include "mathlib.h"
+#include "zone.h"
+#include "cvar.h"
 
 // !!! if this is changed, it much be changed in asm_i386.h too !!!
 typedef struct
@@ -127,7 +132,6 @@ void SNDDMA_Shutdown(void);
 #define	MAX_CHANNELS			128
 #define	MAX_DYNAMIC_CHANNELS	8
 
-
 extern	channel_t   channels[MAX_CHANNELS];
 // 0 to MAX_DYNAMIC_CHANNELS-1	= normal entity sounds
 // MAX_DYNAMIC_CHANNELS to MAX_DYNAMIC_CHANNELS + NUM_AMBIENTS -1 = water, etc
@@ -152,14 +156,8 @@ extern volatile dma_t *shm;
 extern volatile dma_t sn;
 extern vec_t sound_nominal_clip_dist;
 
-/* extern	cvar_t loadas8bit;
- CVAR_FIXME */
 extern	cvar_t *loadas8bit;
-/* extern	cvar_t bgmvolume;
- CVAR_FIXME */
 extern	cvar_t *bgmvolume;
-/* extern	cvar_t volume;
- CVAR_FIXME */
 extern	cvar_t *volume;
 
 extern qboolean	snd_initialized;
@@ -177,4 +175,4 @@ void SNDDMA_Submit(void);
 void S_AmbientOff (void);
 void S_AmbientOn (void);
 
-#endif
+#endif // _SOUND_H

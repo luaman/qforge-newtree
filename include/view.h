@@ -19,11 +19,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // view.h
 
-/* extern	cvar_t		v_gamma;
- CVAR_FIXME */
+#ifndef _VIEW_H
+#define _VIEW_H
+
+#include "mathlib.h"
+#include "cvar.h"
+
 extern	cvar_t		*v_gamma;
-/* extern	cvar_t		lcd_x;
- CVAR_FIXME */
 extern	cvar_t		*lcd_x;
 
 void V_Init (void);
@@ -31,3 +33,4 @@ void V_RenderView (void);
 float V_CalcRoll (vec3_t angles, vec3_t velocity);
 void V_UpdatePalette (void);
 
+#endif // _VIEW_H

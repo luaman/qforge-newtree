@@ -19,16 +19,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // winquake.h: Win32-specific Quake header file
 
-#ifndef WINQUAKE_H
-#define WINQUAKE_H
+#ifndef _WINQUAKE_H
+#define _WINQUAKE_H
 
 #ifdef _WIN32 
+
 #pragma warning( disable : 4229 )  // mgraph gets this
 
 #include <windows.h>
 #include <ddraw.h>
 #include <dsound.h>
 #include <mgraph.h> // Was #ifdef GLQUAKE
+
+#include "common.h"
 
 #define WM_MOUSEWHEEL                   0x020A
 
@@ -106,4 +109,4 @@ int (PASCAL FAR *pgetsockname)(SOCKET s, struct sockaddr FAR *name,
 							   int FAR * namelen);
 #endif // _WIN32
 
-#endif // WINQUAKE_H
+#endif // _WINQUAKE_H

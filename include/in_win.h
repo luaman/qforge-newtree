@@ -25,10 +25,11 @@
 
 */
 
-#ifndef IN_WIN_H
-#define IN_WIN_H
+#ifndef _IN_WIN_H
+#define _IN_WIN_H
 
-#include "winquake.h"   // for usercmd_t in client.h
+#include "common.h"
+#include "protocol.h"
 
 extern qboolean      mouseactive;
 extern float         mouse_x, mouse_y;
@@ -50,6 +51,6 @@ extern void IN_Accumulate (void);
 extern void IN_ClearStates (void);
 extern void IN_Commands (void);
 
-#endif // IN_WIN_H
+#endif // _IN_WIN_H
 
 

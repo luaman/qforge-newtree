@@ -17,9 +17,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-// disable data conversion warnings
+
+#ifndef _GLQUAKE_H
+#define _GLQUAKE_H
 
 #ifdef _WIN32
+// disable data conversion warnings
+// FIXME: move that somewhere else -- yan
 #pragma warning(disable : 4244)     // MIPS
 #pragma warning(disable : 4136)     // X86
 #pragma warning(disable : 4051)     // ALPHA
@@ -30,6 +34,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+#include "common.h"
+#include "model.h"
+#include "render.h"
+#include "cvar.h"
 
 // Ender: HackHackHack
 #ifndef GLAPIENTRY
@@ -343,3 +352,4 @@ void GL_BuildLightmaps (void);
 //
 void R_NetGraph (void);
 
+#endif // _GLQUAKE_H

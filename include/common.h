@@ -17,9 +17,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-// comndef.h  -- general definitions
+// common.h  -- general definitions
+
 #ifndef _COMMON_H
 #define _COMMON_H
+
+//#include "protocol.h" // for struct usercmd_s
 
 typedef unsigned char 		byte;
 #define _DEF_BYTE_
@@ -30,7 +33,7 @@ typedef unsigned char 		byte;
 
 typedef enum {false, true}	qboolean;
 
-#define	MAX_INFO_STRING	196
+#define	MAX_INFO_STRING			196
 #define	MAX_SERVERINFO_STRING	512
 #define	MAX_LOCALINFO_STRING	32768
 
@@ -56,7 +59,6 @@ typedef struct link_s
 {
 	struct link_s	*prev, *next;
 } link_t;
-
 
 void ClearLink (link_t *l);
 void RemoveLink (link_t *l);
@@ -98,8 +100,6 @@ extern	float	(*BigFloat) (float l);
 extern	float	(*LittleFloat) (float l);
 
 //============================================================================
-
-struct usercmd_s;
 
 extern struct usercmd_s nullcmd;
 
@@ -166,8 +166,6 @@ void MSG_ReadDeltaUsercmd (struct usercmd_s *from, struct usercmd_s *cmd);
 int	Q_atoi (char *str);
 float Q_atof (char *str);
 
-
-
 //============================================================================
 
 extern	char		com_token[1024];
@@ -192,7 +190,6 @@ void COM_DefaultExtension (char *path, char *extension);
 
 char	*va(char *format, ...);
 // does a varargs printf into a temp buffer
-
 
 //============================================================================
 
@@ -228,4 +225,5 @@ byte	COM_BlockSequenceCheckByte (byte *base, int length, int sequence, unsigned 
 byte	COM_BlockSequenceCRCByte (byte *base, int length, int sequence);
 
 int build_number( void );
+
 #endif // _COMMON_H

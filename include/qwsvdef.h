@@ -17,7 +17,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-// quakedef.h -- primary header for server
+// qwsvdef.h -- primary header for server
+
+#ifndef _QWSVDEF_H
+#define _QWSVDEF_H
 
 #define	QUAKE_GAME			// as opposed to utilities
 
@@ -26,6 +29,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifdef _WIN32
 #pragma warning( disable : 4244 4127 4201 4214 4514 4305 4115 4018)
 #endif
+
+// FIXME: clean those includes -- yan
 
 #include <math.h>
 #include <string.h>
@@ -60,9 +65,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "compat.h"
 #include "commdef.h"
 
-
 void SV_Error (char *error, ...);
 void SV_Init (quakeparms_t *parms);
 
 void Con_Printf (char *fmt, ...);
 void Con_DPrintf (char *fmt, ...);
+
+#endif
