@@ -132,24 +132,6 @@ char *Sys_ConsoleInput (void)
 	return NULL;
 }
 
-
-/*
-================
-Sys_Printf
-================
-*/
-void Sys_Printf (char *fmt, ...)
-{
-	va_list		argptr;
-	
-	if (sys_nostdout->value)
-		return;
-		
-	va_start (argptr,fmt);
-	vprintf (fmt,argptr);
-	va_end (argptr);
-}
-
 /*
 ================
 Sys_Quit
@@ -159,7 +141,6 @@ void Sys_Quit (void)
 {
 	exit (0);
 }
-
 
 /*
 =============
