@@ -29,9 +29,12 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_WINDOWS_H
+# include <windows.h>
+#endif
+
 #include <SDL.h>
 
-#include <windows.h>
 #include "qargs.h"
 #include "console.h"
 #include "cdaudio.h"
@@ -44,13 +47,14 @@ static qboolean cdValid = false;
 static qboolean initialized = false;
 static qboolean enabled = true;
 static qboolean playLooping = false;
-static SDL_CD *cd_id;
-static float cdvolume = 1.0;
 
-static void CD_f ();
+static SDL_CD	*cd_id;
+static float	cdvolume = 1.0;
+
+static void CD_f (void);
 
 static void
-CDAudio_Eject ()
+CDAudio_Eject (void)
 {
 	if (!cd_id || !enabled)
 		return;
@@ -95,9 +99,8 @@ CDAudio_Play (byte track, qboolean looping)
 	playLooping = looping;
 }
 
-
 void
-CDAudio_Stop ()
+CDAudio_Stop (void)
 {
 	int         cdstate;
 
@@ -112,7 +115,7 @@ CDAudio_Stop ()
 }
 
 void
-CDAudio_Pause ()
+CDAudio_Pause (void)
 {
 	if (!cd_id || !enabled)
 		return;
@@ -125,7 +128,7 @@ CDAudio_Pause ()
 
 
 void
-CDAudio_Resume ()
+CDAudio_Resume (void)
 {
 	if (!cd_id || !enabled)
 		return;
@@ -137,7 +140,7 @@ CDAudio_Resume ()
 }
 
 void
-CDAudio_Update ()
+CDAudio_Update (void)
 {
 	if (!cd_id || !enabled)
 		return;
@@ -158,7 +161,7 @@ CDAudio_Update ()
 }
 
 int
-CDAudio_Init ()
+CDAudio_Init (void)
 {
 #ifdef UQUAKE
 	if (cls.state == ca_dedicated)
@@ -198,7 +201,7 @@ CDAudio_Init ()
 
 
 void
-CDAudio_Shutdown ()
+CDAudio_Shutdown (void)
 {
 	if (!cd_id)
 		return;
@@ -210,7 +213,7 @@ CDAudio_Shutdown ()
 
 #define CD_f_DEFINED
 static void
-CD_f ()
+CD_f (void)
 {
 	char       *command;
 	int         cdstate;

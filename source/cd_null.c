@@ -30,6 +30,8 @@
 # include "config.h"
 #endif
 
+#include "qtypes.h"
+
 void
 CDAudio_Play (byte track, qboolean looping)
 {

@@ -505,6 +505,7 @@ AC_ARG_WITH(3dfx,
 [  --with-3dfx             support 3Dfx output for the V1/V2, if an argument
                           is specified it will be used as the GL wrapper lib
                           for glide.],
+
    HAS_3dfx=$withval, HAS_3dfx=auto)
 if test "x$HAS_3dfx" != "xno" -a "x$HAS_SVGA" != "xno" \
         -a "x$HAS_GLIDE" != "xno"; then
@@ -580,14 +581,20 @@ AC_ARG_ENABLE(alsa,
 [  --disable-alsa          disable alsa support],
 )      
 
-AC_ARG_ENABLE(sdlsound,
-[  --enable-sdlsound       use SDL for sound output]
-)
-
 SNDTYPE=""
 SOUND_LIBS=""
 SOUND_CFLAGS=""
 AC_MSG_CHECKING(for sound support)
+
+dnl SDL digital audio
+AC_ARG_ENABLE(sdl-audio,
+[  --enable-sdl-audio      use SDL for audio output],
+	if test -z "$SNDTYPE" -a "x$HAVE_SDL" = "xyes"; then
+		SNDTYPE="SDL"
+		SOUND_LIBS="$SDL_LIBS"
+	fi
+)
+
 if test "x$enable_alsa" != "xno"; then
 	if test -z "$SNDTYPE" -a "x$ac_cv_header_sys_asoundlib_h" = "xyes"; then
 		AC_EGREP_CPP([QF_maGiC_VALUE],
@@ -615,12 +622,6 @@ QF_maGiC_VALUE
 			)
 		)
 	fi
-fi
-
-dnl Must put SDL tests before other sound tests...
-if test -z "$SNDTYPE" -a "x$HAVE_SDL" = "xyes" -a "x$enable_sdlsound" = "xyes"; then
-	SNDTYPE="SDL"
-	SOUND_LIBS="$SDL_LIBS"
 fi
 
 dnl MME
@@ -745,7 +746,18 @@ dnl ==================================================================
 
 CD_LIBS=""
 CD_CFLAGS=""
+
 AC_MSG_CHECKING(for CD audio support)
+
+dnl SDL CD audio
+AC_ARG_ENABLE(sdl-cd-audio,
+[  --enable-sdl-cd-audio   use SDL for CD audio output],
+	if test -z "$CDTYPE" -a "x$HAVE_SDL" = "xyes"; then
+		AC_MSG_RESULT([yes (SDL)])
+		CDTYPE=SDL
+		CD_LIBS="$SDL_LIBS"
+	fi
+)
 
 dnl Linux
 if test -z "$CDTYPE"; then
@@ -794,9 +806,10 @@ AC_SUBST(CD_LIBS)
 AC_SUBST(CD_CFLAGS)
 
 AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "LINUX")
+AM_CONDITIONAL(CDTYPE_SDL, test "$CDTYPE" = "SDL")
 AM_CONDITIONAL(CDTYPE_SGI, test "$CDTYPE" = "SGI")
 AM_CONDITIONAL(CDTYPE_WIN32, test "$CDTYPE" = "WIN32")
-AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "LINUX" -a "$CDTYPE" != "SGI" -a "$CDTYPE" != "WIN32")
+AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "LINUX" -a "$CDTYPE" != "SDL" -a "$CDTYPE" != "SGI" -a "$CDTYPE" != "WIN32")
 
 dnl ==================================================================
 dnl Checks for networking
@@ -941,7 +954,7 @@ else
 fi
 
 AC_ARG_ENABLE(optimize,
-	[  --disable-optimize          compile without optimizations (for development)],
+	[  --disable-optimize      compile without optimizations (for development)],
 	optimize=$disable_optimize,
 	optimize=yes
 )
@@ -986,7 +999,7 @@ fi
 
 dnl CFLAGS for release and devel versions
 AC_ARG_ENABLE(profile,
-	[  --enable-profile          compile with profiling (for development)],
+	[  --enable-profile        compile with profiling (for development)],
 	profile=$enable_profile
 )
 if test "x$profile" = xyes; then
@@ -1004,7 +1017,7 @@ if test "x$GCC" = xyes; then
 	dnl Check for -pipe vs -save-temps.
 	AC_MSG_CHECKING(for -pipe vs -save-temps)
 	AC_ARG_ENABLE(save-temps,
-		[  --enable-save-temps        save temporay files],
+		[  --enable-save-temps     save temporary files],
 		AC_MSG_RESULT(-save-temps); CFLAGS="$CFLAGS -save-temps"; BUILD_TYPE="$BUILD_TYPE Save-temps",
 		AC_MSG_RESULT(-pipe); check_pipe=yes)
 fi
@@ -1100,34 +1113,42 @@ dnl Find out what to build and finish
 dnl ==================================================================
 
 AC_ARG_WITH(clients,
-[  --with-clients=<list>   compile clients in <list>;
-                          mgl ggi sdl sgl svga x11 glx 3dfx],
-  clients="$withval", clients="all")
+	[  --with-clients=<list>   compile clients in <list>;
+                          3dfx ggi glx mgl sdl sgl svga x11],
+	clients="$withval",
+	clients="all"
+)
 if test "$clients" = "all"; then
-	ENABLE_MGL=yes
+	ENABLE_3DFX=yes
 	ENABLE_GGI=yes
+	ENABLE_GLX=yes
+	ENABLE_MGL=yes
 	ENABLE_SDL=yes
 	ENABLE_SGL=yes
 	ENABLE_SVGA=yes
 	ENABLE_X11=yes
-	ENABLE_GLX=yes
-	ENABLE_3DFX=yes
 else
-	ENABLE_MGL=no
+	ENABLE_3DFX=no
 	ENABLE_GGI=no
+	ENABLE_GLX=no
+	ENABLE_MGL=no
 	ENABLE_SDL=no
 	ENABLE_SGL=no
 	ENABLE_SVGA=no
 	ENABLE_X11=no
-	ENABLE_GLX=no
-	ENABLE_3DFX=no
 	for client in $clients; do
 		case "$client" in
-			mgl)
-				ENABLE_MGL=yes
+			3dfx)
+				ENABLE_3DFX=yes
 				;;
 			ggi)
 				ENABLE_GGI=yes
+				;;
+			glx)
+				ENABLE_GLX=yes
+				;;
+			mgl)
+				ENABLE_MGL=yes
 				;;
 			sdl)
 				ENABLE_SDL=yes
@@ -1141,12 +1162,6 @@ else
 			x11)
 				ENABLE_X11=yes
 				;;
-			glx)
-				ENABLE_GLX=yes
-				;;
-			3dfx)
-				ENABLE_3DFX=yes
-				;;
 		esac
 	done
 fi
@@ -1158,17 +1173,33 @@ AC_ARG_WITH(server,
 
 CL_TARGETS=""
 TARGETS=""
-if test "x$HAVE_MGL" = xyes -a "x$ENABLE_MGL" = xyes; then
-	TARGETS="$TARGETS qf-client-mgl\$(EXEEXT)"
-	CL_TARGETS="$CL_TARGETS MGL"
+if test "x$HAVE_TDFXGL" = xyes -a "x$ENABLE_3DFX" = xyes; then
+	TARGETS="$TARGETS qf-client-3dfx\$(EXEEXT)"
+	CL_TARGETS="$CL_TARGETS 3dfx"
 fi
 if test "x$HAVE_GGI" = xyes -a "x$ENABLE_GGI" = xyes; then
 	TARGETS="$TARGETS qf-client-ggi\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS GGI"
 fi
+if test "x$HAVE_X" = xyes; then
+	if test "x$HAVE_GLX" = xyes -a "x$ENABLE_GLX" = xyes; then
+		TARGETS="$TARGETS qf-client-glx\$(EXEEXT)"
+		CL_TARGETS="$CL_TARGETS GLX"
+	fi
+fi
+if test "x$HAVE_MGL" = xyes -a "x$ENABLE_MGL" = xyes; then
+	TARGETS="$TARGETS qf-client-mgl\$(EXEEXT)"
+	CL_TARGETS="$CL_TARGETS MGL"
+fi
 if test "x$HAVE_SDL" = xyes -a "x$ENABLE_SDL" = xyes; then
 	TARGETS="$TARGETS qf-client-sdl\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS SDL"
+fi
+if test "x$HAVE_SGL" = xyes; then
+	if test "x$HAVE_GLX" = xyes -a "x$ENABLE_SGL" = xyes; then
+		TARGETS="$TARGETS qf-client-sgl\$(EXEEXT)"
+		CL_TARGETS="$CL_TARGETS SDL-GL"
+	fi
 fi
 if test "x$HAVE_SVGA" = xyes -a "x$ENABLE_SVGA" = xyes; then
 	TARGETS="$TARGETS qf-client-svga\$(EXEEXT)"
@@ -1177,22 +1208,6 @@ fi
 if test "x$HAVE_X" = xyes -a "x$ENABLE_X11" = xyes; then
 	TARGETS="$TARGETS qf-client-x11\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS X11"
-fi
-if test "x$HAVE_X" = xyes; then
-	if test "x$HAVE_GLX" = xyes -a "x$ENABLE_GLX" = xyes; then
-		TARGETS="$TARGETS qf-client-glx\$(EXEEXT)"
-		CL_TARGETS="$CL_TARGETS GLX"
-	fi
-fi
-if test "x$HAVE_SGL" = xyes; then
-	if test "x$HAVE_GLX" = xyes -a "x$ENABLE_SGL" = xyes; then
-		TARGETS="$TARGETS qf-client-sgl\$(EXEEXT)"
-		CL_TARGETS="$CL_TARGETS SDL-GL"
-	fi
-fi
-if test "x$HAVE_TDFXGL" = xyes -a "x$ENABLE_3DFX" = xyes; then
-	TARGETS="$TARGETS qf-client-3dfx\$(EXEEXT)"
-	CL_TARGETS="$CL_TARGETS 3dfx"
 fi
 if test "x$SV_TARGETS" = xyes; then
 	TARGETS="qf-server\$(EXEEXT) $TARGETS"
@@ -1220,10 +1235,10 @@ AC_MSG_RESULT([
 	Build type:$BUILD_TYPE
 	Server support: $SV_TARGETS
 	Client support:$CL_TARGETS
+	Sound system: $SNDTYPE
 
-	System game data directory: $sharepath
+	Shared game data directory: $sharepath
 	Per-user game data directory: $userpath
 	Global configuration file: $globalconf
-	Sound sytem: $SNDTYPE
 ])
 test -d ./CVS && echo -e "WARNING: Hackers at work, watch for falling bits of code.\n(This is from a development CVS tree. Expect problems)\n"

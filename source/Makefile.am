@@ -128,6 +128,9 @@ EXTRA_libqfsnd_a_SOURCES= snd_dma.c snd_mem.c snd_mix.c snd_alsa_0_5.c \
 if CDTYPE_LINUX
 libqfcd_a_SOURCES=	cd_linux.c
 endif
+if CDTYPE_SDL
+libqfcd_a_SOURCES=	cd_sdl.c
+endif
 if CDTYPE_SGI
 libqfcd_a_SOURCES=	cd_sgi.c
 endif
