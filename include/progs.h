@@ -63,41 +63,44 @@ typedef struct edict_s
 } edict_t;
 #define	EDICT_FROM_AREA(l) STRUCT_FROM_LINK(l,edict_t,area)
 
-struct progs_s;
+#ifndef PROGS_T
+typedef struct progs_s progs_t;
+#define PROGS_T
+#endif
 
 //============================================================================
 
 void PR_Init (void);
 
-void PR_ExecuteProgram (struct progs_s *pr, func_t fnum);
-void PR_LoadProgs (struct progs_s *pr);
+void PR_ExecuteProgram (progs_t *pr, func_t fnum);
+void PR_LoadProgs (progs_t *pr);
 
 void PR_Profile_f (void);
 
-edict_t *ED_Alloc (struct progs_s *pr);
-void ED_Free (struct progs_s *pr, edict_t *ed);
+edict_t *ED_Alloc (progs_t *pr);
+void ED_Free (progs_t *pr, edict_t *ed);
 
-char	*ED_NewString (struct progs_s *pr, char *string);
+char	*ED_NewString (progs_t *pr, char *string);
 // returns a copy of the string allocated from the server's string heap
 
-void ED_Print (struct progs_s *pr, edict_t *ed);
-void ED_Write (struct progs_s *pr, QFile *f, edict_t *ed);
-char *ED_ParseEdict (struct progs_s *pr, char *data, edict_t *ent);
+void ED_Print (progs_t *pr, edict_t *ed);
+void ED_Write (progs_t *pr, QFile *f, edict_t *ed);
+char *ED_ParseEdict (progs_t *pr, char *data, edict_t *ent);
 
-void ED_WriteGlobals (struct progs_s *pr, QFile *f);
-void ED_ParseGlobals (struct progs_s *pr, char *data);
+void ED_WriteGlobals (progs_t *pr, QFile *f);
+void ED_ParseGlobals (progs_t *pr, char *data);
 
-void ED_LoadFromFile (struct progs_s *pr, char *data);
+void ED_LoadFromFile (progs_t *pr, char *data);
 
-ddef_t *ED_FindField (struct progs_s *pr, char *name);
-dfunction_t *ED_FindFunction (struct progs_s *pr, char *name);
+ddef_t *ED_FindField (progs_t *pr, char *name);
+dfunction_t *ED_FindFunction (progs_t *pr, char *name);
 
 
 //define EDICT_NUM(p,n) ((edict_t *)(*(p)->edicts+ (n)*(p)->pr_edict_size))
 //define NUM_FOR_EDICT(p,e) (((byte *)(e) - *(p)->edicts)/(p)->pr_edict_size)
 
-edict_t *EDICT_NUM(struct progs_s *pr, int n);
-int NUM_FOR_EDICT(struct progs_s *pr, edict_t *e);
+edict_t *EDICT_NUM(progs_t *pr, int n);
+int NUM_FOR_EDICT(progs_t *pr, edict_t *e);
 
 #define	NEXT_EDICT(p,e) ((edict_t *)( (byte *)e + (p)->pr_edict_size))
 
@@ -121,11 +124,11 @@ int NUM_FOR_EDICT(struct progs_s *pr, edict_t *e);
 
 extern	int		type_size[8];
 
-typedef void (*builtin_t) (struct progs_s *pr);
+typedef void (*builtin_t) (progs_t *pr);
 extern	builtin_t *pr_builtins;
 extern int pr_numbuiltins;
 
-int FindFieldOffset (struct progs_s *pr, char *field);
+int FindFieldOffset (progs_t *pr, char *field);
 
 extern func_t	EndFrame;	// 2000-01-02 EndFrame function by Maddes/FrikaC
 
@@ -133,26 +136,26 @@ extern func_t SpectatorConnect;
 extern func_t SpectatorThink;
 extern func_t SpectatorDisconnect;
 
-void PR_RunError (struct progs_s *pr, char *error, ...) __attribute__((format(printf,2,3)));
+void PR_RunError (progs_t *pr, char *error, ...) __attribute__((format(printf,2,3)));
 
-void ED_PrintEdicts (struct progs_s *pr);
-void ED_PrintNum (struct progs_s *pr, int ent);
-void ED_Count (struct progs_s *pr);
-void PR_Profile (struct progs_s *pr);
+void ED_PrintEdicts (progs_t *pr);
+void ED_PrintNum (progs_t *pr, int ent);
+void ED_Count (progs_t *pr);
+void PR_Profile (progs_t *pr);
 
-eval_t *GetEdictFieldValue(struct progs_s *pr, edict_t *ed, char *field);
+eval_t *GetEdictFieldValue(progs_t *pr, edict_t *ed, char *field);
 
 //
 // PR STrings stuff
 //
 #define MAX_PRSTR 1024
 
-char *PR_GetString(struct progs_s *pr, int num);
-int PR_SetString(struct progs_s *pr, char *s);
+char *PR_GetString(progs_t *pr, int num);
+int PR_SetString(progs_t *pr, char *s);
 
 // externaly supplied functions
 
-int ED_Parse_Extra_Fields (struct progs_s *pr, char *key, char *value);
+int ED_Parse_Extra_Fields (progs_t *pr, char *key, char *value);
 
 //============================================================================
 
@@ -164,7 +167,7 @@ typedef struct {
 	dfunction_t *f;
 } prstack_t;
 
-typedef struct progs_s {
+struct progs_s {
 	dprograms_t		*progs;
 	dfunction_t		*pr_functions;
 	char			*pr_strings;
@@ -201,6 +204,6 @@ typedef struct progs_s {
 
 	void			(*unlink)(edict_t *ent);
 	void			(*flush)(void);
-} progs_t;
+};
 
 #endif // _PROGS_H

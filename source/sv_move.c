@@ -35,6 +35,7 @@
 
 #include "pmove.h"
 #include "server.h"
+#include "sv_pr_cmds.h"
 #include "world.h"
 
 #define	STEPSIZE	18
@@ -240,7 +241,6 @@ facing it.
 
 ======================
 */
-void        PF_changeyaw (void);
 qboolean
 SV_StepDirection (edict_t *ent, float yaw, float dist)
 {
@@ -248,7 +248,7 @@ SV_StepDirection (edict_t *ent, float yaw, float dist)
 	float       delta;
 
 	ent->v.ideal_yaw = yaw;
-	PF_changeyaw ();
+	PF_changeyaw (&sv_progs);
 
 	yaw = yaw * M_PI * 2 / 360;
 	move[0] = cos (yaw) * dist;

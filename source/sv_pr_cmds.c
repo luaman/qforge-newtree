@@ -35,6 +35,7 @@
 #include "cmd.h"
 #include "msg.h"
 #include "server.h"
+#include "sv_pr_cmds.h"
 #include "world.h"
 #include "va.h"
 
