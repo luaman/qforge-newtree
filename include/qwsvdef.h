@@ -57,58 +57,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "world.h"
 #include "pmove.h"
 
-#ifndef max
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#endif
+#include "compat.h"
+#include "commdef.h"
 
-#ifdef _WIN32
-#ifndef __BORLANDC__
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#define kbhit _kbhit
-#endif
-#endif
-
-//=============================================================================
-
-// the host system specifies the base of the directory tree, the
-// command line parms passed to the program, and the amount of memory
-// available for the program to use
-
-typedef struct
-{
-	char	*basedir;
-	char	*cachedir;		// for development over ISDN lines
-	int		argc;
-	char	**argv;
-	void	*membase;
-	int		memsize;
-} quakeparms_t;
-
-
-//=============================================================================
-
-//
-// host
-//
-extern	quakeparms_t host_parms;
-
-/* extern	cvar_t		sys_nostdout;
- CVAR_FIXME */
-extern	cvar_t		*sys_nostdout;
-/* extern	cvar_t		developer;
- CVAR_FIXME */
-extern	cvar_t		*developer;
-
-extern	qboolean	host_initialized;		// true if into command execution
-extern	double		host_frametime;
-extern	double		realtime;			// not bounded in any way, changed at
-										// start of every frame, never reset
 
 void SV_Error (char *error, ...);
 void SV_Init (quakeparms_t *parms);
 
 void Con_Printf (char *fmt, ...);
 void Con_DPrintf (char *fmt, ...);
-

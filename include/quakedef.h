@@ -69,37 +69,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "cdaudio.h"
 #include "pmove.h"
 
+#include "compat.h"
+#include "commdef.h"
 
-#ifndef max
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#endif
-
-#ifdef _WIN32
-#ifndef __BORLANDC__
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#endif
-#endif
-
-//=============================================================================
-
-// the host system specifies the base of the directory tree, the
-// command line parms passed to the program, and the amount of memory
-// available for the program to use
-
-typedef struct
-{
-	char	*basedir;
-	char	*cachedir;		// for development over ISDN lines
-	int		argc;
-	char	**argv;
-	void	*membase;
-	int		memsize;
-} quakeparms_t;
-
-
-//=============================================================================
 
 #define MAX_NUM_ARGVS	50
 
@@ -107,32 +79,17 @@ typedef struct
 extern qboolean noclip_anglehack;
 
 
-//
-// host
-//
-extern	quakeparms_t host_parms;
-
 /* extern	cvar_t		sys_ticrate;
  CVAR_FIXME */
 extern	cvar_t		*sys_ticrate;
-/* extern	cvar_t		sys_nostdout;
- CVAR_FIXME */
-extern	cvar_t		*sys_nostdout;
-/* extern	cvar_t		developer;
- CVAR_FIXME */
-extern	cvar_t		*developer;
 
 /* extern	cvar_t	password;
  CVAR_FIXME */
 extern	cvar_t	*password;
 
-extern	qboolean	host_initialized;		// true if into command execution
-extern	double		host_frametime;
 extern	byte		*host_basepal;
 extern	byte		*host_colormap;
 extern	int			host_framecount;	// incremented every frame, never reset
-extern	double		realtime;			// not bounded in any way, changed at
-										// start of every frame, never reset
 
 void Host_ServerFrame (void);
 void Host_InitCommands (void);
@@ -146,6 +103,6 @@ void Host_Quit_f (void);
 void Host_ClientCommands (char *fmt, ...);
 void Host_ShutdownServer (qboolean crash);
 
-extern qboolean		msg_suppress_1;		// suppresses resolution and cache size console output
-										//  an fullscreen DIB focus gain/loss
-
+extern qboolean		msg_suppress_1;		/* Suppresses resolution and cache
+										   size console output and
+										   fullscreen DIB focus gain/loss */
