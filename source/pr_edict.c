@@ -49,6 +49,7 @@
 #endif
 
 cvar_t	*r_skyname;
+cvar_t  *pr_boundscheck;
 
 void SV_Error (char *error, ...);
 void FindEdictFieldOffsets();
@@ -62,6 +63,7 @@ dstatement_t	*pr_statements;
 globalvars_t	*pr_global_struct;
 float			*pr_globals;			// same as pr_global_struct
 int				pr_edict_size;	// in bytes
+int                             pr_edictareasize;               // LordHavoc: in bytes
 
 int		type_size[8] = {1,sizeof(void *)/4,1,3,1,1,sizeof(void *)/4,sizeof(void *)/4};
 
@@ -995,7 +997,6 @@ void ED_LoadFromFile (char *data)
 	Con_DPrintf ("%i entities inhibited\n", inhibit);
 }
 
-
 /*
 ===============
 PR_LoadProgs
@@ -1004,22 +1005,24 @@ PR_LoadProgs
 void PR_LoadProgs (void)
 {
 	int		i;
-	char	num[32];
-	dfunction_t *f;
+        char    num[32];
+	dstatement_t *st;
+        dfunction_t *f;
 
 // flush the non-C variable lookup cache
 	for (i=0 ; i<GEFV_CACHESIZE ; i++)
 		gefvCache[i].field[0] = 0;
 
-	progs = (dprograms_t *)COM_LoadHunkFile ("qwprogs.dat");
-	if (!progs)
+        progs = (dprograms_t *)COM_LoadHunkFile ("qwprogs.dat");
+        if (!progs) {
 		progs = (dprograms_t *)COM_LoadHunkFile ("progs.dat");
-	if (!progs)
 		SV_Error ("PR_LoadProgs: couldn't load progs.dat");
+        }
+
 	Con_DPrintf ("Programs occupy %iK.\n", com_filesize/1024);
 
 // add prog crc to the serverinfo
-	snprintf (num, sizeof(num), "%i", CRC_Block ((byte *)progs, com_filesize));
+        snprintf (num, sizeof(num), "%i", CRC_Block((byte *)progs, com_filesize));
 	Info_SetValueForStarKey (svs.info, "*progs", num, MAX_SERVERINFO_STRING);
 
 // byte swap the header
@@ -1027,9 +1030,9 @@ void PR_LoadProgs (void)
 		((int *)progs)[i] = LittleLong ( ((int *)progs)[i] );		
 
 	if (progs->version != PROG_VERSION)
-		SV_Error ("progs.dat has wrong version number (%i should be %i)", progs->version, PROG_VERSION);
+                SV_Error ("progs.dat has wrong version number (%i should be %i)", progs->version, PROG_VERSION);
 	if (progs->crc != PROGHEADER_CRC)
-		SV_Error ("You must have the progs.dat from QuakeWorld installed");
+                SV_Error ("You must have the qwprogs.dat from QuakeWorld installed");
 
 	pr_functions = (dfunction_t *)((byte *)progs + progs->ofs_functions);
 	pr_strings = (char *)progs + progs->ofs_strings;
@@ -1037,13 +1040,15 @@ void PR_LoadProgs (void)
 	pr_fielddefs = (ddef_t *)((byte *)progs + progs->ofs_fielddefs);
 	pr_statements = (dstatement_t *)((byte *)progs + progs->ofs_statements);
 
-	num_prstr = 0;
+        num_prstr = 0;
 
 	pr_global_struct = (globalvars_t *)((byte *)progs + progs->ofs_globals);
 	pr_globals = (float *)pr_global_struct;
 	
 	pr_edict_size = progs->entityfields * 4 + sizeof (edict_t) - sizeof(entvars_t);
-	
+
+	pr_edictareasize = pr_edict_size * MAX_EDICTS;
+
 // byte swap the lumps
 	for (i=0 ; i<progs->numstatements ; i++)
 	{
@@ -1055,12 +1060,12 @@ void PR_LoadProgs (void)
 
 	for (i=0 ; i<progs->numfunctions; i++)
 	{
-	pr_functions[i].first_statement = LittleLong (pr_functions[i].first_statement);
-	pr_functions[i].parm_start = LittleLong (pr_functions[i].parm_start);
-	pr_functions[i].s_name = LittleLong (pr_functions[i].s_name);
-	pr_functions[i].s_file = LittleLong (pr_functions[i].s_file);
-	pr_functions[i].numparms = LittleLong (pr_functions[i].numparms);
-	pr_functions[i].locals = LittleLong (pr_functions[i].locals);
+		pr_functions[i].first_statement = LittleLong (pr_functions[i].first_statement);
+		pr_functions[i].parm_start = LittleLong (pr_functions[i].parm_start);
+		pr_functions[i].s_name = LittleLong (pr_functions[i].s_name);
+		pr_functions[i].s_file = LittleLong (pr_functions[i].s_file);
+		pr_functions[i].numparms = LittleLong (pr_functions[i].numparms);
+		pr_functions[i].locals = LittleLong (pr_functions[i].locals);
 	}	
 
 	for (i=0 ; i<progs->numglobaldefs ; i++)
@@ -1074,7 +1079,7 @@ void PR_LoadProgs (void)
 	{
 		pr_fielddefs[i].type = LittleShort (pr_fielddefs[i].type);
 		if (pr_fielddefs[i].type & DEF_SAVEGLOBAL)
-			SV_Error ("PR_LoadProgs: pr_fielddefs[i].type & DEF_SAVEGLOBAL");
+                        SV_Error ("PR_LoadProgs: pr_fielddefs[i].type & DEF_SAVEGLOBAL");
 		pr_fielddefs[i].ofs = LittleShort (pr_fielddefs[i].ofs);
 		pr_fielddefs[i].s_name = LittleLong (pr_fielddefs[i].s_name);
 	}
@@ -1101,8 +1106,108 @@ void PR_LoadProgs (void)
 
 	// LordHavoc: Ender added this
 	FindEdictFieldOffsets();
-}
 
+	// LordHavoc: bounds check anything static
+	for (i = 0,st = pr_statements;i < progs->numstatements;i++,st++)
+	{
+		switch (st->op)
+		{
+		case OP_IF:
+		case OP_IFNOT:
+			if ((unsigned short) st->a >= progs->numglobals || st->b + i < 0 || st->b + i >= progs->numstatements)
+                                SV_Error("PR_LoadProgs: out of bounds IF/IFNOT (statement %d)\n", i);
+			break;
+		case OP_GOTO:
+			if (st->a + i < 0 || st->a + i >= progs->numstatements)
+                                SV_Error("PR_LoadProgs: out of bounds GOTO (statement %d)\n", i);
+			break;
+		// global global global
+		case OP_ADD_F:
+		case OP_ADD_V:
+		case OP_SUB_F:
+		case OP_SUB_V:
+		case OP_MUL_F:
+		case OP_MUL_V:
+		case OP_MUL_FV:
+		case OP_MUL_VF:
+		case OP_DIV_F:
+		case OP_BITAND:
+		case OP_BITOR:
+		case OP_GE:
+		case OP_LE:
+		case OP_GT:
+		case OP_LT:
+		case OP_AND:
+		case OP_OR:
+		case OP_EQ_F:
+		case OP_EQ_V:
+		case OP_EQ_S:
+		case OP_EQ_E:
+		case OP_EQ_FNC:
+		case OP_NE_F:
+		case OP_NE_V:
+		case OP_NE_S:
+		case OP_NE_E:
+		case OP_NE_FNC:
+		case OP_ADDRESS:
+		case OP_LOAD_F:
+		case OP_LOAD_FLD:
+		case OP_LOAD_ENT:
+		case OP_LOAD_S:
+		case OP_LOAD_FNC:
+		case OP_LOAD_V:
+			if ((unsigned short) st->a >= progs->numglobals || (unsigned short) st->b >= progs->numglobals || (unsigned short) st->c >= progs->numglobals)
+                                SV_Error("PR_LoadProgs: out of bounds global index (statement %d)\n", i);
+			break;
+		// global none global
+		case OP_NOT_F:
+		case OP_NOT_V:
+		case OP_NOT_S:
+		case OP_NOT_FNC:
+		case OP_NOT_ENT:
+			if ((unsigned short) st->a >= progs->numglobals || (unsigned short) st->c >= progs->numglobals)
+                                SV_Error("PR_LoadProgs: out of bounds global index (statement %d)\n", i);
+			break;
+		// 2 globals
+		case OP_STOREP_F:
+		case OP_STOREP_ENT:
+		case OP_STOREP_FLD:
+		case OP_STOREP_S:
+		case OP_STOREP_FNC:
+		case OP_STORE_F:
+		case OP_STORE_ENT:
+		case OP_STORE_FLD:
+		case OP_STORE_S:
+		case OP_STORE_FNC:
+		case OP_STATE:
+		case OP_STOREP_V:
+		case OP_STORE_V:
+			if ((unsigned short) st->a >= progs->numglobals || (unsigned short) st->b >= progs->numglobals)
+                                SV_Error("PR_LoadProgs: out of bounds global index (statement %d)\n", i);
+			break;
+		// 1 global
+		case OP_CALL0:
+		case OP_CALL1:
+		case OP_CALL2:
+		case OP_CALL3:
+		case OP_CALL4:
+		case OP_CALL5:
+		case OP_CALL6:
+		case OP_CALL7:
+		case OP_CALL8:
+		case OP_DONE:
+		case OP_RETURN:
+			if ((unsigned short) st->a >= progs->numglobals)
+                                SV_Error("PR_LoadProgs: out of bounds global index (statement %d)\n", i);
+			break;
+		default:
+                        SV_Error("PR_LoadProgs: unknown opcode %d at statement %d\n", st->op, i);
+			break;
+		}
+	}
+
+	FindEdictFieldOffsets(); // LordHavoc: update field offset list
+}
 
 /*
 ===============
@@ -1120,6 +1225,7 @@ void PR_Init (void)
 void PR_Init_Cvars (void)
 {
 	r_skyname = Cvar_Get ("r_skyname", com_token, CVAR_SERVERINFO, "name of skybox");
+        pr_boundscheck = Cvar_Get("pr_boundscheck", "1", CVAR_NONE, "Server progs bounds checking");
 }
 
 
