@@ -884,7 +884,7 @@ R_DrawAliasModel (entity_t *e)
 	}
 
 	if (gl_affinemodels->int_val)
-		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE); // DESPAIR: was GL_FASTEST
+		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
 
 	glPopMatrix ();
 

@@ -29,12 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <string.h>
-#include <stdio.h>
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
+#ifdef HAVE_STRING_H
+# include <string.h>
 #endif
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
+
+#include <stdio.h>
 
 #include "cmd.h"
 #include "console.h"
@@ -476,11 +478,14 @@ Draw_Init (void)
 	cs_texture = GL_LoadTexture ("crosshair", 8, 8, cs_data, false, true, 1);
 //  char_texture = GL_LoadTexture ("charset", 128, 128, draw_chars, false, true, 1);    // 1999-12-27 Conwidth/height charset fix by TcT
 
-//	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // DESPAIR: If trilinear, crosshairs are blocks of solid color
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+	if (gl_picmip)
+	{
+		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	} else {
+		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
 	// save a texture slot for translated picture
 	translate_texture = texture_extension_number++;
 
