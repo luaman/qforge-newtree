@@ -1,6 +1,11 @@
 *.d
 *.o
+*.obj
 qw-server
 qw-client-x11
 qw-client-svga
 qw-client-glx
+client.exe
+server.exe
+p
+
