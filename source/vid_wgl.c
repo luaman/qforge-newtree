@@ -93,6 +93,15 @@ const char *gl_renderer;
 const char *gl_version;
 const char *gl_extensions;
 
+// ARB Multitexture
+qboolean    gl_mtex_capable = false;
+GLenum		gl_mtex_enum = GL_TEXTURE0_ARB;
+
+// 8-bit and permedia support
+QF_glColorTableEXT	qglColorTableEXT = NULL;
+qboolean			is8bit = false;
+qboolean			isPermedia = false;
+
 // fixme: Only used by MGL ..
 qboolean    DDActive;
 
@@ -153,14 +162,6 @@ char       *VID_GetModeDescription (int mode);
 void        ClearAllStates (void);
 void        VID_UpdateWindowStatus (void);
 void        GL_Init (void);
-
-typedef void (APIENTRY * lp3DFXFUNC) (int, int, int, int, int, const void *);
-lp3DFXFUNC  glColorTableEXT;
-qboolean    is8bit = false;
-qboolean    isPermedia = false;
-int         gl_mtex_enum = TEXTURE0_SGIS;
-qboolean    gl_arb_mtex = false;
-qboolean    gl_mtexable = false;
 
 //====================================
 
@@ -490,47 +491,33 @@ VID_UpdateWindowStatus (void)
 
 int         texture_extension_number = 1;
 
-#ifdef _WIN32
 void
 CheckMultiTextureExtensions (void)
 {
 	Con_Printf ("Checking for multitexture... ");
 	if (COM_CheckParm ("-nomtex")) {
-		Con_Printf ("disabled\n");
+		Con_Printf ("disabled.\n");
 		return;
 	}
-	if (strstr (gl_extensions, "GL_ARB_multitexture ")) {
-		Con_Printf ("GL_ARB_multitexture\n");
-		qglMTexCoord2f = (void *) wglGetProcAddress ("glMultiTexCoord2fARB");
-		qglSelectTexture = (void *) wglGetProcAddress ("glActiveTextureARB");
-		gl_mtex_enum = GL_TEXTURE0_ARB;
-		gl_mtexable = true;
-		gl_arb_mtex = true;
-	} else if (strstr (gl_extensions, "GL_SGIS_multitexture ")) {
-		Con_Printf ("GL_SGIS_multitexture\n");
-		qglMTexCoord2f = (void *) wglGetProcAddress ("glMTexCoord2fSGIS");
-		qglSelectTexture = (void *) wglGetProcAddress ("glSelectTextureSGIS");
-		gl_mtex_enum = TEXTURE0_SGIS;
-		gl_mtexable = true;
-		gl_arb_mtex = false;
-	} else if (strstr (gl_extensions, "GL_EXT_multitexture ")) {
-		Con_Printf ("GL_EXT_multitexture\n");
-		qglMTexCoord2f = (void *) wglGetProcAddress ("glMTexCoord2fEXT");
-		qglSelectTexture = (void *) wglGetProcAddress ("glSelectTextureEXT");
-		gl_mtex_enum = TEXTURE0_SGIS;
-		gl_mtexable = true;
-		gl_arb_mtex = false;
+
+	if (QFGL_ExtensionPresent ("GL_ARB_multitexture")) {
+
+		int max_texture_units = 0;
+
+		glGetIntegerv (GL_MAX_TEXTURE_UNITS_ARB, &max_texture_units);
+		if (max_texture_units >= 2) {
+			Con_Printf ("enabled, %d TMUs.\n", max_texture_units);
+			qglMultiTexCoord2f = QFGL_ExtensionAddress ("glMultiTexCoord2fARB");
+			qglActiveTexture = QFGL_ExtensionAddress ("glActiveTextureARB");
+			gl_mtex_enum = GL_TEXTURE0_ARB;
+			gl_mtex_capable = true;
+		} else {
+			Con_Printf ("disabled, not enough TMUs.\n");
+		}
 	} else {
-		Con_Printf ("none found\n");
+		Con_Printf ("not found.\n");
 	}
 }
-#else
-void
-CheckMultiTextureExtensions (void)
-{
-	gl_mtexable = true;
-}
-#endif
 
 /*
 ===============
@@ -1428,35 +1415,37 @@ VID_Is8bit ()
 	return is8bit;
 }
 
-#define GL_SHARED_TEXTURE_PALETTE_EXT 0x81FB
-
 void
-VID_Init8bitPalette ()
+VID_Init8bitPalette (void)
 {
-	// Check for 8bit Extensions and initialize them.
-	int         i;
-	char        thePalette[256 * 3];
-	char       *oldPalette, *newPalette;
+	int 		i;
+	GLubyte 	thePalette[256 * 3];
+	GLubyte		*oldPalette, *newPalette;
 
-	glColorTableEXT = (void *) wglGetProcAddress ("glColorTableEXT");
-	if (!glColorTableEXT
-		|| strstr (gl_extensions, "GL_EXT_shared_texture_palette")
-		|| COM_CheckParm ("-no8bit"))
+	if (COM_CheckParm ("-no8bit") || is8bit) {
 		return;
-
-	Con_Printf ("8-bit GL extensions enabled.\n");
-	glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
-	oldPalette = (char *) d_8to24table;	// d_8to24table3dfx;
-	newPalette = thePalette;
-	for (i = 0; i < 256; i++) {
-		*newPalette++ = *oldPalette++;
-		*newPalette++ = *oldPalette++;
-		*newPalette++ = *oldPalette++;
-		oldPalette++;
 	}
-	glColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB,
-					 GL_UNSIGNED_BYTE, (void *) thePalette);
-	is8bit = TRUE;
+
+	if (QFGL_ExtensionPresent ("GL_EXT_shared_texture_palette")) {
+		if (!(qglColorTableEXT = QFGL_ExtensionAddress ("glColorTableEXT"))) {
+			return;
+		}
+
+		Con_Printf ("8-bit GL extension enabled.\n");
+
+		glEnable (GL_SHARED_TEXTURE_PALETTE_EXT);
+		oldPalette = (GLubyte *) d_8to24table;	// d_8to24table3dfx;
+		newPalette = thePalette;
+		for (i = 0; i < 256; i++) {
+			*newPalette++ = *oldPalette++;
+			*newPalette++ = *oldPalette++;
+			*newPalette++ = *oldPalette++;
+			oldPalette++;
+		}
+		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB,
+							GL_UNSIGNED_BYTE, (GLvoid *) thePalette);
+		is8bit = true;
+	}
 }
 
 /*

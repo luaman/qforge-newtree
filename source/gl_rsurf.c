@@ -381,8 +381,8 @@ extern int  solidskytexture;
 extern int  alphaskytexture;
 extern float speedscale;				// for top sky and bottom sky
 
-lpMTexFUNC  qglMTexCoord2f = NULL;
-lpSelTexFUNC qglSelectTexture = NULL;
+QF_glActiveTextureARB	qglActiveTexture = NULL;
+QF_glMultiTexCoord2fARB qglMultiTexCoord2f = NULL;
 
 void
 GL_UploadLightmap (int i, int x, int y, int w, int h)
@@ -414,12 +414,12 @@ R_DrawMultitexturePoly (msurface_t *s)
 
 	glColor3f (1, 1, 1);
 	// Binds world to texture env 0
-	qglSelectTexture (gl_mtex_enum + 0);
+	qglActiveTexture (gl_mtex_enum + 0);
 	glBindTexture (GL_TEXTURE_2D, texture->gl_texturenum);
 	glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glEnable (GL_TEXTURE_2D);
 	// Binds lightmap to texenv 1
-	qglSelectTexture (gl_mtex_enum + 1);
+	qglActiveTexture (gl_mtex_enum + 1);
 	glBindTexture (GL_TEXTURE_2D, lightmap_textures + i);
 	glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glEnable (GL_TEXTURE_2D);
@@ -448,13 +448,13 @@ R_DrawMultitexturePoly (msurface_t *s)
 	glBegin (GL_POLYGON);
 	v = s->polys->verts[0];
 	for (i = 0; i < s->polys->numverts; i++, v += VERTEXSIZE) {
-		qglMTexCoord2f (gl_mtex_enum + 0, v[3], v[4]);
-		qglMTexCoord2f (gl_mtex_enum + 1, v[5], v[6]);
+		qglMultiTexCoord2f (gl_mtex_enum + 0, v[3], v[4]);
+		qglMultiTexCoord2f (gl_mtex_enum + 1, v[5], v[6]);
 		glVertex3fv (v);
 	}
 	glEnd ();
 	glDisable (GL_TEXTURE_2D);
-	qglSelectTexture (gl_mtex_enum + 0);
+	qglActiveTexture (gl_mtex_enum + 0);
 	glEnable (GL_TEXTURE_2D);
 
 	if (texture->gl_fb_texturenum > 0) {
@@ -785,7 +785,7 @@ R_DrawBrushModel (entity_t *e)
 	e->angles[0] = -e->angles[0];		// stupid quake bug
 
 	// LordHavoc: anyone without multitexture won't want texsort 0 anyway...
-	if (!gl_mtexable)
+	if (!gl_mtex_capable)
 		Cvar_SetValue (gl_texsort, 1);
 
 	// 
@@ -966,7 +966,7 @@ R_DrawWorld (void)
 	currententity = &ent;
 
 	// LordHavoc: anyone without multitexture won't want texsort 0 anyway...
-	if (!gl_mtexable)
+	if (!gl_mtex_capable)
 		Cvar_SetValue (gl_texsort, 1);
 
 	memset (lightmap_polys, 0, sizeof (lightmap_polys));
@@ -1266,8 +1266,8 @@ GL_BuildLightmaps (void)
 		}
 	}
 
-	if (gl_mtexable && !gl_texsort->int_val)
-		qglSelectTexture (gl_mtex_enum + 1);
+	if (gl_mtex_capable && !gl_texsort->int_val)
+		qglActiveTexture (gl_mtex_enum + 1);
 
 	// 
 	// upload all lightmaps that were filled
@@ -1288,6 +1288,6 @@ GL_BuildLightmaps (void)
 					  GL_UNSIGNED_BYTE, lightmaps[i]);
 	}
 
-	if (gl_mtexable && !gl_texsort->int_val)
-		qglSelectTexture (gl_mtex_enum + 0);
+	if (gl_mtex_capable && !gl_texsort->int_val)
+		qglActiveTexture (gl_mtex_enum + 0);
 }

@@ -651,7 +651,7 @@ SCR_ScreenShot_f (void)
 		return;
 	}
 	buffer = malloc (glwidth * glheight * 3);
-	glReadPixels (glx, gly, glwidth, glheight, GL_BGR, GL_UNSIGNED_BYTE,
+	glReadPixels (glx, gly, glwidth, glheight, GL_BGR_EXT, GL_UNSIGNED_BYTE,
 				  buffer);
 	WriteTGAfile (pcxname, buffer, glwidth, glheight);
 	free (buffer);

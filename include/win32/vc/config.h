@@ -36,6 +36,12 @@
 
 #pragma warning( disable : 4761)
 
+									// disable data conversion warnings
+# pragma warning(disable : 4051)	// ALPHA
+# pragma warning(disable : 4136)	// X86
+# pragma warning(disable : 4244)	// MIPS
+# pragma warning(disable : 4305)	// thousands of double to float truncation warnings
+
 /* Define to empty if the keyword does not work.  */
 #undef const
 
@@ -227,6 +233,7 @@
 /* Define if you have the <sys/timeb.h> header file.  */
 #define HAVE_SYS_TIMEB_H 1
 
+/* Define if you have the <string.h> header file.  */
 #define HAVE_STRING_H
 
 /* Define if you have the <unistd.h> header file.  */

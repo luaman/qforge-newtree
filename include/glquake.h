@@ -33,13 +33,7 @@
 # include "config.h"
 #endif
 
-#if defined(_WIN32) && !defined(__GNUC__)
-// disable data conversion warnings
-// FIXME: move that somewhere else -- yan
-# pragma warning(disable : 4244)     // MIPS
-# pragma warning(disable : 4136)     // X86
-# pragma warning(disable : 4051)     // ALPHA
-# pragma warning(disable : 4305)     // thousands of double to float truncation warnings
+#ifdef HAVE_WINDOWS_H
 # include <windows.h>
 #endif
 
@@ -49,51 +43,22 @@
 #include "cvar.h"
 #include "model.h"
 #include "render.h"
+#include "qfgl_ext.h"
 #include "wad.h"
-
-#ifndef GL_BGR
-# define GL_BGR 0x80E0
-#endif
-
-#ifndef GL_BGRA
-# define GL_BGRA 0x80E1
-#endif
-
-#ifndef GLAPIENTRY
-# ifdef APIENTRY
-#  define GLAPIENTRY APIENTRY
-# else
-#  define GLAPIENTRY
-# endif
-#endif
 
 void GL_BeginRendering (int *x, int *y, int *width, int *height);
 void GL_EndRendering (void);
 
-// Function prototypes for the Texture Object Extension routines
-typedef GLboolean (GLAPIENTRY *ARETEXRESFUNCPTR)(GLsizei, const GLuint *,const GLboolean *);
-typedef void (GLAPIENTRY *BINDTEXFUNCPTR)(GLenum, GLuint);
-typedef void (GLAPIENTRY *DELTEXFUNCPTR)(GLsizei, const GLuint *);
-typedef void (GLAPIENTRY *GENTEXFUNCPTR)(GLsizei, GLuint *);
-typedef GLboolean (GLAPIENTRY *ISTEXFUNCPTR)(GLuint);
-typedef void (GLAPIENTRY *PRIORTEXFUNCPTR)(GLsizei, const GLuint *,
-                    const GLclampf *);
-typedef void (GLAPIENTRY *TEXSUBIMAGEPTR)(int, int, int, int, int, int, int, int, void *);
+extern int		texture_extension_number;
+extern int		texture_mode;
 
-extern	DELTEXFUNCPTR delTexFunc;
-extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
-
-extern	int texture_extension_number;
-extern	int		texture_mode;
-
-extern	float	gldepthmin, gldepthmax;
+extern float	gldepthmin, gldepthmax;
 
 void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
 void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
 int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha, int bytesperpixel);
 
-typedef struct
-{
+typedef struct {
 	float	x, y, z;
 	float	s, t;
 	float	r, g, b;
@@ -102,13 +67,6 @@ typedef struct
 extern glvert_t glv;
 
 extern	int glx, gly, glwidth, glheight;
-
-#ifdef _WIN32
-extern	PROC glArrayElementEXT;
-extern	PROC glColorPointerEXT;
-extern	PROC glTexturePointerEXT;
-extern	PROC glVertexPointerEXT;
-#endif
 
 // r_local.h -- private refresh defs
 
@@ -134,8 +92,7 @@ void R_TimeRefresh_f (void);
 void R_ReadPointFile_f (void);
 texture_t *R_TextureAnimation (texture_t *base);
 
-typedef struct surfcache_s
-{
+typedef struct surfcache_s {
 	struct surfcache_s	*next;
 	struct surfcache_s 	**owner;		// NULL is an empty chunk of memory
 	int					lightadj[MAXLIGHTMAPS]; // checked for strobe flush
@@ -186,67 +143,58 @@ extern	int	skytexturenum;		// index in cl.loadmodel, not gl texture object
 
 extern cvar_t	*r_norefresh;
 extern cvar_t	*r_drawentities;
-extern	cvar_t	*r_drawworld;
-extern	cvar_t	*r_drawviewmodel;
-extern	cvar_t	*r_speeds;
-extern	cvar_t	*r_waterwarp;
-extern	cvar_t	*r_shadows;
-extern	cvar_t	*r_wateralpha;
-extern	cvar_t	*r_waterripple;
-extern	cvar_t	*r_dynamic;
-extern	cvar_t	*r_novis;
-extern	cvar_t	*r_netgraph;
+extern cvar_t	*r_drawworld;
+extern cvar_t	*r_drawviewmodel;
+extern cvar_t	*r_speeds;
+extern cvar_t	*r_waterwarp;
+extern cvar_t	*r_shadows;
+extern cvar_t	*r_wateralpha;
+extern cvar_t	*r_waterripple;
+extern cvar_t	*r_dynamic;
+extern cvar_t	*r_novis;
+extern cvar_t	*r_netgraph;
 
-extern	cvar_t	*gl_clear;
-extern	cvar_t	*gl_cull;
-extern	cvar_t	*gl_poly;
-extern	cvar_t	*gl_texsort;
-extern	cvar_t	*gl_smooth;
-extern	cvar_t	*gl_smoothdlights;
-extern	cvar_t	*gl_affinemodels;
-extern	cvar_t	*gl_polyblend;
-extern	cvar_t	*gl_keeptjunctions;
-extern	cvar_t	*gl_flashblend;
-extern	cvar_t	*gl_nocolors;
-extern	cvar_t	*gl_particles;
-extern	cvar_t	*gl_fb_models;
-extern	cvar_t	*gl_fb_bmodels;
+extern cvar_t	*gl_clear;
+extern cvar_t	*gl_cull;
+extern cvar_t	*gl_poly;
+extern cvar_t	*gl_texsort;
+extern cvar_t	*gl_smooth;
+extern cvar_t	*gl_smoothdlights;
+extern cvar_t	*gl_affinemodels;
+extern cvar_t	*gl_polyblend;
+extern cvar_t	*gl_keeptjunctions;
+extern cvar_t	*gl_flashblend;
+extern cvar_t	*gl_nocolors;
+extern cvar_t	*gl_particles;
+extern cvar_t	*gl_fb_models;
+extern cvar_t	*gl_fb_bmodels;
 
-extern	int		gl_lightmap_format;
-extern	int		gl_solid_format;
-extern	int		gl_alpha_format;
+extern cvar_t	*gl_max_size;
+extern cvar_t	*gl_playermip;
 
-extern	cvar_t	*gl_max_size;
-extern	cvar_t	*gl_playermip;
+extern cvar_t	*r_skyname;
+extern cvar_t	*gl_skymultipass;
+extern cvar_t	*gl_sky_clip;
+extern cvar_t	*gl_sky_divide;
 
-extern	cvar_t	*r_skyname;
-extern	cvar_t	*gl_skymultipass;
-extern	cvar_t	*gl_sky_clip;
-extern	cvar_t	*gl_sky_divide;
+extern int		gl_lightmap_format;
+extern int		gl_solid_format;
+extern int		gl_alpha_format;
 
-extern	float	r_world_matrix[16];
+extern float	r_world_matrix[16];
 
-extern	const char *gl_vendor;
-extern	const char *gl_renderer;
-extern	const char *gl_version;
-extern	const char *gl_extensions;
+extern const char *gl_vendor;
+extern const char *gl_renderer;
+extern const char *gl_version;
+extern const char *gl_extensions;
 
 void R_TranslatePlayerSkin (int playernum);
 
-// Multitexture
-#define TEXTURE0_SGIS		0x835E
-#define TEXTURE1_SGIS		0x835F
-#define GL_TEXTURE0_ARB		0x84C0
-#define GL_TEXTURE1_ARB		0x84C1
-
-typedef void (GLAPIENTRY *lpMTexFUNC) (GLenum, GLfloat, GLfloat);
-typedef void (GLAPIENTRY *lpSelTexFUNC) (GLenum);
-extern lpMTexFUNC qglMTexCoord2f;
-extern lpSelTexFUNC qglSelectTexture;
-
-extern qboolean gl_mtexable;
-extern qboolean gl_arb_mtex;
-extern int gl_mtex_enum;
+// Multitexturing
+extern QF_glActiveTextureARB	qglActiveTexture;
+extern QF_glMultiTexCoord2fARB	qglMultiTexCoord2f;
+extern qboolean 				gl_mtex_capable;
+extern GLenum					gl_mtex_enum;
 
 void GL_DisableMultitexture (void);
 void GL_EnableMultitexture (void);
@@ -348,4 +296,3 @@ void GL_BuildLightmaps (void);
 void R_NetGraph (void);
 
 #endif // _GLQUAKE_H
-
