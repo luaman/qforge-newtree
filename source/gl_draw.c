@@ -1128,10 +1128,17 @@ static void GL_Upload32 (unsigned int *data, int width, int height, qboolean mip
 	free(scaled);
 }
 
-#if defined(GL_SHARED_TEXTURE_PALETTE_EXT) && defined(HAVE_GL_COLOR_INDEX8_EXT)
+/*
+	GL_Upload8_EXT
+
+	If we have shared or global palettes, upload an 8-bit texture. If we don't,
+	this function does nothing.
+*/
 void
-GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha) 
+GL_Upload8_EXT (byte *data, int width, int height, qboolean mipmap, qboolean alpha) 
 {
+#if defined(GL_SHARED_TEXTURE_PALETTE_EXT) && defined(HAVE_GL_COLOR_INDEX8_EXT)
+
 	byte	*scaled;
 	int		scaled_width, scaled_height;
 
@@ -1182,14 +1189,8 @@ GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean al
 	}
 
 	free (scaled);
-}
-#else
-void
-GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha) 
-{
-	// this space intentionally left blank
-}
 #endif
+}
 
 extern qboolean VID_Is8bit();
 
@@ -1199,7 +1200,7 @@ GL_Upload8
 ===============
 */
 void
-GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha)
+GL_Upload8 (byte *data, int width, int height, qboolean mipmap, qboolean alpha)
 {
 	unsigned int	*trans = NULL;
 	int				i, s, p;
@@ -1218,7 +1219,7 @@ GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha)
 		}
 	} else {
 		if (s & 3)
-			Sys_Error ("GL_Upload8: s&3");
+			Sys_Error ("GL_Upload8: width*height divisible by 3");
 		for (i = 0; i < s; i += 4) {
 			trans[i] = d_8to24table[data[i]];
 			trans[i+1] = d_8to24table[data[i+1]];
