@@ -668,7 +668,7 @@ PF_stuffcmd (progs_t *pr)
 	char       *str;
 	client_t   *cl;
 	char       *buf;
-	int         i;
+	char       *p;
 
 	entnum = G_EDICTNUM (pr, OFS_PARM0);
 	if (entnum < 1 || entnum > MAX_CLIENTS)
@@ -680,20 +680,24 @@ PF_stuffcmd (progs_t *pr)
 	buf = cl->stufftext_buf;
 	if (strlen (buf) + strlen (str) >= MAX_STUFFTEXT)
 		PR_RunError (pr, "stufftext buffer overflow");
-	strncat (buf, str, MAX_STUFFTEXT - strlen (buf));
+	strcat (buf, str);
 
-	for (i = strlen (buf); i >= 0; i--) {
-		if (buf[i] == '\n') {
-			if (!strcmp (buf, "disconnect\n")) {
-				// so long and thanks for all the fish
-				cl->drop = true;
-				buf[0] = 0;
-				return;
-			}
-			ClientReliableWrite_Begin (cl, svc_stufftext, 2 + strlen (buf));
-			ClientReliableWrite_String (cl, buf);
-			buf[0] = 0;
-		}
+	if (!strcmp (buf, "disconnect\n")) {
+		// so long and thanks for all the fish
+		cl->drop = true;
+		buf[0] = 0;
+		return;
+	}
+
+	p = strrchr (buf, '\n');
+	if (p) {
+		char t = p[1];
+		p[1] = 0;
+		ClientReliableWrite_Begin (cl, svc_stufftext, 2 + p - buf);
+		ClientReliableWrite_String (cl, buf);
+		p[1] = t;
+		strcpy (buf, p + 1);		// safe because this is a downward, in
+									// buffer move
 	}
 }
 
