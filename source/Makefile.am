@@ -269,3 +269,6 @@ EXTRA_DIST=	makefile.win \
 		qf-server.mak qw_server.dsp \
 		qf-client-sdl.mak qf-client-win.mak qw_client.dsp \
 		qf-client-sgl.mak qf-client-wgl.mak qf-client-win.mak
+
+# Kill the temp files, hopefully.
+CLEANFILES	= *.i *.s

@@ -942,6 +942,15 @@ if test "x$profile" = xyes; then
 	fi
 fi
 
+if test "x$GCC" = xyes; then
+	dnl Check for -pipe vs -save-temps.
+	AC_MSG_CHECKING(for -pipe vs -save-temps)
+	AC_ARG_ENABLE(save-temps,
+		[  --enable-save-temps        save temporay files],
+		AC_MSG_RESULT(-save-temps); CFLAGS="$CFLAGS -save-temps",
+		AC_MSG_RESULT(-pipe); CFLAGS="$CFLAGS -pipe")
+fi
+
 dnl QuakeForge uses lots of BCPL-style (//) comments, which can cause problems
 dnl with many compilers that don't support the latest ISO standards. Well,
 dnl that is our cover story -- the reality is that we like them and don't want
