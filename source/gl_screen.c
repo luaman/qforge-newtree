@@ -465,11 +465,15 @@ void SCR_DrawFPS (void)
 		fps_count = 0;
 		lastframetime = t;
 	}
-
-	sprintf(st, "%3d FPS", lastfps);
-	x = vid.width - strlen(st) * 8 - 8;
+	/* Misty: I really do need to read about sprintf a bit. This thing keeps chewing on my foot! */
+	sprintf(st, "%-3d FPS", lastfps);
+	/* Misty: New trick! (for me) the ? makes this work like a if then else - IE: if 
+	cl_hudswap->int_val is not null, do first case, else (else is a : here) do second case.
+	Deek taught me this trick */
+	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + 8) : 8;
 	y = vid.height - sb_lines - 8;
 	Draw_String8 (x, y, st);
+
 }
 
 /* Misty: I like to see the time */
@@ -490,7 +494,7 @@ void SCR_DrawTime (void)
 	strftime(local_time, sizeof(local_time), "%k:%M", localtime(&systime));
 	/* now actually print it to the screen directly below where show_fps is */
 	sprintf(st, "%s", local_time);
-	x = vid.width - strlen(st) * 8 - 8;
+	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + 8) : 8;
 	y = vid.height - sb_lines - 16;
 	Draw_String8 (x, y, st);
 }
