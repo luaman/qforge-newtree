@@ -68,6 +68,7 @@
 #include "console.h"
 #include "cvar.h"
 #include "draw.h"
+#include "hash.h"
 #include "info.h"
 #include "qargs.h"
 #include "qendian.h"
@@ -139,6 +140,7 @@ typedef struct pack_s {
 	QFile      *handle;
 	int         numfiles;
 	packfile_t *files;
+	hashtab_t  *file_hash;
 } pack_t;
 
 /*
@@ -549,8 +551,6 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 {
 	searchpath_t *search;
 	char        netpath[MAX_OSPATH];
-	pack_t     *pak;
-	int         i;
 	int         findtime;
 
 #ifdef HAVE_ZLIB
@@ -570,7 +570,31 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 	for (search = com_searchpaths; search; search = search->next) {
 		// is the element a pak file?
 		if (search->pack) {
+#if 1
+			packfile_t *packfile;
+
+			packfile = (packfile_t*)Hash_Find (search->pack->file_hash,
+											   filename);
+#ifdef HAVE_ZLIB
+			if (!packfile)
+				packfile = (packfile_t*)Hash_Find (search->pack->file_hash,
+												   gzfilename);
+#endif
+			if (packfile) {
+				Con_DPrintf ("PackFile: %s : %s\n", search->pack->filename,
+							 packfile->name);
+				// open a new file on the pakfile
+				strncpy (foundname, packfile->name, MAX_OSPATH);
+				*gzfile =
+					COM_OpenRead (search->pack->filename, packfile->filepos,
+								  packfile->filelen, zip);
+				file_from_pak = 1;
+				return com_filesize;
+			}
+#else
 			// look through all the pak file elements
+			int         i;
+			pack_t     *pak;
 			pak = search->pack;
 			for (i = 0; i < pak->numfiles; i++) {
 				char       *fn = 0;
@@ -597,6 +621,7 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 					return com_filesize;
 				}
 			}
+#endif
 		} else {
 			// check a file in the directory tree
 			snprintf (netpath, sizeof (netpath), "%s/%s", search->filename,
@@ -728,6 +753,13 @@ COM_LoadStackFile (char *path, void *buffer, int bufsize)
 	return buf;
 }
 
+static char *
+pack_get_key (void *_p)
+{
+	packfile_t *p = (packfile_t*)_p;
+	return p->name;
+}
+
 /*
 	COM_LoadPackFile
 
@@ -746,6 +778,7 @@ COM_LoadPackFile (char *packfile)
 	pack_t     *pack;
 	QFile      *packhandle;
 	dpackfile_t info[MAX_FILES_IN_PACK];
+	hashtab_t  *hash;
 
 	if (COM_FileOpenRead (packfile, &packhandle) == -1)
 		return NULL;
@@ -763,6 +796,7 @@ COM_LoadPackFile (char *packfile)
 		Sys_Error ("%s has %i files", packfile, numpackfiles);
 
 	newfiles = calloc (1, numpackfiles * sizeof (packfile_t));
+	hash = Hash_NewTable (1021, pack_get_key, 0);
 
 	Qseek (packhandle, header.dirofs, SEEK_SET);
 	Qread (packhandle, info, header.dirlen);
@@ -773,6 +807,7 @@ COM_LoadPackFile (char *packfile)
 		strcpy (newfiles[i].name, info[i].name);
 		newfiles[i].filepos = LittleLong (info[i].filepos);
 		newfiles[i].filelen = LittleLong (info[i].filelen);
+		Hash_Add (hash, &newfiles[i]);
 	}
 
 	pack = calloc (1, sizeof (pack_t));
@@ -780,6 +815,7 @@ COM_LoadPackFile (char *packfile)
 	pack->handle = packhandle;
 	pack->numfiles = numpackfiles;
 	pack->files = newfiles;
+	pack->file_hash = hash;
 
 	Con_Printf ("Added packfile %s (%i files)\n", packfile, numpackfiles);
 	return pack;
