@@ -76,7 +76,6 @@ static int FindToken(const char *s)
 
     for (i = 0; keywords[i].token > 0; i++)
 	if (!strcasecmp(s, keywords[i].name)) {
-	    yylval = keywords[i].value;
 	    return keywords[i].token;
 	}
     Die("%s:%d: Unknown keyword `%s'\n", Opt_modedb, line, s);
@@ -109,7 +108,8 @@ junk	.
 %%
 
 {keyword}   {
-		return FindToken(yytext);
+		yylval = FindToken(yytext);
+		return yylval;
 	    }
 
 {number}    {
