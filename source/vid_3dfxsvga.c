@@ -219,6 +219,7 @@ VID_Init (unsigned char *palette)
 	GLint       attribs[32];
 
 	VID_GetWindowSize (640, 480);
+	Con_CheckResize (); // Now that we have a window size, fix console
 
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;

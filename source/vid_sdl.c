@@ -38,6 +38,7 @@
 
 #include <SDL.h>
 
+#include "console.h"
 #include "cvar.h"
 #include "d_local.h"
 #include "host.h"
@@ -143,6 +144,8 @@ VID_Init (unsigned char *palette)
 
 	// Set up display mode (width and height)
 	VID_GetWindowSize (BASEWIDTH, BASEHEIGHT);
+	Con_CheckResize (); // Now that we have a window size, fix console
+
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 

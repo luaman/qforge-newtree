@@ -189,6 +189,7 @@ VID_Init (unsigned char *palette)
 
 	vid.height = vid.conheight = min (vid.conheight, scr_height);
 	vid.width = vid.conwidth = min (vid.conwidth, scr_width);
+	Con_CheckResize (); // Now that we have a window size, fix console
 
 	vid.aspect = ((float) vid.height / (float) vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
