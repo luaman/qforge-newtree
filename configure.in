@@ -1,0 +1,516 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_PREREQ(2.13)
+AC_INIT(source/sv_main.c)
+AC_REVISION($Revision$) dnl
+AM_CONFIG_HEADER(include/config.h)
+AC_CANONICAL_SYSTEM
+
+dnl This is the only place where the package version appears
+AM_INIT_AUTOMAKE(quakeforge, 0.1.99pre0)
+
+QW_VERSION=2.40
+QSG_VERSION=1.0
+
+AC_DEFINE_UNQUOTED(PROGRAM,		"QuakeForge")
+AC_DEFINE_UNQUOTED(QW_VERSION,	"$QW_VERSION")
+AC_DEFINE_UNQUOTED(QSG_VERSION,	"$QSG_VERSION")
+AC_SUBST(QW_VERSION)
+AC_SUBST(QSG_VERSION)
+
+dnl Start TARGETS out at "qf-server"
+TARGETS=qf-server
+
+dnl Set to yes for releases
+RELEASE=no
+
+dnl Set this to no for Id defaults
+NEWSTYLE=yes
+
+ISODATE=`date +%Y-%m-%d`
+AC_SUBST(ISODATE)
+
+AC_LANG_C
+
+dnl Checks for programs.
+AC_PROG_AWK
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+
+dnl Checks for system services
+AC_SYS_LONG_FILE_NAMES
+AC_EXEEXT
+AC_OBJEXT
+
+dnl Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_HEADER_MAJOR
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS(
+	unistd.h fcntl.h dlfcn.h windows.h sys/ioctl.h sys/mman.h \
+	sys/io.h asm/io.h \
+	sys/stat.h sys/time.h sys/timeb.h \
+	sys/socket.h netinet/in.h netdb.h arpa/inet.h sys/filio.h \
+	sys/soundcard.h linux/soundcard.h machine/soundcard.h sys/audioio.h \
+	dsound.h mmsystem.h initguid.h mme/mmsystem.h mme/mme_public.h \
+	sys/asoundlib.h string.h strings.h memory.h malloc.h \
+	errno.h sys/dir.h
+)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_STRUCT_ST_BLKSIZE
+AC_HEADER_TIME
+AC_STRUCT_TM
+
+AC_TRY_COMPILE(
+	[#include <sys/types.h>],
+	[ socklen_t x = 0;],
+	AC_DEFINE(HAVE_SOCKLEN_T) AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no)
+	dnl FreeBSD 4.0 has it in sys/socket.h
+	AC_MSG_CHECKING(for socklen_t in sys/socket.h)
+	AC_TRY_COMPILE(
+		[#include <sys/types.h>
+		#include <sys/socket.h>],
+		[ socklen_t x = 0;],
+		AC_DEFINE(HAVE_SOCKLEN_T) AC_MSG_RESULT(yes),
+		AC_MSG_RESULT(no)
+	)
+)
+
+AC_MSG_CHECKING(for size_t in sys/types.h)
+AC_TRY_COMPILE(
+	[#include <sys/types.h>],
+	[ size_t x = 0;],
+	AC_DEFINE(HAVE_SIZE_T) AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no)
+)
+
+dnl maybe these two (at least the 2nd) should only be checked if ipv6 is enabled?
+AC_MSG_CHECKING(for ss_len in struct sockaddr_storage)
+AC_TRY_COMPILE(
+	[#include <sys/types.h>
+	#include <sys/socket.h>],
+	[ void f(void) { struct sockaddr_storage ss; ss.ss_len=0; }],
+	AC_DEFINE(HAVE_SS_LEN) AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(for sin6_len in struct sockaddr_in6)
+AC_TRY_COMPILE(
+	[#include <sys/types.h>
+	#include <netinet/in.h>],
+	[ void f(void) { struct sockaddr_in6 s6; s6.sin6_len=0; }],
+	AC_DEFINE(HAVE_SIN6_LEN) AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(for sa_len in struct sockaddr)
+AC_TRY_COMPILE(
+	[#include <sys/types.h>
+	#include <netinet/in.h>],
+	[ void f(void) { struct sockaddr sa; sa.sa_len=0; }],
+	AC_DEFINE(HAVE_SA_LEN) AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no)
+)
+
+dnl Checks for library functions.
+AC_FUNC_ALLOCA
+AC_FUNC_MEMCMP
+AC_FUNC_MMAP
+AC_TYPE_SIGNAL
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS(
+	gethostname gethostbyname connect gettimeofday getwd mkdir \
+	ftime _ftime fcntl stat putenv select socket strerror strstr \
+	snprintf _snprintf vsnprintf _vsnprintf strsep dlopen getaddrinfo \
+	getnameinfo
+)
+
+dnl Checks for stricmp/strcasecmp
+AC_CHECK_FUNC(stricmp,,
+	AC_CHECK_FUNC(strcasecmp, AC_DEFINE(stricmp,strcasecmp)))
+
+dnl Check for vsnprintf
+if test "x$ac_cv_func_vsnprintf" = "xno" -a \
+	"x$ac_cv_func__vsnprintf" = "xno"; then
+	dnl libdb may have this
+	AC_CHECK_LIB(db,vsnprintf)
+fi
+
+dnl Checks for working -lm
+AC_CHECK_LIB(m, pow,, AC_MSG_ERROR([math library (-lm) appears broken]))
+
+dnl Checks for SVGALib support
+AC_ARG_WITH(svga,
+[  --with-svga[=DIR]       use SVGALib found in DIR],
+HAVE_SVGA=$withval, HAVE_SVGA=auto)
+if test "x$HAVE_SVGA" != xno; then
+	if test "x$HAVE_SVGA" != xauto; then
+		SVGA_CFLAGS="$SVGA_CFLAGS= -I$withval/include"
+		SVGA_LIBS="$SVGA_LIBS -L$withval/lib"
+		dnl The default system location is /usr/include or /usr/local/include
+		dnl and we (obviously) do not need to set CFLAGS for that
+	fi
+	save_CPPFLAGS="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $SVGA_CFLAGS"
+	AC_CHECK_HEADER(vga.h, HAVE_SVGA=yes, HAVE_SVGA=no)
+	CPPFLAGS="$save_CPPFLAGS"
+
+	dnl Make sure -lvga works
+	if test "x$HAVE_SVGA" = xyes; then
+		AC_CHECK_LIB(vga, vga_getmousetype, SVGA_LIBS="$SVGA_LIBS -lvga"
+			HAVE_SVGA=yes, HAVE_SVGA=no, [$SVGA_LIBS]
+		)
+	fi 
+	if test "x$HAVE_SVGA" != xyes; then
+		SVGA_CFLAGS="" SVGA_LIBS=""
+	fi
+fi
+AC_SUBST(SVGA_CFLAGS)
+AC_SUBST(SVGA_LIBS)
+
+dnl Checks for X11 and XShm
+AC_PATH_XTRA
+if test "x$no_x" = x; then
+	HAVE_X11=yes
+	AC_CHECK_LIB(Xext, XShmQueryExtension, [X11_SHM_LIB=-lXext],
+		[HAVE_X11="no"], [ $X_LIBS -lX11 $X_EXTRA_LIBS ]
+	)
+
+	dnl check for X11 video driver
+	AC_MSG_CHECKING(for X11 video driver)
+	case "${target}" in
+	   *-solaris*) 
+	      X11_VID_SRC="vid_sunx.c" ;;
+	   *)
+	      if test "x$HAVE_X11"; then
+	         X11_VID_SRC="vid_x11.c";
+	      else
+	         X11_VID_SRC=
+	      fi
+	     ;;
+	esac
+fi
+if test "x$X11_VID_SRC" = x; then
+AC_MSG_RESULT(no)
+else
+AC_MSG_RESULT(yes ($X11_VID_SRC))
+fi
+AC_SUBST(X_CFLAGS)
+AC_SUBST(X_LIBS)
+AC_SUBST(X11_SHM_LIB)
+AC_SUBST(X11_VID_SRC)
+     
+dnl Checks for OpenGL support
+dnl GL is a special case, we need seperate includes/libs entires
+AC_ARG_WITH(opengl,
+	[  --with-opengl[=DIR]     use OpenGL with libraries found in DIR],
+	HAVE_OPENGL=$withval, HAVE_OPENGL=auto
+)
+AC_ARG_WITH(opengl-includes,
+	[  --with-opengl-includes[=DIR]
+                          use OpenGL with header files found in DIR],
+	OPENGL_INCLUDES=$withval, OPENGL_INCLUDES=auto
+)
+if test "x$OPENGL_INCLUDES" = xno; then
+	HAVE_OPENGL="no"
+fi
+if test "x$HAVE_OPENGL" = xno; then
+	OPENGL_INCLUDES=""
+fi
+if test "x$HAVE_OPENGL" != xno; then
+	if test "x$HAVE_OPENGL" != xauto; then
+		OPENGL_LIBS="$OPENGL_LIBS -L$HAVE_OPENGL"
+	fi
+	if test "x$OPENGL_INCLUDES" != xauto; then
+		OPENGL_INCLUDES="-I$OPENGL_INCLUDES"
+	else
+		OPENGL_INCLUDES="-I${x_includes:-.}"
+	fi
+	save_CPPFLAGS="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $OPENGL_INCLUDES"
+	AC_CHECK_HEADER(GL/gl.h, HAVE_OPENGL=yes, HAVE_OPENGL=no)
+	if test "x$HAVE_OPENGL" != xno; then
+		AC_MSG_CHECKING(for GL_COLOR_INDEX8_EXT in GL/gl.h)
+		AC_TRY_COMPILE([#include "GL/gl.h"],
+			[ int x = (int) GL_COLOR_INDEX8_EXT;],
+			AC_DEFINE(HAVE_GL_COLOR_INDEX8_EXT) AC_MSG_RESULT(yes),
+			AC_MSG_RESULT(no)
+		)
+		AC_MSG_CHECKING(for GLAPIENTRY in GL/gl.h)
+		AC_TRY_COMPILE(
+			[#include "GL/gl.h"],
+        	[ int x = GLAPIENTRY printf("");],
+	        HAVE_GLAPIENTRY=yes, HAVE_GLAPIENTRY=no
+		)
+		if test "x$HAVE_GLAPIENTRY" != xno; then
+			AC_MSG_RESULT(yes)
+		else
+			AC_MSG_RESULT(no)
+      
+			AC_MSG_CHECKING(for APIENTRY in GL/gl.h)
+			AC_TRY_COMPILE(
+				[#include "GL/gl.h"],
+				[ int x = APIENTRY printf("");],
+				AC_DEFINE(GLAPIENTRY, APIENTRY) AC_MSG_RESULT(yes),
+				AC_DEFINE(GLAPIENTRY, ) AC_MSG_RESULT(no)
+			)
+		fi
+	fi
+	CPPFLAGS="$save_CPPFLAGS"
+
+	dnl Make sure -lGL or -lMesaGL works
+	if test "x$HAVE_OPENGL" = xyes; then
+		AC_CHECK_LIB(GL, glColor4f,
+			OPENGL_LIBS="$OPENGL_LIBS -lGL"
+			HAVE_OPENGL=yes
+			OPENGL_NAME=GL
+			if test "x$have_dynload" != "xyes"; then
+				AC_CHECK_LIB(GL, XMesaSetFXmode, qwfoo=qwfoo, HAVE_XMESA=no,
+					[ $OPENGL_LIBS $X_PRE_LIBS $X_LIBS -lX11 -lXext $X_EXTRA_LIBS]
+				)
+			fi
+			,HAVE_OPENGL=no,
+			[ $OPENGL_LIBS $X_PRE_LIBS $X_LIBS -lX11 -lXext $X_EXTRA_LIBS]
+		)
+		if test "x$HAVE_OPENGL" != xyes; then
+			AC_CHECK_LIB(MesaGL, glColor4f, OGL_LIBS="$OGL_LIBS -lMesaGL"
+		        HAVE_OPENGL=yes
+				OPENGL_NAME=MesaGL
+		        if test "x$have_dynload" != "xyes"; then
+					AC_CHECK_LIB(MesaGL, XMesaSetFXmode, qwfoo=qwfoo, HAVE_XMESA=no,
+						[ $OPENGL_LIBS $X_LIBS -lXext -lX11 $X_EXTRA_LIBS]
+					)
+				fi
+		        ,HAVE_OPENGL=no,
+				[ $OPENGL_LIBS $X_PRE_LIBS $X_LIBS -lX11 -lXext $X_EXTRA_LIBS]
+			)
+		fi
+	fi
+	if test "x$HAVE_OPENGL" != xyes; then
+		OGL_CFLAGS="" OGL_LIBS=""
+	else
+		if test "x$HAVE_XMESA" = xyes; then
+			AC_DEFINE(HAVE_XMESA)
+		fi
+	fi
+fi
+if test "x$HAVE_OPENGL" = xyes; then
+	AC_DEFINE(HAVE_OPENGL)
+fi
+
+AC_SUBST(OGL_CFLAGS)
+AC_SUBST(OGL_INCLUDES)
+AC_SUBST(OGL_LIBS)
+
+dnl Set $prefix and $exec_prefix to $ac_default_prefix if they haven't been set
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+
+AC_ARG_ENABLE(experimental,
+[  --enable-experimental   compile with experimental code. Use at your
+                          own risk])
+if test "x$enable_experimental" = xyes; then
+	AC_DEFINE(_EXPERIMENTAL_)
+fi
+
+AC_ARG_WITH(gamename,
+[  --with-newstyle         compile with defaults a bit different than those
+                          used by Id Software (does not affect gameplay)],
+	NEWSTYLE=$enable_newstyle
+)
+if test "x$NEWSTYLE" = xyes; then
+	AC_DEFINE(NEWSTYLE)
+	AC_DEFINE(BASEGAME, "base")
+else
+	AC_DEFINE(BASEGAME, "id1")
+fi
+
+AC_ARG_WITH(global-cfg,
+[  --with-global-cfg=FILE  If set will change the name and location of the
+                          global config file used by QuakeForge.  Defaults to
+                          \${sysconfdir}/quakeforge.conf],
+globalconf="$withval", globalconf="auto")
+if test "x$globalconf" = "xauto" || test "x$globalconf" = "xyes" || \
+	test "x$globalconf" = "xno"; then  dnl yes/no sanity checks
+	eval foo="$sysconfdir"
+	AC_DEFINE_UNQUOTED(FS_GLOBALCFG,	"$foo/quakeforge.conf")
+else
+	AC_DEFINE_UNQUOTED(FS_GLOBALCFG,	$globalconf)
+fi
+
+AC_ARG_WITH(sharepath,
+[  --with-sharepath=DIR    Use DIR for shared game data, defaults to
+                          \${datadir}/games/quakeforge],
+SHAREPATH=$withval, SHAREPATH="auto")
+if test "x$SHAREPATH" = "xauto" -o "x$SHAREPATH" = "xyes" -o "x$SHAREPATH" = "x"; then
+	eval foo="$datadir"
+	AC_DEFINE_UNQUOTED(FS_SHAREPATH, "$foo/games/quakeforge")
+elif test "x$SHAREPATH" = xno; then
+	AC_DEFINE_UNQUOTED(FS_SHAREPATH, ".")
+else
+	AC_DEFINE_UNQUOTED(FS_SHAREPATH, "$SHAREPATH")
+fi
+
+AC_ARG_WITH(userpath,
+[  --with-userpath=DIR     Use DIR for unshared game data, defaults to
+                          \${HOME}/.quakeforge],
+USERPATH=$withval, USERPATH="auto")
+if test "x$USERPATH" = "xauto" -o "x$USERPATH" = "xyes" -o "x$USERPATH" = "x"; then
+	AC_DEFINE_UNQUOTED(FS_USERPATH, "~/.quakeforge")
+elif test "x$USERPATH" = xno; then
+   AC_DEFINE_UNQUOTED(FS_USERPATH, ".")
+else
+   AC_DEFINE_UNQUOTED(FS_USERPATH, "$USERPATH")
+fi
+
+dnl CFLAGS for release and devel versions
+AC_ARG_ENABLE(release,
+	[  --enable-release        compile release (with optimizations)],
+	RELEASE=$enable_release
+)
+if test "x$RELEASE" = xyes; then
+	CFLAGS="-O6 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations"
+	if test "x$GCC" = xyes; then
+		AC_MSG_CHECKING(for special release compiler settings)
+		case "${target}" in
+			i?86-*-*)
+				MORE_CFLAGS="-malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				;;
+			*)
+				MORE_CFLAGS=""
+				;;
+		esac
+		if test "x$MORE_CFLAGS" = x; then
+			AC_MSG_RESULT(no)
+		else
+			AC_MSG_RESULT(yes)
+			CFLAGS="$CFLAGS $MORE_CFLAGS"
+		fi
+	else
+		CFLAGS=-O2
+	fi
+fi
+
+dnl QuakeForge code has lots of BCPL-style (//) comments, which cause
+dnl problems with any compiler that is ANSI/ISO-C compliant.
+dnl Make the compiler swallow its pride...
+if test "x$GCC" != xyes; then
+   AC_MSG_CHECKING(for how to deal with C++ comments)
+   case "$target" in
+   *-aix*)
+	CFLAGS="$CFLAGS -qcpluscmt"
+        AC_MSG_RESULT([-qcpluscmt])
+	;;
+   *-irix6*)
+	CFLAGS="$CFLAGS -Xcpluscomm"
+        AC_MSG_RESULT([-Xcpluscomm])
+	;;
+   *-solaris*)
+	CFLAGS="$CFLAGS -xCC"
+        AC_MSG_RESULT([-xCC])
+	;;
+   *)
+        AC_MSG_RESULT(nothing needed or no switch known)
+	;;
+  esac
+fi
+
+dnl We want warnings, lots of warnings...
+if test "x$GCC" = xyes; then
+   CFLAGS="$CFLAGS -Wall -Werror"
+#   CFLAGS="$CFLAGS -Wall -pedantic"
+fi
+
+dnl Check for ia32
+AC_MSG_CHECKING(for an ia32 machine)
+case "${target}" in
+	i?86-*-*)
+		AC_MSG_RESULT(yes)
+		AC_MSG_CHECKING(to see if we should disable asm optimizations)
+		AC_ARG_ENABLE(asmopt,
+			[  --disable-asmopt        disable assembler optimization],
+			ASM_ARCH=none
+			AC_MSG_RESULT(yes),
+			AC_DEFINE(USE_INTEL_ASM)
+			AC_MSG_RESULT(no)
+		)
+		;;
+	*) AC_MSG_RESULT(no)
+esac
+
+dnl Checks for which system driver to use
+AC_MSG_CHECKING(for system driver)
+case "${target}" in
+   *-*-linux-gnu*)
+      CL_SYS_SRC="sys_linux.c"
+      SV_SYS_SRC="sys_unix.c"
+      ;;
+   i?86-*-mingw32*)
+      CL_SYS_SRC="sys_win.c"
+      SV_SYS_SRC="sys_win.c"
+      ;;
+   i?86-*-*djgpp* | i?86-*-*msdos*)
+# XXX - dos  - conproc.c(?) sys_dos.c
+# XXX - need to add dos
+      CL_SYS_SRC=""
+      SV_SYS_SRC=""
+      ;;
+   *)
+      CL_SYS_SRC="sys_linux.c"
+      SV_SYS_SRC="sys_unix.c"
+      DEFAULT_SYS=yes
+      ;;
+esac
+if test "x$DEFAULT_SYS" = xyes; then
+AC_MSG_RESULT([no, using default])
+else
+AC_MSG_RESULT(yes ($CL_SYS_SRC $SV_SYS_SRC))
+fi
+
+AC_MSG_CHECKING(targets to be built)
+if test "x$HAVE_SVGA" = xyes; then
+   TARGETS="$TARGETS qf-client-svga"
+fi
+if test "x$HAVE_X11" = xyes; then
+   TARGETS="$TARGETS qf-client-x11"
+fi
+if test "x$HAVE_OPENGL" = xyes; then
+   TARGETS="$TARGETS qf-client-glx"
+fi
+
+AC_SUBST(libdir)
+
+AC_SUBST(ASM_ARCH)
+AC_SUBST(HAVE_OPENGL)
+AC_SUBST(HAVE_SVGA)
+AC_SUBST(HAVE_X11)
+AC_SUBST(INTEL_ARCH)
+AC_SUBST(LIBS)
+AC_SUBST(CL_SYS_SRC)
+AC_SUBST(SV_SYS_SRC)
+AC_SUBST(QW_VERSION)
+AC_SUBST(TARGETS)
+
+AC_SUBST(ac_configure_args)
+
+dnl Output files
+AC_OUTPUT(
+	source/Makefile
+	Makefile
+	RPM/quakeforge.spec
+	RPM/build_rpm
+	quakeforge.lsm,
+	chmod +x RPM/build_rpm
+)
+AC_MSG_RESULT([
+	The following targets have been configured:
+
+	$TARGETS]
+)
