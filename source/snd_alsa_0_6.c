@@ -46,6 +46,7 @@ static int  snd_inited;
 static snd_pcm_t *pcm_handle;
 static snd_pcm_hw_info_t hwinfo;
 static snd_pcm_hw_params_t hwparams;
+static snd_pcm_sw_params_t swparams;
 static const snd_pcm_channel_area_t *mmap_running_areas;
 static int  card = -1, dev = -1;
 
@@ -211,14 +212,21 @@ SNDDMA_Init (void)
 	hwparams.fragment_size = 512;
 	hwparams.fragments = 32;
 
-	while (1) {
-		err_msg = "snd_pcm_hw_params";
-		if ((rc = snd_pcm_hw_params (pcm_handle, &hwparams)) < 0) {
-			Con_Printf("failed: %08x\n", hwparams.fail_mask);
-			goto error;
-		}
+	err_msg = "snd_pcm_hw_params";
+	if ((rc = snd_pcm_hw_params (pcm_handle, &hwparams)) < 0) {
+		Con_Printf("failed: %08x\n", hwparams.fail_mask);
+		goto error;
+	}
 
-		break;							// XXX
+	memset (&swparams, 0, sizeof (swparams));
+	swparams.start_mode = SND_PCM_START_EXPLICIT;
+	swparams.xrun_mode = SND_PCM_XRUN_NONE;
+	swparams.xfer_min = 1;
+	swparams.xfer_align = 1;
+	err_msg = "snd_pcm_sw_params";
+	if ((rc = snd_pcm_sw_params (pcm_handle, &swparams)) < 0) {
+		Con_Printf("failed: %08x\n", swparams.fail_mask);
+		goto error;
 	}
 
 	err_msg = "audio prepare";
@@ -234,8 +242,8 @@ SNDDMA_Init (void)
 	shm->submission_chunk = frag_size;	// don't mix less than this #
 	shm->samplepos = 0;					// in mono samples
 	shm->samplebits = hwparams.format == SND_PCM_FORMAT_S16_LE ? 16 : 8;
-	shm->samples = hwparams.fragment_size * hwparams.fragments * shm->channels;	// mono samples in
-														// buffer
+	shm->samples = hwparams.fragment_size * hwparams.fragments
+	               * shm->channels;		// mono samples in buffer
 	shm->speed = hwparams.rate;
 	shm->buffer = (unsigned char *) mmap_running_areas->addr;
 	Con_Printf ("%5d stereo\n", shm->channels - 1);
@@ -339,6 +347,7 @@ SNDDMA_Submit (void)
 			}
 			break;
 		default:
+			printf("umm\n");
 			break;
 	}
 }
