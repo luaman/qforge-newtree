@@ -28,7 +28,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
 
 #include <string.h>
@@ -49,33 +49,19 @@
 #include "input.h"
 #include "sbar.h"
 #include "context_x11.h"
-#include "dga_check.h"
 #include "quakedef.h"
 #include "qendian.h"
 #include "qargs.h"
 
-#define WARP_WIDTH              320
-#define WARP_HEIGHT             200
+#define WARP_WIDTH		320
+#define WARP_HEIGHT 	200
 
 static qboolean		vid_initialized = false;
 
 static GLXContext	ctx = NULL;
 
-extern cvar_t	*in_dga_mouseaccel;
-
-#ifdef HAVE_DGA
-static int	hasdgavideo = 0;
-static int	hasdga = 0;
-#endif
-
-#if defined(HAVE_DGA)
-int VID_options_items = 2;
-#else
-int VID_options_items = 1;
-#endif
-
-extern void GL_Init_Common(void);
-extern void VID_Init8bitPalette(void);
+extern void GL_Init_Common (void);
+extern void VID_Init8bitPalette (void);
 /*-----------------------------------------------------------------------*/
 
 const char *gl_vendor;
@@ -84,40 +70,40 @@ const char *gl_version;
 const char *gl_extensions;
 
 void
-VID_Shutdown(void)
+VID_Shutdown (void)
 {
 	if (!vid_initialized)
 		return;
 
-	Con_Printf("VID_Shutdown\n");
+	Con_Printf ("VID_Shutdown\n");
 
-	x11_restore_vidmode();
-	x11_close_display();
-	x_disp=0;
+	x11_restore_vidmode ();
+	x11_close_display ();
+	x_disp = 0;
 }
 
 #if 0
 static void
-signal_handler(int sig)
+signal_handler (int sig)
 {
-	printf("Received signal %d, exiting...\n", sig);
-	Sys_Quit();
-	exit(sig);
+	printf ("Received signal %d, exiting...\n", sig);
+	Sys_Quit ();
+	exit (sig);
 }
 
 static void
-InitSig(void)
+InitSig (void)
 {
-	signal(SIGHUP, signal_handler);
-	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, signal_handler);
-	signal(SIGILL, signal_handler);
-	signal(SIGTRAP, signal_handler);
-	signal(SIGIOT, signal_handler);
-	signal(SIGBUS, signal_handler);
-/*	signal(SIGFPE, signal_handler); */
-	signal(SIGSEGV, signal_handler);
-	signal(SIGTERM, signal_handler);
+	signal (SIGHUP, signal_handler);
+	signal (SIGINT, signal_handler);
+	signal (SIGQUIT, signal_handler);
+	signal (SIGILL, signal_handler);
+	signal (SIGTRAP, signal_handler);
+	signal (SIGIOT, signal_handler);
+	signal (SIGBUS, signal_handler);
+/*	signal (SIGFPE, signal_handler); */
+	signal (SIGSEGV, signal_handler);
+	signal (SIGTERM, signal_handler);
 }
 #endif
 
@@ -129,19 +115,19 @@ GL_Init
 void
 GL_Init (void)
 {
-	GL_Init_Common();
+	GL_Init_Common ();
 }
 
 void
 GL_EndRendering (void)
 {
-	glFlush();
-	glXSwapBuffers(x_disp, x_win);
+	glFlush ();
+	glXSwapBuffers (x_disp, x_win);
 	Sbar_Changed ();
 }
 
 void
-VID_Init(unsigned char *palette)
+VID_Init (unsigned char *palette)
 {
 	int i;
 	int attrib[] = {
@@ -158,85 +144,66 @@ VID_Init(unsigned char *palette)
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.colormap = host_colormap;
-	vid.fullbright = 256 - LittleLong (*((int *)vid.colormap + 2048));
+	vid.fullbright = 256 - LittleLong (*((int *) vid.colormap + 2048));
 
 	/* Interpret command-line params
 	 */
 
 	/* Set vid parameters */
 
-	if ((i = COM_CheckParm("-conwidth")) != 0)
+	if ((i = COM_CheckParm ("-conwidth")))
 		vid.conwidth = atoi(com_argv[i+1]);
 	else
 		vid.conwidth = scr_width;
 
 	vid.conwidth &= 0xfff8; // make it a multiple of eight
-	if (vid.conwidth < 320)
-		vid.conwidth = 320;
+	vid.conwidth = max (vid.conwidth, 320);
 
 	// pick a conheight that matches with correct aspect
 	vid.conheight = vid.conwidth * 3 / 4;
 
-	i = COM_CheckParm ("-conheight");
-	if ( i != 0 )	// Set console height, but no smaller than 200 px
-		vid.conheight = atoi(com_argv[i+1]);
-	if (vid.conheight < 200)
-		vid.conheight = 200;
+	if ((i = COM_CheckParm ("-conheight")))	// conheight no smaller than 200px
+		vid.conheight = atoi (com_argv[i+1]);
+	vid.conheight = max (vid.conheight, 200);
 
-	x11_open_display();
+	x11_open_display ();
 
-	x_visinfo = glXChooseVisual(x_disp, x_screen, attrib);
+	x_visinfo = glXChooseVisual (x_disp, x_screen, attrib);
 	if (!x_visinfo) {
-		fprintf(stderr, "Error couldn't get an RGB, Double-buffered, Depth visual\n");
-		exit(1);
+		fprintf (stderr, "Error couldn't get an RGB, Double-buffered, Depth visual\n");
+		exit (1);
 	}
 	x_vis = x_visinfo->visual;
 
-#ifdef HAVE_DGA
-	{
-		int maj_ver;
-
-		hasdga = VID_CheckDGA(x_disp, &maj_ver, NULL, &hasdgavideo);
-		if (!hasdga || maj_ver < 1) {
-			hasdga = hasdgavideo = 0;
-		}
-	}
-	Con_Printf ("hasdga = %i\nhasdgavideo = %i\n", hasdga, hasdgavideo);
-#endif
-	x11_set_vidmode(scr_width, scr_height);
-	x11_create_window(scr_width, scr_height);
+	x11_set_vidmode (scr_width, scr_height);
+	x11_create_window (scr_width, scr_height);
 	/* Invisible cursor */
-	x11_create_null_cursor();
+	x11_create_null_cursor ();
 
-	x11_grab_keyboard();
+	x11_grab_keyboard ();
 
-	XSync(x_disp, 0);
+	XSync (x_disp, 0);
 
-	ctx = glXCreateContext(x_disp, x_visinfo, NULL, True);
+	ctx = glXCreateContext (x_disp, x_visinfo, NULL, True);
 
-	glXMakeCurrent(x_disp, x_win, ctx);
+	glXMakeCurrent (x_disp, x_win, ctx);
 
-	if (vid.conheight > scr_height)
-		vid.conheight = scr_height;
-	if (vid.conwidth > scr_width)
-		vid.conwidth = scr_width;
-	vid.width = vid.conwidth;
-	vid.height = vid.conheight;
+	vid.height = vid.conheight = min (vid.conheight, scr_height);
+	vid.width = vid.conwidth = min (vid.conwidth, scr_width);
 
-	vid.aspect = ((float)vid.height / (float)vid.width) * (320.0 / 240.0);
+	vid.aspect = ((float) vid.height / (float) vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
 
-	//InitSig(); // trap evil signals
+	//InitSig (); // trap evil signals
 
-	GL_Init();
+	GL_Init ();
 
 	VID_SetPalette (palette);
 
-	// Check for 3DFX Extensions and initialize them.
-	VID_Init8bitPalette();
+	// Check for 8-bit extension and initialize if present
+	VID_Init8bitPalette ();
 
-	Con_Printf ("Video mode %dx%d initialized.\n",
-			scr_width, scr_height);
+	Con_Printf ("Video mode %dx%d initialized.\n", scr_width, scr_height);
 
 	vid_initialized = true;
 
