@@ -1207,7 +1207,7 @@ void CL_Init (void)
 	CL_InitCam ();
 	Pmove_Init ();
 	
-	if ((servlist = Qopen(va("%s/servers.txt",fs_basepath->string),"r"))) {
+	if ((servlist = Qopen(va("%s/servers.txt",fs_userpath->string),"r"))) {
 		slist = Server_List_LoadF(servlist,slist);
 		Qclose(servlist);
 	}

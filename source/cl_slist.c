@@ -40,7 +40,7 @@
 #include "zone.h"
 #include <string.h>
 
-extern cvar_t *fs_basepath;
+extern cvar_t *fs_userpath;
 server_entry_t	*slist;
   
 server_entry_t *Server_List_Add (server_entry_t *start, char *ip, char *desc) {
@@ -187,7 +187,7 @@ server_entry_t *Server_List_LoadF (QFile *f,server_entry_t *start) { // This cou
  void Server_List_Shutdown (server_entry_t *start) {
  	QFile *f;
  	if (start) {
- 		if ((f = Qopen(va("%s/servers.txt",fs_basepath->string),"w"))) {
+ 		if ((f = Qopen(va("%s/servers.txt",fs_userpath->string),"w"))) {
  			Server_List_SaveF(f,start);
  			Qclose(f);
  		}
