@@ -835,7 +835,7 @@ R_DrawAliasModel (entity_t *e)
 	if (gl_affinemodels->int_val)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-	if (gl_lerp_anim->int_val && !torch) {
+	if (gl_lerp_anim->int_val) {
 		R_SetupAliasBlendedFrame (currententity->frame, paliashdr, currententity, false);
 	} else {
 		R_SetupAliasFrame (currententity->frame, paliashdr, false);

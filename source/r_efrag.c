@@ -34,6 +34,7 @@
 #include "bothdefs.h"
 #include "r_local.h"
 #include "cl_main.h"
+#include "cl_tent.h"
 
 mnode_t    *r_pefragtopnode;
 
@@ -257,9 +258,11 @@ R_StoreEfrags (efrag_t **ppefrag)
 			case mod_sprite:
 				pent = pefrag->entity;
 
-				if ((pent->visframe != r_framecount) &&
-					(cl_numvisedicts < MAX_VISEDICTS)) {
-					cl_visedicts[cl_numvisedicts++] = pent;
+				if (pent->visframe != r_framecount) {
+					entity_t **ent = CL_NewTempEntity ();
+					if (!ent)
+						return;
+					*ent = pent;
 
 					// mark that we've recorded this entity for this frame
 					pent->visframe = r_framecount;
