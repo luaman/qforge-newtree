@@ -272,7 +272,7 @@ ED_FindFunction (char *name)
 	return NULL;
 }
 
-eval_t     *
+eval_t *
 GetEdictFieldValue (edict_t *ed, char *field)
 {
 	ddef_t     *def = NULL;
@@ -308,7 +308,7 @@ PR_ValueString
 Returns a string describing *data in a type specific manner
 =============
 */
-char       *
+char *
 PR_ValueString (etype_t type, eval_t *val)
 {
 	static char line[256];
@@ -362,7 +362,7 @@ Returns a string describing *data in a type specific manner
 Easier to parse than PR_ValueString
 =============
 */
-char       *
+char *
 PR_UglyValueString (etype_t type, eval_t *val)
 {
 	static char line[256];
@@ -413,7 +413,7 @@ Returns a string with a description and the contents of a global,
 padded to 20 field width
 ============
 */
-char       *
+char *
 PR_GlobalString (int ofs)
 {
 	char       *s;
@@ -440,7 +440,7 @@ PR_GlobalString (int ofs)
 	return line;
 }
 
-char       *
+char *
 PR_GlobalStringNoContents (int ofs)
 {
 	int         i;
@@ -724,7 +724,7 @@ ED_ParseGlobals (char *data)
 ED_NewString
 =============
 */
-char       *
+char *
 ED_NewString (char *string)
 {
 	char       *new, *new_p;
@@ -828,7 +828,7 @@ ed should be a properly initialized empty edict.
 Used for initial level load and for savegames.
 ====================
 */
-char       *
+char *
 ED_ParseEdict (char *data, edict_t *ent)
 {
 	ddef_t     *key;
@@ -1249,7 +1249,7 @@ PR_Init_Cvars (void)
 
 
 
-edict_t    *
+edict_t *
 EDICT_NUM (int n)
 {
 	if (n < 0 || n >= MAX_EDICTS)

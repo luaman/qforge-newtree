@@ -54,8 +54,7 @@ typedef struct
 
 // player_state_t is the information needed by a player entity
 // to do move prediction and to generate a drawable entity
-typedef struct
-{
+typedef struct player_state_s {
 	int			messagenum;		// all player's won't be updated each frame
 
 	double		state_time;		// not the same as the packet time,
@@ -67,6 +66,7 @@ typedef struct
 	vec3_t		velocity;
 	int			weaponframe;
 
+	int 		number;
 	int			modelindex;
 	int			frame;
 	int			skinnum;

@@ -355,21 +355,14 @@ CL_ParsePacketEntities (qboolean delta)
 
 	full = false;
 	if (oldpacket != -1) {
-		if (cls.netchan.outgoing_sequence - oldpacket >= UPDATE_BACKUP - 1) {	// we 
-																				// can't 
-																				// use 
-																				// this, 
-																				// it 
-																				// is 
-																				// too 
-																				// old
+		if (cls.netchan.outgoing_sequence - oldpacket >= UPDATE_BACKUP - 1) {
+			// we can't use this, it is too old
 			FlushEntityPacket ();
 			return;
 		}
 		cl.validsequence = cls.netchan.incoming_sequence;
 		oldp = &cl.frames[oldpacket & UPDATE_MASK].packet_entities;
-	} else {							// this is a full update that we can
-										// start delta compressing from now
+	} else {	// a full update that we can start delta compressing from now
 		oldp = &dummy;
 		dummy.num_entities = 0;
 		cl.validsequence = cls.netchan.incoming_sequence;
@@ -489,8 +482,7 @@ CL_LinkPacketEntities (void)
 	extern int  cl_playerindex;
 	extern int  cl_h_playerindex, cl_gib1index, cl_gib2index, cl_gib3index;
 
-	pack =
-		&cl.frames[cls.netchan.incoming_sequence & UPDATE_MASK].packet_entities;
+	pack = &cl.frames[cls.netchan.incoming_sequence & UPDATE_MASK].packet_entities;
 
 	autorotate = anglemod (100 * cl.time);
 
@@ -498,24 +490,19 @@ CL_LinkPacketEntities (void)
 
 	for (pnum = 0; pnum < pack->num_entities; pnum++) {
 		s1 = &pack->entities[pnum];
-		s2 = s1;						// FIXME: no interpolation right now
+		s2 = s1;	// FIXME: no interpolation right now
 
 		// spawn light flashes, even ones coming from invisible objects
 		if ((s1->effects & (EF_BLUE | EF_RED)) == (EF_BLUE | EF_RED))
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1],
-						  s1->origin[2], 200 + (rand () & 31), 0.1, 3);
+			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2], 200 + (rand () & 31), 0.1, 3);
 		else if (s1->effects & EF_BLUE)
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1],
-						  s1->origin[2], 200 + (rand () & 31), 0.1, 1);
+			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2], 200 + (rand () & 31), 0.1, 1);
 		else if (s1->effects & EF_RED)
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1],
-						  s1->origin[2], 200 + (rand () & 31), 0.1, 2);
+			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2], 200 + (rand () & 31), 0.1, 2);
 		else if (s1->effects & EF_BRIGHTLIGHT)
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1],
-						  s1->origin[2] + 16, 400 + (rand () & 31), 0.1, 0);
+			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2] + 16, 400 + (rand () & 31), 0.1, 0);
 		else if (s1->effects & EF_DIMLIGHT)
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1],
-						  s1->origin[2], 200 + (rand () & 31), 0.1, 0);
+			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2], 200 + (rand () & 31), 0.1, 0);
 
 		// if set to invisible, skip
 		if (!s1->modelindex)
@@ -536,8 +523,7 @@ CL_LinkPacketEntities (void)
 		if (cl_numvisedicts == MAX_VISEDICTS)
 			break;						// object list is full
 
-		ent = &cl_visedicts[cl_numvisedicts];
-		cl_numvisedicts++;
+		ent = &cl_visedicts[cl_numvisedicts++];
 
 		ent->keynum = s1->number;
 		ent->model = model = cl.model_precache[s1->modelindex];
@@ -552,36 +538,22 @@ CL_LinkPacketEntities (void)
 			ent->scoreboard = NULL;
 		}
 
-
 		// LordHavoc: cleaned up Endy's coding style, and fixed Endy's bugs
 		// Ender: Extend (Colormod) [QSG - Begin]
 		// N.B: All messy code below is the sole fault of LordHavoc and
 		// his futile attempts to save bandwidth. :)
-		// 
-		ent->glowsize =
-			s1->glowsize <
-			128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
-//      if (s1->glowsize != 0)
-//          Con_Printf("glowsize: %d\n", s1->glowsize);
+		ent->glowsize =	s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
 		ent->glowcolor = s1->glowcolor;
-//      if (s1->glowcolor != 254)
-//          Con_Printf("glowcolor: %d\n", s1->glowcolor);
 		ent->alpha = s1->alpha / 255.0;
-//      if (s1->alpha != 255)
-//          Con_Printf("alpha: %d\n", s1->alpha);
 		ent->scale = s1->scale / 16.0;
-//      if (s1->scale != 16)
-//          Con_Printf("scale: %d\n", s1->scale);
 
-		if (s1->colormod == 255)
+		if (s1->colormod == 255) {
 			ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
-		else {
-//          Con_Printf("colormod: %d\n", s1->colormod);
+		} else {
 			ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
 			ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
 			ent->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
 		}
-		// 
 		// Ender: Extend (Colormod) [QSG - End]
 
 		// set skin
@@ -590,8 +562,7 @@ CL_LinkPacketEntities (void)
 		// set frame
 		ent->frame = s1->frame;
 
-		// rotate binary objects locally
-		if (model->flags & EF_ROTATE) {
+		if (model->flags & EF_ROTATE) { // rotate binary objects locally
 			ent->angles[0] = 0;
 			ent->angles[1] = autorotate;
 			ent->angles[2] = 0;
@@ -611,8 +582,7 @@ CL_LinkPacketEntities (void)
 
 		// calculate origin
 		for (i = 0; i < 3; i++)
-			ent->origin[i] = s2->origin[i] +
-				f * (s1->origin[i] - s2->origin[i]);
+			ent->origin[i] = s2->origin[i] + f * (s1->origin[i] - s2->origin[i]);
 
 		// add automatic particle trails
 		if (!model->flags)
@@ -621,12 +591,17 @@ CL_LinkPacketEntities (void)
 		// scan the old entity display list for a matching
 		for (i = 0; i < cl_oldnumvisedicts; i++) {
 			if (cl_oldvisedicts[i].keynum == ent->keynum) {
+				ent->frame_start_time = cl_oldvisedicts[i].frame_start_time;
+				ent->frame_interval = cl_oldvisedicts[i].frame_interval;
+				ent->pose1 = cl_oldvisedicts[i].pose1;
+				ent->pose2 = cl_oldvisedicts[i].pose2;
 				VectorCopy (cl_oldvisedicts[i].origin, old_origin);
 				break;
 			}
 		}
-		if (i == cl_oldnumvisedicts)
-			continue;					// not in last message
+
+		if (i == cl_oldnumvisedicts)	// not in last message
+			continue;
 
 		for (i = 0; i < 3; i++)
 			if (abs (old_origin[i] - ent->origin[i]) > 128) {	// no trail
@@ -634,6 +609,7 @@ CL_LinkPacketEntities (void)
 				VectorCopy (ent->origin, old_origin);
 				break;
 			}
+
 		if (model->flags & EF_ROCKET) {
 			R_RocketTrail (old_origin, ent->origin, 0, ent);
 			dl = CL_AllocDlight (s1->number);
@@ -781,13 +757,14 @@ CL_ParsePlayerinfo (void)
 
 	num = MSG_ReadByte ();
 	if (num > MAX_CLIENTS)
-//      Sys_Error ("CL_ParsePlayerinfo: bad num");
+//		Sys_Error ("CL_ParsePlayerinfo: bad num");
 		Host_EndGame ("CL_ParsePlayerinfo: bad num");
 
 	info = &cl.players[num];
 
 	state = &cl.frames[parsecountmod].playerstate[num];
 
+	state->number = num;
 	flags = state->flags = MSG_ReadShort ();
 
 	state->messagenum = cl.parsecount;
@@ -944,7 +921,6 @@ CL_LinkPlayers (void)
 		if (state->messagenum != cl.parsecount)
 			continue;					// not present this frame
 
-		// FIXME: Use a findvar or something for gl_flashblend  --KB
 		// spawn light flashes, even ones coming from invisible objects
 		if (!gl_flashblend->int_val || j != cl.playernum) {
 
@@ -986,12 +962,23 @@ CL_LinkPlayers (void)
 			continue;
 
 		// grab an entity to fill in
-		if (cl_numvisedicts == MAX_VISEDICTS)
-			break;						// object list is full
+		if (cl_numvisedicts == MAX_VISEDICTS)	// object list is full
+			break;
+
 		ent = &cl_visedicts[cl_numvisedicts];
 		cl_numvisedicts++;
-		ent->keynum = 0;
 
+		// scan the old entity display list for a matching player
+		for (i = 0; i < cl_oldnumvisedicts; i++) {
+			if (cl_oldvisedicts[i].keynum == state->number) {
+				ent->frame_start_time = cl_oldvisedicts[i].frame_start_time;
+				ent->frame_interval = cl_oldvisedicts[i].frame_interval;
+				ent->pose1 = cl_oldvisedicts[i].pose1;
+				ent->pose2 = cl_oldvisedicts[i].pose2;
+			}
+		}
+
+		ent->keynum = 0;
 		ent->model = cl.model_precache[state->modelindex];
 		ent->skinnum = state->skinnum;
 		ent->frame = state->frame;
@@ -1019,17 +1006,10 @@ CL_LinkPlayers (void)
 
 		// only predict half the move to minimize overruns
 		msec = 500 * (playertime - state->state_time);
-		if (msec <= 0
-			|| (!cl_predict_players->int_val
-				&& !cl_predict_players2->int_val)) {
+		if (msec <= 0 || (!cl_predict_players->int_val && !cl_predict_players2->int_val)) {
 			VectorCopy (state->origin, ent->origin);
-//Con_DPrintf ("nopredict\n");
-		} else {
-			// predict players movement
-			if (msec > 255)
-				msec = 255;
-			state->command.msec = msec;
-//Con_DPrintf ("predict: %i\n", msec);
+		} else {	// predict players movement
+			state->command.msec = msec = min (msec, 255);
 
 			oldphysent = pmove.numphysent;
 			CL_SetSolidPlayers (j);
@@ -1145,9 +1125,7 @@ CL_SetUpPlayerPrediction (qboolean dopred)
 				// Con_DPrintf ("nopredict\n");
 			} else {
 				// predict players movement
-				if (msec > 255)
-					msec = 255;
-				state->command.msec = msec;
+				state->command.msec = msec = min (msec, 255);
 				// Con_DPrintf ("predict: %i\n", msec);
 
 				CL_PredictUsercmd (state, &exact, &state->command, false);
@@ -1221,8 +1199,7 @@ CL_EmitEntities (void)
 		return;
 
 	cl_oldnumvisedicts = cl_numvisedicts;
-	cl_oldvisedicts =
-		cl_visedicts_list[(cls.netchan.incoming_sequence - 1) & 1];
+	cl_oldvisedicts = cl_visedicts_list[(cls.netchan.incoming_sequence - 1) & 1];
 	cl_visedicts = cl_visedicts_list[cls.netchan.incoming_sequence & 1];
 
 	cl_numvisedicts = 0;

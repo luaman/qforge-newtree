@@ -65,6 +65,7 @@ void        R_InitBubble ();
 void        R_FireColor_f (void);
 
 cvar_t     *gl_fires;
+extern cvar_t	*gl_lerp_anim;
 qboolean    allowskybox;				// allow skyboxes?  --KB
 
 /*
@@ -251,6 +252,9 @@ R_Init_Cvars (void)
 							  "Toggles fullbright color support for bmodels");
 
 	gl_keeptjunctions = Cvar_Get ("gl_keeptjunctions", "1", CVAR_NONE, "None");
+
+	gl_lerp_anim = Cvar_Get ("gl_lerp_anim", "1", CVAR_ARCHIVE,
+								"Toggles model animation interpolation");
 
 	r_skyname = Cvar_Get ("r_skyname", "none", CVAR_NONE,
 						  "name of the current skybox");
