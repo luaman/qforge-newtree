@@ -474,7 +474,6 @@ else
 AC_MSG_RESULT(yes ($CL_SYS_SRC $SV_SYS_SRC))
 fi
 
-AC_MSG_CHECKING(targets to be built)
 if test "x$HAVE_SVGA" = xyes; then
    TARGETS="$TARGETS qf-client-svga"
 fi
