@@ -752,7 +752,7 @@ void SV_BeginDownload_f(void)
 		char *p;
 
 		for (p = name; *p; p++)
-			*p = (char)tolower(*p);
+			*p = tolower((int)*p);
 	}
 
 
