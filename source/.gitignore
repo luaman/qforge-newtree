@@ -1,6 +1,7 @@
 *.d
 *.o
 *.obj
+Makefile
 Makefile.in
 client.exe
 qf-client-ggi
