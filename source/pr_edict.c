@@ -49,6 +49,7 @@
 #endif
 
 void SV_Error (char *error, ...);
+void FindEdictFieldOffsets();
 
 dprograms_t		*progs;
 dfunction_t		*pr_functions;
@@ -1087,6 +1088,8 @@ void PR_LoadProgs (void)
 		SpectatorThink = (func_t)(f - pr_functions);
 	if ((f = ED_FindFunction ("SpectatorDisconnect")) != NULL)
 		SpectatorDisconnect = (func_t)(f - pr_functions);
+
+        FindEdictFieldOffsets();
 }
 
 

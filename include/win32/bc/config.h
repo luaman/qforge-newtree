@@ -243,9 +243,6 @@
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
 
-/* Define if you want the QSG standards */
-#define QSG_VERSION "1.0"
-
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_
 

@@ -89,6 +89,8 @@ mleaf_t		*r_viewleaf, *r_oldviewleaf;
 int		d_lightstylevalue[256];	// 8.8 fraction of base light value
 
 
+vec3_t  shadecolor; // Ender (Extend) Colormod
+
 void R_MarkLeaves (void);
 
 cvar_t	*r_norefresh;
@@ -390,7 +392,12 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 
 			// normals and vertexes come from the frame list
 			l = shadedots[verts->lightnormalindex] * shadelight;
-			glColor3f (l, l, l);
+// Ender: Test (Colormod)
+//        if (shadecolor[0] || shadecolor[1] || shadecolor[2]) {
+//           glColor3f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l);
+//        } else {
+           glColor3f (l, l, l);
+//        }
 			glVertex3f (verts->v[0], verts->v[1], verts->v[2]);
 			verts++;
 		} while (--count);
@@ -494,7 +501,6 @@ void R_SetupAliasFrame (int frame, aliashdr_t *paliashdr)
 }
 
 
-
 /*
 =================
 R_DrawAliasModel
@@ -530,6 +536,11 @@ void R_DrawAliasModel (entity_t *e)
 	//
 
 	ambientlight = shadelight = R_LightPoint (currententity->origin);
+
+        // Ender (Extend)
+        shadecolor[0] = currententity->colormod[0];
+        shadecolor[1] = currententity->colormod[1];
+        shadecolor[2] = currententity->colormod[2];
 
 	// allways give the gun some light
 	if (e == &cl.viewent && ambientlight < 24)

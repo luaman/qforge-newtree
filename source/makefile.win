@@ -24,7 +24,7 @@ COM_sources=\
   sys_win.obj
 
 SV_sources=\
-  pr_cmds.obj pr_edict.obj pr_exec.obj \
+  pr_cmds.obj pr_edict.obj pr_exec.obj pr_offs.obj\
   sv_init.obj sv_main.obj sv_misc.obj sv_model.obj sv_nchan.obj sv_ents.obj \
   sv_send.obj sv_move.obj sv_phys.obj sv_user.obj sv_ccmds.obj \
   world.obj sv_cvar.obj model.obj \

@@ -214,6 +214,7 @@ typedef struct client_s
 	netchan_t		netchan;
 	int				msecs, msec_cheating;
 	double			last_check;
+        int                     stdver;
 } client_t;
 
 // a client can leave the server in one of four ways:

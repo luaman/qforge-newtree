@@ -11,7 +11,7 @@ AM_INIT_AUTOMAKE(quakeforge, 0.1.99pre2)
 dnl Define the proper name and extra version numbers for package
 PROGRAM=QuakeForge
 QW_VERSION=2.40
-QSG_VERSION=1.0
+QSG_VERSION=2.0
 
 AC_DEFINE_UNQUOTED(PROGRAM, 	"$PROGRAM")
 AC_DEFINE_UNQUOTED(QW_VERSION,	"$QW_VERSION")

@@ -209,6 +209,14 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 		if (bits&(1<<i))
 			bitcounts[i]++;
 
+        if (bits & U_EXTEND1)
+        {                
+                bits |= MSG_ReadByte() << 16;
+                if (bits & U_EXTEND2)
+                        bits |= MSG_ReadByte() << 24;
+        }
+
+
 	to->flags = bits;
 	
 	if (bits & U_MODEL)
@@ -243,6 +251,15 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 		
 	if (bits & U_ANGLE3)
 		to->angles[2] = MSG_ReadAngle();
+
+        if (bits & U_GLOWSIZE)
+         to->glowsize = MSG_ReadByte();
+
+        if (bits & U_GLOWCOLOR)
+         to->glowcolor = MSG_ReadByte();
+
+        if (bits & U_GLOWCOLOR)
+         to->colormod = MSG_ReadByte();
 
 	if (bits & U_SOLID)
 	{
@@ -499,7 +516,19 @@ void CL_LinkPacketEntities (void)
 			ent->scoreboard = NULL;
 		}
 
-		// set skin
+      // Ender: Extend (Colormod) [QSG - Begin]
+      //        N.B: All messy code below is the sole fault of LordHavoc and
+      //             his futile attempts to save bandwidth. :)
+      //
+        ent->glowsize    = s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
+        ent->glowcolor   = s1->glowcolor;
+        ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
+        ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
+        ent->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
+     //
+     // Ender: Extend (Colormod) [QSG - End]
+
+                 // set skin
 		ent->skinnum = s1->skinnum;
 		
 		// set frame

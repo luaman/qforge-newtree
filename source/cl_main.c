@@ -1143,6 +1143,7 @@ void CL_Init (void)
 //        sprintf (st, "%s-%04d", QW_VERSION, build_number());
         sprintf (st, "%s", QW_VERSION);
 	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING);
+        Info_SetValueForStarKey (cls.userinfo, "stdver", QSG_VERSION, MAX_INFO_STRING);
 
 	CL_InitInput ();
 	CL_InitTEnts ();

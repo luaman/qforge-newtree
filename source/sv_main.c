@@ -1622,6 +1622,7 @@ void SV_ExtractFromUserinfo (client_t *cl)
 		cl->messagelevel = atoi(val);
 	}
 
+        cl->stdver = atoi(Info_ValueForKey (cl->userinfo, "stdver"));
 }
 
 

@@ -63,7 +63,7 @@ int			skytexturenum;
 #define	GL_RGBA4	0
 #endif
 
-
+extern vec3_t  shadecolor; // Ender (Extend) Colormod
 int		lightmap_bytes;		// 1 or 4
 
 int		lightmap_textures;
@@ -707,7 +707,7 @@ void R_DrawWaterSurfaces (void)
 		glColor4f (0.5, 0.5, 0.5, r_wateralpha->value);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	} else
-		glColor3f (0.5, 0.5, 0.5);
+                glColor3f (0.5, 0.5, 0.5);
 
 	if (!gl_texsort->value) {
 		if (!waterchain)
@@ -837,7 +837,14 @@ void R_DrawBrushModel (entity_t *e)
 	if (R_CullBox (mins, maxs))
 		return;
 
-	glColor3f (1.0, 1.0, 1.0);
+// Ender: Extend (Alpha) [QSG - Begin]
+//        glEnable(GL_BLEND);
+//        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+// Note: glColor4f and gl_texsort->value = 1 for alpha! :)
+         glColor3f (1, 1, 1);
+// Ender: Extend (Alpha) [QSG - End]
+
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 
 	VectorSubtract (r_refdef.vieworg, e->origin, modelorg);
