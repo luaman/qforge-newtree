@@ -1,7 +1,7 @@
 /*
 	world.c
 
-	(description)
+	world query functions
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// world.c -- world query functions
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

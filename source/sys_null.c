@@ -1,7 +1,7 @@
 /*
 	sys_null.c
 
-	(description)
+	null system driver to aid porting efforts
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// sys_null.h -- null system driver to aid porting efforts
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	r_drawa.S
 
-	(description)
+	x86 assembly-language edge clipping and emission code
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +25,6 @@
 
 	$Id$
 */
-// r_drawa.s
-// x86 assembly-language edge clipping and emission code
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

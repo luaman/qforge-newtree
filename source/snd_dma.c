@@ -1,7 +1,7 @@
 /*
 	snd_dma.c
 
-	(description)
+	main control for any streaming sound output device
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// snd_dma.c -- main control for any streaming sound output device
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

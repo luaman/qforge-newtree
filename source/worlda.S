@@ -1,7 +1,7 @@
 /*
 	worlda.S
 
-	(description)
+	x86 assembly-language server testing stuff
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +25,6 @@
 
 	$Id$
 */
-// worlda.s
-// x86 assembly-language server testing stuff
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

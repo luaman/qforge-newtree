@@ -1,7 +1,7 @@
 /*
 	vid_null.c
 
-	(description)
+	null video driver to aid porting efforts
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// vid_null.c -- null video driver to aid porting efforts
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	sv_user.c
 
-	(description)
+	server code for moving users
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,7 @@
 
 	$Id$
 */
-// sv_user.c -- server code for moving users
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif

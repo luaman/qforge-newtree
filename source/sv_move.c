@@ -1,7 +1,7 @@
 /*
 	sv_move.c
 
-	(description)
+	monster movement
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// sv_move.c -- monster movement
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

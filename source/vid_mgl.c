@@ -1,7 +1,7 @@
 /*
-	vid_win.c
+	vid_mgl.c
 
-	(description)
+	Win32 Scitech MGL video driver
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// vid_win.c -- Win32 video driver
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

@@ -1,7 +1,7 @@
 /*
 	r_alias.c
 
-	(description)
+	routines for setting up to draw alias models
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// r_alias.c: routines for setting up to draw alias models
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

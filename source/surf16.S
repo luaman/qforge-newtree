@@ -1,7 +1,7 @@
 /*
 	surf16.S
 
-	(description)
+	x86 assembly-language 16 bpp surface block drawing code.
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,8 +25,6 @@
 
 	$Id$
 */
-// surf16.s
-// x86 assembly-language 16 bpp surface block drawing code.
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
-	gl_vidnt.c
+	vid_wgl.c
 
-	(description)
+	Win32 WGL vid component
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// gl_vidnt.c -- NT GL vid component
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

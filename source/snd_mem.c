@@ -1,7 +1,7 @@
 /*
 	snd_mem.c
 
-	(description)
+	sound caching
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// snd_mem.c: sound caching
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

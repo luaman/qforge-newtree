@@ -1,7 +1,7 @@
 /*
 	snd_mix.c
 
-	(description)
+	portable code to mix sounds for snd_dma.c
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// snd_mix.c -- portable code to mix sounds for snd_dma.c
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

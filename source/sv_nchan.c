@@ -1,7 +1,7 @@
 /*
 	sv_nchan.c
 
-	(description)
+	user reliable data stream writes
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// sv_nchan.c, user reliable data stream writes
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
-	view.c
+	r_view.c
 
-	(description)
+	player eye positioning
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// view.c -- player eye positioning
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
