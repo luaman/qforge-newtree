@@ -40,6 +40,7 @@
 #include "console.h"
 #include "glquake.h"
 #include "tga.h"
+#include "view.h"
 
 extern double realtime;
 extern model_t *loadmodel;
@@ -258,10 +259,16 @@ R_DrawSkyDome (void)
 void
 R_DrawSky (void)
 {
+	float l = 1 / (256 * brightness->value);
+
+	glColor3f (lighthalf_v[0] * l, lighthalf_v[1] * l, lighthalf_v[2] * l);
+
 	if (skyloaded)
 		R_DrawSkyBox ();
 	else
 		R_DrawSkyDome ();
+
+	glColor3ubv (lighthalf_v);
 }
 
 
