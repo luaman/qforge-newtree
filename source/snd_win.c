@@ -714,7 +714,7 @@ DSOUND_LockBuffer(qboolean lockit)
 					("S_TransferStereo16: DS::Lock Sound Buffer Failed\n");
 				S_Shutdown ();
 				S_Startup ();
-				return;
+				return NULL;
 			}
 
 			if (++reps > 10000) {
@@ -722,7 +722,7 @@ DSOUND_LockBuffer(qboolean lockit)
 					("S_TransferStereo16: DS: couldn't restore buffer\n");
 				S_Shutdown ();
 				S_Startup ();
-				return;
+				return NULL;
 			}
 		}
 	} else {
