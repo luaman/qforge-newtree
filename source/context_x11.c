@@ -95,7 +95,7 @@ static int  nummodes;
 
 static int	screen_width;
 static int	screen_height;
-static int	original_mode;
+static int	original_mode = 0;
 #endif
 
 static qboolean	vidmode_avail = false;
@@ -273,16 +273,17 @@ x11_set_vidmode (int width, int height)
 
 	if (vid_fullscreen->int_val && vidmode_avail) {
 
-		int 		i;
-		int 		best_mode = 0;
-		qboolean	found_mode = false;
+		int 				i;
+		int 				best_mode = 0;
+		qboolean			found_mode = false;
+		XF86VidModeModeLine orig_data;
 
 		XF86VidModeGetAllModeLines (x_disp, x_screen, &nummodes, &vidmodes);
-		XF86VidModeGetViewPort (x_disp, x_screen, &screen_width, &screen_height);
+		XF86VidModeGetViewPort (x_disp, x_screen, &orig_data);
 
 		for (i = 0; i < nummodes; i++) {
-			if ((vidmodes[i]->hdisplay == screen_width) &&
-					(vidmodes[i]->vdisplay == screen_height)) {
+			if ((vidmodes[i]->hdisplay == orig_data.hdisplay) &&
+					(vidmodes[i]->vdisplay == orig_data.vdisplay)) {
 				original_mode = i;
 				break;
 			}
