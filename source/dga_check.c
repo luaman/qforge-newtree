@@ -43,6 +43,9 @@
 #ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
 # include <X11/extensions/xf86vmstr.h>
+# ifndef XDGA_MAJOR_VERSION
+#  define XDGA_MAJOR_VERSION XF86DGA_MAJOR_VERSION
+# endif
 #endif
 
 #include "console.h"
