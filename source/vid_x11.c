@@ -47,6 +47,7 @@ typedef unsigned short PIXEL;
 #include <X11/keysym.h>
 #include <X11/extensions/XShm.h>
 
+#include "sys.h"
 #include "quakedef.h"
 #include "d_local.h"
 

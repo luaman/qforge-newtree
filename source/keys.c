@@ -26,10 +26,13 @@
 	$Id$
 */
 
-#include "quakedef.h"
 #ifdef _WIN32
 #include <windows.h>
 #endif
+
+#include "sys.h"
+#include "quakedef.h"
+
 /*
 
 key up events are sent even if in console mode

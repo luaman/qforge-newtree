@@ -27,6 +27,7 @@
 */
 // snd_mem.c: sound caching
 
+#include "sys.h"
 #include "quakedef.h"
 
 int			cache_full_cycle;

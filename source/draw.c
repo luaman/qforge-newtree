@@ -28,6 +28,7 @@
 // draw.c -- this is the only file outside the refresh that touches the
 // vid buffer
 
+#include "sys.h"
 #include "quakedef.h"
 
 typedef struct {

@@ -26,6 +26,7 @@
 	$Id$
 */
 
+#include "sys.h"
 #include "quakedef.h"
 
 mnode_t	*r_pefragtopnode;

@@ -152,7 +152,7 @@ CL_sources=\
   menu.c \
   keys.c \
   console.c \
-  sys_dosa.S
+  sys_x86.S
 
 CL_dependencies = $(patsubst %,%.d,$(basename $(CL_sources)))
 CL_objects = $(patsubst %.d,%.o,$(CL_dependencies))

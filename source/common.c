@@ -29,6 +29,7 @@
 
 #include <ctype.h>
 
+#include "sys.h"
 #include "quakedef.h"
                
 #define MAX_NUM_ARGVS	50

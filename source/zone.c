@@ -26,6 +26,7 @@
 	$Id$
 */
 
+#include "sys.h"
 #include "quakedef.h"
 
 #define	DYNAMIC_SIZE	0x20000

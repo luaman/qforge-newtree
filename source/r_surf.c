@@ -27,6 +27,7 @@
 */
 // r_surf.c: surface-related refresh code
 
+#include "sys.h"
 #include "quakedef.h"
 #include "r_local.h"
 

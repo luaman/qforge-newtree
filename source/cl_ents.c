@@ -27,6 +27,7 @@
 */
 // cl_ents.c -- entity parsing and management
 
+#include "sys.h"
 #include "quakedef.h"
 
 extern	cvar_t	cl_predict_players;

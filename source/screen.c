@@ -27,6 +27,7 @@
 */
 // screen.c -- master for refresh, status bar, console, chat, notify, etc
 
+#include "sys.h"
 #include "quakedef.h"
 #include "r_local.h"
 

@@ -27,6 +27,7 @@
 */
 // snd_dma.c -- main control for any streaming sound output device
 
+#include "sys.h"
 #include "quakedef.h"
 
 #ifdef _WIN32

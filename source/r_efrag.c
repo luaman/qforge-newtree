@@ -26,6 +26,7 @@
 	$Id$
 */
 
+#include "sys.h"
 #include "quakedef.h"
 #include "r_local.h"
 

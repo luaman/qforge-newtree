@@ -26,6 +26,7 @@
 	$Id$
 */
 
+#include "sys.h"
 #include "quakedef.h"
 
 cvar_t		baseskin = {"baseskin", "base"};

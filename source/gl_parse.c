@@ -27,6 +27,7 @@
 */
 // cl_parse.c  -- parse a message received from the server
 
+#include "sys.h"
 #include "quakedef.h"
 #include "glquake.h"
 

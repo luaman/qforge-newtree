@@ -26,8 +26,11 @@
 	$Id$
 */
 
+#include "sys.h"
 #include "quakedef.h"
+#ifdef _WIN32
 #include "winquake.h"
+#endif
 
 void (*vid_menudrawfn)(void);
 void (*vid_menukeyfn)(int key);

@@ -27,15 +27,17 @@
 */
 // cl_main.c  -- client main loop
 
+#include <ctype.h>
+
+#include "sys.h"
 #include "quakedef.h"
-#include "winquake.h"
 #ifdef _WIN32
+#include "winquake.h"
 #include "winsock.h"
 #include "in_win.h"
 #else
 #include <netinet/in.h>
 #endif
-#include <ctype.h>
 
 
 // we need to declare some mouse variables here, because the menu system

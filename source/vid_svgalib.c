@@ -36,6 +36,7 @@
 
 #include <asm/io.h>
 
+#include "sys.h"
 #include "vga.h"
 #include "vgakeyboard.h"
 #include "vgamouse.h"
