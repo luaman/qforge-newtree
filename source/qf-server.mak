@@ -75,7 +75,7 @@ MISCINCLUDES = $(ZLIB)
 
 INCLUDES = $(QFINCLUDES);$(SYSINCLUDE);$(MISCINCLUDES)
 
-DEFINES=WIN32=1;_WIN32=1;WINDOWS=1;_WINDOWS=1;HAVE_CONFIG_H=1;HAVE_FNMATCH_H=1
+DEFINES=WIN32=1;_WIN32=1;WINDOWS=1;_WINDOWS=1;HAVE_CONFIG_H=1;HAVE_FNMATCH_H=1;USE_INTEL_ASM=1
 
 DEBUGOPTS = -y -k- -r -v
 
@@ -116,6 +116,8 @@ EXT2=.obj
 # Dependency List
 #
 DEPEND = \
+   $(OBJS)\sys_x86.obj\
+   $(OBJS)\worlda.obj\
    $(OBJS)\ver_check.obj\
    $(ZLIB)\zlib.lib\
    $(OBJS)\model.obj\
@@ -170,6 +172,8 @@ $(EXE)\qf-server.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0x32.obj+
+$(OBJS)\sys_x86.obj\
+$(OBJS)\worlda.obj+
 $(OBJS)\ver_check.obj+
 $(ZLIB)\zlib.lib+
 $(OBJS)\model.obj+
@@ -463,5 +467,15 @@ $(OBJS)\sv_ccmds.obj :  $(QFROOT)\source\sv_ccmds.c
 $(OBJS)\math.obj :  $(QFROOT)\source\math.asm
   $(ASSEMBLER) @&&|
  $(ASMOPTS) $(ASMIN)\math$(EXT2) $(ASMOUT)\math$(EXT1)
+|
+
+$(OBJS)\worlda.obj :  $(QFROOT)\source\worlda.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\worlda$(EXT2) $(ASMOUT)\worlda$(EXT1)
+|
+
+$(OBJS)\sys_x86.obj :  $(QFROOT)\source\sys_x86.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\sys_x86$(EXT2) $(ASMOUT)\sys_x86$(EXT1)
 |
 
