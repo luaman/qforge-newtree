@@ -26,8 +26,8 @@
 	$Id$
 */
 
-#ifndef _INFO_H
-#define _INFO_H
+#ifndef __info_h_
+#define __info_h_
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -35,15 +35,18 @@
 
 #include <stdlib.h> // for size_t. sys/types.h SHOULD be used, but can't :(bc)
 
+#include "qtypes.h"
+
 #define	MAX_INFO_STRING			512
 #define	MAX_SERVERINFO_STRING	512
 #define	MAX_LOCALINFO_STRING	32768
 
-char *Info_ValueForKey (char *s, char *key);
+qboolean Info_FilterForKey (const char *key);
+void Info_Print (char *s);
 void Info_RemoveKey (char *s, char *key);
 void Info_RemovePrefixedKeys (char *start, char prefix);
 void Info_SetValueForKey (char *s, char *key, char *value, size_t maxsize);
 void Info_SetValueForStarKey (char *s, char *key, char *value, size_t maxsize);
-void Info_Print (char *s);
+char *Info_ValueForKey (char *s, char *key);
 
-#endif	// _INFO_H
+#endif	// __info_h_

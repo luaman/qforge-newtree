@@ -39,6 +39,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#include "compat.h"
 #include "console.h"
 #include "info.h"
 
@@ -46,13 +47,48 @@
 	INFO STRINGS
 */
 
+const static char	*client_info_filters[] = {	// Info keys needed by client
+	"name",
+	"topcolor",
+	"bottomcolor",
+	"rate",
+	"msg",
+	"skin",
+	"team",
+	"noaim",
+	"pmodel",
+	"emodel",
+	"spectator",
+	"*spectator",
+	"*ver",
+	NULL
+};
+
+/*
+	Info_FilterForKey
+
+	Searches for key in the "client-needed" info string list
+*/
+qboolean
+Info_FilterForKey (const char *key)
+{
+	const char	**s;
+
+	for (s = client_info_filters; *s; s++) {
+		if (strequal (*s, key)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 /*
 	Info_ValueForKey
 
 	Searches the string for the given
 	key and returns the associated value, or an empty string.
 */
-char       *
+char *
 Info_ValueForKey (char *s, char *key)
 {
 	char        pkey[512];
@@ -127,7 +163,7 @@ Info_RemoveKey (char *s, char *key)
 		}
 		*o = 0;
 
-		if (!strcmp (key, pkey)) {
+		if (strequal (key, pkey)) {
 			strcpy (start, s);			// remove this part
 			return;
 		}
@@ -168,7 +204,7 @@ Info_RemovePrefixedKeys (char *start, char prefix)
 		}
 		*o = 0;
 
-		if (pkey[0] == prefix) {
+		if ((pkey[0] == prefix) || (!(Info_FilterForKey (pkey)))) {
 			Info_RemoveKey (start, pkey);
 			s = start;
 		}
@@ -176,7 +212,6 @@ Info_RemovePrefixedKeys (char *start, char prefix)
 		if (!*s)
 			return;
 	}
-
 }
 
 
