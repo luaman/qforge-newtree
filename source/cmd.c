@@ -685,6 +685,19 @@ int Cmd_CheckParm (char *parm)
 	return 0;
 }
 
+void Cmd_CmdList_f (void)
+{
+	cmd_function_t	*cmd;
+	int	i;
+
+	for (cmd=cmd_functions, i=0 ; cmd ; cmd=cmd->next, i++)
+	{
+		Con_Printf("%s\n", cmd->name);
+	}
+
+	Con_Printf ("------------\n%d commands\n", i);
+}
+
 /*
 ============
 Cmd_Init
@@ -700,5 +713,6 @@ void Cmd_Init (void)
 	Cmd_AddCommand ("echo",Cmd_Echo_f);
 	Cmd_AddCommand ("alias",Cmd_Alias_f);
 	Cmd_AddCommand ("wait", Cmd_Wait_f);
+	Cmd_AddCommand ("cmdlist", Cmd_CmdList_f);
 }
 
