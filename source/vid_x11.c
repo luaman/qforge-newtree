@@ -803,6 +803,8 @@ VID_UnlockBuffer ( void )
 {       
 }       
 
-void VID_SetCaption (char *text)
+void
+VID_SetCaption (char *text)
 {
+	x11_set_caption (text);
 }

@@ -55,6 +55,7 @@
 # include <X11/extensions/xf86vmode.h>
 #endif
 
+#include "commdef.h"
 #include "context_x11.h"
 #include "dga_check.h"
 #include "qtypes.h"
@@ -319,8 +320,11 @@ x11_create_window(int width, int height)
 	x_win = XCreateWindow(x_disp, x_root, 0, 0, width, height,
 						0, x_visinfo->depth, InputOutput,
 						x_vis, mask, &attr);
-	/* Give it a title */
-	XStoreName(x_disp, x_win, "XQuake");
+
+	// Set window title
+	XStoreName (x_disp, x_win, va ("%s %s", PROGRAM, VERSION));
+	// Set icon name
+	XSetIconName (x_disp, x_win, PROGRAM);
 
 	/* Make window respond to Delete events */
 	aWMDelete = XInternAtom(x_disp, "WM_DELETE_WINDOW", False);
@@ -354,4 +358,11 @@ x11_grab_keyboard(void)
 					  CurrentTime);
 	}
 #endif
+}
+
+void
+x11_set_caption (char *text)
+{
+	if (x_disp && x_win && text)
+		XStoreName (x_disp, x_win, text);
 }

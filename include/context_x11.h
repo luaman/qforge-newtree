@@ -47,16 +47,17 @@ extern qboolean doShm;
 extern int		x_shmeventtype;
 extern qboolean oktodraw;
 
-qboolean x11_add_event( int event, void (*event_handler)(XEvent *));
-qboolean x11_del_event( int event, void (*event_handler)(XEvent *));
-void x11_process_event( void );
-void x11_process_events( void );
-void x11_open_display( void );
-void x11_close_display( void );
-void x11_create_null_cursor(void);
-void x11_set_vidmode(int width, int height);
-void x11_restore_vidmode(void);
-void x11_create_window(int width, int height);
-void x11_grab_keyboard(void);
+qboolean x11_add_event (int event, void (*event_handler)(XEvent *));
+qboolean x11_del_event (int event, void (*event_handler)(XEvent *));
+void x11_process_event (void);
+void x11_process_events (void);
+void x11_open_display (void);
+void x11_close_display (void);
+void x11_create_null_cursor (void);
+void x11_set_vidmode (int, int);
+void x11_restore_vidmode (void);
+void x11_create_window (int, int);
+void x11_grab_keyboard (void);
+void x11_set_caption (char *);
 
 #endif	// __CONTEXT_X11_H__
