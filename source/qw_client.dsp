@@ -233,6 +233,21 @@ SOURCE=.\cl_tent.c
 # Begin Source File
 
 SOURCE=.\cl_trans.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
