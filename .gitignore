@@ -7,4 +7,6 @@ config.log
 config.status
 configure
 quakeforge.lsm
+quakeforge-*.tar.bz2
 quakeforge-*.tar.gz
+quakeforge-*.zip

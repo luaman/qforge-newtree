@@ -723,19 +723,6 @@ QF_maGiC_VALUE
 fi
 
 if test -z "$CDTYPE"; then
-	AC_EGREP_CPP([QF_maGiC_VALUE],
-		[
-#include <sys/cdio.h>
-#if defined (CDIOREADTOCENTRY) || defined (CDIOREADTOCENTRYS)
-QF_maGiC_VALUE
-#endif
-		],
-		AC_MSG_RESULT([yes (BSD)])
-		CDTYPE=BSD
-	)
-fi
-
-if test -z "$CDTYPE"; then
 	AC_EGREP_CPP([QF_maGIC_VALUE],
 		[
 #include <windows.h>
@@ -752,15 +739,8 @@ test -z "$CDTYPE" && AC_MSG_RESULT([no, using null CD audio driver])
 AC_SUBST(CD_LIBS)
 AC_SUBST(CD_CFLAGS)
 AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "LINUX")
-AM_CONDITIONAL(CDTYPE_BSD, test "$CDTYPE" = "BSD")
 AM_CONDITIONAL(CDTYPE_WIN32, test "$CDTYPE" = "WIN32")
-AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "LINUX" -a "$CDTYPE" != "BSD" -a "$CDTYPE" != "WIN32")
-
-if test "$CDTTPE" = BSD; then
-	AC_HAVE_STRUCT_FIELD(struct ioc_read_toc_single_entry, entry,
-		[#include <sys/cdio.h>]
-	)
-fi
+AM_CONDITIONAL(CDTYPE_NULL, test "$CDTYPE" != "LINUX" -a "$CDTYPE" != "WIN32")
 
 dnl ==================================================================
 dnl Checks for networking

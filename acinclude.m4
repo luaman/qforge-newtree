@@ -79,7 +79,7 @@ dnl
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 char*
 my_strdup (char *str)
@@ -156,7 +156,7 @@ int main (int argc, char *argv[])
           LIBS="$LIBS $SDL_LIBS"
           AC_TRY_LINK([
 #include <stdio.h>
-#include <SDL/SDL.h>
+#include <SDL.h>
 ],      [ return 0; ],
         [ echo "*** The test program compiled, but did not run. This usually means"
           echo "*** that the run-time linker is not finding SDL or finding the wrong"
@@ -193,7 +193,7 @@ int main (int argc, char *argv[])
 # Shamelessly stolen from Owen Taylor
 
 dnl AM_CHECK_SGL([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
-dnl Test for SDL 1.1.x, and define SGL_CFLAGS and SGL_LIBS
+dnl Test for SDL 1.1.x, do _not_ redefine any variables.
 dnl ***MUST*** be run _after_ checking for SDL 1.0x, if used.
 dnl
 AC_DEFUN(AM_CHECK_SGL,
@@ -201,7 +201,7 @@ AC_DEFUN(AM_CHECK_SGL,
 dnl Get the cflags and libraries from the sdl-config script
 dnl
   min_sdl_version=ifelse([$1], ,1.1.0,$1)
-  AC_MSG_CHECKING(for SDL - version >= $min_sdl_version)
+  AC_MSG_CHECKING(whether SDL is version >= $min_sdl_version)
   no_sgl=""
   if test "$SDL_CONFIG" = "no" ; then
     no_sgl=yes
@@ -215,6 +215,10 @@ dnl
            sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
     sdl_micro_version=`$SDL_CONFIG $sdl_config_args --version | \
            sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+	ac_save_CFLAGS="$CFLAGS"
+	ac_save_LIBS="$LIBS"
+	CFLAGS="$CFLAGS $SGL_CFLAGS"
+	LIBS="$LIBS $SGL_LIBS"
 dnl
 dnl Do nothing more than check if the installed SDL is sufficiently new, since
 dnl we already did that in the SDL detection
@@ -223,7 +227,7 @@ dnl
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 char*
 my_strdup (char *str)
@@ -274,6 +278,4 @@ main (int argc, char *argv[])
      AC_MSG_RESULT(no)
      ifelse([$3], , :, [$3])
   fi
-  AC_SUBST(SGL_CFLAGS)
-  AC_SUBST(SGL_LIBS)
 ])
