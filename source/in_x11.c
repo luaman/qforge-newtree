@@ -241,12 +241,10 @@ event_button (XEvent *event)
 			Key_Event(K_MOUSE1 + but - 1, event->type == ButtonPress);
 			break;
 		case 4:
-			Key_Event(K_MWHEELUP, 1);
-			Key_Event(K_MWHEELUP, 0);
+			Key_Event(K_MWHEELUP, event->type == ButtonPress);
 			break;
 		case 5:
-			Key_Event(K_MWHEELDOWN, 1);
-			Key_Event(K_MWHEELDOWN, 0);
+			Key_Event(K_MWHEELDOWN, event->type == ButtonPress);
 			break;
 	}
 }
