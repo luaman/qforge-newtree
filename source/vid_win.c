@@ -270,6 +270,8 @@ void VID_UpdateWindowStatus (void)
 }
 
 
+extern qboolean keydown[256];
+
 /*
 ================
 ClearAllStates
