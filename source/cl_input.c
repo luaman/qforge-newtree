@@ -46,6 +46,7 @@
 #include "view.h"
 #include "checksum.h"
 #include "keys.h"
+#include "teamplay.h"
 
 cvar_t	*cl_nodelta;
 
