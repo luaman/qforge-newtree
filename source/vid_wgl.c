@@ -52,6 +52,10 @@
 void GL_Common_Init_Cvars (void);
 void CheckMultiTextureExtensions (void);
 void VID_Init8bitPalette (void);
+void VID_BuildGammaTable (double);
+
+void VID_GetSystemGamma (void);
+void VID_RestoreSystemGamma (void);
 
 extern void (*vid_menudrawfn) (void);
 extern void (*vid_menukeyfn) (int);
@@ -104,6 +108,7 @@ qboolean    DDActive;
 // If you ever merge screen/gl_screen, don't forget this one
 qboolean    scr_skipupdate;
 
+static unsigned short system_gamma_ramp[3][256];
 static vmode_t modelist[MAX_MODE_LIST];
 static int  nummodes;
 static vmode_t badmode;
@@ -555,11 +560,12 @@ VID_Shutdown (void)
 	int         i, temp[8192];
 
 #ifdef SPLASH_SCREEN
-        if(hwnd_dialog)
-                DestroyWindow (hwnd_dialog);
+	if(hwnd_dialog)
+			DestroyWindow (hwnd_dialog);
 #endif
 
 	if (vid_initialized) {
+		VID_RestoreSystemGamma ();
 		vid_canalttab = false;
 		hRC = wglGetCurrentContext ();
 		hDC = wglGetCurrentDC ();
@@ -1422,6 +1428,8 @@ VID_Init (unsigned char *palette)
 			DestroyWindow (hwnd_dialog);
 #endif
 
+	VID_GetSystemGamma ();
+
 	GL_Common_Init_Cvars ();
 	VID_InitGamma (palette);
 	VID_SetPalette (palette);
@@ -1602,5 +1610,31 @@ VID_SetCaption (char *text)
 qboolean
 VID_SetGamma (double gamma)
 {
-	    return false; //FIXME
+	int         i;
+	unsigned short ramps[3][256];
+	HDC         hdc = GetDC (NULL);
+
+	VID_BuildGammaTable (gamma);
+	for (i = 0; i < 255; i++) {
+		ramps[0][i] = ramps[1][i] = ramps[2][i] = gammatable[i] << 16;
+	}
+	i = SetDeviceGammaRamp(hdc, ramps);
+	ReleaseDC (NULL, hdc);
+	return i;
+}
+
+void
+VID_GetSystemGamma (void)
+{
+	HDC         hdc = GetDC (NULL);
+	GetDeviceGammaRamp(hdc, &system_gamma_ramp[0][0]);
+	ReleaseDC (NULL, hdc);
+}
+
+void
+VID_RestoreSystemGamma (void)
+{
+	HDC         hdc = GetDC (NULL);
+	SetDeviceGammaRamp(hdc, &system_gamma_ramp[0][0]);
+	ReleaseDC (NULL, hdc);
 }
