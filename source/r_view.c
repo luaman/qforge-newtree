@@ -71,8 +71,6 @@ cvar_t     *v_ipitch_level;
 
 cvar_t     *v_idlescale;
 
-cvar_t     *v_contentblend;
-
 float       v_dmg_time, v_dmg_roll, v_dmg_pitch;
 
 extern int  in_forward, in_forward2, in_back;
@@ -263,6 +261,11 @@ V_DriftPitch (void)
 
 cvar_t     *gl_cshiftpercent;
 
+extern cvar_t	*cl_cshift_bonus;
+extern cvar_t	*cl_cshift_contents;
+extern cvar_t	*cl_cshift_damage;
+extern cvar_t	*cl_cshift_powerup;
+
 cshift_t    cshift_empty = { {130, 80, 50}, 0 };
 cshift_t    cshift_water = { {130, 80, 50}, 128 };
 cshift_t    cshift_slime = { {0, 25, 5}, 150 };
@@ -295,8 +298,6 @@ V_CheckGamma (void)
 	return true;
 }
 
-
-
 /*
 ===============
 V_ParseDamage
@@ -305,6 +306,7 @@ V_ParseDamage
 void
 V_ParseDamage (void)
 {
+
 	int         armor, blood;
 	vec3_t      from;
 	int         i;
@@ -323,26 +325,27 @@ V_ParseDamage (void)
 
 	cl.faceanimtime = cl.time + 0.2;	// but sbar face into pain frame
 
-	cl.cshifts[CSHIFT_DAMAGE].percent += 3 * count;
-	if (cl.cshifts[CSHIFT_DAMAGE].percent < 0)
-		cl.cshifts[CSHIFT_DAMAGE].percent = 0;
-	if (cl.cshifts[CSHIFT_DAMAGE].percent > 150)
-		cl.cshifts[CSHIFT_DAMAGE].percent = 150;
+	if (cl_cshift_damage->int_val
+		|| (atoi (Info_ValueForKey (cl.serverinfo, "cshifts")) & INFO_CSHIFT_DAMAGE)) {
 
-	if (armor > blood) {
-		cl.cshifts[CSHIFT_DAMAGE].destcolor[0] = 200;
-		cl.cshifts[CSHIFT_DAMAGE].destcolor[1] = 100;
-		cl.cshifts[CSHIFT_DAMAGE].destcolor[2] = 100;
-	} else if (armor) {
-		cl.cshifts[CSHIFT_DAMAGE].destcolor[0] = 220;
-		cl.cshifts[CSHIFT_DAMAGE].destcolor[1] = 50;
-		cl.cshifts[CSHIFT_DAMAGE].destcolor[2] = 50;
-	} else {
-		cl.cshifts[CSHIFT_DAMAGE].destcolor[0] = 255;
-		cl.cshifts[CSHIFT_DAMAGE].destcolor[1] = 0;
-		cl.cshifts[CSHIFT_DAMAGE].destcolor[2] = 0;
+		cl.cshifts[CSHIFT_DAMAGE].percent += 3 * count;
+		cl.cshifts[CSHIFT_DAMAGE].percent = bound (0, cl.cshifts[CSHIFT_DAMAGE].percent, 150);
+
+		if (armor > blood) {
+			cl.cshifts[CSHIFT_DAMAGE].destcolor[0] = 200;
+			cl.cshifts[CSHIFT_DAMAGE].destcolor[1] = 100;
+			cl.cshifts[CSHIFT_DAMAGE].destcolor[2] = 100;
+		} else if (armor) {
+			cl.cshifts[CSHIFT_DAMAGE].destcolor[0] = 220;
+			cl.cshifts[CSHIFT_DAMAGE].destcolor[1] = 50;
+			cl.cshifts[CSHIFT_DAMAGE].destcolor[2] = 50;
+		} else {
+			cl.cshifts[CSHIFT_DAMAGE].destcolor[0] = 255;
+			cl.cshifts[CSHIFT_DAMAGE].destcolor[1] = 0;
+			cl.cshifts[CSHIFT_DAMAGE].destcolor[2] = 0;
+		}
 	}
-
+	
 //
 // calculate view angle kicks
 //
@@ -386,6 +389,10 @@ When you run over an item, the server sends this command
 void
 V_BonusFlash_f (void)
 {
+	if (!cl_cshift_bonus->int_val
+		&& !(atoi (Info_ValueForKey (cl.serverinfo, "cshifts")) & INFO_CSHIFT_BONUS))
+		return;
+		
 	cl.cshifts[CSHIFT_BONUS].destcolor[0] = 215;
 	cl.cshifts[CSHIFT_BONUS].destcolor[1] = 186;
 	cl.cshifts[CSHIFT_BONUS].destcolor[2] = 69;
@@ -399,10 +406,13 @@ V_SetContentsColor
 Underwater, lava, etc each has a color shift
 =============
 */
+
 void
 V_SetContentsColor (int contents)
 {
-	if (!v_contentblend->int_val) {
+
+	if (!cl_cshift_contents->int_val
+		&& !(atoi (Info_ValueForKey (cl.serverinfo, "cshifts")) & INFO_CSHIFT_CONTENTS)) {
 		cl.cshifts[CSHIFT_CONTENTS] = cshift_empty;
 		return;
 	}
@@ -428,9 +438,14 @@ V_SetContentsColor (int contents)
 V_CalcPowerupCshift
 =============
 */
+
 void
 V_CalcPowerupCshift (void)
 {
+	if (!cl_cshift_powerup->int_val
+		|| (atoi (Info_ValueForKey (cl.serverinfo, "cshifts")) & INFO_CSHIFT_POWERUP))
+		return;
+
 	if (cl.stats[STAT_ITEMS] & IT_QUAD) {
 		cl.cshifts[CSHIFT_POWERUP].destcolor[0] = 0;
 		cl.cshifts[CSHIFT_POWERUP].destcolor[1] = 0;
@@ -814,8 +829,6 @@ V_Init_Cvars (void)
 	v_iyaw_level = Cvar_Get ("v_iyaw_level", "0.3", CVAR_NONE, "None");
 	v_iroll_level = Cvar_Get ("v_iroll_level", "0.1", CVAR_NONE, "None");
 	v_ipitch_level = Cvar_Get ("v_ipitch_level", "0.3", CVAR_NONE, "None");
-
-	v_contentblend = Cvar_Get ("v_contentblend", "1", CVAR_NONE, "None");
 
 	v_idlescale = Cvar_Get ("v_idlescale", "0", CVAR_NONE, "None");
 

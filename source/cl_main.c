@@ -115,6 +115,11 @@ cvar_t     *cl_sbar_separator;
 cvar_t     *cl_hudswap;
 cvar_t     *cl_maxfps;
 
+cvar_t		*cl_cshift_bonus;
+cvar_t		*cl_cshift_contents;
+cvar_t		*cl_cshift_damage;
+cvar_t		*cl_cshift_powerup;
+
 cvar_t     *lookspring;
 cvar_t     *lookstrafe;
 cvar_t     *sensitivity;
@@ -1256,6 +1261,16 @@ CL_Init_Cvars (void)
 							"display host processing times");
 	developer = Cvar_Get ("developer", "0", CVAR_NONE,
 						  "show info interesting to developers");
+
+	// Misty: Turn on or off screen filling colors for powerups among other things. 
+	cl_cshift_bonus = Cvar_Get ("cl_cshift_bonus", "1", CVAR_ARCHIVE,
+							"Show bonus flash on item pickup");
+	cl_cshift_contents = Cvar_Get ("cl_cshift_content", "1", CVAR_ARCHIVE,
+							"Shift view colors for contents (water, slime, etc)");
+	cl_cshift_damage = Cvar_Get ("cl_cshift_damage", "1", CVAR_ARCHIVE,
+							"Shift view colors on damage");
+	cl_cshift_powerup = Cvar_Get ("cl_cshift_powerup", "1", CVAR_ARCHIVE,
+							"Shift view colors for powerups");
 
 	cl_autoexec = Cvar_Get ("cl_autoexec", "0", CVAR_ROM,
 							"exec autoexec.cfg on gamedir change");

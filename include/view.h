@@ -27,14 +27,19 @@
 */
 // view.h
 
-#ifndef _VIEW_H
-#define _VIEW_H
+#ifndef __view_h_
+#define __view_h_
 
 #include "mathlib.h"
 #include "cvar.h"
 
-extern	cvar_t		*brightness;
-extern	cvar_t		*contrast;
+extern	cvar_t	*brightness;
+extern	cvar_t	*contrast;
+
+#define INFO_CSHIFT_BONUS		(1 << 0)
+#define INFO_CSHIFT_CONTENTS	(1 << 1)
+#define INFO_CSHIFT_DAMAGE		(1 << 2)
+#define INFO_CSHIFT_POWERUP		(1 << 3)
 
 void V_Init (void);
 void V_Init_Cvars (void);
@@ -51,4 +56,4 @@ void V_ParseDamage (void);
 void V_SetContentsColor (int contents);
 void V_CalcBlend (void);
 
-#endif // _VIEW_H
+#endif // __view_h_

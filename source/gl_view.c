@@ -60,7 +60,7 @@ extern double host_frametime;
 extern int  onground;
 extern byte gammatable[256];
 
-extern cvar_t *gl_cshiftpercent;
+extern cvar_t	*contrast;
 
 byte        ramps[3][256];
 float       v_blend[4];
@@ -86,11 +86,7 @@ V_CalcBlend (void)
 	a = 0;
 
 	for (j = 0; j < NUM_CSHIFTS; j++) {
-		if (!gl_cshiftpercent->value)
-			continue;
-
-		a2 =
-			((cl.cshifts[j].percent * gl_cshiftpercent->value) / 100.0) / 255.0;
+		a2 = cl.cshifts[j].percent / 255.0;
 
 		if (!a2)
 			continue;
@@ -104,14 +100,21 @@ V_CalcBlend (void)
 		a = 1.0 - a3;
 	}
 
+	if ((a2 = 1 - bound (0.0, contrast->value, 1.0)) < 0.999) { // add contrast
+		r += (128 - r) * a2;
+		g += (128 - g) * a2;
+		b += (128 - b) * a2;
+
+		a3 = (1.0 - a) * (1.0 - a2);
+		a = 1.0 - a3;
+	}
+
 	// LordHavoc: saturate color
 	if (a) {
 		a2 = 1.0 / a;
 		r *= a2;
 		g *= a2;
 		b *= a2;
-		if (a > 1)						// clamp alpha blend too
-			a = 1;
 	}
 
 	v_blend[0] = min (r, 255.0) / 255.0;

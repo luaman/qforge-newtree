@@ -904,7 +904,7 @@ int         oldviewsize = 0;
 extern void R_ForceLightUpdate ();
 qboolean    lighthalf;
 unsigned char lighthalf_v[3];
-extern cvar_t *gl_lightmode, *brightness, *contrast;
+extern cvar_t *gl_lightmode, *brightness;
 
 /*
 	SCR_UpdateScreen
@@ -1041,24 +1041,16 @@ SCR_UpdateScreen (void)
 		glColor3ubv (lighthalf_v);
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	Cvar_SetValue (contrast, bound (0.0, contrast->value, 1.0));
-	if (v_blend[3] || (contrast->value < 0.999)) {	// precision
-		glBegin (GL_QUADS);
-		if (contrast->value < 0.999) {	// precision
-			glColor4f (0.5, 0.5, 0.5, (1 - contrast->value));
-			glVertex2f (0, 0);
-			glVertex2f (vid.width, 0);
-			glVertex2f (vid.width, vid.height);
-			glVertex2f (0, vid.height);
-		}
 
-		if (v_blend[3]) {
-			glColor4fv (v_blend);
-			glVertex2f (0, 0);
-			glVertex2f (vid.width, 0);
-			glVertex2f (vid.width, vid.height);
-			glVertex2f (0, vid.height);
-		}
+	if (v_blend[3]) {
+		glBegin (GL_QUADS);
+
+		glColor4fv (v_blend);
+		glVertex2f (0, 0);
+		glVertex2f (vid.width, 0);
+		glVertex2f (vid.width, vid.height);
+		glVertex2f (0, vid.height);
+
 		glEnd ();
 		glColor3ubv (lighthalf_v);
 	}
