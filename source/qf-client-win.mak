@@ -76,25 +76,38 @@ MISCINCLUDES = $(SCITECHROOT)\include;$(DIRECTXSDK)\include
 
 INCLUDES = $(QFINCLUDES);$(SYSINCLUDE);$(MISCINCLUDES)
 
-DEFINES=WIN32=1;WINDOWS=1;_WINDOWS=1;_WIN32=1;HAVE_CONFIG_H=1;HAVE_FNMATCH_H=1
+DEFINES=WIN32=1;WINDOWS=1;_WINDOWS=1;_WIN32=1;HAVE_CONFIG_H=1;USE_INTEL_ASM=1;HAVE_FNMATCH_H=1
 
-DEBUGOPTS = -y -k- -r -v
-#-xp -xs -o-
+# for releases
+DEBUGOPTS = -k- -vi
+# for debugging
+#DEBUGOPTS = -y -v
+# -xp -xs -o
 
+# no optimizations - for debugging
+#OPT = -a -O-S -Od
 # for basic optimizations for 386
-OPT = -O-d -3 -Oc -Oi -Ov -a4 -OS
+OPT = -3 -Oc -Oi -Ov -a4
 # for Pentium
-#OPT = -O-d -5 -Oc -Oi -Ov -a4 -OS
+#OPT = -5 -Oc -Oi -Ov -a4 -OS
 # for Pentium Pro and higher
-#OPT = -O-d -6 -Oc -Oi -Ov -a4 -OS
+#OPT = -6 -Oc -Oi -Ov -a4 -OS
+# Testing purposes
+#OPT = -6 -Oc -Oi -Ov -a4 -Og -Oc -Ol -Ob -Oe -Om -Op
 
-WARNS =  -w-pro- -w-aus- -w-csu- -w-par- -w-pck-
+# disable warnings, for cleaner compile
+WARNS = -w-
+# for debugging
+#WARNS = -w
 
-COMPOPTS = $(DEBUGOPTS) $(OPT) $(WARNS) -He- -f -ff -fp- -WM -W
+COMPOPTS = $(DEBUGOPTS) $(OPT) $(WARNS) -R -WM -H-
+#-He- -f -ff -fp-
 
-LINKOPTS = -w-dup -w-dpl -Tpe -aa -V4.0 -s -m -M -Gz -C -c -L$(LIBS)
-# -x -v- 
-# -C -Gn
+# for normal releases
+LINKOPTS = -w-dup -w-dpl -Tpe -aa -V4.0 -c -Gn -Gz -x -L$(LIBS)
+# for debugging
+#LINKOPTS = -w -v -w-dup -w-dpl -Tpe -aa -V4.0 -c -Gn -Gz -m -M -s -L$(LIBS)
+# -Gm
 
 # MASM
 ASSEMBLER = ML
@@ -147,6 +160,24 @@ DEPEND = \
    $(OBJS)\d_init.obj\
    $(OBJS)\d_fill.obj\
    $(OBJS)\r_misc.obj\
+   $(OBJS)\worlda.obj\
+   $(OBJS)\d_varsa.obj\
+   $(OBJS)\sys_x86.obj\
+   $(OBJS)\surf8.obj\
+   $(OBJS)\surf16.obj\
+   $(OBJS)\snd_mixa.obj\
+   $(OBJS)\r_varsa.obj\
+   $(OBJS)\r_edgea.obj\
+   $(OBJS)\r_drawa.obj\
+   $(OBJS)\r_aliasa.obj\
+   $(OBJS)\r_aclipa.obj\
+   $(OBJS)\math.obj\
+   $(OBJS)\d_draw.obj\
+   $(OBJS)\d_scana.obj\
+   $(OBJS)\d_polysa.obj\
+   $(OBJS)\d_parta.obj\
+   $(OBJS)\d_draw16.obj\
+   $(OBJS)\d_spr8.obj\
    $(OBJS)\borland.obj\
    $(DIRECTXSDK)\lib\borland\dxguid.lib\
    $(SCITECHROOT)\lib\win32\bc5\mglfx.lib\
@@ -204,8 +235,8 @@ DEPEND = \
    $(OBJS)\sbar.obj
 
 $(EXE)\qf-client-win.exe : $(DEPEND)
-  $(TLINK32) @&&|
- /v $(LINKOPTS) +
+  $(TLINK32) /v @&&|
+ $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
 $(OBJS)\vid_mgl.obj+
 $(OBJS)\cl_trans.obj+
@@ -239,6 +270,24 @@ $(OBJS)\d_modech.obj+
 $(OBJS)\d_init.obj+
 $(OBJS)\d_fill.obj+
 $(OBJS)\r_misc.obj+
+$(OBJS)\worlda.obj+
+$(OBJS)\d_varsa.obj+
+$(OBJS)\sys_x86.obj+
+$(OBJS)\surf8.obj+
+$(OBJS)\surf16.obj+
+$(OBJS)\snd_mixa.obj+
+$(OBJS)\r_varsa.obj+
+$(OBJS)\r_edgea.obj+
+$(OBJS)\r_drawa.obj+
+$(OBJS)\r_aliasa.obj+
+$(OBJS)\r_aclipa.obj+
+$(OBJS)\math.obj+
+$(OBJS)\d_draw.obj+
+$(OBJS)\d_scana.obj+
+$(OBJS)\d_polysa.obj+
+$(OBJS)\d_parta.obj+
+$(OBJS)\d_draw16.obj+
+$(OBJS)\d_spr8.obj+
 $(OBJS)\borland.obj+
 $(OBJS)\buildnum.obj+
 $(OBJS)\checksum.obj+
@@ -723,3 +772,94 @@ $(OBJS)\sbar.obj :  $(QFROOT)\source\sbar.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sbar.c
 |
+
+$(OBJS)\d_draw.obj :  $(QFROOT)\source\d_draw.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\d_draw$(EXT2) $(ASMOUT)\d_draw$(EXT1)
+|
+
+$(OBJS)\sys_x86.obj :  $(QFROOT)\source\sys_x86.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\sys_x86$(EXT2) $(ASMOUT)\sys_x86$(EXT1)
+|
+
+$(OBJS)\surf8.obj :  $(QFROOT)\source\surf8.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\surf8$(EXT2) $(ASMOUT)\surf8$(EXT1)
+|
+
+$(OBJS)\surf16.obj :  $(QFROOT)\source\surf16.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\surf16$(EXT2) $(ASMOUT)\surf16$(EXT1)
+|
+
+$(OBJS)\snd_mixa.obj :  $(QFROOT)\source\snd_mixa.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\snd_mixa$(EXT2) $(ASMOUT)\snd_mixa$(EXT1)
+|
+
+$(OBJS)\r_varsa.obj :  $(QFROOT)\source\r_varsa.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\r_varsa$(EXT2) $(ASMOUT)\r_varsa$(EXT1)
+|
+
+$(OBJS)\r_edgea.obj :  $(QFROOT)\source\r_edgea.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\r_edgea$(EXT2) $(ASMOUT)\r_edgea$(EXT1)
+|
+
+$(OBJS)\r_drawa.obj :  $(QFROOT)\source\r_drawa.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\r_drawa$(EXT2) $(ASMOUT)\r_drawa$(EXT1)
+|
+
+$(OBJS)\r_aliasa.obj :  $(QFROOT)\source\r_aliasa.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\r_aliasa$(EXT2) $(ASMOUT)\r_aliasa$(EXT1)
+|
+
+$(OBJS)\r_aclipa.obj :  $(QFROOT)\source\r_aclipa.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\r_aclipa$(EXT2) $(ASMOUT)\r_aclipa$(EXT1)
+|
+
+$(OBJS)\math.obj :  $(QFROOT)\source\math.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\math$(EXT2) $(ASMOUT)\math$(EXT1)
+|
+
+$(OBJS)\d_varsa.obj :  $(QFROOT)\source\d_varsa.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\d_varsa$(EXT2) $(ASMOUT)\d_varsa$(EXT1)
+|
+
+$(OBJS)\d_spr8.obj :  $(QFROOT)\source\d_spr8.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\d_spr8$(EXT2) $(ASMOUT)\d_spr8$(EXT1)
+|
+
+$(OBJS)\d_scana.obj :  $(QFROOT)\source\d_scana.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\d_scana$(EXT2) $(ASMOUT)\d_scana$(EXT1)
+|
+
+$(OBJS)\d_polysa.obj :  $(QFROOT)\source\d_polysa.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\d_polysa$(EXT2) $(ASMOUT)\d_polysa$(EXT1)
+|
+
+$(OBJS)\d_parta.obj :  $(QFROOT)\source\d_parta.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\d_parta$(EXT2) $(ASMOUT)\d_parta$(EXT1)
+|
+
+$(OBJS)\d_draw16.obj :  $(QFROOT)\source\d_draw16.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\d_draw16$(EXT2) $(ASMOUT)\d_draw16$(EXT1)
+|
+
+$(OBJS)\worlda.obj :  $(QFROOT)\source\worlda.asm
+  $(ASSEMBLER) @&&|
+ $(ASMOPTS) $(ASMIN)\worlda$(EXT2) $(ASMOUT)\worlda$(EXT1)
+|
+

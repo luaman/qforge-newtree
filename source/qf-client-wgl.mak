@@ -80,25 +80,38 @@ MISCINCLUDES = $(SCITECHROOT)\include;$(DIRECTXSDK)\include
 
 INCLUDES = $(QFINCLUDES);$(SYSINCLUDE);$(MISCINCLUDES)
 
-DEFINES=_WINDOWS=1;_WIN32=1;WINDOWS=1;WIN32=1;HAVE_CONFIG_H=1;HAVE_FNMATCH_H=1;HAVE_INTEL_ASM=1
+DEFINES=_WINDOWS=1;_WIN32=1;WINDOWS=1;WIN32=1;HAVE_CONFIG_H=1;HAVE_FNMATCH_H=1;USE_INTEL_ASM=1
 
-DEBUGOPTS = -y -k- -r -v
+# for releases
+DEBUGOPTS = -k- -vi
+# for debugging
+#DEBUGOPTS = -y -v
+# -xp -xs -o
 
+# no optimizations - for debugging
+#OPT = -a -O-S -Od
 # for basic optimizations for 386
-OPT = -O-d -3 -Oc -Oi -Ov -a4 -OS
+OPT = -3 -Oc -Oi -Ov -a4
 # for Pentium
-#OPT = -O-d -5 -Oc -Oi -Ov -a4 -OS
+#OPT = -5 -Oc -Oi -Ov -a4 -OS
 # for Pentium Pro and higher
-#OPT = -O-d -6 -Oc -Oi -Ov -a4 -OS
+#OPT = -6 -Oc -Oi -Ov -a4 -OS
 # Testing purposes
-#OPT = -O-d -5 -Oc -Oi -Ov -a4 -Og -Oc -Ol -Ob -Oe -Om -Op
+#OPT = -6 -Oc -Oi -Ov -a4 -Og -Oc -Ol -Ob -Oe -Om -Op
 
-WARNS =  -w-pro- -w-aus- -w-csu- -w-par- -w-pck-
+# disable warnings, for cleaner compile
+WARNS = -w-
+# for debugging
+#WARNS = -w
 
-COMPOPTS = $(DEBUGOPTS) $(OPT) $(WARNS) -He- -f -ff -fp- -WM -W 
+COMPOPTS = $(DEBUGOPTS) $(OPT) $(WARNS) -R -WM -H-
+#-He- -f -ff -fp-
 
-LINKOPTS = -w-dup -w-dpl -Tpe -aa -V4.0 -c -x -v- -L$(LIBS)
-# -C -Gn
+# for normal releases
+LINKOPTS = -w-dup -w-dpl -Tpe -aa -V4.0 -c -Gn -Gz -x -L$(LIBS)
+# for debugging
+#LINKOPTS = -w -v -w-dup -w-dpl -Tpe -aa -V4.0 -c -Gn -Gz -m -M -s -L$(LIBS)
+# -Gm
 
 # MASM
 ASSEMBLER = ML
