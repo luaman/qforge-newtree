@@ -29,7 +29,15 @@
 /* All the headers include this file. */
 //#include <_mingw.h>
 
-#include <io.h>
+// ugly hack for MSVC
+#if defined(_POSIX_)
+ #undef _POSIX_
+ #include <io.h>
+ #define _POSIX_
+#else
+ #include <io.h>
+#endif
+
 
 #ifndef RC_INVOKED
 
