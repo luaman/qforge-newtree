@@ -365,6 +365,9 @@ x11_create_window (int width, int height)
 	}
 
 	XMapWindow (x_disp, x_win);
+	if (vid_fullscreen->int_val) {
+		XGrabPointer (x_disp, x_win, True, 0, GrabModeAsync, GrabModeAsync, x_win, None, CurrentTime);
+	}
 	XRaiseWindow (x_disp, x_win);
 }
 
