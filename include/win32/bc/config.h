@@ -254,6 +254,9 @@
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_
 
+/* Define if we've scitech MGL library and mgraph.h */
+#define HAVE_MGRAPH_H 1
+
 #ifdef HAVE_3DNOW_ASM
         #define atan  _atan
         #define atan2 _atan2
