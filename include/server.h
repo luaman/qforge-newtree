@@ -68,8 +68,8 @@ typedef struct
 	qboolean	paused;				// are we paused?
 
 	//check player/eyes models for hacks
-	unsigned	model_player_checksum;
-	unsigned	eyes_player_checksum;
+	unsigned int	model_player_checksum;
+	unsigned int	eyes_player_checksum;
 	
 	char		name[64];			// map name
 	char		modelname[MAX_QPATH];		// maps/<name>.bsp, for model_precache[0]
@@ -146,7 +146,7 @@ typedef struct client_s
 										// this prevents malicious multiple broadcasts
 	float			lastnametime;		// time of last name change
 	int				lastnamecount;		// time of last name change
-	unsigned		checksum;			// checksum for calcs
+	unsigned int	checksum;			// checksum for calcs
 	qboolean		drop;				// lose this guy next opportunity
 	int				lossage;			// loss percentage
 

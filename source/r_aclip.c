@@ -247,7 +247,7 @@ void R_AliasClipTriangle (mtriangle_t *ptri)
 {
 	int				i, k, pingpong;
 	mtriangle_t		mtri;
-	unsigned		clipflags;
+	unsigned int	clipflags;
 
 // copy vertexes and fix seam texture coordinates
 	if (ptri->facesfront)

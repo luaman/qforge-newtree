@@ -1082,7 +1082,7 @@ void CL_MuzzleFlash (void)
 
 	i = MSG_ReadShort ();
 
-	if ((unsigned)(i-1) >= MAX_CLIENTS)
+	if ((unsigned int)(i-1) >= MAX_CLIENTS)
 		return;
 
 	// don't draw our own muzzle flash in gl if flashblending

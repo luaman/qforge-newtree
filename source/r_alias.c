@@ -107,7 +107,7 @@ qboolean R_AliasCheckBBox (void)
 	auxvert_t			*pa0, *pa1, viewaux[16];
 	maliasframedesc_t	*pframedesc;
 	qboolean			zclipped, zfullyclipped;
-	unsigned			anyclip, allclip;
+	unsigned int		anyclip, allclip;
 	int					minz;
 	
 // expand, rotate, and translate points into worldspace

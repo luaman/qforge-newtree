@@ -437,8 +437,8 @@ void Draw_TransPic (int x, int y, qpic_t *pic)
 	unsigned short	*pusdest;
 	int				v, u;
 
-	if (x < 0 || (unsigned)(x + pic->width) > vid.width || y < 0 ||
-		 (unsigned)(y + pic->height) > vid.height)
+	if (x < 0 || (unsigned int)(x + pic->width) > vid.width || y < 0 ||
+		 (unsigned int)(y + pic->height) > vid.height)
 	{
 		Sys_Error ("Draw_TransPic: bad coordinates");
 	}
@@ -524,8 +524,8 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 	unsigned short	*pusdest;
 	int				v, u;
 
-	if (x < 0 || (unsigned)(x + pic->width) > vid.width || y < 0 ||
-		 (unsigned)(y + pic->height) > vid.height)
+	if (x < 0 || (unsigned int)(x + pic->width) > vid.width || y < 0 ||
+		 (unsigned int)(y + pic->height) > vid.height)
 	{
 		Sys_Error ("Draw_TransPic: bad coordinates");
 	}
@@ -869,7 +869,7 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 {
 	byte			*dest;
 	unsigned short	*pusdest;
-	unsigned		uc;
+	unsigned int	uc;
 	int				u, v;
 
 	if (x < 0 || x + w > vid.width ||

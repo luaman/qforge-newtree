@@ -304,15 +304,15 @@ void R_TranslatePlayerSkin (int playernum)
 {
 	int		top, bottom;
 	byte	translate[256];
-	unsigned	translate32[256];
+	unsigned int	translate32[256];
 	int		i, j;
 	byte	*original;
-	unsigned	pixels[512*256], *out;
-	unsigned	scaled_width, scaled_height;
+	unsigned int	pixels[512*256], *out;
+	unsigned int	scaled_width, scaled_height;
 	int			inwidth, inheight;
 	int			tinwidth, tinheight;
 	byte		*inrow;
-	unsigned	frac, fracstep;
+	unsigned int	frac, fracstep;
 	player_info_t *player;
 	extern	byte		player_8bit_texels[320*200];
 	char s[512];

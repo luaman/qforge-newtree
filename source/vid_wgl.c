@@ -127,7 +127,7 @@ HWND WINAPI InitializeWindow (HINSTANCE hInstance, int nCmdShow);
 extern 	viddef_t	vid;				// global video state
 
 unsigned short	d_8to16table[256];
-unsigned	d_8to24table[256];
+unsigned int	d_8to24table[256];
 unsigned char d_15to8table[65536];
 
 float		gldepthmin, gldepthmax;
@@ -715,12 +715,12 @@ void GL_EndRendering (void)
 void	VID_SetPalette (unsigned char *palette)
 {
 	byte	*pal;
-	unsigned r,g,b;
-	unsigned v;
+	unsigned int r,g,b;
+	unsigned int v;
 	int     r1,g1,b1;
         int             k;
 	unsigned short i;
-	unsigned	*table;
+	unsigned int	*table;
 	FILE *f;
 	char s[255];
 	float dist, bestdist;

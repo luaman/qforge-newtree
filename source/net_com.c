@@ -34,10 +34,10 @@
 #endif
 #include <mdfour.h>
 
-unsigned Com_BlockChecksum (void *buffer, int length)
+unsigned int Com_BlockChecksum (void *buffer, int length)
 {
 	int				digest[4];
-	unsigned 		val;
+	unsigned int	val;
 
 	mdfour ( (unsigned char *) digest, (unsigned char *) buffer, length );
 

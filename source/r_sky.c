@@ -109,7 +109,7 @@ void R_MakeSky (void)
 	int			x, y;
 	int			ofs, baseofs;
 	int			xshift, yshift;
-	unsigned	*pnewsky;
+	unsigned int	*pnewsky;
 	static int	xlast = -1, ylast = -1;
 
 	xshift = skytime*skyspeed;
@@ -121,7 +121,7 @@ void R_MakeSky (void)
 	xlast = xshift;
 	ylast = yshift;
 	
-	pnewsky = (unsigned *)&newsky[0];
+	pnewsky = (unsigned int *)&newsky[0];
 
 	for (y=0 ; y<SKYSIZE ; y++)
 	{
@@ -136,9 +136,9 @@ void R_MakeSky (void)
 
 		// PORT: unaligned dword access to bottommask and bottomsky
 
-			*pnewsky = (*(pnewsky + (128 / sizeof (unsigned))) &
-						*(unsigned *)&bottommask[ofs]) |
-						*(unsigned *)&bottomsky[ofs];
+			*pnewsky = (*(pnewsky + (128 / sizeof (unsigned int))) &
+						*(unsigned int *)&bottommask[ofs]) |
+						*(unsigned int *)&bottomsky[ofs];
 			pnewsky++;
 		}
 
@@ -151,12 +151,12 @@ void R_MakeSky (void)
 			*(byte *)pnewsky = (*((byte *)pnewsky + 128) &
 						*(byte *)&bottommask[ofs]) |
 						*(byte *)&bottomsky[ofs];
-			pnewsky = (unsigned *)((byte *)pnewsky + 1);
+			pnewsky = (unsigned int *)((byte *)pnewsky + 1);
 		}
 
 #endif
 
-		pnewsky += 128 / sizeof (unsigned);
+		pnewsky += 128 / sizeof (unsigned int);
 	}
 
 	r_skymade = 1;
@@ -173,14 +173,14 @@ void R_GenSkyTile (void *pdest)
 	int			x, y;
 	int			ofs, baseofs;
 	int			xshift, yshift;
-	unsigned	*pnewsky;
-	unsigned	*pd;
+	unsigned int	*pnewsky;
+	unsigned int	*pd;
 
 	xshift = skytime*skyspeed;
 	yshift = skytime*skyspeed;
 
-	pnewsky = (unsigned *)&newsky[0];
-	pd = (unsigned *)pdest;
+	pnewsky = (unsigned int *)&newsky[0];
+	pd = (unsigned int *)pdest;
 
 	for (y=0 ; y<SKYSIZE ; y++)
 	{
@@ -195,9 +195,9 @@ void R_GenSkyTile (void *pdest)
 
 		// PORT: unaligned dword access to bottommask and bottomsky
 
-			*pd = (*(pnewsky + (128 / sizeof (unsigned))) &
-				   *(unsigned *)&bottommask[ofs]) |
-				   *(unsigned *)&bottomsky[ofs];
+			*pd = (*(pnewsky + (128 / sizeof (unsigned int))) &
+				   *(unsigned int *)&bottommask[ofs]) |
+				   *(unsigned int *)&bottomsky[ofs];
 			pnewsky++;
 			pd++;
 		}
@@ -211,13 +211,13 @@ void R_GenSkyTile (void *pdest)
 			*(byte *)pd = (*((byte *)pnewsky + 128) &
 						*(byte *)&bottommask[ofs]) |
 						*(byte *)&bottomsky[ofs];
-			pnewsky = (unsigned *)((byte *)pnewsky + 1);
-			pd = (unsigned *)((byte *)pd + 1);
+			pnewsky = (unsigned int *)((byte *)pnewsky + 1);
+			pd = (unsigned int *)((byte *)pd + 1);
 		}
 
 #endif
 
-		pnewsky += 128 / sizeof (unsigned);
+		pnewsky += 128 / sizeof (unsigned int);
 	}
 }
 

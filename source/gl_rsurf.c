@@ -63,7 +63,7 @@ int		lightmap_bytes;		// 1 or 3
 
 int		lightmap_textures;
 
-unsigned		blocklights[18*18*3];
+unsigned int	blocklights[18*18*3];
 
 cvar_t		*gl_colorlights;
 
@@ -136,7 +136,7 @@ R_AddDynamicLights
 void R_AddDynamicLights (msurface_t *surf)
 {
 	int			sdtable[18], lnum, td, maxdist, maxdist2, maxdist3, i, s, t, smax, tmax, red, green, blue, j;
-	unsigned	*bl;
+	unsigned int	*bl;
 	float		dist, f;
 	vec3_t		impact, local;
 	// use 64bit integer...  shame it's not very standardized...
@@ -238,10 +238,10 @@ R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 	int			t;
 	int			i, j, size;
 	byte		*lightmap;
-	unsigned	scale;
+	unsigned int	scale;
 	int			maps;
 	float		t2;
-	unsigned	*bl;
+	unsigned int	*bl;
 
 	surf->cached_dlight = (surf->dlightframe == r_framecount);
 

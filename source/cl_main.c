@@ -911,8 +911,8 @@ void CL_ConnectionlessPacket (void)
 
 		Con_Printf ("client command\n");
 
-		if ((*(unsigned *)net_from.ip != *(unsigned *)net_local_adr.ip
-			&& *(unsigned *)net_from.ip != htonl(INADDR_LOOPBACK)) )
+		if ((*(unsigned int *)net_from.ip != *(unsigned int *)net_local_adr.ip
+			&& *(unsigned int *)net_from.ip != htonl(INADDR_LOOPBACK)) )
 		{
 			Con_Printf ("Command packet from remote host.  Ignored.\n");
 			return;

@@ -209,7 +209,7 @@ void SV_CalcPHS (void)
 	int		rowbytes, rowwords;
 	int		i, j, k, l, index, num;
 	int		bitbyte;
-	unsigned	*dest, *src;
+	unsigned int	*dest, *src;
 	byte	*scan;
 	int		count, vcount;
 
@@ -241,7 +241,7 @@ void SV_CalcPHS (void)
 	sv.phs = Hunk_Alloc (rowbytes*num);
 	count = 0;
 	scan = sv.pvs;
-	dest = (unsigned *)sv.phs;
+	dest = (unsigned int *)sv.phs;
 	for (i=0 ; i<num ; i++, dest += rowwords, scan += rowbytes)
 	{
 		memcpy (dest, scan, rowbytes);
@@ -259,7 +259,7 @@ void SV_CalcPHS (void)
 				index = ((j<<3)+k+1);
 				if (index >= num)
 					continue;
-				src = (unsigned *)sv.pvs + index*rowwords;
+				src = (unsigned int *)sv.pvs + index*rowwords;
 				for (l=0 ; l<rowwords ; l++)
 					dest[l] |= src[l];
 			}
@@ -276,7 +276,7 @@ void SV_CalcPHS (void)
 		, vcount/num, count/num, num);
 }
 
-unsigned SV_CheckModel(char *mdl)
+unsigned int SV_CheckModel(char *mdl)
 {
 	byte	stackbuf[1024];		// avoid dirtying the cache heap
 	byte *buf;

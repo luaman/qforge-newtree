@@ -880,7 +880,7 @@ void S_ExtraUpdate (void)
 
 void S_Update_(void)
 {
-	unsigned        endtime;
+	unsigned int    endtime;
 	int				samps;
 	
 	if (!sound_started || (snd_blocked > 0))

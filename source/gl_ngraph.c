@@ -124,7 +124,7 @@ void R_NetGraph (void)
 	int		a, x, i, y;
 	int lost;
 	char st[80];
-	unsigned	ngraph_pixels[NET_GRAPHHEIGHT][NET_TIMINGS];
+	unsigned int	ngraph_pixels[NET_GRAPHHEIGHT][NET_TIMINGS];
 
 	x = 0;
 	lost = CL_CalcNet();

@@ -64,7 +64,7 @@
 
 
 //unsigned short	d_8to16table[256];
-unsigned		d_8to24table[256];
+unsigned int	d_8to24table[256];
 unsigned char	d_15to8table[65536];
 
 static cvar_t	*vid_mode;
@@ -153,12 +153,12 @@ void VID_ShiftPalette(unsigned char *p)
 void	VID_SetPalette (unsigned char *palette)
 {
 	byte	*pal;
-	unsigned r,g,b;
-	unsigned v;
+	unsigned int r,g,b;
+	unsigned int v;
 	int     r1,g1,b1;
 	int		k;
 	unsigned short i;
-	unsigned	*table;
+	unsigned int	*table;
 	FILE *f;
 	char s[255];
 //#endif

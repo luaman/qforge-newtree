@@ -254,7 +254,7 @@ void Netchan_Transmit (netchan_t *chan, int length, byte *data)
 	sizebuf_t	send;
 	byte		send_buf[MAX_MSGLEN + PACKET_HEADER];
 	qboolean	send_reliable;
-	unsigned	w1, w2;
+	unsigned int	w1, w2;
 	int			i;
 
 // check for message overflow
@@ -352,8 +352,8 @@ modifies net_message so that it points to the packet payload
 */
 qboolean Netchan_Process (netchan_t *chan)
 {
-	unsigned		sequence, sequence_ack;
-	unsigned		reliable_ack, reliable_message;
+	unsigned int	sequence, sequence_ack;
+	unsigned int	reliable_ack, reliable_message;
 	int			qport;
 
 	if (is_server)
@@ -424,7 +424,7 @@ qboolean Netchan_Process (netchan_t *chan)
 //
 // discard stale or duplicated packets
 //
-	if (sequence <= (unsigned)chan->incoming_sequence)
+	if (sequence <= (unsigned int)chan->incoming_sequence)
 	{
 		if (showdrop->value)
 			Con_Printf ("%s:Out of order packet %i at %i\n"
@@ -453,7 +453,7 @@ qboolean Netchan_Process (netchan_t *chan)
 // if the current outgoing reliable message has been acknowledged
 // clear the buffer to make way for the next
 //
-	if (reliable_ack == (unsigned)chan->reliable_sequence)
+	if (reliable_ack == (unsigned int)chan->reliable_sequence)
 		chan->reliable_length = 0;	// it has been received
 	
 //

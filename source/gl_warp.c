@@ -795,10 +795,10 @@ void R_InitSky (texture_t *mt)
 {
 	int			i, j, p;
 	byte		*src;
-	unsigned	trans[128*128];
-	unsigned	transpix;
+	unsigned int	trans[128*128];
+	unsigned int	transpix;
 	int			r, g, b;
-	unsigned	*rgba;
+	unsigned int	*rgba;
 
 	src = (byte *)mt + mt->offsets[0];
 

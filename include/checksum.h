@@ -31,9 +31,9 @@
 
 #include "qtypes.h"
 
-unsigned Com_BlockChecksum (void *buffer, int length);
+unsigned int Com_BlockChecksum (void *buffer, int length);
 void Com_BlockFullChecksum (void *buffer, int len, unsigned char *outbuf);
-byte	COM_BlockSequenceCheckByte (byte *base, int length, int sequence, unsigned mapchecksum);
+byte	COM_BlockSequenceCheckByte (byte *base, int length, int sequence, unsigned int mapchecksum);
 byte	COM_BlockSequenceCRCByte (byte *base, int length, int sequence);
 
 #endif // _CHECKSUM_H

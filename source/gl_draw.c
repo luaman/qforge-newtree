@@ -676,8 +676,8 @@ Draw_TransPic
 void Draw_TransPic (int x, int y, qpic_t *pic)
 {
 
-	if (x < 0 || (unsigned)(x + pic->width) > vid.width || y < 0 ||
-		 (unsigned)(y + pic->height) > vid.height)
+	if (x < 0 || (unsigned int)(x + pic->width) > vid.width || y < 0 ||
+		 (unsigned int)(y + pic->height) > vid.height)
 	{
 		Sys_Error ("Draw_TransPic: bad coordinates");
 	}
@@ -696,7 +696,7 @@ Only used for the player color selection menu
 void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 {
 	int				v, u, c;
-	unsigned		trans[64*64], *dest;
+	unsigned int	trans[64*64], *dest;
 	byte			*src;
 	int				p;
 
@@ -985,11 +985,11 @@ void GL_Set2D (void)
 GL_ResampleTexture
 ================
 */
-static void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight)
+static void GL_ResampleTexture (unsigned int *in, int inwidth, int inheight, unsigned int *out, int outwidth, int outheight)
 {
 	int		i, j;
-	unsigned	*inrow;
-	unsigned	frac, fracstep;
+	unsigned int	*inrow;
+	unsigned int	frac, fracstep;
 
 	fracstep = inwidth*0x10000/outwidth;
 	for (i=0 ; i<outheight ; i++, out += outwidth)
@@ -1018,8 +1018,8 @@ GL_Resample8BitTexture -- JACK
 static void GL_Resample8BitTexture (unsigned char *in, int inwidth, int inheight, unsigned char *out,  int outwidth, int outheight)
 {
 	int		i, j;
-	unsigned	char *inrow;
-	unsigned	frac, fracstep;
+	unsigned char	*inrow;
+	unsigned int	frac, fracstep;
 
 	fracstep = inwidth*0x10000/outwidth;
 	for (i=0 ; i<outheight ; i++, out += outwidth)
@@ -1104,16 +1104,14 @@ static void GL_MipMap8Bit (byte *in, int width, int height)
 GL_Upload32
 ===============
 */
-static void GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap, qboolean alpha)
+static void GL_Upload32 (unsigned int *data, int width, int height, qboolean mipmap, qboolean alpha)
 {
-	int			samples;
-static	unsigned	scaled[1024*512];	// [512*256];
-	int			scaled_width, scaled_height;
+	unsigned int	*scaled;
+	int		scaled_width, scaled_height, samples;
 
-	for (scaled_width = 1 ; scaled_width < width ; scaled_width<<=1)
-		;
-	for (scaled_height = 1 ; scaled_height < height ; scaled_height<<=1)
-		;
+	// Snap the height and width to a power of 2.
+	for (scaled_width = 1 ; scaled_width < width ; scaled_width<<=1) ;
+	for (scaled_height = 1 ; scaled_height < height ; scaled_height<<=1) ;
 
 	scaled_width >>= (int)gl_picmip->value;
 	scaled_height >>= (int)gl_picmip->value;
@@ -1121,44 +1119,26 @@ static	unsigned	scaled[1024*512];	// [512*256];
 	scaled_width = min(scaled_width, gl_max_size->value);
 	scaled_height = min(scaled_height, gl_max_size->value);
 
-	if (scaled_width * scaled_height > sizeof(scaled)/4)
+	if (!(scaled = malloc(scaled_width * scaled_height * 4 * sizeof(unsigned int))))
 		Sys_Error ("GL_LoadTexture: too big");
 
 	samples = alpha ? gl_alpha_format : gl_solid_format;
 
-#if 0
-	if (mipmap)
-		gluBuild2DMipmaps (GL_TEXTURE_2D, samples, width, height, GL_RGBA, GL_UNSIGNED_BYTE, trans);
-	else if (scaled_width == width && scaled_height == height)
-		glTexImage2D (GL_TEXTURE_2D, 0, samples, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
-	else
-	{
-		gluScaleImage (GL_RGBA, width, height, GL_UNSIGNED_BYTE, trans,
-			scaled_width, scaled_height, GL_UNSIGNED_BYTE, scaled);
-		glTexImage2D (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
-	}
-#else
-
-	if (scaled_width == width && scaled_height == height)
-	{
-		if (!mipmap)
-		{
-			glTexImage2D (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			goto done;
-		}
+	// If the real width/height and the 'scaled' width/height then we
+	// rescale it.
+	if (scaled_width == width && scaled_height == height) {
 		memcpy (scaled, data, width*height*4);
-	}
-	else
+	} else {
 		GL_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
+	}
 
 	glTexImage2D (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
-	if (mipmap)
-	{
+
+	if (mipmap) {
 		int		miplevel;
 
 		miplevel = 0;
-		while (scaled_width > 1 || scaled_height > 1)
-		{
+		while (scaled_width > 1 || scaled_height > 1) {
 			GL_MipMap ((byte *)scaled, scaled_width, scaled_height);
 			scaled_width >>= 1;
 			scaled_height >>= 1;
@@ -1170,49 +1150,27 @@ static	unsigned	scaled[1024*512];	// [512*256];
 			glTexImage2D (GL_TEXTURE_2D, miplevel, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
 		}
 	}
-done: ;
-#endif
 
-
-	if (mipmap)
-	{
+	if (mipmap) {
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
-	}
-	else
-	{
+	} else {
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_max);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
+
+	free(scaled);
 }
 
 void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha) 
 {
-	int			i, s;
-	qboolean	noalpha;
-	int			samples;
-    static	unsigned char scaled[1024*512];	// [512*256];
-	int			scaled_width, scaled_height;
+#ifdef HAVE_GL_COLOR_INDEX8_EXT
+    byte	*scaled;
+	int		scaled_width, scaled_height;
 
-	s = width*height;
-	// if there are no transparent pixels, make it a 3 component
-	// texture even if it was specified as otherwise
-	if (alpha)
-	{
-		noalpha = true;
-		for (i=0 ; i<s ; i++)
-		{
-			if (data[i] == 255)
-				noalpha = false;
-		}
-
-		if (alpha && noalpha)
-			alpha = false;
-	}
-	for (scaled_width = 1 ; scaled_width < width ; scaled_width<<=1)
-		;
-	for (scaled_height = 1 ; scaled_height < height ; scaled_height<<=1)
-		;
+	// Snap the height and width to a power of 2.
+	for (scaled_width = 1 ; scaled_width < width ; scaled_width<<=1) ;
+	for (scaled_height = 1 ; scaled_height < height ; scaled_height<<=1) ;
 
 	scaled_width >>= (int)gl_picmip->value;
 	scaled_height >>= (int)gl_picmip->value;
@@ -1220,41 +1178,24 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	scaled_width = min(scaled_width, gl_max_size->value);
 	scaled_height = min(scaled_height, gl_max_size->value);
 
-	if (scaled_width * scaled_height > sizeof(scaled))
+	if (!(scaled = malloc(scaled_width * scaled_height)))
 		Sys_Error ("GL_LoadTexture: too big");
 
-	samples = 1; // alpha ? gl_alpha_format : gl_solid_format;
-
-	if (scaled_width == width && scaled_height == height)
-	{
-		if (!mipmap)
-		{
-/* FIXME - what if this extension isn't available? */
-#ifdef HAVE_GL_COLOR_INDEX8_EXT
-			glTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX , GL_UNSIGNED_BYTE, data);
-#else
-                        /* FIXME - should warn that this isn't available */
-#endif
-			goto done;
-		}
+	// If the real width/height and the 'scaled' width/height then we
+	// rescale it.
+	if (scaled_width == width && scaled_height == height) {
 		memcpy (scaled, data, width*height);
-	}
-	else
+	} else {
 		GL_Resample8BitTexture (data, width, height, scaled, scaled_width, scaled_height);
+	}
 
-// FIXME - what if this extension isn't available?
-#ifdef HAVE_GL_COLOR_INDEX8_EXT
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, scaled);
-#else
-        /* FIXME - should warn that this isn't available */
-#endif
-	if (mipmap)
-	{
+
+	if (mipmap) {
 		int		miplevel;
 
 		miplevel = 0;
-		while (scaled_width > 1 || scaled_height > 1)
-		{
+		while (scaled_width > 1 || scaled_height > 1) {
 			GL_MipMap8Bit ((byte *)scaled, scaled_width, scaled_height);
 			scaled_width >>= 1;
 			scaled_height >>= 1;
@@ -1263,26 +1204,22 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
-/* FIXME - what if this extension isn't available? */
-#ifdef HAVE_GL_COLOR_INDEX8_EXT
 			glTexImage2D (GL_TEXTURE_2D, miplevel, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, scaled);
-#else
-                        /* FIXME - should warn that this isn't available */
-#endif
 		}
 	}
-done: ;
 
-	if (mipmap)
-	{
+	if (mipmap) {
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
-	}
-	else
-	{
+	} else {
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_max);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
+
+	free(scaled);
+#else
+	Sys_Error ("GL_Upload8_EXT without HAVE_GL_COLOR_INDEX8_EXT");
+#endif
 }
 
 extern qboolean VID_Is8bit();
@@ -1294,10 +1231,50 @@ GL_Upload8
 */
 void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha)
 {
-static	unsigned	trans[640*480];		// FIXME, temporary
-	int			i, s;
-	qboolean	noalpha;
-	int			p;
+#if 1
+	unsigned int	*trans = NULL;
+	int			i, s, p;
+
+	s = width*height;
+	trans = malloc(s * sizeof(unsigned int));
+	// if there are no transparent pixels, make it a 3 component
+	// texture even if it was specified as otherwise
+	if (alpha) {
+		alpha = false;
+		for (i=0 ; i<s ; i++) {
+			p = data[i];
+			if (p == 255) alpha = true;
+			trans[i] = d_8to24table[p];
+		}
+	} else {
+		if (s&3)
+			Sys_Error ("GL_Upload8: s&3");
+		for (i=0 ; i<s ; i+=4) {
+			trans[i] = d_8to24table[data[i]];
+			trans[i+1] = d_8to24table[data[i+1]];
+			trans[i+2] = d_8to24table[data[i+2]];
+			trans[i+3] = d_8to24table[data[i+3]];
+		}
+	}
+
+
+#ifdef gl_draw_scraps
+	if (VID_Is8bit() && !alpha && (data!=scrap_texels[0])) 
+#else
+	if (VID_Is8bit() && !alpha) 
+#endif
+	{
+		GL_Upload8_EXT (data, width, height, mipmap, alpha);
+	} else {
+		GL_Upload32 (trans, width, height, mipmap, alpha);
+	}
+
+	free(trans);
+#else
+	static unsigned int    trans[640*480];     // FIXME, temporary
+	int         i, s;
+	qboolean    noalpha;
+	int         p;
 
 	s = width*height;
 	// if there are no transparent pixels, make it a 3 component
@@ -1330,16 +1307,17 @@ static	unsigned	trans[640*480];		// FIXME, temporary
 	}
 
 #ifdef gl_draw_scraps
-	if (VID_Is8bit() && !alpha && (data!=scrap_texels[0])) 
+	if (VID_Is8bit() && !alpha && (data!=scrap_texels[0]))
 #else
-	if (VID_Is8bit() && !alpha) 
+		if (VID_Is8bit() && !alpha)
 #endif
-	{
-		GL_Upload8_EXT (data, width, height, mipmap, alpha);
-		return;
-	}
+		{
+			GL_Upload8_EXT (data, width, height, mipmap, alpha);
+			return;
+		}
 
 	GL_Upload32 (trans, width, height, mipmap, alpha);
+#endif
 }
 
 /*
@@ -1405,7 +1383,7 @@ SetupTexture:
 			GL_Upload8 (data, width, height, mipmap, alpha);
 			break;
 		case 4:
-			GL_Upload32 ((unsigned *)data, width, height, mipmap, alpha);
+			GL_Upload32 ((unsigned int *) data, width, height, mipmap, alpha);
 			break;
 		default:
 			Sys_Error ("SetupTexture: unknown bytesperpixel %i",

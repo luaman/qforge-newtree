@@ -38,11 +38,11 @@ drawsurf_t	r_drawsurf;
 int				lightleft, sourcesstep, blocksize, sourcetstep;
 int				lightdelta, lightdeltastep;
 int				lightright, lightleftstep, lightrightstep, blockdivshift;
-unsigned		blockdivmask;
+unsigned int	blockdivmask;
 void			*prowdestbase;
 unsigned char	*pbasesource;
 int				surfrowbytes;	// used by ASM files
-unsigned		*r_lightptr;
+unsigned int	*r_lightptr;
 int				r_stepback;
 int				r_lightwidth;
 int				r_numhblocks, r_numvblocks;
@@ -62,7 +62,7 @@ static void	(*surfmiptable[4])(void) = {
 
 
 
-unsigned		blocklights[18*18];
+unsigned int	blocklights[18*18];
 
 /*
 ===============
@@ -144,7 +144,7 @@ void R_BuildLightMap (void)
 	int			t;
 	int			i, size;
 	byte		*lightmap;
-	unsigned	scale;
+	unsigned int	scale;
 	int			maps;
 	msurface_t	*surf;
 
