@@ -320,7 +320,7 @@ cross_cube_edge (struct box_def *box, int face1, vec3_t v1, int face2,
 		face = axis;
 	else if (l[axis] < -1024)
 		face = axis + 3;
-	if (face > 0) {
+	if (face >= 0) {
 		vec3_t      x;
 
 		VectorAdd (v1, v2, x);
