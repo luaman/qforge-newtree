@@ -183,19 +183,11 @@ void Master_Connect_f (void);
 
 char	*server_version = NULL;	// version of server we connected to
 
-char emodel_name[] = 
-	{ 'e' ^ 0xff, 'm' ^ 0xff, 'o' ^ 0xff, 'd' ^ 0xff, 'e' ^ 0xff, 'l' ^ 0xff, 0 };
-char pmodel_name[] = 
-	{ 'p' ^ 0xff, 'm' ^ 0xff, 'o' ^ 0xff, 'd' ^ 0xff, 'e' ^ 0xff, 'l' ^ 0xff, 0 };
-char prespawn_name[] = 
-	{ 'p'^0xff, 'r'^0xff, 'e'^0xff, 's'^0xff, 'p'^0xff, 'a'^0xff, 'w'^0xff, 'n'^0xff,
-		' '^0xff, '%'^0xff, 'i'^0xff, ' '^0xff, '0'^0xff, ' '^0xff, '%'^0xff, 'i'^0xff, 0 };
-char modellist_name[] = 
-	{ 'm'^0xff, 'o'^0xff, 'd'^0xff, 'e'^0xff, 'l'^0xff, 'l'^0xff, 'i'^0xff, 's'^0xff, 't'^0xff, 
-		' '^0xff, '%'^0xff, 'i'^0xff, ' '^0xff, '%'^0xff, 'i'^0xff, 0 };
-char soundlist_name[] = 
-	{ 's'^0xff, 'o'^0xff, 'u'^0xff, 'n'^0xff, 'd'^0xff, 'l'^0xff, 'i'^0xff, 's'^0xff, 't'^0xff, 
-		' '^0xff, '%'^0xff, 'i'^0xff, ' '^0xff, '%'^0xff, 'i'^0xff, 0 };
+char emodel_name[] = "emodel";
+char pmodel_name[] = "pmodel";
+char prespawn_name[] = "prespawn %i 0 %i";
+char modellist_name[] = "modellist %i %i";
+char soundlist_name[] = "soundlist %i %i";
 
 /*
 ==================
@@ -1580,15 +1572,6 @@ static void simple_crypt(char *buf, int len)
 		*buf++ ^= 0xff;
 }
 
-void Host_FixupModelNames(void)
-{
-	simple_crypt(emodel_name, sizeof(emodel_name) - 1);
-	simple_crypt(pmodel_name, sizeof(pmodel_name) - 1);
-	simple_crypt(prespawn_name,  sizeof(prespawn_name)  - 1);
-	simple_crypt(modellist_name, sizeof(modellist_name) - 1);
-	simple_crypt(soundlist_name, sizeof(soundlist_name) - 1);
-}
-
 //============================================================================
 
 /*
@@ -1645,8 +1628,6 @@ void Host_Init (quakeparms_t *parms)
 	//Cmd_StuffCmds_f ();
 	//Cbuf_Execute ();
 
-	Host_FixupModelNames();
-	
 	NET_Init (PORT_CLIENT);
 	Netchan_Init ();
 

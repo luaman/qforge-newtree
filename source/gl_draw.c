@@ -771,7 +771,7 @@ Draw_ConsoleBackground ( int lines )
 	}
 
 	// slide console up/down or stretch it?
-	if (gl_constretch->value)
+	if (gl_constretch->int_val)
 		ofs = 0;
 	else
 		ofs = (vid.conheight - lines)/(float)vid.conheight;
