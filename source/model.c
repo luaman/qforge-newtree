@@ -768,7 +768,10 @@ void Mod_LoadFaces (lump_t *l)
 			out->samples = loadmodel->lightdata + i;
 		
 	// set the drawing flags flag
-		
+                // fixme: do this right?-)
+                if (!out->texinfo->texture) continue;
+                if (!out->texinfo->texture->name) continue;
+
 		if (!strncmp(out->texinfo->texture->name,"sky",3))	// sky
 		{
 			out->flags |= (SURF_DRAWSKY | SURF_DRAWTILED);
