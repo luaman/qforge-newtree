@@ -1,9 +1,11 @@
 /*
-	input.h
+	dga_check.h
 
-	External (non-keyboard) input devices
+	Definitions for XFree86 DGA and VidMode support
 
-	Copyright (C) 1996-1997  Id Software, Inc.
+	Copyright (C) 2000 Marcus Sundberg [mackan@stacken.kth.se]
+	Copyright (C) 2000  contributors of the QuakeForge project
+	Please see the file "AUTHORS" for a list of contributors
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -26,27 +28,26 @@
 	$Id$
 */
 
-#ifndef _INPUT_H
-#define _INPUT_H
+#ifndef DGA_CHECK_H
+#define DGA_CHECK_H
 
-#include "protocol.h"
+#include <X11/Xlib.h>
 
-#define freelook (in_mlook.state&1 || cl_freelook->value)
+extern cvar_t	*vid_dga_mouseaccel;
 
-void IN_Init (void);
+/*
+  VID_CheckDGA
 
-void IN_Shutdown (void);
+  Check for the presence of the XFree86-DGA support in the X server
+*/
+int VID_CheckDGA(Display *dpy, int *maj_ver, int *min_ver, int *hasvideo);
 
-void IN_Commands (void);
-// oportunity for devices to stick commands on the script buffer
 
-void IN_SendKeyEvents (void);
-// Perform Key_Event () callbacks until the input que is empty
+/*
+  VID_CheckVMode
 
-void IN_Move (usercmd_t *cmd);
-// add additional movement on top of the keyboard move cmd
+  Check for the presence of the XFree86-VMode X server extension
+*/
+int VID_CheckVMode(Display *dpy, int *maj_ver, int *min_ver);
 
-void IN_ModeChanged (void);
-// called whenever screen dimensions change
-
-#endif // _INPUT_H
+#endif /* DGA_CHECK_H */

@@ -58,7 +58,7 @@ soft_SOURCES=	cl_model.c cl_trans.c d_edge.c d_fill.c d_init.c d_modech.c \
 		r_draw.c r_edge.c r_efrag.c r_light.c r_main.c r_misc.c \
 		r_part.c r_sky.c r_sprite.c r_surf.c r_vars.c sw_view.c \
 		screen.c \
-		d_copy.S d_draw.S d_draw16.S d_parta.S d_polysa.S d_scana.S \
+		d_draw.S d_draw16.S d_parta.S d_polysa.S d_scana.S \
 		d_spr8.S d_varsa.S r_aclipa.S r_aliasa.S r_drawa.S r_edgea.S \
 		r_varsa.S surf16.S surf8.S
 ogl_SOURCES=	gl_draw.c gl_mesh.c gl_model.c gl_ngraph.c gl_part.c \
@@ -67,9 +67,9 @@ ogl_SOURCES=	gl_draw.c gl_mesh.c gl_model.c gl_ngraph.c gl_part.c \
 
 mgl_SOURCES=	vid_mgl.c in_win.c
 ggi_SOURCES=	vid_ggi.c
-svga_SOURCES=	vid_svgalib.c
-x11_SOURCES=	vid_x11.c
-glx_SOURCES=	vid_glx.c
+svga_SOURCES=	d_copy.S vid_svgalib.c in_svgalib.c
+x11_SOURCES=	vid_x11.c in_x11.c context_x11.c dga_check.c
+glx_SOURCES=	vid_glx.c in_x11.c context_x11.c dga_check.c
 wgl_SOURCES=	vid_wgl.c
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)

@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#include "input.h"
 #include "sys.h"
 #include "screen.h"
 #include "r_local.h"
@@ -1060,7 +1061,7 @@ int SCR_ModalMessage (char *text)
 	do
 	{
 		key_count = -1;		// wait for a key down and up
-		Sys_SendKeyEvents ();
+		IN_SendKeyEvents ();
 	} while (key_lastpress != 'y' && key_lastpress != 'n' && key_lastpress != K_ESCAPE);
 
 	scr_fullupdate = 0;

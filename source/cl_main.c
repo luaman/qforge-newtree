@@ -31,6 +31,7 @@
 #endif
 #include <ctype.h>
 #include "bothdefs.h"
+#include "input.h"
 #include "in_win.h"
 #include "sys.h"
 #include "sys.h"
@@ -1581,7 +1582,7 @@ void Host_Frame (float time)
 		host_frametime = 0.2;
 		
 	// get new key events
-	Sys_SendKeyEvents ();
+	IN_SendKeyEvents ();
 
 	// allow mice or other external controllers to add commands
 	IN_Commands ();
@@ -1744,9 +1745,9 @@ void Host_Init (quakeparms_t *parms)
 	if (!host_colormap)
 		Sys_Error ("Couldn't load gfx/colormap.lmp");
 #ifdef __linux__
-	IN_Init ();
 	CDAudio_Init ();
 	VID_Init (host_basepal);
+	IN_Init ();
 	Draw_Init ();
 	SCR_Init ();
 	R_Init ();

@@ -4,6 +4,10 @@
 	OpenGL GLX video driver
 
 	Copyright (C) 1996-1997  Id Software, Inc.
+	Copyright (C) 1999-2000  Nelson Rush.
+	Copyright (C) 2000       Marcus Sundberg [mackan@stacken.kth.se]
+	Copyright (C) 1999,2000  contributors of the QuakeForge project
+	Please see the file "AUTHORS" for a list of contributors
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -26,86 +30,96 @@
 	$Id$
 */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-#include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <signal.h>
-#include <math.h>
-
-#include "bothdefs.h"   // needed by: common.h, net.h, client.h
-
+#include <values.h>
+#include "qtypes.h"
 #include "quakedef.h"
-
-#include "bspfile.h"    // needed by: glquake.h
-#include "vid.h"
-#include "sys.h"
-#include "zone.h"       // needed by: client.h, gl_model.h
-#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
-                        //  modelgen.h, glmodel.h
-#include "wad.h"
-#include "draw.h"
-#include "cvar.h"
-#include "net.h"        // needed by: client.h
-#include "protocol.h"   // needed by: client.h
-#include "cmd.h"
-#include "keys.h"
-#include "sbar.h"
-#include "sound.h"
-#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
-#include "client.h"     // need cls in this file
-#include "model.h"   // needed by: glquake.h
-#include "console.h"
-#include "glquake.h"
 #include "qendian.h"
+#include "glquake.h"
+#include "cvar.h"
 #include "qargs.h"
-#include "compat.h"
-#include "input.h"
+#include "console.h"
+#include "keys.h"
+#include "menu.h"
+#include "sys.h"
+#include "draw.h"
+#include "context_x11.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <signal.h>
+
+#ifdef HAVE_DLFCN_H
+# include <dlfcn.h>
+#endif
+#ifndef RTLD_LAZY
+# ifdef DL_LAZY
+#  define RTLD_LAZY	DL_LAZY
+# else
+#  define RTLD_LAZY	0
+# endif
+#endif
 
 #include <GL/glx.h>
 
 #include <X11/keysym.h>
 #include <X11/cursorfont.h>
 
-#ifdef USE_DGA
-#include <X11/extensions/xf86dga.h>
+#ifdef HAS_DGA
+# include <X11/extensions/xf86dga.h>
 #endif
+#ifdef HAS_VIDMODE
+# include <X11/extensions/xf86vmode.h>
+#endif
+#include "dga_check.h"
 
+#ifdef XMESA
+# include <GL/xmesa.h>
+#endif
 
 #define WARP_WIDTH              320
 #define WARP_HEIGHT             200
 
-extern    byte            *host_colormap;
-extern qboolean noclip_anglehack;
+static qboolean		vid_initialized = false;
 
-static Display *x_disp = NULL;
-static Window x_win;
-static GLXContext ctx = NULL;
+static int		screen;
+Window			x_win;
+static GLXContext	ctx = NULL;
 
-static float old_windowed_mouse = 0;
-
-#define KEY_MASK (KeyPressMask | KeyReleaseMask)
-#define MOUSE_MASK (ButtonPressMask | ButtonReleaseMask | \
-		    PointerMotionMask)
-
-#define X_MASK (KEY_MASK | MOUSE_MASK | VisibilityChangeMask)
+#define X_MASK (VisibilityChangeMask | StructureNotifyMask)
 
 unsigned short	d_8to16table[256];
-unsigned		d_8to24table[256];
+unsigned	d_8to24table[256];
 unsigned char	d_15to8table[65536];
 
-cvar_t	*_windowed_mouse;
 cvar_t	*vid_mode;
- 
-static float   mouse_x, mouse_y;
-static float	old_mouse_x, old_mouse_y;
+cvar_t	*vid_fullscreen;
+extern cvar_t	*gl_triplebuffer;
+extern cvar_t *vid_dga_mouseaccel;
 
-cvar_t	*m_filter;
+#ifdef HAS_VIDMODE
+static XF86VidModeModeInfo **vidmodes;
+static int	nummodes, hasvidmode = 0;
+#endif
+#ifdef HAS_DGA
+static int	hasdgavideo = 0;
+static int	hasdga = 0;
+#endif
 
-static int scr_width, scr_height;
+
+#ifdef HAVE_DLOPEN
+static void	*dlhand = NULL;
+#endif
+static GLboolean (*QF_XMesaSetFXmode)(GLint mode) = NULL;
+
+
+int scr_width, scr_height;
+
+#if defined(XMESA) || defined(HAS_DGA)
+int VID_options_items = 2;
+#else
+int VID_options_items = 1;
+#endif
 
 /*-----------------------------------------------------------------------*/
 
@@ -118,10 +132,8 @@ int		texture_mode = GL_LINEAR;
 
 int		texture_extension_number = 1;
 
-float	gldepthmin, gldepthmax;
+float		gldepthmin, gldepthmax;
 
-/* cvar_t	gl_ztrick = {"gl_ztrick","1"};
- CVAR_FIXME */
 cvar_t	*gl_ztrick;
 
 const char *gl_vendor;
@@ -141,318 +153,48 @@ void D_EndDirectRect (int x, int y, int width, int height)
 {
 }
 
-/*
-========================================================================
-Create an empty cursor
-========================================================================
-*/
-
-static Cursor	nullcursor = None;
-
-static Cursor
-CreateNullCursor(Display *display, Window root)
+void
+VID_Shutdown(void)
 {
-    Pixmap cursormask;
-    XGCValues xgc;
-    GC gc;
-    XColor dummycolour;
-
-	if (nullcursor != None) return nullcursor;
-
-	cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
-	xgc.function = GXclear;
-	gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
-	XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
-	dummycolour.pixel = 0;
-	dummycolour.red = 0;
-	dummycolour.flags = 04;
-	nullcursor = XCreatePixmapCursor(display, cursormask, cursormask,
-									 &dummycolour,&dummycolour, 0,0);
-	XFreePixmap(display,cursormask);
-	XFreeGC(display,gc);
-
-	return nullcursor;
-}
-
-static int XLateKey(XKeyEvent *ev)
-{
-
-	int key;
-	char buf[64];
-	KeySym keysym;
-
-	key = 0;
-
-	XLookupString(ev, buf, sizeof buf, &keysym, 0);
-
-	switch(keysym)
-	{
-		case XK_KP_Page_Up:	 
-		case XK_Page_Up:	 key = K_PGUP; break;
-
-		case XK_KP_Page_Down: 
-		case XK_Page_Down:	 key = K_PGDN; break;
-
-		case XK_KP_Home: 
-		case XK_Home:	 key = K_HOME; break;
-
-		case XK_KP_End:  
-		case XK_End:	 key = K_END; break;
-
-		case XK_KP_Left: 
-		case XK_Left:	 key = K_LEFTARROW; break;
-
-		case XK_KP_Right: 
-		case XK_Right:	key = K_RIGHTARROW;		break;
-
-		case XK_KP_Down: 
-		case XK_Down:	 key = K_DOWNARROW; break;
-
-		case XK_KP_Up:   
-		case XK_Up:		 key = K_UPARROW;	 break;
-
-		case XK_Escape: key = K_ESCAPE;		break;
-
-		case XK_KP_Enter: 
-		case XK_Return: key = K_ENTER;		 break;
-
-		case XK_Tab:		key = K_TAB;			 break;
-
-		case XK_F1:		 key = K_F1;				break;
-
-		case XK_F2:		 key = K_F2;				break;
-
-		case XK_F3:		 key = K_F3;				break;
-
-		case XK_F4:		 key = K_F4;				break;
-
-		case XK_F5:		 key = K_F5;				break;
-
-		case XK_F6:		 key = K_F6;				break;
-
-		case XK_F7:		 key = K_F7;				break;
-
-		case XK_F8:		 key = K_F8;				break;
-
-		case XK_F9:		 key = K_F9;				break;
-
-		case XK_F10:		key = K_F10;			 break;
-
-		case XK_F11:		key = K_F11;			 break;
-
-		case XK_F12:		key = K_F12;			 break;
-
-		case XK_BackSpace: key = K_BACKSPACE; break;
-
-		case XK_KP_Delete: 
-		case XK_Delete: key = K_DEL; break;
-
-		case XK_Pause:	key = K_PAUSE;		 break;
-
-		case XK_Shift_L:
-		case XK_Shift_R:	key = K_SHIFT;		break;
-
-		case XK_Execute: 
-		case XK_Control_L: 
-		case XK_Control_R:	key = K_CTRL;		 break;
-
-		case XK_Alt_L:	
-		case XK_Meta_L: 
-		case XK_Alt_R:	
-		case XK_Meta_R: key = K_ALT;			break;
-
-		case XK_KP_Begin: key = '5';	break;
-
-		case XK_KP_Insert: 
-		case XK_Insert:key = K_INS; break;
-
-		case XK_KP_Multiply: key = '*'; break;
-		case XK_KP_Add:  key = '+'; break;
-		case XK_KP_Subtract: key = '-'; break;
-		case XK_KP_Divide: key = '/'; break;
-
-#if 0
-		case 0x021: key = '1';break;/* [!] */
-		case 0x040: key = '2';break;/* [@] */
-		case 0x023: key = '3';break;/* [#] */
-		case 0x024: key = '4';break;/* [$] */
-		case 0x025: key = '5';break;/* [%] */
-		case 0x05e: key = '6';break;/* [^] */
-		case 0x026: key = '7';break;/* [&] */
-		case 0x02a: key = '8';break;/* [*] */
-		case 0x028: key = '9';;break;/* [(] */
-		case 0x029: key = '0';break;/* [)] */
-		case 0x05f: key = '-';break;/* [_] */
-		case 0x02b: key = '=';break;/* [+] */
-		case 0x07c: key = '\'';break;/* [|] */
-		case 0x07d: key = '[';break;/* [}] */
-		case 0x07b: key = ']';break;/* [{] */
-		case 0x022: key = '\'';break;/* ["] */
-		case 0x03a: key = ';';break;/* [:] */
-		case 0x03f: key = '/';break;/* [?] */
-		case 0x03e: key = '.';break;/* [>] */
-		case 0x03c: key = ',';break;/* [<] */
-#endif
-
-		default:
-			key = *(unsigned char*)buf;
-			if (key >= 'A' && key <= 'Z')
-				key = key - 'A' + 'a';
-			break;
-	} 
-
-	return key;
-}
-
-static void install_grabs(void)
-{
-	XGrabPointer(x_disp, x_win,
-				 True,
-				 0,
-				 GrabModeAsync, GrabModeAsync,
-				 x_win,
-				 None,
-				 CurrentTime);
-
-#ifdef USE_DGA
-	XF86DGADirectVideo(x_disp, DefaultScreen(x_disp), XF86DGADirectMouse);
-	dgamouse = 1;
-#else
-	XWarpPointer(x_disp, None, x_win,
-				 0, 0, 0, 0,
-				 vid.width / 2, vid.height / 2);
-#endif
-
-	XGrabKeyboard(x_disp, x_win,
-				  False,
-				  GrabModeAsync, GrabModeAsync,
-				  CurrentTime);
-
-//	XSync(x_disp, True);
-}
-
-static void uninstall_grabs(void)
-{
-#ifdef USE_DGA
-	XF86DGADirectVideo(x_disp, DefaultScreen(x_disp), 0);
-	dgamouse = 0;
-#endif
-
-	XUngrabPointer(x_disp, CurrentTime);
-	XUngrabKeyboard(x_disp, CurrentTime);
-
-//	XSync(x_disp, True);
-}
-
-static void GetEvent(void)
-{
-	XEvent event;
-	int b;
-
-	if (!x_disp)
+	if (!vid_initialized)
 		return;
 
-	XNextEvent(x_disp, &event);
-
-	switch (event.type) {
-	case KeyPress:
-	case KeyRelease:
-		Key_Event(XLateKey(&event.xkey), event.type == KeyPress);
-		break;
-
-	case MotionNotify:
-#ifdef USE_DGA
-/* 		if (dgamouse && _windowed_mouse.value) {
- CVAR_FIXME */
-		if (dgamouse && _windowed_mouse->value) {
-			mouse_x = event.xmotion.x_root;
-			mouse_y = event.xmotion.y_root;
-		} else
-#endif
-		{
-/* 			if (_windowed_mouse.value) {
- CVAR_FIXME */
-			if (_windowed_mouse->value) {
-				mouse_x = (float) ((int)event.xmotion.x - (int)(vid.width/2));
-				mouse_y = (float) ((int)event.xmotion.y - (int)(vid.height/2));
-
-				/* move the mouse to the window center again */
-				XSelectInput(x_disp, x_win, X_MASK & ~PointerMotionMask);
-				XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0, 
-					(vid.width/2), (vid.height/2));
-				XSelectInput(x_disp, x_win, X_MASK);
-			}
-		}
-		break;
-
-	case ButtonPress:
-		b=-1;
-		if (event.xbutton.button == 1)
-			b = 0;
-		else if (event.xbutton.button == 2)
-			b = 2;
-		else if (event.xbutton.button == 3)
-			b = 1;
-		if (b>=0)
-			Key_Event(K_MOUSE1 + b, true);
-		break;
-
-	case ButtonRelease:
-		b=-1;
-		if (event.xbutton.button == 1)
-			b = 0;
-		else if (event.xbutton.button == 2)
-			b = 2;
-		else if (event.xbutton.button == 3)
-			b = 1;
-		if (b>=0)
-			Key_Event(K_MOUSE1 + b, false);
-		break;
-	}
-
-/* 	if (old_windowed_mouse != _windowed_mouse.value) {
- CVAR_FIXME */
-	if (old_windowed_mouse != _windowed_mouse->value) {
-/* 		old_windowed_mouse = _windowed_mouse.value;
- CVAR_FIXME */
-		old_windowed_mouse = _windowed_mouse->value;
-
-/* 		if (!_windowed_mouse.value) {
- CVAR_FIXME */
-		if (!_windowed_mouse->value) {
-			/* ungrab the pointer */
-			uninstall_grabs();
-		} else {
-			/* grab the pointer */
-			install_grabs();
-		}
-	}
-}
-
-
-void VID_Shutdown(void)
-{
 	Con_Printf("VID_Shutdown\n");
-	if (ctx) {
-		glXDestroyContext(x_disp, ctx);
+
+	glXDestroyContext(x_disp, ctx);
+
+#ifdef HAS_VIDMODE
+	if (hasvidmode) {
+		int i;
+
+		XF86VidModeSwitchToMode (x_disp, DefaultScreen (x_disp),
+								 vidmodes[0]);
+		for (i = 0; i < nummodes; i++) {
+			if (vidmodes[i]->private) XFree(vidmodes[i]->private);
+		}
+		XFree(vidmodes);
 	}
-	if (nullcursor != None) {
-		XFreeCursor(x_disp, nullcursor);
-		nullcursor = None;
+#endif
+#ifdef HAVE_DLOPEN
+	if (dlhand) {
+		dlclose(dlhand);
+		dlhand = NULL;
 	}
-	XCloseDisplay(x_disp);
+#endif
+	x11_close_display();
 }
 
-void signal_handler(int sig)
+static void
+signal_handler(int sig)
 {
 	printf("Received signal %d, exiting...\n", sig);
 	Sys_Quit();
-	exit(0);
+	exit(sig);
 }
 
-void InitSig(void)
+static void
+InitSig(void)
 {
-#if 0
 	signal(SIGHUP, signal_handler);
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, signal_handler);
@@ -460,10 +202,9 @@ void InitSig(void)
 	signal(SIGTRAP, signal_handler);
 	signal(SIGIOT, signal_handler);
 	signal(SIGBUS, signal_handler);
-	signal(SIGFPE, signal_handler);
+/*	signal(SIGFPE, signal_handler); */
 	signal(SIGSEGV, signal_handler);
 	signal(SIGTERM, signal_handler);
-#endif
 }
 
 void VID_ShiftPalette(unsigned char *p)
@@ -488,7 +229,7 @@ void	VID_SetPalette (unsigned char *palette)
 //
 // 8 8 8 encoding
 //
-//	Con_DPrintf("Converting 8to24\n");
+//	Con_Printf("Converting 8to24\n");
 
 	pal = palette;
 	table = d_8to24table;
@@ -498,7 +239,7 @@ void	VID_SetPalette (unsigned char *palette)
 		g = pal[1];
 		b = pal[2];
 		pal += 3;
-		
+
 //		v = (255<<24) + (r<<16) + (g<<8) + (b<<0);
 //		v = (255<<0) + (r<<8) + (g<<16) + (b<<24);
 		v = (255<<24) + (r<<0) + (g<<8) + (b<<16);
@@ -540,15 +281,16 @@ void	VID_SetPalette (unsigned char *palette)
 			}
 			d_15to8table[i]=k;
 		}
-		snprintf (s, sizeof(s), "%s/glquake", com_gamedir);
+		snprintf(s, sizeof(s), "%s/glquake", com_gamedir);
  		Sys_mkdir (s);
-		snprintf (s, sizeof(s), "%s/glquake/15to8.pal", com_gamedir);
+		snprintf(s, sizeof(s), "%s/glquake/15to8.pal", com_gamedir);
 		if ((f = Qopen(s, "wb")) != NULL) {
 			Qwrite(f, d_15to8table, 1<<15);
 			Qclose(f);
 		}
 	}
 }
+
 
 /*
 ===============
@@ -569,7 +311,7 @@ void GL_Init (void)
 
 //	Con_Printf ("%s %s\n", gl_renderer, gl_version);
 
-	glClearColor (1,0,0,0);
+	glClearColor (0,0,0,0);
 	glCullFace(GL_FRONT);
 	glEnable(GL_TEXTURE_2D);
 
@@ -625,8 +367,8 @@ qboolean VID_Is8bit(void)
 	return is8bit;
 }
 
-#ifdef GLX_EXT_SHARED
-void VID_Init8bitPalette() 
+#ifdef GL_EXT_SHARED
+void VID_Init8bitPalette()
 {
 	// Check for 8bit Extensions and initialize them.
 	int i;
@@ -656,34 +398,6 @@ void VID_Init8bitPalette(void)
 {
 }
 
-#if 0
-extern void gl3DfxSetPaletteEXT(GLuint *pal);
-
-void VID_Init8bitPalette(void) 
-{
-	// Check for 8bit Extensions and initialize them.
-	int i;
-	GLubyte table[256][4];
-	char *oldpal;
-
-	if (strstr(gl_extensions, "3DFX_set_global_palette") == NULL)
-		return;
-
-	Con_SafePrintf("8-bit GL extensions enabled.\n");
-	glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
-	oldpal = (char *) d_8to24table; //d_8to24table3dfx;
-	for (i=0;i<256;i++) {
-		table[i][2] = *oldpal++;
-		table[i][1] = *oldpal++;
-		table[i][0] = *oldpal++;
-		table[i][3] = 255;
-		oldpal++;
-	}
-	gl3DfxSetPaletteEXT((GLuint *)table);
-	is8bit = true;
-}
-#endif
-
 #endif
 
 void VID_Init(unsigned char *palette)
@@ -700,25 +414,27 @@ void VID_Init(unsigned char *palette)
 	};
 	char	gldir[MAX_OSPATH];
 	int width = 640, height = 480;
-	int scrnum;
 	XSetWindowAttributes attr;
 	unsigned long mask;
 	Window root;
 	XVisualInfo *visinfo;
 
-
-	vid_mode = Cvar_Get("vid_mode", "0", CVAR_NONE, "None");
-	gl_ztrick = Cvar_Get("gl_ztrick", "0", CVAR_NONE, "None");
-	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
-	
+	vid_mode = Cvar_Get ("vid_mode","0",0,"None");
+	gl_ztrick = Cvar_Get ("gl_ztrick","0",CVAR_ARCHIVE,"None");
+	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
+#ifdef HAS_DGA
+	vid_dga_mouseaccel = Cvar_Get("vid_dga_mouseaccel","1",CVAR_ARCHIVE,
+					"None");
+#endif
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.colormap = host_colormap;
 	vid.fullbright = 256 - LittleLong (*((int *)vid.colormap + 2048));
 
-	// interpret command-line params
+	/* Interpret command-line params
+	 */
 
-	// set vid parameters
+	/* Set vid parameters */
 	if ((i = COM_CheckParm("-width")) != 0)
 		width = atoi(com_argv[i+1]);
 	if ((i = COM_CheckParm("-height")) != 0)
@@ -730,28 +446,82 @@ void VID_Init(unsigned char *palette)
 		vid.conwidth = width;
 
 	vid.conwidth &= 0xfff8; // make it a multiple of eight
-
-	vid.conwidth = max(vid.conwidth, 320);
+	if (vid.conwidth < 320)
+		vid.conwidth = 320;
 
 	// pick a conheight that matches with correct aspect
-	vid.conheight = vid.conwidth*3 / 4;
+	vid.conheight = vid.conwidth * 3 / 4;
 
-	if ((i = COM_CheckParm("-conheight")) != 0)
-		vid.conheight = max(atoi(com_argv[i+1]), 200);
+	i = COM_CheckParm ("-conheight");
+	if ( i != 0 )	// Set console height, but no smaller than 200 px
+		vid.conheight = atoi(com_argv[i+1]);
+	if (vid.conheight < 200)
+		vid.conheight = 200;
 
-	if (!(x_disp = XOpenDisplay(NULL))) {
-		fprintf(stderr, "Error couldn't open the X display\n");
-		exit(1);
-	}
+	x11_open_display();
 
-	scrnum = DefaultScreen(x_disp);
-	root = RootWindow(x_disp, scrnum);
+	screen = DefaultScreen(x_disp);
+	root = RootWindow(x_disp, screen);
 
-	visinfo = glXChooseVisual(x_disp, scrnum, attrib);
+	visinfo = glXChooseVisual(x_disp, screen, attrib);
 	if (!visinfo) {
-		fprintf(stderr, "qkHack: Error couldn't get an RGB, Double-buffered, Depth visual\n");
+		fprintf(stderr, "Error couldn't get an RGB, Double-buffered, Depth visual\n");
 		exit(1);
 	}
+
+#ifdef HAS_DGA
+	{
+		int maj_ver;
+
+		hasdga = VID_CheckDGA(x_disp, &maj_ver, NULL, &hasdgavideo);
+		if (!hasdga || maj_ver < 1) {
+			hasdga = hasdgavideo = 0;
+		}
+	}
+	Con_SafePrintf ("hasdga = %i\nhasdgavideo = %i\n", hasdga, hasdgavideo);
+#endif
+#ifdef HAS_VIDMODE
+	hasvidmode = VID_CheckVMode(x_disp, NULL, NULL);
+	if (hasvidmode) {
+		if (! XF86VidModeGetAllModeLines(x_disp, DefaultScreen(x_disp),
+						 &nummodes, &vidmodes)
+		    || nummodes <= 0) {
+			hasvidmode = 0;
+		}
+	}
+	Con_SafePrintf ("hasvidmode = %i\nnummodes = %i\n", hasvidmode, nummodes);
+#endif
+#ifdef HAVE_DLOPEN
+	dlhand = dlopen(NULL, RTLD_LAZY);
+	if (dlhand) {
+		QF_XMesaSetFXmode = dlsym(dlhand, "XMesaSetFXmode");
+		if (!QF_XMesaSetFXmode) {
+			QF_XMesaSetFXmode = dlsym(dlhand, "_XMesaSetFXmode");
+		}
+	} else {
+		QF_XMesaSetFXmode = NULL;
+	}
+#else
+#ifdef XMESA
+	QF_XMesaSetFXmode = XMesaSetFXmode;
+#endif
+#endif
+	if (QF_XMesaSetFXmode) {
+#ifdef XMESA
+		const char *str = getenv("MESA_GLX_FX");
+		if (str != NULL && *str != 'd') {
+			if (tolower(*str) == 'w') {
+				Cvar_Set (vid_fullscreen, "0");
+			} else {
+				Cvar_Set (vid_fullscreen, "1");
+			}
+		}
+#endif
+		/* Glide uses DGA internally, so we don't want to
+		   mess with it. */
+//		hasdga = 0;
+	}
+
 	/* window attributes */
 	attr.background_pixel = 0;
 	attr.border_pixel = 0;
@@ -759,18 +529,52 @@ void VID_Init(unsigned char *palette)
 	attr.event_mask = X_MASK;
 	mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
 
+#ifdef HAS_VIDMODE
+	if (hasvidmode && vid_fullscreen->value) {
+		int smallest_mode=0, x=MAXINT, y=MAXINT;
+
+		attr.override_redirect=1;
+		mask|=CWOverrideRedirect;
+
+		// FIXME: does this depend on mode line order in XF86Config?
+		for (i=0; i<nummodes; i++) {
+			if (x>vidmodes[i]->hdisplay || y>vidmodes[i]->vdisplay) {
+				smallest_mode=i;
+				x=vidmodes[i]->hdisplay;
+				y=vidmodes[i]->vdisplay;
+			}
+			printf("%dx%d\n",vidmodes[i]->hdisplay,vidmodes[i]->vdisplay);
+		}
+		// chose the smallest mode that our window fits into;
+		for (i=smallest_mode;
+			 i!=(smallest_mode+1)%nummodes;
+			 i=(i?i-1:nummodes-1)) {
+			if (vidmodes[i]->hdisplay>=width
+				&& vidmodes[i]->vdisplay>=height) {
+				XF86VidModeSwitchToMode (x_disp, DefaultScreen (x_disp),
+										 vidmodes[i]);
+				break;
+			}
+		}
+		XF86VidModeSetViewPort(x_disp, DefaultScreen (x_disp), 0, 0);
+		_windowed_mouse = Cvar_Get ("_windowed_mouse","1",CVAR_ARCHIVE|CVAR_ROM,"None");
+	} else
+#endif
+		_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
+
 	x_win = XCreateWindow(x_disp, root, 0, 0, width, height,
 						0, visinfo->depth, InputOutput,
 						visinfo->visual, mask, &attr);
-	/* Invisible Cursor */
-	XDefineCursor(x_disp, x_win, CreateNullCursor(x_disp, x_win));
-
-	/* Map the window */
 	XMapWindow(x_disp, x_win);
+#ifdef HAS_VIDMODE
+	if (hasvidmode && vid_fullscreen->value) {
+		XRaiseWindow(x_disp, x_win);
+		XGrabKeyboard(x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
+					  CurrentTime);
+	}
+#endif
 
-	XMoveWindow(x_disp, x_win, 0, 0);
-
-	XFlush(x_disp);
+	XSync(x_disp, 0);
 
 	ctx = glXCreateContext(x_disp, visinfo, NULL, True);
 
@@ -779,8 +583,12 @@ void VID_Init(unsigned char *palette)
 	scr_width = width;
 	scr_height = height;
 
-	vid.height = vid.conheight = min(height, vid.conheight);
-	vid.width = vid.conwidth = min(width, vid.conwidth);
+	if (vid.conheight > height)
+		vid.conheight = height;
+	if (vid.conwidth > width)
+		vid.conwidth = width;
+	vid.width = vid.conwidth;
+	vid.height = vid.conheight;
 
 	vid.aspect = ((float)vid.height / (float)vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
@@ -789,7 +597,7 @@ void VID_Init(unsigned char *palette)
 
 	GL_Init();
 
-	snprintf (gldir, sizeof(gldir), "%s/glquake", com_gamedir);
+	snprintf(gldir, sizeof(gldir), "%s/glquake", com_gamedir);
 	Sys_mkdir (gldir);
 
 	VID_SetPalette(palette);
@@ -797,96 +605,26 @@ void VID_Init(unsigned char *palette)
 	// Check for 3DFX Extensions and initialize them.
 	VID_Init8bitPalette();
 
-	Con_SafePrintf ("Video mode %dx%d initialized.\n", width, height);
+	Con_SafePrintf ("Video mode %dx%d initialized.\n",
+			width, height);
 
-	vid.recalc_refdef = 1;				// force a surface cache flush
+	vid_initialized = true;
+
+	vid.recalc_refdef = 1;		// force a surface cache flush
 }
 
-void Sys_SendKeyEvents(void)
+void VID_InitCvars()
 {
-	if (x_disp) {
-		while (XPending(x_disp)) 
-			GetEvent();
-	}
+	gl_triplebuffer = Cvar_Get("gl_triplebuffer","1",CVAR_ARCHIVE,"None");
 }
 
-void Force_CenterView_f (void)
-{
-	cl.viewangles[PITCH] = 0;
-}
-
-void IN_Init(void)
+void
+VID_LockBuffer ( void )
 {
 }
 
-void IN_Shutdown(void)
+void
+VID_UnlockBuffer ( void )
 {
 }
-
-/*
-===========
-IN_Commands
-===========
-*/
-void IN_Commands (void)
-{
-}
-
-/*
-===========
-IN_Move
-===========
-*/
-void IN_MouseMove (usercmd_t *cmd)
-{
-	if (m_filter->value)
-	{
-		mouse_x = (mouse_x + old_mouse_x) * 0.5;
-		mouse_y = (mouse_y + old_mouse_y) * 0.5;
-	}
-	old_mouse_x = mouse_x;
-	old_mouse_y = mouse_y;
-
-	mouse_x *= sensitivity->value;
-	mouse_y *= sensitivity->value;
-
-// add mouse X/Y movement to cmd
-	if ( (in_strafe.state & 1) || (lookstrafe->value && freelook ))
-		cmd->sidemove += m_side->value * mouse_x;
-	else
-		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
-	
-	if (freelook)
-		V_StopPitchDrift ();
-		
-	if ( freelook && !(in_strafe.state & 1))
-	{
-		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
-		if (cl.viewangles[PITCH] > 80)
-			cl.viewangles[PITCH] = 80;
-		if (cl.viewangles[PITCH] < -70)
-			cl.viewangles[PITCH] = -70;
-	}
-	else
-	{
-		if ((in_strafe.state & 1) && noclip_anglehack)
-			cmd->upmove -= m_forward->value * mouse_y;
-		else
-			cmd->forwardmove -= m_forward->value * mouse_y;
-	}
-	mouse_x = mouse_y = 0.0;
-}
-
-void IN_Move (usercmd_t *cmd)
-{
-	IN_MouseMove(cmd);
-}
-
-void VID_InitCvars ()
-{
-	m_filter = Cvar_Get("m_filter", "0", CVAR_NONE, "None");
-}
-
-void VID_UnlockBuffer() {}
-void VID_LockBuffer() {}
 
