@@ -31,11 +31,13 @@
 #endif
 
 #include <stdarg.h>
+
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
+
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
 
 #include "client.h"
@@ -53,9 +55,7 @@
 int         con_ormask;
 console_t   con_main;
 console_t   con_chat;
-console_t  *con;						// point to either con_main or
-
-										// con_chat
+console_t  *con;						// point to either con_main or con_chat
 
 int         con_linewidth;				// characters across screen
 int         con_totallines;				// total lines in console scrollback
@@ -66,15 +66,11 @@ float       con_cursorspeed = 4;
 cvar_t     *con_notifytime;				// seconds
 
 #define	NUM_CON_TIMES 4
-float       con_times[NUM_CON_TIMES];	// realtime time the line was
-
-										// generated
-								// for transparent notify lines
+float       con_times[NUM_CON_TIMES];	// realtime time the line was generated
+										// for transparent notify lines
 
 int         con_vislines;
-int         con_notifylines;			// scan lines to clear for notify
-
-										// lines
+int         con_notifylines;			// scan lines to clear for notify lines
 
 qboolean    con_debuglog;
 
@@ -85,7 +81,6 @@ extern int  key_linepos;
 
 
 qboolean    con_initialized;
-
 
 void
 Key_ClearTyping (void)
@@ -618,7 +613,7 @@ Con_DrawConsole (int lines)
 	// draw the download bar
 	// figure out width
 	if (cls.download) {
-		if ((text = strrchr (cls.downloadname, '/')) != NULL)
+		if ((text = strrchr (cls.downloadname, '/')))
 			text++;
 		else
 			text = cls.downloadname;
