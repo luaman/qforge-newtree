@@ -99,7 +99,6 @@ SV_New_f (void)
 {
 	char       *gamedir;
 	int         playernum;
-	cvar_t     *r_skyname;
 
 	if (host_client->state == cs_spawned)
 		return;
