@@ -213,11 +213,7 @@ SOURCE=.\cl_parse.c
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
 
-# PROP Exclude_From_Build 1
-
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-# PROP Exclude_From_Build 1
 
 !ENDIF 
 
@@ -233,6 +229,10 @@ SOURCE=.\cl_sys_win.c
 # Begin Source File
 
 SOURCE=.\cl_tent.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\cl_trans.c
 # End Source File
 # Begin Source File
 
@@ -579,25 +579,6 @@ SOURCE=.\gl_ngraph.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\gl_parse.c
-
-!IF  "$(CFG)" == "qw_client - Win32 Release"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=.\gl_part.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
@@ -732,6 +713,25 @@ SOURCE=.\gl_screen.c
 # Begin Source File
 
 SOURCE=.\gl_test.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\gl_trans.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 
