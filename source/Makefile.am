@@ -39,7 +39,6 @@ EXTRA_PROGRAMS= qf-server \
 		qf-client-3dfx qf-client-ggi qf-client-glx qf-client-mgl \
 		qf-client-sdl qf-client-sgl qf-client-svga qf-client-wgl \
 		qf-client-x11
-		
 
 noinst_LIBRARIES= libqfcd.a libqfjs.a libqfnet.a libqfsnd.a libqfsys_cl.a libqfsys_sv.a
 
@@ -204,7 +203,7 @@ soft_SOURCES=	d_edge.c d_fill.c d_init.c d_modech.c \
 #
 # ... GGI
 #
-ggi_SOURCES=		vid_ggi.c
+ggi_SOURCES=		vid_ggi.c in_ggi.c
 
 qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(ggi_SOURCES)
 qf_client_ggi_LDADD=	$(GGI_LIBS) $(CLIENT_LIBS)
