@@ -110,6 +110,8 @@ cvar_t     *rcon_password;
 
 cvar_t     *rcon_address;
 
+cvar_t     *cl_writecfg;
+
 cvar_t     *cl_timeout;
 
 cvar_t     *cl_shownet;					// can be 0, 1, or 2
@@ -1266,6 +1268,8 @@ CL_Init_Cvars (void)
 	rcon_address = Cvar_Get ("rcon_address", "", CVAR_NONE,
 							 "server IP address when client not connected - for sending rcon commands");
 
+	cl_writecfg = Cvar_Get ("cl_writecfg", "1", CVAR_NONE, "write config files?");
+
 	cl_predict_players2 = Cvar_Get ("cl_predict_players2", "1", CVAR_NONE,
 									"If this and cl_predict_players is 0, no player prediction is done");
 	cl_predict_players = Cvar_Get ("cl_predict_players", "1", CVAR_NONE,
@@ -1357,7 +1361,7 @@ Host_WriteConfiguration (void)
 {
 	QFile      *f;
 
-	if (host_initialized) {
+	if (cl_writecfg->int_val && host_initialized) {
 		char       *path = va ("%s/config.cfg", com_gamedir);
 
 		COM_CreatePath (path);
