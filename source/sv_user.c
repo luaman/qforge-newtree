@@ -1199,6 +1199,7 @@ SV_NoSnap_f (void)
 typedef struct {
 	char       *name;
 	void        (*func) (void);
+	int         no_redirect;
 } ucmd_t;
 
 ucmd_t      ucmds[] = {
@@ -1207,7 +1208,7 @@ ucmd_t      ucmds[] = {
 	{"soundlist", SV_Soundlist_f},
 	{"prespawn", SV_PreSpawn_f},
 	{"spawn", SV_Spawn_f},
-	{"begin", SV_Begin_f},
+	{"begin", SV_Begin_f, 1},
 
 	{"drop", SV_Drop_f},
 	{"pings", SV_Pings_f},
@@ -1218,8 +1219,8 @@ ucmd_t      ucmds[] = {
 	{"pause", SV_Pause_f},
 	{"msg", SV_Msg_f},
 
-	{"say", SV_Say_f},
-	{"say_team", SV_Say_Team_f},
+	{"say", SV_Say_f, 1},
+	{"say_team", SV_Say_Team_f, 1},
 
 	{"setinfo", SV_SetInfo_f},
 
@@ -1232,8 +1233,15 @@ ucmd_t      ucmds[] = {
 
 	{"snap", SV_NoSnap_f},
 
-	{NULL, NULL}
 };
+
+static int
+ucmds_compare (const void *_a, const void *_b)
+{
+	ucmd_t *a = (ucmd_t*)_a;
+	ucmd_t *b = (ucmd_t*)_b;
+	return strcmp (a->name, b->name);
+}
 
 /*
 	SV_ExecuteUserCommand
@@ -1244,31 +1252,26 @@ void
 SV_ExecuteUserCommand (char *s)
 {
 	ucmd_t     *u;
-	int         no_redirect;
+	ucmd_t		cmd;
 
-	no_redirect = strnequal (s, "say", 3);
 	Cmd_TokenizeString (s);
 	sv_player = host_client->edict;
+	cmd.name = Cmd_Argv(0);
 
-	if (!no_redirect)
+	u = (ucmd_t*) bsearch (&cmd, ucmds, sizeof (ucmds) / sizeof (ucmds[0]),
+						   sizeof (ucmds[0]), ucmds_compare);
+
+	if (!u) {
 		SV_BeginRedirect (RD_CLIENT);
-
-	for (u = ucmds; u->name; u++) {
-		if (!strcmp (Cmd_Argv (0), u->name)) {
-			u->func ();
-			break;
-		}
-	}
-
-	if (!u->name) {
-		if (no_redirect)
-			SV_BeginRedirect (RD_CLIENT);
-		no_redirect = 0;
 		Con_Printf ("Bad user command: %s\n", Cmd_Argv (0));
-	}
-
-	if (!no_redirect)
 		SV_EndRedirect ();
+	} else {
+		if (!u->no_redirect)
+			SV_BeginRedirect (RD_CLIENT);
+		u->func ();
+		if (!u->no_redirect)
+			SV_EndRedirect ();
+	}
 }
 
 /*
@@ -1818,6 +1821,8 @@ SV_UserInit
 void
 SV_UserInit (void)
 {
+	qsort (ucmds, sizeof (ucmds) / sizeof (ucmds[0]), sizeof (ucmds[0]),
+		   ucmds_compare);
 	cl_rollspeed = Cvar_Get ("cl_rollspeed", "200", CVAR_NONE, "How quickly a player straightens out after strafing");
 	cl_rollangle = Cvar_Get ("cl_rollangle", "2", CVAR_NONE, "How much a player's screen tilts when strafing");
 	sv_spectalk = Cvar_Get ("sv_spectalk", "1", CVAR_NONE, "Toggles the ability of spectators to talk to players");
