@@ -54,14 +54,15 @@ qf_server_PROGRAM = qfserver.exe
 #
 
 #!if ASM_ARCH
-#math_ASM = math.S sys_x86.S
+math_ASM = math.S sys_x86.S
+world_ASM = worlda.S
 #!endif
 
 common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c info.c link.c \
 		locs.c mathlib.c mdfour.c model.c model_brush.c msg.c \
 		net_chan.c net_com.c net_udp.c pmove.c pmovetst.c qargs.c \
                 qendian.c quakefs.c quakeio.c sizebuf.c va.c zone.c hash.c \
-		$(math_ASM)
+		$(math_ASM) $(world_ASM)
 
 sound_SOURCES= snd_dma.c snd_mem.c snd_mix.c
 
@@ -76,7 +77,7 @@ WIN32_OTHER = cd_win.c joy_win.c in_win.c
 # Client itself
 #
 #if ASM_ARCH
-#client_ASM=     snd_mixa.S cl_math.S
+client_ASM=     snd_mixa.S cl_math.S
 #endif
 
 client_SOURCES= cl_cam.c cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c \
@@ -117,16 +118,12 @@ soft_SOURCES=	sw_skin.c d_edge.c d_fill.c d_init.c d_modech.c \
 #
 #
 
-#if ASM_ARCH
-#world_ASM = worlda.S
-#endif
-
 server_SYS = fnmatch.c dirent.c sv_sys_win.c sys_win.c
 
 server_SOURCES= sv_pr_cmds.c pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
 		sv_ents.c sv_init.c sv_main.c sv_misc.c sv_model.c \
 		sv_move.c sv_nchan.c sv_phys.c sv_send.c sv_user.c \
-                ver_check.c world.c sv_progs.c $(world_ASM)
+                ver_check.c world.c sv_progs.c
 
 # Microsoft Opengl Win32
 
@@ -169,9 +166,8 @@ qf_server_SOURCES = $(common_SOURCES) $(server_SOURCES) $(server_SYS)
 #
 #
 
-DEFS = -DHAVE_CONFIG_H=1 -D_WINDOWS=1 -DWINDOWS=1 -D_WIN32=1 -DWIN32=1 -DHAVE_FNMATCH_H=1 
-
-#-DUSE_INTEL_ASM=1
+DEFS = -DHAVE_CONFIG_H=1 -D_WINDOWS=1 -DWINDOWS=1 -D_WIN32=1 -DWIN32=1 -DHAVE_FNMATCH_H=1 -DUSE_INTEL_ASM=1
+#-DHAVE_MGRAPH_H=1
 
 # For Pentium Pro and higher
 #MACHINEDEPOPTS = -mpentiumpro -march=pentiumpro -malign-loops=2 -malign-jumps=2 -malign-functions=2
@@ -196,6 +192,8 @@ qf_server_LIBS = $(common_libs)
 
 QFINCLUDES = -I$(QFROOT)\include\win32\mingw -I$(QFROOT)\include\win32 -I$(QFROOT)\include -L. -I$(QFROOT)\include\win32\resources
 OTHERINCLUDES = -I$(DIRECTXSDK)\includes -I$(ZLIB)
+
+#-ID:\scitech\include
 
 CFLAGS = -I$(SDLSDK)\include $(QFINCLUDES) $(OTHERINCLUDES) $(COPTS) $(DEFS)
 
@@ -230,8 +228,9 @@ qf-server: $(qf_server_OBJECTS)
 clean: 
 	rm -f $(PROGRAM) $(OBJECTS)
 
-# compile is not supported yet, probs with MGLFX
+# compile is not supported yet, probs with MGLFX -Xlinker --verbose 
 #qf-client-win: $(qf_client_win_OBJECTS)
-#	gcc -Xlinker --verbose $(CFLAGS) -ID:\scitech\includes -o $(qf_client_win_PROGRAM) $(qf_client_win_OBJECTS) $(qf_client_win_LIBS) -mwindows
-#	strip --strip-all $(qf_client_win_PROGRAM)
+#        gcc $(CFLAGS) -o $(qf_client_win_PROGRAM) $(qf_client_win_OBJECTS) $(qf_client_win_LIBS) -mwindows
+#        strip --strip-all $(qf_client_win_PROGRAM)
+
 

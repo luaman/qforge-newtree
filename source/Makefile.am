@@ -48,11 +48,12 @@ endif
 
 if ASM_ARCH
 math_ASM = math.S sys_x86.S
+world_ASM=	worlda.S
 endif
 common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c hash.c \
 	info.c link.c mathlib.c mdfour.c model.c model_brush.c \
 	msg.c pmove.c pmovetst.c qargs.c qendian.c quakefs.c quakeio.c \
-	sizebuf.c va.c zone.c $(math_ASM) $(packetlogger)
+	sizebuf.c va.c zone.c $(math_ASM) $(packetlogger) $(world_ASM)
 
 #
 # ... Network type
@@ -76,14 +77,10 @@ libqfsys_sv_a_SOURCES=	sv_sys_unix.c sys_unix.c
 endif
 EXTRA_libqfsys_sv_a_SOURCES= fnmatch.c dirent.c sv_sys_unix.c sv_sys_win.c sys_unix.c sys_win.c
 
-if ASM_ARCH
-world_ASM=	worlda.S
-endif
-
 server_SOURCES=	pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
 		sv_ents.c sv_init.c sv_main.c sv_misc.c sv_model.c \
 		sv_move.c sv_nchan.c sv_phys.c sv_pr_cmds.c sv_progs.c sv_send.c \
-		sv_user.c ver_check.c world.c $(world_ASM)
+		sv_user.c ver_check.c world.c
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
 qf_server_LDADD=	-L. -lqfnet -lqfsys_sv $(NET_LIBS) $(Z_LIBS) $(DL_LIBS)
