@@ -75,7 +75,7 @@ cvar_t	*zombietime;	// seconds to sink messages
 
 cvar_t	*rcon_password;	// password for remote server commands
 cvar_t	*password;	// password for entering the game
-cvar_t	*spectator_password;	// password for entering as a sepctator
+cvar_t	*spectator_password;	// password for entering as a spectator
 
 cvar_t	*allow_download;
 cvar_t	*allow_download_skins;
