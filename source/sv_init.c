@@ -280,14 +280,16 @@ SV_CheckModel (char *mdl)
 {
 	byte        stackbuf[1024];			// avoid dirtying the cache heap
 	byte       *buf;
-	unsigned short crc;
+	unsigned short crc = 0;
 
 //  int len;
 
 	buf = (byte *) COM_LoadStackFile (mdl, stackbuf, sizeof (stackbuf));
-	crc = CRC_Block (buf, com_filesize);
-//  for (len = com_filesize; len; len--, buf++)
-//      CRC_ProcessByte(&crc, *buf);
+	if (buf) {
+		crc = CRC_Block (buf, com_filesize);
+	} else {
+		Con_Printf ("WARNING: cannot generate checksum for %s\n", mdl);
+	}
 
 	return crc;
 }
