@@ -1339,7 +1339,6 @@ void GL_BuildLightmaps (void)
 		currentmodel = m;
 		for (i=0 ; i<m->numsurfaces ; i++)
 		{
-			//GL_CreateSurfaceLightmap (m->surfaces + i);
 			if ( m->surfaces[i].flags & SURF_DRAWTURB )
 				continue;
 			if ( m->surfaces[i].flags & SURF_DRAWSKY )
