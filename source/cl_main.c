@@ -1460,20 +1460,21 @@ Host_Frame (float time)
 	// resend a connection request if necessary
 	if (cls.state == ca_disconnected) {
 		CL_CheckForResend ();
-	} else
+	} else {
 		CL_SendCmd ();
 
 	// Set up prediction for other players
-	CL_SetUpPlayerPrediction (false);
+		CL_SetUpPlayerPrediction (false);
 
 	// do client side motion prediction
-	CL_PredictMove ();
+		CL_PredictMove ();
 
 	// Set up prediction for other players
-	CL_SetUpPlayerPrediction (true);
+		CL_SetUpPlayerPrediction (true);
 
 	// build a refresh entity list
-	CL_EmitEntities ();
+		CL_EmitEntities ();
+	}
 
 	// update video
 	if (host_speeds->int_val)
