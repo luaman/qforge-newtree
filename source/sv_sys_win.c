@@ -226,7 +226,7 @@ int main (int argc, char **argv)
 	parms.basedir = ".";
 
 	// LordHavoc: check for -basedir
-	t = Com_CheckParm ("-basedir");
+	t = COM_CheckParm ("-basedir");
 	if (t && (t + 1) < com_argc)
 		parms.basedir = com_argv[t];
 
