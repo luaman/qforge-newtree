@@ -79,7 +79,11 @@ VID_CheckDGA (Display * dpy, int *maj_ver, int *min_ver, int *hasvideo)
 	if (!XF86DGAQueryDirectVideo (dpy, DefaultScreen (dpy), &dgafeat)) {
 		*hasvideo = 0;
 	} else {
-		*hasvideo = (dgafeat & XF86DGADirectPresent);
+		*hasvideo = (dgafeat & XF86DGADirectGraphics);
+	}
+
+	if (!(dgafeat & (XF86DGADirectPresent | XF86DGADirectMouse))) {
+			return false;
 	}
 
 	return true;

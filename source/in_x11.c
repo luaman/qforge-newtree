@@ -483,8 +483,8 @@ IN_Shutdown (void)
 		XAutoRepeatOn (x_disp);
 
 #ifdef HAVE_DGA
-	if (dga_avail)
-		XF86DGADirectVideo (x_disp, DefaultScreen (x_disp), 0);
+		if (dga_avail)
+			XF86DGADirectVideo (x_disp, DefaultScreen (x_disp), 0);
 #endif
 	}
 	x11_close_display ();
