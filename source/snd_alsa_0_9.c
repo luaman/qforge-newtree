@@ -33,7 +33,7 @@
 
 #include <stdio.h>
 
-#include <sys/asoundlib.h>
+#include <alsa/asoundlib.h>
 
 #include "qtypes.h"
 #include "sound.h"
