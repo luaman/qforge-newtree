@@ -873,6 +873,10 @@ static void GetEvent(void)
 
 		if (b < NUM_STDBUTTONS) {
 			Key_Event(K_MOUSE1 + b, true);
+		} else if (b < NUM_STDBUTTONS+2) {
+			b-=3;
+			if (b) Key_Event(K_MWHEELDOWN, true);
+			else Key_Event(K_MWHEELUP, true);
 		} else if (b < NUM_BUTTONS) {
 			Key_Event(K_AUX32 - NUM_BUTTONS + b, true);
 		}
@@ -885,6 +889,10 @@ static void GetEvent(void)
 
 		if (b < NUM_STDBUTTONS) {
 			Key_Event(K_MOUSE1 + b, false);
+		} else if (b < NUM_STDBUTTONS+2) {
+			b-=3;
+			if (b) Key_Event(K_MWHEELDOWN, false);
+			else Key_Event(K_MWHEELUP, false);
 		} else if (b < NUM_BUTTONS) {
 			Key_Event(K_AUX32 - NUM_BUTTONS + b, false);
 		}
@@ -1013,9 +1021,17 @@ IN_Move(usercmd_t *cmd)
 }
 
 
-void VID_Init_Cvars(void)	{}
-void VID_LockBuffer(void)	{}
-void VID_UnlockBuffer(void) {}
+void VID_Init_Cvars(void)
+{
+}
+
+void VID_LockBuffer(void)
+{
+}
+
+void VID_UnlockBuffer(void)
+{
+}
 
 void VID_SetCaption (char *text)
 {
