@@ -251,10 +251,6 @@ GL_Init (void)
 
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
-/* glShadeMode(GL_SMOOTH) should look better then GL_FLAT but
-   I don't know if it looks any better, sure is slower
-	glShadeModel (GL_SMOOTH);
-*/
 	glShadeModel (GL_FLAT);
 
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

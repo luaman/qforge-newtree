@@ -813,7 +813,6 @@ R_UpdateFires (void)
 
 	glDepthMask(GL_FALSE);
 	glDisable (GL_TEXTURE_2D);
-	glShadeModel (GL_SMOOTH);
 	glBlendFunc (GL_ONE, GL_ONE);
 
 	f = r_fires;

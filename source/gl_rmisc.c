@@ -251,7 +251,8 @@ void R_Init (void)
 		Cvar_SetValue(gl_texsort, 0.0);
 
 	gl_cull = Cvar_Get("gl_cull", "1", CVAR_NONE, "None");
-	gl_smoothmodels = Cvar_Get("gl_smoothmodels", "1", CVAR_NONE, "None");
+	gl_smooth = Cvar_Get("gl_smooth", "1", CVAR_NONE, "None");
+	gl_smoothdlights = Cvar_Get("gl_smoothdlights", "1", CVAR_NONE, "None");
 	gl_affinemodels = Cvar_Get("gl_affinemodels", "0", CVAR_NONE, "None");
 	gl_polyblend = Cvar_Get("gl_polyblend", "1", CVAR_NONE, "None");
 	gl_flashblend = Cvar_Get("gl_flashblend",  "0", CVAR_NONE, "None");

@@ -106,7 +106,8 @@ cvar_t	*r_netgraph;
 cvar_t	*gl_clear;
 cvar_t	*gl_cull;
 cvar_t	*gl_texsort;
-cvar_t	*gl_smoothmodels;
+cvar_t	*gl_smooth;
+cvar_t	*gl_smoothdlights;
 cvar_t	*gl_affinemodels;
 cvar_t	*gl_polyblend;
 cvar_t	*gl_flashblend;
@@ -636,11 +637,8 @@ static void R_DrawAliasModel (entity_t *e)
 		    glBindTexture (GL_TEXTURE_2D, playertextures + i);
 	}
 
-	if (gl_smoothmodels->value)
-		glShadeModel (GL_SMOOTH);
-
 	if (gl_affinemodels->value)
-		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	R_SetupAliasFrame (currententity->frame, paliashdr, false);
 
@@ -651,9 +649,8 @@ static void R_DrawAliasModel (entity_t *e)
 		R_SetupAliasFrame (currententity->frame, paliashdr, true);
 	}
 
-	glShadeModel (GL_FLAT);
 	if (gl_affinemodels->value)
-		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
 	glPopMatrix ();
 
@@ -896,8 +893,6 @@ static void R_SetupGL (void)
 //    MYgluPerspective (yfov,  screenaspect,  4,  4096);
     MYgluPerspective (r_refdef.fov_y,  screenaspect,  4,  4096);
 
-	glCullFace(GL_FRONT);
-
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity ();
 
@@ -921,7 +916,12 @@ static void R_SetupGL (void)
 	glDisable (GL_ALPHA_TEST);
 	glAlphaFunc (GL_GREATER, 0.5);
 	glEnable (GL_DEPTH_TEST);
-	glShadeModel (GL_SMOOTH);
+	if (gl_smooth->value)
+		glShadeModel (GL_SMOOTH);
+	else
+		glShadeModel (GL_FLAT);
+
+
 }
 
 /*

@@ -186,8 +186,9 @@ void R_RenderDlights (void)
 											//  advanced yet for this frame
 	glDepthMask(GL_FALSE);
 	glDisable (GL_TEXTURE_2D);
-	glShadeModel (GL_SMOOTH);
 	glBlendFunc (GL_ONE, GL_ONE);
+	if (gl_smoothdlights->value)
+		glShadeModel (GL_SMOOTH);
 
 	l = cl_dlights;
 	for (i=0 ; i<MAX_DLIGHTS ; i++, l++)
@@ -197,6 +198,8 @@ void R_RenderDlights (void)
 		R_RenderDlight (l);
 	}
 
+	if (!gl_smooth->value)
+		glShadeModel (GL_FLAT);
 	glColor3ubv(lighthalf_v);
 	glEnable (GL_TEXTURE_2D);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
