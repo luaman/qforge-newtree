@@ -338,6 +338,7 @@ find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 								// always on an axis plane.
 	vec3_t v = {0, 0, 0};		// direction vector of cube edge. always +ve
 	vec_t x_n, v_n;				// x.n and v.n
+	vec3_t t;
 
 	x[face1 % 3] = 1024 * (1 - 2 * (face1 / 3));
 	x[face2 % 3] = 1024 * (1 - 2 * (face2 / 3));
@@ -348,8 +349,8 @@ find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 
 	x_n = DotProduct (x, n);
 	v_n = DotProduct (v, n);
-	VectorScale (v, x_n / v_n, v);
-	VectorSubtract (x, v, y);
+	VectorScale (v, x_n / v_n, t);
+	VectorSubtract (x, t, y);
 }
 
 static void
@@ -392,7 +393,7 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 	static int skytex_offs[] = {3, 0, 4, 1, 2, 5};
 	vec3_t v, last_v;
 	struct {
-		int			tex;
+		int			tex, enter, leave;
 		glpoly_t	poly;
 		float		verts[32][VERTEXSIZE];
 	} box[6];
@@ -400,8 +401,10 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 	int face, prev_face;
 
 	memset (box, 0, sizeof (box));
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < 6; i++) {
 		box[i].tex = SKY_TEX + skytex_offs[i];
+		box[i].enter = box[i].leave = -1;
+	}
 
 	if (poly->numverts>=32) {
 		Con_Printf ("too many verts!");
@@ -422,6 +425,14 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 				find_intersect (prev_face, last_v, face, v, l);
 
 				set_vertex(&box[prev_face].poly, l, prev_face);
+				if (box[prev_face].enter >= 0 && box[prev_face].leave == -1) {
+					set_vertex(&box[prev_face].poly, , prev_face);
+				}
+				box[prev_face].leave = face;
+				if (box[face].enter == -1 && box[face].leave >= 0) {
+					set_vertex(&box[face].poly, , face);
+				}
+				box[prev_face].leave = face;
 				set_vertex(&box[face].poly, l, face);
 			}
 		}
@@ -442,6 +453,28 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		}
 		glEnd ();
 	}
+	glDisable (GL_TEXTURE_2D);
+	glColor3f (1, 1, 1);
+	glBegin (GL_LINES);
+	for (i=0; i<poly->numverts; i++) {
+		glVertex3fv (poly->verts[i]);
+	}
+	glVertex3fv (poly->verts[0]);
+	glEnd();
+	glColor3f (1, 0, 0);
+	for (i=0; i<6; i++) {
+		glBegin (GL_LINES);
+		for (j=0; j<4; j++) {
+			vec3_t v;
+			memcpy (v, &skyvec[i][j][2], sizeof(v));
+			VectorAdd (v, r_refdef.vieworg, v);
+			glVertex3fv (v);
+		}
+		glVertex3fv (&skyvec[i][0][2]);
+		glEnd ();
+	}
+	glColor3ubv (lighthalf_v);
+	glEnable (GL_TEXTURE_2D);
 }
 
 void
@@ -456,6 +489,13 @@ R_DrawSkyDomePoly (glpoly_t *poly)
 	for (i=0; i<poly->numverts; i++) {
 		glVertex3fv (poly->verts[i]);
 	}
+	glEnd ();
+	glColor3f (1, 1, 1);
+	glBegin (GL_LINES);
+	for (i=0; i<poly->numverts; i++) {
+		glVertex3fv (poly->verts[i]);
+	}
+	glVertex3fv (poly->verts[0]);
 	glEnd ();
 	glEnable (GL_TEXTURE_2D);
 	glEnable (GL_BLEND);

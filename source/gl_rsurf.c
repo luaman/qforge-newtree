@@ -801,12 +801,6 @@ void R_DrawBrushModel (entity_t *e)
 	// draw texture
 	//
 	for (i=0 ; i<clmodel->nummodelsurfaces ; i++, psurf++) {
-		if (psurf->flags & SURF_DRAWSKY) {
-			psurf->texturechain = sky_chain;
-			sky_chain = psurf;
-			return;
-		}
-
 		// find which side of the node we are on
 		pplane = psurf->plane;
 
@@ -816,6 +810,12 @@ void R_DrawBrushModel (entity_t *e)
 		if (((psurf->flags & SURF_PLANEBACK) && (dot < -BACKFACE_EPSILON)) ||
 			(!(psurf->flags & SURF_PLANEBACK) && (dot > BACKFACE_EPSILON)))
 		{
+			if (psurf->flags & SURF_DRAWSKY) {
+				psurf->texturechain = sky_chain;
+				sky_chain = psurf;
+				return;
+			}
+
 			if (psurf->flags & SURF_DRAWTURB)
 				GL_WaterSurface(psurf);
 			else if (gl_texsort->int_val)
@@ -931,14 +931,14 @@ void R_RecursiveWorldNode (mnode_t *node)
 			if (surf->visframe != r_framecount)
 				continue;
 
+			if ((dot < 0) ^ !!(surf->flags & SURF_PLANEBACK))
+				continue;		// wrong side
+
 			if (surf->flags & SURF_DRAWSKY) {
 				surf->texturechain = sky_chain;
 				sky_chain = surf;
 				continue;
 			}
-
-			if ((dot < 0) ^ !!(surf->flags & SURF_PLANEBACK))
-				continue;		// wrong side
 
 			if (surf->flags & SURF_DRAWTURB)
 			{
