@@ -1036,6 +1036,8 @@ GL_ResampleTexture (unsigned int *in, int inwidth, int inheight,
 	unsigned int *inrow;
 	unsigned int frac, fracstep;
 
+	if (!outwidth || !outheight)
+		return;
 	fracstep = inwidth * 0x10000 / outwidth;
 	for (i = 0; i < outheight; i++, out += outwidth) {
 		inrow = in + inwidth * (i * inheight / outheight);
