@@ -32,6 +32,8 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "commdef.h"
 #include "cvar.h"
 #include "zone.h"
 #include "console.h"

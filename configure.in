@@ -6,7 +6,7 @@ AM_CONFIG_HEADER(include/config.h)
 AC_CANONICAL_SYSTEM
 
 dnl This is the only place where the package version appears
-AM_INIT_AUTOMAKE(quakeforge, 0.1.99pre0)
+AM_INIT_AUTOMAKE(quakeforge, 0.2.0)
 
 dnl Define the proper name for package
 AC_DEFINE(PROGRAM, "QuakeForge")
