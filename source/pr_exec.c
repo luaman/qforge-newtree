@@ -162,9 +162,7 @@ char       *PR_GlobalStringNoContents (int ofs);
 //=============================================================================
 
 /*
-=================
-PR_PrintStatement
-=================
+	PR_PrintStatement
 */
 void
 PR_PrintStatement (dstatement_t *s)
@@ -199,9 +197,7 @@ PR_PrintStatement (dstatement_t *s)
 }
 
 /*
-============
-PR_StackTrace
-============
+	PR_StackTrace
 */
 void
 PR_StackTrace (void)
@@ -228,10 +224,7 @@ PR_StackTrace (void)
 
 
 /*
-============
-PR_Profile_f
-
-============
+	PR_Profile_f
 */
 void
 PR_Profile_f (void)
@@ -264,11 +257,9 @@ PR_Profile_f (void)
 
 
 /*
-============
-PR_RunError
+	PR_RunError
 
-Aborts the currently executing function
-============
+	Aborts the currently executing function
 */
 void
 PR_RunError (char *error, ...)
@@ -291,19 +282,15 @@ PR_RunError (char *error, ...)
 }
 
 /*
-============================================================================
-PR_ExecuteProgram
+	PR_ExecuteProgram
 
-The interpretation main loop
-============================================================================
+	The interpretation main loop
 */
 
 /*
-====================
-PR_EnterFunction
+	PR_EnterFunction
 
-Returns the new program statement counter
-====================
+	Returns the new program statement counter
 */
 int
 PR_EnterFunction (dfunction_t *f)
@@ -340,9 +327,7 @@ PR_EnterFunction (dfunction_t *f)
 }
 
 /*
-====================
-PR_LeaveFunction
-====================
+	PR_LeaveFunction
 */
 int
 PR_LeaveFunction (void)
@@ -371,15 +356,15 @@ PR_LeaveFunction (void)
 
 
 /*
-====================
-PR_ExecuteProgram
-====================
+	PR_ExecuteProgram
 */
 // LordHavoc: optimized
 #define OPA ((eval_t *)&pr_globals[(unsigned short) st->a])
 #define OPB ((eval_t *)&pr_globals[(unsigned short) st->b])
 #define OPC ((eval_t *)&pr_globals[(unsigned short) st->c])
+
 extern cvar_t *pr_boundscheck;
+
 void
 PR_ExecuteProgram (func_t fnum)
 {
@@ -999,7 +984,7 @@ char       *
 PR_GetString (int num)
 {
 	if (num < 0) {
-//Con_DPrintf("GET:%d == %s\n", num, pr_strtbl[-num]);
+		//Con_DPrintf("GET:%d == %s\n", num, pr_strtbl[-num]);
 		return pr_strtbl[-num];
 	}
 	return pr_strings + num;
@@ -1020,7 +1005,7 @@ PR_SetString (char *s)
 			Sys_Error ("MAX_PRSTR");
 		num_prstr++;
 		pr_strtbl[num_prstr] = s;
-//Con_DPrintf("SET:%d == %s\n", -num_prstr, s);
+		//Con_DPrintf("SET:%d == %s\n", -num_prstr, s);
 		return -num_prstr;
 	}
 	return (int) (s - pr_strings);
