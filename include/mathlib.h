@@ -29,6 +29,7 @@
 #ifndef _MATHLIB_H
 #define _MATHLIB_H
 
+#include <math.h>
 #include "qtypes.h"
 
 #ifndef M_PI
