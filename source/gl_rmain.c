@@ -920,8 +920,6 @@ static void R_SetupGL (void)
 		glShadeModel (GL_SMOOTH);
 	else
 		glShadeModel (GL_FLAT);
-
-
 }
 
 /*

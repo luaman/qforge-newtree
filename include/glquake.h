@@ -195,7 +195,6 @@ extern	cvar_t	*r_waterwarp;
 extern	cvar_t	*r_fullbright;
 extern	cvar_t	*r_lightmap;
 extern	cvar_t	*r_shadows;
-extern	cvar_t	*r_mirroralpha;
 extern	cvar_t	*r_wateralpha;
 extern	cvar_t	*r_waterripple;
 extern	cvar_t	*r_dynamic;
@@ -206,7 +205,8 @@ extern	cvar_t	*gl_clear;
 extern	cvar_t	*gl_cull;
 extern	cvar_t	*gl_poly;
 extern	cvar_t	*gl_texsort;
-extern	cvar_t	*gl_smoothmodels;
+extern	cvar_t	*gl_smooth;
+extern	cvar_t	*gl_smoothdlights;
 extern	cvar_t	*gl_affinemodels;
 extern	cvar_t	*gl_polyblend;
 extern	cvar_t	*gl_keeptjunctions;
@@ -226,10 +226,6 @@ extern	cvar_t	*gl_playermip;
 
 extern	cvar_t	*r_skyname;
 extern	cvar_t *gl_skymultipass;
-
-extern	int			mirrortexturenum;	// quake texturenum, not gltexturenum
-extern	qboolean	mirror;
-extern	mplane_t	*mirror_plane;
 
 extern	float	r_world_matrix[16];
 
