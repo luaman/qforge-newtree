@@ -858,12 +858,22 @@ char	pr_string_temp[128];
 void PF_ftos (void)
 {
 	float	v;
+	int		i;	// 1999-07-25 FTOS fix by Maddes
+
 	v = G_FLOAT(OFS_PARM0);
 	
 	if (v == (int)v)
 		sprintf (pr_string_temp, "%d",(int)v);
 	else
-		sprintf (pr_string_temp, "%5.1f",v);
+// 1999-07-25 FTOS fix by Maddes  start
+	{
+		sprintf (pr_string_temp, "%1f", v);
+		for (i=strlen(pr_string_temp)-1 ; i>0 && pr_string_temp[i]=='0' && pr_string_temp[i-1]!='.' ; i--)
+		{
+			pr_string_temp[i] = 0;
+		}
+	}
+// 1999-07-25 FTOS fix by Maddes  end
 	G_INT(OFS_RETURN) = PR_SetString(pr_string_temp);
 }
 
