@@ -269,6 +269,10 @@ maplist_new (void)
 static void
 maplist_free (struct maplist *maplist)
 {
+	int i;
+
+	for (i=0; i < maplist->count; i++)
+		free (maplist->list[i]);
 	free (maplist->list);
 	free (maplist);
 }
@@ -288,7 +292,7 @@ maplist_add_map (struct maplist *maplist, char *fname)
 		}
 		maplist->list = new_list;
 	}
-	maplist->list[maplist->count++] = fname;
+	maplist->list[maplist->count++] = strdup (fname);
 }
 
 static int
