@@ -76,6 +76,8 @@ typedef struct {
 
 static gefv_cache	gefvCache[GEFV_CACHESIZE] = {{NULL, ""}, {NULL, ""}};
 
+func_t	EndFrame;	// 2000-01-02 EndFrame function by Maddes/FrikaC
+
 func_t SpectatorConnect;
 func_t SpectatorThink;
 func_t SpectatorDisconnect;
@@ -1089,6 +1091,13 @@ void PR_LoadProgs (void)
 		SpectatorThink = (func_t)(f - pr_functions);
 	if ((f = ED_FindFunction ("SpectatorDisconnect")) != NULL)
 		SpectatorDisconnect = (func_t)(f - pr_functions);
+
+// 2000-01-02 EndFrame function by Maddes/FrikaC  start
+	EndFrame = 0;
+
+	if ((f = ED_FindFunction ("EndFrame")) != NULL)
+		EndFrame = (func_t)(f - pr_functions);
+// 2000-01-02 EndFrame function by Maddes/FrikaC  end
 
 	// LordHavoc: Ender added this
 	FindEdictFieldOffsets();
