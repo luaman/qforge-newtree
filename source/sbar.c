@@ -38,6 +38,7 @@
 #include "cmd.h"
 #include "client.h"
 #include "bothdefs.h"
+#include "va.h"
 #include "msg.h"
 
 #include <stdlib.h>

@@ -64,6 +64,7 @@
 #include "input.h"
 #include "draw.h"
 #include "console.h"
+#include "va.h"
 #include "client.h"
 #include "input.h"
 #include "context_x11.h"

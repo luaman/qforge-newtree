@@ -38,6 +38,7 @@
 #include "sys.h"
 #include "pmove.h"
 #include "compat.h"
+#include "va.h"
 #include "quakefs.h"
 #include "bothdefs.h"
 #include "qendian.h"

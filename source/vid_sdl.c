@@ -33,6 +33,7 @@
 #include <SDL.h>
 
 #include "client.h"
+#include "va.h"
 #include "console.h"
 #include "cvar.h"
 #include "draw.h"

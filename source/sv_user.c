@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#include "va.h"
 #include "server.h"
 #include "crc.h"
 #include "console.h"

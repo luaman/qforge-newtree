@@ -35,6 +35,7 @@
 #include "client.h"
 #include "console.h"
 #include "commdef.h"
+#include "va.h"
 
 #include <string.h>
 

@@ -34,6 +34,7 @@
 #include "msg.h"
 #include "client.h"
 #include "commdef.h"
+#include "va.h"
 
 void
 Cvar_Info(cvar_t *var)

@@ -62,7 +62,4 @@ extern	qboolean	host_initialized;	/* True if into command execution. */
 extern	double		realtime;			/* Not bounded in any way, changed at
 										   start of every frame, never reset */
 
-char	*va(char *format, ...) __attribute__((format(printf,1,2)));
-// does a varargs printf into a temp buffer
-
 #endif // _COMMDEF_H

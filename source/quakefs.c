@@ -40,6 +40,7 @@
 #include "qendian.h"
 #include "info.h"
 #include "server.h"
+#include "va.h"
 #include "qargs.h"
 
 #include <stdlib.h>

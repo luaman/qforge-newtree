@@ -38,6 +38,7 @@
 #include "bothdefs.h"
 #include "console.h"
 #include "msg.h"
+#include "va.h"
 #include "pmove.h"
 #include "sbar.h"
 #include "teamplay.h"

@@ -38,6 +38,7 @@
 #include "cmd.h"
 #include "console.h"
 #include "qendian.h"
+#include "va.h"
 #include "quakefs.h"
 #include "quakedef.h"
 #include "pmove.h"

@@ -58,6 +58,7 @@
 #include "commdef.h"
 #include "context_x11.h"
 #include "dga_check.h"
+#include "va.h"
 #include "qargs.h"
 #include "qtypes.h"
 #include "vid.h"

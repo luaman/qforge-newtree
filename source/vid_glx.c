@@ -62,6 +62,7 @@
 #endif
 
 #include "qtypes.h"
+#include "va.h"
 #include "quakedef.h"
 #include "qendian.h"
 #include "glquake.h"

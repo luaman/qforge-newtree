@@ -30,6 +30,7 @@
 # include <config.h>
 #endif
 #include "pr_comp.h"
+#include "va.h"
 #include "progs.h"
 #include "console.h"
 #include "server.h"

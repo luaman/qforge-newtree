@@ -30,6 +30,7 @@
 # include <config.h>
 #endif
 #include "server.h"
+#include "va.h"
 #include "crc.h"
 #include "msg.h"
 #include "world.h"

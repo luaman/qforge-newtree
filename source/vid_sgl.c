@@ -41,6 +41,7 @@
 #include "console.h"
 #include "cvar.h"
 #include "draw.h"
+#include "va.h"
 #include "glquake.h"
 #include "input.h"
 #include "joystick.h"

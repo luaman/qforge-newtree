@@ -32,12 +32,15 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include <string.h>
+
 #include "cl_slist.h"
 #include "bothdefs.h"
 #include "console.h"
 #include "commdef.h"
 #include "quakefs.h"
-#include <string.h>
+#include "va.h"
 
 server_entry_t	*slist;
   

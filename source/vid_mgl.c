@@ -32,6 +32,7 @@
 #include <stdlib.h>
 
 #include "quakedef.h"
+#include "va.h"
 #include "winquake.h"
 #include "sys.h"
 #include "d_local.h"

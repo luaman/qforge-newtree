@@ -29,6 +29,10 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include <stdarg.h>
+#include <string.h>
+
 #include "input.h"
 #include "sys.h"
 #include "console.h"
@@ -38,10 +42,8 @@
 #include "commdef.h"
 #include "qargs.h"
 #include "cmd.h"
+#include "va.h"
 #include "screen.h"
-
-#include <stdarg.h>
-#include <string.h>
 
 int			con_ormask;
 console_t	con_main;

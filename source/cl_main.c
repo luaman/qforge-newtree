@@ -38,6 +38,7 @@
 #include "cvar.h"
 #include "sizebuf.h"
 #include "msg.h"
+#include "va.h"
 #include "client.h"
 #include "commdef.h"
 #include "cmd.h"

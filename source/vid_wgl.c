@@ -30,6 +30,7 @@
 # include "config.h"
 #endif
 #include "quakedef.h"
+#include "va.h"
 #include "winquake.h"
 #include "sys.h"
 #include "resource.h"

@@ -38,6 +38,7 @@
 #include "keys.h"
 #include "menu.h"
 #include "vid.h"
+#include "va.h"
 #include "draw.h"
 #include "cmd.h"
 #include "screen.h"
