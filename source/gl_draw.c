@@ -1160,6 +1160,9 @@ GL_Upload32 (unsigned int *data, int width, int height, qboolean mipmap,
 	unsigned int *scaled;
 	int         scaled_width, scaled_height, samples;
 
+        if (!width || !height)
+                return; // Null texture
+
 	// Snap the height and width to a power of 2.
 	for (scaled_width = 1; scaled_width < width; scaled_width <<= 1);
 	for (scaled_height = 1; scaled_height < height; scaled_height <<= 1);
@@ -1178,7 +1181,7 @@ GL_Upload32 (unsigned int *data, int width, int height, qboolean mipmap,
 	// If the real width/height and the 'scaled' width/height then we
 	// rescale it.
 	if (scaled_width == width && scaled_height == height) {
-		memcpy (scaled, data, width * height * 4);
+		memcpy (scaled, data, width * height * sizeof (GLuint));
 	} else {
 		GL_ResampleTexture (data, width, height, scaled, scaled_width,
 							scaled_height);
