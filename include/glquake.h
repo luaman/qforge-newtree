@@ -254,6 +254,8 @@ extern	cvar_t	*gl_max_size;
  CVAR_FIXME */
 extern	cvar_t	*gl_playermip;
 
+extern	cvar_t	*r_skyname;
+
 extern	int			mirrortexturenum;	// quake texturenum, not gltexturenum
 extern	qboolean	mirror;
 extern	mplane_t	*mirror_plane;

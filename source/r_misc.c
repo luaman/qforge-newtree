@@ -33,6 +33,7 @@
 #include "quakedef.h"
 #include "r_local.h"
 
+qboolean	allowskybox;	// whether or not to allow skyboxes  --KB
 
 /*
 ===============

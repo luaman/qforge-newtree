@@ -32,8 +32,6 @@
 #endif
 #include <ctype.h>
 
-#include "sys.h"
-#include "quakedef.h"
 #ifdef _WIN32
 #include "winquake.h"
 #include "winsock.h"
@@ -42,6 +40,8 @@
 #include <netinet/in.h>
 #endif
 
+#include "sys.h"
+#include "quakedef.h"
 
 // we need to declare some mouse variables here, because the menu system
 // references them even when on a unix system.
@@ -672,6 +672,19 @@ void CL_FullServerinfo_f (void)
 			Con_Printf("QSG Standard version %i\n", cl.stdver);
 		else
 			Con_Printf("Invalid standards version: %s", p);
+	}
+	if ((p = Info_ValueForKey(cl.serverinfo, "skybox")) && *p)
+	{
+		if (stricmp (p, "none") == 0)
+		{
+			allowskybox = false;
+		} else {
+			allowskybox = true;
+			Cmd_ExecuteString (va("loadsky %s\n", p));
+//			R_LoadSkys (p);
+		}
+	} else {
+		allowskybox = false;
 	}
 }
 

@@ -56,6 +56,8 @@
 qboolean VID_Is8bit(void);
 extern void R_InitBubble();
 
+qboolean	allowskybox;		// allow skyboxes?  --KB
+
 /*
 ==================
 R_InitTextures
@@ -217,7 +219,9 @@ R_Init
 ===============
 */
 void R_Init (void)
-{	
+{
+	allowskybox = false;	// server will decide if this is allowed  --KB
+
 	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);	
 	Cmd_AddCommand ("envmap", R_Envmap_f);	
 	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);
@@ -301,6 +305,9 @@ void R_Init (void)
 /* 	Cvar_RegisterVariable (&gl_reporttjunctions);
  CVAR_FIXME */
 	gl_reporttjunctions = Cvar_Get("gl_reporttjunctions", "0", CVAR_NONE, "None");
+	
+	r_skyname = Cvar_Get("r_skyname", "none", CVAR_NONE, 
+			"name of the current skybox");
 
 	R_InitBubble();
 	
@@ -505,6 +512,7 @@ R_NewMap
 void R_NewMap (void)
 {
 	int		i;
+	cvar_t		*r_skyname;
 	
 	for (i=0 ; i<256 ; i++)
 		d_lightstylevalue[i] = 264;		// normal light value
@@ -535,7 +543,11 @@ void R_NewMap (void)
 			mirrortexturenum = i;
  		cl.worldmodel->textures[i]->texturechain = NULL;
 	}
-	R_LoadSkys ("none");
+	r_skyname = Cvar_FindVar ("r_skyname");
+	if (r_skyname != NULL)
+		R_LoadSkys (r_skyname->string);
+	else
+		R_LoadSkys ("none");
 }
 
 

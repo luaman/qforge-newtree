@@ -808,6 +808,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 	qboolean	anglehack;
 	qboolean	init;
 	char		keyname[256];
+	cvar_t		*r_skyname;
 
 	init = false;
 
@@ -825,23 +826,22 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 		if (!data)
 			SV_Error ("ED_ParseEntity: EOF without closing brace");
 		
-// anglehack is to allow QuakeEd to write single scalar angles
-// and allow them to be turned into vectors. (FIXME...)
-if (!strcmp(com_token, "angle"))
-{
-	strcpy (com_token, "angles");
-	anglehack = true;
-}
-else
-	anglehack = false;
+		// anglehack is to allow QuakeEd to write single scalar angles
+		// and allow them to be turned into vectors. (FIXME...)
+		if (!strcmp(com_token, "angle"))
+		{
+			strcpy (com_token, "angles");
+			anglehack = true;
+		} else
+			anglehack = false;
 
-// FIXME: change light to _light to get rid of this hack
-if (!strcmp(com_token, "light"))
-	strcpy (com_token, "light_lev");	// hack for single light def
+		// FIXME: change light to _light to get rid of this hack
+		if (!strcmp(com_token, "light"))
+			strcpy (com_token, "light_lev");	// hack for single light def
 
 		strcpy (keyname, com_token);
 		
-	// parse value	
+		// parse value	
 		data = COM_Parse (data);
 		if (!data)
 			SV_Error ("ED_ParseEntity: EOF without closing brace");
@@ -855,7 +855,17 @@ if (!strcmp(com_token, "light"))
 // and are immediately discarded by quake
 		if (keyname[0] == '_')
 			continue;
-		
+
+		if (stricmp (keyname, "skyname") == 0 ||
+				stricmp (keyname, "qlsky") == 0)
+		{
+			Info_SetValueForKey (svs.info, "skybox",
+					"1", MAX_SERVERINFO_STRING);
+			r_skyname = Cvar_Get ("r_skyname", com_token,
+					CVAR_NONE, "name of skybox");
+			continue;
+		}
+
 		key = ED_FindField (keyname);
 		if (!key)
 		{

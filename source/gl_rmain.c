@@ -181,6 +181,8 @@ cvar_t	*gl_reporttjunctions;
  CVAR_FIXME */
 cvar_t	*gl_finish;
 
+cvar_t	*r_skyname;
+
 /* extern	cvar_t	gl_ztrick;
  CVAR_FIXME */
 extern	cvar_t	*gl_ztrick;

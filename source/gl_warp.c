@@ -896,7 +896,7 @@ void R_DrawSkyChain (msurface_t *s)
 	vec3_t	verts[MAX_CLIP_VERTS];
 	glpoly_t	*p;
 
-	if (skyloaded)
+	if (allowskybox && skyloaded)
 	{
 		c_sky = 0;
 		GL_Bind(solidskytexture);

@@ -91,6 +91,7 @@ void SV_New_f (void)
 {
 	char		*gamedir;
 	int			playernum;
+	cvar_t		*r_skyname;
 
 	if (host_client->state == cs_spawned)
 		return;
@@ -147,6 +148,15 @@ void SV_New_f (void)
 	// send server info string
 	MSG_WriteByte (&host_client->netchan.message, svc_stufftext);
 	MSG_WriteString (&host_client->netchan.message, va("fullserverinfo \"%s\"\n", svs.info) );
+
+	// Send our current skybox
+	r_skyname = Cvar_FindVar ("r_skyname");
+	if (r_skyname != NULL)
+	{
+		MSG_WriteByte (&host_client->netchan.message, svc_stufftext);
+		MSG_WriteString (&host_client->netchan.message, va("r_skyname %s",
+					r_skyname->string));
+	}
 }
 
 /*
