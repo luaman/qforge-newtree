@@ -184,9 +184,12 @@ server_entry_t *Server_List_LoadF (FILE *f,server_entry_t *start) { // This coul
  }
  
  void Server_List_Shutdown (server_entry_t *start) {
- 	FILE *f;
+ 	FILE	*f;
+	char	e_path[MAX_OSPATH];
+	
  	if (start) {
- 		if ((f = fopen(va("%s/servers.txt",fs_userpath->string),"w"))) {
+		Qexpand_squiggle(fs_userpath->string, e_path);
+ 		if ((f = fopen(va("%s/servers.txt", e_path),"w"))) {
  			Server_List_SaveF(f,start);
  			fclose(f);
  		}

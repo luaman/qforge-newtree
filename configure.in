@@ -785,8 +785,8 @@ AC_MSG_RESULT([
 
 	Server support:$SV_TARGETS
 	Client support:$CL_TARGETS
-	
-	Shared game directory: $sharepath
-	Unshared game directory: $userpath
+
+	System game data directory: $sharepath
+	Per-user game data directory: $userpath
 	Global configuration file: $globalconf
 ])

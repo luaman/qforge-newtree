@@ -1119,6 +1119,7 @@ void CL_Init (void)
 {
 	FILE	*servlist;
 	char	st[80];
+	char	e_path[MAX_OSPATH];
 
 	cls.state = ca_disconnected;
 
@@ -1137,7 +1138,8 @@ void CL_Init (void)
 	CL_InitCam ();
 	Pmove_Init ();
 	
-	if ((servlist = fopen(va("%s/servers.txt",fs_userpath->string),"r"))) {
+	Qexpand_squiggle(fs_userpath->string, e_path);
+	if ((servlist = fopen(va("%s/servers.txt", e_path), "r"))) {
 		slist = Server_List_LoadF(servlist,slist);
 		fclose(servlist);
 	}
