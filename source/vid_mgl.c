@@ -29,25 +29,26 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include <stdlib.h>
 
-#include "va.h"
-#include "winquake.h"
-#include "sys.h"
+#include "cdaudio.h"
+#include "cmd.h"
+#include "console.h"
 #include "d_local.h"
-#include "resource.h"
+#include "draw.h"
+#include "host.h"
 #include "in_win.h"
 #include "keys.h"
-#include "screen.h"
-#include "wad.h"
-#include "cmd.h"
-#include "qendian.h"
-#include "draw.h"
-#include "console.h"
-#include "sound.h"
-#include "cdaudio.h"
 #include "qargs.h"
-#include "host.h"
+#include "qendian.h"
+#include "resource.h"
+#include "screen.h"
+#include "sound.h"
+#include "sys.h"
+#include "va.h"
+#include "wad.h"
+#include "winquake.h"
 
 #define	MINIMUM_MEMORY	0x550000
 

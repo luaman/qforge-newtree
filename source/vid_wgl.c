@@ -29,23 +29,25 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "va.h"
-#include "winquake.h"
-#include "sys.h"
-#include "resource.h"
-#include "glquake.h"
-#include "in_win.h"
+
 #include <commctrl.h>
-#include "screen.h"
+
+#include "cdaudio.h"
+#include "cmd.h"
+#include "console.h"
+#include "draw.h"
+#include "glquake.h"
+#include "host.h"
+#include "in_win.h"
 #include "keys.h"
 #include "qargs.h"
-#include "cmd.h"
 #include "qendian.h"
-#include "draw.h"
-#include "cdaudio.h"
-#include "console.h"
+#include "resource.h"
 #include "sbar.h"
-#include "host.h"
+#include "screen.h"
+#include "sys.h"
+#include "va.h"
+#include "winquake.h"
 
 extern void (*vid_menudrawfn) (void);
 extern void (*vid_menukeyfn) (int);
