@@ -653,8 +653,11 @@ R_DrawSkyDomePoly (glpoly_t *poly)
 void
 R_DrawSkyChain (msurface_t *sky_chain)
 {
+	extern cvar_t *brightness;
 	msurface_t *sc = sky_chain;
-
+	float l = 1 / (256 * brightness->value);
+	
+	glColor3f (lighthalf_v[0] * l, lighthalf_v[1] * l, lighthalf_v[2] * l);
 	if (skyloaded) {
 		glDepthRange (gldepthmax, gldepthmax);
 		while (sc) {
