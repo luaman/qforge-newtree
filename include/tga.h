@@ -34,11 +34,10 @@
 
 #ifndef __GNUC__
 # if defined (__BORLANDC__) || defined (_MSC_VER)
+#  define __attribute__(x)
 #  if (defined(__BORLANDC__) && (__BORLANDC__ < 0x550))
-#   define __attribute__(x)
 #   pragma option -a1
 #  else
-#   define __attribute__(x)
 #   pragma pack(push, tgainclude)
 #   pragma pack(1)
 #  endif
