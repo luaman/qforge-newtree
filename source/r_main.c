@@ -267,8 +267,8 @@ R_Init_Cvars (void)
 	D_Init_Cvars ();
 
 	r_draworder = Cvar_Get ("r_draworder", "0", CVAR_NONE, "Toggles drawing order");
-	r_speeds = Cvar_Get ("r_speeds", "0", CVAR_NONE, "Toggles the displaying of drawing time and
-		statistics of what is currently being viewed");
+	r_speeds = Cvar_Get ("r_speeds", "0", CVAR_NONE, "Toggles the displaying of drawing time and"
+		"statistics of what is currently being viewed");
 	r_timegraph = Cvar_Get ("r_timegraph", "0", CVAR_NONE, "Toggle the display of a performance graph");
 	r_netgraph = Cvar_Get ("r_netgraph", "0", CVAR_NONE, "Toggle the display of a graph showing network performance");
 	r_zgraph = Cvar_Get ("r_zgraph", "0", CVAR_NONE, "Toggle the graph that reports the changes of z-axis position");
@@ -291,7 +291,7 @@ R_Init_Cvars (void)
 	r_aliastransadj = Cvar_Get ("r_aliastransadj", "100", CVAR_NONE, "Determines how much of an alias model is clipped away and how much is viewable.");
 	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_NONE, "Toggles the type of lighting for objects");
 	gl_sky_divide = Cvar_Get ("gl_sky_divide", "1", CVAR_ARCHIVE,
-							  "subdivide sky polys");
+		"subdivide sky polys");
 }
 
 /*

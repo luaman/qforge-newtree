@@ -1496,25 +1496,25 @@ SV_InitLocal (void)
 	timelimit = Cvar_Get ("timelimit", "0", CVAR_SERVERINFO, 
 		"Sets the amount of time in minutes that is needed before advancing to the next level");
 	teamplay = Cvar_Get ("teamplay", "0", CVAR_SERVERINFO, 
-		"Determines teamplay rules. 0 off, 1 You cannot hurt yourself nor your teammates, 
-		2 You can hurt yourself, your teammates, and you will lose one frag for killing a teammate
-		3 You can hurt yourself but you cannot hurt your teammates");
+		"Determines teamplay rules. 0 off, 1 You cannot hurt yourself nor your teammates, "
+		"2 You can hurt yourself, your teammates, and you will lose one frag for killing a teammate"
+		"3 You can hurt yourself but you cannot hurt your teammates");
 	samelevel = Cvar_Get ("samelevel", "0", CVAR_SERVERINFO, 
-		"Determines the rules for level changing and exiting. 0 Allows advancing to the next level,
-		1 The same level will be played until someone exits,
-		2 The same level will be played and the exit will kill anybody that tries to exit,
-		3 The same level will be played and the exit will kill anybody that tries to exit, except on the Start map.");
+		"Determines the rules for level changing and exiting. 0 Allows advancing to the next level,"
+		"1 The same level will be played until someone exits,"
+		"2 The same level will be played and the exit will kill anybody that tries to exit,"
+		"3 The same level will be played and the exit will kill anybody that tries to exit, except on the Start map.");
 	maxclients = Cvar_Get ("maxclients", "8", CVAR_SERVERINFO, 
 		"Sets how many clients can connect to your server, this includes spectators and players");
 	maxspectators = Cvar_Get ("maxspectators", "8", CVAR_SERVERINFO, 
-		"Sets how many spectators can connect to your server. The maxclients value takes precidence over this value so this
-		 value should always be equal-to or less-then the maxclients value");
+		"Sets how many spectators can connect to your server. The maxclients value takes precidence over this value so this"
+		" value should always be equal-to or less-then the maxclients value");
 	hostname = Cvar_Get ("hostname", "unnamed", CVAR_SERVERINFO, "Report or sets the server name");
 	deathmatch = Cvar_Get ("deathmatch", "1", CVAR_SERVERINFO, 
-		"Sets the rules for weapon and item respawning. 
-		1 Does not leave weapons on the map. You can pickup weapons and items and they will respawn,
-		2 Leaves weapons on the map. You can only pick up a weapon once. Picked up items will not respawn,
-		3 Leaves weapons on the map. You can only pick up a weapon once. Picked up items will respawn.");
+		"Sets the rules for weapon and item respawning. "
+		"1 Does not leave weapons on the map. You can pickup weapons and items and they will respawn,"
+		"2 Leaves weapons on the map. You can only pick up a weapon once. Picked up items will not respawn,"
+		"3 Leaves weapons on the map. You can only pick up a weapon once. Picked up items will respawn.");
 	spawn = Cvar_Get ("spawn", "0", CVAR_SERVERINFO, "Spawn the player entity");
 	watervis = Cvar_Get ("watervis", "0", CVAR_SERVERINFO, "Toggle the use of r_watervis by OpenGL clients");
 
@@ -1578,9 +1578,9 @@ SV_InitLocal (void)
 				  "Time/date format to use");
 
 	filterban = Cvar_Get ("filterban", "1", CVAR_NONE, 
-		"Determines the rules for the IP list 
-		0 Only IP addresses on the Ban list will be allowed onto the server, 
-		1 Only IP addresses NOT on the Ban list will be allowed onto the server");
+		"Determines the rules for the IP list "
+		"0 Only IP addresses on the Ban list will be allowed onto the server, "
+		"1 Only IP addresses NOT on the Ban list will be allowed onto the server");
 
 	allow_download = Cvar_Get ("allow_download", "1", CVAR_NONE, "Toggle if clients can download game data from the server");
 	allow_download_skins =

@@ -214,8 +214,8 @@ R_Init_Cvars (void)
 	r_drawentities = Cvar_Get ("r_drawentities", "1", CVAR_NONE, "Set to 0 to disable drawing entities");
 	r_drawviewmodel = Cvar_Get ("r_drawviewmodel", "1", CVAR_ARCHIVE, "Set to 0 to disable drawing your weapon");
 	r_shadows = Cvar_Get ("r_shadows", "0", CVAR_NONE, "Set to 1 to enable shadows for entities");
-	r_wateralpha = Cvar_Get ("r_wateralpha", "1", CVAR_NONE, "Determine opacity of liquids. 1 is solid,
-		.75, .50, and .25 are partially transparent, and 0 is transparent.");
+	r_wateralpha = Cvar_Get ("r_wateralpha", "1", CVAR_NONE, "Determine opacity of liquids. 1 is solid,"
+		".75, .50, and .25 are partially transparent, and 0 is transparent.");
 	/* FIXME what does r_waterripple use for units? */
 	r_waterripple = Cvar_Get ("r_waterripple", "0", CVAR_NONE, "Set to make liquids ripple, a good setting is 5");
 	r_dynamic = Cvar_Get ("r_dynamic", "1", CVAR_NONE, "Set to 0 to disable all dynamic lighting - unless gl_flashblend is set to 1");
