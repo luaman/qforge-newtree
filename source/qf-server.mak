@@ -115,6 +115,7 @@ EXT2=.obj
 # Dependency List
 #
 DEPEND = \
+   $(OBJS)\ver_check.obj\
    $(ZLIB)\zlib.lib\
    $(OBJS)\model.obj\
    $(OBJS)\model_brush.obj\
@@ -167,6 +168,7 @@ $(EXE)\qf-server.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0x32.obj+
+$(OBJS)\ver_check.obj+
 $(ZLIB)\zlib.lib+
 $(OBJS)\model.obj+
 $(OBJS)\model_brush.obj+
@@ -218,6 +220,11 @@ $<,$*
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
 #$(CROOT)\LIB\cw32mt.lib
+
+|
+$(OBJS)\ver_check.obj :  $(QFROOT)\source\ver_check.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\ver_check.c
 
 |
 $(OBJS)\model.obj :  $(QFROOT)\source\model.c
