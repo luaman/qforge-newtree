@@ -1,5 +1,7 @@
 /*
 Copyright (C) 1996-1997 Id Software, Inc.
+Copyright (C) 1999,2000  contributors of the QuakeForge project
+Please see the file "AUTHORS" for a list of contributors
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -135,7 +137,6 @@ typedef struct msurface_s
 	int			firstedge;	// look up in model->surfedges[], negative numbers
 	int			numedges;	// are backwards edges
 	
-// surface generation data
 	struct surfcache_s	*cachespots[MIPLEVELS];
 
 	short		texturemins[2];
@@ -191,7 +192,7 @@ typedef struct mleaf_s
 
 // leaf specific
 	byte		*compressed_vis;
-	struct efrag_s	*efrags;
+	efrag_t		*efrags;
 
 	msurface_t	**firstmarksurface;
 	int			nummarksurfaces;
@@ -225,8 +226,8 @@ typedef struct mspriteframe_s
 	int		width;
 	int		height;
 	float	up, down, left, right;
-	int		gl_texturenum;
 	byte	pixels[4];
+	int		gl_texturenum;
 } mspriteframe_t;
 
 typedef struct
@@ -265,10 +266,10 @@ Alias models are position independent, so the cache manager can move them.
 
 typedef struct
 {
+	aliasframetype_t	type;
 	int					firstpose;
 	int					numposes;
 	float				interval;
-	aliasframetype_t	type;
 	trivertx_t			bboxmin;
 	trivertx_t			bboxmax;
 	int					frame;
@@ -278,7 +279,6 @@ typedef struct
 typedef struct
 {
 	aliasskintype_t		type;
-	void				*pcachespot;
 	int					skin;
 } maliasskindesc_t;
 
@@ -328,16 +328,17 @@ typedef struct {
 	int			flags;
 	float		size;
 
-	int					numposes;
-	int					poseverts;
-	int					posedata;	// numposes*poseverts trivert_t
-	int					commands;	// gl command list with embedded s/t
-	int					gl_texturenum[MAX_SKINS][4];
-	int					model;
-	int					stverts;
-	int					skindesc;
-	int					triangles;
-	maliasframedesc_t	frames[1];	// variable sized
+	int			numposes;
+	int			poseverts;
+	int			posedata;	// numposes*poseverts trivert_t
+	int			commands;	// gl command list with embedded s/t
+	int			gl_texturenum[MAX_SKINS][4];
+	int			model;
+	int			stverts;
+	int			skindesc;
+	int			triangles;
+	int			texels[MAX_SKINS];  // only for player skins
+	maliasframedesc_t	frames[1];
 } aliashdr_t;
 
 #define	MAXALIASVERTS	1024
@@ -383,7 +384,7 @@ typedef struct model_s
 	float		radius;
 
 //
-// solid volume for clipping (sent from server)
+// solid volume for clipping 
 //
 	qboolean	clipbox;
 	vec3_t		clipmins, clipmaxs;
@@ -435,8 +436,8 @@ typedef struct model_s
 	byte		*lightdata;
 	char		*entities;
 
-	unsigned	checksum;		// for world models only
-	unsigned	checksum2;		// for world models only
+	unsigned	checksum;
+	unsigned	checksum2;
 
 //
 // additional model data

@@ -45,13 +45,13 @@ COM_sources=\
   cvar.c \
   crc.c \
   common.c \
-  cmd.c \
-  model.c
+  cmd.c 
 
 COM_dependencies = $(patsubst %,%.d,$(basename $(COM_sources)))
 COM_objects = $(patsubst %.d,%.o,$(COM_dependencies))
 
 SV_sources=\
+  model.c \
   pr_cmds.c \
   pr_edict.c \
   pr_exec.c \
@@ -90,6 +90,7 @@ CL_SW_sources=\
   d_vars.c \
   d_zpoint.c \
   draw.c \
+  model.c \
   r_aclip.c \
   r_alias.c \
   r_bsp.c \
