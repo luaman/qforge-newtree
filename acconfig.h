@@ -1,8 +1,8 @@
 /*
 	Compiler/Machine-Specific Configuration
 */
-#ifndef _CONFIG_H
-#define _CONFIG_H
+#ifndef __config_h_
+#define __config_h_
 @TOP@
 /* "Proper" package name */
 #undef PROGRAM
@@ -49,17 +49,11 @@
 /* Define this if you have GLX */
 #undef HAVE_GLX
 
-/* Define this if you have 3dfx */
-#undef HAVE_TDFXGL
+/* Define this if you have Glide */
+#undef HAVE_GLIDE
 
 /* Define this if you have GL_COLOR_INDEX8_EXT in GL/gl.h */
 #undef HAVE_GL_COLOR_INDEX8_EXT
-
-/* Define this if you have PFNGLCOLORTABLEEXTPROC in GL/glext.h */
-#undef HAVE_PFNGLCOLORTABLEEXTPROC
-
-/* Define this if you are using a version of Mesa with X mode change support */
-#undef HAVE_XMESA
 
 /* Define this if you want IPv6 support */
 #undef HAVE_IPV6
@@ -104,4 +98,4 @@
 #undef HAVE_FNMATCH_PROTO
 
 @BOTTOM@
-#endif // _CONFIG_H
+#endif // __config_h_
