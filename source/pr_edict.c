@@ -1007,32 +1007,30 @@ void PR_LoadProgs (void)
 	int		i;
         char    num[32];
 	dstatement_t *st;
-        dfunction_t *f;
+	dfunction_t *f;
 
 // flush the non-C variable lookup cache
 	for (i=0 ; i<GEFV_CACHESIZE ; i++)
 		gefvCache[i].field[0] = 0;
 
-        progs = (dprograms_t *)COM_LoadHunkFile ("qwprogs.dat");
-        if (!progs) {
-		progs = (dprograms_t *)COM_LoadHunkFile ("progs.dat");
-		SV_Error ("PR_LoadProgs: couldn't load progs.dat");
-        }
+	progs = (dprograms_t *)COM_LoadHunkFile ("qwprogs.dat");
+	if (!progs) progs = (dprograms_t *)COM_LoadHunkFile ("progs.dat");
+	if (!progs) SV_Error ("PR_LoadProgs: couldn't load progs.dat");
 
 	Con_DPrintf ("Programs occupy %iK.\n", com_filesize/1024);
 
 // add prog crc to the serverinfo
-        snprintf (num, sizeof(num), "%i", CRC_Block((byte *)progs, com_filesize));
+	snprintf (num, sizeof(num), "%i", CRC_Block((byte *)progs, com_filesize));
 	Info_SetValueForStarKey (svs.info, "*progs", num, MAX_SERVERINFO_STRING);
 
 // byte swap the header
 	for (i=0 ; i<sizeof(*progs)/4 ; i++)
-		((int *)progs)[i] = LittleLong ( ((int *)progs)[i] );		
+		((int *)progs)[i] = LittleLong ( ((int *)progs)[i] );
 
 	if (progs->version != PROG_VERSION)
-                SV_Error ("progs.dat has wrong version number (%i should be %i)", progs->version, PROG_VERSION);
+		SV_Error ("progs.dat has wrong version number (%i should be %i)", progs->version, PROG_VERSION);
 	if (progs->crc != PROGHEADER_CRC)
-                SV_Error ("You must have the qwprogs.dat from QuakeWorld installed");
+		SV_Error ("You must have the qwprogs.dat from QuakeWorld installed");
 
 	pr_functions = (dfunction_t *)((byte *)progs + progs->ofs_functions);
 	pr_strings = (char *)progs + progs->ofs_strings;
@@ -1040,7 +1038,7 @@ void PR_LoadProgs (void)
 	pr_fielddefs = (ddef_t *)((byte *)progs + progs->ofs_fielddefs);
 	pr_statements = (dstatement_t *)((byte *)progs + progs->ofs_statements);
 
-        num_prstr = 0;
+	num_prstr = 0;
 
 	pr_global_struct = (globalvars_t *)((byte *)progs + progs->ofs_globals);
 	pr_globals = (float *)pr_global_struct;
