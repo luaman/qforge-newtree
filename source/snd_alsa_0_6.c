@@ -322,10 +322,14 @@ SNDDMA_Submit (void)
 	state = snd_pcm_state (pcm_handle);
 
 	switch (state) {
+		case SND_PCM_STATE_XRUN:
+			//snd_pcm_reset (pcm_handle);
+			snd_pcm_prepare (pcm_handle);
+			//break;
 		case SND_PCM_STATE_PREPARED:
 			snd_pcm_mmap_forward (pcm_handle, count);
 			snd_pcm_start (pcm_handle);
-			break;
+			//break;
 		case SND_PCM_STATE_RUNNING:
 			hw_ptr = get_hw_ptr ();
 			missed = hw_ptr - shm->samplepos / shm->channels;
@@ -347,7 +351,7 @@ SNDDMA_Submit (void)
 			}
 			break;
 		default:
-			printf("umm %d\n", state);
+			printf("snd_alsa: nexpected state: %d\n", state);
 			break;
 	}
 }
