@@ -64,10 +64,14 @@ GDT_InitDotParticleTexture (void)
 		dx2 = x - 8;
 		dx2 *= dx2;
 		for (y = 0; y < 16; y++) {
-			data[y][x][0] = 255;
 			dy = y - 8;
 			d = 255 - 4 * (dx2 + dy * dy);
-			if (d<0) d = 0;
+			if (d<=0) {
+				d = 0;
+				data[y][x][0] = 0;
+			} else
+				data[y][x][0] = 255;
+
 			data[y][x][1] = (byte) d;
 		}
 	}
@@ -93,20 +97,24 @@ GDT_InitSmokeParticleTexture (void)
 			dy2 = y - 16;
 			dy2 *= dy2;
 			for (x = 0; x < 32; x++) {
-				data[y][x][0] = (noise1[y][x] >> 1) + 128;
 				dx = x - 16;
 				d = noise2[y][x] * 4 - 512;
 				if (d > 0) {
 					if (d > 255)
 						d = 255;
 					d = (d * (255 - (int) (dx * dx + dy2))) >> 8;
-					if (d < 0)
+					if (d <= 0) {
 						d = 0;
+						data[y][x][0] = 0;
+					} else
+						data[y][x][0] = (noise1[y][x] >> 1) + 128;
 //					if (d > 255)
 //						d = 255;
 					data[y][x][1] = (byte) d;
-				} else
+				} else {
+					data[y][x][0] = 0; //DESPAIR
 					data[y][x][1] = 0;
+				}
 			}
 		}
 		part_tex_smoke[i] = texture_extension_number++;

@@ -32,35 +32,40 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
-#include <ctype.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
-#include <fcntl.h>
 
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
+
+#include <ctype.h>
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
+
+#include <fcntl.h>
 #include <dirent.h>
+
 #ifdef HAVE_FNMATCH_H
-#define model_t sunmodel_t
-#include <fnmatch.h>
-#undef model_t
+# define model_t sunmodel_t
+# include <fnmatch.h>
+# undef model_t
 #endif
 
 #ifdef WIN32
-#include <io.h>
+# include <io.h>
 #endif
 
 #ifdef _MSC_VER
-#define _POSIX_
+# define _POSIX_
 #endif
+
 #include <limits.h>
 
 #include "cmd.h"
@@ -79,7 +84,7 @@
 #include "va.h"
 
 #ifndef HAVE_FNMATCH_PROTO
-int         fnmatch (const char *__pattern, const char *__string, int __flags);
+ int        fnmatch (const char *__pattern, const char *__string, int __flags);
 #endif
 
 

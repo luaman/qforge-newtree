@@ -504,7 +504,6 @@ R_RocketTrail (int type, entity_t *ent)
 					porg[j] = ent->old_origin[j] + ((rand () % 3) - 2);
 				}
 				ptype = pt_grav;
-				palpha = 255;
 				break;
 			case 6:					// voor trail
 				len -= 3;

@@ -30,11 +30,12 @@
 # include "config.h"
 #endif
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
 #include <stdio.h>
 
 #include "glquake.h"
