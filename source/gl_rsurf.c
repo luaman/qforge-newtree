@@ -637,7 +637,13 @@ void GL_WaterSurface(msurface_t *s)
 	if (r_wateralpha->value < 1.0)
 	{
 		glDepthMask(GL_FALSE);
+		if (lighthalf) {
+			glColor4f(0.5,0.5,0.5,r_wateralpha->value);
+		} else {
+			glColor4f(1,1,1,r_wateralpha->value);
+		}
 		EmitWaterPolys (s);
+		glColor3ubv(lighthalf_v);
 		glDepthMask(GL_TRUE);
 	}
 	else
@@ -661,8 +667,14 @@ void R_DrawWaterSurfaces (void)
 
 	glLoadMatrixf (r_world_matrix);
 
-	if (r_wateralpha->value < 1.0)
+	if (r_wateralpha->value < 1.0) {
 		glDepthMask(GL_FALSE);
+		if (lighthalf) {
+			glColor4f(0.5,0.5,0.5,r_wateralpha->value);
+		} else {
+			glColor4f(1,1,1,r_wateralpha->value);
+		}
+	}
 
 	i = -1;
 	for (s = waterchain;s;s = s->texturechain)
@@ -677,8 +689,10 @@ void R_DrawWaterSurfaces (void)
 	
 	waterchain = NULL;
 
-	if (r_wateralpha->value < 1.0)
+	if (r_wateralpha->value < 1.0) {
 		glDepthMask(GL_TRUE);
+		glColor3ubv(lighthalf_v);
+	}
 }
 
 
