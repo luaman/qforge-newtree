@@ -75,7 +75,7 @@ cvar_t		*gl_colorlights;
 #define	BLOCK_WIDTH		128
 #define	BLOCK_HEIGHT	128
 
-#define	MAX_LIGHTMAPS	64
+#define	MAX_LIGHTMAPS	256
 int			active_lightmaps;
 
 typedef struct glRect_s {
