@@ -84,7 +84,6 @@ SNDDMA_Init(void)
 	snd_inited = 0;
 
 	// open /dev/dsp, confirm capability to mmap, and get size of dma buffer
-
 	audio_fd = open ("/dev/dsp", O_RDWR);
 	if (audio_fd < 0) { // Failed open, retry up to 3 times if it's busy
 		while ((audio_fd < 0) && retries-- &&
@@ -99,78 +98,82 @@ SNDDMA_Init(void)
 		}
 	}
 
-	rc = ioctl(audio_fd, SNDCTL_DSP_RESET, 0);
-	if (rc < 0)
-	{
-		perror("/dev/dsp");
-		Con_Printf("Could not reset /dev/dsp\n");
-		close(audio_fd);
+	if ((rc = ioctl (audio_fd, SNDCTL_DSP_RESET, 0)) < 0) {
+		perror ("/dev/dsp");
+		Con_Printf ("Could not reset /dev/dsp\n");
+		close (audio_fd);
 		return 0;
 	}
 
-	if (ioctl(audio_fd, SNDCTL_DSP_GETCAPS, &caps)==-1)
-	{
-		perror("/dev/dsp");
-		Con_Printf("Sound driver too old\n");
-		close(audio_fd);
+	if (ioctl (audio_fd, SNDCTL_DSP_GETCAPS, &caps) == -1) {
+		perror ("/dev/dsp");
+		Con_Printf ("Sound driver too old\n");
+		close (audio_fd);
 		return 0;
 	}
 
-	if (!(caps & DSP_CAP_TRIGGER) || !(caps & DSP_CAP_MMAP))
-	{
-		Con_Printf("Sorry but your soundcard can't do this\n");
-		close(audio_fd);
+	if (!(caps & DSP_CAP_TRIGGER) || !(caps & DSP_CAP_MMAP)) {
+		Con_Printf ("Error: Sound device can't do memory-mapped I/O.\n");
+		close (audio_fd);
 		return 0;
 	}
 
-	if (ioctl(audio_fd, SNDCTL_DSP_GETOSPACE, &info)==-1)
-	{   
-		perror("GETOSPACE");
-		Con_Printf("Um, can't do GETOSPACE?\n");
-		close(audio_fd);
+	if (ioctl (audio_fd, SNDCTL_DSP_GETOSPACE, &info) == -1) {   
+		perror ("GETOSPACE");
+		Con_Printf ("Um, can't do GETOSPACE?\n");
+		close (audio_fd);
 		return 0;
 	}
 	
 	shm = &sn;
 	shm->splitbuffer = 0;
 
-// set sample bits & speed
-
-	s = getenv("QUAKE_SOUND_SAMPLEBITS");
-	if (s) shm->samplebits = atoi(s);
-	else if ((i = COM_CheckParm("-sndbits")) != 0)
-		shm->samplebits = atoi(com_argv[i+1]);
-	if (shm->samplebits != 16 && shm->samplebits != 8)
-	{
-		ioctl(audio_fd, SNDCTL_DSP_GETFMTS, &fmt);
-		if (fmt & AFMT_S16_LE) shm->samplebits = 16;
-		else if (fmt & AFMT_U8) shm->samplebits = 8;
+	// set sample bits & speed
+	if ((i = COM_CheckParm ("-sndbits"))) {
+		shm->samplebits = atoi (com_argv[i+1]);
+	} else {
+		if ((s = getenv ("QF_SND_BITS"))) {
+			shm->samplebits = atoi (s);
+		}
 	}
 
-	s = getenv("QUAKE_SOUND_SPEED");
-	if (s) shm->speed = atoi(s);
-	else if ((i = COM_CheckParm("-sndspeed")) != 0)
-		shm->speed = atoi(com_argv[i+1]);
-	else
-	{
-		for (i=0 ; i<sizeof(tryrates)/4 ; i++)
-			if (!ioctl(audio_fd, SNDCTL_DSP_SPEED, &tryrates[i])) break;
+	if (shm->samplebits != 16 && shm->samplebits != 8) {
+		ioctl (audio_fd, SNDCTL_DSP_GETFMTS, &fmt);
+
+		if (fmt & AFMT_S16_LE) {	// little-endian 16-bit signed
+			shm->samplebits = 16;
+		} else {
+			if (fmt & AFMT_U8) {	// unsigned 8-bit ulaw
+				shm->samplebits = 8;
+			}
+		}
+	}
+
+	if ((i = COM_CheckParm ("-sndspeed"))) {
+		shm->speed = atoi (com_argv[i+1]);
+	} else if ((s = getenv ("QF_SND_SPEED"))) {
+			shm->speed = atoi (s);
+	} else {
+		for (i = 0; i < (sizeof (tryrates) / 4); i++)
+			if (!ioctl (audio_fd, SNDCTL_DSP_SPEED, &tryrates[i]))
+				break;
 		shm->speed = tryrates[i];
 	}
 
-	s = getenv("QUAKE_SOUND_CHANNELS");
-	if (s) shm->channels = atoi(s);
-	else if ((i = COM_CheckParm("-sndmono")) != 0)
+	if ((i = COM_CheckParm ("-sndmono"))) {
 		shm->channels = 1;
-	else if ((i = COM_CheckParm("-sndstereo")) != 0)
+	} else if ((i = COM_CheckParm ("-sndstereo"))) {
 		shm->channels = 2;
-	else shm->channels = 2;
+	} else if ((s = getenv ("QF_SND_CHANNELS"))) {
+		shm->channels = atoi (s);
+	} else {
+		shm->channels = 2;
+	}
 
 	shm->samples = info.fragstotal * info.fragsize / (shm->samplebits/8);
 	shm->submission_chunk = 1;
 
-// memory map the dma buffer
-
+	// memory map the dma buffer
 	shm->buffer = (unsigned char *) mmap(NULL, info.fragstotal
 		* info.fragsize, PROT_READ|PROT_WRITE, MAP_FILE|MAP_SHARED, audio_fd, 0);
 
