@@ -878,6 +878,7 @@ Redirect all printfs
 void SVC_RemoteCommand (void)
 {
 	int		i;
+	int		len = 0;
 	char	remaining[1024];
 
 	if (CheckForFlood(FLOOD_RCON)) return;
@@ -892,18 +893,18 @@ void SVC_RemoteCommand (void)
 
 	} else {
 
-		Con_Printf ("Rcon from %s:\n%s\n"
-			, NET_AdrToString (net_from), net_message.data+4);
-
-		SV_BeginRedirect (RD_PACKET);
-
 		remaining[0] = 0;
 
-		for (i=2 ; i<Cmd_Argc() ; i++)
-		{
-			strcat (remaining, Cmd_Argv(i) );
-			strcat (remaining, " ");
+		for (i=2 ; i<Cmd_Argc() ; i++) {
+			strncat (remaining, Cmd_Argv(i), sizeof (remaining) - len - 1);
+			strncat (remaining, " ", sizeof (remaining) - len - 2);
+			len += strlen (Cmd_Argv (i)) + 1;	// +1 for " "
 		}
+
+		Con_Printf ("Rcon from %s:\nrcon (hidden) %s\n"
+			, NET_AdrToString (net_from), remaining);
+
+		SV_BeginRedirect (RD_PACKET);
 
 		Cmd_ExecuteString (remaining);
 
