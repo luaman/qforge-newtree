@@ -241,7 +241,7 @@ x11_set_vidmode(int width, int height)
 {
 	int i;
 
-	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
+	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"Toggles fullscreen game mode");
 
 	XGetScreenSaver (x_disp, &xss_timeout, &xss_interval, &xss_blanking,
 					&xss_exposures);

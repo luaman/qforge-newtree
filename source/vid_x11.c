@@ -97,8 +97,6 @@ int	VID_options_items = 1;
 
 static byte current_palette[768];
 
-cvar_t	*vid_fullscreen;
-
 typedef unsigned short PIXEL16;
 typedef unsigned long PIXEL24;
 static PIXEL16 st2d_8to16table[256];
@@ -456,8 +454,6 @@ void VID_Init (unsigned char *palette)
 	int template_mask;
 
 	//plugin_load("in_x11.so");
-	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",CVAR_NONE,
-		"Toggles fullscreen game mode");
 //	Cmd_AddCommand("gamma", VID_Gamma_f);
 	for (i=0; i < 256; i++)	vid_gamma[i] = i;
 
