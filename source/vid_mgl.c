@@ -263,19 +263,19 @@ qboolean VID_CheckAdequateMem (int width, int height)
 
 
 /*
-================
-VID_AllocBuffers
-================
+
+	VID_AllocBuffers
+
 */
 qboolean
 VID_AllocBuffers (int width, int height)
 {
-        int             zbuffersize, cachesize;
+	int		zbuffersize, cachesize;
 
 	// Calculate the sizes we want first
 
-        zbuffersize = width * height * sizeof (*d_pzbuffer);
-        cachesize = D_SurfaceCacheForRes(width, height);
+	zbuffersize = width * height * sizeof (*d_pzbuffer);
+	cachesize = D_SurfaceCacheForRes(width, height);
 
 	// Free the old z-buffer
 	if (d_pzbuffer) {
@@ -306,7 +306,7 @@ VID_AllocBuffers (int width, int height)
 		d_pzbuffer = NULL;
 		Sys_Error ("Not enough memory for video mode\n");
 	}
-        vid_surfcachesize = cachesize;
+	vid_surfcachesize = cachesize;
 
 	return true;
 }
