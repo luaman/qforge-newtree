@@ -34,7 +34,6 @@
 
 #ifndef __GNUC__
 # if defined (__BORLANDC__) || defined (_MSC_VER)
-#  define __attribute__(x)
 #  if (defined(__BORLANDC__) && (__BORLANDC__ < 0x550))
 #   pragma option -a1
 #  else
