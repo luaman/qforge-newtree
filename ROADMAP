@@ -13,7 +13,7 @@ M  Scitech MGL used in win32 is screwed - dump it and use SDL
 o  It's possible to stick on some obtuse-angled corners qwsv 2.3x didn't
 X  fullbrights on models (yeah, we have to..)
 ?  Draw_Pic and friends need a cleanup in GL at least
-?  software PCXs don't work in X11 at least if you're using 24/32 color
+?  software PCXs don't work in X11 at least if you're using 16/24/32 color
 ?  console commands to see a user, ignore talk from them, etc
 ?  more direct inter-team comms (ie, talk to offense or defense directly)
 ?  improved crosshairs (custom file, 32 bit for GL, etc)
@@ -23,5 +23,5 @@ X  fullbrights on models (yeah, we have to..)
 ?  better control over client console logging
 ?  ban reasons and expire times
 o  "proxy" cvars (cl_muzzleflash, v_bonusflash)
-o  teamplay messages ($location, $health; %L, %h?; cl_parsesay)
+X  teamplay messages ($location, $health; %L, %h?; cl_parsesay)
 o  triggers (f_respawn, f_death, f_took; cl_triggers)
