@@ -50,8 +50,7 @@
 #define MAX_PARTICLES			2048	// default max # of particles at one
 										// time
 #define ABSOLUTE_MIN_PARTICLES	512		// no fewer than this no matter
-										// what's
-										// on the command line
+										// what's on the command line
 
 typedef enum {
 	pt_static, pt_grav, pt_blob, pt_blob2,
