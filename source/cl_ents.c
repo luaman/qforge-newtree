@@ -257,16 +257,24 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 // Ender (QSG - Begin)
 	if (bits & U_ALPHA)
 		to->alpha = MSG_ReadByte();
+	else if (!to->alpha)
+		to->alpha = 1;
 	if (bits & U_SCALE)
 		to->scale = MSG_ReadByte();
+	else if (!to->scale)
+		to->scale = 16;
 	if (bits & U_EFFECTS2)
 		to->effects = (to->effects & 0xFF) | (MSG_ReadByte() << 8);
 	if (bits & U_GLOWSIZE)
 		to->glowsize = MSG_ReadByte();
 	if (bits & U_GLOWCOLOR)
 		to->glowcolor = MSG_ReadByte();
+	else if (!to->glowcolor)
+		to->glowcolor = 254;
 	if (bits & U_COLORMOD)
 		to->colormod = MSG_ReadByte();
+	else if (!to->colormod)
+		to->colormod = 255;
 	if (bits & U_FRAME2)
 		to->frame = (to->frame & 0xFF) | (MSG_ReadByte() << 8);
 // Ender (QSG - End)
@@ -275,6 +283,19 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 	{
 		// FIXME
 	}
+	/*
+	if ((!to->alpha) || (!to->colormod))
+		Con_Printf("fa: %d, fc: %d, ta: %d, tc: %d\n", 
+				from->alpha, from->colormod, to->alpha, to->colormod);
+				*/
+		/*
+	if ((!ent->alpha) || (!ent->colormod[0]) || (!ent->colormod[1]) || 
+			(!ent->colormod[2])) {
+		Con_Printf("ea: %f, ec0: %f, ec1: %f ec2: %f, sa: %d, sc: %d\n",
+				ent->alpha, ent->colormod[0], ent->colormod[1], 
+				ent->colormod[2], s1->alpha, s1->colormod);
+	}
+	*/
 }
 
 
