@@ -33,14 +33,14 @@
 #include <stdlib.h>
 #include <X11/Xlib.h>
 
-#if defined(HAVE_DGA)
+#ifdef HAVE_DGA
 #include <X11/extensions/xf86dga.h>
 #endif
-#if defined(HAVE_VIDMODE)
+#ifdef HAVE_VIDMODE
 #include <X11/extensions/xf86vmode.h>
 #endif
 
-#include <dga_check.h>
+#include "dga_check.h"
 
 
 /*
@@ -48,31 +48,34 @@
 
   Check for the presence of the XFree86-DGA X server extension
 */
-int
-VID_CheckDGA(Display *dpy, int *maj_ver, int *min_ver, int *hasvideo)
+qboolean
+VID_CheckDGA (Display *dpy, int *maj_ver, int *min_ver, int *hasvideo)
 {
-#if defined(HAVE_DGA)
+#ifdef HAVE_DGA
 	int event_base, error_base, dgafeat, dummy;
 
-	if (! XF86DGAQueryExtension(dpy, &event_base, &error_base)) {
-		return 0;
+	if (!XF86DGAQueryExtension (dpy, &event_base, &error_base)) {
+		return false;
 	}
 
-	if (maj_ver == NULL) maj_ver = &dummy;
-	if (min_ver == NULL) min_ver = &dummy;
+	if (!maj_ver) maj_ver = &dummy;
+	if (!min_ver) min_ver = &dummy;
 
-	if (! XF86DGAQueryVersion(dpy, maj_ver, min_ver)) {
-		return 0;
+	if (!XF86DGAQueryVersion (dpy, maj_ver, min_ver)) {
+		return false;
 	}
-	if (! XF86DGAQueryDirectVideo(dpy, DefaultScreen(dpy), &dgafeat)) {
+
+	if (!hasvideo) hasvideo = &dummy;
+
+	if (!XF86DGAQueryDirectVideo (dpy, DefaultScreen (dpy), &dgafeat)) {
 		*hasvideo = 0;
 	} else {
 		*hasvideo = (dgafeat & XF86DGADirectPresent);
 	}
 
-	return 1;
+	return true;
 #else
-	return 0;
+	return false;
 #endif	// HAVE_DGA
 }
 
@@ -82,26 +85,26 @@ VID_CheckDGA(Display *dpy, int *maj_ver, int *min_ver, int *hasvideo)
 
   Check for the presence of the XFree86-VidMode X server extension
 */
-int
-VID_CheckVMode(Display *dpy, int *maj_ver, int *min_ver)
+qboolean
+VID_CheckVMode (Display *dpy, int *maj_ver, int *min_ver)
 {
 #if defined(HAVE_VIDMODE)
 	int event_base, error_base;
 	int dummy;
 
 	if (! XF86VidModeQueryExtension(dpy, &event_base, &error_base)) {
-		return 0;
+		return false;
 	}
 
 	if (maj_ver == NULL) maj_ver = &dummy;
 	if (min_ver == NULL) min_ver = &dummy;
 
 	if (! XF86VidModeQueryVersion(dpy, maj_ver, min_ver)) {
-		return 0;
+		return false;
 	}
 
-	return 1;
+	return true;
 #else
-	return 0;
+	return false;
 #endif	// HAVE_VIDMODE
 }

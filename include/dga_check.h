@@ -3,9 +3,8 @@
 
 	Definitions for XFree86 DGA and VidMode support
 
-	Copyright (C) 2000 Marcus Sundberg [mackan@stacken.kth.se]
-	Copyright (C) 2000  contributors of the QuakeForge project
-	Please see the file "AUTHORS" for a list of contributors
+	Copyright (C) 2000	Jeff Teunissen <deek@dusknet.dhs.org>
+	Copyright (C) 2000	Marcus Sundberg [mackan@stacken.kth.se]
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -28,21 +27,17 @@
 	$Id$
 */
 
-#ifndef DGA_CHECK_H
-#define DGA_CHECK_H
+#ifndef __dga_check_h_
+#define __dga_check_h_
 
 #include <X11/Xlib.h>
-
-#include "cvar.h"
-
-extern cvar_t	*vid_dga_mouseaccel;
 
 /*
   VID_CheckDGA
 
   Check for the presence of the XFree86-DGA support in the X server
 */
-int VID_CheckDGA(Display *dpy, int *maj_ver, int *min_ver, int *hasvideo);
+qboolean VID_CheckDGA (Display *, int *, int *, int *);
 
 
 /*
@@ -50,6 +45,6 @@ int VID_CheckDGA(Display *dpy, int *maj_ver, int *min_ver, int *hasvideo);
 
   Check for the presence of the XFree86-VMode X server extension
 */
-int VID_CheckVMode(Display *dpy, int *maj_ver, int *min_ver);
+qboolean VID_CheckVMode (Display *, int *, int *);
 
-#endif /* DGA_CHECK_H */
+#endif	// __dga_check_h_
