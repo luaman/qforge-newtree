@@ -50,8 +50,14 @@ extern viddef_t vid;					// global video state
 unsigned short d_8to16table[256];
 
 int         modestate;					// fixme: just to avoid cross-comp.
+                                                        // errors - remove later
 
-										// errors - remove later
+#ifdef WIN32
+/* fixme: this is evil hack to get full DirectSound support with SDL */
+#include <windows.h>
+#include <SDL_syswm.h>
+HWND 		mainwindow;
+#endif
 
 // The original defaults
 #define    BASEWIDTH    320
@@ -166,6 +172,15 @@ VID_Init (unsigned char *palette)
 
 	// initialize the mouse
 	SDL_ShowCursor (0);
+
+#ifdef WIN32
+        // fixme: EVIL thing - but needed for win32 until
+        // SDL_sound works better - without this DirectSound fails.
+
+//        SDL_GetWMInfo(&info);
+//        mainwindow=info.window;
+        mainwindow=GetActiveWindow();
+#endif
 
 }
 

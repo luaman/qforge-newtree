@@ -218,7 +218,7 @@ Sys_Error (char *error, ...)
 	Host_Shutdown ();
 	exit (1);
 }
-
+/*
 void
 Sys_Printf (char *fmt, ...)
 {
@@ -229,7 +229,7 @@ Sys_Printf (char *fmt, ...)
 
 	va_end (argptr);
 }
-
+*/
 void
 Sys_Quit (void)
 {
@@ -306,4 +306,9 @@ SDL_main (int c, char **v)
 		oldtime = newtime;
 	}
 
+}
+
+/* fixme: evil stub for directsound crap */
+IN_Accumulate (void)
+{
 }

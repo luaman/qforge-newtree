@@ -52,6 +52,13 @@ static qboolean vid_initialized = false;
 
 cvar_t     *vid_fullscreen;
 
+#ifdef WIN32
+/* fixme: this is evil hack to get full DirectSound support with SDL */
+#include <windows.h>
+#include <SDL_syswm.h>
+HWND 		mainwindow;
+#endif
+
 int         VID_options_items = 1;
 int         modestate;
 
@@ -114,6 +121,8 @@ VID_Init (unsigned char *palette)
 {
 	Uint32      flags = SDL_OPENGL;
 	int         i;
+
+//        SDL_SysWMinfo info;
 
 	VID_GetWindowSize (640, 480);
 
@@ -195,6 +204,15 @@ VID_Init (unsigned char *palette)
 	Con_Printf ("Video mode %dx%d initialized.\n", scr_width, scr_height);
 
 	vid_initialized = true;
+
+#ifdef WIN32
+        // fixme: EVIL thing - but needed for win32 until
+        // SDL_sound works better - without this DirectSound fails.
+
+//        SDL_GetWMInfo(&info);
+//        mainwindow=info.window;
+        mainwindow=GetActiveWindow();
+#endif
 
 	vid.recalc_refdef = 1;				// force a surface cache flush
 }
