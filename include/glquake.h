@@ -33,7 +33,7 @@
 # include "config.h"
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 // disable data conversion warnings
 // FIXME: move that somewhere else -- yan
 #pragma warning(disable : 4244)     // MIPS
