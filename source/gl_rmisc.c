@@ -227,83 +227,35 @@ void R_Init (void)
 	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);
 	Cmd_AddCommand ("loadsky", R_LoadSky_f);
 
-/* 	Cvar_RegisterVariable (&r_norefresh);
- CVAR_FIXME */
 	r_norefresh = Cvar_Get("r_norefresh", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_lightmap);
- CVAR_FIXME */
 	r_lightmap = Cvar_Get("r_lightmap", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_fullbright);
- CVAR_FIXME */
 	r_fullbright = Cvar_Get("r_fullbright", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_drawentities);
- CVAR_FIXME */
 	r_drawentities = Cvar_Get("r_drawentities", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_drawviewmodel);
- CVAR_FIXME */
 	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_shadows);
- CVAR_FIXME */
 	r_shadows = Cvar_Get("r_shadows", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_mirroralpha);
- CVAR_FIXME */
 	r_mirroralpha = Cvar_Get("r_mirroralpha", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_wateralpha);
- CVAR_FIXME */
 	r_wateralpha = Cvar_Get("r_wateralpha", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_dynamic);
- CVAR_FIXME */
 	r_dynamic = Cvar_Get("r_dynamic", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_novis);
- CVAR_FIXME */
 	r_novis = Cvar_Get("r_novis", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_speeds);
- CVAR_FIXME */
 	r_speeds = Cvar_Get("r_speeds", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&r_netgraph);
- CVAR_FIXME */
 	r_netgraph = Cvar_Get("r_netgraph", "0", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&gl_clear);
- CVAR_FIXME */
 	gl_clear = Cvar_Get("gl_clear", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_texsort);
- CVAR_FIXME */
 	gl_texsort = Cvar_Get("gl_texsort", "1", CVAR_NONE, "None");
  
  	if (gl_mtexable)
 		gl_texsort->value = 0.0;
 
-/* 	Cvar_RegisterVariable (&gl_cull);
- CVAR_FIXME */
 	gl_cull = Cvar_Get("gl_cull", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_smoothmodels);
- CVAR_FIXME */
 	gl_smoothmodels = Cvar_Get("gl_smoothmodels", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_affinemodels);
- CVAR_FIXME */
 	gl_affinemodels = Cvar_Get("gl_affinemodels", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_polyblend);
- CVAR_FIXME */
 	gl_polyblend = Cvar_Get("gl_polyblend", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_flashblend);
- CVAR_FIXME */
 	gl_flashblend = Cvar_Get("gl_flashblend",  "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_playermip);
- CVAR_FIXME */
 	gl_playermip = Cvar_Get("gl_playermip", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_nocolors);
- CVAR_FIXME */
 	gl_nocolors = Cvar_Get("gl_nocolors", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_finish);
- CVAR_FIXME */
 	gl_finish = Cvar_Get("gl_finish", "0", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&gl_keeptjunctions);
- CVAR_FIXME */
 	gl_keeptjunctions = Cvar_Get("gl_keeptjunctions", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_reporttjunctions);
- CVAR_FIXME */
 	gl_reporttjunctions = Cvar_Get("gl_reporttjunctions", "0", CVAR_NONE, "None");
 	
 	r_skyname = Cvar_Get("r_skyname", "none", CVAR_NONE, 
@@ -313,10 +265,6 @@ void R_Init (void)
 	
 	R_InitParticles ();
 	R_InitParticleTexture ();
-
-#ifdef GLTEST
-	Test_Init ();
-#endif
 
 	netgraphtexture = texture_extension_number;
 	texture_extension_number++;
@@ -430,18 +378,12 @@ void R_TranslatePlayerSkin (int playernum)
 			false, false, true);
 #endif
 
-/* 		scaled_width = gl_max_size.value < 512 ? gl_max_size.value : 512;
- CVAR_FIXME */
-		scaled_width = gl_max_size->value < 512 ? gl_max_size->value : 512;
-/* 		scaled_height = gl_max_size->value < 256 ? gl_max_size.value : 256;
- CVAR_FIXME */
-		scaled_height = gl_max_size->value < 256 ? gl_max_size->value : 256;
+		// FIXME deek: This 512x256 limit sucks!
+ 		scaled_width = min(gl_max_size->value, 512);
+ 		scaled_height = min(gl_max_size->value, 256);
+
 		// allow users to crunch sizes down even more if they want
-/* 		scaled_width >>= (int)gl_playermip.value;
- CVAR_FIXME */
 		scaled_width >>= (int)gl_playermip->value;
-/* 		scaled_height >>= (int)gl_playermip.value;
- CVAR_FIXME */
 		scaled_height >>= (int)gl_playermip->value;
 
 		if (VID_Is8bit()) { // 8bit texture upload

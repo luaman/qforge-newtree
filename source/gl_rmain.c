@@ -27,35 +27,21 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "bothdefs.h"   // needed by: common.h, net.h, client.h
-
-#include "bspfile.h"    // needed by: glquake.h
-#include "vid.h"
-#include "sys.h"
-#include "zone.h"       // needed by: client.h, gl_model.h
-#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
-                        //  modelgen.h, glmodel.h
-#include "wad.h"
-#include "draw.h"
-#include "cvar.h"
-#include "net.h"        // needed by: client.h
-#include "protocol.h"   // needed by: client.h
-#include "sound.h"
-#include "cmd.h"
-#include "sbar.h"
-#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
-#include "client.h"     // need cls in this file
-#include "model.h"   // needed by: glquake.h
+#include "bothdefs.h"
+#include "commdef.h"
 #include "console.h"
 #include "glquake.h"
-
+#include "model.h"
+#include "render.h"
+#include "sys.h"
 
 entity_t	r_worldentity;
 
@@ -107,87 +93,35 @@ int		d_lightstylevalue[256];	// 8.8 fraction of base light value
 
 void R_MarkLeaves (void);
 
-/* cvar_t	r_norefresh = {"r_norefresh","0"};
- CVAR_FIXME */
 cvar_t	*r_norefresh;
-/* cvar_t	r_drawentities = {"r_drawentities","1"};
- CVAR_FIXME */
 cvar_t	*r_drawentities;
-/* cvar_t	r_drawviewmodel = {"r_drawviewmodel","1"};
- CVAR_FIXME */
 cvar_t	*r_drawviewmodel;
-/* cvar_t	r_speeds = {"r_speeds","0"};
- CVAR_FIXME */
 cvar_t	*r_speeds;
-/* cvar_t	r_fullbright = {"r_fullbright","0"};
- CVAR_FIXME */
 cvar_t	*r_fullbright;
-/* cvar_t	r_lightmap = {"r_lightmap","0"};
- CVAR_FIXME */
 cvar_t	*r_lightmap;
-/* cvar_t	r_shadows = {"r_shadows","0"};
- CVAR_FIXME */
 cvar_t	*r_shadows;
-/* cvar_t	r_mirroralpha = {"r_mirroralpha","1"};
- CVAR_FIXME */
 cvar_t	*r_mirroralpha;
-/* cvar_t	r_wateralpha = {"r_wateralpha","1"};
- CVAR_FIXME */
 cvar_t	*r_wateralpha;
-/* cvar_t	r_dynamic = {"r_dynamic","1"};
- CVAR_FIXME */
 cvar_t	*r_dynamic;
-/* cvar_t	r_novis = {"r_novis","0"};
- CVAR_FIXME */
 cvar_t	*r_novis;
-/* cvar_t	r_netgraph = {"r_netgraph","0"};
- CVAR_FIXME */
 cvar_t	*r_netgraph;
 
-/* cvar_t	gl_clear = {"gl_clear","0"};
- CVAR_FIXME */
 cvar_t	*gl_clear;
-/* cvar_t	gl_cull = {"gl_cull","1"};
- CVAR_FIXME */
 cvar_t	*gl_cull;
-/* cvar_t	gl_texsort = {"gl_texsort","1"};
- CVAR_FIXME */
 cvar_t	*gl_texsort;
-/* cvar_t	gl_smoothmodels = {"gl_smoothmodels","1"};
- CVAR_FIXME */
 cvar_t	*gl_smoothmodels;
-/* cvar_t	gl_affinemodels = {"gl_affinemodels","0"};
- CVAR_FIXME */
 cvar_t	*gl_affinemodels;
-/* cvar_t	gl_polyblend = {"gl_polyblend","1"};
- CVAR_FIXME */
 cvar_t	*gl_polyblend;
-/* cvar_t	gl_flashblend = {"gl_flashblend","1"};
- CVAR_FIXME */
 cvar_t	*gl_flashblend;
-/* cvar_t	gl_playermip = {"gl_playermip","0"};
- CVAR_FIXME */
 cvar_t	*gl_playermip;
-/* cvar_t	gl_nocolors = {"gl_nocolors","0"};
- CVAR_FIXME */
 cvar_t	*gl_nocolors;
-/* cvar_t	gl_keeptjunctions = {"gl_keeptjunctions","1"};
- CVAR_FIXME */
 cvar_t	*gl_keeptjunctions;
-/* cvar_t	gl_reporttjunctions = {"gl_reporttjunctions","0"};
- CVAR_FIXME */
 cvar_t	*gl_reporttjunctions;
-/* cvar_t	gl_finish = {"gl_finish","0"};
- CVAR_FIXME */
 cvar_t	*gl_finish;
 
 cvar_t	*r_skyname;
 
-/* extern	cvar_t	gl_ztrick;
- CVAR_FIXME */
 extern	cvar_t	*gl_ztrick;
-/* extern	cvar_t	scr_fov;
- CVAR_FIXME */
 extern	cvar_t	*scr_fov;
 /*
 =================
@@ -630,8 +564,6 @@ void R_DrawAliasModel (entity_t *e)
 
 	// we can't dynamically colormap textures, so they are cached
 	// seperately for the players.  Heads are just uncolored.
-/* 	if (currententity->scoreboard && !gl_nocolors.value)
- CVAR_FIXME */
 	if (currententity->scoreboard && !gl_nocolors->value)
 	{
 		i = currententity->scoreboard - cl.players;
@@ -643,14 +575,10 @@ void R_DrawAliasModel (entity_t *e)
 		    GL_Bind(playertextures + i);
 	}
 
-/* 	if (gl_smoothmodels.value)
- CVAR_FIXME */
 	if (gl_smoothmodels->value)
 		glShadeModel (GL_SMOOTH);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-/* 	if (gl_affinemodels.value)
- CVAR_FIXME */
 	if (gl_affinemodels->value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
@@ -659,15 +587,11 @@ void R_DrawAliasModel (entity_t *e)
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	glShadeModel (GL_FLAT);
-/* 	if (gl_affinemodels.value)
- CVAR_FIXME */
 	if (gl_affinemodels->value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	glPopMatrix ();
 
-/* 	if (r_shadows.value)
- CVAR_FIXME */
 	if (r_shadows->value)
 	{
 		glPushMatrix ();
@@ -695,8 +619,6 @@ void R_DrawEntitiesOnList (void)
 {
 	int		i;
 
-/* 	if (!r_drawentities.value)
- CVAR_FIXME */
 	if (!r_drawentities->value)
 		return;
 
@@ -751,16 +673,12 @@ void R_DrawViewModel (void)
 	dlight_t	*dl;
 	int			ambientlight, shadelight;
 
-/* 	if (!r_drawviewmodel.value || !Cam_DrawViewModel())
- CVAR_FIXME */
 	if (!r_drawviewmodel->value || !Cam_DrawViewModel())
 		return;
 
 	if (envmap)
 		return;
 
-/* 	if (!r_drawentities.value)
- CVAR_FIXME */
 	if (!r_drawentities->value)
 		return;
 
@@ -815,8 +733,6 @@ R_PolyBlend
 */
 void R_PolyBlend (void)
 {
-/* 	if (!gl_polyblend.value)
- CVAR_FIXME */
 	if (!gl_polyblend->value)
 		return;
 	if (!v_blend[3])
@@ -913,16 +829,10 @@ R_SetupFrame
 void R_SetupFrame (void)
 {
 // don't allow cheats in multiplayer
-/* 	r_fullbright.value = 0;
- CVAR_FIXME */
 	r_fullbright->value = 0;
-/* 	r_lightmap.value = 0;
- CVAR_FIXME */
 	r_lightmap->value = 0;
 	if (!atoi(Info_ValueForKey(cl.serverinfo, "watervis")))
-/* 		r_wateralpha.value = 1;
- CVAR_FIXME */
-		r_wateralpha->value = 1;
+		Cvar_SetValue(r_wateralpha, 1);
 
 	R_AnimateLight ();
 
@@ -1006,11 +916,7 @@ void R_SetupGL (void)
 	glViewport (glx + x, gly + y2, w, h);
     screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
 //	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
-/* //	yfov = (2.0 * tan (scr_fov.value/360*M_PI)) / screenaspect;
- CVAR_FIXME */
 //	yfov = (2.0 * tan (scr_fov->value/360*M_PI)) / screenaspect;
-/* //	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*(scr_fov.value*2)/M_PI;
- CVAR_FIXME */
 //	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*(scr_fov->value*2)/M_PI;
 //    MYgluPerspective (yfov,  screenaspect,  4,  4096);
     MYgluPerspective (r_refdef.fov_y,  screenaspect,  4,  4096);
@@ -1041,8 +947,6 @@ void R_SetupGL (void)
 	//
 	// set drawing parms
 	//
-/* 	if (gl_cull.value)
- CVAR_FIXME */
 	if (gl_cull->value)
 		glEnable(GL_CULL_FACE);
 	else
@@ -1096,12 +1000,8 @@ R_Clear
 */
 void R_Clear (void)
 {
-/* 	if (r_mirroralpha.value != 1.0)
- CVAR_FIXME */
 	if (r_mirroralpha->value != 1.0)
 	{
-/* 		if (gl_clear.value)
- CVAR_FIXME */
 		if (gl_clear->value)
 			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		else
@@ -1110,14 +1010,10 @@ void R_Clear (void)
 		gldepthmax = 0.5;
 		glDepthFunc (GL_LEQUAL);
 	}
-/* 	else if (gl_ztrick.value)
- CVAR_FIXME */
 	else if (gl_ztrick->value)
 	{
 		static int trickframe;
 
-/* 		if (gl_clear.value)
- CVAR_FIXME */
 		if (gl_clear->value)
 			glClear (GL_COLOR_BUFFER_BIT);
 
@@ -1137,8 +1033,6 @@ void R_Clear (void)
 	}
 	else
 	{
-/* 		if (gl_clear.value)
- CVAR_FIXME */
 		if (gl_clear->value)
 			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		else
@@ -1234,16 +1128,12 @@ void R_RenderView (void)
 {
 	double	time1 = 0, time2;
 
-/* 	if (r_norefresh.value)
- CVAR_FIXME */
 	if (r_norefresh->value)
 		return;
 
 	if (!r_worldentity.model || !cl.worldmodel)
 		Sys_Error ("R_RenderView: NULL worldmodel");
 
-/* 	if (r_speeds.value)
- CVAR_FIXME */
 	if (r_speeds->value)
 	{
 		glFinish ();
@@ -1254,8 +1144,6 @@ void R_RenderView (void)
 
 	mirror = false;
 
-/* 	if (gl_finish.value)
- CVAR_FIXME */
 	if (gl_finish->value)
 		glFinish ();
 
@@ -1271,8 +1159,6 @@ void R_RenderView (void)
 
 	R_PolyBlend ();
 
-/* 	if (r_speeds.value)
- CVAR_FIXME */
 	if (r_speeds->value)
 	{
 //		glFinish ();

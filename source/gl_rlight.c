@@ -27,8 +27,9 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -175,8 +176,6 @@ void R_RenderDlights (void)
 	int		i;
 	dlight_t	*l;
 
-/* 	if (!gl_flashblend.value)
- CVAR_FIXME */
 	if (!gl_flashblend->value)
 		return;
 
@@ -268,8 +267,6 @@ void R_PushDlights (void)
 	int		i;
 	dlight_t	*l;
 
-/* 	if (gl_flashblend.value)
- CVAR_FIXME */
 	if (gl_flashblend->value)
 		return;
 

@@ -27,8 +27,9 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
 #include <string.h>
 #include <stdio.h>
 
@@ -59,8 +60,6 @@ extern unsigned char d_15to8table[65536];
  CVAR_FIXME */
 extern cvar_t *crosshair, *cl_crossx, *cl_crossy, *crosshaircolor;
 
-/* cvar_t		gl_nobind = {"gl_nobind", "0"};
- CVAR_FIXME */
 cvar_t		*gl_nobind;
 /* cvar_t		gl_max_size = {"gl_max_size", "1024"};
  CVAR_FIXME */
@@ -126,8 +125,6 @@ int			numgltextures;
 
 void GL_Bind (int texnum)
 {
-/* 	if (gl_nobind.value)
- CVAR_FIXME */
 	if (gl_nobind->value)
 		texnum = char_texture;
 	if (currenttexture == texnum)
@@ -387,7 +384,7 @@ void Draw_TextureMode_f (void)
 
 	for (i=0 ; i< 6 ; i++)
 	{
-		if (!strcasecmp (modes[i].name, Cmd_Argv(1) ) )
+		if (!stricmp (modes[i].name, Cmd_Argv(1) ) )
 			break;
 	}
 	if (i == 6)
@@ -434,10 +431,7 @@ void Draw_Init (void)
  CVAR_FIXME */
 	gl_picmip = Cvar_Get("gl_picmip",  "0", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&cl_verstring);
- CVAR_FIXME */
-/* Oddone:  Why did you remove this? */
-	cl_verstring = Cvar_Get("cl_verstring", PROGRAM " " VERSION, CVAR_NONE, "None");
+	cl_verstring = Cvar_Get("cl_verstring", PROGRAM " " VERSION, CVAR_NONE, "Client version string");
 
 	// 3dfx can only handle 256 wide textures
 	if (!strncasecmp ((char *)gl_renderer, "3dfx",4) ||
@@ -612,19 +606,11 @@ void Draw_Crosshair(void)
 	extern vrect_t		scr_vrect;
 	unsigned char *pColor;
 
-/* 	if (crosshair.value == 2) {
- CVAR_FIXME */
 	if (crosshair->value == 2) {
-/* 		x = scr_vrect.x + scr_vrect.width/2 - 3 + cl_crossx.value; 
- CVAR_FIXME */
 		x = scr_vrect.x + scr_vrect.width/2 - 3 + cl_crossx->value; 
-/* 		y = scr_vrect.y + scr_vrect.height/2 - 3 + cl_crossy.value;
- CVAR_FIXME */
 		y = scr_vrect.y + scr_vrect.height/2 - 3 + cl_crossy->value;
 
 		glTexEnvf ( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
-/* 		pColor = (unsigned char *) &d_8to24table[(byte) crosshaircolor.value];
- CVAR_FIXME */
 		pColor = (unsigned char *) &d_8to24table[(byte) crosshaircolor->value];
 		glColor4ubv ( pColor );
 		GL_Bind (cs_texture);
@@ -641,16 +627,9 @@ void Draw_Crosshair(void)
 		glEnd ();
 		
 		glTexEnvf ( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
-/* 	} else if (crosshair.value)
- CVAR_FIXME */
 	} else if (crosshair->value)
-/* 		Draw_Character (scr_vrect.x + scr_vrect.width/2-4 + cl_crossx.value, 
- CVAR_FIXME */
 		Draw_Character (scr_vrect.x + scr_vrect.width/2-4 + cl_crossx->value, 
-/* 			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy.value, 
- CVAR_FIXME */
-			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy->value, 
-			'+');
+			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy->value, '+');
 }
 
 
@@ -707,9 +686,9 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	gl = (glpic_t *)pic->data;
 	glDisable(GL_ALPHA_TEST);
 	glEnable (GL_BLEND);
-//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glCullFace(GL_FRONT);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+//	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);	// FIXME deek: these cause problems with text. Looking for the real problem
 	glColor4f (1,1,1,alpha);
 	GL_Bind (gl->texnum);
 	glBegin (GL_QUADS);
@@ -723,7 +702,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	glVertex2f (x, y+pic->height);
 	glEnd ();
 	glColor4f (1,1,1,1);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+//	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); // FIXME
 	glEnable(GL_ALPHA_TEST);
 	glDisable (GL_BLEND);
 }
@@ -1144,25 +1123,11 @@ static	unsigned	scaled[1024*512];	// [512*256];
 	for (scaled_height = 1 ; scaled_height < height ; scaled_height<<=1)
 		;
 
-/* 	scaled_width >>= (int)gl_picmip.value;
- CVAR_FIXME */
 	scaled_width >>= (int)gl_picmip->value;
-/* 	scaled_height >>= (int)gl_picmip.value;
- CVAR_FIXME */
 	scaled_height >>= (int)gl_picmip->value;
 
-/* 	if (scaled_width > gl_max_size.value)
- CVAR_FIXME */
-	if (scaled_width > gl_max_size->value)
-/* 		scaled_width = gl_max_size.value;
- CVAR_FIXME */
-		scaled_width = gl_max_size->value;
-/* 	if (scaled_height > gl_max_size.value)
- CVAR_FIXME */
-	if (scaled_height > gl_max_size->value)
-/* 		scaled_height = gl_max_size.value;
- CVAR_FIXME */
-		scaled_height = gl_max_size->value;
+	scaled_width = min(scaled_width, gl_max_size->value);
+	scaled_height = min(scaled_height, gl_max_size->value);
 
 	if (scaled_width * scaled_height > sizeof(scaled)/4)
 		Sys_Error ("GL_LoadTexture: too big");
@@ -1258,25 +1223,11 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	for (scaled_height = 1 ; scaled_height < height ; scaled_height<<=1)
 		;
 
-/* 	scaled_width >>= (int)gl_picmip.value;
- CVAR_FIXME */
 	scaled_width >>= (int)gl_picmip->value;
-/* 	scaled_height >>= (int)gl_picmip.value;
- CVAR_FIXME */
 	scaled_height >>= (int)gl_picmip->value;
 
-/* 	if (scaled_width > gl_max_size.value)
- CVAR_FIXME */
-	if (scaled_width > gl_max_size->value)
-/* 		scaled_width = gl_max_size.value;
- CVAR_FIXME */
-		scaled_width = gl_max_size->value;
-/* 	if (scaled_height > gl_max_size.value)
- CVAR_FIXME */
-	if (scaled_height > gl_max_size->value)
-/* 		scaled_height = gl_max_size.value;
- CVAR_FIXME */
-		scaled_height = gl_max_size->value;
+	scaled_width = min(scaled_width, gl_max_size->value);
+	scaled_height = min(scaled_height, gl_max_size->value);
 
 	if (scaled_width * scaled_height > sizeof(scaled))
 		Sys_Error ("GL_LoadTexture: too big");

@@ -27,8 +27,9 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
 #include "sys.h"
 #include "qargs.h"
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h

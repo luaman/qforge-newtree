@@ -27,33 +27,19 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
+
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "bothdefs.h"   // needed by: common.h, net.h, client.h
-#include "quakefs.h"
-#include "bspfile.h"    // needed by: glquake.h
-#include "vid.h"
-#include "sys.h"
-#include "zone.h"       // needed by: client.h, gl_model.h
-#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
-                        //  modelgen.h, glmodel.h
-#include "wad.h"
-#include "draw.h"
-#include "cvar.h"
-#include "net.h"        // needed by: client.h
-#include "protocol.h"   // needed by: client.h
-#include "cmd.h"
-#include "sbar.h"
-#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
-#include "client.h"     // need cls in this file
-#include "model.h"   // needed by: glquake.h
+#include "bothdefs.h"
 #include "console.h"
+#include "model.h"
 #include "glquake.h"
+#include "sys.h"
 
 extern	double	realtime;
 extern	model_t	*loadmodel;
@@ -69,8 +55,6 @@ qboolean	skyloaded = false;
 
 msurface_t	*warpface;
 
-/* extern cvar_t gl_subdivide_size;
- CVAR_FIXME */
 extern cvar_t *gl_subdivide_size;
 
 void BoundPoly (int numverts, float *verts, vec3_t mins, vec3_t maxs)
@@ -369,7 +353,7 @@ void LoadPCX (FILE *f)
 //
 // parse the PCX file
 //
-	Qread (f, &pcxbuf, sizeof(pcxbuf));
+	fread (&pcxbuf, 1, sizeof(pcxbuf), f);
 
 	pcx = &pcxbuf;
 
@@ -385,10 +369,10 @@ void LoadPCX (FILE *f)
 	}
 
 	// seek to palette
-	Qseek (f, -768, SEEK_END);
-	Qread (f, palette, 768);
+	fseek (f, -768, SEEK_END);
+	fread (palette, 1, 768, f);
 
-	Qseek (f, sizeof(pcxbuf) - 4, SEEK_SET);
+	fseek (f, sizeof(pcxbuf) - 4, SEEK_SET);
 
 	count = (pcx->xmax+1) * (pcx->ymax+1);
 	pcx_rgb = malloc( count * 4);
@@ -398,12 +382,12 @@ void LoadPCX (FILE *f)
 		pix = pcx_rgb + 4*y*(pcx->xmax+1);
 		for (x=0 ; x<=pcx->ymax ; )
 		{
-			dataByte = Qgetc(f);
+			dataByte = fgetc(f);
 
 			if((dataByte & 0xC0) == 0xC0)
 			{
 				runLength = dataByte & 0x3F;
-				dataByte = Qgetc(f);
+				dataByte = fgetc(f);
 			}
 			else
 				runLength = 1;
@@ -445,8 +429,8 @@ int fgetLittleShort (FILE *f)
 {
 	byte	b1, b2;
 
-	b1 = Qgetc(f);
-	b2 = Qgetc(f);
+	b1 = fgetc(f);
+	b2 = fgetc(f);
 
 	return (short)(b1 + b2*256);
 }
@@ -455,10 +439,10 @@ int fgetLittleLong (FILE *f)
 {
 	byte	b1, b2, b3, b4;
 
-	b1 = Qgetc(f);
-	b2 = Qgetc(f);
-	b3 = Qgetc(f);
-	b4 = Qgetc(f);
+	b1 = fgetc(f);
+	b2 = fgetc(f);
+	b3 = fgetc(f);
+	b4 = fgetc(f);
 
 	return b1 + (b2<<8) + (b3<<16) + (b4<<24);
 }
@@ -476,19 +460,19 @@ void LoadTGA (FILE *fin)
 	int				row, column;
 	unsigned char	red = 0, green = 0, blue = 0, alphabyte = 0;
 
-	targa_header.id_length = Qgetc(fin);
-	targa_header.colormap_type = Qgetc(fin);
-	targa_header.image_type = Qgetc(fin);
+	targa_header.id_length = fgetc(fin);
+	targa_header.colormap_type = fgetc(fin);
+	targa_header.image_type = fgetc(fin);
 	
 	targa_header.colormap_index = fgetLittleShort(fin);
 	targa_header.colormap_length = fgetLittleShort(fin);
-	targa_header.colormap_size = Qgetc(fin);
+	targa_header.colormap_size = fgetc(fin);
 	targa_header.x_origin = fgetLittleShort(fin);
 	targa_header.y_origin = fgetLittleShort(fin);
 	targa_header.width = fgetLittleShort(fin);
 	targa_header.height = fgetLittleShort(fin);
-	targa_header.pixel_size = Qgetc(fin);
-	targa_header.attributes = Qgetc(fin);
+	targa_header.pixel_size = fgetc(fin);
+	targa_header.attributes = fgetc(fin);
 
 	if (targa_header.image_type!=2 
 		&& targa_header.image_type!=10) 
@@ -505,7 +489,7 @@ void LoadTGA (FILE *fin)
 	targa_rgba = malloc (numPixels*4);
 	
 	if (targa_header.id_length != 0)
-		Qseek(fin, targa_header.id_length, SEEK_CUR);  // skip TARGA image comment
+		fseek(fin, targa_header.id_length, SEEK_CUR);  // skip TARGA image comment
 	
 	if (targa_header.image_type==2) {  // Uncompressed, RGB images
 		for(row=rows-1; row>=0; row--) {
@@ -514,19 +498,19 @@ void LoadTGA (FILE *fin)
 				switch (targa_header.pixel_size) {
 					case 24:
 							
-							blue = Qgetc(fin);
-							green = Qgetc(fin);
-							red = Qgetc(fin);
+							blue = getc(fin);
+							green = getc(fin);
+							red = getc(fin);
 							*pixbuf++ = red;
 							*pixbuf++ = green;
 							*pixbuf++ = blue;
 							*pixbuf++ = 255;
 							break;
 					case 32:
-							blue = Qgetc(fin);
-							green = Qgetc(fin);
-							red = Qgetc(fin);
-							alphabyte = Qgetc(fin);
+							blue = getc(fin);
+							green = getc(fin);
+							red = getc(fin);
+							alphabyte = getc(fin);
 							*pixbuf++ = red;
 							*pixbuf++ = green;
 							*pixbuf++ = blue;
@@ -541,21 +525,21 @@ void LoadTGA (FILE *fin)
 		for(row=rows-1; row>=0; row--) {
 			pixbuf = targa_rgba + row*columns*4;
 			for(column=0; column<columns; ) {
-				packetHeader=Qgetc(fin);
+				packetHeader=getc(fin);
 				packetSize = 1 + (packetHeader & 0x7f);
 				if (packetHeader & 0x80) {        // run-length packet
 					switch (targa_header.pixel_size) {
 						case 24:
-								blue = Qgetc(fin);
-								green = Qgetc(fin);
-								red = Qgetc(fin);
+								blue = getc(fin);
+								green = getc(fin);
+								red = getc(fin);
 								alphabyte = 255;
 								break;
 						case 32:
-								blue = Qgetc(fin);
-								green = Qgetc(fin);
-								red = Qgetc(fin);
-								alphabyte = Qgetc(fin);
+								blue = getc(fin);
+								green = getc(fin);
+								red = getc(fin);
+								alphabyte = getc(fin);
 								break;
 					}
 	
@@ -579,19 +563,19 @@ void LoadTGA (FILE *fin)
 					for(j=0;j<packetSize;j++) {
 						switch (targa_header.pixel_size) {
 							case 24:
-									blue = Qgetc(fin);
-									green = Qgetc(fin);
-									red = Qgetc(fin);
+									blue = getc(fin);
+									green = getc(fin);
+									red = getc(fin);
 									*pixbuf++ = red;
 									*pixbuf++ = green;
 									*pixbuf++ = blue;
 									*pixbuf++ = 255;
 									break;
 							case 32:
-									blue = Qgetc(fin);
-									green = Qgetc(fin);
-									red = Qgetc(fin);
-									alphabyte = Qgetc(fin);
+									blue = getc(fin);
+									green = getc(fin);
+									red = getc(fin);
+									alphabyte = getc(fin);
 									*pixbuf++ = red;
 									*pixbuf++ = green;
 									*pixbuf++ = blue;
@@ -614,7 +598,7 @@ void LoadTGA (FILE *fin)
 		}
 	}
 	
-	Qclose(fin);
+	fclose(fin);
 }
 
 /*
@@ -718,16 +702,6 @@ void DrawSkyPolygon (int nump, vec3_t vecs)
 	float	*vp;
 
 	c_sky++;
-#if 0
-glBegin (GL_POLYGON);
-for (i=0 ; i<nump ; i++, vecs+=3)
-{
-	VectorAdd(vecs, r_origin, v);
-	glVertex3fv (v);
-}
-glEnd();
-return;
-#endif
 	// decide which face it maps to
 	VectorCopy (vec3_origin, v);
 	for (i=0, vp=vecs ; i<nump ; i++, vp+=3)
@@ -1001,12 +975,6 @@ void R_DrawSkyBox (void)
 {
 	int		i;
 
-#if 0
-glEnable (GL_BLEND);
-glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-glColor4f (1,1,1,0.5);
-glDisable (GL_DEPTH_TEST);
-#endif
 	for (i=0 ; i<6 ; i++)
 	{
 		if (skymins[0][i] >= skymaxs[0][i]
@@ -1014,12 +982,6 @@ glDisable (GL_DEPTH_TEST);
 			continue;
 
 		GL_Bind (SKY_TEX+skytexorder[i]);
-#if 0
-skymins[0][i] = -1;
-skymins[1][i] = -1;
-skymaxs[0][i] = 1;
-skymaxs[1][i] = 1;
-#endif
 		glBegin (GL_QUADS);
 		MakeSkyVec (skymins[0][i], skymins[1][i], i);
 		MakeSkyVec (skymins[0][i], skymaxs[1][i], i);
@@ -1027,12 +989,6 @@ skymaxs[1][i] = 1;
 		MakeSkyVec (skymaxs[0][i], skymins[1][i], i);
 		glEnd ();
 	}
-#if 0
-glDisable (GL_BLEND);
-glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-glColor4f (1,1,1,0.5);
-glEnable (GL_DEPTH_TEST);
-#endif
 }
 
 

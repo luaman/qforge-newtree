@@ -126,7 +126,6 @@ void R_ReadPointFile_f (void)
 	int		c;
 	particle_t	*p;
 	char	name[MAX_OSPATH];
-	char	buf[256];
 
 // FIXME	sprintf (name,"maps/%s.pts", sv.name);
 
@@ -141,9 +140,7 @@ void R_ReadPointFile_f (void)
 	c = 0;
 	for ( ;; )
 	{
-		if (!Qgets(f,buf,sizeof(buf)))
-			break;
-		r = sscanf (buf,"%f %f %f\n", &org[0], &org[1], &org[2]);
+		r = fscanf (f,"%f %f %f\n", &org[0], &org[1], &org[2]);
 		if (r != 3)
 			break;
 		c++;
@@ -165,7 +162,7 @@ void R_ReadPointFile_f (void)
 		VectorCopy (org, p->org);
 	}
 
-	Qclose (f);
+	fclose (f);
 	Con_Printf ("%i points read\n", c);
 }
 	
