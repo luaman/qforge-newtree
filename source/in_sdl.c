@@ -169,7 +169,7 @@ IN_SendKeyEvents (void)
 			// If we're not directly handled and still above 255
 			// just force it to 0
 			if(sym > 255) sym = 0;
-				Key_Event(sym, state);
+				Key_Event(sym, -1, state);
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
@@ -184,14 +184,14 @@ IN_SendKeyEvents (void)
 			case 1:
 			case 2:
 			case 3:
-				Key_Event(K_MOUSE1 + but - 1, event.type
+				Key_Event(K_MOUSE1 + but - 1, 0, event.type
 						  == SDL_MOUSEBUTTONDOWN);
 				break;
 			case 4:
-				Key_Event(K_MWHEELUP, event.type == SDL_MOUSEBUTTONDOWN);
+				Key_Event(K_MWHEELUP, 0, event.type == SDL_MOUSEBUTTONDOWN);
 				break;
 			case 5:
-				Key_Event(K_MWHEELDOWN, event.type == SDL_MOUSEBUTTONDOWN);
+				Key_Event(K_MWHEELDOWN, 0, event.type == SDL_MOUSEBUTTONDOWN);
 				break;
 			}
 			break;
@@ -286,10 +286,10 @@ void IN_Frame(void)
 	mouse_buttonstate = (i & ~0x06) | ((i & 0x02)<<1) | ((i & 0x04)>>1);
 	for (i=0 ; i<3 ; i++) {
 		if ( (mouse_buttonstate & (1<<i)) && !(mouse_oldbuttonstate & (1<<i)) )
-			Key_Event (K_MOUSE1 + i, true);
+			Key_Event (K_MOUSE1 + i, 0, true);
 
 		if ( !(mouse_buttonstate & (1<<i)) && (mouse_oldbuttonstate & (1<<i)) )
-			Key_Event (K_MOUSE1 + i, false);
+			Key_Event (K_MOUSE1 + i, 0, false);
 	}
 	mouse_oldbuttonstate = mouse_buttonstate;
 }

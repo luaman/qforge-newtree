@@ -80,7 +80,7 @@ static void keyhandler(int scancode, int state)
 #if 0
 	Con_Printf("scancode=%x (%d%s)\n", scancode, sc, scancode&0x80?"+128":"");
 #endif
-	Key_Event(scantokey[sc], state == KEY_EVENTPRESS);
+	Key_Event(scantokey[sc], -1, state == KEY_EVENTPRESS);
 }
 
 
@@ -90,11 +90,11 @@ static void mousehandler(int buttonstate, int dx, int dy, int dz, int drx, int d
 	mx += dx;
 	my += dy;
 	if (drx > 0) {
-		Key_Event(K_MWHEELUP, 1);
-		Key_Event(K_MWHEELUP, 0);
+		Key_Event(K_MWHEELUP, 0, 1);
+		Key_Event(K_MWHEELUP, 0, 0);
 	} else if (drx < 0) {
-		Key_Event(K_MWHEELDOWN, 1);
-		Key_Event(K_MWHEELDOWN, 0);
+		Key_Event(K_MWHEELDOWN, 0, 1);
+		Key_Event(K_MWHEELDOWN, 0, 0);
 	}
 }
 
@@ -318,24 +318,24 @@ void IN_Commands(void)
 		/* Perform button actions */
 		if ((mouse_buttonstate & MOUSE_LEFTBUTTON) &&
 			!(mouse_oldbuttonstate & MOUSE_LEFTBUTTON))
-			Key_Event (K_MOUSE1, true);
+			Key_Event (K_MOUSE1, 0, true);
 		else if (!(mouse_buttonstate & MOUSE_LEFTBUTTON) &&
 			(mouse_oldbuttonstate & MOUSE_LEFTBUTTON))
-			Key_Event (K_MOUSE1, false);
+			Key_Event (K_MOUSE1, 0, false);
 
 		if ((mouse_buttonstate & MOUSE_RIGHTBUTTON) &&
 			!(mouse_oldbuttonstate & MOUSE_RIGHTBUTTON))
-			Key_Event (K_MOUSE2, true);
+			Key_Event (K_MOUSE2, 0, true);
 		else if (!(mouse_buttonstate & MOUSE_RIGHTBUTTON) &&
 			(mouse_oldbuttonstate & MOUSE_RIGHTBUTTON))
-			Key_Event (K_MOUSE2, false);
+			Key_Event (K_MOUSE2, 0, false);
 
 		if ((mouse_buttonstate & MOUSE_MIDDLEBUTTON) &&
 			!(mouse_oldbuttonstate & MOUSE_MIDDLEBUTTON))
-			Key_Event (K_MOUSE3, true);
+			Key_Event (K_MOUSE3, 0, true);
 		else if (!(mouse_buttonstate & MOUSE_MIDDLEBUTTON) &&
 			(mouse_oldbuttonstate & MOUSE_MIDDLEBUTTON))
-			Key_Event (K_MOUSE3, false);
+			Key_Event (K_MOUSE3, 0, false);
 
 		mouse_oldbuttonstate = mouse_buttonstate;
 	}
