@@ -63,6 +63,7 @@ void X11_Init_Cvars (void);
 void X11_OpenDisplay (void);
 void X11_ProcessEvent (void);
 void X11_ProcessEvents (void);
+void X11_RestoreGamma (void);
 void X11_RestoreVidMode (void);
 void X11_SetCaption (char *);
 void X11_SetVidMode (int, int);

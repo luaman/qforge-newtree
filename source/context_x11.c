@@ -97,11 +97,11 @@ static int	original_mode = 0;
 static qboolean	vidmode_avail = false;
 static qboolean	vidmode_active = false;
 
-cvar_t		*vid_fullscreen;
-cvar_t		*vid_system_gamma;
-qboolean	vid_gamma_avail;
-qboolean	vid_fullscreen_active;
+cvar_t			*vid_fullscreen;
+cvar_t			*vid_system_gamma;
+qboolean		vid_fullscreen_active;
 static double	x_gamma;
+extern qboolean	vid_gamma_avail;
 
 static int	xss_timeout;
 static int	xss_interval;
@@ -323,7 +323,7 @@ X11_Init_Cvars (void)
 {
 	vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ROM, NULL,
 							   "Toggles fullscreen game mode");
-	vid_system_gamma = Cvar_Get ("vid_system_gamma", "1", CVAR_ARCHIVE, NULL,
+	vid_system_gamma = Cvar_Get ("vid_system_gamma", "0", CVAR_ARCHIVE, NULL,
 								 "Use system gamma control if available");
 }
 
@@ -406,7 +406,7 @@ X11_RestoreVidMode (void)
 
 #ifdef HAVE_VIDMODE
 	if (vidmode_active) {
-		X11_SetGamma (x_gamma);
+		X11_RestoreGamma ();
 		XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[original_mode]);
 		XFree (vidmodes);
 	}
@@ -471,7 +471,7 @@ X11_SetGamma (double gamma)
 # ifdef X_XF86VidModeSetGamma
 	XF86VidModeGamma	xgamma;
 	
-	if (vidmode_avail && vid_system_gamma->int_val) {
+	if (vid_gamma_avail && vid_system_gamma->int_val) {
 		xgamma.red = xgamma.green = xgamma.blue = (float) gamma;
 		if (XF86VidModeSetGamma (x_disp, x_screen, &xgamma))
 			return true;
@@ -479,4 +479,19 @@ X11_SetGamma (double gamma)
 # endif
 #endif
 	return false;
+}
+
+void
+X11_RestoreGamma (void)
+{
+#ifdef HAVE_VIDMODE
+# ifdef X_XF86VidModeSetGamma
+	XF86VidModeGamma	xgamma;
+
+	if (vid_gamma_avail) {
+		xgamma.red = xgamma.green = xgamma.blue = (float) x_gamma;
+		XF86VidModeSetGamma (x_disp, x_screen, &xgamma);
+	}
+# endif
+#endif
 }
