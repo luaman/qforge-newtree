@@ -806,6 +806,8 @@ void	VID_Shutdown (void)
 {
    	HGLRC hRC;
    	HDC	  hDC;
+      int i,temp[8192];
+
 
 	if (vid_initialized)
 	{
