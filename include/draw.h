@@ -50,7 +50,7 @@ void Draw_FadeScreen (void);
 void Draw_String8 (int x, int y, char *str);
 void Draw_AltString8 (int x, int y, char *str);
 qpic_t *Draw_PicFromWad (char *name);
-qpic_t *Draw_CachePic (char *path);
+qpic_t *Draw_CachePic (char *path, qboolean alpha);
 void Draw_Crosshair(void);
 
 #endif // _DRAW_H

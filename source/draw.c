@@ -93,7 +93,7 @@ Draw_ClearCache (void)
 	Draw_CachePic
 */
 qpic_t     *
-Draw_CachePic (char *path)
+Draw_CachePic (char *path, qboolean alpha)
 {
 	cachepic_t *pic;
 	int         i;
@@ -140,30 +140,30 @@ Draw_TextBox (int x, int y, int width, int lines)
 	// draw left side
 	cx = x;
 	cy = y;
-	p = Draw_CachePic ("gfx/box_tl.lmp");
+	p = Draw_CachePic ("gfx/box_tl.lmp", true);
 	Draw_Pic (cx, cy, p);
-	p = Draw_CachePic ("gfx/box_ml.lmp");
+	p = Draw_CachePic ("gfx/box_ml.lmp", true);
 	for (n = 0; n < lines; n++) {
 		cy += 8;
 		Draw_Pic (cx, cy, p);
 	}
-	p = Draw_CachePic ("gfx/box_bl.lmp");
+	p = Draw_CachePic ("gfx/box_bl.lmp", true);
 	Draw_Pic (cx, cy + 8, p);
 
 	// draw middle
 	cx += 8;
 	while (width > 0) {
 		cy = y;
-		p = Draw_CachePic ("gfx/box_tm.lmp");
+		p = Draw_CachePic ("gfx/box_tm.lmp", true);
 		Draw_Pic (cx, cy, p);
-		p = Draw_CachePic ("gfx/box_mm.lmp");
+		p = Draw_CachePic ("gfx/box_mm.lmp", true);
 		for (n = 0; n < lines; n++) {
 			cy += 8;
 			if (n == 1)
-				p = Draw_CachePic ("gfx/box_mm2.lmp");
+				p = Draw_CachePic ("gfx/box_mm2.lmp", true);
 			Draw_Pic (cx, cy, p);
 		}
-		p = Draw_CachePic ("gfx/box_bm.lmp");
+		p = Draw_CachePic ("gfx/box_bm.lmp", true);
 		Draw_Pic (cx, cy + 8, p);
 		width -= 2;
 		cx += 16;
@@ -171,14 +171,14 @@ Draw_TextBox (int x, int y, int width, int lines)
 
 	// draw right side
 	cy = y;
-	p = Draw_CachePic ("gfx/box_tr.lmp");
+	p = Draw_CachePic ("gfx/box_tr.lmp", true);
 	Draw_Pic (cx, cy, p);
-	p = Draw_CachePic ("gfx/box_mr.lmp");
+	p = Draw_CachePic ("gfx/box_mr.lmp", true);
 	for (n = 0; n < lines; n++) {
 		cy += 8;
 		Draw_Pic (cx, cy, p);
 	}
-	p = Draw_CachePic ("gfx/box_br.lmp");
+	p = Draw_CachePic ("gfx/box_br.lmp", true);
 	Draw_Pic (cx, cy + 8, p);
 }
 
@@ -565,7 +565,7 @@ Draw_ConsoleBackground (int lines)
 	int         f, fstep;
 	qpic_t     *conback;
 
-	conback = Draw_CachePic ("gfx/conback.lmp");
+	conback = Draw_CachePic ("gfx/conback.lmp", false);
 
 // draw the pic
 	if (r_pixbytes == 1) {

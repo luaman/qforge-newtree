@@ -891,7 +891,7 @@ Sbar_TeamOverlay (void)
 	scr_copyeverything = 1;
 	scr_fullupdate = 0;
 
-	pic = Draw_CachePic ("gfx/ranking.lmp");
+	pic = Draw_CachePic ("gfx/ranking.lmp", true);
 	Draw_Pic (160 - pic->width / 2, 0, pic);
 
 	y = 24;
@@ -992,7 +992,7 @@ Sbar_DeathmatchOverlay (int start)
 	scr_fullupdate = 0;
 
 	if (!start) {
-		pic = Draw_CachePic ("gfx/ranking.lmp");
+		pic = Draw_CachePic ("gfx/ranking.lmp", true);
 		Draw_Pic (160 - pic->width / 2, 0, pic);
 	}
 // scores   
@@ -1278,6 +1278,6 @@ Sbar_FinaleOverlay (void)
 
 	scr_copyeverything = 1;
 
-	pic = Draw_CachePic ("gfx/finale.lmp");
+	pic = Draw_CachePic ("gfx/finale.lmp", true);
 	Draw_Pic ((vid.width - pic->width) / 2, 16, pic);
 }

@@ -47,7 +47,7 @@
 #include "screen.h"
 #include "sys.h"
 
-static int  GL_LoadPicTexture (qpic_t *pic);
+static int  GL_LoadPicTexture (qpic_t *pic, qboolean alpha);
 
 extern byte *host_basepal;
 extern unsigned char d_15to8table[65536];
@@ -136,7 +136,7 @@ Draw_PicFromWad (char *name)
 	p = W_GetLumpName (name);
 	gl = (glpic_t *) p->data;
 
-	gl->texnum = GL_LoadPicTexture (p);
+	gl->texnum = GL_LoadPicTexture (p, true);
 	gl->sl = 0;
 	gl->sh = 1;
 	gl->tl = 0;
@@ -159,7 +159,7 @@ Draw_ClearCache (void)
 	Draw_CachePic
 */
 qpic_t *
-Draw_CachePic (char *path)
+Draw_CachePic (char *path, qboolean alpha)
 {
 	cachepic_t *pic;
 	int         i;
@@ -194,7 +194,7 @@ Draw_CachePic (char *path)
 
 	// Now feed it to the GL stuff and get a texture number..
 	gl = (glpic_t *) pic->pic.data;
-	gl->texnum = GL_LoadPicTexture (dat);
+	gl->texnum = GL_LoadPicTexture (dat, alpha);
 
 	// Alignment stuff..
 	gl->sl = 0;
@@ -287,30 +287,30 @@ Draw_TextBox (int x, int y, int width, int lines)
 	// draw left side
 	cx = x;
 	cy = y;
-	p = Draw_CachePic ("gfx/box_tl.lmp");
+	p = Draw_CachePic ("gfx/box_tl.lmp", true);
 	Draw_Pic (cx, cy, p);
-	p = Draw_CachePic ("gfx/box_ml.lmp");
+	p = Draw_CachePic ("gfx/box_ml.lmp", true);
 	for (n = 0; n < lines; n++) {
 		cy += 8;
 		Draw_Pic (cx, cy, p);
 	}
-	p = Draw_CachePic ("gfx/box_bl.lmp");
+	p = Draw_CachePic ("gfx/box_bl.lmp", true);
 	Draw_Pic (cx, cy + 8, p);
 
 	// draw middle
 	cx += 8;
 	while (width > 0) {
 		cy = y;
-		p = Draw_CachePic ("gfx/box_tm.lmp");
+		p = Draw_CachePic ("gfx/box_tm.lmp", true);
 		Draw_Pic (cx, cy, p);
-		p = Draw_CachePic ("gfx/box_mm.lmp");
+		p = Draw_CachePic ("gfx/box_mm.lmp", true);
 		for (n = 0; n < lines; n++) {
 			cy += 8;
 			if (n == 1)
-				p = Draw_CachePic ("gfx/box_mm2.lmp");
+				p = Draw_CachePic ("gfx/box_mm2.lmp", true);
 			Draw_Pic (cx, cy, p);
 		}
-		p = Draw_CachePic ("gfx/box_bm.lmp");
+		p = Draw_CachePic ("gfx/box_bm.lmp", true);
 		Draw_Pic (cx, cy + 8, p);
 		width -= 2;
 		cx += 16;
@@ -318,14 +318,14 @@ Draw_TextBox (int x, int y, int width, int lines)
 
 	// draw right side
 	cy = y;
-	p = Draw_CachePic ("gfx/box_tr.lmp");
+	p = Draw_CachePic ("gfx/box_tr.lmp", true);
 	Draw_Pic (cx, cy, p);
-	p = Draw_CachePic ("gfx/box_mr.lmp");
+	p = Draw_CachePic ("gfx/box_mr.lmp", true);
 	for (n = 0; n < lines; n++) {
 		cy += 8;
 		Draw_Pic (cx, cy, p);
 	}
-	p = Draw_CachePic ("gfx/box_br.lmp");
+	p = Draw_CachePic ("gfx/box_br.lmp", true);
 	Draw_Pic (cx, cy + 8, p);
 }
 
@@ -658,7 +658,7 @@ Draw_ConsoleBackground (int lines)
 	float       alpha;
 
 	// This can be a CachePic now, just like in software
-	conback = Draw_CachePic ("gfx/conback.lmp");
+	conback = Draw_CachePic ("gfx/conback.lmp", false);
 	gl = (glpic_t *) conback->data;
 
 	// spin the console? - effect described in a QER tutorial
@@ -1229,8 +1229,8 @@ GL_LoadTexture (char *identifier, int width, int height, byte * data,
 	GL_LoadPicTexture
 */
 static int
-GL_LoadPicTexture (qpic_t *pic)
+GL_LoadPicTexture (qpic_t *pic, qboolean alpha)
 {
-	return GL_LoadTexture ("", pic->width, pic->height, pic->data, false, true,
+	return GL_LoadTexture ("", pic->width, pic->height, pic->data, false, alpha,
 						   1);
 }

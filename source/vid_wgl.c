@@ -1698,7 +1698,7 @@ VID_MenuDraw (void)
 	int         lnummodes, i, k, column, row;
 	vmode_t    *pv;
 
-	p = Draw_CachePic ("gfx/vidmodes.lmp");
+	p = Draw_CachePic ("gfx/vidmodes.lmp", true);
 	M_DrawPic ((320 - p->width) / 2, 4, p);
 
 	vid_wmodes = 0;

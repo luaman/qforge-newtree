@@ -245,30 +245,30 @@ M_DrawTextBox (int x, int y, int width, int lines)
 	// draw left side
 	cx = x;
 	cy = y;
-	p = Draw_CachePic ("gfx/box_tl.lmp");
+	p = Draw_CachePic ("gfx/box_tl.lmp", true);
 	M_DrawTransPic (cx, cy, p);
-	p = Draw_CachePic ("gfx/box_ml.lmp");
+	p = Draw_CachePic ("gfx/box_ml.lmp", true);
 	for (n = 0; n < lines; n++) {
 		cy += 8;
 		M_DrawTransPic (cx, cy, p);
 	}
-	p = Draw_CachePic ("gfx/box_bl.lmp");
+	p = Draw_CachePic ("gfx/box_bl.lmp", true);
 	M_DrawTransPic (cx, cy + 8, p);
 
 	// draw middle
 	cx += 8;
 	while (width > 0) {
 		cy = y;
-		p = Draw_CachePic ("gfx/box_tm.lmp");
+		p = Draw_CachePic ("gfx/box_tm.lmp", true);
 		M_DrawTransPic (cx, cy, p);
-		p = Draw_CachePic ("gfx/box_mm.lmp");
+		p = Draw_CachePic ("gfx/box_mm.lmp", true);
 		for (n = 0; n < lines; n++) {
 			cy += 8;
 			if (n == 1)
-				p = Draw_CachePic ("gfx/box_mm2.lmp");
+				p = Draw_CachePic ("gfx/box_mm2.lmp", true);
 			M_DrawTransPic (cx, cy, p);
 		}
-		p = Draw_CachePic ("gfx/box_bm.lmp");
+		p = Draw_CachePic ("gfx/box_bm.lmp", true);
 		M_DrawTransPic (cx, cy + 8, p);
 		width -= 2;
 		cx += 16;
@@ -276,14 +276,14 @@ M_DrawTextBox (int x, int y, int width, int lines)
 
 	// draw right side
 	cy = y;
-	p = Draw_CachePic ("gfx/box_tr.lmp");
+	p = Draw_CachePic ("gfx/box_tr.lmp", true);
 	M_DrawTransPic (cx, cy, p);
-	p = Draw_CachePic ("gfx/box_mr.lmp");
+	p = Draw_CachePic ("gfx/box_mr.lmp", true);
 	for (n = 0; n < lines; n++) {
 		cy += 8;
 		M_DrawTransPic (cx, cy, p);
 	}
-	p = Draw_CachePic ("gfx/box_br.lmp");
+	p = Draw_CachePic ("gfx/box_br.lmp", true);
 	M_DrawTransPic (cx, cy + 8, p);
 }
 
@@ -345,15 +345,15 @@ M_Main_Draw (void)
 	int         f;
 	qpic_t     *p;
 
-	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp"));
-	p = Draw_CachePic ("gfx/ttl_main.lmp");
+	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp", true));
+	p = Draw_CachePic ("gfx/ttl_main.lmp", true);
 	M_DrawPic ((320 - p->width) / 2, 4, p);
-	M_DrawTransPic (72, 32, Draw_CachePic ("gfx/mainmenu.lmp"));
+	M_DrawTransPic (72, 32, Draw_CachePic ("gfx/mainmenu.lmp", true));
 
 	f = (int) (realtime * 10) % 6;
 
 	M_DrawTransPic (54, 32 + m_main_cursor * 20,
-					Draw_CachePic (va ("gfx/menudot%i.lmp", f + 1)));
+					Draw_CachePic (va ("gfx/menudot%i.lmp", f + 1), true));
 }
 
 
@@ -532,8 +532,8 @@ M_Options_Draw (void)
 	float       r;
 	qpic_t     *p;
 
-	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp"));
-	p = Draw_CachePic ("gfx/p_option.lmp");
+	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp", true));
+	p = Draw_CachePic ("gfx/p_option.lmp", true);
 	M_DrawPic ((320 - p->width) / 2, 4, p);
 
 	M_Print (16, 32, "    Customize controls");
@@ -762,7 +762,7 @@ M_Keys_Draw (void)
 	int         x, y;
 	qpic_t     *p;
 
-	p = Draw_CachePic ("gfx/ttl_cstm.lmp");
+	p = Draw_CachePic ("gfx/ttl_cstm.lmp", true);
 	M_DrawPic ((320 - p->width) / 2, 4, p);
 
 	if (bind_grab)
@@ -906,7 +906,7 @@ M_Menu_Help_f (void)
 void
 M_Help_Draw (void)
 {
-	M_DrawPic (0, 0, Draw_CachePic (va ("gfx/help%i.lmp", help_page)));
+	M_DrawPic (0, 0, Draw_CachePic (va ("gfx/help%i.lmp", help_page), true));
 }
 
 
@@ -1039,11 +1039,11 @@ M_SinglePlayer_Draw (void)
 {
 	qpic_t     *p;
 
-	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp"));
-//  M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp") );
-	p = Draw_CachePic ("gfx/ttl_sgl.lmp");
+	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp", true));
+//  M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp", true) );
+	p = Draw_CachePic ("gfx/ttl_sgl.lmp", true);
 	M_DrawPic ((320 - p->width) / 2, 4, p);
-//  M_DrawTransPic (72, 32, Draw_CachePic ("gfx/sp_menu.lmp") );
+//  M_DrawTransPic (72, 32, Draw_CachePic ("gfx/sp_menu.lmp", true) );
 
 	M_DrawTextBox (60, 10 * 8, 23, 4);
 	M_PrintWhite (88, 12 * 8, "This client is for");
@@ -1092,8 +1092,8 @@ M_MultiPlayer_Draw (void)
 
 	int f;
 
-	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp"));
-	p = Draw_CachePic ("gfx/p_multi.lmp");
+	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp", true));
+	p = Draw_CachePic ("gfx/p_multi.lmp", true);
 	M_DrawPic ((320 - p->width) / 2, 4, p);
 
 	if (!slist) {
@@ -1187,7 +1187,7 @@ M_MultiPlayer_Draw (void)
 		M_PrintWhite (STAT_X + 10, STAT_Y + 24, "Updating...");
 		f = (int)(realtime * 10) % 6;
 		M_PrintWhite(STAT_X+118,STAT_Y+48,"uakeforge!");
-		M_DrawTransPic(STAT_X+105,STAT_Y+38,Draw_CachePic(va("gfx/menudot%i.lmp",f+1)));
+		M_DrawTransPic(STAT_X+105,STAT_Y+38,Draw_CachePic(va("gfx/menudot%i.lmp",f+1), true));
 	}
 
 	M_DrawCharacter (MENU_X + 8, (m_multip_cursor - m_multip_mins + 1) * 8 + MENU_Y, 12 + ((int) (realtime * 4) & 1));
@@ -1378,8 +1378,8 @@ M_SEdit_Draw (void)
 {
 	qpic_t     *p;
 
-	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp"));
-	p = Draw_CachePic ("gfx/p_multi.lmp");
+	M_DrawTransPic (16, 4, Draw_CachePic ("gfx/qplaque.lmp", true));
+	p = Draw_CachePic ("gfx/p_multi.lmp", true);
 	M_DrawPic ((320 - p->width) / 2, 4, p);
 
 	M_DrawTextBox (SERV_X, SERV_Y, 23, 1);
