@@ -66,34 +66,45 @@ Mod_LoadLighting
 */
 void Mod_LoadLighting (lump_t *l)
 {
-	int		i;
-	byte		*in, *out;
-	byte		d;
-	char		litfilename[1024];
-		
-	if (!l->filelen)
-	{
-		loadmodel->lightdata = NULL;
-		return;
-	}
-
+	int i;
+	byte *in, *out, *data;
+	byte d;
+	char litfilename[1024];
+	loadmodel->lightdata = NULL;
+	// LordHavoc: check for a .lit file to load
 	strcpy(litfilename, loadmodel->name);
 	COM_StripExtension(litfilename, litfilename);
-	strncat (litfilename,  ".lit", sizeof(litfilename) - strlen (litfilename));
-
-	loadmodel->lightdata = (byte*) COM_LoadHunkFile (litfilename);
-	if (!loadmodel->lightdata) // expand the white lighting data
+	strncat (litfilename, ".lit", sizeof(litfilename) - strlen (litfilename));
+	data = (byte*) COM_LoadHunkFile (litfilename);
+	if (data)
 	{
-		loadmodel->lightdata = Hunk_AllocName ( l->filelen*3, litfilename);
-		in = loadmodel->lightdata + l->filelen*2; // place the file at the end, so it will not be overwritten until the very last write
-		out = loadmodel->lightdata;
-		memcpy (in, mod_base + l->fileofs, l->filelen);
-		for (i = 0;i < l->filelen;i++)
+		if (data[0] == 'Q' && data[1] == 'L' && data[2] == 'I' && data[3] == 'T')
 		{
-			d = *in++;
-			*out++ = d;
-			*out++ = d;
-			*out++ = d;
+			i = LittleLong(((int *)data)[1]);
+			if (i == 1)
+			{
+				Con_DPrintf("%s loaded", litfilename);
+				loadmodel->lightdata = data + 8;
+				return;
+			}
+			else
+				Con_Printf("Unknown .lit file version (%d)\n", i);
 		}
+		else
+			Con_Printf("Corrupt .lit file (old version?), ignoring\n");
+	}
+	// LordHavoc: oh well, expand the white lighting data
+	if (!l->filelen)
+		return;
+	loadmodel->lightdata = Hunk_AllocName ( l->filelen*3, litfilename);
+	in = loadmodel->lightdata + l->filelen*2; // place the file at the end, so it will not be overwritten until the very last write
+	out = loadmodel->lightdata;
+	memcpy (in, mod_base + l->fileofs, l->filelen);
+	for (i = 0;i < l->filelen;i++)
+	{
+		d = *in++;
+		*out++ = d;
+		*out++ = d;
+		*out++ = d;
 	}
 }
