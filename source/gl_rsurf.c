@@ -130,24 +130,39 @@ void R_ForceLightUpdate()
 /*
 	R_AddDynamicLights
 
-	LordHavoc's lighting
+  LordHavoc: completely rewrote this, relies on 64bit integer math...
 */
-void
-R_AddDynamicLights (msurface_t *surf)
+int dlightdivtable[8192];
+int dlightdivtableinitialized = 0;
+
+/*
+===============
+R_AddDynamicLights
+===============
+*/
+void R_AddDynamicLights (msurface_t *surf)
 {
-	int			lnum;
-	int			sd, td;
-	float		dist, maxdist, radb, brightness, red, green, blue, f;
-	vec3_t		impact, local;
-	int			s, t;
-	int			i;
-	int			smax, tmax;
-	mtexinfo_t	*tex;
+	int			sdtable[18], lnum, td, maxdist, maxdist2, maxdist3, i, s, t, smax, tmax, red, green, blue, j;
 	unsigned	*bl;
+	float		dist, f;
+	vec3_t		impact, local;
+	// use 64bit integer...  shame it's not very standardized...
+#if _MSC_VER
+	__int64		k;
+#else
+	long long	k;
+#endif
+
+	if (!dlightdivtableinitialized)
+	{
+		dlightdivtable[0] = 1048576 >> 7;
+		for (s = 1;s < 8192;s++)
+			dlightdivtable[s] = 1048576 / (s << 7);
+		dlightdivtableinitialized = 1;
+	}
 
 	smax = (surf->extents[0]>>4)+1;
 	tmax = (surf->extents[1]>>4)+1;
-	tex = surf->texinfo;
 
 	for (lnum=0 ; lnum<MAX_DLIGHTS ; lnum++)
 	{
@@ -156,42 +171,57 @@ R_AddDynamicLights (msurface_t *surf)
 
 		VectorSubtract(cl_dlights[lnum].origin, currententity->origin, local);
 		dist = DotProduct (local, surf->plane->normal) - surf->plane->dist;
-
 		for (i=0 ; i<3 ; i++)
 			impact[i] = cl_dlights[lnum].origin[i] - surf->plane->normal[i]*dist;
 
-		local[0] = DotProduct (impact, tex->vecs[0]) + tex->vecs[0][3] - surf->texturemins[0];
-		local[1] = DotProduct (impact, tex->vecs[1]) + tex->vecs[1][3] - surf->texturemins[1];
+		f = DotProduct (impact, surf->texinfo->vecs[0]) + surf->texinfo->vecs[0][3] - surf->texturemins[0];
+		i = f;
 
-		dist *= dist;
-		red = cl_dlights[lnum].color[0];
-		green = cl_dlights[lnum].color[1];
-		blue = cl_dlights[lnum].color[2];
+		// reduce calculations
+		t = dist*dist;
+		for (s = 0;s < smax;s++, i -= 16)
+			sdtable[s] = i*i + t;
 
-		maxdist = cl_dlights[lnum].radius*cl_dlights[lnum].radius; // for comparisons to minimum acceptable light
-//		if (cl_dlights[lnum].dark) // negate for darklight
-//			radb = cl_dlights[lnum].radius*cl_dlights[lnum].radius*-256.0*16.0; // negate and multiply by 256 for the code below
-//		else
-			radb = cl_dlights[lnum].radius*cl_dlights[lnum].radius*256.0*16.0; // multiply by 256 for the code below
-		bl = blocklights;
-		for (t = 0 ; t<tmax ; t++)
+		f = DotProduct (impact, surf->texinfo->vecs[1]) + surf->texinfo->vecs[1][3] - surf->texturemins[1];
+		i = f;
+
+		maxdist = (int) (cl_dlights[lnum].radius*cl_dlights[lnum].radius); // for comparisons to minimum acceptable light
+		// clamp radius to avoid exceeding 8192 entry division table
+		if (maxdist > 1048576)
+			maxdist = 1048576;
+		maxdist3 = maxdist - (int) (dist*dist);
+		// convert to 8.8 blocklights format
+//		if (!cl_dlights[lnum].dark)
+//		{
+			f = cl_dlights[lnum].color[0] * maxdist;red = f;
+			f = cl_dlights[lnum].color[1] * maxdist;green = f;
+			f = cl_dlights[lnum].color[2] * maxdist;blue = f;
+		/*
+		}
+		else // negate for darklight
 		{
-			td = local[1] - t*16;
-			td = td*td + dist;
-			if (td < maxdist) // make sure some part of it is visible on this line
+			f = cl_dlights[lnum].color[0] * -maxdist;red = f;
+			f = cl_dlights[lnum].color[1] * -maxdist;green = f;
+			f = cl_dlights[lnum].color[2] * -maxdist;blue = f;
+		}
+		*/
+		bl = blocklights;
+		for (t = 0;t < tmax;t++,i -= 16)
+		{
+			td = i*i;
+			if (td < maxdist3) // make sure some part of it is visible on this line
 			{
-				for (s=0 ; s<smax ; s++)
+				maxdist2 = maxdist - td;
+				for (s = 0;s < smax;s++)
 				{
-					sd = local[0] - s*16;
-					if ((f = sd*sd+td) < maxdist)
+					if (sdtable[s] < maxdist2)
 					{
-						brightness = radb / f;
-						*bl++ += brightness * red;
-						*bl++ += brightness * green;
-						*bl++ += brightness * blue;
+						j = dlightdivtable[(sdtable[s]+td) >> 7];
+						k = (red   * j) >> 7;bl[0] += k;
+						k = (green * j) >> 7;bl[1] += k;
+						k = (blue  * j) >> 7;bl[2] += k;
 					}
-					else
-						bl += 3; // skip pixel
+					bl += 3;
 				}
 			}
 			else
