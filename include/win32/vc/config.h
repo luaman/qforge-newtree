@@ -270,6 +270,8 @@
 #define HAVE_MGRAPH_H 1
 
 #define FS_GLOBALCFG ".\\qforge.cfg"
+#define FS_SHAREPATH "."
+#define FS_USERPATH "."
 
 #define strcasecmp(s1, s2) stricmp((s1), (s2))
 #define strncasecmp(s1, s2, n) strnicmp((s1), (s2), (n))
