@@ -1075,7 +1075,7 @@ GL_Upload32
 static void GL_Upload32 (unsigned int *data, int width, int height, qboolean mipmap, qboolean alpha)
 {
 	unsigned int	*scaled;
-	int		scaled_width, scaled_height, samples;
+	int				scaled_width, scaled_height, samples;
 
 	// Snap the height and width to a power of 2.
 	for (scaled_width = 1 ; scaled_width < width ; scaled_width<<=1) ;
@@ -1110,10 +1110,8 @@ static void GL_Upload32 (unsigned int *data, int width, int height, qboolean mip
 			GL_MipMap ((byte *)scaled, scaled_width, scaled_height);
 			scaled_width >>= 1;
 			scaled_height >>= 1;
-			if (scaled_width < 1)
-				scaled_width = 1;
-			if (scaled_height < 1)
-				scaled_height = 1;
+			scaled_width = max (scaled_width, 1);
+			scaled_height = max (scaled_height, 1);
 			miplevel++;
 			glTexImage2D (GL_TEXTURE_2D, miplevel, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
 		}
@@ -1130,9 +1128,10 @@ static void GL_Upload32 (unsigned int *data, int width, int height, qboolean mip
 	free(scaled);
 }
 
-void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha) 
+#if defined(GL_SHARED_TEXTURE_PALETTE_EXT) && defined(HAVE_GL_COLOR_INDEX8_EXT)
+void
+GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha) 
 {
-#ifdef HAVE_GL_COLOR_INDEX8_EXT
 	byte	*scaled;
 	int		scaled_width, scaled_height;
 
@@ -1167,10 +1166,8 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 			GL_MipMap8Bit ((byte *)scaled, scaled_width, scaled_height);
 			scaled_width >>= 1;
 			scaled_height >>= 1;
-			if (scaled_width < 1)
-				scaled_width = 1;
-			if (scaled_height < 1)
-				scaled_height = 1;
+			scaled_width = max (scaled_width, 1);
+			scaled_height = max (scaled_height, 1);
 			miplevel++;
 			glTexImage2D (GL_TEXTURE_2D, miplevel, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, scaled);
 		}
@@ -1184,11 +1181,9 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
 
-	free(scaled);
-#else
-	Sys_Error ("GL_Upload8_EXT without HAVE_GL_COLOR_INDEX8_EXT");
-#endif
+	free (scaled);
 }
+#endif
 
 extern qboolean VID_Is8bit();
 
@@ -1197,27 +1192,28 @@ extern qboolean VID_Is8bit();
 GL_Upload8
 ===============
 */
-void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha)
+void
+GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha)
 {
-#if 1
 	unsigned int	*trans = NULL;
-	int			i, s, p;
+	int				i, s, p;
 
 	s = width*height;
-	trans = malloc(s * sizeof(unsigned int));
+	trans = malloc (s * sizeof (unsigned int));
 	// if there are no transparent pixels, make it a 3 component
 	// texture even if it was specified as otherwise
 	if (alpha) {
 		alpha = false;
-		for (i=0 ; i<s ; i++) {
+		for (i = 0; i < s; i++) {
 			p = data[i];
-			if (p == 255) alpha = true;
+			if (p == 255)
+				alpha = true;
 			trans[i] = d_8to24table[p];
 		}
 	} else {
-		if (s&3)
+		if (s & 3)
 			Sys_Error ("GL_Upload8: s&3");
-		for (i=0 ; i<s ; i+=4) {
+		for (i = 0; i < s; i += 4) {
 			trans[i] = d_8to24table[data[i]];
 			trans[i+1] = d_8to24table[data[i+1]];
 			trans[i+2] = d_8to24table[data[i+2]];
@@ -1225,67 +1221,22 @@ void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean a
 		}
 	}
 
+#if defined(GL_SHARED_TEXTURE_PALETTE_EXT) && defined(HAVE_GL_COLOR_INDEX8_EXT)
 
-#ifdef gl_draw_scraps
-	if (VID_Is8bit() && !alpha && (data!=scrap_texels[0])) 
-#else
-	if (VID_Is8bit() && !alpha) 
-#endif
-	{
+# ifdef gl_draw_scraps
+	if (VID_Is8bit() && !alpha && (data != scrap_texels[0])) {
+# else
+	if (VID_Is8bit() && !alpha) {
+# endif
 		GL_Upload8_EXT (data, width, height, mipmap, alpha);
 	} else {
+#else
+	{
+#endif
 		GL_Upload32 (trans, width, height, mipmap, alpha);
 	}
 
 	free(trans);
-#else
-	static unsigned int    trans[640*480];     // FIXME, temporary
-	int         i, s;
-	qboolean    noalpha;
-	int         p;
-
-	s = width*height;
-	// if there are no transparent pixels, make it a 3 component
-	// texture even if it was specified as otherwise
-	if (alpha)
-	{
-		noalpha = true;
-		for (i=0 ; i<s ; i++)
-		{
-			p = data[i];
-			if (p == 255)
-				noalpha = false;
-			trans[i] = d_8to24table[p];
-		}
-
-		if (alpha && noalpha)
-			alpha = false;
-	}
-	else
-	{
-		if (s&3)
-			Sys_Error ("GL_Upload8: s&3");
-		for (i=0 ; i<s ; i+=4)
-		{
-			trans[i] = d_8to24table[data[i]];
-			trans[i+1] = d_8to24table[data[i+1]];
-			trans[i+2] = d_8to24table[data[i+2]];
-			trans[i+3] = d_8to24table[data[i+3]];
-		}
-	}
-
-#ifdef gl_draw_scraps
-	if (VID_Is8bit() && !alpha && (data!=scrap_texels[0]))
-#else
-		if (VID_Is8bit() && !alpha)
-#endif
-		{
-			GL_Upload8_EXT (data, width, height, mipmap, alpha);
-			return;
-		}
-
-	GL_Upload32 (trans, width, height, mipmap, alpha);
-#endif
 }
 
 /*
@@ -1293,21 +1244,19 @@ void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean a
 GL_LoadTexture
 ================
 */
-int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha, int bytesperpixel)
+int
+GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha, int bytesperpixel)
 {
-	int i, crc;
 	gltexture_t *glt;
+	int 		i, crc;
 
 	// LordHavoc: now just using a standard CRC for texture validation
-	crc = CRC_Block(data, width*height*bytesperpixel);
+	crc = CRC_Block (data, width * height * bytesperpixel);
 
-	// see if the texture is allready present
-	if (identifier[0])
-	{
-		for (i=0, glt=gltextures ; i<numgltextures ; i++, glt++)
-		{
-			if (!strcmp (identifier, glt->identifier))
-			{
+	// see if the texture is already present
+	if (identifier[0]) {
+		for (i=0, glt = gltextures; i < numgltextures; i++, glt++) {
+			if (strequal (identifier, glt->identifier)) {
 				if (crc != glt->crc
 						|| width != glt->width
 						|| height != glt->height
@@ -1325,8 +1274,8 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 	glt = &gltextures[numgltextures];
 	numgltextures++;
 
-	strncpy (glt->identifier, identifier, sizeof(glt->identifier) - 1);
-	glt->identifier[sizeof(glt->identifier) - 1] = '\0';
+	strncpy (glt->identifier, identifier, sizeof (glt->identifier) - 1);
+	glt->identifier[sizeof (glt->identifier) - 1] = '\0';
 
 	glt->texnum = texture_extension_number;
 	texture_extension_number++;
@@ -1340,8 +1289,7 @@ SetupTexture:
 
 	glBindTexture (GL_TEXTURE_2D, glt->texnum);
 
-	switch (glt->bytesperpixel)
-	{
+	switch (glt->bytesperpixel) {
 		case 1:
 			GL_Upload8 (data, width, height, mipmap, alpha);
 			break;
