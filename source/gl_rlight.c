@@ -99,8 +99,8 @@ float       bubble_sintable[33], bubble_costable[33];
 void
 R_InitBubble ()
 {
-	float       a;
 	int         i;
+	float       a;
 	float      *bub_sin, *bub_cos;
 
 	bub_sin = bubble_sintable;
@@ -117,7 +117,6 @@ void
 R_RenderDlight (dlight_t *light)
 {
 	int         i, j;
-
 	vec3_t      v;
 	float       rad;
 	float      *bub_sin, *bub_cos;
@@ -125,36 +124,39 @@ R_RenderDlight (dlight_t *light)
 	bub_sin = bubble_sintable;
 	bub_cos = bubble_costable;
 	rad = light->radius * 0.35;
-
 	VectorSubtract (light->origin, r_origin, v);
+
 	if (Length (v) < rad) {				// view is inside the dlight
-		AddLightBlend (light->color[0], light->color[1], light->color[2], light->radius * 0.0003);
 		return;
 	}
 
 	glBegin (GL_TRIANGLE_FAN);
+
 	if (lighthalf)
 		glColor3f (light->color[0] * 0.5, light->color[1] * 0.5,
-				   light->color[2] * 0.5);
+			   light->color[2] * 0.5);
 	else
 		glColor3fv (light->color);
+
 	for (i = 0; i < 3; i++)
 		v[i] = light->origin[i] - vpn[i] * rad;
+
 	glVertex3fv (v);
 	glColor3f (0, 0, 0);
+
 	for (i = 16; i >= 0; i--) {
 		for (j = 0; j < 3; j++)
 			v[j] = light->origin[j] + (vright[j] * (*bub_cos) +
-									   +vup[j] * (*bub_sin)) * rad;
+						   vup[j] * (*bub_sin)) * rad;
 		bub_sin += 2;
 		bub_cos += 2;
 		glVertex3fv (v);
 	}
+
 	glEnd ();
-	// No, we don't reset here, we reset in the function which calls this
-	// one.
-	// Largely because this is called in a big loop.
-	// glColor3ubv(lighthalf_v);
+
+	// Don't glColor3ubv(lighthalf_v), as we reset in the function which
+	// calls this one, because this is called in a big loop.
 }
 
 /*
