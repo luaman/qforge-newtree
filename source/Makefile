@@ -76,6 +76,7 @@ SV_objects = $(patsubst %.d,%.o,$(SV_dependencies))
 
 CL_SW_sources=\
   cl_model.c \
+  cl_parse.c \
   d_edge.c \
   d_fill.c \
   d_init.c \
@@ -133,7 +134,6 @@ CL_sources=\
   cl_main.c \
   cl_math.S \
   cl_misc.c \
-  cl_parse.c \
   cl_pred.c \
   cl_tent.c \
   cl_cam.c \
@@ -173,6 +173,7 @@ CL_GLX_sources=\
   gl_mesh.c \
   gl_model.c \
   gl_ngraph.c \
+  gl_parse.c \
   gl_part.c \
   gl_refrag.c \
   gl_rlight.c \
