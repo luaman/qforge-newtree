@@ -651,7 +651,9 @@ void R_BlendLightmaps (void)
 
 	glDepthMask (0);		// don't bother writing Z
 
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc (GL_ZERO, GL_SRC_COLOR);
+	glEnable(GL_BLEND);
 
 	for (i=0 ; i<MAX_LIGHTMAPS ; i++)
 	{
@@ -1045,6 +1047,7 @@ void R_DrawBrushModel (entity_t *e)
 		}
 	}
 
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	R_BlendLightmaps ();
 
 	glPopMatrix ();
@@ -1201,6 +1204,7 @@ void R_DrawWorld (void)
 	DrawTextureChains ();
 
 	R_BlendLightmaps ();
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
 
