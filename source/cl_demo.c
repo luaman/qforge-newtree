@@ -175,10 +175,17 @@ CL_GetDemoMessage (void)
 	float       demotime;
 	byte        c;
 	usercmd_t  *pcmd;
+	static int  demotime_cached;
+	static float cached_demotime;
 
 	// read the time from the packet
-	Qread (cls.demofile, &demotime, sizeof (demotime));
-	demotime = LittleFloat (demotime);
+	if (demotime_cached) {
+		demotime = cached_demotime;
+		demotime_cached = 0;
+	} else {
+		Qread (cls.demofile, &demotime, sizeof (demotime));
+		demotime = LittleFloat (demotime);
+	}
 
 // decide if it is time to grab the next message        
 	if (cls.timedemo) {
@@ -187,8 +194,8 @@ CL_GetDemoMessage (void)
 		else if (demotime > cls.td_lastframe) {
 			cls.td_lastframe = demotime;
 			// rewind back to time
-			Qseek (cls.demofile, Qtell (cls.demofile) - sizeof (demotime),
-				   SEEK_SET);
+			demotime_cached = 1;
+			cached_demotime = demotime;
 			return 0;					// allready read this frame's message
 		}
 		if (!cls.td_starttime && cls.state == ca_active) {
@@ -203,13 +210,13 @@ CL_GetDemoMessage (void)
 			// too far back
 			realtime = demotime - 1.0;
 			// rewind back to time
-			Qseek (cls.demofile, Qtell (cls.demofile) - sizeof (demotime),
-				   SEEK_SET);
+			demotime_cached = 1;
+			cached_demotime = demotime;
 			return 0;
 		} else if (realtime < demotime) {
 			// rewind back to time
-			Qseek (cls.demofile, Qtell (cls.demofile) - sizeof (demotime),
-				   SEEK_SET);
+			demotime_cached = 1;
+			cached_demotime = demotime;
 			return 0;					// don't need another message yet
 		}
 	} else
