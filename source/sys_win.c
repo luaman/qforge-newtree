@@ -119,7 +119,7 @@ void Sys_Printf (char *fmt, ...)
 
 	unsigned char	*p;
 
-	if (sys_nostdout->int_val)
+	if (sys_nostdout && sys_nostdout->int_val)
 		return;
 
 	va_start (argptr, fmt);
