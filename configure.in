@@ -21,10 +21,6 @@ AC_SUBST(PROGRAM)
 AC_SUBST(QW_VERSION)
 AC_SUBST(QSG_VERSION)
 
-dnl Start TARGETS out at "qf-server"
-TARGETS="qf-server\$(EXEEXT)"
-SV_TARGETS=" yes"
-
 ISODATE=`date +%Y-%m-%d`
 AC_SUBST(ISODATE)
 
@@ -941,40 +937,102 @@ dnl ==================================================================
 dnl Find out what to build and finish
 dnl ==================================================================
 
+AC_ARG_WITH(clients,
+[  --with-clients=<list>   compile clients in <list>;
+                          mgl ggi sdl sgl svga x11 glx 3dfx],
+  clients="$withval", clients="all")
+if test "$clients" = "all"; then
+	ENABLE_MGL=yes
+	ENABLE_GGI=yes
+	ENABLE_SDL=yes
+	ENABLE_SGL=yes
+	ENABLE_SVGA=yes
+	ENABLE_X11=yes
+	ENABLE_GLX=yes
+	ENABLE_3DFX=yes
+else
+	ENABLE_MGL=no
+	ENABLE_GGI=no
+	ENABLE_SDL=no
+	ENABLE_SGL=no
+	ENABLE_SVGA=no
+	ENABLE_X11=no
+	ENABLE_GLX=no
+	ENABLE_3DFX=no
+	for client in $clients; do
+		case "$client" in
+			mgl)
+				ENABLE_MGL=yes
+				;;
+			ggi)
+				ENABLE_GGI=yes
+				;;
+			sdl)
+				ENABLE_SDL=yes
+				;;
+			sgl)
+				ENABLE_SGL=yes
+				;;
+			svga)
+				ENABLE_SVGA=yes
+				;;
+			x11)
+				ENABLE_X11=yes
+				;;
+			glx)
+				ENABLE_GLX=yes
+				;;
+			3dfx)
+				ENABLE_3DFX=yes
+				;;
+		esac
+	done
+fi
+
+AC_ARG_WITH(server,
+[  --with-server           compile dedicated server],
+  SV_TARGETS="$withval", SV_TARGETS=yes)
+
 CL_TARGETS=""
-if test "x$HAVE_MGL" = xyes ; then
+TARGETS=""
+if test "x$HAVE_MGL" = xyes a "x$ENABLE_MGL" = xyes; then
 	TARGETS="$TARGETS qf-client-mgl\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS MGL"
 fi
-if test "x$HAVE_GGI" = xyes ; then
+if test "x$HAVE_GGI" = xyes -a "x$ENABLE_GGI" = xyes; then
 	TARGETS="$TARGETS qf-client-ggi\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS GGI"
 fi
-if test "x$HAVE_SDL" = xyes ; then
+if test "x$HAVE_SDL" = xyes -a "x$ENABLE_SDL" = xyes; then
 	TARGETS="$TARGETS qf-client-sdl\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS SDL"
 fi
 if test "x$HAVE_SGL" = xyes; then
-	if test "x$HAVE_GLX" = xyes; then
+	if test "x$HAVE_GLX" = xyes -a "x$ENABLE_SGL" = xyes; then
 		TARGETS="$TARGETS qf-client-sgl\$(EXEEXT)"
 		CL_TARGETS="$CL_TARGETS SDL-GL"
 	fi
 fi
-if test "x$HAVE_SVGA" = xyes ; then
+if test "x$HAVE_SVGA" = xyes -a "x$ENABLE_SVGA" = xyes; then
 	TARGETS="$TARGETS qf-client-svga\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS SVGAlib"
 fi
-if test "x$HAVE_X" = xyes; then
+if test "x$HAVE_X" = xyes -a "x$ENABLE_X11" = xyes; then
 	TARGETS="$TARGETS qf-client-x11\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS X11"
-	if test "x$HAVE_GLX" = xyes; then
+fi
+if test "x$HAVE_X" = xyes; then
+	if test "x$HAVE_GLX" = xyes -a "x$ENABLE_GLX" = xyes; then
 		TARGETS="$TARGETS qf-client-glx\$(EXEEXT)"
 		CL_TARGETS="$CL_TARGETS GLX"
 	fi
 fi
-if test "x$HAVE_TDFXGL" = xyes ; then
+if test "x$HAVE_TDFXGL" = xyes -a "x$ENABLE_3DFX" = xyes; then
 	TARGETS="$TARGETS qf-client-3dfx\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS 3dfx"
+fi
+if test "x$SV_TARGETS" = xyes; then
+	TARGETS="qf-server\$(EXEEXT) $TARGETS"
 fi
 AC_SUBST(TARGETS)
 
@@ -996,7 +1054,7 @@ AC_MSG_RESULT([
 	QuakeForge has been configured successfully.
 
 	Build type: $BUILD_TYPE
-	Server support:$SV_TARGETS
+	Server support: $SV_TARGETS
 	Client support:$CL_TARGETS
 
 	System game data directory: $sharepath
