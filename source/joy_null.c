@@ -30,6 +30,7 @@
 # include "config.h"
 #endif
 
+#include "console.h"
 #include "cvar.h"
 #include "protocol.h"
 #include "qtypes.h"
