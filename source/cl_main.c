@@ -641,8 +641,6 @@ void CL_FullServerinfo_f (void)
 			allowskybox = false;
 		} else {
 			allowskybox = true;
-			Cmd_ExecuteString (va("loadsky %s\n", p));
-//			R_LoadSkys (p);
 		}
 	} else {
 		allowskybox = false;
