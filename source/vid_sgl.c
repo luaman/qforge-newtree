@@ -56,7 +56,6 @@
 static qboolean		vid_initialized = false;
 
 cvar_t  *vid_fullscreen;
-extern cvar_t   *in_dga_mouseaccel;
 cvar_t	  *_windowed_mouse;
 cvar_t	  *m_filter;
 
