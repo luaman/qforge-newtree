@@ -793,6 +793,40 @@ SOURCE=.\gl_warp.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\hl_bsp.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\hl_wad.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\in_win.c
 # End Source File
 # Begin Source File
