@@ -341,7 +341,6 @@ SCR_CalcRefdef (void)
 	r_refdef.fov_y = CalcFov (r_refdef.fov_x, r_refdef.vrect.width, r_refdef.vrect.height);
 
 	scr_vrect = r_refdef.vrect;
-	printf ("%d %d %d %d %d\n", r_refdef.vrect.x, r_refdef.vrect.y, r_refdef.vrect.width, r_refdef.vrect.height, vid.height);
 }
 
 
