@@ -41,9 +41,7 @@
 #ifdef HAVE_WINSOCK_H
 #include <winsock.h>
 #endif
-#ifdef HAVE_SETJMP_H
 #include <setjmp.h>
-#endif
 
 #include "bothdefs.h"
 #include "buildnum.h"

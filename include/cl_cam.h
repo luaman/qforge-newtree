@@ -1,7 +1,7 @@
 /*
-	client.h
+	cl_cam.h
 
-	Client definitions
+	Client camera definitions
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -33,14 +33,9 @@
 // try to get them self-sufficient by including whatever other 
 // headers they might need
 
-#include <stdio.h>
 
-#include "qtypes.h"
 #include "protocol.h"
 
-//
-// cl_cam.c
-//
 #define CAM_NONE	0
 #define CAM_TRACK	1
 

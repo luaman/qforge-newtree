@@ -43,6 +43,7 @@
 #include "cmd.h"
 #include "client.h"
 #include "locs.h"
+#include "model.h"
 #include "quakefs.h"
 #include "sys.h"
 #include "teamplay.h"

@@ -34,7 +34,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "cvar.h"
 #include "qtypes.h"
 
 void GetEvent( void );
@@ -48,7 +47,7 @@ extern Window	x_win;
 extern qboolean doShm;
 extern int		x_shmeventtype;
 extern qboolean oktodraw;
-extern cvar_t	*vid_fullscreen;
+extern struct cvar_s	*vid_fullscreen;
 
 qboolean x11_add_event (int event, void (*event_handler)(XEvent *));
 qboolean x11_del_event (int event, void (*event_handler)(XEvent *));

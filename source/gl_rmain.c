@@ -49,6 +49,7 @@
 #include "qargs.h"
 #include "r_dynamic.h"
 #include "skin.h"
+#include "sound.h"
 #include "sys.h"
 #include "view.h"
 

@@ -29,7 +29,6 @@
 #ifndef _CL_PRED_H
 #define _CL_PRED_H
 
-#include "qtypes.h"
 #include "client.h"
 
 void CL_Prediction_Init_Cvars (void);

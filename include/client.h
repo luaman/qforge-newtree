@@ -29,21 +29,13 @@
 #ifndef _CLIENT_H
 #define _CLIENT_H
 
-// since all headers are circular-protected with #ifdef _xxx_H
-// try to get them self-sufficient by including whatever other 
-// headers they might need
-
-#include <stdio.h>
-
 #include "info.h"
-#include "mathlib.h"
-#include "protocol.h"
 #include "net.h"
-#include "model.h"
-#include "sound.h"
-#include "render.h"
-#include "cvar.h"
+#include "protocol.h"
 #include "quakefs.h"
+#include "render.h"
+#include "vid.h"
+#include "zone.h"
 
 typedef struct
 {
@@ -321,36 +313,36 @@ typedef struct
 //
 // cvars
 //
-extern  cvar_t	*cl_warncmd;
-extern	cvar_t	*cl_upspeed;
-extern	cvar_t	*cl_forwardspeed;
-extern	cvar_t	*cl_backspeed;
-extern	cvar_t	*cl_sidespeed;
+extern  struct cvar_s	*cl_warncmd;
+extern	struct cvar_s	*cl_upspeed;
+extern	struct cvar_s	*cl_forwardspeed;
+extern	struct cvar_s	*cl_backspeed;
+extern	struct cvar_s	*cl_sidespeed;
 
-extern	cvar_t	*cl_movespeedkey;
+extern	struct cvar_s	*cl_movespeedkey;
 
-extern	cvar_t	*cl_yawspeed;
-extern	cvar_t	*cl_pitchspeed;
+extern	struct cvar_s	*cl_yawspeed;
+extern	struct cvar_s	*cl_pitchspeed;
 
-extern	cvar_t	*cl_anglespeedkey;
+extern	struct cvar_s	*cl_anglespeedkey;
 
-extern	cvar_t	*cl_shownet;
-extern	cvar_t	*cl_sbar;
-extern	cvar_t	*cl_sbar_separator;
-extern	cvar_t	*cl_hudswap;
+extern	struct cvar_s	*cl_shownet;
+extern	struct cvar_s	*cl_sbar;
+extern	struct cvar_s	*cl_sbar_separator;
+extern	struct cvar_s	*cl_hudswap;
 
-extern	cvar_t	*cl_pitchdriftspeed;
-extern	cvar_t	*lookspring;
-extern	cvar_t	*lookstrafe;
-extern	cvar_t	*sensitivity;
-extern	cvar_t	*cl_freelook;
+extern	struct cvar_s	*cl_pitchdriftspeed;
+extern	struct cvar_s	*lookspring;
+extern	struct cvar_s	*lookstrafe;
+extern	struct cvar_s	*sensitivity;
+extern	struct cvar_s	*cl_freelook;
 
-extern	cvar_t	*m_pitch;
-extern	cvar_t	*m_yaw;
-extern	cvar_t	*m_forward;
-extern	cvar_t	*m_side;
+extern	struct cvar_s	*m_pitch;
+extern	struct cvar_s	*m_yaw;
+extern	struct cvar_s	*m_forward;
+extern	struct cvar_s	*m_side;
 
-extern	cvar_t	*name;
+extern	struct cvar_s	*name;
 
 
 #define	MAX_STATIC_ENTITIES	128			// torches, etc

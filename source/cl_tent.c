@@ -45,8 +45,10 @@
 #include "client.h"
 #include "console.h"
 #include "host.h"
+#include "model.h"
 #include "msg.h"
 #include "r_dynamic.h"
+#include "sound.h"
 
 #define	MAX_BEAMS	8
 #define MAX_BEAM_ENTS 20

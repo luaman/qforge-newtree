@@ -60,6 +60,7 @@
 #include "screen.h"
 #include "sbar.h"
 #include "skin.h"
+#include "sound.h"
 #include "teamplay.h"
 #include "va.h"
 #include "view.h"

@@ -42,6 +42,7 @@
 #include "cmd.h"
 #include "console.h"
 #include "host.h"
+#include "model.h"
 #include "qargs.h"
 #include "sys.h"
 #include "sound.h"

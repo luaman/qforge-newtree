@@ -66,6 +66,7 @@
 #include "va.h"
 #include "vid.h"
 #include "view.h"
+#include "winquake.h"
 
 void        (*vid_menudrawfn) (void);
 void        (*vid_menukeyfn) (int key);

@@ -30,6 +30,8 @@
 # include "config.h"
 #endif
 
+#include <stdarg.h>
+
 #include "host.h"
 #include "sys.h"
 

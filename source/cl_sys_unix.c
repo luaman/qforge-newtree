@@ -44,6 +44,7 @@
 #include <sys/types.h>
 #include <sys/mman.h>
 
+#include "cvar.h"
 #include "host.h"
 #include "qargs.h"
 #include "sys.h"

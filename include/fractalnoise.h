@@ -29,8 +29,6 @@
 #ifndef _FRACTALNOISE_H
 #define _FRACTALNOISE_H
 
-#include <stdlib.h>
-
 void fractalnoise(unsigned char *noise, int size);
 
 #endif // _FRACTALNOISE_H

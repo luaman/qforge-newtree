@@ -31,7 +31,6 @@
 
 #include "mathlib.h"
 #include "model.h"
-#include "cvar.h"
 
 #define WARP_WIDTH		320
 #define WARP_HEIGHT		200
@@ -120,7 +119,7 @@ typedef struct
 	int		color;
 } zpointdesc_t;
 
-extern cvar_t	*r_drawflat;
+extern struct cvar_s	*r_drawflat;
 extern int		d_spanpixcount;
 extern int		r_framecount;		// sequence # of current frame since Quake
 									//  started

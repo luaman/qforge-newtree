@@ -45,6 +45,7 @@
 #include "cmd.h"
 #include "r_local.h"
 #include "screen.h"
+#include "sound.h"
 #include "sys.h"
 #include "view.h"
 

@@ -34,8 +34,8 @@
 # include "config.h"
 #endif
 
-#include "cvar.h"
 #include "gcc_attr.h"
+#include "qtypes.h"
 
 /* The host system specifies the base of the directory tree, the
    command line parms passed to the program, and the amount of memory
@@ -53,8 +53,8 @@ typedef struct
 /* Host */
 extern	quakeparms_t host_parms;
 
-extern	cvar_t		*sys_nostdout;
-extern	cvar_t		*developer;
+extern	struct cvar_s	*sys_nostdout;
+extern	struct cvar_s	*developer;
 
 extern	qboolean	host_initialized;	/* True if into command execution. */
 //extern	double		host_frametime;
