@@ -205,12 +205,12 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 	}
 
 	// count the bits for net profiling
-	for (i=0 ; i<16 ; i++)
-		if (bits&(1<<i))
-			bitcounts[i]++;
+//        for (i=0 ; i<16 ; i++)
+//                if (bits&(1<<i))
+//                        bitcounts[i]++;
 
         if (bits & U_EXTEND1)
-        {                
+        {
                 bits |= MSG_ReadByte() << 16;
                 if (bits & U_EXTEND2)
                         bits |= MSG_ReadByte() << 24;
@@ -258,8 +258,10 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
         if (bits & U_GLOWCOLOR)
          to->glowcolor = MSG_ReadByte();
 
-        if (bits & U_GLOWCOLOR)
+        if (bits & U_COLORMOD) {
          to->colormod = MSG_ReadByte();
+         Con_Printf("CM: %d\n)", (float) to->colormod);
+        }
 
 	if (bits & U_SOLID)
 	{
@@ -522,9 +524,14 @@ void CL_LinkPacketEntities (void)
       //
         ent->glowsize    = s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
         ent->glowcolor   = s1->glowcolor;
-        ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
-        ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
-        ent->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
+        if (s1->colormod) {
+         ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
+         ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
+         ent->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
+         Con_Printf("Colormod: %d %d %d\n", ent->colormod[0], ent->colormod[1], ent->colormod[2]);
+        } else {
+         ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 0;
+        }
      //
      // Ender: Extend (Colormod) [QSG - End]
 

@@ -50,24 +50,26 @@ int FindFieldOffset(char *field)
 {
 	ddef_t *d;
 	d = ED_FindField(field);
-	if (!d)
+        if (!d)
 		return 0;
+
 	return d->ofs*4;
 }
 
 
 eval_t *GETEDICTFIELDVALUE(edict_t *ed, int fieldoffset)
 {
-	if (!fieldoffset)
-		return NULL;
+        if (!fieldoffset)
+               return NULL;
+
 	return (eval_t*)((char*)&ed->v + fieldoffset);
 }
 
 void FindEdictFieldOffsets()
 {
 	eval_alpha = FindFieldOffset("alpha");
-	eval_fullbright = FindFieldOffset("fullbright");
-	eval_colormod = FindFieldOffset("colormod");
+        eval_fullbright = FindFieldOffset("fullbright");
+        eval_colormod = FindFieldOffset("colormod");
         eval_glowsize = FindFieldOffset("glow_size");
         eval_glowcolor = FindFieldOffset("glow_color");
 };

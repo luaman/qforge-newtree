@@ -223,7 +223,8 @@ void SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, qb
         if (stdver > 1) {
          if (to->glowsize  != from->glowsize)    bits |= U_GLOWSIZE;
          if (to->glowcolor != from->glowcolor)   bits |= U_GLOWCOLOR;
-         if (to->colormod  != from->colormod)    bits |= U_COLORMOD;
+// LordHavocFIX
+//         if (to->colormod  != from->colormod)    bits |= U_COLORMOD;
         }
 
         if (bits >= 16777216)
@@ -568,7 +569,7 @@ void SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
          eval_t  *val;
          state->glowsize  = 0;
          state->glowcolor = 254;
-         state->colormod  = 255;
+         state->colormod  = 0;
 
                 if (val = GETEDICTFIELDVALUE(ent, eval_glowsize)) {
                    state->glowsize = (int) val->_float >> 3;
@@ -586,7 +587,7 @@ void SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
                  if (val = GETEDICTFIELDVALUE(ent, eval_colormod)) {
                   if (val->vector[0] != 0 || val->vector[1] != 0 || val->vector[2] != 0) {
                    int modred, modgreen, modblue;
-
+                   Con_Printf("Setting colormod! :)\n");
                    modred = val->vector[0] * 8.0;
                    if (modred < 0) modred = 0;
                    if (modred > 7) modred = 7;
@@ -599,6 +600,7 @@ void SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
                    if (modblue < 0) modblue = 0;
                    if (modblue > 3) modblue = 3;
 
+//                   Con_Printf("Colormod: %d %d %d\n", modred, modgreen, modblue);
                    state->colormod = (modred << 5) | (modgreen << 2) | modblue;
                   }
                  }

@@ -392,12 +392,15 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 
 			// normals and vertexes come from the frame list
 			l = shadedots[verts->lightnormalindex] * shadelight;
-// Ender: Test (Colormod)
-//        if (shadecolor[0] || shadecolor[1] || shadecolor[2]) {
-//           glColor3f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l);
-//        } else {
-           glColor3f (l, l, l);
-//        }
+
+// Ender: Test (Colormod) [QSG Begin]
+                        if (shadecolor[0] || shadecolor[1] || shadecolor[2]) {
+                           glColor3f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l);
+                        } else {
+                           glColor3f (l, l, l);
+                        }
+// Ender: Test (Colormod) [QSG End]
+
 			glVertex3f (verts->v[0], verts->v[1], verts->v[2]);
 			verts++;
 		} while (--count);
