@@ -213,7 +213,7 @@ main (int argc, char **argv)
 	host_parms.argc = com_argc;
 	host_parms.argv = com_argv;
 
-	host_parms.memsize = 16 * 1024 * 1024;
+	host_parms.memsize = 8 * 1024 * 1024;
 
 	if ((t = COM_CheckParm ("-heapsize")) != 0 && t + 1 < com_argc)
 		host_parms.memsize = atoi (com_argv[t + 1]) * 1024;
