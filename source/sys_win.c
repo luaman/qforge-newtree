@@ -27,6 +27,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "winquake.h"
 #include <limits.h>
 #include <direct.h>
+#include "server.h"
+
+/* This is unused in the client, but we need the symbol there too. */
+server_static_t	svs;
 
 /*
 ==============
