@@ -41,6 +41,7 @@ dnl ==================================================================
 AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_CPP
+AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
@@ -145,6 +146,7 @@ AC_TRY_COMPILE(
 	AC_DEFINE(HAVE_SA_LEN) AC_MSG_RESULT(yes),
 	AC_MSG_RESULT(no)
 )
+
 
 dnl ==================================================================
 dnl Checks for library functions.
@@ -415,6 +417,127 @@ AC_SUBST(GLX_CFLAGS)
 AC_SUBST(GLX_LIBS)
 
 
+dnl ==================================================================
+dnl Checks for system type
+dnl ==================================================================
+
+dnl Checks for which system driver to use
+AC_MSG_CHECKING(for system driver)
+case "${host}" in
+   i?86-*-mingw32*)
+	SYSTYPE=WIN32
+	AC_MSG_RESULT([Win32 driver])
+	;;
+   *)
+	SYSTYPE=POSIX
+	AC_MSG_RESULT([default POSIX driver])
+	;;
+esac
+AM_CONDITIONAL(SYSTYPE_WIN32, test "$SYSTYPE" = "WIN32")
+
+
+dnl ==================================================================
+dnl Checks for sound
+dnl ==================================================================
+
+dnl MME
+AC_CHECK_LIB(mme,waveOutOpen,HAVE_LIBMME=yes)
+if test -z "$SNDTYPE" -a "x$ac_cv_header_mme_mmsystem_h" = "xyes" -a \
+	"x$HAVE_LIBMME" = "xyes"; then
+  AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <mme/mmsystem.h>
+#ifdef WAVE_OPEN_SHAREABLE
+QF_maGiC_VALUE
+#endif
+    ], SNDTYPE="MME"
+       SOUND_LIBS="-lmme")
+fi
+
+dnl OSS
+if test -z "$SNDTYPE" -a "x$ac_cv_header_sys_soundcard_h" = "xyes"; then
+   AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <sys/soundcard.h>
+#ifdef SNDCTL_DSP_SETTRIGGER
+QF_maGiC_VALUE
+#endif
+    ], SNDTYPE="OSS")
+fi
+if test -z "$SNDTYPE" -a "x$ac_cv_header_linux_soundcard_h" = "xyes"; then
+   AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <linux/soundcard.h>
+#ifdef SNDCTL_DSP_SETTRIGGER
+QF_maGiC_VALUE
+#endif
+    ], SNDTYPE="OSS")
+fi
+if test -z "$SNDTYPE" -a "x$ac_cv_header_machine_soundcard_h" = "xyes"; then
+   AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <machine/soundcard.h>
+#ifdef SNDCTL_DSP_SETTRIGGER
+QF_maGiC_VALUE
+#endif
+    ], SNDTYPE="OSS")
+fi
+
+dnl Win32
+if test -z "$SNDTYPE" -a "x$ac_cv_header_windows_h" = "xyes" -a \
+	"x$ac_cv_header_mmsystem_h" = "xyes"; then
+  AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <windows.h>
+#include <mmsystem.h>
+#ifdef GMEM_MOVEABLE
+#ifdef WAVE_FORMAT_PCM
+QF_maGiC_VALUE
+#endif
+#endif
+    ], SNDTYPE="WIN32"
+       SOUND_LIBS="-lwinmm")
+fi
+
+AC_SUBST(SOUND_LIBS)
+AM_CONDITIONAL(SNDTYPE_MME, test "$SNDTYPE" = "MME")
+AM_CONDITIONAL(SNDTYPE_OSS, test "$SNDTYPE" = "OSS")
+AM_CONDITIONAL(SNDTYPE_WIN32, test "$SNDTYPE" = "WIN32")
+
+
+dnl ==================================================================
+dnl Checks for CD-ROM
+dnl ==================================================================
+
+dnl Linux/BSD
+AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <linux/cdrom.h>
+#ifdef CDROMREADTOCENTRY
+QF_maGiC_VALUE
+#endif
+],
+      AC_DEFINE(USE_LINUX_CD)
+      CDTYPE=LINUX
+      ,
+      AC_EGREP_CPP([QF_maGiC_VALUE],[
+#include <sys/cdio.h>
+#if defined (CDIOREADTOCENTRY) || defined (CDIOREADTOCENTRYS)
+QF_maGiC_VALUE
+#endif
+    ], AC_DEFINE(USE_BSD_CD))
+)
+AC_HAVE_STRUCT_FIELD(struct ioc_read_toc_single_entry, entry,[
+#include <sys/cdio.h>
+])
+
+dnl Win32
+if test -z "$CDTYPE" -a "$SYSTYPE" = "WIN32"; then
+    CDTYPE="WIN32"
+fi
+
+AM_CONDITIONAL(CDTYPE_WIN32, test "$CDTYPE" = "WIN32")
+AM_CONDITIONAL(CDTYPE_LINUX, test "$CDTYPE" = "LINUX")
+
+
+dnl ==================================================================
+dnl Checks for networking
+dnl ==================================================================
+
 NET_LIBS=""
 if test "x$ac_cv_func_connect" != "xyes"; then
   AC_MSG_CHECKING([for connect in -lwsock32])
@@ -573,20 +696,6 @@ case "${host}" in
 	*) AC_MSG_RESULT(no)
 esac
 AC_SUBST(ASM_ARCH)
-
-dnl Checks for which system driver to use
-AC_MSG_CHECKING(for system driver)
-case "${host}" in
-   i?86-*-mingw32*)
-	SYSTYPE=WIN32
-	AC_MSG_RESULT([Win32 driver])
-	;;
-   *)
-	SYSTYPE=POSIX
-	AC_MSG_RESULT([default POSIX driver])
-	;;
-esac
-AM_CONDITIONAL(SYSTYPE_WIN32, test "$SYSTYPE" = "WIN32")
 
 
 dnl ==================================================================

@@ -7,24 +7,51 @@ bin_PROGRAMS =	@TARGETS@
 EXTRA_PROGRAMS= qf-server qf-client-mgl qf-client-ggi qf-client-svga \
 		qf-client-x11 qf-client-glx
 
+noinst_LIBRARIES = libqfsys_cl.a libqfsys_sv.a libqfsnd.a libqfcd.a
+
 if SYSTYPE_WIN32
-cl_sys = sys_win.c cl_sys_win.c
-sv_sys = sys_win.c sv_sys_win.c
+libqfsys_cl_a_SOURCES = sys_win.c cl_sys_win.c
+libqfsys_sv_a_SOURCES = sys_win.c sv_sys_win.c
 else
-cl_sys = sys_unix.c cl_sys_unix.c
-sv_sys = sys_unix.c sv_sys_unix.c
+libqfsys_cl_a_SOURCES = sys_unix.c cl_sys_unix.c
+libqfsys_sv_a_SOURCES = sys_unix.c sv_sys_unix.c
 endif
+
+EXTRA_libqfsys_cl_a_SOURCES = sys_unix.c cl_sys_unix.c 
+EXTRA_libqfsys_sv_a_SOURCES = sys_unix.c sv_sys_unix.c 
+
+if SNDTYPE_WIN32
+libqfsnd_a_SOURCES = snd_win.c
+else
+if SNDTYPE_OSS
+libqfsnd_a_SOURCES = snd_oss.c
+else
+libqfsnd_a_SOURCES = snd_null.c
+endif
+endif
+EXTRA_libqfsnd_a_SOURCES = snd_win.c snd_oss.c snd_null.c 
+
+if CDTYPE_WIN32
+libqfcd_a_SOURCES = cd_win.c
+else
+if CDTYPE_LINUX
+libqfcd_a_SOURCES = cd_linux.c
+else
+libqfcd_a_SOURCES = cd_null.c
+endif
+endif
+EXTRA_libqfcd_a_SOURCES = cd_win.c cd_linux.c cd_null.c
 
 common_SOURCES= net_chan.c net_com.c net_udp.c pmove.c pmovetst.c zone.c \
 		mdfour.c mathlib.c math.S cvar.c crc.c common.c model.c cmd.c
 server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c sv_init.c sv_main.c sv_misc.c \
 		sv_model.c sv_nchan.c sv_ents.c sv_send.c sv_move.c sv_phys.c \
-		sv_user.c sv_ccmds.c world.c worlda.S sv_cvar.c $(sv_sys)
+		sv_user.c sv_ccmds.c world.c worlda.S sv_cvar.c
 client_SOURCES= cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c cl_main.c \
 		cl_math.S cl_misc.c cl_parse.c cl_pred.c cl_tent.c cl_cam.c \
-		snd_oss.c cd_linux.c r_view.c wad.c snd_dma.c \
-		snd_mem.c snd_mix.c snd_mixa.S skin.c sbar.c nonintel.c \
-		menu.c keys.c console.c sys_x86.S cl_slist.c $(cl_sys)
+		r_view.c wad.c snd_dma.c snd_mem.c snd_mix.c snd_mixa.S \
+		skin.c sbar.c nonintel.c menu.c keys.c console.c \
+		sys_x86.S cl_slist.c
 soft_SOURCES=	cl_model.c cl_trans.c d_edge.c d_fill.c d_init.c d_modech.c \
 		d_part.c d_polyse.c d_scan.c d_sky.c d_sprite.c d_surf.c \
 		d_vars.c d_zpoint.c draw.c r_aclip.c r_alias.c r_bsp.c \
@@ -44,10 +71,6 @@ svga_SOURCES=	vid_svgalib.c
 x11_SOURCES=	vid_x11.c
 glx_SOURCES=	vid_glx.c
 
-# We just has to list these once, but a plain EXTRA_SOURCES isn't allowed
-EXTRA_qf_server_SOURCES= sys_unix.c cl_sys_unix.c sv_sys_unix.c \
-	sys_win.c cl_sys_win.c sv_sys_win.c
-
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
 qf_client_mgl_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(mgl_SOURCES)
 qf_client_ggi_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(ggi_SOURCES)
@@ -55,12 +78,15 @@ qf_client_svga_SOURCES= $(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(sv
 qf_client_x11_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(soft_SOURCES) $(x11_SOURCES)
 qf_client_glx_SOURCES=	$(common_SOURCES) $(client_SOURCES) $(ogl_SOURCES) $(glx_SOURCES)
 
-qf_server_LDADD=	$(NET_LIBS)
-qf_client_mgl_LDADD=	$(MGL_LIBS) $(NET_LIBS)
-qf_client_ggi_LDADD=	$(GGI_LIBS) $(NET_LIBS)
-qf_client_svga_LDADD=	$(SVGA_LIBS) $(NET_LIBS)
-qf_client_x11_LDADD=	$(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB) $(NET_LIBS)
-qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(NET_LIBS)
+
+CLIENT_LIBS = -L. -lqfsys_cl -lqfsnd -lqfcd $(SOUND_LIBS) $(NET_LIBS)
+
+qf_server_LDADD=	-L. -lqfsys_sv $(NET_LIBS)
+qf_client_mgl_LDADD=	$(MGL_LIBS) $(CLIENT_LIBS)
+qf_client_ggi_LDADD=	$(GGI_LIBS) $(CLIENT_LIBS)
+qf_client_svga_LDADD=	$(SVGA_LIBS) $(CLIENT_LIBS)
+qf_client_x11_LDADD=	$(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(X_SHM_LIB) $(CLIENT_LIBS)
+qf_client_glx_LDADD=	$(GLX_LIBS) $(X_PRE_LIBS) $(X_LIBS) -lX11 $(X_EXTRA_LIBS) $(CLIENT_LIBS)
 
 EXTRA_DIST = makefile.winc makefile.wingl makefile.wins \
 	qw_client.dsp qw_server.dsp
