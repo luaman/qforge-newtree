@@ -245,7 +245,7 @@ int main (int argc, char **argv)
 
 	if (COM_CheckParm ("-nopriority"))
 	{
-		Cvar_Set ("sys_sleep", "0");
+		Cvar_Set (sys_sleep, "0");
 	}
 	else
 	{
@@ -257,7 +257,7 @@ int main (int argc, char **argv)
 
 	// sys_sleep > 0 seems to cause packet loss on WinNT (why?)
 	if (WinNT)
-		Cvar_Set ("sys_sleep", "0");
+		Cvar_Set (sys_sleep, "0");
 
 // run one frame immediately for first heartbeat
 	SV_Frame (0.1);		

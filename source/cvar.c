@@ -178,16 +178,10 @@ void Cvar_Info (cvar_t *var);
 Cvar_Set
 ============
 */
-void Cvar_Set (char *var_name, char *value)
+void Cvar_Set (cvar_t *var, char *value)
 {
-        cvar_t  *var;
-
-        var = Cvar_FindVar (var_name);
         if (!var)
-        {       // there is an error in C code if this happens
-                Con_Printf ("Cvar_Set: variable %s not found\n", var_name);
                 return;
-        }
 
         Z_Free (var->string);   // free the old value string
 
@@ -197,6 +191,20 @@ void Cvar_Set (char *var_name, char *value)
 
         Cvar_Info(var);
 }
+
+/*
+============
+Cvar_SetValue
+============
+*/
+void Cvar_SetValue (cvar_t *var_name, float value)
+{
+        char    val[32];
+        
+        sprintf (val, "%f",value);
+        Cvar_Set (var_name, val);
+}
+
 /*
 ============
 Cvar_Command
@@ -222,7 +230,7 @@ qboolean	Cvar_Command (void)
 		return true;
 	}
 
-	Cvar_Set (v->name, Cmd_Argv(1));
+	Cvar_Set (v, Cmd_Argv(1));
 	return true;
 }
 
@@ -262,7 +270,7 @@ void Cvar_Set_f(void)
 		var = Cvar_FindAlias (var_name);
 	if (var)
 	{
-		Cvar_Set (var->name, value);
+		Cvar_Set (var, value);
 	}
 	else
 	{
@@ -290,7 +298,7 @@ void Cvar_Toggle_f (void)
 		return;
 	}
 
-	Cvar_Set (var->name, var->value ? "0" : "1");
+	Cvar_Set (var, var->value ? "0" : "1");
 }
 
 void Cvar_Help_f (void)

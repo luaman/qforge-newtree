@@ -715,17 +715,17 @@ void SVC_DirectConnect (void)
 /* 	if ( maxclients.value > MAX_CLIENTS )
  CVAR_FIXME */
 	if ( maxclients->value > MAX_CLIENTS )
-		maxclients->value = MAX_CLIENTS;
+		Cvar_SetValue (maxclients, MAX_CLIENTS);
 /* 	if (maxspectators.value > MAX_CLIENTS)
  CVAR_FIXME */
 	if (maxspectators->value > MAX_CLIENTS)
-		maxspectators->value = MAX_CLIENTS;
+		Cvar_SetValue (maxspectators, MAX_CLIENTS);
 /* 	if (maxspectators.value + maxclients.value > MAX_CLIENTS)
  CVAR_FIXME */
 	if (maxspectators->value + maxclients->value > MAX_CLIENTS)
 /* 		Cvar_SetValue ("maxspectators", MAX_CLIENTS - maxspectators.value + maxclients.value);
  CVAR_FIXME */
-		maxspectators->value =  MAX_CLIENTS - maxspectators->value + maxclients->value;
+ 		Cvar_SetValue (maxspectators, MAX_CLIENTS - maxspectators->value + maxclients->value);
 /* 	if ( (spectator && spectators >= (int)maxspectators.value)
  CVAR_FIXME */
 	if ( (spectator && spectators >= (int)maxspectators->value)

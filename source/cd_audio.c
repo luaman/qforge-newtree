@@ -764,12 +764,12 @@ void CDAudio_Update(void)
 	newVolume = (int)(bgmvolume->value * 255.0);
 	if (newVolume < 0)
 	{
-		Cvar_SetValue ("bgmvolume", 0.0);
+		Cvar_SetValue (bgmvolume, 0.0);
 		newVolume = 0;
 	}
 	else if (newVolume > 255)
 	{
-		Cvar_SetValue ("bgmvolume", 1.0);
+		Cvar_SetValue (bgmvolume, 1.0);
 		newVolume = 255;
 	}
 	if (cdvolume != newVolume)

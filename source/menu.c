@@ -410,8 +410,8 @@ void M_AdjustSliders (int dir)
 		if (scr_viewsize->value > 120)
 /* 			scr_viewsize.value = 120;
  CVAR_FIXME */
-			scr_viewsize->value = 120;
-/* 		Cvar_SetValue ("viewsize", scr_viewsize.value);
+			Cvar_SetValue (scr_viewsize, 120);	
+/* 		Cvar_SetValue (viewsize, scr_viewsize.value);
  CVAR_FIXME */
 		break;
 	case 4:	// gamma
@@ -429,7 +429,7 @@ void M_AdjustSliders (int dir)
 		if (v_gamma->value > 1)
 /* 			v_gamma.value = 1;
  CVAR_FIXME */
-			v_gamma->value = 1;
+			Cvar_SetValue (v_gamma, 1);
 /* 		Cvar_SetValue ("gamma", v_gamma.value);
  CVAR_FIXME */
 		break;
@@ -448,7 +448,7 @@ void M_AdjustSliders (int dir)
 		if (sensitivity->value > 11)
 /* 			sensitivity.value = 11;
  CVAR_FIXME */
-			sensitivity->value = 11;
+			Cvar_SetValue (sensitivity, 11);
 /* 		Cvar_SetValue ("sensitivity", sensitivity.value);
  CVAR_FIXME */
 		break;
@@ -456,43 +456,43 @@ void M_AdjustSliders (int dir)
 #ifdef _WIN32
 /* 		bgmvolume.value += dir * 1.0;
  CVAR_FIXME */
-		bgmvolume->value += dir * 1.0;
+		Cvar_SetValue (bgmvolume, bgmvolume->value + dir * 1.0);
 #else
 /* 		bgmvolume.value += dir * 0.1;
  CVAR_FIXME */
-		bgmvolume->value += dir * 0.1;
+		Cvar_SetValue (bgmvolume, bgmvolume->value + dir * 0.1);
 #endif
 /* 		if (bgmvolume.value < 0)
  CVAR_FIXME */
 		if (bgmvolume->value < 0)
 /* 			bgmvolume.value = 0;
  CVAR_FIXME */
-			bgmvolume->value = 0;
+			Cvar_SetValue (bgmvolume, 0);
 /* 		if (bgmvolume.value > 1)
  CVAR_FIXME */
 		if (bgmvolume->value > 1)
 /* 			bgmvolume.value = 1;
  CVAR_FIXME */
-			bgmvolume->value = 1;
+			Cvar_SetValue (bgmvolume, 1);
 /* 		Cvar_SetValue ("bgmvolume", bgmvolume.value);
  CVAR_FIXME */
 		break;
 	case 7:	// sfx volume
 /* 		volume.value += dir * 0.1;
  CVAR_FIXME */
-		volume->value += dir * 0.1;
+		Cvar_SetValue (volume, volume->value + dir * 0.1);
 /* 		if (volume.value < 0)
  CVAR_FIXME */
 		if (volume->value < 0)
 /* 			volume.value = 0;
  CVAR_FIXME */
-			volume->value = 0;
+			Cvar_SetValue (volume, 0);
 /* 		if (volume.value > 1)
  CVAR_FIXME */
 		if (volume->value > 1)
 /* 			volume.value = 1;
  CVAR_FIXME */
-			volume->value = 1;
+			Cvar_SetValue (volume, 1);
  /*CVAR_FIXME */
 		break;
 		
@@ -501,49 +501,50 @@ void M_AdjustSliders (int dir)
  CVAR_FIXME */
 		if (cl_forwardspeed->value > 200)
 		{
-			cl_forwardspeed->value = 200;
-			cl_backspeed->value = 200;
+			Cvar_SetValue (cl_forwardspeed, 200);
+			Cvar_SetValue (cl_backspeed, 200);
 		}
 		else
 		{
-			cl_forwardspeed->value = 400;
-			cl_backspeed->value = 400;
+			Cvar_SetValue (cl_forwardspeed, 400);
+			Cvar_SetValue (cl_backspeed, 400);
 		}
 		break;
 	
 	case 9:	// invert mouse
 /* 		m_pitch- -m_pitch.value);
  CVAR_FIXME */
-		m_pitch->value = -m_pitch->value;
+		Cvar_SetValue (m_pitch, -m_pitch->value);
 		break;
 	
 	case 10:	// lookspring
 /* 		Cvar_SetValue ("lookspring", !lookspring.value);
  CVAR_FIXME */
-		lookspring->value = !lookspring->value;
+ 		Cvar_SetValue (lookspring, !lookspring->value);
 		break;
 	
 	case 11:	// lookstrafe
 /* 		Cvar_SetValue ("lookstrafe", !lookstrafe.value);
  CVAR_FIXME */
-		lookstrafe->value = !lookstrafe->value;
+ 		Cvar_SetValue (lookstrafe, !lookstrafe->value);
 		break;
 
 	case 12:
 /* 		Cvar_SetValue ("cl_sbar", !cl_sbar.value);
  CVAR_FIXME */
-		cl_sbar->value = !cl_sbar->value;
+ 		Cvar_SetValue (cl_sbar, !cl_sbar->value);
 		break;
 
 	case 13:
 /* 		Cvar_SetValue ("cl_hudswap", !cl_hudswap.value);
  CVAR_FIXME */
-		cl_hudswap->value = !cl_hudswap->value;
+ 		Cvar_SetValue (cl_hudswap, !cl_hudswap->value);
+		break;
 
 	case 15:	// _windowed_mouse
 /* 		Cvar_SetValue ("_windowed_mouse", !_windowed_mouse.value);
  CVAR_FIXME */
-		_windowed_mouse->value = !_windowed_mouse->value;
+ 		Cvar_SetValue (_windowed_mouse, !_windowed_mouse->value);
 		break;
 	}
 }

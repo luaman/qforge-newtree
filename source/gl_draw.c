@@ -437,12 +437,11 @@ void Draw_Init (void)
 
 /* 	Cvar_RegisterVariable (&cl_verstring);
  CVAR_FIXME */
-	cl_verstring = Cvar_Get("cl_verstring",  PROGRAM " " VERSION, CVAR_NONE, "None");
 
 	// 3dfx can only handle 256 wide textures
 	if (!Q_strncasecmp ((char *)gl_renderer, "3dfx",4) ||
 		!Q_strncasecmp ((char *)gl_renderer, "Mesa",4))
-		Cvar_Set ("gl_max_size", "256");
+		Cvar_Set (gl_max_size, "256");
 
 	Cmd_AddCommand ("gl_texturemode", &Draw_TextureMode_f);
 

@@ -628,9 +628,9 @@ void CL_Color_f (void)
 		bottom = 13;
 	
 	sprintf (num, "%i", top);
-	Cvar_Set ("topcolor", num);
+	Cvar_Set (topcolor, num);
 	sprintf (num, "%i", bottom);
-	Cvar_Set ("bottomcolor", num);
+	Cvar_Set (bottomcolor, num);
 }
 
 /*
@@ -965,7 +965,7 @@ void CL_ConnectionlessPacket (void)
 				"You may need to reload your server browser and %s.\n",
 				s, localid->string, PROGRAM);
 			Con_Printf("===========================\n");
-			Cvar_Set("localid", "");
+			Cvar_Set(localid, "");
 			return;
 		}
 

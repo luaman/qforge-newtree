@@ -345,21 +345,21 @@ static void SCR_CalcRefdef (void)
 /* 	if (scr_viewsize.value < 30)
  CVAR_FIXME */
 	if (scr_viewsize->value < 30)
-		Cvar_Set ("viewsize","30");
+		Cvar_Set (scr_viewsize,"30");
 /* 	if (scr_viewsize.value > 120)
  CVAR_FIXME */
 	if (scr_viewsize->value > 120)
-		Cvar_Set ("viewsize","120");
+		Cvar_Set (scr_viewsize,"120");
 
 // bound field of view
 /* 	if (scr_fov.value < 10)
  CVAR_FIXME */
 	if (scr_fov->value < 10)
-		Cvar_Set ("fov","10");
+		Cvar_Set (scr_fov,"10");
 /* 	if (scr_fov.value > 170)
  CVAR_FIXME */
 	if (scr_fov->value > 170)
-		Cvar_Set ("fov","170");
+		Cvar_Set (scr_fov,"170");
 
 // intermission is always full screen   
 	if (cl.intermission)
@@ -441,7 +441,7 @@ void SCR_SizeUp_f (void)
 {
 /* 	Cvar_SetValue ("viewsize",scr_viewsize.value+10);
  CVAR_FIXME */
-	scr_viewsize->value = scr_viewsize->value+10;
+	Cvar_SetValue (scr_viewsize, scr_viewsize->value+10);
 
 	vid.recalc_refdef = 1;
 }
@@ -458,7 +458,7 @@ void SCR_SizeDown_f (void)
 {
 /* 	Cvar_SetValue ("viewsize",scr_viewsize.value-10);
  CVAR_FIXME */
-	scr_viewsize->value = scr_viewsize->value-10;
+	Cvar_SetValue (scr_viewsize, scr_viewsize->value-10);
 	vid.recalc_refdef = 1;
 }
 
