@@ -346,23 +346,17 @@ void CDAudio_Update(void)
 	if (!enabled)
 		return;
 
-/* 	if (bgmvolume.value != cdvolume)
- CVAR_FIXME */
 	if (bgmvolume->value != cdvolume)
 	{
 		if (cdvolume)
 		{
-			bgmvolume->value = 0.0;
-/* 			cdvolume = bgmvolume.value;
- CVAR_FIXME */
+			Cvar_SetValue (bgmvolume, 0.0);
 			cdvolume = bgmvolume->value;
 			CDAudio_Pause ();
 		}
 		else
 		{
 			bgmvolume->value = 1.0;
-/* 			cdvolume = bgmvolume.value;
- CVAR_FIXME */
 			cdvolume = bgmvolume->value;
 			CDAudio_Resume ();
 		}

@@ -37,8 +37,6 @@
 #include "cmd.h"
 
 extern	HWND	mainwindow;
-/* extern	cvar_t	bgmvolume;
- CVAR_FIXME */
 extern	cvar_t	*bgmvolume;
 
 static qboolean cdValid = false;
@@ -423,23 +421,17 @@ void CDAudio_Update(void)
 	if (!enabled)
 		return;
 
-/* 	if (bgmvolume.value != cdvolume)
- CVAR_FIXME */
 	if (bgmvolume->value != cdvolume)
 	{
 		if (cdvolume)
 		{
 			Cvar_SetValue (bgmvolume, 0.0);
-/* 			cdvolume = bgmvolume.value;
- CVAR_FIXME */
 			cdvolume = bgmvolume->value;
 			CDAudio_Pause ();
 		}
 		else
 		{
 			Cvar_SetValue (bgmvolume, 1.0);
-/* 			cdvolume = bgmvolume.value;
- CVAR_FIXME */
 			cdvolume = bgmvolume->value;
 			CDAudio_Resume ();
 		}

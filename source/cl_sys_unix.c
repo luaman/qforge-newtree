@@ -53,8 +53,6 @@ qboolean	is_server = false;
 
 #define BASEDIR	"."
 
-/* cvar_t  sys_linerefresh = {"sys_linerefresh","0"};// set for entity display
- CVAR_FIXME */
 cvar_t  *sys_linerefresh;// set for entity display
 
 
@@ -237,7 +235,7 @@ int main (int c, char **v)
 		parms.memsize = (int) (atof(com_argv[j+1]) * 1024 * 1024);
 	parms.membase = malloc (parms.memsize);
 	if (!parms.membase) {
-		printf("Can't allocate memroy for zone.\n");
+		printf("Can't allocate memory for zone.\n");
 		return 1;
 	}
 

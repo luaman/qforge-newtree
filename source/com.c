@@ -106,8 +106,6 @@ void COM_Init (void)
 		LittleFloat = FloatSwap;
 #endif
 
-/* 	Cvar_RegisterVariable (&registered);
- CVAR_FIXME */
 	registered = Cvar_Get("registered", "0", CVAR_NONE, "None");
 	Cmd_AddCommand ("path", COM_Path_f);
 

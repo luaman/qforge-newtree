@@ -44,18 +44,10 @@
 #include "pmove.h"
 #include "view.h"
 
-/* extern	cvar_t	cl_predict_players;
- CVAR_FIXME */
 extern	cvar_t	*cl_predict_players;
-/* extern	cvar_t	cl_predict_players2;
- CVAR_FIXME */
 extern	cvar_t	*cl_predict_players2;
-/* extern	cvar_t	cl_solid_players;
- CVAR_FIXME */
 extern	cvar_t	*cl_solid_players;
 
-/* extern     cvar_t  gl_flashblend;
- CVAR_FIXME */
 extern     cvar_t  *gl_flashblend;
 
 static struct predicted_player {
@@ -903,8 +895,6 @@ void CL_LinkPlayers (void)
 
 		// only predict half the move to minimize overruns
 		msec = 500*(playertime - state->state_time);
-/* 		if (msec <= 0 || (!cl_predict_players.value && !cl_predict_players2.value))
- CVAR_FIXME */
 		if (msec <= 0 || (!cl_predict_players->value && !cl_predict_players2->value))
 		{
 			VectorCopy (state->origin, ent->origin);
@@ -1026,8 +1016,6 @@ void CL_SetUpPlayerPrediction(qboolean dopred)
 			// only predict half the move to minimize overruns
 			msec = 500*(playertime - state->state_time);
 			if (msec <= 0 ||
-/* 				(!cl_predict_players.value && !cl_predict_players2.value) ||
- CVAR_FIXME */
 				(!cl_predict_players->value && !cl_predict_players2->value) ||
 				!dopred)
 			{
@@ -1067,8 +1055,6 @@ void CL_SetSolidPlayers (int playernum)
 	struct predicted_player *pplayer;
 	physent_t *pent;
 
-/* 	if (!cl_solid_players.value)
- CVAR_FIXME */
 	if (!cl_solid_players->value)
 		return;
 

@@ -64,8 +64,6 @@ typedef struct sspan_s
 	int				u, v, count;
 } sspan_t;
 
-/* extern cvar_t	d_subdiv16;
- CVAR_FIXME */
 extern cvar_t	*d_subdiv16;
 
 extern float	scale_for_mip;

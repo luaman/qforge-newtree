@@ -75,71 +75,33 @@ qboolean	noclip_anglehack;		// remnant from old quake
 
 
 cvar_t	*fs_globalcfg;
-/* cvar_t	rcon_password = {"rcon_password", "", false};
- CVAR_FIXME */
 cvar_t	*rcon_password;
 
-/* cvar_t	rcon_address = {"rcon_address", ""};
- CVAR_FIXME */
 cvar_t	*rcon_address;
 
-/* cvar_t	cl_timeout = {"cl_timeout", "60"};
- CVAR_FIXME */
 cvar_t	*cl_timeout;
 
-/* cvar_t	cl_shownet = {"cl_shownet","0"};	// can be 0, 1, or 2
- CVAR_FIXME */
 cvar_t	*cl_shownet;	// can be 0, 1, or 2
 cvar_t	*cl_autoexec;
-/* cvar_t	cl_sbar		= {"cl_sbar", "0", true};
- CVAR_FIXME */
 cvar_t	*cl_sbar;
-/* cvar_t	cl_hudswap	= {"cl_hudswap", "0", true};
- CVAR_FIXME */
 cvar_t	*cl_hudswap;
-/* cvar_t	cl_maxfps	= {"cl_maxfps", "0", true};
- CVAR_FIXME */
 cvar_t	*cl_maxfps;
 
-/* cvar_t	lookspring = {"lookspring","0", true};
- CVAR_FIXME */
 cvar_t	*lookspring;
-/* cvar_t	lookstrafe = {"lookstrafe","0", true};
- CVAR_FIXME */
 cvar_t	*lookstrafe;
-/* cvar_t	sensitivity = {"sensitivity","3", true};
- CVAR_FIXME */
 cvar_t	*sensitivity;
 cvar_t	*cl_freelook;
 
-/* cvar_t	m_pitch = {"m_pitch","0.022", true};
- CVAR_FIXME */
 cvar_t	*m_pitch;
-/* cvar_t	m_yaw = {"m_yaw","0.022"};
- CVAR_FIXME */
 cvar_t	*m_yaw;
-/* cvar_t	m_forward = {"m_forward","1"};
- CVAR_FIXME */
 cvar_t	*m_forward;
-/* cvar_t	m_side = {"m_side","0.8"};
- CVAR_FIXME */
 cvar_t	*m_side;
 
-/* cvar_t	entlatency = {"entlatency", "20"};
- CVAR_FIXME */
 cvar_t	*entlatency;
-/* cvar_t	cl_predict_players = {"cl_predict_players", "1"};
- CVAR_FIXME */
 cvar_t	*cl_predict_players;
-/* cvar_t	cl_predict_players2 = {"cl_predict_players2", "1"};
- CVAR_FIXME */
 cvar_t	*cl_predict_players2;
-/* cvar_t	cl_solid_players = {"cl_solid_players", "1"};
- CVAR_FIXME */
 cvar_t	*cl_solid_players;
 
-/* cvar_t  localid = {"localid", ""};
- CVAR_FIXME */
 cvar_t  *localid;
 
 static qboolean allowremotecmd = true;
@@ -147,39 +109,17 @@ static qboolean allowremotecmd = true;
 //
 // info mirrors
 //
-/* cvar_t	password = {"password", "", false, true};
- CVAR_FIXME */
 cvar_t	*password;
-/* cvar_t	spectator = {"spectator", "", false, true};
- CVAR_FIXME */
 cvar_t	*spectator;
-/* cvar_t	name = {"name","unnamed", true, true};
- CVAR_FIXME */
 cvar_t	*name;
-/* cvar_t	team = {"team","", true, true};
- CVAR_FIXME */
 cvar_t	*team;
-/* cvar_t	skin = {"skin","", true, true};
- CVAR_FIXME */
 cvar_t	*skin;
-/* cvar_t	topcolor = {"topcolor","0", true, true};
- CVAR_FIXME */
 cvar_t	*topcolor;
-/* cvar_t	bottomcolor = {"bottomcolor","0", true, true};
- CVAR_FIXME */
 cvar_t	*bottomcolor;
-/* cvar_t	rate = {"rate","2500", true, true};
- CVAR_FIXME */
 cvar_t	*rate;
-/* cvar_t	noaim = {"noaim","0", true, true};
- CVAR_FIXME */
 cvar_t	*noaim;
-/* cvar_t	msg = {"msg","1", true, true};
- CVAR_FIXME */
 cvar_t	*msg;
 
-/* extern cvar_t cl_hightrack;
- CVAR_FIXME */
 extern cvar_t *cl_hightrack;
 
 client_static_t	cls;
@@ -217,14 +157,8 @@ byte		*host_colormap;
 
 netadr_t	master_adr;				// address of the master server
 
-/* cvar_t	host_speeds = {"host_speeds","0"};			// set for running times
- CVAR_FIXME */
 cvar_t	*host_speeds;			// set for running times
-/* cvar_t	show_fps = {"show_fps","0"};			// set for running times
- CVAR_FIXME */
 cvar_t	*show_fps;			// set for running times
-/* cvar_t	developer = {"developer","0"};
- CVAR_FIXME */
 cvar_t	*developer;
 
 int			fps_count;
@@ -1110,8 +1044,6 @@ void CL_ReadPackets (void)
 	// check timeout
 	//
 	if (cls.state >= ca_connected
-/* 	 && realtime - cls.netchan.last_received > cl_timeout.value)
- CVAR_FIXME */
 	 && realtime - cls.netchan.last_received > cl_timeout->value)
 	{
 		Con_Printf ("\nServer connection timed out.\n");
@@ -1270,152 +1202,64 @@ void CL_Init (void)
 
 void CL_InitCvars (void)
 {
-/* 	extern	cvar_t		baseskin;
- CVAR_FIXME */
 	extern	cvar_t		*baseskin;
-/* 	extern	cvar_t		noskins;
- CVAR_FIXME */
 	extern	cvar_t		*noskins;
 
 
-/* 	Cvar_RegisterVariable (&show_fps);
- CVAR_FIXME */
 	show_fps = Cvar_Get("show_fps", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&host_speeds);
- CVAR_FIXME */
 	host_speeds = Cvar_Get("host_speeds", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&developer);
- CVAR_FIXME */
 	developer = Cvar_Get("developer", "0", CVAR_NONE, "None");
 
 	cl_autoexec = Cvar_Get ("cl_autoexec","0",CVAR_ROM,"exec autoexec.cfg on gamedir change");
 	cl_warncmd = Cvar_Get("cl_warncmd",  "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_upspeed);
- CVAR_FIXME */
 	cl_upspeed = Cvar_Get("cl_upspeed", "200", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_forwardspeed);
- CVAR_FIXME */
 	cl_forwardspeed = Cvar_Get("cl_forwardspeed", "200", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&cl_backspeed);
- CVAR_FIXME */
 	cl_backspeed = Cvar_Get("cl_backspeed", "200", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&cl_sidespeed);
- CVAR_FIXME */
 	cl_sidespeed = Cvar_Get("cl_sidespeed", "350", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_movespeedkey);
- CVAR_FIXME */
 	cl_movespeedkey = Cvar_Get("cl_movespeedkey", "2.0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_yawspeed);
- CVAR_FIXME */
 	cl_yawspeed = Cvar_Get("cl_yawspeed", "140", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_pitchspeed);
- CVAR_FIXME */
 	cl_pitchspeed = Cvar_Get("cl_pitchspeed", "150", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_anglespeedkey);
- CVAR_FIXME */
 	cl_anglespeedkey = Cvar_Get("cl_anglespeedkey", "1.5", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_shownet);
- CVAR_FIXME */
 	cl_shownet = Cvar_Get("cl_shownet", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_sbar);
- CVAR_FIXME */
 	cl_sbar = Cvar_Get("cl_sbar",  "0", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&cl_hudswap);
- CVAR_FIXME */
 	cl_hudswap = Cvar_Get("cl_hudswap",  "0", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&cl_maxfps);
- CVAR_FIXME */
 	cl_maxfps = Cvar_Get("cl_maxfps",  "0", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&cl_timeout);
- CVAR_FIXME */
 	cl_timeout = Cvar_Get("cl_timeout",  "60", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&lookspring);
- CVAR_FIXME */
 	lookspring = Cvar_Get("lookspring", "0", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&lookstrafe);
- CVAR_FIXME */
 	lookstrafe = Cvar_Get("lookstrafe", "0", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&sensitivity);
- CVAR_FIXME */
 	sensitivity = Cvar_Get("sensitivity", "3", CVAR_ARCHIVE, "None");
 	cl_freelook = Cvar_Get("freelook", "0", CVAR_ARCHIVE, "None");
 
-/* 	Cvar_RegisterVariable (&m_pitch);
- CVAR_FIXME */
 	m_pitch = Cvar_Get("m_pitch", "0.022", CVAR_ARCHIVE, "None");
-/* 	Cvar_RegisterVariable (&m_yaw);
- CVAR_FIXME */
 	m_yaw = Cvar_Get("m_yaw", "0.022", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&m_forward);
- CVAR_FIXME */
 	m_forward = Cvar_Get("m_forward", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&m_side);
- CVAR_FIXME */
 	m_side = Cvar_Get("m_side", "0.8", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&rcon_password);
- CVAR_FIXME */
 	rcon_password = Cvar_Get("rcon_password",  "", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&rcon_address);
- CVAR_FIXME */
 	rcon_address = Cvar_Get("rcon_address",  "", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&entlatency);
- CVAR_FIXME */
 	entlatency = Cvar_Get("entlatency",  "20", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_predict_players2);
- CVAR_FIXME */
 	cl_predict_players2 = Cvar_Get("cl_predict_players2",  "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_predict_players);
- CVAR_FIXME */
 	cl_predict_players = Cvar_Get("cl_predict_players",  "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_solid_players);
- CVAR_FIXME */
 	cl_solid_players = Cvar_Get("cl_solid_players",  "1", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&localid);
- CVAR_FIXME */
 	localid = Cvar_Get("localid",  "", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&baseskin);
- CVAR_FIXME */
 	baseskin = Cvar_Get("baseskin",  "base", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&noskins);
- CVAR_FIXME */
 	noskins = Cvar_Get("noskins",  "0", CVAR_NONE, "None");
 
 	//
 	// info mirrors
 	//
-/* 	Cvar_RegisterVariable (&name);
- CVAR_FIXME */
 	name = Cvar_Get("name", "unnamed", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-/* 	Cvar_RegisterVariable (&password);
- CVAR_FIXME */
 	password = Cvar_Get("password",  "", CVAR_SERVERINFO|CVAR_USERINFO, "None");
-/* 	Cvar_RegisterVariable (&spectator);
- CVAR_FIXME */
 	spectator = Cvar_Get("spectator",  "", CVAR_SERVERINFO|CVAR_USERINFO, "None");
-/* 	Cvar_RegisterVariable (&skin);
- CVAR_FIXME */
 	skin = Cvar_Get("skin", "", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-/* 	Cvar_RegisterVariable (&team);
- CVAR_FIXME */
 	team = Cvar_Get("team", "", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-/* 	Cvar_RegisterVariable (&topcolor);
- CVAR_FIXME */
 	topcolor = Cvar_Get("topcolor", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-/* 	Cvar_RegisterVariable (&bottomcolor);
- CVAR_FIXME */
 	bottomcolor = Cvar_Get("bottomcolor", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-/* 	Cvar_RegisterVariable (&rate);
- CVAR_FIXME */
 	rate = Cvar_Get("rate", "2500", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-/* 	Cvar_RegisterVariable (&msg);
- CVAR_FIXME */
 	msg = Cvar_Get("msg", "1", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-/* 	Cvar_RegisterVariable (&noaim);
- CVAR_FIXME */
 	noaim = Cvar_Get("noaim", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
 }
 
@@ -1520,15 +1364,9 @@ qboolean Host_SimulationTime(float time)
 	if (oldrealtime > realtime)
 		oldrealtime = 0;
 
-/* 	if (cl_maxfps.value)
- CVAR_FIXME */
 	if (cl_maxfps->value)
-/* 		fps = max(30.0, min(cl_maxfps.value, 72.0));
- CVAR_FIXME */
 		fps = max(30.0, min(cl_maxfps->value, 72.0));
 	else
-/* 		fps = max(30.0, min(rate.value/80.0, 72.0));
- CVAR_FIXME */
 		fps = max(30.0, min(rate->value/80.0, 72.0));
 
 	if (!cls.timedemo && (realtime + time) - oldrealtime < 1.0/fps)
@@ -1561,15 +1399,9 @@ void Host_Frame (float time)
 	if (oldrealtime > realtime)
 		oldrealtime = 0;
 
-/* 	if (cl_maxfps.value)
- CVAR_FIXME */
 	if (cl_maxfps->value)
-/* 		fps = max(30.0, min(cl_maxfps.value, 72.0));
- CVAR_FIXME */
 		fps = max(30.0, min(cl_maxfps->value, 72.0));
 	else
-/* 		fps = max(30.0, min(rate.value/80.0, 72.0));
- CVAR_FIXME */
 		fps = max(30.0, min(rate->value/80.0, 72.0));
 
 	if (!cls.timedemo && realtime - oldrealtime < 1.0/fps)
@@ -1612,15 +1444,11 @@ void Host_Frame (float time)
 	CL_EmitEntities ();
 
 	// update video
-/* 	if (host_speeds.value)
- CVAR_FIXME */
 	if (host_speeds->value)
 		time1 = Sys_DoubleTime ();
 
 	SCR_UpdateScreen ();
 
-/* 	if (host_speeds.value)
- CVAR_FIXME */
 	if (host_speeds->value)
 		time2 = Sys_DoubleTime ();
 		
@@ -1635,8 +1463,6 @@ void Host_Frame (float time)
 	
 	CDAudio_Update();
 
-/* 	if (host_speeds.value)
- CVAR_FIXME */
 	if (host_speeds->value)
 	{
 		pass1 = (time1 - time3)*1000;

@@ -51,8 +51,6 @@ byte		*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
 qpic_t		*draw_backtile;
 
-/* cvar_t		cl_verstring = {"cl_verstring", "QuakeForge " QF_VERSION};
- CVAR_FIXME */
 cvar_t		*cl_verstring;
 
 //=============================================================================
@@ -136,8 +134,6 @@ void Draw_Init (void)
 	r_rectdesc.ptexbytes = draw_backtile->data;
 	r_rectdesc.rowbytes = draw_backtile->width;
 
-/* 	Cvar_RegisterVariable (&cl_verstring);
- CVAR_FIXME */
 	cl_verstring = Cvar_Get("cl_verstring",  PROGRAM " " VERSION, CVAR_NONE, "None");
 }
 
@@ -293,22 +289,12 @@ void Draw_Pixel(int x, int y, byte color)
 void Draw_Crosshair(void)
 {
 	int x, y;
-/* 	extern cvar_t crosshair, cl_crossx, cl_crossy, crosshaircolor;
- CVAR_FIXME */
 	extern cvar_t *crosshair, *cl_crossx, *cl_crossy, *crosshaircolor;
 	extern vrect_t		scr_vrect;
-/* 	byte c = (byte)crosshaircolor.value;
- CVAR_FIXME */
 	byte c = (byte)crosshaircolor->value;
 
-/* 	if (crosshair.value == 2) {
- CVAR_FIXME */
 	if (crosshair->value == 2) {
-/* 		x = scr_vrect.x + scr_vrect.width/2 + cl_crossx.value; 
- CVAR_FIXME */
 		x = scr_vrect.x + scr_vrect.width/2 + cl_crossx->value; 
-/* 		y = scr_vrect.y + scr_vrect.height/2 + cl_crossy.value;
- CVAR_FIXME */
 		y = scr_vrect.y + scr_vrect.height/2 + cl_crossy->value;
 		Draw_Pixel(x - 1, y, c);
 		Draw_Pixel(x - 3, y, c);
@@ -318,15 +304,9 @@ void Draw_Crosshair(void)
 		Draw_Pixel(x, y - 3, c);
 		Draw_Pixel(x, y + 1, c);
 		Draw_Pixel(x, y + 3, c);
-/* 	} else if (crosshair.value)
- CVAR_FIXME */
 	} else if (crosshair->value)
 		Draw_Character (
-/* 			scr_vrect.x + scr_vrect.width/2-4 + cl_crossx.value, 
- CVAR_FIXME */
 			scr_vrect.x + scr_vrect.width/2-4 + cl_crossx->value, 
-/* 			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy.value, 
- CVAR_FIXME */
 			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy->value, 
 			'+');
 }
