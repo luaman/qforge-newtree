@@ -98,32 +98,19 @@ void Sys_Printf (char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
-#if 0
-	static char	lastmessage[MAXPRINTMSG];
-	static int	msgcount=0;
-#endif
+
 	unsigned char	*p;
 
-	if (sys_nostdout->value) return;
-
-	va_start(argptr,fmt);
-	vsnprintf(msg, sizeof(msg), fmt, argptr);
-	va_end(argptr);
-
-#if 0
-	if (strncmp(lastmessage,msg,MAXPRINTMSG)==0) {
-		msgcount+=1;
+	if (sys_nostdout->value)
 		return;
-	} else {
-		if (msgcount>0) printf("Last message repeated %d times\n",msgcount);
-			strncpy(lastmessage,msg,MAXPRINTMSG);
-		msgcount=0;
-	}
-#endif
+
+	va_start (argptr, fmt);
+	vsnprintf(msg, sizeof (msg), fmt, argptr);
+	va_end (argptr);
 
 	/* translate to ASCII instead of printing [xx]  --KB */
-	for (p = (unsigned char *)msg; *p; p++)
-		putc(qfont_table[*p], stdout);
+	for (p = (unsigned char *) msg; *p; p++)
+		putc (qfont_table[*p], stdout);
 
 	fflush (stdout);
 }

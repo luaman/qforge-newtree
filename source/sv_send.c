@@ -147,7 +147,7 @@ void Con_Printf (char *fmt, ...)
 	va_end (argptr);
 
 	if (sv_redirected) {	// Add to redirected message
-		if (strlen (msg) + strlen(outputbuf) > sizeof (outputbuf) - 1)
+		if (strlen (msg) + strlen (outputbuf) > sizeof (outputbuf) - 1)
 			SV_FlushRedirect ();
 		strcat (outputbuf, msg);
 		return;
@@ -200,7 +200,7 @@ void Con_DPrintf (char *fmt, ...)
 		return;
 
 	va_start (argptr, fmt);
-	vsnprintf (msg, sizeof(msg), fmt, argptr);
+	vsnprintf (msg, sizeof (msg), fmt, argptr);
 	va_end (argptr);
 	
 	Con_Printf ("%s", msg);

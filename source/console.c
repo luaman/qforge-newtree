@@ -389,18 +389,18 @@ void Con_Printf (char *fmt, ...)
 	va_start (argptr, fmt);
 	vsnprintf (msg, sizeof(msg), fmt, argptr);
 	va_end (argptr);
-	
-// also echo to debugging console
+
+	// also echo to debugging console
 	Sys_Printf ("%s", msg);	// also echo to debugging console
 
-// log all messages to file
+	// log all messages to file
 	if (con_debuglog)
-		Sys_DebugLog(va("%s/qconsole.log",com_gamedir), "%s", msg);
+		Sys_DebugLog (va ("%s/qconsole.log", com_gamedir), "%s", msg);
 		
 	if (!con_initialized)
 		return;
 		
-// write it to the scrollable buffer
+	// write it to the scrollable buffer
 	Con_Print (msg);
 }
 
