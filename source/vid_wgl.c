@@ -112,7 +112,7 @@ int			vid_realmode;
 int			vid_default = MODE_WINDOWED;
 static int	windowed_default;
 unsigned char	vid_curpal[256*3];
-static qboolean fullsbardraw = false;
+static qboolean fullsbardraw = true;
 
 HGLRC	baseRC;
 HDC		maindc;
