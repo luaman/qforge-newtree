@@ -921,7 +921,7 @@ byte        scantokey[128] =
 	K_DOWNARROW,K_PGDN,K_INS,K_DEL,0,0,             0,              K_F11, 
 	K_F12,0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,        // 5 
 	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0, 
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,        // 6 
+	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,        // 6
 	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0, 
 	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0         // 7 
 					}; 
@@ -942,7 +942,7 @@ byte        shiftscantokey[128] =
 	K_UPARROW,K_PGUP,'_',K_LEFTARROW,'%',K_RIGHTARROW,'+',K_END, //4 
 	K_DOWNARROW,K_PGDN,K_INS,K_DEL,0,0,             0,              K_F11, 
 	K_F12,0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,        // 5 
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0, 
+	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,
 	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,        // 6 
 	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0, 
 	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0         // 7 
@@ -984,7 +984,7 @@ ClearAllStates
 void ClearAllStates (void)
 {
 	int		i;
-	
+
 // send an up event for each key, to make sure the server clears them all
 	for (i=0 ; i<256 ; i++)
 	{
@@ -1284,7 +1284,7 @@ char *VID_GetExtModeDescription (int mode)
 		if (modestate == MS_WINDOWED)
 			snprintf (pinfo, sizeof(pinfo), "%s windowed", pv->modedesc);
 		else
-			strcpy (pinfo, "windowed");
+			snprintf (pinfo, sizeof(pinfo), "windowed");
 	}
 
 	return pinfo;
@@ -1403,7 +1403,7 @@ void VID_InitDIB (HINSTANCE hInstance)
 	if (modelist[0].height < 240)
 		modelist[0].height = 240;
 
-	sprintf (modelist[0].modedesc, "%dx%d",
+	snprintf (modelist[0].modedesc, sizeof(modelist[0].modedesc), "%dx%d",
 			 modelist[0].width, modelist[0].height);
 
 	modelist[0].modenum = MODE_WINDOWED;
@@ -1456,7 +1456,7 @@ void VID_InitFullDIB (HINSTANCE hInstance)
 				modelist[nummodes].dib = 1;
 				modelist[nummodes].fullscreen = 1;
 				modelist[nummodes].bpp = devmode.dmBitsPerPel;
-				sprintf (modelist[nummodes].modedesc, "%dx%dx%d",
+				snprintf (modelist[nummodes].modedesc, sizeof(modelist[nummodes].modedesc), "%dx%dx%d",
 						 devmode.dmPelsWidth, devmode.dmPelsHeight,
 						 devmode.dmBitsPerPel);
 
@@ -1468,7 +1468,7 @@ void VID_InitFullDIB (HINSTANCE hInstance)
 					{
 						modelist[nummodes].width >>= 1;
 						modelist[nummodes].halfscreen = 1;
-						sprintf (modelist[nummodes].modedesc, "%dx%dx%d",
+						snprintf (modelist[nummodes].modedesc, sizeof(modelist[nummodes].modedesc), "%dx%dx%d",
 								 modelist[nummodes].width,
 								 modelist[nummodes].height,
 								 modelist[nummodes].bpp);
@@ -1521,7 +1521,7 @@ void VID_InitFullDIB (HINSTANCE hInstance)
 				modelist[nummodes].dib = 1;
 				modelist[nummodes].fullscreen = 1;
 				modelist[nummodes].bpp = devmode.dmBitsPerPel;
-				sprintf (modelist[nummodes].modedesc, "%dx%dx%d",
+				snprintf (modelist[nummodes].modedesc, sizeof(modelist[nummodes].modedesc), "%dx%dx%d",
 						 devmode.dmPelsWidth, devmode.dmPelsHeight,
 						 devmode.dmBitsPerPel);
 
@@ -1761,7 +1761,7 @@ void	VID_Init (unsigned char *palette)
 					modelist[nummodes].dib = 1;
 					modelist[nummodes].fullscreen = 1;
 					modelist[nummodes].bpp = bpp;
-					sprintf (modelist[nummodes].modedesc, "%dx%dx%d",
+					snprintf (modelist[nummodes].modedesc, sizeof(modelist[nummodes].modedesc), "%dx%dx%d",
 							 devmode.dmPelsWidth, devmode.dmPelsHeight,
 							 devmode.dmBitsPerPel);
 
