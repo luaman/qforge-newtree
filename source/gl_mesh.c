@@ -110,7 +110,7 @@ int	StripLength (int starttri, int startv)
 
 	// look for a matching triangle
 nexttri:
-	for (j=starttri+1, check=&triangles[starttri+1] ; j<pheader->numtris ; j++, check++)
+	for (j=starttri+1, check=&triangles[starttri+1] ; j<pheader->mdl.numtris ; j++, check++)
 	{
 		if (check->facesfront != last->facesfront)
 			continue;
@@ -144,7 +144,7 @@ nexttri:
 done:
 
 	// clear the temp used flags
-	for (j=starttri+1 ; j<pheader->numtris ; j++)
+	for (j=starttri+1 ; j<pheader->mdl.numtris ; j++)
 		if (used[j] == 2)
 			used[j] = 0;
 
@@ -180,7 +180,7 @@ int	FanLength (int starttri, int startv)
 
 	// look for a matching triangle
 nexttri:
-	for (j=starttri+1, check=&triangles[starttri+1] ; j<pheader->numtris ; j++, check++)
+	for (j=starttri+1, check=&triangles[starttri+1] ; j<pheader->mdl.numtris ; j++, check++)
 	{
 		if (check->facesfront != last->facesfront)
 			continue;
@@ -211,7 +211,7 @@ nexttri:
 done:
 
 	// clear the temp used flags
-	for (j=starttri+1 ; j<pheader->numtris ; j++)
+	for (j=starttri+1 ; j<pheader->mdl.numtris ; j++)
 		if (used[j] == 2)
 			used[j] = 0;
 
@@ -243,7 +243,7 @@ void BuildTris (void)
 	numorder = 0;
 	numcommands = 0;
 	memset (used, 0, sizeof(used));
-	for (i=0 ; i<pheader->numtris ; i++)
+	for (i=0 ; i<pheader->mdl.numtris ; i++)
 	{
 		// pick an unused triangle and start the trifan
 		if (used[i])
@@ -290,9 +290,9 @@ void BuildTris (void)
 			s = stverts[k].s;
 			t = stverts[k].t;
 			if (!triangles[besttris[0]].facesfront && stverts[k].onseam)
-				s += pheader->skinwidth / 2;	// on back side
-			s = (s + 0.5) / pheader->skinwidth;
-			t = (t + 0.5) / pheader->skinheight;
+				s += pheader->mdl.skinwidth / 2;	// on back side
+			s = (s + 0.5) / pheader->mdl.skinwidth;
+			t = (t + 0.5) / pheader->mdl.skinheight;
 
 			*(float *)&commands[numcommands++] = s;
 			*(float *)&commands[numcommands++] = t;
@@ -301,10 +301,10 @@ void BuildTris (void)
 
 	commands[numcommands++] = 0;		// end of list marker
 
-	Con_DPrintf ("%3i tri %3i vert %3i cmd\n", pheader->numtris, numorder, numcommands);
+	Con_DPrintf ("%3i tri %3i vert %3i cmd\n", pheader->mdl.numtris, numorder, numcommands);
 
 	allverts += numorder;
-	alltris += pheader->numtris;
+	alltris += pheader->mdl.numtris;
 }
 
 

@@ -1,7 +1,7 @@
 /*
-	sv_model.c
+	sw_model_bursh.c
 
-	(description)
+	model loading and caching
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -26,51 +26,43 @@
 	$Id$
 */
 
+// models are the only shared resource between a client and server running
+// on the same machine.
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "server.h"
-#include "crc.h"
-#include "msg.h"
-#include "world.h"
-#include "commdef.h"
-#include "cmd.h"
-#include "sys.h"
-#include "pmove.h"
+
+#include "model.h"
+
+extern	model_t	*loadmodel;
+extern	char	loadname[];
+extern	byte	*mod_base;
 
 const int mod_lightmap_bytes=1;
 
-void Mod_LoadBrushModel (model_t *mod, void *buffer);
-
 void
-Mod_LoadLighting(lump_t *l)
+GL_SubdivideSurface(msurface_t *fa)
 {
 }
 
 void
-Mod_LoadAliasModel(model_t *mod, void *buf)
-{
-	Mod_LoadBrushModel (mod, buf);
-}
-
-void
-Mod_LoadSpriteModel(model_t *mod, void *buf)
-{
-	Mod_LoadBrushModel (mod, buf);
-}
-
-void
-R_InitSky(struct texture_s *mt)
+Mod_LoadMMNearest(miptex_t *mt, texture_t   *tx)
 {
 }
 
-void
-Mod_LoadMMNearest(miptex_t *mx, texture_t	*tx)
+/*
+=================
+Mod_LoadLighting
+=================
+*/
+void Mod_LoadLighting (lump_t *l)
 {
-}
-
-void
-GL_SubdivideSurface (msurface_t *fa)
-{
+	if (!l->filelen)
+	{
+		loadmodel->lightdata = NULL;
+		return;
+	}
+	loadmodel->lightdata = Hunk_AllocName ( l->filelen, loadname);	
+	memcpy (loadmodel->lightdata, mod_base + l->fileofs, l->filelen);
 }

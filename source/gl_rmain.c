@@ -472,9 +472,9 @@ static void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 			order += 2;
 
 			// normals and vertexes come from the frame list
-			point[0] = verts->v[0] * paliashdr->scale[0] + paliashdr->scale_origin[0];
-			point[1] = verts->v[1] * paliashdr->scale[1] + paliashdr->scale_origin[1];
-			point[2] = verts->v[2] * paliashdr->scale[2] + paliashdr->scale_origin[2];
+			point[0] = verts->v[0] * paliashdr->mdl.scale[0] + paliashdr->mdl.scale_origin[0];
+			point[1] = verts->v[1] * paliashdr->mdl.scale[1] + paliashdr->mdl.scale_origin[1];
+			point[2] = verts->v[2] * paliashdr->mdl.scale[2] + paliashdr->mdl.scale_origin[2];
 
 			point[0] -= shadevector[0]*(point[2]+lheight);
 			point[1] -= shadevector[1]*(point[2]+lheight);
@@ -502,7 +502,7 @@ static void R_SetupAliasFrame (int frame, aliashdr_t *paliashdr, qboolean fb)
 	int				pose, numposes;
 	float			interval;
 
-	if ((frame >= paliashdr->numframes) || (frame < 0))
+	if ((frame >= paliashdr->mdl.numframes) || (frame < 0))
 	{
 		Con_DPrintf ("R_AliasSetupFrame: no such frame %d\n", frame);
 		frame = 0;
@@ -621,7 +621,7 @@ static void R_DrawAliasModel (entity_t *e)
 	//
 	paliashdr = (aliashdr_t *)Mod_Extradata (currententity->model);
 
-	c_alias_polys += paliashdr->numtris;
+	c_alias_polys += paliashdr->mdl.numtris;
 
 	//
 	// draw all the triangles
@@ -632,14 +632,14 @@ static void R_DrawAliasModel (entity_t *e)
 
 	if (!strcmp (clmodel->name, "progs/eyes.mdl") )
 	{
-		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2] - (22 + 8));
+		glTranslatef (paliashdr->mdl.scale_origin[0], paliashdr->mdl.scale_origin[1], paliashdr->mdl.scale_origin[2] - (22 + 8));
 	// double size of eyes, since they are really hard to see in gl
-		glScalef (paliashdr->scale[0]*2, paliashdr->scale[1]*2, paliashdr->scale[2]*2);
+		glScalef (paliashdr->mdl.scale[0]*2, paliashdr->mdl.scale[1]*2, paliashdr->mdl.scale[2]*2);
 	}
 	else
 	{
-		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
-		glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+		glTranslatef (paliashdr->mdl.scale_origin[0], paliashdr->mdl.scale_origin[1], paliashdr->mdl.scale_origin[2]);
+		glScalef (paliashdr->mdl.scale[0], paliashdr->mdl.scale[1], paliashdr->mdl.scale[2]);
 	}
 
 	anim = (int)(cl.time*10) & 3;
