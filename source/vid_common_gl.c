@@ -91,7 +91,7 @@ CheckMultiTextureExtensions (void)
 		Con_Printf ("disabled\n");
 		return;
 	}
-#ifdef HAVE_DLOPEN
+
 	if (QFGL_ExtensionPresent ("GL_ARB_multitexture")) {
 		Con_Printf ("GL_ARB_multitexture\n");
 		qglMTexCoord2f = QFGL_ExtensionAddress ("glMultiTexCoord2fARB");
@@ -116,9 +116,6 @@ CheckMultiTextureExtensions (void)
 	} else {
 		Con_Printf ("none\n");
 	}
-#else
-	gl_mtexable = false;
-#endif
 }
 
 void
