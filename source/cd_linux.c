@@ -412,7 +412,7 @@ int CDAudio_Init(void)
 		cd_dev[sizeof(cd_dev) - 1] = 0;
 	}
 
-	if ((cdfile = open(cd_dev, O_RDONLY)) == -1) {
+	if ((cdfile = open(cd_dev, O_RDONLY | O_NONBLOCK)) == -1) {
 		Con_Printf("CDAudio_Init: open of \"%s\" failed (%i)\n", cd_dev, errno);
 		cdfile = -1;
 		return -1;
