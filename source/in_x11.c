@@ -68,8 +68,8 @@
 
 cvar_t		*_windowed_mouse;
 cvar_t		*m_filter;
-#ifdef HAVE_DGA
 cvar_t		*in_dgamouse;
+#ifdef HAVE_DGA
 cvar_t		*in_dga_mouseaccel;
 #endif
 
