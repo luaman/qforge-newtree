@@ -188,8 +188,6 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinind
 	daliasskingroup_t		*pinskingroup;
 	int		groupskins;
 	daliasskininterval_t	*pinskinintervals;
-	
-	skin = (byte *)pskintype;
 
 	if (numskins < 1 || numskins > MAX_SKINS)
 		SV_Error ("Mod_LoadAliasModel: Invalid # of skins: %d\n", numskins);
@@ -199,7 +197,7 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinind
 	for (i=0 ; i<numskins ; i++)
 	{
 		if (pskintype->type == ALIAS_SKIN_SINGLE) {
-			skin+=4;
+			skin = (byte *)(pskintype+1);
 			skin = Mod_LoadSkin (skin, skinsize, i, 0, false);
 
 			for (j=1; j < 4; j++) {
@@ -231,9 +229,10 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinind
 					pheader->gl_fb_texturenum[i][j - k]; 
 			}
 		}
+		pskintype = (daliasskintype_t*)skin;
 	}
 
-	return (void *)skin;
+	return pskintype;
 }
 
 /*
@@ -270,7 +269,6 @@ void * Mod_LoadAliasFrame (void * pin, maliasframedesc_t *frame)
 
 	return (void *)pinframe;
 }
-
 
 /*
 =================
