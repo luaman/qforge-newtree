@@ -104,48 +104,15 @@ QFGL_ExtensionPresent (const char *name)
 {
 	static const GLubyte *gl_extensions = NULL;
 
-#ifdef _WIN32
-	static const GLubyte *wgl_extensions = NULL;
-
-	static qboolean extensionFunc_present = true;
-	static QF_wglGetExtensionsStringEXT extensionFunc = NULL;
-#endif
-
 	if (!gl_extensions) {				// get and save GL extension list
 		gl_extensions = glGetString (GL_EXTENSIONS);
 	}
-#ifdef _WIN32
-	if (!wgl_extensions) {				// get and save WGL extension list
-		if (extensionFunc_present && !extensionFunc) {
-			if (!
-				(QFGL_ParseExtensionList
-				 (gl_extensions, "WGL_EXT_extensions_string"))) {
-				extensionFunc_present = false;
-			} else {
-				extensionFunc =
-					QFGL_ExtensionAddress ("WGL_EXT_extension_string");
-			}
-		}
 
-		if (extensionFunc_present)
-			wgl_extensions = extensionFunc ();
-		else
-			wgl_extensions = "";
-	}
-
-	if (QFGL_ParseExtensionList (gl_extensions, name))
-		return true;
-	if (QFGL_ParseExtensionList (wgl_extensions, name))
-		return true;
-
-	return false;
-#else
 	return QFGL_ParseExtensionList (gl_extensions, name);
-#endif
 }
 
 
-void       *
+void *
 QFGL_ExtensionAddress (const char *name)
 {
 #if defined(HAVE_GLX) && defined(HAVE_DLOPEN)
