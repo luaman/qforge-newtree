@@ -425,7 +425,7 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 	pack_t		*pak;
 	int			i;
 	int			findtime;
-#ifdef HAS_ZLIB
+#ifdef HAVE_ZLIB
 	char		gzfilename[MAX_OSPATH];
 	int			filenamelen;;
 
@@ -448,7 +448,7 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 			pak = search->pack;
 			for (i=0 ; i<pak->numfiles ; i++) {
 				char *fn=0;
-#ifdef HAS_ZLIB
+#ifdef HAVE_ZLIB
 				if (!strncmp(pak->files[i].name, filename, filenamelen)) {
 					if (!pak->files[i].name[filenamelen])
 						fn=filename;
@@ -481,7 +481,7 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 			strncpy(foundname, filename, MAX_OSPATH);
 			findtime = Sys_FileTime (netpath);
 			if (findtime == -1) {
-#ifdef HAS_ZLIB
+#ifdef HAVE_ZLIB
 				strncpy(foundname, gzfilename, MAX_OSPATH);
 				snprintf(netpath, sizeof(netpath), "%s/%s",search->filename,
 						 gzfilename);

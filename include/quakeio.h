@@ -35,7 +35,7 @@
 #endif
 
 #include <stdio.h>
-#ifdef HAS_ZLIB
+#ifdef HAVE_ZLIB
 #include <zlib.h>
 #endif
 
@@ -43,7 +43,7 @@
 
 typedef struct {
 	FILE *file;
-#ifdef HAS_ZLIB
+#ifdef HAVE_ZLIB
 	gzFile *gzfile;
 #endif
 } QFile;

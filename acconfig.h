@@ -83,7 +83,7 @@
 #undef HAVE_DLOPEN
 
 /* Define if you have zlib */
-#undef HAS_ZLIB
+#undef HAVE_ZLIB
 
 /* Define if you have pthread support. */
 #undef HAVE_LIBPTHREAD

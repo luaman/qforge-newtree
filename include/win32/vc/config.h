@@ -244,7 +244,7 @@
 #undef HAVE_LIBM
 
 /* Define if you have the zlib library (-lz).  */
-#define HAS_ZLIB
+#define HAVE_ZLIB
 
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_

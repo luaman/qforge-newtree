@@ -29,9 +29,9 @@ To compile under "free" Borland C++, see couple of paragraphs below.
 
    or:
      open include/vc/config.h and change the line that reads
-        #define HAS_ZLIB
+        #define HAVE_ZLIB
      to
-        #undef HAS_ZLIB
+        #undef HAVE_ZLIB
      and remove zlib.lib and zlibd.lib from the project settings
      (not reccommended)
 
