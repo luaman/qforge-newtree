@@ -1171,11 +1171,7 @@ COM_Init
 */
 void COM_Init (void)
 {
-	byte	swaptest[2] = {1,0};
-
-// set the byte swapping variables in a portable manner	
-	if ( *(short *)swaptest == 1)
-	{
+#ifndef WORDS_BIGENDIEN
 		bigendien = false;
 		BigShort = ShortSwap;
 		LittleShort = ShortNoSwap;
@@ -1183,9 +1179,7 @@ void COM_Init (void)
 		LittleLong = LongNoSwap;
 		BigFloat = FloatSwap;
 		LittleFloat = FloatNoSwap;
-	}
-	else
-	{
+#else
 		bigendien = true;
 		BigShort = ShortNoSwap;
 		LittleShort = ShortSwap;
@@ -1193,7 +1187,7 @@ void COM_Init (void)
 		LittleLong = LongSwap;
 		BigFloat = FloatNoSwap;
 		LittleFloat = FloatSwap;
-	}
+#endif
 
 /* 	Cvar_RegisterVariable (&registered);
  CVAR_FIXME */
