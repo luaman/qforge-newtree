@@ -655,13 +655,15 @@ R_SetupAliasBlendedFrame (int frame, aliashdr_t *paliashdr, entity_t *e, qboolea
 		e->frame_interval = paliashdr->frames[frame].interval;
 		pose += (int) (cl.time / e->frame_interval) % numposes;
 	} else {
-		/* One tenth of a second is a good for most Quake animations. If the
-		   nextthink is longer then the animation is usually meant to pause
-		   (e.g. check out the shambler magic animation in shambler.qc).  If
-		   its shorter then things will still be smoothed partly, and the
-		   jumps will be less noticable because of the shorter time.  So,
-		   this is probably a good assumption. */
-		e->frame_interval = 0.2;
+		/*
+			One tenth of a second is a good for most Quake animations. If the
+			nextthink is longer then the animation is usually meant to pause
+			(e.g. check out the shambler magic animation in shambler.qc).  If
+			its shorter then things will still be smoothed partly, and the
+			jumps will be less noticable because of the shorter time.  So,
+			this is probably a good assumption.
+		*/
+		e->frame_interval = 0.1;
 	}
 
 	if (e->pose2 != pose) {
@@ -671,12 +673,11 @@ R_SetupAliasBlendedFrame (int frame, aliashdr_t *paliashdr, entity_t *e, qboolea
 		blend = 0;
 	} else {
 		blend = (realtime - e->frame_start_time) / e->frame_interval;
-		blend = min (blend, 1);
 	}
-//	Sys_Printf ("numposes: %d, pose1: %d, pose2: %d\n", numposes, e->pose1, e->pose2);
+	// Con_DPrintf ("numposes: %d, poses: %d %d\n", numposes, e->pose1, e->pose2);
 
 	// wierd things start happening if blend passes 1
-	if (cl.paused)
+	if (cl.paused || blend > 1)
 		blend = 1;
 
 	GL_DrawAliasBlendedFrame (paliashdr, e->pose1, e->pose2, blend, fb);
@@ -831,11 +832,11 @@ R_DrawAliasModel (entity_t *e)
 	if (clmodel->hasfullbrights && gl_fb_models->int_val &&
 		paliashdr->gl_fb_texturenum[currententity->skinnum][anim]) {
 		glBindTexture (GL_TEXTURE_2D, paliashdr->gl_fb_texturenum[currententity->skinnum][anim]);
-	    if (gl_lerp_anim->int_val && !torch) {
+		if (gl_lerp_anim->int_val && !torch) {
 			R_SetupAliasBlendedFrame (currententity->frame, paliashdr, currententity, true);
-	    } else {
+		} else {
 			R_SetupAliasFrame (currententity->frame, paliashdr, true);
-	    }
+		}
 	}
 
 	if (gl_affinemodels->int_val)
