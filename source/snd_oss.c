@@ -36,6 +36,7 @@
 #include <sys/types.h>
 #include <sys/shm.h>
 #include <sys/wait.h>
+#include <errno.h>
 #include <stdio.h>
 
 #ifdef HAVE_SYS_IOCTL_H
@@ -78,17 +79,24 @@ SNDDMA_Init(void)
 	char *s;
 	struct audio_buf_info info;
 	int caps;
+	int retries = 3;
 
 	snd_inited = 0;
 
-// open /dev/dsp, confirm capability to mmap, and get size of dma buffer
+	// open /dev/dsp, confirm capability to mmap, and get size of dma buffer
 
-	audio_fd = open("/dev/dsp", O_RDWR);
-	if (audio_fd < 0)
-	{
-		perror("/dev/dsp");
-		Con_Printf("Could not open /dev/dsp\n");
-		return 0;
+	audio_fd = open ("/dev/dsp", O_RDWR);
+	if (audio_fd < 0) { // Failed open, retry up to 3 times if it's busy
+		while ((audio_fd < 0) && retries-- &&
+				((errno == EAGAIN) || (errno == EBUSY))) {
+			sleep (1);
+			audio_fd = open ("/dev/dsp", O_RDWR);
+		}
+		if (audio_fd < 0) {
+			perror ("/dev/dsp");
+			Con_Printf ("Could not open /dev/dsp\n");
+			return 0;
+		}
 	}
 
 	rc = ioctl(audio_fd, SNDCTL_DSP_RESET, 0);
