@@ -53,6 +53,15 @@
 #include "wad.h"
 #include "client.h"
 
+
+#ifndef GLAPIENTRY
+# ifdef APIENTRY
+#  define GLAPIENTRY APIENTRY
+# else
+#  define GLAPIENTRY
+# endif
+#endif
+
 void GL_BeginRendering (int *x, int *y, int *width, int *height);
 void GL_EndRendering (void);
 

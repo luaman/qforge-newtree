@@ -366,21 +366,6 @@ if test "x$HAVE_GLX" != xno; then
 		AC_DEFINE(HAVE_GL_COLOR_INDEX8_EXT) AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no)
 	)
-	AC_MSG_CHECKING(for GLAPIENTRY in GL/gl.h)
-	AC_TRY_COMPILE(
-		[#include "GL/gl.h"],
-		[ int x = GLAPIENTRY printf("");],
-		AC_MSG_RESULT(yes)
-		,
-		AC_MSG_RESULT(no)
-		AC_MSG_CHECKING(for APIENTRY in GL/gl.h)
-		AC_TRY_COMPILE(
-			[#include "GL/gl.h"],
-			[ int x = APIENTRY printf("");],
-			AC_DEFINE(GLAPIENTRY, APIENTRY) AC_MSG_RESULT(yes),
-			AC_DEFINE(GLAPIENTRY, ) AC_MSG_RESULT(no)
-		)
-	)
 fi
 CPPFLAGS="$save_CPPFLAGS"
 
