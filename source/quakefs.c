@@ -207,7 +207,7 @@ COM_FileOpenRead (char *path, FILE **hndl)
 {
 	FILE	*f;
 
-	f = fopen(path, "rbz");
+	f = fopen(path, "rb");
 	if (!f)
 	{
 		*hndl = NULL;
@@ -393,7 +393,11 @@ COM_OpenRead (const char *path, int offs, int len)
 	}
 	lseek(fd,offs,SEEK_SET);
 	com_filesize=len;
-	return fdopen(fd,"rbz");
+
+#ifdef WIN32
+	setmode(fd,O_BINARY);
+#endif
+        return fdopen(fd,"rb");
 	return 0;
 }
 
