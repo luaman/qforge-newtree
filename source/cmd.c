@@ -585,7 +585,6 @@ void Cmd_TokenizeString (char *text)
 {
 	static char	argv_buf[1024];
 	int		argv_idx;
-	int		i;
 
 	argv_idx = 0;
 

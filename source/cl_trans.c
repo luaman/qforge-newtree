@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#include "quakedef.h"   // Host_EndGame
 #include "sys.h"
 #include "vid.h"
 #include "client.h"

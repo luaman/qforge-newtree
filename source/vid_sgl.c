@@ -613,8 +613,8 @@ void IN_Init (void)
 
     mouse_x = mouse_y = 0.0;
     mouse_avail = 1;
-    SDL_WM_GrabInput (SDL_GRAB_ON);
     SDL_ShowCursor (0);
+    SDL_WM_GrabInput (SDL_GRAB_ON);
     // FIXME: disable DGA if in_dgamouse says to
 }
 
