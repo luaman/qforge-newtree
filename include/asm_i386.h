@@ -22,9 +22,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define __ASM_I386__
 
 #ifdef HAVE_SYM_PREFIX_UNDERSCORE
-#define C(label) label
-#else
 #define C(label) _##label
+#else
+#define C(label) label
 #endif
 
 //

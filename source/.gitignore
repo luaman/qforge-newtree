@@ -9,3 +9,4 @@ qf-client-svga
 qf-client-x11
 qf-server
 server.exe
+.deps
