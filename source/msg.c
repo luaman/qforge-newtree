@@ -372,7 +372,7 @@ MSG_ReadDeltaUsercmd (usercmd_t *from, usercmd_t *move)
 {
 	int         bits;
 
-	memcpy (move, from, sizeof (*move));
+	memcpy (move, from, sizeof (usercmd_t));
 
 	bits = MSG_ReadByte ();
 
