@@ -13,7 +13,7 @@ of us use.
 	Description
 */
 returntype
-SECTION_FunctionName ( args )
+SECTION_FunctionName (args)
 {
 	type	var;
 
