@@ -26,8 +26,9 @@
 	$Id$
 */
 // r_surf.c: surface-related refresh code
-#include <math.h>
 #include <stdio.h>
+#include <string.h>
+#include <math.h>
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
 
