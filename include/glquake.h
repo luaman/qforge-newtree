@@ -222,6 +222,7 @@ extern	cvar_t	*gl_playermip;
 
 extern	cvar_t	*r_skyname;
 extern	cvar_t *gl_skymultipass;
+extern	cvar_t	*gl_sky_clip;
 
 extern	float	r_world_matrix[16];
 
@@ -279,6 +280,7 @@ void EmitSkyPolys (msurface_t *fa);
 void R_DrawSkyChain (msurface_t *s);
 void R_LoadSkys (char *);
 void R_DrawSky (void);
+void R_DrawSkyChain (msurface_t *sky_chain);
 
 //
 // gl_draw.c

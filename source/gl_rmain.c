@@ -47,6 +47,7 @@
 #include "skin.h"
 #include "cl_main.h"
 #include "cl_cam.h"
+#include "va.h"
 #include "view.h"
 
 
@@ -123,6 +124,8 @@ cvar_t	*gl_sky_clip;
 cvar_t *gl_fb_models;
 cvar_t *gl_fb_bmodels;
 
+cvar_t *brighten;
+
 extern	cvar_t	*scr_fov;
 
 extern byte gammatable[256];
@@ -145,12 +148,15 @@ GL_CheckBrightness (unsigned char *pal)
 	int 	i, inf;
 	float	brightness;
 
+	brighten = Cvar_Get ("brighten", "1", CVAR_ROM,
+						 "Palette hack equivalent to brightness");
 	if ((i = COM_CheckParm ("-brighten"))) {
 		brightness = atof (com_argv[i + 1]);
-		brightness = bound (1, brightness, 5);
 	} else {
-		brightness = 1.0;
+		brightness = brighten->value;
 	}
+	brightness = bound (1, brightness, 5);
+	Cvar_SetROM (brighten, va("%f", brightness));
 	
 	// Build gamma table
 	if (brightness == 1.0) {	// screw the math
