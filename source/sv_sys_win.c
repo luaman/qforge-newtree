@@ -94,7 +94,7 @@ char *Sys_ConsoleInput (void)
 	int		c;
 
 	// read a line out
-	while (_kbhit())
+        while (kbhit())
 	{
 		c = _getch();
 		putch (c);
