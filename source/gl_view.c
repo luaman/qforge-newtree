@@ -191,8 +191,7 @@ void V_UpdatePalette (void)
 	basepal = host_basepal;
 	newpal = pal;
 	
-	for (i=0 ; i<256 ; i++)
-	{
+	for (i=0; i<256; i++) {
 		ir = basepal[0];
 		ig = basepal[1];
 		ib = basepal[2];
@@ -207,3 +206,19 @@ void V_UpdatePalette (void)
 	VID_ShiftPalette (pal);	
 }
 
+/*
+	BuildGammaTable
+
+	In software mode, this function gets the palette ready for changing...in
+	in GL, it does very little as you can see.
+*/
+
+void
+BuildGammaTable (float b, float c)
+{
+	int		i;
+
+	for (i = 0; i < 256; i++)
+		gammatable[i] = i;
+	return;
+}

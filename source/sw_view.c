@@ -104,3 +104,32 @@ void V_UpdatePalette (void)
 	}
 	VID_ShiftPalette (pal);
 }
+
+void
+BuildGammaTable (float b, float c)
+{
+	int		i, j;
+	int 	inf = 0;
+	
+	if ((b == 1.0) && (c == 1.0)) {
+		for (i = 0; i < 256; i++)
+			gammatable[i] = i;
+		return;
+	}
+	
+	for (i=0 ; i<256 ; i++) {
+		if (!(i == 128)) {
+			if (i < 128) {
+				j = i + (int) ((128 - i) * (1 - c));
+			} else {
+				j = i + (int) ((i - 128) * (1 - c));
+			}
+		} else {
+			j = i;
+		}
+		inf = (j * b);	// gamma is brightness now, and positive
+		inf = bound(0, inf, 255);
+		gammatable[i] = inf;
+	}
+}
+

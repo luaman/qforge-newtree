@@ -88,6 +88,8 @@ extern	int			in_forward, in_forward2, in_back;
 frame_t		*view_frame;
 player_state_t		*view_message;
 
+void BuildGammaTable (float, float);
+
 /*
 ===============
 V_CalcRoll
@@ -279,32 +281,6 @@ cvar_t		*brightness;
 cvar_t		*contrast;
 
 byte		gammatable[256];	// palette is sent through this
-
-void BuildGammaTable (float b, float c)
-{
-	int		i, j, inf = 0;
-	
-	if ((b == 1.0) && (c == 1.0)) {
-		for (i = 0; i < 256; i++)
-			gammatable[i] = i;
-		return;
-	}
-	
-	for (i=0 ; i<256 ; i++) {
-		if (!(i == 128)) {
-			if (i < 128) {
-				j = i + (int) ((128 - i) * (1 - c));
-			} else {
-				j = i + (int) ((i - 128) * (1 - c));
-			}
-		} else {
-			j = i;
-		}
-		inf = (j * b);	// gamma is brightness now, and positive
-		inf = bound(0, inf, 255);
-		gammatable[i] = inf;
-	}
-}
 
 /*
 =================
