@@ -53,12 +53,13 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(
 	unistd.h fcntl.h dlfcn.h windows.h sys/ioctl.h sys/mman.h \
 	sys/io.h asm/io.h \
-	sys/stat.h sys/time.h sys/timeb.h \
+	sys/param.h sys/stat.h sys/time.h sys/timeb.h \
 	sys/socket.h netinet/in.h netdb.h arpa/inet.h sys/filio.h \
 	sys/soundcard.h linux/soundcard.h machine/soundcard.h sys/audioio.h \
 	dsound.h mmsystem.h initguid.h mme/mmsystem.h mme/mme_public.h \
 	sys/asoundlib.h string.h strings.h memory.h malloc.h \
-	errno.h sys/dir.h
+	errno.h sys/dir.h \
+	mgraph.h
 )
 
 dnl Checks for typedefs, structures, and compiler characteristics.
