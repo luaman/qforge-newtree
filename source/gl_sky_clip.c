@@ -647,16 +647,11 @@ R_DrawSkyDomePoly (glpoly_t *poly)
 {
 	int         i;
 
-	glDisable (GL_BLEND);
-	glDisable (GL_TEXTURE_2D);
-	glColor3f (0, 0, 0);
 	glBegin (GL_POLYGON);
 	for (i = 0; i < poly->numverts; i++) {
 		glVertex3fv (poly->verts[i]);
 	}
 	glEnd ();
-	glEnable (GL_TEXTURE_2D);
-	glEnable (GL_BLEND);
 }
 
 void
@@ -679,6 +674,9 @@ R_DrawSkyChain (msurface_t *sky_chain)
 		}
 		glDepthRange (gldepthmin, gldepthmax);
 	} else {
+		glDisable (GL_BLEND);
+		glDisable (GL_TEXTURE_2D);
+		glColor3f (0, 0, 0);
 		while (sc) {
 			glpoly_t   *p = sc->polys;
 
@@ -688,6 +686,8 @@ R_DrawSkyChain (msurface_t *sky_chain)
 			}
 			sc = sc->texturechain;
 		}
+		glEnable (GL_TEXTURE_2D);
+		glEnable (GL_BLEND);
 	}
 #if 0
 	// seems to work, but this is the wrong place to do it.
