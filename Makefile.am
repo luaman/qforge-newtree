@@ -14,7 +14,7 @@ NOCONV_DIST=	$(distdir)/include/win32/resources/icon1.ico
 
 changelog::
 	-touch ChangeLog
-	-tools/cvs2cl/cvs2cl.pl -b
+	-tools/cvs2cl/cvs2cl.pl -b --utc
 	-rm -f ChangeLog.bak
 
 dist-zip: distdir
