@@ -301,16 +301,17 @@ event_motion (XEvent *event)
 void
 IN_Commands (void)
 {
-	static int	old_windowed, windowed;
+	static int	old_windowed_mouse;
+	static int	old_in_dga;
 
 	JOY_Command ();
 
-	windowed = _windowed_mouse->int_val || vid_fullscreen->int_val || in_dga->int_val;
+	if ((old_windowed_mouse != _windowed_mouse->int_val)
+		|| (old_in_dga != in_dga->int_val)) {
+		old_windowed_mouse = _windowed_mouse->int_val;
+		old_in_dga = in_dga->int_val;
 
-	if (old_windowed != windowed) {
-		old_windowed = windowed;
-
-		if (windowed) { // grab the pointer
+		if (_windowed_mouse->int_val) { // grab the pointer
 			XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
 							GrabModeAsync, x_win, None, CurrentTime);
 #ifdef HAVE_DGA
@@ -431,6 +432,10 @@ IN_Init (void)
 		return;
 
 	dga_avail = VID_CheckDGA (x_disp, NULL, NULL, NULL);
+	if (vid_fullscreen->int_val) {
+		Cvar_Set (_windowed_mouse, "1");
+		_windowed_mouse->flags |= CVAR_ROM;
+	}
 
 	mouse_x = mouse_y = 0.0;
 	mouse_avail = 1;
