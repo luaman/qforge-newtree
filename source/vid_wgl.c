@@ -47,6 +47,9 @@
 #include "console.h"
 #include "sbar.h"
 
+extern void (*vid_menudrawfn)(void);
+extern void (*vid_menukeyfn)(int);
+
 #define MAX_MODE_LIST	30
 #define VID_ROW_SIZE	3
 #define WARP_WIDTH		320
