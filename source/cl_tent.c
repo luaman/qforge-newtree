@@ -426,6 +426,9 @@ void CL_UpdateBeams (void)
 			ent->angles[0] = pitch;
 			ent->angles[1] = yaw;
 			ent->angles[2] = rand()%360;
+			// LordHavoc: visible lightning
+			ent->alpha = 1;
+			ent->colormod[0] = ent->colormod[1] = ent->colormod[2];
 
 			for (j=0 ; j<3 ; j++)
 				org[j] += dist[j]*30;
