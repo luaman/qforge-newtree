@@ -131,6 +131,8 @@ int dlightdivtableinitialized = 0;
 /*
 ===============
 R_AddDynamicLights
+
+NOTE! LordHavoc was here, and it shows... (Mercury)
 ===============
 */
 void R_AddDynamicLights (msurface_t *surf)
@@ -178,26 +180,15 @@ void R_AddDynamicLights (msurface_t *surf)
 		f = DotProduct (impact, surf->texinfo->vecs[1]) + surf->texinfo->vecs[1][3] - surf->texturemins[1];
 		i = f;
 
-		maxdist = (int) (cl_dlights[lnum].radius*cl_dlights[lnum].radius); // for comparisons to minimum acceptable light
+		maxdist = (int) ((cl_dlights[lnum].radius*cl_dlights[lnum].radius) * 0.75); // for comparisons to minimum acceptable light
 		// clamp radius to avoid exceeding 8192 entry division table
 		if (maxdist > 1048576)
 			maxdist = 1048576;
 		maxdist3 = maxdist - (int) (dist*dist);
 		// convert to 8.8 blocklights format
-//		if (!cl_dlights[lnum].dark)
-//		{
-			f = cl_dlights[lnum].color[0] * maxdist;red = f;
-			f = cl_dlights[lnum].color[1] * maxdist;green = f;
-			f = cl_dlights[lnum].color[2] * maxdist;blue = f;
-		/*
-		}
-		else // negate for darklight
-		{
-			f = cl_dlights[lnum].color[0] * -maxdist;red = f;
-			f = cl_dlights[lnum].color[1] * -maxdist;green = f;
-			f = cl_dlights[lnum].color[2] * -maxdist;blue = f;
-		}
-		*/
+		f = cl_dlights[lnum].color[0] * maxdist;red = f;
+		f = cl_dlights[lnum].color[1] * maxdist;green = f;
+		f = cl_dlights[lnum].color[2] * maxdist;blue = f;
 		bl = blocklights;
 		for (t = 0;t < tmax;t++,i -= 16)
 		{
