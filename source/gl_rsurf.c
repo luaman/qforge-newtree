@@ -102,21 +102,21 @@ extern qboolean lighthalf;
 
 // LordHavoc: place for gl_rsurf setup code
 void
-glrsurf_init ()
+glrsurf_init (void)
 {
 	memset (&lightmaps, 0, sizeof (lightmaps));
 }
 
 void
-recursivelightupdate (mnode_t *node)
+R_RecursiveLightUpdate (mnode_t *node)
 {
 	int         c;
 	msurface_t *surf;
 
 	if (node->children[0]->contents >= 0)
-		recursivelightupdate (node->children[0]);
+		R_RecursiveLightUpdate (node->children[0]);
 	if (node->children[1]->contents >= 0)
-		recursivelightupdate (node->children[1]);
+		R_RecursiveLightUpdate (node->children[1]);
 	if ((c = node->numsurfaces))
 		for (surf = cl.worldmodel->surfaces + node->firstsurface; c;
 			 c--, surf++) surf->cached_dlight = true;
@@ -124,11 +124,11 @@ recursivelightupdate (mnode_t *node)
 
 // LordHavoc: function to force all lightmaps to be updated
 void
-R_ForceLightUpdate ()
+R_ForceLightUpdate (void)
 {
 	if (cl.worldmodel && cl.worldmodel->nodes
 		&& cl.worldmodel->nodes->contents >= 0)
-		recursivelightupdate (cl.worldmodel->nodes);
+		R_RecursiveLightUpdate (cl.worldmodel->nodes);
 }
 
 /*
@@ -182,56 +182,38 @@ R_AddDynamicLights (msurface_t *surf)
 			impact[i] =
 				cl_dlights[lnum].origin[i] - surf->plane->normal[i] * dist;
 
-		f =
-			DotProduct (impact,
-						surf->texinfo->vecs[0]) + surf->texinfo->vecs[0][3] -
-			surf->texturemins[0];
-		i = f;
+		i = f =	DotProduct (impact, surf->texinfo->vecs[0]) + surf->texinfo->vecs[0][3] - surf->texturemins[0];
 
 		// reduce calculations
 		t = dist * dist;
 		for (s = 0; s < smax; s++, i -= 16)
 			sdtable[s] = i * i + t;
 
-		f =
-			DotProduct (impact,
-						surf->texinfo->vecs[1]) + surf->texinfo->vecs[1][3] -
-			surf->texturemins[1];
-		i = f;
+		i = f = DotProduct (impact, surf->texinfo->vecs[1]) + surf->texinfo->vecs[1][3] - surf->texturemins[1];
 
-		maxdist = (int) ((cl_dlights[lnum].radius * cl_dlights[lnum].radius) * 0.75);	// for 
-																						// comparisons 
-																						// to 
-																						// minimum 
-																						// acceptable 
-																						// light
+		// for comparisons to minimum acceptable light
+		maxdist = (int) ((cl_dlights[lnum].radius * cl_dlights[lnum].radius) * 0.75);
+
 		// clamp radius to avoid exceeding 8192 entry division table
 		if (maxdist > 1048576)
 			maxdist = 1048576;
 		maxdist3 = maxdist - (int) (dist * dist);
+
 		// convert to 8.8 blocklights format
-		f = cl_dlights[lnum].color[0] * maxdist;
-		red = f;
-		f = cl_dlights[lnum].color[1] * maxdist;
-		green = f;
-		f = cl_dlights[lnum].color[2] * maxdist;
-		blue = f;
+		red = f = cl_dlights[lnum].color[0] * maxdist;
+		green = f = cl_dlights[lnum].color[1] * maxdist;
+		blue = f = cl_dlights[lnum].color[2] * maxdist;
 		bl = blocklights;
 		for (t = 0; t < tmax; t++, i -= 16) {
 			td = i * i;
-			if (td < maxdist3)			// make sure some part of it is
-										// visible on this line
-			{
+			if (td < maxdist3) {	// make sure some part of it is visible on this line
 				maxdist2 = maxdist - td;
 				for (s = 0; s < smax; s++) {
 					if (sdtable[s] < maxdist2) {
 						j = dlightdivtable[(sdtable[s] + td) >> 7];
-						k = (red * j) >> 7;
-						bl[0] += k;
-						k = (green * j) >> 7;
-						bl[1] += k;
-						k = (blue * j) >> 7;
-						bl[2] += k;
+						bl[0] += (k = (red * j) >> 7);
+						bl[1] += (k = (green * j) >> 7);
+						bl[2] += (k = (blue * j) >> 7);
 					}
 					bl += 3;
 				}
@@ -882,8 +864,8 @@ R_RecursiveWorldNode (mnode_t *node)
 	mleaf_t    *pleaf;
 	double      dot;
 
-	if (node->contents == CONTENTS_SOLID)
-		return;							// solid
+	if (node->contents == CONTENTS_SOLID)	// solid
+		return;
 
 	if (node->visframe != r_visframecount)
 		return;
@@ -1139,18 +1121,13 @@ BuildSurfaceDisplayList (msurface_t *fa)
 	float       s, t;
 	glpoly_t   *poly;
 
-// reconstruct the polygon
+	// reconstruct the polygon
 	pedges = currentmodel->edges;
 	lnumverts = fa->numedges;
 	vertpage = 0;
 
-	// 
 	// draw texture
-	// 
-	poly =
-
-		Hunk_Alloc (sizeof (glpoly_t) +
-					(lnumverts - 4) * VERTEXSIZE * sizeof (float));
+	poly = Hunk_Alloc (sizeof (glpoly_t) + (lnumverts - 4) * VERTEXSIZE * sizeof (float));
 	poly->next = fa->polys;
 	poly->flags = fa->flags;
 	fa->polys = poly;
@@ -1176,9 +1153,7 @@ BuildSurfaceDisplayList (msurface_t *fa)
 		poly->verts[i][3] = s;
 		poly->verts[i][4] = t;
 
-		// 
 		// lightmap texture coordinates
-		// 
 		s = DotProduct (vec, fa->texinfo->vecs[0]) + fa->texinfo->vecs[0][3];
 		s -= fa->texturemins[0];
 		s += fa->light_s * 16;
@@ -1195,9 +1170,7 @@ BuildSurfaceDisplayList (msurface_t *fa)
 		poly->verts[i][6] = t;
 	}
 
-	// 
 	// remove co-linear points - Ed
-	// 
 	if (!gl_keeptjunctions->int_val && !(fa->flags & SURF_UNDERWATER)) {
 		for (i = 0; i < lnumverts; ++i) {
 			vec3_t      v1, v2;
@@ -1253,11 +1226,8 @@ GL_CreateSurfaceLightmap (msurface_t *surf)
 	smax = (surf->extents[0] >> 4) + 1;
 	tmax = (surf->extents[1] >> 4) + 1;
 
-	surf->lightmaptexturenum =
-		AllocBlock (smax, tmax, &surf->light_s, &surf->light_t);
-	base =
-		lightmaps[surf->lightmaptexturenum] + (surf->light_t * BLOCK_WIDTH +
-											   surf->light_s) * lightmap_bytes;
+	surf->lightmaptexturenum = AllocBlock (smax, tmax, &surf->light_s, &surf->light_t);
+	base = lightmaps[surf->lightmaptexturenum] + (surf->light_t * BLOCK_WIDTH + surf->light_s) * lightmap_bytes;
 	R_BuildLightMap (surf, base, BLOCK_WIDTH * lightmap_bytes);
 }
 
