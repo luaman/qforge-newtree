@@ -362,8 +362,8 @@ just do everything as it passes with no need to sort
 void R_DrawSequentialPoly (msurface_t *s)
 {
 	glpoly_t	*p;
-	float		*v;
-	int			i;
+//	float		*v;
+//	int			i;
 	texture_t	*t;
 
 	//
