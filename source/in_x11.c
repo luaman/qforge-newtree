@@ -461,44 +461,31 @@ IN_Init(void)
 
 	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
 	m_filter = Cvar_Get ("m_filter","0",CVAR_ARCHIVE,"None");
-	in_dgamouse = Cvar_Get ("in_dgamouse", "0", CVAR_NONE,
-			"1 if you have DGA mouse support");
-	
 
 	if (COM_CheckParm("-nomouse")) return 1;
 #ifdef HAVE_DGA
-	in_dga_mouseaccel = Cvar_Get ("in_dga_mouseaccel","1",CVAR_ARCHIVE,
-					"None");
+	in_dgamouse = Cvar_Get ("in_dgamouse", "0", CVAR_ROM,
+			"1 if you have DGA mouse support");
+	in_dga_mouseaccel = Cvar_Get ("in_dga_mouseaccel", "1", CVAR_ARCHIVE,
+			"None");
 
 	if (!COM_CheckParm("-nodga"))
 	{
 		XGrabKeyboard (x_disp, x_win, True, GrabModeAsync, 
 				GrabModeAsync, CurrentTime);
 
-		// XF86DGASetViewPort, XF86DGASetVidPage, and XF86DGADirectVideo's
-		// XF86DGADirectVideo flag are disabled till someone has a chance to
-		// figure out what's wrong with them (if anything)  --KB
-
-		//	XF86DGASetViewPort(x_disp, DefaultScreen(x_disp), 0, 0);
 		XF86DGADirectVideo(x_disp, DefaultScreen(x_disp),
-						   /*XF86DGADirectGraphics|*/
 						   XF86DGADirectMouse|XF86DGADirectKeyb);
-		//	XF86DGASetVidPage(x_disp, DefaultScreen(x_disp), 0);
 
-		XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
-				vid.width, vid.height);
-//		XWarpPointer (x_disp, None, x_win, 0, 0, 0, 0, scr_width,
-//				scr_height);
+//		XWarpPointer(x_disp, None, x_win, 0, 0, 0, 0,
+//				vid.width, vid.height);
 
 		XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
 				GrabModeAsync, x_win, None, CurrentTime);
 
-		Cvar_Set (in_dgamouse, "1");
+		Cvar_SetROM (in_dgamouse, "1");
 	}
 #endif
-
-	in_dgamouse = Cvar_Get ("in_dgamouse", "0", CVAR_ROM,
-			"1 if you have DGA mouse support");
 
 	mouse_x = mouse_y = 0.0;
 	mouse_avail = 1;

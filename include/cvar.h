@@ -89,6 +89,9 @@ void	Cvar_Alias_Get (char *name, cvar_t *cvar);
 void 	Cvar_Set (cvar_t *var, char *value);
 void	Cvar_SetValue (cvar_t *var, float value);
 
+// sets a CVAR_ROM variable from within the engine
+void	Cvar_SetROM (cvar_t *var, char *value);
+
 // allows you to change a Cvar's flags without a full Cvar_Get
 void	Cvar_SetFlags (cvar_t *var, int cvarflags);
 
