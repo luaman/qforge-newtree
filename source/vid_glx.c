@@ -160,7 +160,7 @@ VID_Shutdown(void)
 		return;
 
 	Con_Printf("VID_Shutdown\n");
-
+	XDestroyWindow(x_disp, x_win);
 	glXDestroyContext(x_disp, ctx);
 
 #ifdef HAVE_VIDMODE
@@ -170,7 +170,7 @@ VID_Shutdown(void)
 		XF86VidModeSwitchToMode (x_disp, DefaultScreen (x_disp),
 								 vidmodes[0]);
 		for (i = 0; i < nummodes; i++) {
-			if (vidmodes[i]->private) XFree(vidmodes[i]->private);
+		//	if (vidmodes[i]->privsize) XFree(vidmodes[i]->private);
 		}
 		XFree(vidmodes);
 	}
