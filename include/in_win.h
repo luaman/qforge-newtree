@@ -30,7 +30,9 @@
 
 #include "winquake.h"   // for usercmd_t in client.h
 
-extern qboolean mouseactive;
+extern qboolean      mouseactive;
+extern float         mouse_x, mouse_y;
+extern unsigned int  uiWheelMessage;
 
 extern void IN_UpdateClipCursor (void);
 extern void IN_ShowMouse (void);
