@@ -28,7 +28,7 @@
 // vid_win.c -- Win32 video driver
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "quakedef.h"
 #include "winquake.h"
@@ -282,7 +282,8 @@ void ClearAllStates (void)
 // send an up event for each key, to make sure the server clears them all
 	for (i=0 ; i<256 ; i++)
 	{
-		Key_Event (i, false);
+		if (keydown[i])
+			Key_Event (i, false);
 	}
 
 	Key_ClearStates ();
