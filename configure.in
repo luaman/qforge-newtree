@@ -20,7 +20,7 @@ AC_SUBST(QW_VERSION)
 AC_SUBST(QSG_VERSION)
 
 dnl Start TARGETS out at "qf-server"
-TARGETS=qf-server
+TARGETS="qf-server\$(EXEEXT)"
 
 dnl Set to yes for releases
 RELEASE=no
@@ -528,15 +528,15 @@ AC_SUBST(CL_SYS_SRC)
 AC_SUBST(SV_SYS_SRC)
 
 if test "x$HAVE_SVGA" = xyes; then
-	TARGETS="$TARGETS qf-client-svga"
+	TARGETS="$TARGETS qf-client-svga\$(EXEEXT)"
 fi
 if test "x$HAVE_GGI" = xyes; then
-	TARGETS="$TARGETS qf-client-ggi"
+	TARGETS="$TARGETS qf-client-ggi\$(EXEEXT)"
 fi
 if test "x$HAVE_X" = xyes; then
-	TARGETS="$TARGETS qf-client-x11"
+	TARGETS="$TARGETS qf-client-x11\$(EXEEXT)"
 	if test "x$HAVE_GLX" = xyes; then
-	   TARGETS="$TARGETS qf-client-glx"
+	   TARGETS="$TARGETS qf-client-glx\$(EXEEXT)"
 	fi
 fi
 AC_SUBST(TARGETS)
