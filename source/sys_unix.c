@@ -109,6 +109,8 @@ void Sys_Printf (char *fmt, ...)
 	/* translate to ASCII instead of printing [xx]  --KB */
 	for (p = (unsigned char *)text; *p; p++)
 		putc(qfont_table[*p], stdout);
+
+	fflush (stdout);
 }
 
 
