@@ -311,7 +311,7 @@ void Cvar_Set_f(void)
 	}
 	else
 	{
-		var = Cvar_Get (var_name, value, CVAR_USER_CREATED|CVAR_HEAP,
+		var = Cvar_Get (var_name, value, CVAR_USER_CREATED,
 				"User created cvar");
 	}
 }
@@ -393,9 +393,13 @@ void Cvar_CvarList_f (void)
 	int i;
 
 	for (var=cvar_vars, i=0 ; var ; var=var->next, i++)
-	{
-		Con_Printf("%s\n",var->name);
-	}
+		Con_Printf("%c%c%c %s\n",
+			var->flags & CVAR_ARCHIVE ? '*' : ' ',
+			var->flags & CVAR_USERINFO ? 'u' : ' ',
+			var->flags & CVAR_SERVERINFO ? 's' : ' ',
+			var->name);
+
+
 	Con_Printf ("------------\n%d variables\n", i);
 }
 
@@ -420,7 +424,6 @@ void Cvar_Shutdown (void)
 	while(var)
 	{
 		next = var->next;
-		free(var->description);
 		free(var->string);
 		free(var->name);
 		free(var);
@@ -459,20 +462,15 @@ cvar_t *Cvar_Get(char *name, char *string, int cvarflags, char *description)
 		v->string = malloc (strlen(string)+1);
 		strcpy (v->string, string);
 		v->flags = cvarflags;
-		v->description = strdup(description);
+		v->description = description;
 		v->value = atof (v->string);
 		return v;
 	}
 	// Cvar does exist, so we update the flags and return.
-	v->flags ^= CVAR_USER_CREATED;
-	v->flags ^= CVAR_HEAP;
+	v->flags &= ~CVAR_USER_CREATED;
 	v->flags |= cvarflags;
-	if (!strcmp (v->description,"User created cvar"))
-	{	
-		// Set with the real description
-		free(v->description);
-		v->description = strdup (description);
-	}
+	v->description = description;
+
 	return v;
 }
 
