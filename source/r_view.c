@@ -808,7 +808,6 @@ void V_RenderView (void)
 		V_CalcRefdef ();
 	}
 
-	R_PushDlights ();
 	R_RenderView ();
 }
 
