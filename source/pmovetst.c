@@ -232,13 +232,9 @@ PM_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1,
 		num = node->children[1];
 		goto loc0;
 	}
-	// put the crosspoint DIST_EPSILON pixels on the near side so that both
-	// p1 and mid are on the same side of the plane
+
 	side = (t1 < 0);
-	if (side)
-		frac = bound (0, (t1 + DIST_EPSILON) / (t1 - t2), 1);
-	else
-		frac = bound (0, (t1 - DIST_EPSILON) / (t1 - t2), 1);
+	frac = bound (0, t1 / (t1 - t2), 1);
 
 	midf = p1f + (p2f - p1f) * frac;
 	for (i = 0; i < 3; i++)
@@ -368,7 +364,6 @@ PM_PlayerMove (vec3_t start, vec3_t end)
 			hull = PM_HullForBox (mins, maxs);
 		}
 
-		// PM_HullForEntity (ent, mins, maxs, offset);
 		VectorCopy (pe->origin, offset);
 
 		VectorSubtract (start, offset, start_l);
@@ -379,7 +374,6 @@ PM_PlayerMove (vec3_t start, vec3_t end)
 
 		trace.fraction = 1;
 		trace.allsolid = true;
-//      trace.startsolid = true;
 		VectorCopy (end, trace.endpos);
 
 		// trace a line through the apropriate clipping hull
@@ -399,6 +393,17 @@ PM_PlayerMove (vec3_t start, vec3_t end)
 			total.ent = i;
 		}
 
+	}
+	/* if the fraction and endpos are not brought in a bit, the player cannot
+	   slide along a wall */
+	if (total.fraction && total.fraction < 1.0) {
+		vec3_t v;
+		float  l, f;
+		VectorSubtract (total.endpos, start, v);
+		l = VectorNormalize (v);
+		f = l - DIST_EPSILON;
+		VectorMA (start, f, v, total.endpos);
+		total.fraction *= f/l;
 	}
 
 	return total;
