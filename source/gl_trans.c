@@ -44,7 +44,6 @@ void
 CL_NewTranslation (int slot)
 {
 	if (slot > MAX_CLIENTS)
-//      Sys_Error ("CL_NewTranslation: slot > MAX_CLIENTS");
 		Host_EndGame ("CL_NewTranslation: slot > MAX_CLIENTS");
 
 	R_TranslatePlayerSkin (slot);

@@ -55,7 +55,6 @@ CL_NewTranslation (int slot)
 	char        s[512];
 
 	if (slot > MAX_CLIENTS)
-//      Sys_Error ("CL_NewTranslation: slot > MAX_CLIENTS");
 		Host_EndGame ("CL_NewTranslation: slot > MAX_CLIENTS");
 
 	player = &cl.players[slot];
