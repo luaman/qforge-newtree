@@ -38,6 +38,7 @@
 #include "commdef.h"
 #include "console.h"
 #include "cvar.h"
+#include "mathlib.h"
 #include "pmove.h"
 
 cvar_t     *cl_nopred;
