@@ -373,8 +373,6 @@ int VID_Suspend (MGLDC *dc, int flags)
 		in_mode_set = true;
 
 		block_drawing = true;	// so we don't try to draw while switched away
-
-		return MGL_NO_SUSPEND_APP;
 	}
 	else if (flags & MGL_REACTIVATE)
 	{
@@ -389,10 +387,9 @@ int VID_Suspend (MGLDC *dc, int flags)
 		vid.recalc_refdef = 1;
 
 		block_drawing = false;
-
-		return MGL_NO_SUSPEND_APP;
 	}
 
+	return MGL_NO_SUSPEND_APP;
 }
 #endif
 
