@@ -190,6 +190,16 @@ void VID_MenuKey (int key);
 LONG WINAPI MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AppActivate(BOOL fActive, BOOL minimize);
 
+/*
+================
+VID_InitCvars
+================
+*/
+void
+VID_InitCvars ()
+{
+	// It may not look like it, but this is important
+}
 
 /*
 ================
@@ -2939,7 +2949,7 @@ void AppActivate(BOOL fActive, BOOL minimize)
 				IN_DeactivateMouse ();
 				IN_ShowMouse ();
 			}
-/* 			else if ((modestate == MS_WINDOWED) && _windowed_mouse.value /* && mouseactive */)
+/* 			else if ((modestate == MS_WINDOWED) && _windowed_mouse.value //* && mouseactive * /)
  CVAR_FIXME */
 			else if ((modestate == MS_WINDOWED) && _windowed_mouse->value /* && mouseactive */)
 			{
