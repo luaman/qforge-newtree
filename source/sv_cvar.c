@@ -47,10 +47,11 @@ void        SV_SendServerInfoChange (char *key, char *value);
 void
 Cvar_Info (cvar_t *var)
 {
+	int         highchars = sv_highchars ? sv_highchars->int_val : 0;
 	if (var->flags & CVAR_SERVERINFO) {
 		unsigned char info[1024], *p, *c;
 
-		if (!sv_highchars || !sv_highchars->int_val) {
+		if (!highchars) {
 			for (p = info, c = var->string;
 				 *c && (p - info < sizeof (info) - 1);) {
 				*c &= 0x7f;
@@ -60,10 +61,10 @@ Cvar_Info (cvar_t *var)
 			}
 			*p = 0;
 			Info_SetValueForKey (svs.info, var->name, info,
-								 MAX_SERVERINFO_STRING, !sv_highchars->int_val);
+								 MAX_SERVERINFO_STRING, !highchars);
 		} else
 			Info_SetValueForKey (svs.info, var->name, var->string,
-								 MAX_SERVERINFO_STRING, !sv_highchars->int_val);
+								 MAX_SERVERINFO_STRING, !highchars);
 
 		SV_SendServerInfoChange (var->name, var->string);
 //      SV_BroadcastCommand ("fullserverinfo \"%s\"\n", svs.info);
