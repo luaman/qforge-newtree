@@ -45,6 +45,7 @@
 
 #define stringify(m) { #m, m }
 
+extern viddef_t	vid;
 unsigned short       d_8to16table[256];
 static byte		*vid_surfcache;
 static int		VID_highhunkmark;
