@@ -28,40 +28,17 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
-
-#include <qtypes.h>
-#include <sound.h>
-#include <qargs.h>
-#include <console.h>
 
 #include <stdio.h>
-#include <stdlib.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <fcntl.h>
-#include <sys/types.h>
-#ifdef HAVE_SYS_IOCTL_H
-# include <sys/ioctl.h>
-#endif
-#ifdef HAVE_SYS_MMAN_H
-# include <sys/mman.h>
-#endif
-#if defined HAVE_SYS_SOUNDCARD_H
-# include <sys/soundcard.h>
-#elif defined HAVE_LINUX_SOUNDCARD_H
-# include <linux/soundcard.h>
-#elif HAVE_MACHINE_SOUNDCARD_H
-# include <machine/soundcard.h>
-#endif
 
 #include <sys/asoundlib.h>
 
-#ifndef MAP_FAILED
-# define MAP_FAILED ((void*)-1)
-#endif
+#include "qtypes.h"
+#include "sound.h"
+#include "qargs.h"
+#include "console.h"
 
 static int snd_inited;
 
@@ -314,24 +291,42 @@ Send sound to device if buffer isn't really the dma buffer
 */
 void SNDDMA_Submit(void)
 {
+	int delay;
 	int count = paintedtime - soundtime;
-	int avail = snd_pcm_avail_update(pcm_handle);
+	int avail;
+	int offset;
+	int missed;
 	int state;
 
 	state = snd_pcm_state (pcm_handle);
 
-	printf("%d %d %d\n", state, count, avail);
-
-	//count -= delay;
-
-	if (count > avail) {
-		snd_pcm_mmap_forward (pcm_handle, avail);
-		count -= avail;
-	}
-	snd_pcm_mmap_forward (pcm_handle, count);
 	switch (state) {
 	case SND_PCM_STATE_PREPARED:
+		snd_pcm_mmap_forward (pcm_handle, count);
 		printf ("%d\n", snd_pcm_start (pcm_handle));
+		break;
+	case SND_PCM_STATE_RUNNING:
+		printf ("%4d ", snd_pcm_delay (pcm_handle, &delay));
+		if (delay < 0)
+			delay += setup.buffer_size;
+		printf ("delay: %d\n", delay);
+		offset = snd_pcm_mmap_offset (pcm_handle);
+		printf ("offset: %d\n", offset);
+		missed = offset - shm->samplepos / shm->channels;
+		printf ("missed: %d\n", missed);
+		count -= missed;
+		snd_pcm_rewind (pcm_handle, count - delay);
+		avail = snd_pcm_avail_update(pcm_handle);
+		printf ("avail: %d\n", avail);
+		if (count > avail) {
+			snd_pcm_mmap_forward (pcm_handle, avail);
+			count -= avail;
+		}
+		printf ("count: %d\n", count);
+		snd_pcm_mmap_forward (pcm_handle, count);
+		break;
+	default:
+		printf ("Unexpected state: %d\n", state);
 		break;
 	}
 }
