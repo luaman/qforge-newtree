@@ -126,7 +126,7 @@ GL_Init (void)
 	Con_Printf ("Dithering: ");
 
 	if ((p = COM_CheckParm ("-dither")) && p < com_argc) {
-		if (strequal (com_argv[p+1], "2x2") {
+		if (strequal (com_argv[p+1], "2x2")) {
 			dither_select (GR_DITHER_2x2);
 			Con_Printf ("2x2.\n");
 		}
