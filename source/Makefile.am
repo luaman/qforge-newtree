@@ -206,6 +206,7 @@ soft_SOURCES=	d_edge.c d_fill.c d_init.c d_modech.c \
 YFLAGS = -d
 fbdev_SOURCES=		fbset.c fbset_modes_y.y fbset_modes_l.l vid_fbdev.c in_fbdev.c
 YACCLEX_CLEANFILES=	fbset_modes_y.c fbset_modes_y.h fbset_modes_y.tab.h fbset_modes_l.c
+EXTRA_qf_client_fbdev_SOURCES=fbset_modes_y.h
 
 fbset_modes_y.o: fbset_modes_y.c
 	$(CC) $(INCLUDES) $(CFLAGS) -Wno-error -c fbset_modes_y.c
