@@ -565,7 +565,7 @@ qboolean VID_Is8bit(void)
 	return is8bit;
 }
 
-#if 0  //defined(GL_EXT_SHARED)
+#ifdef GLX_VERSION_1_2
 void VID_Init8bitPalette() 
 {
 	// Check for 8bit Extensions and initialize them.

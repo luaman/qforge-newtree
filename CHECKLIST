@@ -18,6 +18,7 @@ M:      Ender has built these binaries sucessfully with a makefile.
 -------------------------------------------------------------------------
 [X]	1.   The five conflicting files between client and server need to
 	     have those conflicts removed.
+[X]	2.   One object per source
 [ ]	2.   One object per source
 [M]     3a.  Win32 binaries must be buildable for client and server
 [-]	3b.  Linux binaries should become buildable with auto*
