@@ -47,7 +47,7 @@
 
 cvar_t	*cvar_vars;
 char	*cvar_null_string = "";
-cvar_t	*developer;
+extern cvar_t  *developer;
 cvar_alias_t *calias_vars;
 
 /*
