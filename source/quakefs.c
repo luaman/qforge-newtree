@@ -40,6 +40,7 @@
 #include "qendian.h"
 #include "info.h"
 #include "server.h"
+#include "qargs.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -999,11 +1000,25 @@ void COM_Gamedir_f (void)
 }
 
 /*
+	COM_CreateGameDirectory
+*/
+void
+COM_CreateGameDirectory (char *gamename)
+{
+	if (strcmp (fs_userpath->string, FS_USERPATH))
+		COM_CreatePath (va("%s/%s/dummy", fs_userpath->string,
+						gamename));
+	COM_AddGameDirectory (gamename);
+}
+
+/*
 	COM_InitFilesystem
 */
 void
 COM_InitFilesystem ( void )
 {
+	int i;
+
 	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH, CVAR_ROM,
 			"location of shared (read only) game directories");
 	fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
@@ -1015,15 +1030,15 @@ COM_InitFilesystem ( void )
 /*
 	start up with basegame->string by default
 */
-	COM_CreatePath (va("%s/%s/dummy", fs_userpath->string,
-				fs_basegame->string));
-	COM_AddGameDirectory(fs_basegame->string);
+	COM_CreateGameDirectory (fs_basegame->string);
 
 	// If we're dealing with id1, use qw too
-	if (stricmp (fs_basegame->string, "id1") == 0)
-	{
-		COM_CreatePath (va("%s/qw/dummy", fs_userpath->string));
-		COM_AddGameDirectory ("qw");
+	if (stricmp (fs_basegame->string, "id1") == 0) {
+		COM_CreateGameDirectory ("qw");
+	}
+
+	if ((i = COM_CheckParm ("-game")) && i < com_argc - 1) {
+		COM_CreateGameDirectory(com_argv[i+1]);
 	}
 
 	// any set gamedirs will be freed up to here
