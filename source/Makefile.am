@@ -103,6 +103,9 @@ endif
 if SNDTYPE_OSS
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_oss.c
 endif
+if SNDTYPE_SDL
+libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_sdl.c
+endif
 if SNDTYPE_SGI
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_sgi.c
 endif
