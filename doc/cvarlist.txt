@@ -186,7 +186,7 @@ Category	:
 Type		: Number
 Default		: 1
 Description	: Controls when console text will be treated as a chat message
-		: 0-never, 1-smart, 2-always
+            : 0-never, 1-always, 2-smart
 
 Cvar		: cl_crossx
 Targets		:
@@ -1440,7 +1440,7 @@ Category	:
 Type		: integer
 Default		: 8 for Win9x, 0 for WinNT
 Description	: Numbers of milliseconds to try to Sleep() every frame.
-		: Needed when running the server on localhost in Win9x.
+            : Needed when running the server on localhost in Win9x.
 
 Cvar		: team
 Targets		:
