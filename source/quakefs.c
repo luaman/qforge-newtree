@@ -578,7 +578,8 @@ _COM_FOpenFile (char *filename, QFile **gzfile, char *foundname, int zip)
 
 	}
 
-	Sys_Printf ("FindFile: can't find %s\n", filename);
+	if(developer->int_val)
+		Sys_Printf ("FindFile: can't find %s\n", filename);
 
 	*gzfile = NULL;
 	com_filesize = -1;
