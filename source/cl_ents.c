@@ -911,7 +911,7 @@ for all current players
 */
 void CL_LinkPlayers (void)
 {
-	int				j;
+	int				i, j;
 	player_info_t	*info;
 	player_state_t	*state;
 	player_state_t	exact;
@@ -960,6 +960,11 @@ void CL_LinkPlayers (void)
 			continue;
 
 		if (!state->modelindex)
+			continue;
+
+		// Hack hack hack
+		if (cl_deadbodyfilter->value && state->modelindex == cl_playerindex
+			&& ( (i=state->frame)==49 || i==60 || i==69 || i==84 || i==93 || i==102) )
 			continue;
 
 		if (!Cam_DrawPlayer(j))
