@@ -90,7 +90,7 @@
 #endif
 
 /* Define if you have the XFree86 DGA extension */
-#undef HAS_DGA
+#undef HAVE_DGA
 
 /* If your version of OpenGL uses APIENTRY, define GLAPIENTRY to be APIENTRY*/
 #define GLAPIENTRY APIENTRY
@@ -269,7 +269,7 @@
 /* Define if we've scitech MGL library and mgraph.h */
 #define HAVE_MGRAPH_H 1
 
-#define FS_GLOBALCFG ".\\qforge.cfg"
+#define FS_GLOBALCFG ".\\global.cfg"
 #define FS_SHAREPATH "."
 #define FS_USERPATH "."
 
@@ -277,26 +277,26 @@
 #define strncasecmp(s1, s2, n) strnicmp((s1), (s2), (n))
 
 #ifdef HAVE_3DNOW_ASM
-        #define atan  _atan
-        #define atan2 _atan2
-        #define acos _acos
-        #define asin _asin
-        #define log _log
-        #define log10 _log10
-        #define pow _pow
-        #define exp _exp
-        #define sqrt _sqrt
-        #define fabs _fabs
-        #define ceil _ceil
-        #define floor  _floor
-        #define frexp _frexp
-        #define ldexp _ldexp
-        #define modf _modf
-        #define fmod _fmod
-        #define sincos _sincos
-        #define sin _sin
-        #define cos _cos
-        #define tan _tan
+#	define atan  _atan
+#	define atan2 _atan2
+#	define acos _acos
+#	define asin _asin
+#	define log _log
+#	define log10 _log10
+#	define pow _pow
+#	define exp _exp
+#	define sqrt _sqrt
+#	define fabs _fabs
+#	define ceil _ceil
+#	define floor  _floor
+#	define frexp _frexp
+#	define ldexp _ldexp
+#	define modf _modf
+#	define fmod _fmod
+#	define sincos _sincos
+#	define sin _sin
+#	define cos _cos
+#	define tan _tan
 #endif
 
 #endif
