@@ -1,3 +1,7 @@
+o = todo
+X = done
+? = maybe but not likely
+
 o  it seems possible to crash a QF server still - need to fix this!
 o  water textures are seriously screwed in GL
 o  GL is still way too slow
