@@ -8,7 +8,7 @@ EXTRA_DIST = adivtab.h anorm_dots.h anorms.h asm_draw.h asm_i386.h block16.h \
 	gl_warp_sin.h glquake.h in_win.h info.h input.h joystick.h keys.h \
 	link.h locs.h mathlib.h mdfour.h menu.h model.h modelgen.h msg.h \
 	net.h pcx.h pmove.h pr_comp.h progdefs.h progs.h protocol.h qargs.h \
-	qdefs.h qendian.h qstructs.h qtypes.h quakeasm.h quakedef.h \
+	qdefs.h qendian.h qfgl_ext.h qstructs.h qtypes.h quakeasm.h quakedef.h \
 	quakefs.h quakeio.h r_dynamic.h r_local.h r_shared.h render.h \
 	sbar.h screen.h server.h sizebuf.h skin.h sound.h spritegn.h sys.h \
 	tga.h teamplay.h uint32.h va.h ver_check.h vid.h view.h wad.h \
