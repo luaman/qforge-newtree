@@ -255,6 +255,8 @@ Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
 
 	if (r < 0)
 		Sys_Error ("Protection change failed\n");
+# else
+#  error do not know how to make code writable
 # endif
 #endif
 }
