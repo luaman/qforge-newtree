@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef _DRAW_H
+#define _DRAW_H
 // draw.h -- these are the only functions outside the refresh allowed
 // to touch the vid buffer
 
@@ -41,3 +43,5 @@ void Draw_Alt_String (int x, int y, char *str);
 qpic_t *Draw_PicFromWad (char *name);
 qpic_t *Draw_CachePic (char *path);
 void Draw_Crosshair(void);
+
+#endif // _DRAW_H

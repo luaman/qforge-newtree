@@ -437,7 +437,7 @@ void Draw_Init (void)
 
 /* 	Cvar_RegisterVariable (&cl_verstring);
  CVAR_FIXME */
-	cl_verstring = Cvar_Get("cl_verstring",  "QuakeForge " QF_VERSION, CVAR_NONE, "None");
+	cl_verstring = Cvar_Get("cl_verstring",  PROGRAM " " VERSION, CVAR_NONE, "None");
 
 	// 3dfx can only handle 256 wide textures
 	if (!Q_strncasecmp ((char *)gl_renderer, "3dfx",4) ||

@@ -1,7 +1,7 @@
 /*
 	vid_glx.c
 
-	(description)
+	OpenGL GLX video driver
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -37,6 +37,8 @@
 #include <math.h>
 
 #include "bothdefs.h"   // needed by: common.h, net.h, client.h
+
+#include <quakedef.h>
 
 #include "common.h"
 #include "bspfile.h"    // needed by: glquake.h
@@ -113,7 +115,7 @@ int		texture_mode = GL_LINEAR;
 
 int		texture_extension_number = 1;
 
-float		gldepthmin, gldepthmax;
+float	gldepthmin, gldepthmax;
 
 /* cvar_t	gl_ztrick = {"gl_ztrick","1"};
  CVAR_FIXME */
@@ -125,7 +127,6 @@ const char *gl_version;
 const char *gl_extensions;
 
 qboolean is8bit = false;
-qboolean isPermedia = false;
 qboolean gl_mtexable = false;
 
 /*-----------------------------------------------------------------------*/
@@ -484,7 +485,7 @@ void	VID_SetPalette (unsigned char *palette)
 //
 // 8 8 8 encoding
 //
-	Con_DPrintf("Converting 8to24\n");
+//	Con_DPrintf("Converting 8to24\n");
 
 	pal = palette;
 	table = d_8to24table;
@@ -573,6 +574,11 @@ void GL_Init (void)
 	glAlphaFunc(GL_GREATER, 0.666);
 
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+
+/* glShadeMode(GL_SMOOTH) should look better then GL_FLAT but
+   I don't know if it looks any better, sure is slower
+	glShadeModel (GL_SMOOTH);
+*/
 	glShadeModel (GL_FLAT);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -616,7 +622,7 @@ qboolean VID_Is8bit(void)
 	return is8bit;
 }
 
-#ifdef GLX_VERSION_1_2
+#ifdef GLX_EXT_SHARED
 void VID_Init8bitPalette() 
 {
 	// Check for 8bit Extensions and initialize them.
@@ -642,6 +648,12 @@ void VID_Init8bitPalette()
 }
 
 #else
+
+void VID_Init8bitPalette(void)
+{
+}
+
+#if 0
 extern void gl3DfxSetPaletteEXT(GLuint *pal);
 
 void VID_Init8bitPalette(void) 
@@ -669,10 +681,7 @@ void VID_Init8bitPalette(void)
 }
 #endif
 
-void VID_InitCvars ()
-{
-	m_filter = Cvar_Get("m_filter", "0", CVAR_NONE, "None");
-}
+#endif
 
 void VID_Init(unsigned char *palette)
 {
@@ -694,16 +703,9 @@ void VID_Init(unsigned char *palette)
 	Window root;
 	XVisualInfo *visinfo;
 
-//	S_Init();
 
-/* 	Cvar_RegisterVariable (&vid_mode);
- CVAR_FIXME */
 	vid_mode = Cvar_Get("vid_mode", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_ztrick);
- CVAR_FIXME */
-	gl_ztrick = Cvar_Get("gl_ztrick", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&_windowed_mouse);
- CVAR_FIXME */
+	gl_ztrick = Cvar_Get("gl_ztrick", "0", CVAR_NONE, "None");
 	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
 	
 	vid.maxwarpwidth = WARP_WIDTH;
@@ -711,9 +713,9 @@ void VID_Init(unsigned char *palette)
 	vid.colormap = host_colormap;
 	vid.fullbright = 256 - LittleLong (*((int *)vid.colormap + 2048));
 
-// interpret command-line params
+	// interpret command-line params
 
-// set vid parameters
+	// set vid parameters
 	if ((i = COM_CheckParm("-width")) != 0)
 		width = atoi(com_argv[i+1]);
 	if ((i = COM_CheckParm("-height")) != 0)
@@ -722,20 +724,17 @@ void VID_Init(unsigned char *palette)
 	if ((i = COM_CheckParm("-conwidth")) != 0)
 		vid.conwidth = Q_atoi(com_argv[i+1]);
 	else
-		vid.conwidth = 640;
+		vid.conwidth = width;
 
 	vid.conwidth &= 0xfff8; // make it a multiple of eight
 
-	if (vid.conwidth < 320)
-		vid.conwidth = 320;
+	vid.conwidth = max(vid.conwidth, 320);
 
 	// pick a conheight that matches with correct aspect
 	vid.conheight = vid.conwidth*3 / 4;
 
 	if ((i = COM_CheckParm("-conheight")) != 0)
-		vid.conheight = Q_atoi(com_argv[i+1]);
-	if (vid.conheight < 200)
-		vid.conheight = 200;
+		vid.conheight = max(Q_atoi(com_argv[i+1]), 200);
 
 	if (!(x_disp = XOpenDisplay(NULL))) {
 		fprintf(stderr, "Error couldn't open the X display\n");
@@ -777,12 +776,8 @@ void VID_Init(unsigned char *palette)
 	scr_width = width;
 	scr_height = height;
 
-	if (vid.conheight > height)
-		vid.conheight = height;
-	if (vid.conwidth > width)
-		vid.conwidth = width;
-	vid.width = vid.conwidth;
-	vid.height = vid.conheight;
+	vid.height = vid.conheight = min(height, vid.conheight);
+	vid.width = vid.conwidth = min(width, vid.conwidth);
 
 	vid.aspect = ((float)vid.height / (float)vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
@@ -884,6 +879,10 @@ void IN_Move (usercmd_t *cmd)
 	IN_MouseMove(cmd);
 }
 
+void VID_InitCvars ()
+{
+	m_filter = Cvar_Get("m_filter", "0", CVAR_NONE, "None");
+}
 
 void VID_UnlockBuffer() {}
 void VID_LockBuffer() {}

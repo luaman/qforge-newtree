@@ -135,7 +135,7 @@ void Draw_Init (void)
 
 /* 	Cvar_RegisterVariable (&cl_verstring);
  CVAR_FIXME */
-	cl_verstring = Cvar_Get("cl_verstring",  "QuakeForge " QF_VERSION, CVAR_NONE, "None");
+	cl_verstring = Cvar_Get("cl_verstring",  PROGRAM " " VERSION, CVAR_NONE, "None");
 }
 
 

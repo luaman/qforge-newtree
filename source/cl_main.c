@@ -245,7 +245,7 @@ CL_Version_f
 */
 void CL_Version_f (void)
 {
-	Con_Printf ("QuakeForge Version %s\n", QF_VERSION);
+	Con_Printf ("%s Version %s\n", PROGRAM, VERSION);
 	Con_Printf ("Binary: "__TIME__" "__DATE__"\n");
 }
 
@@ -494,7 +494,7 @@ void CL_Disconnect (void)
 	connect_time = -1;
 
 #ifdef _WIN32
-	SetWindowText (mainwindow, "QuakeForge: disconnected");
+	SetWindowText (mainwindow, PROGRAM ": disconnected");
 #endif
 
 // stop sounds (especially looping!)
@@ -654,7 +654,7 @@ void CL_FullServerinfo_f (void)
 	strcpy (cl.serverinfo, Cmd_Argv(1));
 	Con_DPrintf("cl.serverinfo: '%s'\n", cl.serverinfo);
 
-	if ((p = Info_ValueForKey(cl.serverinfo, "*version")) && *p)
+	if ((p = Info_ValueForKey(cl.serverinfo, "*qf_version")) && *p)
 	{
 		if (server_version == NULL)
 			Con_Printf("QuakeForge Version %s Server\n", p);
@@ -666,10 +666,10 @@ void CL_FullServerinfo_f (void)
 		server_version = strdup(p);
 	}
 
-	if ((p = Info_ValueForKey(cl.serverinfo, "*qsg_standard")) && *p)
+	if ((p = Info_ValueForKey(cl.serverinfo, "*qsg_version")) && *p)
 	{
 		if ((cl.stdver = atoi (p)))
-			Con_Printf("QSG standards version %i\n", cl.stdver);
+			Con_Printf("QSG Standard version %i\n", cl.stdver);
 		else
 			Con_Printf("Invalid standards version: %s", p);
 	}
@@ -962,8 +962,8 @@ void CL_ConnectionlessPacket (void)
 			Con_Printf("===========================\n");
 			Con_Printf("Invalid localid on command packet received from local host. "
 				"\n|%s| != |%s|\n"
-				"You may need to reload your server browser and QuakeForge.\n",
-				s, localid->string);
+				"You may need to reload your server browser and %s.\n",
+				s, localid->string, PROGRAM);
 			Con_Printf("===========================\n");
 			Cvar_Set("localid", "");
 			return;
@@ -1709,9 +1709,9 @@ void Host_Init (quakeparms_t *parms)
 
 	host_initialized = true;
 
-	Con_Printf ("\nClient Version %s (Build %04d)\n\n", QF_VERSION, build_number());
+	Con_Printf ("\nClient Version %s (Build %04d)\n\n", VERSION, build_number());
 
-	Con_Printf ("€ QuakeForge Initialized ‚\n");	
+	Con_Printf ("€ %s Initialized ‚\n", PROGRAM);
 }
 
 

@@ -1,7 +1,7 @@
 /*
 	vid_x11.c
 
-	(description)
+	General X11 video driver
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// vid_x.c -- general x video driver
 
 #define _BSD
 

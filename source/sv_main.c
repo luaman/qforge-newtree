@@ -1581,9 +1581,9 @@ void SV_InitLocal (void)
 			MAX_SERVERINFO_STRING);
 
 	// Brand server as QF, with appropriate QSG standards version  --KB
-	Info_SetValueForStarKey (svs.info, "*qf_version", QF_VERSION,
+	Info_SetValueForStarKey (svs.info, "*qf_version", VERSION,
 			MAX_SERVERINFO_STRING);
-	Info_SetValueForStarKey (svs.info, "*qsg_standard", QSG_STANDARD,
+	Info_SetValueForStarKey (svs.info, "*qsg_version", QSG_VERSION,
 			MAX_SERVERINFO_STRING);
 
 	// init fraglog stuff
@@ -1867,7 +1867,7 @@ void SV_Init (quakeparms_t *parms)
 
 	Con_Printf ("\nServer Version %s (Build %04d)\n\n", QW_VERSION, build_number());
 
-	Con_Printf ("======== QuakeForge Initialized ========\n");
+	Con_Printf ("======== %s Initialized ========\n", PROGRAM);
 	
 // process command line arguments
 	Cmd_StuffCmds_f ();
