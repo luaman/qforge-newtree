@@ -68,6 +68,8 @@ int old_windowed_mouse;
 extern viddef_t    vid;                // global video state
 unsigned short  d_8to16table[256];
 
+int modestate; // fixme: just to avoid cross-comp. errors - remove later
+                                                        
 // The original defaults
 //#define    BASEWIDTH    320
 //#define    BASEHEIGHT   200
@@ -141,7 +143,8 @@ void    VID_Init (unsigned char *palette)
     if (!(screen = SDL_SetVideoMode(vid.width, vid.height, 8, flags)))
         Sys_Error("VID: Couldn't set video mode: %s\n", SDL_GetError());
     VID_SetPalette(palette);
-    SDL_WM_SetCaption("sdlquake","sdlquake");
+    VID_SetCaption("sdlquakeworld");
+
     // now know everything we need to know about the buffer
     VGA_width = vid.conwidth = vid.width;
     VGA_height = vid.conheight = vid.height;
@@ -191,8 +194,8 @@ void    VID_Update (vrect_t *rects)
         ++n;
 
     // Second, copy them to SDL rectangles and update
-    if (!(sdlrects = (SDL_Rect *)alloca(n*sizeof(*sdlrects))))
-        Sys_Error("Out of memory");
+	if(!(sdlrects=(SDL_Rect *)calloc(1,n*sizeof(SDL_Rect))))
+        	Sys_Error("Out of memory!");
     i = 0;
     for (rect = rects; rect; rect = rect->pnext)
     {
