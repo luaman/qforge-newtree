@@ -1,0 +1,21 @@
+Here's what we want to do before this tree can become public.  Note that
+these things need to be done in the order described here and checked off
+when work is completed and tested.  Those numbers with letter suffixes
+have multiple parts which can be implemented simultaneously with other
+items sharing the number.
+
+[ ]	1.   The five conflicting files between client and server need to
+	     have those conflicts removed.
+[ ]	2.   One object per source
+[ ]	3a.  Win32 binaries must be buildable for client and server
+[ ]	3b.  Linux binaries should become buildable with auto*
+[ ]	4.   Any structural changes to the tree we agree to make
+[ ]	5a.  Linux targets need to be verified
+[ ]	5b   Win32 targets need to be verified
+[ ]	6a.  Mercury's speed cheat fix
+[ ]	6b.  Cvar revamp
+[ ]	7.   Global config file
+[ ]	8.   fs_*path cvars
+[ ]	9.   Known buffer overflow issues need resolution
+[ ]	10.  DGA support for Linux
+
