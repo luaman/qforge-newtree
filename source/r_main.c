@@ -701,7 +701,7 @@ R_DrawViewModel (void)
 	float       add;
 	dlight_t   *dl;
 
-	if (!r_drawviewmodel->int_val || r_fov_greater_than_90
+	if (!r_drawviewmodel->int_val
 		|| !Cam_DrawViewModel ()
 		|| !r_drawentities->int_val)
 		return;
