@@ -206,7 +206,7 @@ x11_close_display (void)
 	}
 	if (!--x_disp_ref_count) {
 		XCloseDisplay( x_disp );
-		x_disp = NULL;
+		x_disp = 0;
 	}
 }
 

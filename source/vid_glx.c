@@ -79,7 +79,6 @@ VID_Shutdown (void)
 
 	x11_restore_vidmode ();
 	x11_close_display ();
-	x_disp = 0;
 }
 
 #if 0
