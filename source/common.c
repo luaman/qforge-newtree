@@ -30,7 +30,7 @@
 #include <ctype.h>
 
 #include "quakedef.h"
-
+               
 #define MAX_NUM_ARGVS	50
 #define NUM_SAFE_ARGVS	6
 
