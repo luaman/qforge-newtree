@@ -1628,7 +1628,6 @@ Host_Init (void)
 	W_LoadWadFile ("gfx.wad");
 	Key_Init ();
 	Con_Init ();
-	M_Init ();
 	Mod_Init ();
 
 //  Con_Printf ("Exe: "__TIME__" "__DATE__"\n");
@@ -1646,6 +1645,7 @@ Host_Init (void)
 	CDAudio_Init ();
 	VID_Init (host_basepal);
 	IN_Init ();
+	M_Init ();
 	Draw_Init ();
 	SCR_Init ();
 	R_Init ();
@@ -1670,6 +1670,7 @@ Host_Init (void)
 	Skin_Init ();
 	CL_Init ();
 	IN_Init ();
+	M_Init ();
 #endif
 
 	// Reparse the command line for + commands.
