@@ -66,7 +66,7 @@
 
 /* Version string */
 #define QW_VERSION "2.40"
-#define VERSION    "0.1.99pre0"
+#define VERSION    "0.2.0"
 #define PROGRAM    "QuakeForge"
 #define PACKAGE    "quakeforge"
 
