@@ -1956,3 +1956,8 @@ void VID_MenuKey (int key)
 		break;
 	}
 }
+
+void VID_SetCaption (char *text)
+{
+        SetWindowText(mainwindow,(LPSTR) text);
+}
