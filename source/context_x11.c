@@ -279,7 +279,7 @@ x11_set_vidmode (int width, int height)
 
 		XF86VidModeGetAllModeLines (x_disp, x_screen, &nummodes, &vidmodes);
 		XF86VidModeGetViewPort (x_disp, x_screen, &screen_width, &screen_height);
-	
+
 		for (i = 0; i < nummodes; i++) {
 			if ((vidmodes[i]->hdisplay == screen_width) &&
 					(vidmodes[i]->vdisplay == screen_height)) {

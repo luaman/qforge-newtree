@@ -40,6 +40,11 @@
 #endif
 #ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
+# ifdef X_XF86VidModeSetClientVersion
+#  define VIDMODE_VERSION 2
+# else
+#  define VIDMODE_VERSION 1
+# endif
 #endif
 
 #include "dga_check.h"
@@ -54,7 +59,8 @@ qboolean
 VID_CheckDGA (Display * dpy, int *maj_ver, int *min_ver, int *hasvideo)
 {
 #ifdef HAVE_DGA
-	int         event_base, error_base, dgafeat, dummy;
+	int 	event_base, error_base, dgafeat;
+	int 	dummy, dummy_major, dummy_minor, dummy_video;
 
 	if (!XQueryExtension (dpy, "XFree86-DGA", &dummy, &dummy, &dummy)) {
 		return false;
@@ -65,16 +71,16 @@ VID_CheckDGA (Display * dpy, int *maj_ver, int *min_ver, int *hasvideo)
 	}
 
 	if (!maj_ver)
-		maj_ver = &dummy;
+		maj_ver = &dummy_major;
 	if (!min_ver)
-		min_ver = &dummy;
+		min_ver = &dummy_minor;
 
 	if (!XF86DGAQueryVersion (dpy, maj_ver, min_ver)) {
 		return false;
 	}
 
 	if (!hasvideo)
-		hasvideo = &dummy;
+		hasvideo = &dummy_video;
 
 	if (!XF86DGAQueryDirectVideo (dpy, DefaultScreen (dpy), &dgafeat)) {
 		*hasvideo = 0;
@@ -83,7 +89,7 @@ VID_CheckDGA (Display * dpy, int *maj_ver, int *min_ver, int *hasvideo)
 	}
 
 	if (!(dgafeat & (XF86DGADirectPresent | XF86DGADirectMouse))) {
-			return false;
+		return false;
 	}
 
 	return true;
@@ -101,9 +107,9 @@ VID_CheckDGA (Display * dpy, int *maj_ver, int *min_ver, int *hasvideo)
 qboolean
 VID_CheckVMode (Display * dpy, int *maj_ver, int *min_ver)
 {
-#if defined(HAVE_VIDMODE)
-	int         event_base, error_base;
-	int         dummy;
+#ifdef HAVE_VIDMODE
+	int 	event_base, error_base;
+	int 	dummy, dummy_major, dummy_minor;
 
 	if (!XQueryExtension (dpy, "XFree86-VidModeExtension", &dummy, &dummy, &dummy)) {
 		return false;
@@ -113,14 +119,16 @@ VID_CheckVMode (Display * dpy, int *maj_ver, int *min_ver)
 		return false;
 	}
 
-	if (maj_ver == NULL)
-		maj_ver = &dummy;
-	if (min_ver == NULL)
-		min_ver = &dummy;
+	if (!maj_ver)
+		maj_ver = &dummy_major;
+	if (!min_ver)
+		min_ver = &dummy_minor;
 
-	if (!XF86VidModeQueryVersion (dpy, maj_ver, min_ver)) {
+	if (!XF86VidModeQueryVersion (dpy, maj_ver, min_ver))
 		return false;
-	}
+
+	if ((!maj_ver) || (*maj_ver != VIDMODE_VERSION))
+		return false;
 
 	return true;
 #else
