@@ -70,6 +70,7 @@ cvar_t		*m_filter;
 cvar_t		*in_dgamouse;
 #ifdef HAVE_DGA
 cvar_t		*in_dga_mouseaccel;
+cvar_t		*in_nodga_grab;
 #endif
 
 static qboolean	mouse_avail;
@@ -432,9 +433,19 @@ IN_Init(void)
 			"1 if you have DGA mouse support");
 	in_dga_mouseaccel = Cvar_Get ("in_dga_mouseaccel", "1", CVAR_ARCHIVE,
 			"None");
+	in_nodga_grab = Cvar_Get ("in_nodga_grab", "0", CVAR_ROM,
+			"grab keyboard and mouse input when using -nodga");
 
-	if (!COM_CheckParm("-nodga"))
+	if (COM_CheckParm("-nodga"))
 	{
+		if (in_nodga_grab->value) {
+			XGrabKeyboard (x_disp, x_win, True, GrabModeAsync, 
+				GrabModeAsync, CurrentTime);
+
+			XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
+				GrabModeAsync, x_win, None, CurrentTime);
+		}
+	} else {
 		XGrabKeyboard (x_disp, x_win, True, GrabModeAsync, 
 				GrabModeAsync, CurrentTime);
 
