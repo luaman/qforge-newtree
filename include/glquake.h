@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // disable data conversion warnings
 
 #ifdef _WIN32
+#pragma warning(disable : 4244)     // MIPS
+#pragma warning(disable : 4136)     // X86
+#pragma warning(disable : 4051)     // ALPHA
+  
 #include <windows.h>
 #endif
 
@@ -235,8 +239,8 @@ void GL_Bind (int texnum);
 #define    TEXTURE1_SGIS				0x835F
 
 #ifdef _WIN32
-typedef void (APIENTRY *lpMTexFUNC) (GLenum, GLfloat, GLfloat);
-typedef void (APIENTRY *lpSelTexFUNC) (GLenum);
+typedef void (GLAPIENTRY *lpMTexFUNC) (GLenum, GLfloat, GLfloat);
+typedef void (GLAPIENTRY *lpSelTexFUNC) (GLenum);
 extern lpMTexFUNC qglMTexCoord2fSGIS;
 extern lpSelTexFUNC qglSelectTextureSGIS;
 #endif
@@ -270,6 +274,9 @@ void R_RotateForEntity (entity_t *e);
 //
 // gl_rlight.c
 //
+
+extern float v_blend[4];
+
 void R_MarkLights (dlight_t *light, int bit, mnode_t *node);
 void R_AnimateLight (void);
 void R_RenderDlights (void);

@@ -10,12 +10,16 @@ CL_X11_name=qw-client-x11
 CL_X11_libs=-lX11 -lXext
 
 CL_GLX_name=qw-client-glx
-CL_GLX_libs=-lX11 -lXext
+CL_GLX_libs=-lX11 -lXext -lGL
 
 DIRECTORIES=
 vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
 
 CPPFLAGS=-I . -I ../include -DELF -Did386=1 -MMD -Dstricmp=strcasecmp
+
+gcc -I . -I ../include -DELF -Did386=1 -MMD -Dstricmp=strcasecmp  -c -o gl_draw.o gl_draw.c
+
+
 CFLAGS=-Wall -Werror
 CXXFLAGS=-Wall -Werror
 LDFLAGS=-L/usr/X11R6/lib 
@@ -96,10 +100,12 @@ CL_SW_sources=\
   r_light.c \
   r_main.c \
   r_misc.c \
+  r_part.c \
   r_sky.c \
   r_sprite.c \
   r_surf.c \
   r_vars.c \
+  r_view.c \
   screen.c \
   d_copy.S \
   d_draw.S \
@@ -140,13 +146,11 @@ CL_sources=\
   sys_linux.c \
   cd_linux.c \
   wad.c \
-  view.c \
   snd_dma.c \
   snd_mem.c \
   snd_mix.c \
   skin.c \
   sbar.c \
-  r_part.c \
   nonintel.c \
   menu.c \
   keys.c \
@@ -172,12 +176,14 @@ CL_GLX_sources=\
   gl_mesh.c \
   gl_model.c \
   gl_ngraph.c \
+  gl_part.c \
   gl_refrag.c \
   gl_rlight.c \
   gl_rmain.c \
   gl_rmisc.c \
   gl_rsurf.c \
   gl_screen.c \
+  gl_view.c \
   gl_warp.c \
   gl_vidlinuxglx.c
 
@@ -197,6 +203,8 @@ $(CL_SVGA_name): $(COM_objects) $(CL_objects) $(CL_SW_objects) $(CL_SVGA_objects
 $(CL_X11_name): $(COM_objects) $(CL_objects) $(CL_SW_objects) $(CL_X11_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_X11_libs)
 
+$(CL_GLX_objects): CPPFLAGS += -I/usr/include/GL
+
 $(CL_GLX_name): $(COM_objects) $(CL_objects) $(CL_GL_objects) $(CL_GLX_objects)
 	$(CC) $(LDFLAGS) -o $@ $^ -lm $(CL_GLX_libs)
 
@@ -208,7 +216,7 @@ clean:
 -include $(COM_dependencies)
 -include $(SV_dependencies)
 -include $(CL_dependencies)
--include $(CL_GL_dependencies)
+#-include $(CL_GL_dependencies)
 -include $(CL_SVGA_dependencies)
 -include $(CL_X11_dependencies)
 -include $(CL_GLX_dependencies)

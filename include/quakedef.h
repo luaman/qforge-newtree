@@ -56,12 +56,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "render.h"
 #include "client.h"
 
-#ifdef GLQUAKE
-#include "gl_model.h"
-#else
-#include "model.h"
-#include "d_iface.h"
-#endif
+//#ifdef GLQUAKE
+//#include "gl_model.h"
+//#else
+//#include "model.h"
+//#include "d_iface.h"
+//#endif
 
 #include "input.h"
 #include "keys.h"
@@ -72,9 +72,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "cdaudio.h"
 #include "pmove.h"
 
-#ifdef GLQUAKE
-#include "glquake.h"
-#endif
+//#ifdef GLQUAKE
+//#include "glquake.h"
+//#endif
 
 #ifndef max
 #define max(a,b) ((a) > (b) ? (a) : (b))
