@@ -434,7 +434,6 @@ int CheckForFlood(char cmdtype)
 	                {
                                 if (lastmessagetime+5<currenttime)
 		                Con_Printf("Blocking type %d flood from (or to) %s\n",cmdtype,NET_AdrToString(net_from));
-		                Con_Printf("%f %f\n",currenttime,floodstatus[cmdtype][i].issued);
 				floodstatus[cmdtype][i].floodcount=0;
 				floodstatus[cmdtype][i].issued = currenttime;
 			        floodstatus[cmdtype][i].cmdcount+=1;
