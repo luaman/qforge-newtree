@@ -134,13 +134,28 @@ void Con_Printf (char *fmt, ...)
 	char		msg[MAXPRINTMSG];
 	char		msg2[MAXPRINTMSG];
 	char		msg3[MAXPRINTMSG];
+        static char	lastmessage[MAXPRINTMSG];
+        static int	msgcount=0;
 	time_t		mytime = 0;
 	struct tm	*local = NULL;
 	qboolean	timestamps = false;
-	
+
 	va_start (argptr, fmt);
 	vsnprintf (msg, sizeof(msg), fmt, argptr);
 	va_end (argptr);
+
+        if (strncmp(lastmessage,msg,MAXPRINTMSG)==0) {
+		msgcount+=1;
+                return;
+        } else {
+		strncpy(lastmessage,msg,MAXPRINTMSG);
+        	if (msgcount>0) {
+			Sys_Printf ("Last message repeated %d times\n", msgcount);
+			if (sv_logfile)
+				fprintf (sv_logfile, "Last message repeated %d times\n", msgcount);
+		        msgcount=0;
+                }
+        }
 
 	if (sv_timestamps && sv_timefmt && sv_timefmt->string && sv_timestamps->value)
 		timestamps = true;
