@@ -325,6 +325,7 @@ COM_CreatePath ( char *path )
 			*ofs = '/';
 		}
 	}
+	Sys_mkdir (path);
 }
 
 
@@ -890,12 +891,18 @@ COM_InitFilesystem ( void )
 /*
 	start up with BASEGAME by default
 */
+	COM_CreatePath (va("%s/%s",fs_userpath->string,BASEGAME));
 	COM_AddGameDirectory (BASEGAME);
-	if (hipnotic)
+	if (hipnotic) {
+		COM_CreatePath (va("%s/%s",fs_userpath->string,"hipnotic"));
 		COM_AddGameDirectory ("hipnotic");
-	if (rogue)
+	}
+	if (rogue) {
+	  COM_CreatePath (va("%s/%s",fs_userpath->string,"rogue"));
 		COM_AddGameDirectory ("rogue");
+	}
 
+	COM_CreatePath (va("%s/qw",fs_userpath->string));
 	COM_AddGameDirectory ("qw");
 
 	// any set gamedirs will be freed up to here

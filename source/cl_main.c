@@ -1677,8 +1677,6 @@ void Host_Init (quakeparms_t *parms)
 {
 	COM_InitArgv (parms->argc, parms->argv);
 
-	Sys_mkdir("qw");
-
 	if (COM_CheckParm ("-minmemory"))
 		parms->memsize = MINIMUM_MEMORY;
 
