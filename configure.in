@@ -965,7 +965,11 @@ AC_ARG_ENABLE(optimize,
 	optimize=$disable_optimize,
 	optimize=yes
 )
-
+AC_ARG_WITH(amd,
+	[  --with-amd              Optimize for AMD processors instead of Intel],
+	HAVE_AMD="yes",
+	HAVE_AMD="no"
+)
 AC_MSG_CHECKING(for optimization)
 if test "x$optimize" = xyes; then
 	AC_MSG_RESULT(yes)
@@ -981,10 +985,18 @@ if test "x$optimize" = xyes; then
 				MORE_CFLAGS="-m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2"
 				;;
 			i586-*-*)
-				MORE_CFLAGS="-march=pentium -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				if test "x$HAVE_AMD" = "xyes"; then
+					MORE_CFLAGS="-march=k6 -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				else
+					MORE_CFLAGS="-mpentium -march=pentium -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				fi
 				;;
 			i686-*-*)
-				MORE_CFLAGS="-mpentiumpro -march=pentiumpro -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				if test "x$HAVE_AMD" = "xyes"; then
+					MORE_CFLAGS="-march=k6 -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				else
+					MORE_CFLAGS="-mpentiumpro -march=pentiumpro -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+				fi
 				;;
 			*)
 				MORE_CFLAGS=""
