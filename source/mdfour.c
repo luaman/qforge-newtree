@@ -30,12 +30,11 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
 
 #include "mdfour.h"
@@ -51,10 +50,11 @@ static struct mdfour *m;
 #define F(X,Y,Z) (((X)&(Y)) | ((~(X))&(Z)))
 #define G(X,Y,Z) (((X)&(Y)) | ((X)&(Z)) | ((Y)&(Z)))
 #define H(X,Y,Z) ((X)^(Y)^(Z))
+
 #ifdef LARGE_INT32
-#define lshift(x,s) ((((x)<<(s))&0xFFFFFFFF) | (((x)>>(32-(s)))&0xFFFFFFFF))
+# define lshift(x,s) ((((x)<<(s))&0xFFFFFFFF) | (((x)>>(32-(s)))&0xFFFFFFFF))
 #else
-#define lshift(x,s) (((x)<<(s)) | ((x)>>(32-(s))))
+# define lshift(x,s) (((x)<<(s)) | ((x)>>(32-(s))))
 #endif
 
 #define ROUND1(a,b,c,d,k,s) a = lshift(a + F(b,c,d) + X[k], s)

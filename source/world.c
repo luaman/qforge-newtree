@@ -59,7 +59,7 @@ typedef struct {
 										// entire move
 	float      *mins, *maxs;			// size of the moving object
 	vec3_t      mins2, maxs2;			// size when clipping against
-										// mosnters
+										// monsters
 	float      *start, *end;
 	trace_t     trace;
 	int         type;
@@ -452,7 +452,7 @@ SV_LinkEdict (edict_t *ent, qboolean touch_triggers)
 	else
 		InsertLinkBefore (&ent->area, &node->solid_edicts);
 
-// if touch_triggers, touch all entities at this node and decend for more
+// if touch_triggers, touch all entities at this node and descend for more
 	if (touch_triggers)
 		SV_TouchLinks (ent, sv_areanodes);
 }

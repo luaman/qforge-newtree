@@ -29,14 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <math.h>
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
+#include <math.h>
 
 #include "bothdefs.h"
 #include "cl_cam.h"
@@ -725,7 +725,7 @@ R_DrawViewModel (void)
 	j = R_LightPoint (currententity->origin);
 
 	if (j < 24)
-		j = 24;							// allways give some light on gun
+		j = 24;							// always give some light on gun
 	r_viewlighting.ambientlight = j;
 	r_viewlighting.shadelight = j;
 
@@ -1156,8 +1156,7 @@ R_InitTurb (void)
 
 	for (i = 0; i < 1280; i++) {
 		sintable[i] = AMP + sin (i * 3.14159 * 2 / CYCLE) * AMP;
-		intsintable[i] = AMP2 + sin (i * 3.14159 * 2 / CYCLE) * AMP2;	// AMP2, 
-																		// not 
-																		// 20
+		intsintable[i] = AMP2 + sin (i * 3.14159 * 2 / CYCLE) * AMP2;
+		// AMP2 not 20
 	}
 }
