@@ -110,6 +110,7 @@ cvar_t	*cl_timeout;
 cvar_t	*cl_shownet;	// can be 0, 1, or 2
 cvar_t	*cl_autoexec;
 cvar_t	*cl_sbar;
+cvar_t	*cl_sbar_separator;
 cvar_t	*cl_hudswap;
 cvar_t	*cl_maxfps;
 
@@ -1280,6 +1281,8 @@ void CL_Init_Cvars (void)
 			"show network packets. 0=off, 1=basic, 2=verbose");
 	cl_sbar = Cvar_Get("cl_sbar",  "0", CVAR_ARCHIVE,
 			"status bar mode");
+	cl_sbar_separator = Cvar_Get("cl_sbar_separator",  "0", CVAR_ARCHIVE,
+			"turns on status bar separator");
 	cl_hudswap = Cvar_Get("cl_hudswap",  "0", CVAR_ARCHIVE,
 			"put items on left");
 	cl_maxfps = Cvar_Get("cl_maxfps",  "0", CVAR_ARCHIVE,

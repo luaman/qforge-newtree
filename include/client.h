@@ -336,6 +336,7 @@ extern	cvar_t	*cl_anglespeedkey;
 
 extern	cvar_t	*cl_shownet;
 extern	cvar_t	*cl_sbar;
+extern	cvar_t	*cl_sbar_separator;
 extern	cvar_t	*cl_hudswap;
 
 extern	cvar_t	*cl_pitchdriftspeed;

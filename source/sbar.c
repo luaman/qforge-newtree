@@ -1265,10 +1265,11 @@ void Sbar_MiniDeathmatchOverlay (void)
 	if (vid.width < 640 || !teamplay)
 		return;
 
-	// draw seperator
+	// draw separator
 	x += 208;
-	for (y = vid.height - sb_lines; y < vid.height - 6; y += 2)
-		Draw_Character8 (x, y, 14);
+	if (cl_sbar_separator->int_val)
+		for (y = vid.height - sb_lines; y < vid.height - 6; y += 2)
+			Draw_Character8 (x, y, 14);
 
 	x += 16;
 
