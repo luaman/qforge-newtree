@@ -171,7 +171,7 @@ qboolean	NET_StringToAdr (char *s, netadr_t *a)
 		if (*colon == ':')
 		{
 			*colon = 0;
-			sadr.sin_port = htons(atoi(colon+1));	
+			sadr.sin_port = htons((unsigned short)atoi(colon+1));
 		}
 	
 	if (copy[0] >= '0' && copy[0] <= '9')
