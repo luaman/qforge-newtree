@@ -55,9 +55,7 @@
 
 #include <dirent.h>
 #ifdef HAVE_FNMATCH_H
-# include <fnmatch.h>
-#else
-# include "win32/fnmatch.h"
+#include <fnmatch.h>
 #endif
 
 #ifdef WIN32

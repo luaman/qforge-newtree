@@ -251,6 +251,9 @@
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
 
+/* Define if dirent.h is in your include path somewhere */
+#define HAVE_FNMATCH_H 1
+
 /* Define if you want the QSG standards */
 #define QSG_VERSION "1"
 

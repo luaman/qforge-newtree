@@ -35,7 +35,7 @@
 #include <errno.h>
 #include <ctype.h>
 
-#include "win32/fnmatch.h"
+#include "fnmatch.h"
 
 
 /* Comment out all this code if we are using the GNU C Library, and are not
