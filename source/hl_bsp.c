@@ -238,7 +238,7 @@ void HL_Mod_LoadTextures (lump_t *l)
                 if (!strncmp(mt->name,"sky",3)) 
 		{
 			tx->transparent = false;
-                        R_InitSky_32 (data);
+                        R_InitSky_32 (data, bytesperpixel);
 		}
 		else
 		{

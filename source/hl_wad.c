@@ -137,9 +137,9 @@ byte *W_GetTexture(char *name, int matchwidth, int matchheight)
 			{
 				file = texwadlump[i].file;
 				if (fseek(file, texwadlump[i].position, SEEK_SET))
-                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return false;}
+                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return NULL;}
 				if (fread(&t, sizeof(t), 1, file) != 1)
-                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return false;}
+                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return NULL;}
 				image_width = LittleLong(t.width);
 				image_height = LittleLong(t.height);
 				if (matchwidth && image_width != matchwidth)
@@ -147,26 +147,26 @@ byte *W_GetTexture(char *name, int matchwidth, int matchheight)
 				if (matchheight && image_height != matchheight)
 					continue;
 				if (image_width & 15 || image_height & 15)
-                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return false;}
+                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return NULL;}
 
 				// allocate space for expanded image,
 				// and load incoming image into upper area (overwritten as it expands)
 				if (!(data = outdata = malloc(image_width*image_height*4)))
-                                {Con_Printf("W_GetTexture: out of memory");return false;}
+                                {Con_Printf("W_GetTexture: out of memory");return NULL;}
 				indata = outdata + image_width*image_height*3;
 				datasize = image_width*image_height*85/64;
 
 				// read the image data
 				if (fseek(file, texwadlump[i].position + sizeof(t), SEEK_SET))
-                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return false;}
+                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return NULL;}
 				if (fread(indata, 1, image_width*image_height, file) != image_width*image_height)
-                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return false;}
+                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return NULL;}
 
 				// read the number of colors used (always 256)
 				if (fseek(file, texwadlump[i].position + sizeof(t) + datasize, SEEK_SET))
-                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return false;}
+                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return NULL;}
 				if (fread(&colorcount, 2, 1, file) != 1)
-                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return false;}
+                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return NULL;}
 				colorcount = LittleShort(colorcount);
 
 				// sanity checking
@@ -175,7 +175,7 @@ byte *W_GetTexture(char *name, int matchwidth, int matchheight)
 
 				// read the palette
 				if (fread(&pal, 3, colorcount, file) != colorcount)
-                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return false;}
+                                {Con_Printf("W_GetTexture: corrupt WAD3 file");return NULL;}
 
 				// expand the image to 32bit RGBA
 				for (i = 0;i < image_width*image_height;i++)

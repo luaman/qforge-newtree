@@ -35,6 +35,8 @@ COM_sources=\
   fnmatch.obj \
   dirent.obj \
   buildnum.obj \
+  hl_wad.obj \
+  hl_bsp.obj \
   model.obj
 
 CL_SW_sources=\
