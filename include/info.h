@@ -33,7 +33,7 @@
 #include "config.h"
 #endif
 
-#include <sys/types.h>
+#include <stdlib.h> // for size_t. sys/types.h SHOULD be used, but can't :(bc)
 
 #define	MAX_INFO_STRING			512
 #define	MAX_SERVERINFO_STRING	512
