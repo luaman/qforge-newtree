@@ -741,6 +741,9 @@ void V_CalcRefdef (void)
 		view->model = cl.model_precache[cl.stats[STAT_WEAPON]];
 	view->frame = view_message->weaponframe;
 	view->colormap = vid.colormap;
+	// LordHavoc: make gun visible
+	view->alpha = 1;
+	view->colormod[0] = view->colormod[1] = view->colormod[2] = 1;
 
 // set up the refresh position
 	r_refdef.viewangles[PITCH] += cl.punchangle;

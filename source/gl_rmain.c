@@ -720,16 +720,14 @@ R_DrawViewModel
 */
 void R_DrawViewModel (void)
 {
+	currententity = &cl.viewent;
 	if (!r_drawviewmodel->value
 	 || !Cam_DrawViewModel()
 	 || envmap
 	 || !r_drawentities->value
 	 || (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
 	 || cl.stats[STAT_HEALTH] <= 0)
-		return;
-
-	currententity = &cl.viewent;
-	if (!currententity->model)
+	 || !currententity->model)
 		return;
 
 	// hack the depth range to prevent view model from poking into walls
