@@ -197,7 +197,7 @@ static int  resolutions[][3] = {
 #endif
 };
 
-#define NUM_RESOLUTIONS		(sizeof(resolutions)/(sizeof(int)*3))
+#define NUM_RESOLUTIONS		(sizeof (resolutions) / (sizeof (int) * 3))
 
 
 static int
