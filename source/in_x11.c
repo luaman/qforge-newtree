@@ -358,10 +358,6 @@ event_motion (XEvent * event)
 		mouse_x += event->xmotion.x_root * in_dga_mouseaccel->value;
 		mouse_y += event->xmotion.y_root * in_dga_mouseaccel->value;
 	} else {
-		if (!p_mouse_x && !p_mouse_y) {
-			Con_Printf ("event->xmotion.x: %d\n", event->xmotion.x);
-			Con_Printf ("event->xmotion.y: %d\n", event->xmotion.y);
-		}
 		if (vid_fullscreen->int_val || _windowed_mouse->int_val) {
 			if (!event->xmotion.send_event) {
 				mouse_x += (event->xmotion.x - p_mouse_x);
