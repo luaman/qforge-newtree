@@ -251,11 +251,9 @@ R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 	lightmap = surf->samples;
 
 	// set to full bright if no light data
-	if (/*r_fullbright->value ||*/ !cl.worldmodel->lightdata)
-	{
+	if (!cl.worldmodel->lightdata) {
 		bl = blocklights;
-		for (i=0 ; i<size ; i++)
-		{
+		for (i=0 ; i<size ; i++) {
 			*bl++ = 255*256;
 			*bl++ = 255*256;
 			*bl++ = 255*256;
@@ -263,32 +261,28 @@ R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 		goto store;
 	}
 
-	// clear to no light
-	bl = blocklights;
-	for (i=0 ; i<size ; i++)
-	{
-		*bl++ = 0;
-		*bl++ = 0;
-		*bl++ = 0;
-	}
-	bl = blocklights;
-
 	// add all the lightmaps
-	if (lightmap)
+	bl = blocklights;
+	if (lightmap) {
 		for (maps = 0;
-			maps < MAXLIGHTMAPS && surf->styles[maps] != 255;
-			maps++)
-		{
+				maps < MAXLIGHTMAPS && surf->styles[maps] != 255;
+				maps++) {
 			scale = d_lightstylevalue[surf->styles[maps]];
 			surf->cached_light[maps] = scale;	// 8.8 fraction
 			bl = blocklights;
-			for (i=0 ; i<size ; i++)
-			{
-				*bl++ += *lightmap++ * scale;
-				*bl++ += *lightmap++ * scale;
-				*bl++ += *lightmap++ * scale;
+			for (i = 0; i < size; i++) {
+				*bl++ = *lightmap++ * scale;
+				*bl++ = *lightmap++ * scale;
+				*bl++ = *lightmap++ * scale;
 			}
 		}
+	} else {
+		for (i = 0; i < size; i++) {
+			*bl++ = 0;
+			*bl++ = 0;
+			*bl++ = 0;
+		}
+	}
 
 	// add all the dynamic lights
 	if (surf->dlightframe == r_framecount)
@@ -296,15 +290,12 @@ R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 
 store:
 	// bound and shift
-	if (gl_colorlights->value)
-	{
+	if (gl_colorlights->value) {
 		stride -= smax * 3;
 		bl = blocklights;
-		if (lighthalf)
-		{
-			for (i = 0; i < tmax; i++, dest += stride)
-				for (j=0 ; j<smax ; j++)
-				{
+		if (lighthalf) {
+			for (i = 0; i < tmax; i++, dest += stride) {
+				for (j=0 ; j<smax ; j++) {
 					t = (int) *bl++ >> 8;
 					*dest++ = bound(0, t, 255);
 					t = (int) *bl++ >> 8;
@@ -312,12 +303,10 @@ store:
 					t = (int) *bl++ >> 8;
 					*dest++ = bound(0, t, 255);
 				}
-		}
-		else
-		{
-			for (i = 0; i < tmax; i++, dest += stride)
-				for (j=0 ; j<smax ; j++)
-				{
+			}
+		} else {
+			for (i = 0; i < tmax; i++, dest += stride) {
+				for (j=0; j < smax; j++) {
 					t = (int) *bl++ >> 7;
 					*dest++ = bound(0, t, 255);
 					t = (int) *bl++ >> 7;
@@ -325,17 +314,14 @@ store:
 					t = (int) *bl++ >> 7;
 					*dest++ = bound(0, t, 255);
 				}
+			}
 		}
-	}
-	else
-	{
+	} else {
 		stride -= smax;
 		bl = blocklights;
-		if (lighthalf)
-		{
-			for (i = 0; i < tmax; i++, dest += stride)
-				for (j=0 ; j<smax ; j++)
-				{
+		if (lighthalf) {
+			for (i = 0; i < tmax; i++, dest += stride) {
+				for (j=0 ; j<smax ; j++) {
 					t = (int) *bl++ >> 8;
 					t2 = bound(0, t, 255);
 					t = (int) *bl++ >> 8;
@@ -345,12 +331,10 @@ store:
 					t2 *= (1.0/3.0);
 					*dest++ = t2;
 				}
-		}
-		else
-		{
-			for (i = 0; i < tmax; i++, dest += stride)
-				for (j=0 ; j<smax ; j++)
-				{
+			}
+		} else {
+			for (i = 0; i < tmax; i++, dest += stride) {
+				for (j=0 ; j<smax ; j++) {
 					t = (int) *bl++ >> 7;
 					t2 = bound(0, t, 255);
 					t = (int) *bl++ >> 7;
@@ -360,6 +344,7 @@ store:
 					t2 *= (1.0/3.0);
 					*dest++ = t2;
 				}
+			}
 		}
 	}
 }
