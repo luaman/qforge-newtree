@@ -80,7 +80,7 @@ soft_SOURCES=	cl_model.c cl_trans.c d_edge.c d_fill.c d_init.c d_modech.c \
 		screen.c model.c $(SOFT_ASM)
 ogl_SOURCES=	gl_draw.c gl_mesh.c gl_model.c gl_ngraph.c gl_part.c \
 		gl_refrag.c gl_rlight.c gl_rmain.c gl_rmisc.c gl_rsurf.c \
-		gl_screen.c gl_trans.c gl_view.c gl_warp.c
+                gl_screen.c gl_trans.c gl_view.c gl_warp.c hl_bsp.c hl_wad.c
 
 mgl_SOURCES=	vid_mgl.c in_win.c
 ggi_SOURCES=	vid_ggi.c
