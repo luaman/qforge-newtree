@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "cvar.h"
 #include "client.h"
@@ -36,17 +36,13 @@
 #include "console.h"
 #include "commdef.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "winquake.h"
 #endif
 
 #include <math.h>
 
-/* cvar_t	cl_nopred = {"cl_nopred","0"};
- CVAR_FIXME */
 cvar_t	*cl_nopred;
-/* cvar_t	cl_pushlatency = {"pushlatency","-999"};
- CVAR_FIXME */
 cvar_t	*cl_pushlatency;
 
 extern	frame_t		*view_frame;
@@ -120,7 +116,8 @@ void CL_PredictUsercmd (player_state_t *from, player_state_t *to, usercmd_t *u, 
 //for (i=0 ; i<3 ; i++)
 //pmove.origin[i] = ((int)(pmove.origin[i]*8))*0.125;
 	to->waterjumptime = pmove.waterjumptime;
-	to->oldbuttons = pmove.cmd.buttons;
+	to->oldbuttons = pmove.oldbuttons;	// Tonik
+//	to->oldbuttons = pmove.cmd.buttons;
 	VectorCopy (pmove.origin, to->origin);
 	VectorCopy (pmove.angles, to->viewangles);
 	VectorCopy (pmove.velocity, to->velocity);
@@ -143,16 +140,12 @@ void CL_PredictMove (void)
 	frame_t		*from, *to = NULL;
 	int			oldphysent;
 
-/* 	if (cl_pushlatency.value > 0)
- CVAR_FIXME */
 	if (cl_pushlatency->value > 0)
 		Cvar_Set (cl_pushlatency, "0");
 
 	if (cl.paused)
 		return;
 
-/* 	cl.time = realtime - cls.latency - cl_pushlatency.value*0.001;
- CVAR_FIXME */
 	cl.time = realtime - cls.latency - cl_pushlatency->value*0.001;
 	if (cl.time > realtime)
 		cl.time = realtime;
@@ -183,8 +176,6 @@ void CL_PredictMove (void)
 #endif
 	}
 
-/* 	if (cl_nopred.value)
- CVAR_FIXME */
 	if (cl_nopred->value)
 	{
 		VectorCopy (from->playerstate[cl.playernum].velocity, cl.simvel);
@@ -252,11 +243,7 @@ CL_InitPrediction
 */
 void CL_InitPrediction (void)
 {
-/* 	Cvar_RegisterVariable (&cl_pushlatency);
- CVAR_FIXME */
 	cl_pushlatency = Cvar_Get("pushlatency", "-999", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&cl_nopred);
- CVAR_FIXME */
 	cl_nopred = Cvar_Get("cl_nopred", "0", CVAR_NONE, "None");
 }
 
