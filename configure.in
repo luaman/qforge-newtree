@@ -37,6 +37,16 @@ AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
+set $CC
+if test "$1" = gcc; then
+	AC_MSG_CHECKING(for fubared gcc)
+	if test `gcc --version` = 2.96; then
+		AC_MSG_RESULT(yes. you poor sod. Hope you have egcs)
+		CC=egcs
+	else
+		AC_MSG_RESULT(no. good)
+	fi
+fi
 
 dnl ==================================================================
 dnl Checks for system services
