@@ -487,6 +487,9 @@ dnl Output files
 AC_OUTPUT(
 	include/Makefile
 	source/Makefile
+	doc/Makefile
+	doc/man/Makefile
+	doc/texinfo/Makefile
 	Makefile
 	RPM/quakeforge.spec
 	RPM/build_rpm
