@@ -549,9 +549,16 @@ void SV_UpdateClientStats (client_t *client)
 	// stuff the sigil bits into the high bits of items for sbar
 	stats[STAT_ITEMS] = (int)ent->v.items | ((int)pr_global_struct->serverflags << 28);
 
-	// Extensions to the QW 2.40 protocol for MegaTF  --KB
+	// Extensions to the QW 2.40 protocol for Mega2k  --KB
 	stats[STAT_VIEWHEIGHT] = (int)ent->v.view_ofs[2];
-	stats[STAT_FLYMODE] = (ent->v.movetype == MOVETYPE_FLY);                 
+
+	// FIXME: this should become a * key!  --KB
+	if (ent->v.movetype == MOVETYPE_FLY && !atoi(Info_ValueForKey
+				(svs.info, "sv_allowflymode")))
+		ent->v.movetype = MOVETYPE_WALK;
+	
+	stats[STAT_FLYMODE] = (ent->v.movetype == MOVETYPE_FLY);
+
 
 	for (i=0 ; i<MAX_CL_STATS ; i++)
 		if (stats[i] != client->stats[i])
