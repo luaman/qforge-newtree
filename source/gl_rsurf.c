@@ -1440,8 +1440,7 @@ void GL_BuildLightmaps (void)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes, BLOCK_WIDTH,
 				BLOCK_HEIGHT, 0, gl_lightmap_format,
-				GL_UNSIGNED_BYTE, lightmaps + 
-				i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes);
+				GL_UNSIGNED_BYTE, lightmaps[i]);
 	}
 
  	if (!gl_texsort->value)
