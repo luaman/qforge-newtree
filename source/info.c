@@ -240,7 +240,7 @@ Info_SetValueForStarKey (char *s, char *key, char *value, size_t maxsize, int fl
 		// key exists, make sure we have enough room for new value, if we
 		// don't,
 		// don't change it!
-		if (strlen (value) - strlen (v) + strlen (s) > maxsize) {
+		if (strlen (value) - strlen (v) + strlen (s) >= maxsize) {
 			Con_Printf ("Info string length exceeded\n");
 			return;
 		}
@@ -251,7 +251,7 @@ Info_SetValueForStarKey (char *s, char *key, char *value, size_t maxsize, int fl
 
 	snprintf (newstr, sizeof (newstr), "\\%s\\%s", key, value);
 
-	if ((int) (strlen (newstr) + strlen (s)) > maxsize) {
+	if ((int) (strlen (newstr) + strlen (s)) >= maxsize) {
 		Con_Printf ("Info string length exceeded\n");
 		return;
 	}
