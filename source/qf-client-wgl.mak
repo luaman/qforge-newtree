@@ -134,6 +134,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\qfgl_ext.obj\
    $(OBJS)\hash.obj\
    $(OBJS)\joy_win.obj\
    $(OBJS)\pcx.obj\
@@ -232,6 +233,7 @@ $(EXE)\qf-client-wgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\qfgl_ext.obj+
 $(OBJS)\hash.obj+
 $(OBJS)\joy_win.obj+
 $(OBJS)\pcx.obj+
@@ -334,6 +336,11 @@ quakeforge.res
 $(OBJS)\quakeforge.res :  $(QFROOT)\include\win32\resources\quakeforge.rc
   $(BRC32) -R @&&|
  -FO$@ $(QFROOT)\include\win32\resources\quakeforge.rc
+
+|
+$(OBJS)\qfgl_ext.obj :  $(QFROOT)\source\qfgl_ext.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\qfgl_ext.c
 
 |
 $(OBJS)\pcx.obj :  $(QFROOT)\source\pcx.c
