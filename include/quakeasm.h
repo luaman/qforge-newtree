@@ -21,10 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // quakeasm.h: general asm header file
 //
 
-#ifdef _WIN32
-#define __i386__	1
-#endif
-
 // !!! must be kept the same as in d_iface.h !!!
 #define TRANSPARENT_COLOR	255
 

@@ -6,7 +6,7 @@ EXE_libs=
 DIRECTORIES=
 vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
 
-CPPFLAGS=-I . -I ../include -Did386 -Dstricmp=strcasecmp -MMD -DSERVERONLY
+CPPFLAGS=-I . -I ../include -DELF -Did386=1 -Dstricmp=strcasecmp -MMD -DSERVERONLY
 CFLAGS=-Wall #-Werror
 CXXFLAGS=-Wall #-Werror
 LDFLAGS=
