@@ -136,6 +136,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\qfgl_ext.obj\
    $(OBJS)\vid_common_gl.obj\
    $(OBJS)\tga.obj\
    $(OBJS)\fractalnoise.obj\
@@ -236,6 +237,7 @@ $(EXE)\qf-client-sgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\qfgl_ext.obj+
 $(OBJS)\vid_common_gl.obj+
 $(OBJS)\tga.obj+
 $(OBJS)\fractalnoise.obj+
@@ -333,6 +335,11 @@ $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(SDLSDK)\lib\sdl.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
+
+|
+$(OBJS)\qfgl_ext.obj :  $(QFROOT)\source\qfgl_ext.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\qfgl_ext.c
 
 |
 $(OBJS)\vid_common_gl.obj :  $(QFROOT)\source\vid_common_gl.c
