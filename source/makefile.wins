@@ -1,0 +1,45 @@
+include <win32.mak>
+#!include <winopt.mak>
+all:server.exe
+LIBS=winmm.lib wsock32.lib opengl32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib  comctl32.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib  ole32.lib oleaut32.lib uuid.lib libc.lib
+NCFLAGS=/c /nologo /DWIN32 /D_WIN32 /I..\include /IE:\quakesrc\q1src\incs /MT
+COM_sources=\
+  net_chan.obj \
+  net_com.obj \
+  pmove.obj \
+  pmovetst.obj \
+  zone.obj \
+  mdfour.obj \
+  mathlib.obj \
+  cvar.obj \
+  crc.obj \
+  common.obj \
+  cmd.obj \
+  model.obj
+
+SV_sources=\
+  pr_cmds.obj \
+  pr_edict.obj \
+  pr_exec.obj \
+  sv_init.obj \
+  sv_main.obj \
+  sv_misc.obj \
+  sv_model.obj \
+  sv_nchan.obj \
+  sv_ents.obj \
+  sv_send.obj \
+  sv_move.obj \
+  sv_phys.obj \
+  sv_user.obj \
+  sv_ccmds.obj \
+  world.obj \
+  net_wins.obj \
+  sv_sys_win.obj \
+  sys_win.obj \
+  sv_cvar.obj
+
+server.exe:     $(COM_sources) $(SV_sources)
+        $(link) /nologo /subsystem:console /incremental:yes /machine:I386 -out:server.exe *.obj $(LIBS)
+
+.c.obj:
+    $(cc) $(NCFLAGS) $*.c
