@@ -26,3 +26,9 @@
 	$Id$
 */
 
+#include "cvar.h"
+
+extern cvar_t	*cl_deadbodyfilter;
+extern cvar_t	*cl_gibfilter;
+
+void CL_InitTeamplay (void);

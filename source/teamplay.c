@@ -26,4 +26,15 @@
 	$Id$
 */
 
-// Kinda empty, eh? :)
+#include "cvar.h"
+#include "teamplay.h"
+
+cvar_t	*cl_deadbodyfilter;
+cvar_t	*cl_gibfilter;
+
+
+void CL_InitTeamplay (void)
+{
+	cl_deadbodyfilter = Cvar_Get("cl_deadbodyfilter", "0", CVAR_NONE, "None");
+	cl_gibfilter = Cvar_Get("cl_gibfilter", "0", CVAR_NONE, "None");
+}
