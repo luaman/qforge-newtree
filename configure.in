@@ -1057,12 +1057,6 @@ if test "x$HAVE_SDL" = xyes -a "x$ENABLE_SDL" = xyes; then
 	TARGETS="$TARGETS qf-client-sdl\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS SDL"
 fi
-if test "x$HAVE_SGL" = xyes; then
-	if test "x$HAVE_GLX" = xyes -a "x$ENABLE_SGL" = xyes; then
-		TARGETS="$TARGETS qf-client-sgl\$(EXEEXT)"
-		CL_TARGETS="$CL_TARGETS SDL-GL"
-	fi
-fi
 if test "x$HAVE_SVGA" = xyes -a "x$ENABLE_SVGA" = xyes; then
 	TARGETS="$TARGETS qf-client-svga\$(EXEEXT)"
 	CL_TARGETS="$CL_TARGETS SVGAlib"
@@ -1075,6 +1069,12 @@ if test "x$HAVE_X" = xyes; then
 	if test "x$HAVE_GLX" = xyes -a "x$ENABLE_GLX" = xyes; then
 		TARGETS="$TARGETS qf-client-glx\$(EXEEXT)"
 		CL_TARGETS="$CL_TARGETS GLX"
+	fi
+fi
+if test "x$HAVE_SGL" = xyes; then
+	if test "x$HAVE_GLX" = xyes -a "x$ENABLE_SGL" = xyes; then
+		TARGETS="$TARGETS qf-client-sgl\$(EXEEXT)"
+		CL_TARGETS="$CL_TARGETS SDL-GL"
 	fi
 fi
 if test "x$HAVE_TDFXGL" = xyes -a "x$ENABLE_3DFX" = xyes; then
