@@ -489,6 +489,27 @@ Type		: Boolean
 Default		: 1
 Description	: whether or not to use RGBA lightmaps
 
+Cvar		: gl_conalpha
+Targets		: gl clients
+Category	: gl console ui
+Type		: number
+Default		: 0.6
+Description	: alpha value for console
+
+Cvar		: gl_conspin
+Targets		: gl clients
+Category	: gl console ui
+Type		: number
+Default		: 0
+Description	: speed at which the console spins
+
+Cvar		: gl_constretch
+Targets		: gl clients
+Category	: gl console ui
+Type		: boolean
+Default		: 0
+Description	: whether to slide or stretch the console
+
 Cvar		: gl_cshiftpercent
 Targets		:
 Category	:

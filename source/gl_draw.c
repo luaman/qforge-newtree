@@ -59,20 +59,15 @@
 
 extern  byte            *host_basepal;
 extern unsigned char d_15to8table[65536];
-/* extern cvar_t crosshair, cl_crossx, cl_crossy, crosshaircolor;
- CVAR_FIXME */
 extern cvar_t *crosshair, *cl_crossx, *cl_crossy, *crosshaircolor;
 
 cvar_t		*gl_nobind;
-/* cvar_t		gl_max_size = {"gl_max_size", "1024"};
- CVAR_FIXME */
 cvar_t		*gl_max_size;
-/* cvar_t		gl_picmip = {"gl_picmip", "0"};
- CVAR_FIXME */
 cvar_t		*gl_picmip;
 
-/* cvar_t		cl_verstring = {"cl_verstring", "QuakeForge " QF_VERSION};
- CVAR_FIXME */
+cvar_t		*gl_constretch;
+cvar_t		*gl_conalpha;
+cvar_t		*gl_conspin;
 cvar_t		*cl_verstring;
 
 extern byte	*draw_chars;				// 8*8 graphic characters
@@ -100,9 +95,6 @@ typedef struct
 	int		texnum;
 	float	sl, tl, sh, th;
 } glpic_t;
-
-byte		conback_buffer[sizeof(qpic_t) + sizeof(glpic_t)];
-qpic_t		*conback = (qpic_t *)&conback_buffer;
 
 int		gl_lightmap_format = 4;
 int		gl_solid_format = 3;
@@ -324,30 +316,6 @@ qpic_t	*Draw_CachePic (char *path)
 }
 
 
-void Draw_CharToConback (int num, byte *dest)
-{
-	int		row, col;
-	byte	*source;
-	int		drawline;
-	int		x;
-
-	row = num>>4;
-	col = num&15;
-	source = draw_chars + (row<<10) + (col<<3);
-
-	drawline = 8;
-
-	while (drawline--)
-	{
-		for (x=0 ; x<8 ; x++)
-			if (source[x] != 255)
-				dest[x] = 0x60 + source[x];
-		source += 128;
-		dest += 320;
-	}
-
-}
-
 typedef struct
 {
 	char *name;
@@ -419,22 +387,24 @@ Draw_Init
 void Draw_Init (void)
 {
 	int		i;
-	qpic_t	*cb;
-	glpic_t	*gl;
-	int start;
-	byte    *ncdata;
 
-/* 	Cvar_RegisterVariable (&gl_nobind);
- CVAR_FIXME */
-	gl_nobind = Cvar_Get("gl_nobind",  "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_max_size);
- CVAR_FIXME */
-	gl_max_size = Cvar_Get("gl_max_size",  "1024", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_picmip);
- CVAR_FIXME */
-	gl_picmip = Cvar_Get("gl_picmip",  "0", CVAR_NONE, "None");
+	gl_nobind = Cvar_Get("gl_nobind",  "0", CVAR_NONE,
+			"whether or not to inhibit texture binding");
+	gl_max_size = Cvar_Get("gl_max_size",  "1024", CVAR_NONE,
+			"None");  // CVAR_FIXME - set a description
+	gl_picmip = Cvar_Get("gl_picmip",  "0", CVAR_NONE,
+			"None");  // CVAR_FIXME - set a description
 
-	cl_verstring = Cvar_Get("cl_verstring", PROGRAM " " VERSION, CVAR_NONE, "Client version string");
+	// Console effects  --KB
+	gl_constretch = Cvar_Get ("gl_constretch", "0", CVAR_ARCHIVE,
+			"whether slide the console or stretch it");
+	gl_conalpha = Cvar_Get ("gl_conalpha", "0.6", CVAR_ARCHIVE,
+			"alpha value for the console background");
+	gl_conspin = Cvar_Get ("gl_conspin", "0", CVAR_ARCHIVE,
+			"speed at which the console spins");
+
+	cl_verstring = Cvar_Get("cl_verstring", PROGRAM " " VERSION, CVAR_NONE,
+			"client version string");
 
 	// 3dfx can only handle 256 wide textures
 	if (!strncasecmp ((char *)gl_renderer, "3dfx",4) ||
@@ -457,62 +427,8 @@ void Draw_Init (void)
 //	Draw_CrosshairAdjust();
 	cs_texture = GL_LoadTexture ("crosshair", 8, 8, cs_data, false, true);
 
-	start = Hunk_LowMark ();
-
-	cb = (qpic_t *)COM_LoadHunkFile ("gfx/conback.lmp");	
-	if (!cb)
-		Sys_Error ("Couldn't load gfx/conback.lmp");
-	SwapPic (cb);
-
-#if 0
-	conback->width = vid.conwidth;
-	conback->height = vid.conheight;
-
-	// scale console to vid size
-	dest = ncdata = Hunk_AllocName(vid.conwidth * vid.conheight, "conback");
-
-	for (y=0 ; y<vid.conheight ; y++, dest += vid.conwidth)
-	{
-		src = cb->data + cb->width * (y*cb->height/vid.conheight);
-		if (vid.conwidth == cb->width)
-			memcpy (dest, src, vid.conwidth);
-		else
-		{
-			f = 0;
-			fstep = cb->width*0x10000/vid.conwidth;
-			for (x=0 ; x<vid.conwidth ; x+=4)
-			{
-				dest[x] = src[f>>16];
-				f += fstep;
-				dest[x+1] = src[f>>16];
-				f += fstep;
-				dest[x+2] = src[f>>16];
-				f += fstep;
-				dest[x+3] = src[f>>16];
-				f += fstep;
-			}
-		}
-	}
-#else
-	conback->width = cb->width;
-	conback->height = cb->height;
-	ncdata = cb->data;
-#endif
-	
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	gl = (glpic_t *)conback->data;
-	gl->texnum = GL_LoadTexture ("conback", conback->width, conback->height, ncdata, false, false);
-	gl->sl = 0;
-	gl->sh = 1;
-	gl->tl = 0;
-	gl->th = 1;
-	conback->width = vid.conwidth;
-	conback->height = vid.conheight;
-
-	// free loaded console
-	Hunk_FreeToLowMark (start);
 
 	// save a texture slot for translated picture
 	translate_texture = texture_extension_number++;
@@ -813,22 +729,97 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 
 
 /*
-================
-Draw_ConsoleBackground
+	Draw_ConsoleBackground
 
-================
+	Draws console background (obviously!)  Completely rewritten to use
+	several simple yet very cool GL effects.  --KB
 */
-void Draw_ConsoleBackground (int lines)
+void 
+Draw_ConsoleBackground ( int lines )
 {
-	int y;
+	int		y;
+	qpic_t		*conback;
+	glpic_t		*gl;
+	float		ofs;
+	float		alpha;
+
+	// This can be a CachePic now, just like in software
+	conback = Draw_CachePic ("gfx/conback.lmp");
+	gl = (glpic_t *)conback->data;
+
+	// spin the console? - effect described in a QER tutorial
+	if (gl_conspin->value)
+	{
+		static float xangle = 0;
+		static float xfactor = .3f;
+		static float xstep = .005f;
+		
+		glPushMatrix ();
+		glMatrixMode (GL_TEXTURE);
+		glPushMatrix ();
+		glLoadIdentity ();
+		xangle += gl_conspin->value;
+		xfactor += xstep;
+		if (xfactor > 8 || xfactor < .3f)
+			xstep = -xstep;
+		glRotatef (xangle, 0, 0, 1);
+		glScalef (xfactor, xfactor, xfactor);
+	}
+
+	// slide console up/down or stretch it?
+	if (gl_constretch->value)
+		ofs = 0;
+	else
+		ofs = (vid.conheight - lines)/(float)vid.conheight;
 
 	y = (vid.height * 3) >> 2;
 	if (lines > y)
-		Draw_Pic(0, lines-vid.height, conback);
-	else
-		Draw_AlphaPic (0, lines - vid.height, conback, (float)(1.2 * lines)/y);
+	{
+		alpha = 1.0;
+	} else {
+		// set up to draw alpha console
+		alpha = (float)(gl_conalpha->value * 2 * lines)/y;
+		glDisable(GL_ALPHA_TEST);
+		glEnable (GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glCullFace(GL_FRONT);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
 
-	Draw_Alt_String (vid.conwidth - strlen(cl_verstring->string)*8 - 11,
+	glColor4f (1.0, 1.0, 1.0, alpha);
+
+	// draw the console texture
+	GL_Bind (gl->texnum);
+	glBegin (GL_QUADS);
+	glTexCoord2f (gl->sl, gl->tl + ofs);
+	glVertex2f (0, 0);
+	glTexCoord2f (gl->sh, gl->tl + ofs);
+	glVertex2f (vid.conwidth, 0);
+	glTexCoord2f (gl->sh, gl->th);
+	glVertex2f (vid.conwidth, lines);
+	glTexCoord2f (gl->sl, gl->th);
+	glVertex2f (0, lines);
+	glEnd ();
+
+	// turn off alpha blending
+	if (alpha < 1.0)
+	{
+		glColor4f (1.0, 1.0, 1.0, 1.0);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glEnable(GL_ALPHA_TEST);
+		glDisable (GL_BLEND);
+	}
+
+	if (gl_conspin->value)
+	{
+		glPopMatrix ();
+		glMatrixMode (GL_MODELVIEW);
+		glPopMatrix ();
+	}
+
+	// draw version string if not downloading
+	if (!cls.download)
+		Draw_Alt_String (vid.conwidth - strlen(cl_verstring->string)*8 - 11,
 			lines-14, cl_verstring->string);
 }
 
