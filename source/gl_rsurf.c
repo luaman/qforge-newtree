@@ -853,6 +853,8 @@ void R_DrawWaterSurfaces (void)
 		glColor4f(1,1,1, r_wateralpha->value);
 	if (r_wateralpha->value < 1.0)
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	else
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	if (!gl_texsort->value)
 	{
@@ -894,6 +896,7 @@ void R_DrawWaterSurfaces (void)
 	}
 
 	glColor3f(1,1,1);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
 
 
@@ -1047,8 +1050,10 @@ void R_DrawBrushModel (entity_t *e)
 		}
 	}
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	R_BlendLightmaps ();
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 
 	glPopMatrix ();
 }
@@ -1205,6 +1210,8 @@ void R_DrawWorld (void)
 
 	R_BlendLightmaps ();
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 }
 
 
