@@ -131,6 +131,7 @@ void Con_Clear_f (void)
 	con_chat.numlines = 0;
 	memset (con_main.text, ' ', CON_TEXTSIZE);
 	memset (con_chat.text, ' ', CON_TEXTSIZE);
+	con_main.display = con_main.current;
 }
 
 						
