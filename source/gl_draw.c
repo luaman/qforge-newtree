@@ -436,8 +436,8 @@ Draw_TextBox (int x, int y, int width, int lines)
 	Draw_Pic (cx, cy + 8, p);
 }
 
-extern void glrmain_init ();
-extern void glrsurf_init ();
+extern void glrmain_init (void);
+extern void glrsurf_init (void);
 
 /*
 ===============
@@ -1212,7 +1212,7 @@ GL_Upload8_EXT (byte * data, int width, int height, qboolean mipmap,
 #endif
 }
 
-extern qboolean VID_Is8bit ();
+extern qboolean VID_Is8bit (void);
 
 /*
 ===============
