@@ -198,15 +198,18 @@ qboolean	CL_CheckOrDownloadFile (char *filename)
 {
 	QFile	*f;
 
-	if (strstr (filename, ".."))
-	{
+	if (strstr (filename, "..")) {
 		Con_Printf ("Refusing to download a path with ..\n");
 		return true;
 	}
 
+	if (!snd_initialized && strnequal ("sound/", filename, 6)) {
+		// don't bother downloading sownds if we can't play them
+		return true;
+	}
+
 	COM_FOpenFile (filename, &f);
-	if (f)
-	{	// it exists, no need to download
+	if (f) {	// it exists, no need to download
 		Qclose (f);
 		return true;
 	}
