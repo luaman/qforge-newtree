@@ -514,6 +514,8 @@ void Cam_FinishMove(usercmd_t *cmd);
 void Cam_Reset(void);
 void CL_InitCam(void);
 
+void CL_ParseEntityLump(char *entdata);
+
 //
 // skin.c
 //
