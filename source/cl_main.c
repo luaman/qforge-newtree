@@ -166,6 +166,7 @@ entity_t		cl_visedicts_list[2][MAX_VISEDICTS];
 
 double			connect_time = -1;		// for connection retransmits
 
+quakeparms_t host_parms;
 qboolean	host_initialized;		// true if into command execution
 qboolean	nomaster;
 

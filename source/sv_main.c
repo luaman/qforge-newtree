@@ -53,6 +53,7 @@
 #include "ver_check.h"
 #include "world.h"
 
+quakeparms_t host_parms;
 qboolean		host_initialized;	// true if into command execution
 
 double	sv_frametime;
