@@ -60,7 +60,7 @@ byte	mod_novis[MAX_MAP_LEAFS/8];
 #define	MAX_MOD_KNOWN	512
 model_t	mod_known[MAX_MOD_KNOWN];
 int		mod_numknown;
-
+extern int isServer;
 unsigned *model_checksum;
 texture_t *r_notexture_mip;
 cvar_t *gl_subdivide_size;
@@ -356,7 +356,8 @@ void Mod_LoadTextures (lump_t *l)
 		for (j=0 ; j<MIPLEVELS ; j++)
 			tx->offsets[j] = mt->offsets[j] + sizeof(texture_t) - sizeof(miptex_t);
 		// the pixels immediately follow the structures
-		memcpy ( tx+1, mt+1, pixels);
+                if (!isServer)
+                 memcpy ( tx+1, mt+1, pixels);
 
 		if (!strncmp(mt->name,"sky",3))	
 			R_InitSky (tx);

@@ -81,6 +81,7 @@
 #include <strings.h>
 #endif
 
+int isServer = 0;
 
 // we need to declare some mouse variables here, because the menu system
 // references them even when on a unix system.

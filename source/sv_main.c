@@ -48,7 +48,7 @@
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
-
+int isServer = 1;
 quakeparms_t host_parms;
 
 qboolean	host_initialized;		// true if into command execution (compatability)
