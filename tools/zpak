@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -eq 0 ]; then
-	echo 'usage: $0 <pakfile> ...'
+	echo "usage: $0 <pakfile> ..."
 	exit 1
 fi
 
