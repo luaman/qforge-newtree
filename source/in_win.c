@@ -31,9 +31,10 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include <dinput.h>
 #include "quakedef.h"
 #include "winquake.h"
+#include <dinput.h>
+
 //#include "dosisms.h"
 
 #define DINPUT_BUFFERSIZE           16
@@ -903,7 +904,7 @@ static void IN_StartupJoystick (void)
 { 
 	int			/*i,*/ numdevs;
 	JOYCAPS		jc;
-	MMRESULT	mmr;
+	MMRESULT	mmr = !JOYERR_NOERROR;
  
  	// assume no joystick
 	joy_avail = false; 
@@ -1172,7 +1173,7 @@ static qboolean IN_ReadJoystick (void)
 	else
 	{
 		// read error occurred
-		// turning off the joystick seems too harsh for 1 read error,\
+		// turning off the joystick seems too harsh for 1 read error,
 		// but what should be done?
 		// Con_Printf ("IN_ReadJoystick: no response\n");
 		// joy_avail = false;
