@@ -43,13 +43,17 @@ EXTRA_PROGRAMS= qf-server \
 
 noinst_LIBRARIES= libqfcd.a libqfjs.a libqfnet.a libqfsnd.a libqfsys_cl.a libqfsys_sv.a
 
+if PACKETLOG
+packetlogger = net_packetlog.c
+endif
+
 if ASM_ARCH
 math_ASM = math.S sys_x86.S
 endif
 common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c hash.c \
 	info.c link.c locs.c mathlib.c mdfour.c model.c model_brush.c \
 	msg.c pmove.c pmovetst.c qargs.c qendian.c quakefs.c quakeio.c \
-	sizebuf.c va.c zone.c $(math_ASM)
+	sizebuf.c va.c zone.c $(math_ASM) $(packetlogger)
 
 #
 # ... Network type
