@@ -376,7 +376,7 @@ void	VID_Init (unsigned char *palette)
    int num_visuals;
    int template_mask;
 
-	S_Init();
+//	S_Init();
    
    ignorenext=0;
    vid.width = 320;

@@ -568,7 +568,7 @@ void VID_Init(unsigned char *palette)
 	char	gldir[MAX_OSPATH];
 	int width = 640, height = 480;
 
-	S_Init();
+//	S_Init();
 
 	Init_KBD();
 

@@ -243,16 +243,16 @@ sndinitstat SNDDMA_InitDirect (void)
 			return SIS_FAILURE;
 		}
 
-		if (MessageBox (NULL,
-						"The sound hardware is in use by another app.\n\n"
-					    "Select Retry to try to start sound again or Cancel to run Quake with no sound.",
-						"Sound not available",
-						MB_RETRYCANCEL | MB_SETFOREGROUND | MB_ICONEXCLAMATION) != IDRETRY)
-		{
+//		if (MessageBox (NULL,
+//						"The sound hardware is in use by another app.\n\n"
+//					    "Select Retry to try to start sound again or Cancel to run Quake with no sound.",
+//						"Sound not available",
+//						MB_RETRYCANCEL | MB_SETFOREGROUND | MB_ICONEXCLAMATION) != IDRETRY)
+//		{
 			Con_SafePrintf ("DirectSoundCreate failure\n"
 							"  hardware already in use\n");
 			return SIS_NOTAVAIL;
-		}
+//		}
 	}
 
 	dscaps.dwSize = sizeof(dscaps);
@@ -463,16 +463,16 @@ qboolean SNDDMA_InitWav (void)
 			return false;
 		}
 
-		if (MessageBox (NULL,
-						"The sound hardware is in use by another app.\n\n"
-					    "Select Retry to try to start sound again or Cancel to run Quake with no sound.",
-						"Sound not available",
-						MB_RETRYCANCEL | MB_SETFOREGROUND | MB_ICONEXCLAMATION) != IDRETRY)
-		{
+//		if (MessageBox (NULL,
+//						"The sound hardware is in use by another app.\n\n"
+//					    "Select Retry to try to start sound again or Cancel to run Quake with no sound.",
+//						"Sound not available",
+//						MB_RETRYCANCEL | MB_SETFOREGROUND | MB_ICONEXCLAMATION) != IDRETRY)
+//		{
 			Con_SafePrintf ("waveOutOpen failure;\n"
 							"  hardware already in use\n");
 			return false;
-		}
+//		}
 	} 
 
 	/* 

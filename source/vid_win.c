@@ -121,9 +121,9 @@ unsigned char	vid_curpal[256*3];
 unsigned short	d_8to16table[256];
 unsigned	d_8to24table[256];
 
-int     driver = grDETECT,mode;
-bool    useWinDirect = true, useDirectDraw = true;
-MGLDC	*mgldc = NULL,*memdc = NULL,*dibdc = NULL,*windc = NULL;
+int        driver = grDETECT,mode;
+qboolean   useWinDirect = true, useDirectDraw = true;
+MGLDC	   *mgldc = NULL,*memdc = NULL,*dibdc = NULL,*windc = NULL;
 
 typedef struct {
 	modestate_t	type;
@@ -2206,7 +2206,7 @@ void	VID_Init (unsigned char *palette)
 	hide_window = true;
 	VID_SetMode (MODE_WINDOWED, palette);
 	hide_window = false;
-	S_Init ();
+//	S_Init ();
 
 	vid_initialized = true;
 

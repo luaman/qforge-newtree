@@ -1,5 +1,5 @@
 /*
-	gl_vidlinux_x11.c
+	gl_vidlinuxglx.c
 
 	(description)
 
@@ -30,62 +30,78 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/vt.h>
+#include <string.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <signal.h>
-#include <asm/io.h>
+#include <math.h>
 
-//#include <X11/cursorfont.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
+#include "bothdefs.h"   // needed by: common.h, net.h, client.h
+
+#include "common.h"
+#include "bspfile.h"    // needed by: glquake.h
+#include "vid.h"
+#include "sys.h"
+#include "zone.h"       // needed by: client.h, gl_model.h
+#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
+                        //  modelgen.h, glmodel.h
+#include "wad.h"
+#include "draw.h"
+#include "cvar.h"
+#include "net.h"        // needed by: client.h
+#include "protocol.h"   // needed by: client.h
+#include "cmd.h"
+#include "keys.h"
+#include "sbar.h"
+#include "sound.h"
+#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
+#include "client.h"     // need cls in this file
+#include "model.h"   // needed by: glquake.h
+#include "console.h"
+#include "glquake.h"
+
+#include <GL/glx.h>
+
 #include <X11/keysym.h>
+#include <X11/cursorfont.h>
 
-#include "GL/gl.h"
-#include "GL/glx.h"
+#ifdef USE_DGA
+#include <X11/extensions/xf86dga.h>
+#endif
 
-#include "quakedef.h"
 
 #define WARP_WIDTH              320
 #define WARP_HEIGHT             200
+
+extern    byte            *host_colormap;
+extern qboolean noclip_anglehack;
 
 static Display *dpy = NULL;
 static Window win;
 static GLXContext ctx = NULL;
 
-unsigned short d_8to16table[256];
-unsigned int d_8to24table[256];
-unsigned char d_15to8table[65536];
-
-static qboolean usedga = false;
-
-#define stringify(m) { #m, m }
-
-cvar_t vid_mode = {"vid_mode","0",false};
- 
-cvar_t  mouse_button_commands[3] =
-{
-    {"mouse1","+attack"},
-    {"mouse2","+strafe"},
-    {"mouse3","+forward"},
-};
-
-static int mouse_buttons=3;
-static int mouse_buttonstate;
-static int mouse_oldbuttonstate;
-static float mouse_x, mouse_y;
-static float p_mouse_x, p_mouse_y;
-static float old_mouse_x, old_mouse_y;
-
-cvar_t _windowed_mouse = {"_windowed_mouse", "1", true};
-cvar_t m_filter = {"m_filter","0"};
-static float old_windowed_mouse;
-
-static int scr_width, scr_height;
+static float old_windowed_mouse = 0;
 
 #define KEY_MASK (KeyPressMask | KeyReleaseMask)
 #define MOUSE_MASK (ButtonPressMask | ButtonReleaseMask | \
-		    PointerMotionMask | ButtonMotionMask)
+		    PointerMotionMask)
+
+#define X_MASK (KEY_MASK | MOUSE_MASK | VisibilityChangeMask)
+
+unsigned short	d_8to16table[256];
+unsigned		d_8to24table[256];
+unsigned char	d_15to8table[65536];
+
+cvar_t	_windowed_mouse = {"_windowed_mouse","0", true};
+cvar_t	vid_mode = {"vid_mode","0",false};
+ 
+static float   mouse_x, mouse_y;
+static float	old_mouse_x, old_mouse_y;
+
+cvar_t	m_filter = {"m_filter", "0"};
+
+static int scr_width, scr_height;
 
 /*-----------------------------------------------------------------------*/
 
@@ -120,57 +136,7 @@ void D_EndDirectRect (int x, int y, int width, int height)
 {
 }
 
-/*
-=================
-VID_Gamma_f
-
-Keybinding command
-=================
-*/
-void VID_Gamma_f (void)
-{
-	float	gamma, f, inf;
-	unsigned char	palette[768];
-	int		i;
-
-	if (Cmd_Argc () == 2)
-	{
-		gamma = Q_atof (Cmd_Argv(1));
-
-		for (i=0 ; i<768 ; i++)
-		{
-			f = pow ( (host_basepal[i]+1)/256.0 , gamma );
-			inf = f*255 + 0.5;
-			if (inf < 0)
-				inf = 0;
-			if (inf > 255)
-				inf = 255;
-			palette[i] = inf;
-		}
-
-		VID_SetPalette (palette);
-
-		vid.recalc_refdef = 1;				// force a surface cache flush
-	}
-}
-
-void VID_Shutdown(void)
-{
-	if (!ctx)
-		return;
-
-	XUngrabPointer(dpy,CurrentTime);
-	XUngrabKeyboard(dpy,CurrentTime);
-
-	glXDestroyContext(dpy,ctx);
-
-#ifdef USE_DGA
-	if (usedga)
-		XF86DGADirectVideo(dpy,DefaultScreen(dpy),0);
-#endif
-}
-
-int XLateKey(XKeyEvent *ev)
+static int XLateKey(XKeyEvent *ev)
 {
 
 	int key;
@@ -183,33 +149,33 @@ int XLateKey(XKeyEvent *ev)
 
 	switch(keysym)
 	{
-		case XK_KP_Page_Up:
+		case XK_KP_Page_Up:	 
 		case XK_Page_Up:	 key = K_PGUP; break;
 
-		case XK_KP_Page_Down:
+		case XK_KP_Page_Down: 
 		case XK_Page_Down:	 key = K_PGDN; break;
 
-		case XK_KP_Home:
+		case XK_KP_Home: 
 		case XK_Home:	 key = K_HOME; break;
 
-		case XK_KP_End:
+		case XK_KP_End:  
 		case XK_End:	 key = K_END; break;
 
-		case XK_KP_Left:
+		case XK_KP_Left: 
 		case XK_Left:	 key = K_LEFTARROW; break;
 
-		case XK_KP_Right:
+		case XK_KP_Right: 
 		case XK_Right:	key = K_RIGHTARROW;		break;
 
-		case XK_KP_Down:
+		case XK_KP_Down: 
 		case XK_Down:	 key = K_DOWNARROW; break;
 
-		case XK_KP_Up:
+		case XK_KP_Up:   
 		case XK_Up:		 key = K_UPARROW;	 break;
 
 		case XK_Escape: key = K_ESCAPE;		break;
 
-		case XK_KP_Enter:
+		case XK_KP_Enter: 
 		case XK_Return: key = K_ENTER;		 break;
 
 		case XK_Tab:		key = K_TAB;			 break;
@@ -240,7 +206,7 @@ int XLateKey(XKeyEvent *ev)
 
 		case XK_BackSpace: key = K_BACKSPACE; break;
 
-		case XK_KP_Delete:
+		case XK_KP_Delete: 
 		case XK_Delete: key = K_DEL; break;
 
 		case XK_Pause:	key = K_PAUSE;		 break;
@@ -257,13 +223,13 @@ int XLateKey(XKeyEvent *ev)
 		case XK_Alt_R:	
 		case XK_Meta_R: key = K_ALT;			break;
 
-		case XK_KP_Begin: key = K_AUX30;	break;
+		case XK_KP_Begin: key = '5';	break;
 
-		case XK_Insert:
-		case XK_KP_Insert: key = K_INS; break;
+		case XK_KP_Insert: 
+		case XK_Insert:key = K_INS; break;
 
 		case XK_KP_Multiply: key = '*'; break;
-		case XK_KP_Add: key = '+'; break;
+		case XK_KP_Add:  key = '+'; break;
 		case XK_KP_Subtract: key = '-'; break;
 		case XK_KP_Divide: key = '/'; break;
 
@@ -294,139 +260,147 @@ int XLateKey(XKeyEvent *ev)
 			key = *(unsigned char*)buf;
 			if (key >= 'A' && key <= 'Z')
 				key = key - 'A' + 'a';
-//			fprintf(stdout, "case 0x0%x: key = ___;break;/* [%c] */\n", keysym);
 			break;
 	} 
 
 	return key;
 }
 
-struct
+static void install_grabs(void)
 {
-	int key;
-	int down;
-} keyq[64];
-int keyq_head=0;
-int keyq_tail=0;
+	XGrabPointer(dpy, win,
+				 True,
+				 0,
+				 GrabModeAsync, GrabModeAsync,
+				 win,
+				 None,
+				 CurrentTime);
 
-int config_notify=0;
-int config_notify_width;
-int config_notify_height;
-						      
-qboolean Keyboard_Update(void)
-{
-	XEvent x_event;
-   
-	if(!XCheckMaskEvent(dpy,KEY_MASK,&x_event))
-		return false;
+#ifdef USE_DGA
+	XF86DGADirectVideo(dpy, DefaultScreen(dpy), XF86DGADirectMouse);
+	dgamouse = 1;
+#else
+	XWarpPointer(dpy, None, win,
+				 0, 0, 0, 0,
+				 vid.width / 2, vid.height / 2);
+#endif
 
-	switch(x_event.type) {
-	case KeyPress:
-		keyq[keyq_head].key = XLateKey(&x_event.xkey);
-		keyq[keyq_head].down = true;
-		keyq_head = (keyq_head + 1) & 63;
-		break;
-	case KeyRelease:
-		keyq[keyq_head].key = XLateKey(&x_event.xkey);
-		keyq[keyq_head].down = false;
-		keyq_head = (keyq_head + 1) & 63;
-		break;
-	}
+	XGrabKeyboard(dpy, win,
+				  False,
+				  GrabModeAsync, GrabModeAsync,
+				  CurrentTime);
 
-	return true;
+//	XSync(dpy, True);
 }
 
-qboolean Mouse_Update(void)
+static void uninstall_grabs(void)
 {
-	XEvent x_event;
+#ifdef USE_DGA
+	XF86DGADirectVideo(dpy, DefaultScreen(dpy), 0);
+	dgamouse = 0;
+#endif
+
+	XUngrabPointer(dpy, CurrentTime);
+	XUngrabKeyboard(dpy, CurrentTime);
+
+//	XSync(dpy, True);
+}
+
+static void GetEvent(void)
+{
+	XEvent event;
 	int b;
-   
-	if(!XCheckMaskEvent(dpy,MOUSE_MASK,&x_event))
-		return false;
 
-	switch(x_event.type) {
+	if (!dpy)
+		return;
+
+	XNextEvent(dpy, &event);
+
+	switch (event.type) {
+	case KeyPress:
+	case KeyRelease:
+		Key_Event(XLateKey(&event.xkey), event.type == KeyPress);
+		break;
+
 	case MotionNotify:
-		if (usedga) {
-			mouse_x += x_event.xmotion.x_root;
-			mouse_y += x_event.xmotion.y_root;
-		} else if (_windowed_mouse.value) {
-			mouse_x += (float) ((int)x_event.xmotion.x - (int)(scr_width/2));
-			mouse_y += (float) ((int)x_event.xmotion.y - (int)(scr_height/2));
+#ifdef USE_DGA
+		if (dgamouse && _windowed_mouse.value) {
+			mouse_x = event.xmotion.x_root;
+			mouse_y = event.xmotion.y_root;
+		} else
+#endif
+		{
+			if (_windowed_mouse.value) {
+				mouse_x = (float) ((int)event.xmotion.x - (int)(vid.width/2));
+				mouse_y = (float) ((int)event.xmotion.y - (int)(vid.height/2));
 
-			/* move the mouse to the window center again */
-			XSelectInput(dpy,win, (KEY_MASK | MOUSE_MASK) & ~PointerMotionMask);
-			XWarpPointer(dpy,None,win,0,0,0,0, (scr_width/2),(scr_height/2));
-			XSelectInput(dpy,win, KEY_MASK | MOUSE_MASK);
-		} else {
-			mouse_x = (float) (x_event.xmotion.x-p_mouse_x);
-			mouse_y = (float) (x_event.xmotion.y-p_mouse_y);
-			p_mouse_x=x_event.xmotion.x;
-			p_mouse_y=x_event.xmotion.y;
+				/* move the mouse to the window center again */
+				XSelectInput(dpy, win, X_MASK & ~PointerMotionMask);
+				XWarpPointer(dpy, None, win, 0, 0, 0, 0, 
+					(vid.width/2), (vid.height/2));
+				XSelectInput(dpy, win, X_MASK);
+			}
 		}
 		break;
 
 	case ButtonPress:
 		b=-1;
-		if (x_event.xbutton.button == 1)
+		if (event.xbutton.button == 1)
 			b = 0;
-		else if (x_event.xbutton.button == 2)
+		else if (event.xbutton.button == 2)
 			b = 2;
-		else if (x_event.xbutton.button == 3)
+		else if (event.xbutton.button == 3)
 			b = 1;
 		if (b>=0)
-			mouse_buttonstate |= 1<<b;
+			Key_Event(K_MOUSE1 + b, true);
 		break;
 
 	case ButtonRelease:
 		b=-1;
-		if (x_event.xbutton.button == 1)
+		if (event.xbutton.button == 1)
 			b = 0;
-		else if (x_event.xbutton.button == 2)
+		else if (event.xbutton.button == 2)
 			b = 2;
-		else if (x_event.xbutton.button == 3)
+		else if (event.xbutton.button == 3)
 			b = 1;
 		if (b>=0)
-			mouse_buttonstate &= ~(1<<b);
+			Key_Event(K_MOUSE1 + b, false);
 		break;
 	}
-   
+
 	if (old_windowed_mouse != _windowed_mouse.value) {
 		old_windowed_mouse = _windowed_mouse.value;
 
 		if (!_windowed_mouse.value) {
 			/* ungrab the pointer */
-			Con_Printf("Releasing mouse.\n");
-
-			XUngrabPointer(dpy,CurrentTime);
-			XUngrabKeyboard(dpy,CurrentTime);
+			uninstall_grabs();
 		} else {
 			/* grab the pointer */
-			Con_Printf("Grabbing mouse.\n");
-
-			XGrabPointer(dpy,win,False,MOUSE_MASK,GrabModeAsync,
-				GrabModeAsync,win,None,CurrentTime);
-			XWarpPointer(dpy,None,win, 0,0,0,0, scr_width/2, scr_height/2);
-			XGrabKeyboard(dpy,win,
-				False,
-				GrabModeAsync,GrabModeAsync,
-				CurrentTime);
-
-			//XSync(dpy,True);
+			install_grabs();
 		}
 	}
-	return true;
+}
+
+
+void VID_Shutdown(void)
+{
+	if (!ctx)
+		return;
+
+	glXDestroyContext(dpy, ctx);
 }
 
 void signal_handler(int sig)
 {
 	printf("Received signal %d, exiting...\n", sig);
-	VID_Shutdown();
+	Sys_Quit();
 	exit(0);
 }
 
 void InitSig(void)
 {
 	signal(SIGHUP, signal_handler);
+	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, signal_handler);
 	signal(SIGILL, signal_handler);
 	signal(SIGTRAP, signal_handler);
@@ -445,8 +419,8 @@ void VID_ShiftPalette(unsigned char *p)
 void	VID_SetPalette (unsigned char *palette)
 {
 	byte	*pal;
-	unsigned short r,g,b;
-	int     v;
+	unsigned r,g,b;
+	unsigned v;
 	int     r1,g1,b1;
 	int		k;
 	unsigned short i;
@@ -459,6 +433,8 @@ void	VID_SetPalette (unsigned char *palette)
 //
 // 8 8 8 encoding
 //
+	Con_DPrintf("Converting 8to24\n");
+
 	pal = palette;
 	table = d_8to24table;
 	for (i=0 ; i<256 ; i++)
@@ -567,8 +543,6 @@ GL_BeginRendering
 */
 void GL_BeginRendering (int *x, int *y, int *width, int *height)
 {
-	extern cvar_t gl_clear;
-
 	*x = *y = 0;
 	*width = scr_width;
 	*height = scr_height;
@@ -583,7 +557,7 @@ void GL_BeginRendering (int *x, int *y, int *width, int *height)
 void GL_EndRendering (void)
 {
 	glFlush();
-	glXSwapBuffers(dpy,win);
+	glXSwapBuffers(dpy, win);
 }
 
 qboolean VID_Is8bit(void)
@@ -591,7 +565,7 @@ qboolean VID_Is8bit(void)
 	return is8bit;
 }
 
-#ifdef GL_EXT_SHARED
+#if 0  //defined(GL_EXT_SHARED)
 void VID_Init8bitPalette() 
 {
 	// Check for 8bit Extensions and initialize them.
@@ -647,16 +621,17 @@ void VID_Init8bitPalette(void)
 void VID_Init(unsigned char *palette)
 {
 	int i;
-	char	gldir[MAX_OSPATH];
-	int width = 640, height = 480;
-	int attrib[] = { 
+	int attrib[] = {
 		GLX_RGBA,
 		GLX_RED_SIZE, 1,
 		GLX_GREEN_SIZE, 1,
 		GLX_BLUE_SIZE, 1,
 		GLX_DOUBLEBUFFER,
 		GLX_DEPTH_SIZE, 1,
-		None };
+		None
+	};
+	char	gldir[MAX_OSPATH];
+	int width = 640, height = 480;
 	int scrnum;
 	XSetWindowAttributes attr;
 	unsigned long mask;
@@ -667,6 +642,7 @@ void VID_Init(unsigned char *palette)
 
 	Cvar_RegisterVariable (&vid_mode);
 	Cvar_RegisterVariable (&gl_ztrick);
+	Cvar_RegisterVariable (&_windowed_mouse);
 	
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
@@ -676,7 +652,6 @@ void VID_Init(unsigned char *palette)
 // interpret command-line params
 
 // set vid parameters
-
 	if ((i = COM_CheckParm("-width")) != 0)
 		width = atoi(com_argv[i+1]);
 	if ((i = COM_CheckParm("-height")) != 0)
@@ -708,41 +683,30 @@ void VID_Init(unsigned char *palette)
 	scrnum = DefaultScreen(dpy);
 	root = RootWindow(dpy, scrnum);
 
-	visinfo=glXChooseVisual(dpy,scrnum,attrib);
+	visinfo = glXChooseVisual(dpy, scrnum, attrib);
 	if (!visinfo) {
-		fprintf(stderr, "Error couldn't get an RGB, Double-buffered, Depth visual\n");
+		fprintf(stderr, "qkHack: Error couldn't get an RGB, Double-buffered, Depth visual\n");
 		exit(1);
 	}
-
 	/* window attributes */
-	attr.background_pixel=0;
-	attr.border_pixel=0;
-	attr.colormap=XCreateColormap(dpy,root,visinfo->visual,AllocNone);
-	attr.event_mask=KEY_MASK|MOUSE_MASK|VisibilityChangeMask;
-	mask=CWBackPixel|CWBorderPixel|CWColormap|CWEventMask;
+	attr.background_pixel = 0;
+	attr.border_pixel = 0;
+	attr.colormap = XCreateColormap(dpy, root, visinfo->visual, AllocNone);
+	attr.event_mask = X_MASK;
+	mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
 
-	win=XCreateWindow(dpy,root,0,0,width,height,
-			0,visinfo->depth,InputOutput,
-			visinfo->visual,mask,&attr);
-	XMapWindow(dpy,win);
+	win = XCreateWindow(dpy, root, 0, 0, width, height,
+						0, visinfo->depth, InputOutput,
+						visinfo->visual, mask, &attr);
+	XMapWindow(dpy, win);
 
-	XMoveWindow(dpy,win,0,0);
+	XMoveWindow(dpy, win, 0, 0);
 
 	XFlush(dpy);
 
-	if (COM_CheckParm("-window"))
-		putenv("MESA_GLX_FX=window");
-	else
-		putenv("MESA_GLX_FX=fullscreen");
+	ctx = glXCreateContext(dpy, visinfo, NULL, True);
 
-	ctx = glXCreateContext(dpy,visinfo,NULL,True);
-
-	if (!ctx) {
-		fprintf(stderr, "Unable to create glX context.\n");
-		exit(1);
-	}
-
-	glXMakeCurrent(dpy,win,ctx);
+	glXMakeCurrent(dpy, win, ctx);
 
 	scr_width = width;
 	scr_height = height;
@@ -754,8 +718,7 @@ void VID_Init(unsigned char *palette)
 	vid.width = vid.conwidth;
 	vid.height = vid.conheight;
 
-	vid.aspect = ((float)vid.height / (float)vid.width) *
-				(320.0 / 240.0);
+	vid.aspect = ((float)vid.height / (float)vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
 
 	InitSig(); // trap evil signals
@@ -777,16 +740,9 @@ void VID_Init(unsigned char *palette)
 
 void Sys_SendKeyEvents(void)
 {
-	if (dpy)
-	{
-		while (Keyboard_Update())
-			;
-
-		while (keyq_head != keyq_tail)
-		{
-			Key_Event(keyq[keyq_tail].key, keyq[keyq_tail].down);
-			keyq_tail = (keyq_tail + 1) & 63;
-		}
+	if (dpy) {
+		while (XPending(dpy)) 
+			GetEvent();
 	}
 }
 
@@ -795,15 +751,8 @@ void Force_CenterView_f (void)
 	cl.viewangles[PITCH] = 0;
 }
 
-
 void IN_Init(void)
 {
-	Cvar_RegisterVariable (&_windowed_mouse);
-	Cvar_RegisterVariable (&m_filter);
-	Cvar_RegisterVariable (&mouse_button_commands[0]);
-	Cvar_RegisterVariable (&mouse_button_commands[1]);
-	Cvar_RegisterVariable (&mouse_button_commands[2]);
-	Cmd_AddCommand ("force_centerview", Force_CenterView_f);
 }
 
 void IN_Shutdown(void)
@@ -817,17 +766,6 @@ IN_Commands
 */
 void IN_Commands (void)
 {
-	int i;
-
-	for (i=0 ; i<mouse_buttons ; i++) {
-		if ( (mouse_buttonstate & (1<<i)) && !(mouse_oldbuttonstate & (1<<i)) )
-			Key_Event (K_MOUSE1 + i, true);
-
-		if ( !(mouse_buttonstate & (1<<i)) && (mouse_oldbuttonstate & (1<<i)) )
-			Key_Event (K_MOUSE1 + i, false);
-	}
-
-	mouse_oldbuttonstate = mouse_buttonstate;
 }
 
 /*
@@ -835,36 +773,38 @@ void IN_Commands (void)
 IN_Move
 ===========
 */
-void IN_Move (usercmd_t *cmd)
+void IN_MouseMove (usercmd_t *cmd)
 {
-	while (Mouse_Update())
-		;
-
-	if (m_filter.value) {
+	if (m_filter.value)
+	{
 		mouse_x = (mouse_x + old_mouse_x) * 0.5;
 		mouse_y = (mouse_y + old_mouse_y) * 0.5;
 	}
-
 	old_mouse_x = mouse_x;
 	old_mouse_y = mouse_y;
-   
+
 	mouse_x *= sensitivity.value;
 	mouse_y *= sensitivity.value;
-   
+
+// add mouse X/Y movement to cmd
 	if ( (in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1) ))
 		cmd->sidemove += m_side.value * mouse_x;
 	else
 		cl.viewangles[YAW] -= m_yaw.value * mouse_x;
+	
 	if (in_mlook.state & 1)
 		V_StopPitchDrift ();
-   
-	if ( (in_mlook.state & 1) && !(in_strafe.state & 1)) {
+		
+	if ( (in_mlook.state & 1) && !(in_strafe.state & 1))
+	{
 		cl.viewangles[PITCH] += m_pitch.value * mouse_y;
 		if (cl.viewangles[PITCH] > 80)
 			cl.viewangles[PITCH] = 80;
 		if (cl.viewangles[PITCH] < -70)
 			cl.viewangles[PITCH] = -70;
-	} else {
+	}
+	else
+	{
 		if ((in_strafe.state & 1) && noclip_anglehack)
 			cmd->upmove -= m_forward.value * mouse_y;
 		else
@@ -873,7 +813,12 @@ void IN_Move (usercmd_t *cmd)
 	mouse_x = mouse_y = 0.0;
 }
 
+void IN_Move (usercmd_t *cmd)
+{
+	IN_MouseMove(cmd);
+}
 
-void	VID_LockBuffer (void) {}
-void	VID_UnlockBuffer (void) {}
+
+void VID_UnlockBuffer() {}
+void VID_LockBuffer() {}
 
