@@ -137,6 +137,8 @@ else
 	AC_C_BIGENDIAN
 fi
 
+AC_CHECK_FUNCS(usleep)
+
 AC_MSG_CHECKING(that fnmatch is in fnmatch.h)
 AC_TRY_COMPILE(
 	[#include "fnmatch.h"],
@@ -1125,9 +1127,9 @@ if test "x$optimize" = xyes; then
 		case "${host_cpu}" in
 			i?86)
 				if test "x$HAVE_AMD" = "xyes"; then
-					MORE_CFLAGS="-march=k6 -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+					MORE_CFLAGS="-march=k6"
 				else
-					MORE_CFLAGS="-march=${host_cpu} -malign-loops=2 -malign-jumps=2 -malign-functions=2"
+					MORE_CFLAGS="-march=${host_cpu}"
 				fi
 				;;
 			*)
