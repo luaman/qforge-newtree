@@ -1,0 +1,81 @@
+include <win32.mak>             # Microsoft VC6++
+#!include <winopt.mak>          # Use to compile with Intel's compiler
+
+all:glclient.exe
+
+INCPATH=E:\quakesrc\q1src\incs  # Path to other includes (mgl, etc)
+MGLPATH=E:\quakesrc\q1src\libs  # Path to other librarys (mgl)
+DXPATH=E:\quakesrc\q1src\libs   # Path to other librarys (DirectX)
+
+LIBS=winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib  comctl32.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib  ole32.lib oleaut32.lib uuid.lib  $(DXPATH)\dinput.lib $(DXPATH)\dxguid.lib $(MGLPATH)\mgllt.lib glu32.lib opengl32.lib
+NCFLAGS=/c /nologo /DWIN32 /D_WIN32 /I..\include /MT /I$(INCPATH)
+
+COM_sources=\
+  net_chan.obj \
+  net_com.obj \
+  pmove.obj \
+  pmovetst.obj \
+  zone.obj \
+  mdfour.obj \
+  mathlib.obj \
+  cvar.obj \
+  crc.obj \
+  common.obj \
+  cmd.obj
+
+CL_GL_sources=\
+  gl_draw.obj \
+  gl_mesh.obj \
+  gl_model.obj \
+  gl_ngraph.obj \
+  gl_parse.obj \
+  gl_part.obj \
+  gl_refrag.obj \
+  gl_rlight.obj \
+  gl_rmain.obj \
+  gl_rmisc.obj \
+  gl_rsurf.obj \
+  gl_screen.obj \
+  gl_view.obj \
+  gl_warp.obj \
+  gl_vidnt.obj
+
+CL_sources=\
+  cl_cmd.obj \
+  cl_cvar.obj \
+  cl_demo.obj \
+  cl_ents.obj \
+  cl_input.obj \
+  cl_main.obj \
+  cl_misc.obj \
+  cl_pred.obj \
+  cl_tent.obj \
+  cl_cam.obj \
+  wad.obj \
+  snd_dma.obj \
+  snd_mem.obj \
+  snd_mix.obj \
+  skin.obj \
+  sbar.obj \
+  nonintel.obj \
+  menu.obj \
+  keys.obj \
+  console.obj
+
+CL_platform=\
+  snd_win.obj \
+  in_win.obj \
+  sys_win.obj \
+  cl_sys_win.obj \
+  cd_win.obj \
+  net_wins.obj
+
+CL_asm=\
+  sys_wina.obj
+
+glclient.exe:     $(COM_sources) $(CL_GL_sources) $(CL_sources) $(CL_platform) $(CL_asm)
+        $(link) /nologo /subsystem:windows /incremental:yes /machine:I386 -out:glclient.exe *.obj $(LIBS)
+
+.c.obj:
+    $(cc) $(NCFLAGS) $*.c
+
