@@ -53,20 +53,22 @@
 tex_t *
 LoadPCX (QFile *f, int convert)
 {
-	pcx_t      *pcx, pcxbuf;
-	byte        palette[768];
+	pcx_t      *pcx;
+	int         pcx_mark;
+	byte       *palette;
 	byte       *pix;
+	byte       *dataByte;
 	int         x, y;
-	int         dataByte, runLength = 1;
+	int         runLength = 1;
 	int         count;
 	tex_t      *tex;
 
 	// 
 	// parse the PCX file
 	// 
-	Qread (f, &pcxbuf, sizeof (pcxbuf));
-
-	pcx = &pcxbuf;
+	pcx_mark = Hunk_LowMark ();
+	pcx = Hunk_AllocName (com_filesize, "PCX");
+	Qread (f, pcx, com_filesize);
 
 	pcx->xmax = LittleShort (pcx->xmax);
 	pcx->xmin = LittleShort (pcx->xmin);
@@ -85,13 +87,8 @@ LoadPCX (QFile *f, int convert)
 		return 0;
 	}
 
-	if (convert) {
-		// seek to palette
-		Qseek (f, -768, SEEK_END);
-		Qread (f, palette, 768);
-	}
-
-	Qseek (f, sizeof (pcxbuf), SEEK_SET);
+	palette = ((byte*)pcx) + com_filesize - 768;
+	dataByte = (byte*)&pcx[1];
 
 	count = (pcx->xmax + 1) * (pcx->ymax + 1);
 	if (convert)
@@ -109,22 +106,20 @@ LoadPCX (QFile *f, int convert)
 	for (y = 0; y < tex->height; y++) {
 		for (x = 0; x < tex->width;) {
 			runLength = 1;
-			dataByte = Qgetc (f);
-			if (dataByte == EOF)
+			if (dataByte >= palette)
 				break;
 
-			if ((dataByte & 0xC0) == 0xC0) {
-				runLength = dataByte & 0x3F;
-				dataByte = Qgetc (f);
-				if (dataByte == EOF)
+			if ((*dataByte & 0xC0) == 0xC0) {
+				runLength = *dataByte++ & 0x3F;
+				if (dataByte >= palette)
 					break;
 			}
 
 			if (convert) {
 				while (count && runLength > 0) {
-					pix[0] = palette[dataByte * 3];
-					pix[1] = palette[dataByte * 3 + 1];
-					pix[2] = palette[dataByte * 3 + 2];
+					pix[0] = palette[*dataByte * 3];
+					pix[1] = palette[*dataByte * 3 + 1];
+					pix[2] = palette[*dataByte * 3 + 2];
 					pix[3] = 255;
 					pix += 4;
 					count -= 4;
@@ -133,7 +128,7 @@ LoadPCX (QFile *f, int convert)
 				}
 			} else {
 				while (count && runLength > 0) {
-					*pix++ = dataByte;
+					*pix++ = *dataByte;
 					count--;
 					runLength--;
 					x++;
@@ -141,10 +136,12 @@ LoadPCX (QFile *f, int convert)
 			}
 			if (runLength)
 				break;
+			dataByte++;
 		}
 		if (runLength)
 			break;
 	}
+	Hunk_FreeToLowMark (pcx_mark);
 	if (count || runLength) {
 		Con_Printf ("PCX was malformed. You should delete it.\n");
 		return 0;

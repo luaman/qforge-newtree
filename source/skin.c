@@ -153,6 +153,7 @@ Skin_Cache (skin_t *skin)
 		}
 	}
 	tex = LoadPCX (file, 0);
+	Qclose (file);
 
 	if (!tex || tex->width > 320 || tex->height > 200) {
 		skin->failedload = true;
