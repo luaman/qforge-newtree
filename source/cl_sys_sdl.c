@@ -243,10 +243,6 @@ void Sys_Sleep (void)
 {
 }
 
-void
-Sys_Init (void)
-{
-}
 
 void
 Sys_Init_Cvars (void)
