@@ -847,11 +847,11 @@ static void GetEvent(void)
 	ggiEventRead(ggivis, &ev, emAll);
 	switch(ev.any.type) {
 	case evKeyPress:
-		Key_Event(XLateKey(&ev.key), true);
+		Key_Event(XLateKey(&ev.key), 0, true);
 		break;
 
 	case evKeyRelease:
-		Key_Event(XLateKey(&ev.key), false);
+		Key_Event(XLateKey(&ev.key), 0, false);
 		break;
 
 	case evPtrRelative:
@@ -872,13 +872,13 @@ static void GetEvent(void)
 		b = ev.pbutton.button - 1;
 
 		if (b < NUM_STDBUTTONS) {
-			Key_Event(K_MOUSE1 + b, true);
+			Key_Event(K_MOUSE1 + b, 0, true);
 		} else if (b < NUM_STDBUTTONS+2) {
 			b-=3;
-			if (b) Key_Event(K_MWHEELDOWN, true);
-			else Key_Event(K_MWHEELUP, true);
+			if (b) Key_Event(K_MWHEELDOWN, 0, true);
+			else Key_Event(K_MWHEELUP, 0, true);
 		} else if (b < NUM_BUTTONS) {
-			Key_Event(K_AUX32 - NUM_BUTTONS + b, true);
+			Key_Event(K_AUX32 - NUM_BUTTONS + b, 0, true);
 		}
 		break;
 
@@ -888,13 +888,13 @@ static void GetEvent(void)
 		b = ev.pbutton.button - 1;
 
 		if (b < NUM_STDBUTTONS) {
-			Key_Event(K_MOUSE1 + b, false);
+			Key_Event(K_MOUSE1 + b, 0, false);
 		} else if (b < NUM_STDBUTTONS+2) {
 			b-=3;
-			if (b) Key_Event(K_MWHEELDOWN, false);
-			else Key_Event(K_MWHEELUP, false);
+			if (b) Key_Event(K_MWHEELDOWN, 0, false);
+			else Key_Event(K_MWHEELUP, 0, false);
 		} else if (b < NUM_BUTTONS) {
-			Key_Event(K_AUX32 - NUM_BUTTONS + b, false);
+			Key_Event(K_AUX32 - NUM_BUTTONS + b, 0, false);
 		}
 		break;
 
