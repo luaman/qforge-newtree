@@ -462,7 +462,7 @@ R_DrawParticles
 */
 void R_DrawParticles (void)
 {
-	particle_t		*p, *kill;
+	particle_t		*p, **particle;
 	float			grav;
 	int				i;
 	float			time2, time3;
@@ -482,89 +482,73 @@ void R_DrawParticles (void)
 	grav = frametime * 800 * 0.05;
 	dvel = 4*frametime;
 	
-    while (1) {
-        kill = active_particles;
-        if (kill != NULL && kill->die < cl.time) {
-            active_particles = kill->next;
-            kill->next = free_particles;
-            free_particles = kill;
-            continue;
-        }
-        break;
-    }
+	for (particle = &active_particles; *particle; ) {
+		if ((*particle)->die < cl.time) {
+			p = (*particle)->next;
+			(*particle)->next = free_particles;
+			free_particles = (*particle);
+			(*particle) = p;
+		} else {
+			p = *particle;
+			particle = &(*particle)->next;
 
-	for (p=active_particles ; p ; p=p->next)
-	{
-		for ( ;; )
-		{
-			kill = p->next;
-			if (kill && kill->die < cl.time)
-			{
-				p->next = kill->next;
-				kill->next = free_particles;
-				free_particles = kill;
-				continue;
+			D_DrawParticle (p);
+
+			p->org[0] += p->vel[0]*frametime;
+			p->org[1] += p->vel[1]*frametime;
+			p->org[2] += p->vel[2]*frametime;
+
+			switch (p->type) {
+			case pt_static:
+				break;
+			case pt_fire:
+				p->ramp += time1;
+				if (p->ramp >= 6)
+					p->die = -1;
+				else
+					p->color = ramp3[(int)p->ramp];
+				p->vel[2] += grav;
+				break;
+
+			case pt_explode:
+				p->ramp += time2;
+				if (p->ramp >=8)
+					p->die = -1;
+				else
+					p->color = ramp1[(int)p->ramp];
+				for (i=0 ; i<3 ; i++)
+					p->vel[i] += p->vel[i]*dvel;
+				p->vel[2] -= grav;
+				break;
+
+			case pt_explode2:
+				p->ramp += time3;
+				if (p->ramp >=8)
+					p->die = -1;
+				else
+					p->color = ramp2[(int)p->ramp];
+				for (i=0 ; i<3 ; i++)
+					p->vel[i] -= p->vel[i]*frametime;
+				p->vel[2] -= grav;
+				break;
+
+			case pt_blob:
+				for (i=0 ; i<3 ; i++)
+					p->vel[i] += p->vel[i]*dvel;
+				p->vel[2] -= grav;
+				break;
+
+			case pt_blob2:
+				for (i=0 ; i<2 ; i++)
+					p->vel[i] -= p->vel[i]*dvel;
+				p->vel[2] -= grav;
+				break;
+
+			case pt_slowgrav:
+			case pt_grav:
+				p->vel[2] -= grav;
+				break;
 			}
-			break;
-		}
-
-		D_DrawParticle (p);
-
-		p->org[0] += p->vel[0]*frametime;
-		p->org[1] += p->vel[1]*frametime;
-		p->org[2] += p->vel[2]*frametime;
-		
-		switch (p->type)
-		{
-		case pt_static:
-			break;
-		case pt_fire:
-			p->ramp += time1;
-			if (p->ramp >= 6)
-				p->die = -1;
-			else
-				p->color = ramp3[(int)p->ramp];
-			p->vel[2] += grav;
-			break;
-
-		case pt_explode:
-			p->ramp += time2;
-			if (p->ramp >=8)
-				p->die = -1;
-			else
-				p->color = ramp1[(int)p->ramp];
-			for (i=0 ; i<3 ; i++)
-				p->vel[i] += p->vel[i]*dvel;
-			p->vel[2] -= grav;
-			break;
-
-		case pt_explode2:
-			p->ramp += time3;
-			if (p->ramp >=8)
-				p->die = -1;
-			else
-				p->color = ramp2[(int)p->ramp];
-			for (i=0 ; i<3 ; i++)
-				p->vel[i] -= p->vel[i]*frametime;
-			p->vel[2] -= grav;
-			break;
-
-		case pt_blob:
-			for (i=0 ; i<3 ; i++)
-				p->vel[i] += p->vel[i]*dvel;
-			p->vel[2] -= grav;
-			break;
-
-		case pt_blob2:
-			for (i=0 ; i<2 ; i++)
-				p->vel[i] -= p->vel[i]*dvel;
-			p->vel[2] -= grav;
-			break;
-
-		case pt_slowgrav:
-		case pt_grav:
-			p->vel[2] -= grav;
-			break;
 		}
 	}
 
