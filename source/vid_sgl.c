@@ -1,7 +1,7 @@
 /*
-	vid_null.c
+	vid_sgl.c
 
-	null video driver to aid porting efforts
+	Video driver for OpenGL-using versions of SDL
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -26,7 +26,18 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <signal.h>
 #include <values.h>
+
+#include <SDL/SDL.h>
+
 #include "qtypes.h"
 #include "quakedef.h"
 #include "qendian.h"
@@ -38,13 +49,6 @@
 #include "menu.h"
 #include "sys.h"
 #include "draw.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <signal.h>
-#include <SDL/SDL.h>
-
 
 #define	WARP_WIDTH	320
 #define	WARP_HEIGHT	200

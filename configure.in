@@ -462,6 +462,9 @@ fi
 AC_SUBST(GLX_CFLAGS)
 AC_SUBST(GLX_LIBS)
 
+dnl SDL check
+AM_PATH_SDL(1.1.3, HAVE_SDL=yes, HAVE_SDL=no)
+
 # 3Dfx stuff..
 
 # First we see if we can use mesa with glide support..

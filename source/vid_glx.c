@@ -27,25 +27,15 @@
 	$Id$
 */
 
-#include <values.h>
-#include "qtypes.h"
-#include "quakedef.h"
-#include "qendian.h"
-#include "glquake.h"
-#include "cvar.h"
-#include "qargs.h"
-#include "console.h"
-#include "keys.h"
-#include "menu.h"
-#include "sys.h"
-#include "draw.h"
-#include "sbar.h"
-#include "context_x11.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <signal.h>
+#include <values.h>
 
 #ifdef HAVE_DLFCN_H
 # include <dlfcn.h>
@@ -69,11 +59,25 @@
 #ifdef HAVE_VIDMODE
 # include <X11/extensions/xf86vmode.h>
 #endif
-#include "dga_check.h"
 
 #ifdef XMESA
 # include <GL/xmesa.h>
 #endif
+
+#include "qtypes.h"
+#include "quakedef.h"
+#include "qendian.h"
+#include "glquake.h"
+#include "cvar.h"
+#include "qargs.h"
+#include "console.h"
+#include "keys.h"
+#include "menu.h"
+#include "sys.h"
+#include "draw.h"
+#include "sbar.h"
+#include "context_x11.h"
+#include "dga_check.h"
 
 #define WARP_WIDTH              320
 #define WARP_HEIGHT             200
