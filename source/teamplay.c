@@ -399,7 +399,7 @@ void
 locs_dumploc ()
 {
 	char       *mapname, *t1;
-	QFile      *locfd;
+	QFile      *locfd = 0;
 	char        locfile[MAX_OSPATH];
 	int         i;
 	if (Cmd_Argc () != 1) {

@@ -101,7 +101,6 @@ locs_load (char *mapname)
 	vec3_t      loc;
 	char        tmp[PATH_MAX];
 	char        foundname[MAX_OSPATH];
-	char       *tmpfndnme;
 	int         templength = 0;
 	
 	snprintf (tmp, sizeof (tmp), "maps/%s.loc", mapname);
@@ -111,8 +110,7 @@ locs_load (char *mapname)
 		return;
 	}
 #ifdef HAVE_ZLIB
-	tmpfndnme = foundname;
-	if (strncmp(tmpfndnme + strlen(foundname) - 3,".gz",3) == 0) 
+	if (strncmp(foundname + strlen(foundname) - 3,".gz",3) == 0) 
 		locisgz = 1;
 	else 
 		locisgz = 0;
