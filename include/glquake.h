@@ -90,11 +90,9 @@ extern	int		texture_mode;
 
 extern	float	gldepthmin, gldepthmax;
 
-void GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap, qboolean alpha);
 void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
 void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
 int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha, int bytesperpixel);
-int GL_FindTexture (char *identifier);
 
 typedef struct
 {
@@ -291,7 +289,6 @@ void R_DrawSky (void);
 //
 // gl_draw.c
 //
-int GL_LoadPicTexture (qpic_t *pic);
 void GL_Set2D (void);
 
 //

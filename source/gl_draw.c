@@ -56,8 +56,7 @@
 #include "console.h"
 #include "glquake.h"
 
-// FIXME: Do this right..
-void LoadTGA (FILE *fin);
+static int GL_LoadPicTexture (qpic_t *pic);
 
 extern  byte            *host_basepal;
 extern unsigned char d_15to8table[65536];
@@ -80,12 +79,12 @@ extern byte	*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
 qpic_t		*draw_backtile;
 
-int			ltexcrctable[256];  // cache mismatch checking  --KB
+static int	ltexcrctable[256];  // cache mismatch checking  --KB
 
 
-int			translate_texture;
-int			char_texture;
-int			cs_texture; // crosshair texturea
+static int	translate_texture;
+static int	char_texture;
+static int	cs_texture; // crosshair texturea
 
 static byte cs_data[64] = {
 	0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff,
@@ -110,11 +109,9 @@ int		gl_lightmap_format = 4;
 int		gl_solid_format = 3;
 int		gl_alpha_format = 4;
 
-int		gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
-int		gl_filter_max = GL_LINEAR;
+static int	gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
+static int	gl_filter_max = GL_LINEAR;
 
-
-int		texels;
 
 typedef struct
 {
@@ -127,9 +124,8 @@ typedef struct
 } gltexture_t;
 
 #define	MAX_GLTEXTURES	1024
-gltexture_t	gltextures[MAX_GLTEXTURES];
-int			numgltextures;
-
+static gltexture_t	gltextures[MAX_GLTEXTURES];
+static int			numgltextures = 0;
 
 /*
 =============================================================================
@@ -139,42 +135,45 @@ int			numgltextures;
   Allocate all the little status bar obejcts into a single texture
   to crutch up stupid hardware / drivers
 
+  Note, this is a kluge, which may slow down sane cards..
+  As such its all contained in ifdefs..
+
 =============================================================================
 */
+
+#undef gl_draw_scraps
+
+#ifdef gl_draw_scraps
 
 #define	MAX_SCRAPS		1
 #define	BLOCK_WIDTH		256
 #define	BLOCK_HEIGHT	256
 
-int			scrap_allocated[MAX_SCRAPS][BLOCK_WIDTH];
-byte		scrap_texels[MAX_SCRAPS][BLOCK_WIDTH*BLOCK_HEIGHT*4];
-qboolean	scrap_dirty;
-int			scrap_texnum;
+static int		scrap_allocated[MAX_SCRAPS][BLOCK_WIDTH];
+static byte		scrap_texels[MAX_SCRAPS][BLOCK_WIDTH*BLOCK_HEIGHT*4];
+static qboolean	scrap_dirty;
+static int		scrap_texnum;
 
 // returns a texture number and the position inside it
-int Scrap_AllocBlock (int w, int h, int *x, int *y)
+static int Scrap_AllocBlock (int w, int h, int *x, int *y)
 {
 	int		i, j;
 	int		best, best2;
 	int		texnum;
 
-	for (texnum=0 ; texnum<MAX_SCRAPS ; texnum++)
-	{
+	for (texnum=0 ; texnum<MAX_SCRAPS ; texnum++) {
 		best = BLOCK_HEIGHT;
 
-		for (i=0 ; i<BLOCK_WIDTH-w ; i++)
-		{
+		for (i=0 ; i<BLOCK_WIDTH-w ; i++) {
 			best2 = 0;
 
-			for (j=0 ; j<w ; j++)
-			{
+			for (j=0 ; j<w ; j++) {
 				if (scrap_allocated[texnum][i+j] >= best)
 					break;
 				if (scrap_allocated[texnum][i+j] > best2)
 					best2 = scrap_allocated[texnum][i+j];
 			}
-			if (j == w)
-			{	// this is a valid spot
+			if (j == w) {	// this is a valid spot
 				*x = i;
 				*y = best = best2;
 			}
@@ -186,6 +185,7 @@ int Scrap_AllocBlock (int w, int h, int *x, int *y)
 		for (i=0 ; i<w ; i++)
 			scrap_allocated[texnum][*x + i] = best + h;
 
+		scrap_dirty = true;
 		return texnum;
 	}
 
@@ -193,15 +193,14 @@ int Scrap_AllocBlock (int w, int h, int *x, int *y)
 	return 0;
 }
 
-int	scrap_uploads;
-
-void Scrap_Upload (void)
+static void Scrap_Upload (void)
 {
-	scrap_uploads++;
 	glBindTexture (GL_TEXTURE_2D, scrap_texnum);
 	GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, false, true);
 	scrap_dirty = false;
 }
+
+#endif
 
 //=============================================================================
 /* Support Routines */
@@ -215,13 +214,10 @@ typedef struct cachepic_s
 } cachepic_t;
 
 #define	MAX_CACHED_PICS		128
-cachepic_t	cachepics[MAX_CACHED_PICS];
-int			numcachepics;
+static cachepic_t	cachepics[MAX_CACHED_PICS];
+static int			numcachepics;
 
-byte		menuplyr_pixels[4096];
-
-int		pic_texels;
-int		pic_count;
+static byte		menuplyr_pixels[4096];
 
 qpic_t *Draw_PicFromWad (char *name)
 {
@@ -231,15 +227,14 @@ qpic_t *Draw_PicFromWad (char *name)
 	p = W_GetLumpName (name);
 	gl = (glpic_t *)p->data;
 
+#ifdef gl_draw_scraps
 	// load little ones into the scrap
-	if (p->width < 64 && p->height < 64)
-	{
+	if (p->width < 64 && p->height < 64) {
 		int		x, y;
 		int		i, j, k;
 		int		texnum;
 
 		texnum = Scrap_AllocBlock (p->width, p->height, &x, &y);
-		scrap_dirty = true;
 		k = 0;
 		for (i=0 ; i<p->height ; i++)
 			for (j=0 ; j<p->width ; j++, k++)
@@ -250,11 +245,9 @@ qpic_t *Draw_PicFromWad (char *name)
 		gl->sh = (x+p->width-0.01)/(float)BLOCK_WIDTH;
 		gl->tl = (y+0.01)/(float)BLOCK_WIDTH;
 		gl->th = (y+p->height-0.01)/(float)BLOCK_WIDTH;
-
-		pic_count++;
-		pic_texels += p->width*p->height;
 	}
 	else
+#endif
 	{
 		gl->texnum = GL_LoadPicTexture (p);
 		gl->sl = 0;
@@ -262,6 +255,7 @@ qpic_t *Draw_PicFromWad (char *name)
 		gl->tl = 0;
 		gl->th = 1;
 	}
+
 	return p;
 }
 
@@ -287,45 +281,53 @@ qpic_t	*Draw_CachePic (char *path)
 	qpic_t		*dat;
 	glpic_t		*gl;
 
+	// First, check and see if its cached..
 	for (pic=cachepics, i=0 ; i<numcachepics ; pic++, i++)
-		if (!strcmp (path, pic->name))
-			break;
+		if ((!strcmp (path, pic->name)) && !pic->dirty)
+			return &pic->pic;
 
-	if (i == numcachepics)
-	{
-		if (numcachepics == MAX_CACHED_PICS)
-			Sys_Error ("menu_numcachepics == MAX_CACHED_PICS");
-		numcachepics++;
-		strcpy (pic->name, path);
-	}
-	else if (!pic->dirty)
-		return &pic->pic;
+	// Its not cached, lets make sure we have space in the cache..
+	if (numcachepics == MAX_CACHED_PICS)
+		Sys_Error ("menu_numcachepics == MAX_CACHED_PICS");
 
-//
-// load the pic from disk
-//
+	// Load the picture..
 	dat = (qpic_t *)COM_LoadTempFile (path);	
 	if (!dat)
 		Sys_Error ("Draw_CachePic: failed to load %s", path);
+
+	// Adjust for endian..
 	SwapPic (dat);
 
-	// HACK HACK HACK --- we need to keep the bytes for
-	// the translatable player picture just for the menu
-	// configuration dialog
+	// Ok, the image is here, lets load it up into the cache..
+
+	// First the image name..
+	strncpy (pic->name, path, sizeof(pic->name));
+
+	// Now the width and height.
+	pic->pic.width = dat->width;
+	pic->pic.height = dat->height;
+
+	// Now feed it to the GL stuff and get a texture number..
+	gl = (glpic_t *)pic->pic.data;
+	gl->texnum = GL_LoadPicTexture (dat);
+
+	// Alignment stuff..
+	gl->sl = 0; gl->sh = 1; gl->tl = 0; gl->th = 1;
+
+	// Now lets mark this cache entry as used..
+	pic->dirty = false;
+	numcachepics++;
+
+	// FIXME: 
+	// A really ugly kluge, keep a specific image in memory 
+	// for the menu system.
+	// 
+	// Some days I really dislike legacy support..
+
 	if (!strcmp (path, "gfx/menuplyr.lmp"))
 		memcpy (menuplyr_pixels, dat->data, dat->width*dat->height);
 
-	pic->pic.width = dat->width;
-	pic->pic.height = dat->height;
-	pic->dirty = false;
-
-	gl = (glpic_t *)pic->pic.data;
-	gl->texnum = GL_LoadPicTexture (dat);
-	gl->sl = 0;
-	gl->sh = 1;
-	gl->tl = 0;
-	gl->th = 1;
-
+	// And now we are done, return what was asked for..
 	return &pic->pic;
 }
 
@@ -336,7 +338,7 @@ typedef struct
 	int	minimize, maximize;
 } glmode_t;
 
-glmode_t modes[] = {
+static glmode_t modes[] = {
 	{"GL_NEAREST", GL_NEAREST, GL_NEAREST},
 	{"GL_LINEAR", GL_LINEAR, GL_LINEAR},
 	{"GL_NEAREST_MIPMAP_NEAREST", GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST},
@@ -350,7 +352,7 @@ glmode_t modes[] = {
 Draw_TextureMode_f
 ===============
 */
-void Draw_TextureMode_f (void)
+static void Draw_TextureMode_f (void)
 {
 	int		i;
 	gltexture_t	*glt;
@@ -461,9 +463,11 @@ void Draw_Init (void)
 	// save a texture slot for translated picture
 	translate_texture = texture_extension_number++;
 
+#ifdef gl_draw_scraps
 	// save slots for scraps
 	scrap_texnum = texture_extension_number;
 	texture_extension_number += MAX_SCRAPS;
+#endif
 
 	//
 	// get the other pics we need
@@ -589,20 +593,6 @@ void Draw_Crosshair(void)
 			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy->value, '+');
 }
 
-
-/*
-================
-Draw_DebugChar
-
-Draws a single character directly to the upper right corner of the screen.
-This is for debugging lockups by drawing different chars in different parts
-of the code.
-================
-*/
-void Draw_DebugChar (char num)
-{
-}
-
 /*
 =============
 Draw_Pic
@@ -612,8 +602,10 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 {
 	glpic_t			*gl;
 
+#ifdef gl_draw_scraps
 	if (scrap_dirty)
 		Scrap_Upload ();
+#endif
 	gl = (glpic_t *)pic->data;
 	if (lighthalf)
 		glColor3f(0.4,0.4,0.4);
@@ -632,47 +624,16 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 	glEnd ();
 }
 
-/*
-=============
-Draw_AlphaPic
-=============
-*/
-void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
-{
-	glpic_t			*gl;
-
-	if (scrap_dirty)
-		Scrap_Upload ();
-	gl = (glpic_t *)pic->data;
-	if (lighthalf)
-		glColor4f(0.4,0.4,0.4,alpha);
-	else
-		glColor4f(0.8,0.8,0.8,alpha);
-	glBindTexture (GL_TEXTURE_2D, gl->texnum);
-	glBegin (GL_QUADS);
-	glTexCoord2f (gl->sl, gl->tl);
-	glVertex2f (x, y);
-	glTexCoord2f (gl->sh, gl->tl);
-	glVertex2f (x+pic->width, y);
-	glTexCoord2f (gl->sh, gl->th);
-	glVertex2f (x+pic->width, y+pic->height);
-	glTexCoord2f (gl->sl, gl->th);
-	glVertex2f (x, y+pic->height);
-	glEnd ();
-	if (lighthalf)
-		glColor3f(0.5,0.5,0.5);
-	else
-		glColor3f(1,1,1);
-}
-
 void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int height)
 {
 	glpic_t			*gl;
 	float newsl, newtl, newsh, newth;
 	float oldglwidth, oldglheight;
 
+#ifdef gl_draw_scraps
 	if (scrap_dirty)
 		Scrap_Upload ();
+#endif
 	gl = (glpic_t *)pic->data;
 	
 	oldglwidth = gl->sh - gl->sl;
@@ -1015,29 +976,10 @@ void GL_Set2D (void)
 
 /*
 ================
-GL_FindTexture
-================
-*/
-int GL_FindTexture (char *identifier)
-{
-	int		i;
-	gltexture_t	*glt;
-
-	for (i=0, glt=gltextures ; i<numgltextures ; i++, glt++)
-	{
-		if (!strcmp (identifier, glt->identifier))
-			return gltextures[i].texnum;
-	}
-
-	return -1;
-}
-
-/*
-================
 GL_ResampleTexture
 ================
 */
-void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight)
+static void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight)
 {
 	int		i, j;
 	unsigned	*inrow;
@@ -1067,7 +1009,7 @@ void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,
 GL_Resample8BitTexture -- JACK
 ================
 */
-void GL_Resample8BitTexture (unsigned char *in, int inwidth, int inheight, unsigned char *out,  int outwidth, int outheight)
+static void GL_Resample8BitTexture (unsigned char *in, int inwidth, int inheight, unsigned char *out,  int outwidth, int outheight)
 {
 	int		i, j;
 	unsigned	char *inrow;
@@ -1099,7 +1041,7 @@ GL_MipMap
 Operates in place, quartering the size of the texture
 ================
 */
-void GL_MipMap (byte *in, int width, int height)
+static void GL_MipMap (byte *in, int width, int height)
 {
 	int		i, j;
 	byte	*out;
@@ -1126,7 +1068,7 @@ GL_MipMap8Bit
 Mipping for 8 bit textures
 ================
 */
-void GL_MipMap8Bit (byte *in, int width, int height)
+static void GL_MipMap8Bit (byte *in, int width, int height)
 {
 	int		i, j;
 	byte	*out;
@@ -1156,7 +1098,7 @@ void GL_MipMap8Bit (byte *in, int width, int height)
 GL_Upload32
 ===============
 */
-void GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap, qboolean alpha)
+static void GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap, qboolean alpha)
 {
 	int			samples;
 static	unsigned	scaled[1024*512];	// [512*256];
@@ -1190,7 +1132,6 @@ static	unsigned	scaled[1024*512];	// [512*256];
 		glTexImage2D (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
 	}
 #else
-texels += scaled_width * scaled_height;
 
 	if (scaled_width == width && scaled_height == height)
 	{
@@ -1277,8 +1218,6 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 		Sys_Error ("GL_LoadTexture: too big");
 
 	samples = 1; // alpha ? gl_alpha_format : gl_solid_format;
-
-	texels += scaled_width * scaled_height;
 
 	if (scaled_width == width && scaled_height == height)
 	{
@@ -1384,7 +1323,12 @@ static	unsigned	trans[640*480];		// FIXME, temporary
 		}
 	}
 
-	if (VID_Is8bit() && !alpha && (data!=scrap_texels[0])) {
+#ifdef gl_draw_scraps
+	if (VID_Is8bit() && !alpha && (data!=scrap_texels[0])) 
+#else
+	if (VID_Is8bit() && !alpha) 
+#endif
+	{
 		GL_Upload8_EXT (data, width, height, mipmap, alpha);
 		return;
 	}
@@ -1399,10 +1343,8 @@ GL_LoadTexture
 */
 int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha, int bytesperpixel)
 {
-	int			i;
-	int			s;
-	int			lcrc;
-	gltexture_t	*glt;
+	int i, s, lcrc;
+	gltexture_t *glt;
 
 	// LordHavoc's cache check, not a standard crc but it works  --KB
 	lcrc = 0;
@@ -1430,10 +1372,15 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 		}
 	}
 
+	if (numgltextures == MAX_GLTEXTURES)
+		Sys_Error ("numgltextures == MAX_GLTEXTURES");
+
 	glt = &gltextures[numgltextures];
 	numgltextures++;
 
-	strcpy (glt->identifier, identifier);
+	strncpy (glt->identifier, identifier, sizeof(glt->identifier) - 1);
+	glt->identifier[sizeof(glt->identifier) - 1] = '\0';
+
 	glt->texnum = texture_extension_number;
 	texture_extension_number++;
 
@@ -1468,7 +1415,7 @@ SetupTexture:
 GL_LoadPicTexture
 ================
 */
-int GL_LoadPicTexture (qpic_t *pic)
+static int GL_LoadPicTexture (qpic_t *pic)
 {
 	return GL_LoadTexture ("", pic->width, pic->height, pic->data, false, true, 1);
 }

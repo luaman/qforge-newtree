@@ -392,64 +392,65 @@ Bad sides: affects gamespy and spytools somewhat...
 ================
 */
 
-int CheckForFlood(char cmdtype)
+int CheckForFlood(flood_enum_t cmdtype)
 {
-	static qboolean firsttime=true;
-        static flood_t floodstatus[DOSFLOODCMDS][DOSFLOODIP];
+	static qboolean firsttime = true;
+	static flood_t floodstatus[DOSFLOODCMDS][DOSFLOODIP];
 
-        int i;
-        double currenttime;
-        double oldestTime;
-        static double lastmessagetime=0;
-        int oldest;
+	int i;
+	double currenttime;
+	double oldestTime;
+	static double lastmessagetime=0;
+	int oldest;
 
-	if (!sv_netdosprotect->value) return 0;
+	if (!sv_netdosprotect->value) 
+		return 0;
 
-	oldestTime=0x7fffffff;
-	oldest=0;
+	oldestTime = 0x7fffffff;
+	oldest = 0;
 
 	if (firsttime) {
-        	memset(floodstatus,sizeof(flood_t)*DOSFLOODCMDS*DOSFLOODIP,0);
-                firsttime=false;
-        }
+		memset (floodstatus, sizeof(flood_t) * DOSFLOODCMDS * DOSFLOODIP, 0);
+		firsttime = false;
+	}
 
-        currenttime=Sys_DoubleTime();
+	currenttime = Sys_DoubleTime();
 
-	for (i = 0 ; i < DOSFLOODIP ; i++)
-	{
+	for (i = 0 ; i < DOSFLOODIP ; i++) {
 		if (NET_CompareBaseAdr (net_from, floodstatus[cmdtype][i].adr))
 			break;
-		if (floodstatus[cmdtype][i].issued < oldestTime)
-		{
+		if (floodstatus[cmdtype][i].issued < oldestTime) {
 			oldestTime = floodstatus[cmdtype][i].issued;
 			oldest = i;
 		}
 	}
 
-        if (i<DOSFLOODIP && floodstatus[cmdtype][i].issued)
-        	if(floodstatus[cmdtype][i].issued+netdosexpire[cmdtype]>currenttime)
-        	{
-			floodstatus[cmdtype][i].floodcount+=1;
-			if (floodstatus[cmdtype][i].floodcount>netdosvalues[cmdtype])
-	                {
-                                if (lastmessagetime+5<currenttime)
-		                Con_Printf("Blocking type %d flood from (or to) %s\n",cmdtype,NET_AdrToString(net_from));
-				floodstatus[cmdtype][i].floodcount=0;
+	if (i < DOSFLOODIP && floodstatus[cmdtype][i].issued) {
+		if ((floodstatus[cmdtype][i].issued + netdosexpire[cmdtype]) 
+				> currenttime) {
+			floodstatus[cmdtype][i].floodcount += 1;
+			if (floodstatus[cmdtype][i].floodcount > netdosvalues[cmdtype]) {
+				if ((lastmessagetime + 5) < currenttime) 
+					Con_Printf("Blocking type %d flood from (or to) %s\n",
+								cmdtype, NET_AdrToString(net_from));
+				floodstatus[cmdtype][i].floodcount = 0;
 				floodstatus[cmdtype][i].issued = currenttime;
-			        floodstatus[cmdtype][i].cmdcount+=1;
-                                lastmessagetime=currenttime;
-	                        return 1;
-	                }
-		} else floodstatus[cmdtype][i].floodcount=0;
+				floodstatus[cmdtype][i].cmdcount += 1;
+				lastmessagetime = currenttime;
+				return 1;
+			}
+		} else {
+			floodstatus[cmdtype][i].floodcount = 0;
+		}
+	}
 
-       	if (i == DOSFLOODIP)
-	{
+	if (i == DOSFLOODIP) {
 		i = oldest;
 		floodstatus[cmdtype][i].adr = net_from;
-                floodstatus[cmdtype][i].firstseen=currenttime;
+		floodstatus[cmdtype][i].firstseen = currenttime;
 	}
 	floodstatus[cmdtype][i].issued = currenttime;
-        floodstatus[cmdtype][i].cmdcount+=1;
+	floodstatus[cmdtype][i].cmdcount += 1;
 	return 0;
 }
 

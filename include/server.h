@@ -278,14 +278,22 @@ typedef struct
 //=============================================================================
 typedef struct
 {
-        	netadr_t        adr;
-	        double		issued;
-                int		floodcount;
-                int		cmdcount;
-                double 		firstseen;
+	netadr_t	adr;
+	double		issued;
+	int			floodcount;
+	int			cmdcount;
+	double		firstseen;
 } flood_t;
 
-enum {FLOOD_PING, FLOOD_LOG, FLOOD_CONNECT, FLOOD_STATUS, FLOOD_RCON, FLOOD_BAN};
+typedef enum
+{
+	FLOOD_PING,
+	FLOOD_LOG,
+	FLOOD_CONNECT,
+	FLOOD_STATUS,
+	FLOOD_RCON,
+	FLOOD_BAN
+} flood_enum_t;
 
 #define DOSFLOODCMDS 6
 #define DOSFLOODIP 64   // remember latest 64 IP's for each cmd.
