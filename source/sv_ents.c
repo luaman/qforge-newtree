@@ -591,11 +591,11 @@ void SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 // Ender: EXTEND (QSG - Begin)
 		{
 			eval_t  *val;
+			state->alpha		= 255;
+			state->scale		= 16;
 			state->glowsize		= 0;
 			state->glowcolor	= 254;
 			state->colormod		= 255;
-			state->alpha		= 255;
-			state->scale		= 16;
 
 			if ((val = GETEDICTFIELDVALUE(ent, eval_alpha)) && val->_float != 0)
 				state->alpha = bound(0, val->_float, 1) * 255.0;
