@@ -57,6 +57,8 @@ static const int faces_table[3][6] = {
 	{-1, 4, 4, -1, 1, 1},
 	{-1, 2, 2, -1, 5, 5},
 };
+/* convert face magic bit mask to index into visit array */
+static const int faces_bit_magic[] = {3, 4, -1, 0, 2, -1, 1, -1};
 /* axis the cube face cuts (also index into vec3_t and n % 3 for 0 <= n < 6) */
 static const int face_axis[] = {0, 1, 2, 0, 1, 2};
 /* offset on the axis the cube face cuts */
@@ -431,11 +433,9 @@ process_corners (struct box_def *box)
 			// 3 vertexen
 			unsigned int sel = (((abs (visit[2].face - visit[0].face) == 3) << 4)
 								| ((abs (visit[3].face - visit[1].face) == 3) << 3)
-								| ((abs (visit[4].face - visit[2].face) == 3) << 2)
-								| ((abs (visit[0].face - visit[3].face) == 3) << 1)
-								| ((abs (visit[1].face - visit[4].face) == 3) << 0));
+								| ((abs (visit[4].face - visit[2].face) == 3) << 2));
 			vec3_t v[3];
-			center = ((sel * 3) - 6) % 5;
+			center = faces_bit_magic[sel];
 			//printf ("%02o %d  %d %d %d %d %d\n", sel, center, visit[0].face, visit[1].face, visit[2].face, visit[3].face, visit[4].face);
 			for (i = 0; i < 3; i++)
 				find_cube_vertex (visit[center].face, visit[(center + 1 + i) % 5].face, visit[(center + 2 + i) % 5].face, v[i]);
