@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES=	$(GGI_CFLAGS) $(SVGA_CFLAGS) $(X_CFLAGS) $(GLX_CFLAGS)
+INCLUDES=	-I$(top_srcdir)/include $(GGI_CFLAGS) $(SVGA_CFLAGS) $(X_CFLAGS) $(GLX_CFLAGS)
 
 bin_PROGRAMS =	@TARGETS@
 
