@@ -46,7 +46,6 @@ key up events are sent even if in console mode
 #define		MAXCMDLINE	256
 char	key_lines[32][MAXCMDLINE];
 int		key_linepos;
-int		shift_down=false;
 int		key_lastpress;
 
 int		edit_line=0;
@@ -76,6 +75,12 @@ keyname_t keynames[] =
 	{"ESCAPE", K_ESCAPE},
 	{"SPACE", K_SPACE},
 	{"BACKSPACE", K_BACKSPACE},
+
+	{"CAPSLOCK",K_CAPSLOCK},
+	{"PRINTSCR", K_PRNTSCR},
+	{"SCRLCK", K_SCRLCK},
+	{"PAUSE", K_PAUSE},
+
 	{"UPARROW", K_UPARROW},
 	{"DOWNARROW", K_DOWNARROW},
 	{"LEFTARROW", K_LEFTARROW},
@@ -84,7 +89,37 @@ keyname_t keynames[] =
 	{"ALT", K_ALT},
 	{"CTRL", K_CTRL},
 	{"SHIFT", K_SHIFT},
-	
+
+	// Keypad stuff..
+
+	// These are duplicated
+	{"NUMLOCK", KP_NUMLCK},
+	{"KP_NUMLCK", KP_NUMLCK},
+	{"KP_NUMLOCK", KP_NUMLCK},
+	{"KP_SLASH", KP_DIVIDE},
+	{"KP_DIVIDE", KP_DIVIDE},
+	{"KP_STAR", KP_MULTIPLY},
+	{"KP_MULTIPLY", KP_MULTIPLY},
+	{"KP_MINUS", KP_MINUS},
+
+	{"KP_HOME", KP_HOME},
+	{"KP_UPARROW", KP_UPARROW},
+	{"KP_PGUP", KP_PGUP},
+	{"KP_PLUS", KP_PLUS},
+
+	{"KP_LEFTARROW", KP_LEFTARROW},
+	{"KP_5", KP_5},
+	{"KP_RIGHTARROW", KP_RIGHTARROW},
+
+	{"KP_END", KP_END},
+	{"KP_DOWNARROW", KP_DOWNARROW},
+	{"KP_PGDN", KP_PGDN},
+
+	{"KP_INS", KP_INS},
+	{"KP_DEL", KP_DEL},
+	{"KP_ENTER", KP_ENTER},
+
+
 	{"F1", K_F1},
 	{"F2", K_F2},
 	{"F3", K_F3},
@@ -146,8 +181,6 @@ keyname_t keynames[] =
 	{"AUX30", K_AUX30},
 	{"AUX31", K_AUX31},
 	{"AUX32", K_AUX32},
-
-	{"PAUSE", K_PAUSE},
 
 	{"MWHEELUP", K_MWHEELUP},
 	{"MWHEELDOWN", K_MWHEELDOWN},
@@ -724,8 +757,6 @@ void Key_Event (int key, qboolean down)
 			Con_Printf ("%s is unbound, hit F4 to set.\n", Key_KeynumToString (key) );
 	}
 
-	if (key == K_SHIFT)
-		shift_down = down;
 
 //
 // handle escape specialy, so the user can never unbind it
@@ -815,7 +846,7 @@ void Key_Event (int key, qboolean down)
 	if (!down)
 		return;		// other systems only care about key down events
 
-	if (shift_down)
+	if (keydown[K_SHIFT])
 		key = keyshift[key];
 
 	switch (key_dest)
