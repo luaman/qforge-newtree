@@ -131,6 +131,10 @@ SOURCE=.\gl_sky_clip.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\hash.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\info.c
 # End Source File
 # Begin Source File
@@ -180,10 +184,6 @@ SOURCE=.\pmove.c
 # Begin Source File
 
 SOURCE=.\pmovetst.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\pr_cmds.c
 # End Source File
 # Begin Source File
 
@@ -260,6 +260,14 @@ SOURCE=.\sv_nchan.c
 # Begin Source File
 
 SOURCE=.\sv_phys.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sv_pr_cmds.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sv_progs.c
 # End Source File
 # Begin Source File
 

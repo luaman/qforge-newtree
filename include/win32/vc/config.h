@@ -36,6 +36,8 @@
 
 #pragma warning( disable : 4761)
 
+/* fix the retarded malloc.h problem */
+#define alloca _alloca
 									// disable data conversion warnings
 # pragma warning(disable : 4051)	// ALPHA
 # pragma warning(disable : 4136)	// X86
@@ -259,6 +261,9 @@
 
 /* Define if you have a sane fnmatch.h   */
 #define HAVE_FNMATCH_PROTO
+
+/* Define this to something appropriate for declaring 0 length arrays */
+#define ZERO_LENGTH_ARRAY 0
 
 /* Posix, needed for limits.h and Unix stuffs to work right */
 #define _POSIX_
