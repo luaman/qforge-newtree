@@ -104,7 +104,7 @@ CL_SW_sources=\
   r_sprite.c \
   r_surf.c \
   r_vars.c \
-  r_view.c \
+  sw_view.c \
   screen.c \
   d_copy.S \
   d_draw.S \
@@ -140,6 +140,7 @@ CL_sources=\
   snd_linux.c \
   sys_linux.c \
   cd_linux.c \
+  r_view.c \
   wad.c \
   snd_dma.c \
   snd_mem.c \
