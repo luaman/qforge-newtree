@@ -30,13 +30,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+// Ender: HackHackHack
+#ifndef GLAPIENTRY
+ #ifdef APIENTRY
+  #define GLAPIENTRY APIENTRY
+ #endif
+#endif
+
 void GL_BeginRendering (int *x, int *y, int *width, int *height);
 void GL_EndRendering (void);
 
 
 // Function prototypes for the Texture Object Extension routines
-typedef GLboolean (GLAPIENTRY *ARETEXRESFUNCPTR)(GLsizei, const GLuint *,
-                    const GLboolean *);
+typedef GLboolean (GLAPIENTRY *ARETEXRESFUNCPTR)(GLsizei, const GLuint *,const GLboolean *);
 typedef void (GLAPIENTRY *BINDTEXFUNCPTR)(GLenum, GLuint);
 typedef void (GLAPIENTRY *DELTEXFUNCPTR)(GLsizei, const GLuint *);
 typedef void (GLAPIENTRY *GENTEXFUNCPTR)(GLsizei, GLuint *);
