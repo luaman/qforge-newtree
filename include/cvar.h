@@ -39,6 +39,7 @@ typedef struct cvar_s
 	int	flags;
 	char 	*description;	// for "help" command
 	float	value;
+	int		int_val;
 	struct cvar_s *next;
 } cvar_t;
 
