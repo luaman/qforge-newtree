@@ -1065,9 +1065,17 @@ COM_Filesystem_Init ( void )
 void
 COM_Filesystem_Init_Cvars ( void )
 {
-	fs_sharepath = Cvar_Get ("fs_sharepath", FS_SHAREPATH, CVAR_ROM,
+	int t;
+	char *s, *u;
+	// LordHavoc: check for -basedir
+	s = FS_SHAREPATH;
+	u = FS_USERPATH;
+	t = COM_CheckParm("-basedir");
+	if (t && (t + 1) < com_argc)
+		s = u = com_argv[t+1];
+	fs_sharepath = Cvar_Get ("fs_sharepath", s, CVAR_ROM,
 			"location of shared (read only) game directories");
-	fs_userpath = Cvar_Get ("fs_userpath", FS_USERPATH, CVAR_ROM,
+	fs_userpath = Cvar_Get ("fs_userpath", u, CVAR_ROM,
 			"location of your game directories");
 	fs_basegame = Cvar_Get ("fs_basegame", BASEGAME, CVAR_ROM,
 			"game to use by default");

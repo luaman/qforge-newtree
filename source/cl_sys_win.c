@@ -495,11 +495,6 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		SetForegroundWindow (hwnd_dialog);
 	}
 
-	// LordHavoc: check for -basedir
-	t = COM_CheckParm ("-basedir");
-	if (t && (t + 1) < com_argc)
-		parms.basedir = com_argv[t];
-
 // take the greater of all the available memory or half the total memory,
 // but at least 8 Mb and no more than 16 Mb, unless they explicitly
 // request otherwise
