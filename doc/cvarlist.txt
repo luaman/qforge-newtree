@@ -78,9 +78,9 @@ Description	:
 Cvar		: ambient_level
 Targets		:
 Category	:
-Type		:
+Type		: float
 Default		: 0.3	
-Description	:
+Description	: Ambient sound volume
 
 Cvar		: baseskin
 Targets		:
@@ -436,9 +436,9 @@ Description	:
 Cvar 		: freelook
 Targets		:
 Category	:
-Type		:
+Type		: Boolean
 Default		: 0	
-Description	:
+Description	: 1 = force mouse look on (exactly like in Q2/Q3)
 
 Cvar		: fs_globalcfg
 Targets		: all
@@ -1087,7 +1087,7 @@ Description	:
 Cvar		: r_skyname
 Targets		:
 Category	:
-Type		:
+Type		: string
 Default		: "none"
 Description	: name of the current skybox
 
@@ -1388,29 +1388,29 @@ Description	:
 Cvar		: sv_timekick
 Targets		:
 Category	:
-Type		:
+Type		: Boolean
 Default		: 3	
-Description	:
+Description	: Time cheat protection
 
 Cvar		: sv_timekick_fuzz
 Targets		:
 Category	:
-Type		:
-Default		: 10	
-Description	:
+Type		: float
+Default		: 10
+Description	: Timecheat sensitivity (10 = 1%)
 
 Cvar		: sv_timekick_interval
 Targets		:
 Category	:
-Type		:
-Default		: 30	
-Description	:
+Type		: float
+Default		: 30
+Description	: Timecheat check interval
 
 Cvar		: sv_wateraccelerate
 Targets		:
 Category	:
 Type		:
-Default		: 10	
+Default		: 10
 Description	:
 
 Cvar		: sv_waterfriction
@@ -1435,11 +1435,12 @@ Default		: 0
 Description	:
 
 Cvar		: sys_sleep
-Targets		:
+Targets		: Win32
 Category	:
-Type		:
-Default		: 8	
-Description	:
+Type		: integer
+Default		: 8 for Win9x, 0 for WinNT
+Description	: Numbers of milliseconds to try to Sleep() every frame.
+		: Needed when running the server on localhost in Win9x.
 
 Cvar		: team
 Targets		:
