@@ -168,5 +168,9 @@ VID_InitGamma (unsigned char *pal)
 	vid_gamma = Cvar_Get ("vid_gamma", va ("%f", gamma), CVAR_ARCHIVE,
 						  VID_UpdateGamma, "Gamma correction");
 
-	VID_BuildGammaTable (vid_gamma->value);
+	VID_UpdateGamma (vid_gamma);
+
+	for (i = 0; i < 768; i++) {
+		pal[i] = gammatable[pal[i]];
+	}
 }
