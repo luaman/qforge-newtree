@@ -1185,6 +1185,7 @@ void CL_Init (void)
 	Info_SetValueForStarKey (cls.userinfo, "stdver", QSG_VERSION, MAX_INFO_STRING);
 
 	CL_Input_Init ();
+	CL_TEnts_Init ();
 	Pmove_Init ();
 	
 	Qexpand_squiggle(fs_userpath->string, e_path);
