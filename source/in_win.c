@@ -122,6 +122,7 @@ static DIDATAFORMAT df = {
 
 // forward-referenced functions, joy
 
+extern void JOY_Command(void);
 extern void JOY_Init_Cvars(void);
 extern void JOY_Init (void);
 extern void JOY_AdvancedUpdate_f (void);
@@ -696,3 +697,14 @@ IN_ClearStates (void)
 	}
 }
 
+/*
+===========
+IN_Commands
+===========
+*/
+void
+IN_Commands (void)
+{
+        // Joystick
+        JOY_Command();
+}
