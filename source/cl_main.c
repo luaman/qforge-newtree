@@ -29,23 +29,23 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
 
 #include <ctype.h>
 
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
+# include <netinet/in.h>
 #endif
 
 #ifdef HAVE_WINSOCK_H
-#include <winsock.h>
+# include <winsock.h>
 #endif
+
 #include <setjmp.h>
 
 #include "bothdefs.h"
@@ -67,7 +67,7 @@
 #include "draw.h"
 #include "host.h"
 #ifdef _WIN32
-#include "in_win.h"
+# include "in_win.h"
 #endif
 #include "input.h"
 #include "keys.h"
@@ -92,12 +92,11 @@
 
 #ifdef __sun
 /* Sun's model_t in sys/model.h conflicts w/ Quake's model_t */
-#define model_t sunmodel_t
+# define model_t sunmodel_t
 #endif
 
-
 #ifdef __sun
-#undef model_t
+# undef model_t
 #endif
 
 void        CL_RemoveQFInfoKeys ();
