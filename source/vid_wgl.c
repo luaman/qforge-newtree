@@ -307,6 +307,8 @@ VID_SetFullDIBMode (int modenum)
 	int         lastmodestate, width, height;
 	RECT        rect;
 
+        memset(&gdevmode,0,sizeof(gdevmode));
+
 	if (!leavecurrentmode) {
 		gdevmode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 		gdevmode.dmBitsPerPel = modelist[modenum].bpp;
@@ -331,7 +333,12 @@ VID_SetFullDIBMode (int modenum)
 	DIBWidth = modelist[modenum].width;
 	DIBHeight = modelist[modenum].height;
 
-	WindowStyle = WS_POPUP;
+// fixme: some drivers have broken FS popup window handling
+// until I find way around it, or find some other cause for it
+// this is way to avoid it
+
+        if (COM_CheckParm ("-brokenpopup")) WindowStyle = 0;
+        else WindowStyle = WS_POPUP;
 	ExWindowStyle = 0;
 
 	rect = WindowRect;
@@ -911,8 +918,14 @@ AppActivate (BOOL fActive, BOOL minimize)
 			IN_HideMouse ();
 			if (vid_canalttab && vid_wassuspended) {
 				vid_wassuspended = false;
-				ChangeDisplaySettings (&gdevmode, CDS_FULLSCREEN);
-				ShowWindow (mainwindow, SW_SHOWNORMAL);
+
+                                if (ChangeDisplaySettings (&gdevmode, CDS_FULLSCREEN) !=
+                                        DISP_CHANGE_SUCCESSFUL) {
+                                                IN_ShowMouse ();
+                                                Sys_Error ("Couldn't set fullscreen DIB mode (try upgrading your video drivers)");
+                                }
+                                ShowWindow (mainwindow, SW_SHOWNORMAL);
+
 			}
 		}
 			else if ((modestate == MS_WINDOWED) && _windowed_mouse->int_val
