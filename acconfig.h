@@ -31,9 +31,6 @@
 /* Define this to use experimental code */
 #undef _EXPERIMENTAL_
 
-/* Define this if you want to use Intel assembly optimizations */
-#undef USE_INTEL_ASM
-
 /* Define this if you have a Linux-style CD-ROM API */
 #undef USE_LINUX_CD
 
@@ -84,6 +81,9 @@
 
 /* If your version of OpenGL uses APIENTRY, define GLAPIENTRY to be APIENTRY */
 #undef GLAPIENTRY
+
+/* Define this to something sane if you don't have stricmp */
+#undef stricmp
 
 @BOTTOM@
 #endif // _CONFIG_H
