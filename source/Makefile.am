@@ -21,15 +21,18 @@ EXTRA_libqfsys_cl_a_SOURCES = cl_sys_unix.c cl_sys_win.c sys_win.c sys_unix.c fn
 EXTRA_libqfsys_sv_a_SOURCES = sv_sys_unix.c sv_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
 
 if SNDTYPE_WIN32
-libqfsnd_a_SOURCES = snd_win.c
+libqfsnd_a_SOURCES = snd_dma.c snd_win.c
 endif
 if SNDTYPE_OSS
-libqfsnd_a_SOURCES = snd_oss.c
+libqfsnd_a_SOURCES = snd_dma.c snd_oss.c
 endif
 if SNDTYPE_ALSA
-libqfsnd_a_SOURCES = snd_alsa.c
+libqfsnd_a_SOURCES = snd_dma.c snd_alsa.c
 endif
-EXTRA_libqfsnd_a_SOURCES = snd_win.c snd_oss.c snd_alsa.c
+if SNDTYPE_NULL
+libqfsnd_a_SOURCES = snd_null.c
+endif
+EXTRA_libqfsnd_a_SOURCES = snd_dma.c snd_win.c snd_oss.c snd_alsa.c snd_null.c
 
 if CDTYPE_WIN32
 libqfcd_a_SOURCES = cd_win.c
@@ -51,7 +54,7 @@ server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c sv_init.c sv_main.c sv_misc.c \
 		sv_user.c sv_ccmds.c world.c worlda.S sv_cvar.c
 client_SOURCES= cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c cl_main.c \
 		cl_math.S cl_misc.c cl_parse.c cl_pred.c cl_tent.c cl_cam.c \
-		r_view.c wad.c snd_dma.c snd_mem.c snd_mix.c snd_mixa.S \
+		r_view.c wad.c snd_mem.c snd_mix.c snd_mixa.S \
 		skin.c sbar.c nonintel.c menu.c keys.c console.c \
 		sys_x86.S cl_slist.c
 soft_SOURCES=	cl_model.c cl_trans.c d_edge.c d_fill.c d_init.c d_modech.c \
