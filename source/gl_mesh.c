@@ -355,10 +355,7 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 		snprintf (fullpath, sizeof(fullpath), "%s/%s", com_gamedir, cache);
 		f = Qopen (fullpath, "wb");
 		if (!f) {
-			char gldir[MAX_OSPATH];
-
-			snprintf (gldir, sizeof(gldir), "%s/glquake", com_gamedir);
-			Sys_mkdir (gldir);
+			COM_CreatePath (fullpath);
 			f = Qopen (fullpath, "wb");
 		}
 
