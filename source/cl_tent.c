@@ -359,9 +359,10 @@ entity_t *CL_NewTempEntity (void)
 
 	ent->colormap = vid.colormap;
 	// LordHavoc: Endy had neglected to do this as part of the QSG VERSION 2 stuff
-	ent->glowsize    = 0;
-	ent->glowcolor   = 254;
-	ent->alpha       = 1;
+	ent->glowsize		= 0;
+	ent->glowcolor		= 254;
+	ent->alpha			= 1;
+	ent->scale			= 1;
 	ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 	return ent;
 }

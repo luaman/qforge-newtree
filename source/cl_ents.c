@@ -291,6 +291,12 @@ void FlushEntityPacket (void)
 	Con_DPrintf ("FlushEntityPacket\n");
 
 	memset (&olde, 0, sizeof(olde));
+	// LordHavoc: more state setup...
+	olde.alpha = 255;
+	olde.scale = 16;
+	olde.glowsize = 0;
+	olde.glowcolor = 254;
+	olde.colormod = 255;
 
 	cl.validsequence = 0;		// can't render a frame
 	cl.frames[cls.netchan.incoming_sequence&UPDATE_MASK].invalid = true;
@@ -532,9 +538,10 @@ void CL_LinkPacketEntities (void)
 		//        N.B: All messy code below is the sole fault of LordHavoc and
 		//             his futile attempts to save bandwidth. :)
 		//
-		ent->glowsize    = s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
-		ent->glowcolor   = s1->glowcolor;
-		ent->alpha       = s1->alpha / 255.0;
+		ent->glowsize		= s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
+		ent->glowcolor		= s1->glowcolor;
+		ent->alpha			= s1->alpha / 255.0;
+		ent->scale			= s1->scale / 16.0;
 
 		if (s1->colormod == 255)
 			ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
@@ -718,10 +725,11 @@ void CL_LinkProjectiles (void)
 		VectorCopy (pr->origin, ent->origin);
 		VectorCopy (pr->angles, ent->angles);
 		// LordHavoc: Endy had neglected to do this as part of the QSG VERSION 2 stuff
-		ent->glowsize    = 0;
-		ent->glowcolor   = 254;
-		ent->alpha       = 1;
-		ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
+		ent->glowsize		= 0;
+		ent->glowcolor		= 254;
+		ent->alpha			= 1;
+		ent->scale			= 1;
+		ent->colormod[0]	= ent->colormod[1] = ent->colormod[2] = 1;
 	}
 }
 
@@ -945,9 +953,10 @@ void CL_LinkPlayers (void)
 			ent->scoreboard = NULL;
 
 		// LordHavoc: more QSG VERSION 2 stuff, FIXME: players don't have extend stuff
-		ent->glowsize    = 0;
-		ent->glowcolor   = 254;
-		ent->alpha       = 1;
+		ent->glowsize		= 0;
+		ent->glowcolor		= 254;
+		ent->alpha			= 1;
+		ent->scale			= 1;
 		ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 
 		//

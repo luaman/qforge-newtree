@@ -798,7 +798,7 @@ void CL_ParseStatic (void)
 
 	// LordHavoc: make static entities visible
 	ent->alpha = 1;
-	ent->scale = 16;
+	ent->scale = 1;
 	ent->glowsize = 0;
 	ent->glowcolor = 254;
 	ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
