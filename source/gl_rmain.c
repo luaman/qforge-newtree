@@ -122,6 +122,7 @@ cvar_t	*gl_reporttjunctions;
 cvar_t	*gl_particles;
 
 cvar_t	*r_skyname;
+cvar_t	*gl_skymultipass;
 
 extern	cvar_t	*scr_fov;
 

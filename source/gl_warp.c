@@ -754,13 +754,15 @@ R_DrawSkyDome (void)
 	glEnable (GL_BLEND);
 
 	// clouds
-	glBindTexture (GL_TEXTURE_2D, alphaskytexture);
-	domescale[0] = 512;
-	domescale[1] = 512;
-	domescale[2] = 128;
-	speedscale = realtime*16;
-	speedscale -= (int)speedscale & ~127;
-	R_DrawSkyLayer (speedscale);
+	if (gl_skymultipass->value) {
+		glBindTexture (GL_TEXTURE_2D, alphaskytexture);
+		domescale[0] = 512;
+		domescale[1] = 512;
+		domescale[2] = 128;
+		speedscale = realtime*16;
+		speedscale -= (int)speedscale & ~127;
+		R_DrawSkyLayer (speedscale);
+	}
 
 //	glDisable (GL_BLEND);
 	glColor3f (1,1,1);
