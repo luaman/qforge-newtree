@@ -295,7 +295,6 @@ VID_AllocBuffers (int width, int height)
 	// Allocate the new z-buffer
 	d_pzbuffer = calloc (zbuffersize, 1);
 	if (!d_pzbuffer) {
-		free (vid.buffer);
 		Sys_Error ("Not enough memory for video mode\n");
 		return false;
 	}
