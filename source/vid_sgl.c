@@ -334,7 +334,7 @@ VID_Init (unsigned char *palette)
 
 	VID_GetWindowSize (640, 480);
 
-	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
+	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"Toggles fullscreen game mode");
 
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;

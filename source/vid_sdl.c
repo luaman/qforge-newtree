@@ -50,6 +50,7 @@
 #include "quakedef.h"
 
 cvar_t	*_windowed_mouse;
+cvar_t	*vid_fullscreen;
 
 int old_windowed_mouse;
 
@@ -152,14 +153,14 @@ VID_Init (unsigned char *palette)
 	//Uint16 video_w, video_h;
 	Uint32 flags;
 
+	vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ROM, "Toggles fullscreen game mode");
 
 	// Load the SDL library
 	if (SDL_Init (SDL_INIT_VIDEO) < 0) //|SDL_INIT_AUDIO|SDL_INIT_CDROM) < 0)
 		Sys_Error("VID: Couldn't load SDL: %s", SDL_GetError());
 
 	// Set up display mode (width and height)
-	vid.width = BASEWIDTH;
-	vid.height = BASEHEIGHT;
+	VID_GetWindowSize (BASEWIDTH, BASEHEIGHT);
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	if ((pnum=COM_CheckParm("-winsize"))) {
@@ -173,7 +174,7 @@ VID_Init (unsigned char *palette)
 
 	// Set video width, height and flags
 	flags = (SDL_SWSURFACE|SDL_HWPALETTE);
-	if ( COM_CheckParm ("-fullscreen") )
+	if ( vid_fullscreen->int_val )
 		flags |= SDL_FULLSCREEN;
 
 	// Initialize display
