@@ -1687,11 +1687,6 @@ Host_Init (void)
 	V_Init_Cvars ();
 	VID_Init_Cvars ();
 
-	// Reparse the command line for + commands.
-	// (Note, no non-base commands exist yet)
-	Cmd_StuffCmds_f ();
-	Cbuf_Execute ();
-
 	cl_Cmd_Init ();
 	V_Init ();
 	COM_Init ();
@@ -1743,6 +1738,11 @@ Host_Init (void)
 	CL_Init ();
 	IN_Init ();
 #endif
+
+	// Reparse the command line for + commands.
+	// (Note, no non-base commands exist yet)
+	Cmd_StuffCmds_f ();
+	Cbuf_Execute ();
 
 	Cbuf_InsertText ("exec quake.rc\n");
 	Cbuf_AddText
