@@ -38,6 +38,7 @@
 
 #include "bothdefs.h"	// needed by: common.h, net.h, client.h
 
+#include "crc.h"	// LordHavoc: for texture update validation
 #include "bspfile.h"	// needed by: glquake.h
 #include "vid.h"
 #include "sys.h"
@@ -79,9 +80,6 @@ extern byte	*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
 qpic_t		*draw_backtile;
 
-static int	ltexcrctable[256];  // cache mismatch checking  --KB
-
-
 static int	translate_texture;
 static int	char_texture;
 static int	cs_texture; // crosshair texturea
@@ -120,7 +118,7 @@ typedef struct
 	int		width, height;
 	int		bytesperpixel;
 	qboolean	mipmap;
-	int		crc;	// not really a standard CRC, but it works
+	unsigned short	crc;	// LordHavoc: CRC for texture validation
 } gltexture_t;
 
 static gltexture_t	gltextures[MAX_GLTEXTURES];
@@ -1326,17 +1324,12 @@ GL_LoadTexture
 */
 int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha, int bytesperpixel)
 {
-	int i, s, lcrc;
+	int i, crc;
 	gltexture_t *glt;
 
-	// LordHavoc's cache check, not a standard crc but it works  --KB
-	lcrc = 0;
-	s = width*height*bytesperpixel; // size
-	for (i = 0; i < 256; i++)
-		ltexcrctable[i] = i + 1;
-	for (i = 0; i < s; i++)
-		lcrc += (ltexcrctable[data[i] & 255]++);
-	
+	// LordHavoc: now just using a standard CRC for texture validation
+	crc = CRC_Block(data, width*height*bytesperpixel);
+
 	// see if the texture is allready present
 	if (identifier[0])
 	{
@@ -1344,7 +1337,7 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 		{
 			if (!strcmp (identifier, glt->identifier))
 			{
-				if (lcrc != glt->crc
+				if (crc != glt->crc
 						|| width != glt->width
 						|| height != glt->height
 						|| bytesperpixel != glt->bytesperpixel)
@@ -1368,7 +1361,7 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 	texture_extension_number++;
 
 SetupTexture:
-	glt->crc = lcrc;
+	glt->crc = crc;
 	glt->width = width;
 	glt->height = height;
 	glt->bytesperpixel = bytesperpixel;
