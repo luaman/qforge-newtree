@@ -44,7 +44,7 @@
 
 qboolean	dibonly;
 
-extern int		Minimized;
+extern qboolean Minimized;
 
 HWND		mainwindow;
 

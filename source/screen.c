@@ -1105,7 +1105,7 @@ void SCR_UpdateScreen (void)
 
 #ifdef _WIN32
 	{	// don't suck up any cpu if minimized
-		extern int Minimized;
+                extern qboolean Minimized;
 
 		if (Minimized)
 			return;
