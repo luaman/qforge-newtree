@@ -910,7 +910,7 @@ AppActivate (BOOL fActive, BOOL minimize)
                                                 Sys_Error ("Couldn't set fullscreen DIB mode (try upgrading your video drivers)");
                                 }
                                 ShowWindow (mainwindow, SW_SHOWNORMAL);
-
+                                MoveWindow(mainwindow,0,0,gdevmode.dmPelsWidth,gdevmode.dmPelsHeight,false);
 			}
 		}
 			else if ((modestate == MS_WINDOWED) && _windowed_mouse->int_val
