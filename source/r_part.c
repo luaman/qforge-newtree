@@ -482,13 +482,16 @@ void R_DrawParticles (void)
 	grav = frametime * 800 * 0.05;
 	dvel = 4*frametime;
 	
-	for (kill = active_particles; kill != NULL; kill = kill->next) {
-		if (kill->die < cl.time) {
-			active_particles = kill->next;
-			kill->next = free_particles;
-			free_particles = kill;
-		}
-	}
+    while (1) {
+        kill = active_particles;
+        if (kill != NULL && kill->die < cl.time) {
+            active_particles = kill->next;
+            kill->next = free_particles;
+            free_particles = kill;
+            continue;
+        }
+        break;
+    }
 
 	for (p=active_particles ; p ; p=p->next)
 	{
