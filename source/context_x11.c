@@ -92,9 +92,6 @@ static Atom aWMDelete = 0;
 #ifdef HAVE_VIDMODE
 static XF86VidModeModeInfo **vidmodes;
 static int  nummodes;
-
-static int	screen_width;
-static int	screen_height;
 static int	original_mode = 0;
 #endif
 
@@ -279,7 +276,7 @@ x11_set_vidmode (int width, int height)
 		XF86VidModeModeLine orig_data;
 
 		XF86VidModeGetAllModeLines (x_disp, x_screen, &nummodes, &vidmodes);
-		XF86VidModeGetViewPort (x_disp, x_screen, &orig_data);
+		XF86VidModeGetModeLine (x_disp, x_screen, &orig_data);
 
 		for (i = 0; i < nummodes; i++) {
 			if ((vidmodes[i]->hdisplay == orig_data.hdisplay) &&
