@@ -372,15 +372,15 @@ set_vertex (glpoly_t *p, vec3_t v, int face)
 		p->verts[ind][3] = (1024 + v[0]) / 2048;
 		p->verts[ind][4] = (1024 + v[1]) / 2048;
 		break;
-	case 4:
+	case 3:
 		p->verts[ind][3] = (1024 + v[1]) / 2048;
 		p->verts[ind][4] = (1024 - v[2]) / 2048;
 		break;
-	case 5:
+	case 4:
 		p->verts[ind][3] = (1024 - v[0]) / 2048;
 		p->verts[ind][4] = (1024 - v[2]) / 2048;
 		break;
-	case 6:
+	case 5:
 		p->verts[ind][3] = (1024 - v[0]) / 2048;
 		p->verts[ind][4] = (1024 - v[1]) / 2048;
 		break;
@@ -411,13 +411,13 @@ struct box_def {
 static void
 enter_face (struct box_def *box, int prev_face, int face)
 {
-	if (box[face].leave >=0 && box[face].leave != prev_face) {
+	if (box[face].leave >=0 && (box[face].leave % 3) != (prev_face % 3)) {
 		vec3_t t;
 		find_cube_vertex (prev_face, face, box[face].leave, t);
-		set_vertex(&box[face].poly, t, prev_face);
+		set_vertex(&box[face].poly, t, face);
 		box[face].enter = -1;
 	} else {
-		box[face].enter = face;
+		box[face].enter = prev_face;
 	}
 	box[face].leave = -1;
 }
@@ -425,7 +425,7 @@ enter_face (struct box_def *box, int prev_face, int face)
 static void
 leave_face (struct box_def *box, int prev_face, int face)
 {
-	if (box[prev_face].enter >=0 && box[prev_face].enter != face) {
+	if (box[prev_face].enter >=0 && (box[prev_face].enter) % 3 != (face % 3)) {
 		vec3_t t;
 		find_cube_vertex (prev_face, face, box[prev_face].enter, t);
 		set_vertex(&box[prev_face].poly, t, prev_face);
@@ -559,6 +559,7 @@ R_DrawSkyChain (msurface_t *sky_chain)
 			glBegin (GL_LINES);
 			for (j=0; j<4; j++) {
 				memcpy (v, &skyvec[i][j][2], sizeof(v));
+				VectorScale (v, 1023.0/1024, v);
 				VectorAdd (v, r_refdef.vieworg, v);
 				glVertex3fv (v);
 			}
