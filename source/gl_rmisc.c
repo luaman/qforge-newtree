@@ -202,6 +202,8 @@ R_Init (void)
 
 	playertextures = texture_extension_number;
 	texture_extension_number += MAX_CLIENTS;
+	player_fb_textures = texture_extension_number;
+	texture_extension_number += MAX_CACHED_SKINS;
 }
 
 void

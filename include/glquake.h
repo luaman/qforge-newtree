@@ -138,6 +138,7 @@ extern	int		d_lightstylevalue[256];	// 8.8 fraction of base light value
 extern	qboolean	envmap;
 extern	int	netgraphtexture;	// netgraph texture
 extern	int	playertextures;
+extern	int	player_fb_textures;
 
 extern	int	skytexturenum;		// index in cl.loadmodel, not gl texture object
 

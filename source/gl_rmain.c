@@ -74,6 +74,7 @@ qboolean	envmap;						// true during envmap command capture
 
 
 int 	playertextures;				// up to 16 color translated skins
+int 	player_fb_textures;			// up to 128 skin fullbright maps
 
 //
 // view origin

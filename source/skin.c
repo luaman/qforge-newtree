@@ -58,7 +58,6 @@ cvar_t     *bottomcolor;
 
 char        allskins[128];
 
-#define	MAX_CACHED_SKINS		128
 skin_t      skins[MAX_CACHED_SKINS];
 int         numskins;
 

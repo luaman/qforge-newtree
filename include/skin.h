@@ -46,6 +46,7 @@ void	Skin_Set_Translate (player_info_t *player);
 void	Skin_Do_Translation (player_info_t *player);
 void	Skin_Process (skin_t *skin, struct tex_s *);
 
+#define MAX_CACHED_SKINS 128
 
 #define RSSHOT_WIDTH 320
 #define RSSHOT_HEIGHT 200
