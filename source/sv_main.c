@@ -1538,10 +1538,10 @@ SV_InitLocal (void)
 		Cvar_Get ("sv_allow_log", "1", CVAR_NONE, "Allow remote logging");
 	sv_allow_status =
 		Cvar_Get ("sv_allow_status", "1", CVAR_NONE,
-				  "Allow remote status queries (gamespy etc)");
+				  "Allow remote status queries (qstat etc)");
 	sv_allow_ping =
 		Cvar_Get ("sv_allow_pings", "1", CVAR_NONE,
-				  "Allow remote pings (gamespy etc)");
+				  "Allow remote pings (qstat etc)");
 	sv_netdosprotect =
 		Cvar_Get ("sv_netdosprotect", "0", CVAR_NONE,
 				  "DoS flood attack protection");
