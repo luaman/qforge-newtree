@@ -14,6 +14,7 @@ bin_SCRIPTS = ChangeLog
 ChangeLog:
 	-touch ChangeLog
 	-tools/cvs2cl/cvs2cl.pl
+	-rm -f ChangeLog.bak
 
 dist-zip: distdir
 	-chmod -R a+r $(distdir)
