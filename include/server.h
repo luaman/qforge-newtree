@@ -274,6 +274,23 @@ typedef struct
 } server_static_t;
 
 //=============================================================================
+// DoSflood protection
+//=============================================================================
+typedef struct
+{
+        	netadr_t        adr;
+	        double		issued;
+                int		floodcount;
+                int		cmdcount;
+                double 		firstseen;
+} flood_t;
+
+enum {FLOOD_PING, FLOOD_LOG, FLOOD_CONNECT, FLOOD_STATUS, FLOOD_RCON, FLOOD_BAN};
+
+#define DOSFLOODCMDS 6
+#define DOSFLOODIP 64   // remember latest 64 IP's for each cmd.
+
+//=============================================================================
 
 // edict->movetype values
 #define	MOVETYPE_NONE			0		// never moves

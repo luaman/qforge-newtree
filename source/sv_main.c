@@ -62,10 +62,23 @@ netadr_t	master_adr[MAX_MASTERS];	// address of group servers
 
 client_t	*host_client;			// current client
 
+// DoS protection
+// FLOOD_PING, FLOOD_LOG, FLOOD_CONNECT, FLOOD_STATUS, FLOOD_RCON, FLOOD_BAN
+// fixme: these default values need to be tweaked after more testing
+
+double netdosexpire[DOSFLOODCMDS] = {1,1,2,0.9,1,5};
+double netdosvalues[DOSFLOODCMDS] = {12,1,3,2,1,1};
+
+cvar_t *sv_netdosprotect;	// tone down DoS from quake servers
+
+cvar_t *sv_allow_status;
+cvar_t *sv_allow_log;
+cvar_t *sv_allow_ping;
+
 cvar_t	*fs_globalcfg;
 
 cvar_t	*sv_mintic;	// bound the size of the
-cvar_t	*sv_maxtic;	// physics time tic 
+cvar_t	*sv_maxtic;	// physics time tic
 
 cvar_t	*developer;		// show extra messages
 
@@ -370,6 +383,79 @@ CONNECTIONLESS COMMANDS
 
 /*
 ================
+CheckForFlood :: EXPERIMENTAL
+
+Makes it more difficult to use Quake servers for DoS attacks against other sites.
+
+Bad sides: affects gamespy and spytools somewhat...
+
+================
+*/
+
+int CheckForFlood(char cmdtype)
+{
+	static qboolean firsttime=true;
+        static flood_t floodstatus[DOSFLOODCMDS][DOSFLOODIP];
+
+        int i;
+        double currenttime;
+        double oldestTime;
+        static double lastmessagetime=0;
+        int oldest;
+
+	if (!sv_netdosprotect->value) return 0;
+
+	oldestTime=0x7fffffff;
+	oldest=0;
+
+	if (firsttime) {
+        	memset(floodstatus,sizeof(flood_t)*DOSFLOODCMDS*DOSFLOODIP,0);
+                firsttime=false;
+        }
+
+        currenttime=Sys_DoubleTime();
+
+	for (i = 0 ; i < DOSFLOODIP ; i++)
+	{
+		if (NET_CompareBaseAdr (net_from, floodstatus[cmdtype][i].adr))
+			break;
+		if (floodstatus[cmdtype][i].issued < oldestTime)
+		{
+			oldestTime = floodstatus[cmdtype][i].issued;
+			oldest = i;
+		}
+	}
+
+        if (i<DOSFLOODIP && floodstatus[cmdtype][i].issued)
+        	if(floodstatus[cmdtype][i].issued+netdosexpire[cmdtype]>currenttime)
+        	{
+			floodstatus[cmdtype][i].floodcount+=1;
+			if (floodstatus[cmdtype][i].floodcount>netdosvalues[cmdtype])
+	                {
+                                if (lastmessagetime+5<currenttime)
+		                Con_Printf("Blocking type %d flood from (or to) %s\n",cmdtype,NET_AdrToString(net_from));
+		                Con_Printf("%f %f\n",currenttime,floodstatus[cmdtype][i].issued);
+				floodstatus[cmdtype][i].floodcount=0;
+				floodstatus[cmdtype][i].issued = currenttime;
+			        floodstatus[cmdtype][i].cmdcount+=1;
+                                lastmessagetime=currenttime;
+	                        return 1;
+	                }
+		} else floodstatus[cmdtype][i].floodcount=0;
+
+       	if (i == DOSFLOODIP)
+	{
+		i = oldest;
+		floodstatus[cmdtype][i].adr = net_from;
+                floodstatus[cmdtype][i].firstseen=currenttime;
+	}
+	floodstatus[cmdtype][i].issued = currenttime;
+        floodstatus[cmdtype][i].cmdcount+=1;
+	return 0;
+}
+
+/*
+================
 SVC_Status
 
 Responds with all the info that qplug or qspy can see
@@ -382,6 +468,10 @@ void SVC_Status (void)
 	client_t	*cl;
 	int		ping;
 	int		top, bottom;
+
+	if (CheckForFlood(FLOOD_STATUS)) return;
+
+	if (!sv_allow_status->value) return;
 
 	Cmd_TokenizeString ("status");
 	SV_BeginRedirect (RD_PACKET);
@@ -448,6 +538,9 @@ void SVC_Log (void)
 	int		seq;
 	char	data[MAX_DATAGRAM+64];
 
+	if (sv_allow_log->value) return;
+	if (CheckForFlood(FLOOD_LOG)) return;
+
 	if (Cmd_Argc() == 2)
 		seq = atoi(Cmd_Argv(1));
 	else
@@ -464,8 +557,8 @@ void SVC_Log (void)
 
 	//sprintf (data, "stdlog %i\n", svs.logsequence-1);
 	//strcat (data, (char *)svs.log_buf[((svs.logsequence-1)&1)]);
-	snprintf (data, sizeof(data), "stdlog %i\n%s", 
-            svs.logsequence-1, 
+	snprintf (data, sizeof(data), "stdlog %i\n%s",
+            svs.logsequence-1,
             (char *)svs.log_buf[((svs.logsequence-1)&1)]);
 
 	NET_SendPacket (strlen(data)+1, data, net_from);
@@ -481,6 +574,9 @@ Just responds with an acknowledgement
 void SVC_Ping (void)
 {
 	char	data;
+
+	if (!sv_allow_ping->value) return;
+	if (CheckForFlood(FLOOD_PING)) return;
 
 	data = A2A_ACK;
 
@@ -504,6 +600,7 @@ void SVC_GetChallenge (void)
 	int		oldest;
 	int		oldestTime;
 
+//       	if (CheckForFlood(FLOOD_CHALLENGE)) return;
 	oldest = 0;
 	oldestTime = 0x7fffffff;
 
@@ -556,6 +653,8 @@ void SVC_DirectConnect (void)
 	int			qport;
 	int			version;
 	int			challenge;
+
+	if (CheckForFlood(FLOOD_CONNECT)) return;
 
 	version = atoi(Cmd_Argv(1));
 	if (version != PROTOCOL_VERSION)
@@ -705,7 +804,7 @@ void SVC_DirectConnect (void)
 		return;
 	}
 
-	
+
 	// build a new connection
 	// accept the new client
 	// this is the only place a client_t is ever initialized
@@ -781,6 +880,7 @@ void SVC_RemoteCommand (void)
 	int		i;
 	char	remaining[1024];
 
+	if (CheckForFlood(FLOOD_RCON)) return;
 
 	if (!Rcon_Validate ()) {
 		Con_Printf ("Bad rcon from %s:\n%s\n"
@@ -878,7 +978,7 @@ void SV_ConnectionlessPacket (void)
 ==============================================================================
 
 PACKET FILTERING
- 
+
 
 You can add or remove addresses from the filter list with:
 
@@ -1076,11 +1176,13 @@ void SV_SendBan (void)
 {
 	char		data[128];
 
+	if (CheckForFlood(FLOOD_BAN)) return;
+
 	data[0] = data[1] = data[2] = data[3] = 0xff;
 	data[4] = A2C_PRINT;
 	data[5] = 0;
 	strcat (data, "\nbanned.\n");
-	
+
 	NET_SendPacket (strlen(data), data, net_from);
 }
 
@@ -1132,7 +1234,7 @@ void SV_ReadPackets (void)
 			SV_ConnectionlessPacket ();
 			continue;
 		}
-		
+
 		// read the qport out of the message so we can fix up
 		// stupid address translating routers
 		MSG_BeginReading ();
@@ -1207,7 +1309,7 @@ void SV_CheckTimeouts (void)
 				cl->state = cs_free;	// don't bother with zombie state
 			}
 		}
-		if (cl->state == cs_zombie && 
+		if (cl->state == cs_zombie &&
 			realtime - cl->connection_started > zombietime->value)
 		{
 			cl->state = cs_free;	// can now be reused
@@ -1393,11 +1495,16 @@ void SV_InitLocal (void)
 	sv_timekick_fuzz = Cvar_Get("sv_timekick_fuzz",  "15", CVAR_NONE, "Time cheat \"fuzz factor\"");
 	sv_timekick_interval = Cvar_Get("sv_timekick_interval",  "30", CVAR_NONE, "Time cheat check interval");
 
+        sv_allow_log = Cvar_Get("sv_allow_log", "1", CVAR_NONE, "Allow remote logging");
+        sv_allow_status = Cvar_Get("sv_allow_status","1", CVAR_NONE, "Allow remote status queries (gamespy etc)");
+        sv_allow_ping = Cvar_Get("sv_allow_pings","1", CVAR_NONE, "Allow remote pings (gamespy etc)");
+	sv_netdosprotect = Cvar_Get("sv_netdosprotect","0", CVAR_NONE, "DoS flood attack protection");
+
 	sv_timestamps = Cvar_Get ("sv_timestamps", "0", CVAR_NONE, "Time/date stamps in log entries");
 	sv_timefmt = Cvar_Get ("sv_timefmt", "[%b %e %X] ", CVAR_NONE, "Time/date format to use");
 
 	filterban = Cvar_Get("filterban",  "1", CVAR_NONE, "None");
-	
+
 	allow_download = Cvar_Get("allow_download",  "1", CVAR_NONE, "None");
 	allow_download_skins = Cvar_Get("allow_download_skins",  "1", CVAR_NONE, "None");
 	allow_download_models = Cvar_Get("allow_download_models",  "1", CVAR_NONE, "None");
