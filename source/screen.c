@@ -29,24 +29,25 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "input.h"
-#include "sys.h"
-#include "screen.h"
-#include "r_local.h"
-#include "wad.h"
-#include "compat.h"
-#include "draw.h"
-#include "quakedef.h"
-#include "keys.h"
-#include "console.h"
-#include "msg.h"
-#include "sbar.h"
-#include "menu.h"
-#include "qendian.h"
-#include "cmd.h"
 
 #include <time.h>
 #include <string.h>
+
+#include "client.h"
+#include "cmd.h"
+#include "console.h"
+#include "cvar.h"
+#include "draw.h"
+#include "keys.h"
+#include "menu.h"
+#include "msg.h"
+#include "pcx.h"
+#include "qendian.h"
+#include "quakedef.h"
+#include "r_local.h"
+#include "sbar.h"
+#include "sys.h"
+#include "vid.h"
 
 /*
 

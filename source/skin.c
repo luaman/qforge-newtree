@@ -29,15 +29,16 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "sys.h"
-#include "cmd.h"
-#include "msg.h"
-#include "client.h"
-#include "console.h"
-#include "commdef.h"
-#include "va.h"
 
 #include <string.h>
+
+#include "client.h"
+#include "cmd.h"
+#include "console.h"
+#include "msg.h"
+#include "pcx.h"
+#include "sys.h"
+#include "va.h"
 
 cvar_t		*baseskin;
 cvar_t		*noskins;
