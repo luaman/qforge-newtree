@@ -402,22 +402,6 @@ void Con_Printf (char *fmt, ...)
 		
 // write it to the scrollable buffer
 	Con_Print (msg);
-
-#if 0	// Tonik
-// update the screen immediately if the console is displayed
-	if (cls.state != ca_active)
-	{
-	// protect against infinite loop if something in SCR_UpdateScreen calls
-	// Con_Printf
-		static qboolean	inupdate;
-		if (!inupdate)
-		{
-			inupdate = true;
-			SCR_UpdateScreen ();
-			inupdate = false;
-		}
-	}
-#endif
 }
 
 /*
@@ -663,63 +647,3 @@ void Con_DrawConsole (int lines)
 // draw the input prompt, user text, and cursor if desired
 	Con_DrawInput ();
 }
-
-
-/*
-==================
-Con_NotifyBox
-==================
-*/
-void Con_NotifyBox (char *text)
-{
-	double		t1, t2;
-
-// during startup for sound / cd warnings
-	Con_Printf("\n\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n");
-
-	Con_Printf (text);
-
-	Con_Printf ("Press a key.\n");
-	Con_Printf("\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n");
-
-	key_count = -2;		// wait for a key down and up
-	key_dest = key_console;
-
-	do
-	{
-		t1 = Sys_DoubleTime ();
-		SCR_UpdateScreen ();
-		IN_SendKeyEvents ();
-		t2 = Sys_DoubleTime ();
-		realtime += t2-t1;		// make the cursor blink
-	} while (key_count < 0);
-
-	Con_Printf ("\n");
-	key_dest = key_game;
-	realtime = 0;				// put the cursor back to invisible
-}
-
-
-/*
-==================
-Con_SafePrintf
-
-Okay to call even when the screen can't be updated
-==================
-*/
-void Con_SafePrintf (char *fmt, ...)
-{
-	va_list		argptr;
-	char		msg[1024];
-	int			temp;
-		
-	va_start (argptr, fmt);
-	vsnprintf (msg, sizeof(msg), fmt, argptr);
-	va_end (argptr);
-	
-	temp = scr_disabled_for_loading;
-	scr_disabled_for_loading = true;
-	Con_Printf ("%s", msg);
-	scr_disabled_for_loading = temp;
-}
-

@@ -337,7 +337,7 @@ void GL_Init (void)
 	dlhand = dlopen (NULL, RTLD_LAZY);
 
 	if (dlhand == NULL) {
-		Con_SafePrintf ("unable to set.\n");
+		Con_Printf ("unable to set.\n");
 		return;
 	}
 
@@ -474,15 +474,15 @@ void VID_Init8bitPalette()
 
 	dlhand = dlopen (NULL, RTLD_LAZY);
 
-	Con_SafePrintf ("8-bit GL extensions: ");
+	Con_Printf ("8-bit GL extensions: ");
 
 	if (dlhand == NULL) {
-		Con_SafePrintf ("unable to check.\n");
+		Con_Printf ("unable to check.\n");
 		return;
 	}
 
 	if (COM_CheckParm("-no8bit")) {
-		Con_SafePrintf("disabled.\n");
+		Con_Printf("disabled.\n");
 		return;
 	}
 
@@ -491,7 +491,7 @@ void VID_Init8bitPalette()
 		GLubyte table[256][4];
 		gl3DfxSetPaletteEXT_FUNC load_texture = NULL;
 
-		Con_SafePrintf("3DFX_set_global_palette.\n");
+		Con_Printf("3DFX_set_global_palette.\n");
 		load_texture = (void *) dlsym(dlhand, "gl3DfxSetPaletteEXT");
 
 		glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
@@ -510,7 +510,7 @@ void VID_Init8bitPalette()
 		char *oldPalette, *newPalette;
 		glColorTableEXT_FUNC load_texture = NULL;
 
-		Con_SafePrintf("GL_EXT_shared.\n");
+		Con_Printf("GL_EXT_shared.\n");
 		load_texture = (void *) dlsym(dlhand, "glColorTableEXT");
 
 		glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
@@ -528,7 +528,7 @@ void VID_Init8bitPalette()
 
 	dlclose(dlhand);
 	dlhand = NULL;
-	Con_SafePrintf ("not found.\n");
+	Con_Printf ("not found.\n");
 }
 
 void VID_Init(unsigned char *palette)
@@ -613,7 +613,7 @@ void VID_Init(unsigned char *palette)
 	// Check for 3DFX Extensions and initialize them.
 	VID_Init8bitPalette();
 
-	Con_SafePrintf ("Video mode %dx%d initialized.\n", width, height);
+	Con_Printf ("Video mode %dx%d initialized.\n", width, height);
 
 	vid.recalc_refdef = 1;				// force a surface cache flush
 }

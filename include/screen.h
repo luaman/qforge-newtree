@@ -40,10 +40,7 @@ void SCR_UpdateWholeScreen (void);
 
 void SCR_SizeUp (void);
 void SCR_SizeDown (void);
-void SCR_BringDownConsole (void);
 void SCR_CenterPrint (char *str);
-
-int SCR_ModalMessage (char *text);
 
 extern	float		scr_con_current;
 extern	float		scr_conlines;		// lines of console to display

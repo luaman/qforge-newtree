@@ -67,8 +67,6 @@ int		history_line=0;
 
 keydest_t	key_dest;
 
-int		key_count;			// incremented every key event
-
 char	*keybindings[256];
 qboolean	consolekeys[256];	// if true, can't be rebound while in console
 qboolean	menubound[256];	// if true, can't be rebound while in menu
@@ -790,11 +788,6 @@ Key_Event ( int key, qboolean down )
 		key_repeats[key] = 0;
 
 	key_lastpress = key;
-	key_count++;
-	if (key_count <= 0)
-	{
-		return;		// just catching keys for Con_NotifyBox
-	}
 
 // update auto-repeat status
 	if (down)

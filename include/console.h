@@ -64,12 +64,9 @@ void Con_DrawConsole (int lines);
 void Con_Print (char *txt);
 void Con_Printf (char *fmt, ...) __attribute__((format(printf,1,2)));
 void Con_DPrintf (char *fmt, ...) __attribute__((format(printf,1,2)));
-void Con_SafePrintf (char *fmt, ...) __attribute__((format(printf,1,2)));
 void Con_Clear_f (void);
 void Con_DrawNotify (void);
 void Con_ClearNotify (void);
 void Con_ToggleConsole_f (void);
-
-void Con_NotifyBox (char *text);	// during startup for sound / cd warnings
 
 #endif // _CONSOLE_H

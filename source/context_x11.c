@@ -266,7 +266,7 @@ x11_set_vidmode(int width, int height)
 			hasvidmode = 0;
 		}
 	}
-	Con_SafePrintf ("hasvidmode = %i\nnummodes = %i\n", hasvidmode, nummodes);
+	Con_Printf ("hasvidmode = %i\nnummodes = %i\n", hasvidmode, nummodes);
 
 	if (hasvidmode && vid_fullscreen->value) {
 		int smallest_mode=0, x=MAXINT, y=MAXINT;

@@ -964,61 +964,8 @@ void SCR_DrawNotifyString (void)
 	} while (1);
 }
 
-/*
-==================
-SCR_ModalMessage
-
-Displays a text string in the center of the screen and waits for a Y or N
-keypress.  
-==================
-*/
-int SCR_ModalMessage (char *text)
-{
-	scr_notifystring = text;
- 
-// draw a fresh screen
-	scr_fullupdate = 0;
-	scr_drawdialog = true;
-	SCR_UpdateScreen ();
-	scr_drawdialog = false;
-	
-	S_ClearBuffer ();		// so dma doesn't loop current sound
-
-	do
-	{
-		key_count = -1;		// wait for a key down and up
-		IN_SendKeyEvents ();
-	} while (key_lastpress != 'y' && key_lastpress != 'n' && key_lastpress != K_ESCAPE);
-
-	scr_fullupdate = 0;
-	SCR_UpdateScreen ();
-
-	return key_lastpress == 'y';
-}
-
 
 //=============================================================================
-
-/*
-===============
-SCR_BringDownConsole
-
-Brings the console down and fades the palettes back to normal
-================
-*/
-void SCR_BringDownConsole (void)
-{
-	int		i;
-	
-	scr_centertime_off = 0;
-	
-	for (i=0 ; i<20 && scr_conlines != scr_con_current ; i++)
-		SCR_UpdateScreen ();
-
-	cl.cshifts[0].percent = 0;		// no area contents palette on next frame
-	VID_SetPalette (host_basepal);
-}
-
 
 /*
 ==================

@@ -418,7 +418,7 @@ void VID_Init8bitPalette()
 	if (strstr(gl_extensions, "GL_EXT_shared_texture_palette") == NULL)
 		return;
 
-	Con_SafePrintf("8-bit GL extensions enabled.\n");
+	Con_Printf("8-bit GL extensions enabled.\n");
 	glEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
 	oldPalette = (char *) d_8to24table; //d_8to24table3dfx;
 	newPalette = thePalette;
@@ -510,7 +510,7 @@ void VID_Init(unsigned char *palette)
 			hasdga = hasdgavideo = 0;
 		}
 	}
-	Con_SafePrintf ("hasdga = %i\nhasdgavideo = %i\n", hasdga, hasdgavideo);
+	Con_Printf ("hasdga = %i\nhasdgavideo = %i\n", hasdga, hasdgavideo);
 #endif
 #ifdef HAVE_DLOPEN
 	dlhand = dlopen(NULL, RTLD_LAZY);
@@ -585,7 +585,7 @@ void VID_Init(unsigned char *palette)
 	// Check for 3DFX Extensions and initialize them.
 	VID_Init8bitPalette();
 
-	Con_SafePrintf ("Video mode %dx%d initialized.\n",
+	Con_Printf ("Video mode %dx%d initialized.\n",
 			width, height);
 
 	vid_initialized = true;

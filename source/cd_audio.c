@@ -809,12 +809,7 @@ int CDAudio_Init(void)
 	dos_int86 (0x2f);
 	if (regs.x.bx == 0)
 	{
-		Con_NotifyBox (
-			"MSCDEX not loaded, music is\n"
-			"disabled.  Use \"-nocdaudio\" if you\n"
-			"wish to avoid this message in the\n"
-			"future.  See README.TXT for help.\n"
-			);			
+		Con_Printf ("MSCDEX not loaded, music is disabled.  Use \"-nocdaudio\" if you wish to avoid this message in the future.  See README.TXT for help.\n");
 		return -1;
 	}
 	if (regs.x.bx > 1)
@@ -826,12 +821,7 @@ int CDAudio_Init(void)
 	dos_int86 (0x2f);
 	if (regs.x.bx == 0)
 	{
-		Con_NotifyBox (
-			"MSCDEX version 2.00 or later\n"
-			"required for music. See README.TXT\n"
-			"for help.\n"
-			);			
-		Con_DPrintf("CDAudio_Init: MSCDEX version 2.00 or later required.\n");
+		Con_Printf ("MSCDEX version 2.00 or later required for music. See README.TXT for help.\n");			
 		return -1;
 	}
 
