@@ -32,7 +32,7 @@
 #include "protocol.h"
 #include "cvar.h"
 
-#define freelook (in_mlook.state&1 || cl_freelook->value)
+#define freelook (in_mlook.state&1 || cl_freelook->int_val)
 
 void IN_Init (void);
 

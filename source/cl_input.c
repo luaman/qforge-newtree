@@ -29,7 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "in_win.h"
+#include "input.h"
 #include "sys.h"
 #include "sys.h"
 #include "cvar.h"
@@ -145,7 +145,7 @@ void IN_KLookUp (void) {KeyUp(&in_klook);}
 void IN_MLookDown (void) {KeyDown(&in_mlook);}
 void IN_MLookUp (void) {
 KeyUp(&in_mlook);
-if ( !(in_mlook.state&1 || cl_freelook->value) &&  lookspring->value)
+if ( !freelook &&  lookspring->value)
 	V_StartPitchDrift();
 }
 void IN_UpDown(void) {KeyDown(&in_up);}

@@ -35,11 +35,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <string.h>
 #include <errno.h>
+
+#include <string.h>
+
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
@@ -59,12 +66,9 @@
 #include "console.h"
 #include "client.h"
 #include "context_x11.h"
-#include "qargs.h"
+#include "input.h"
 #include "joystick.h"
-
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
+#include "qargs.h"
 
 cvar_t		*_windowed_mouse;
 cvar_t		*m_filter;
@@ -302,18 +306,19 @@ void
 IN_Commands (void)
 {
 	JOY_Command ();
-	if (old__windowed_mouse != _windowed_mouse->value) {
-		old__windowed_mouse = _windowed_mouse->value;
 
-		if (!_windowed_mouse->value) {
+	if (old__windowed_mouse != _windowed_mouse->int_val) {
+		old__windowed_mouse = _windowed_mouse->int_val;
+
+		if (!_windowed_mouse->int_val) {
 			/* ungrab the pointer */
-			XUngrabPointer(x_disp,CurrentTime);
+			XUngrabPointer (x_disp, CurrentTime);
 		} else {
 			/* grab the pointer */
-			XGrabPointer(x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
-						 GrabModeAsync, x_win, None, CurrentTime);
-			//XGrabPointer(x_disp,x_win,True,0,GrabModeAsync,
-			//		GrabModeAsync,x_win,None,CurrentTime);
+			XGrabPointer (x_disp, x_win, True, MOUSE_MASK, GrabModeAsync,
+							GrabModeAsync, x_win, None, CurrentTime);
+//			XGrabPointer (x_disp,x_win,True,0,GrabModeAsync,
+//							GrabModeAsync,x_win,None,CurrentTime);
 		}
 	}
 }
@@ -335,7 +340,7 @@ IN_Move (usercmd_t *cmd)
 	if (!mouse_avail)
 		return;
 
-	if (m_filter->value) {
+	if (m_filter->int_val) {
 		mouse_x = (mouse_x + old_mouse_x) * 0.5;
 		mouse_y = (mouse_y + old_mouse_y) * 0.5;
 	}
@@ -346,14 +351,15 @@ IN_Move (usercmd_t *cmd)
 	mouse_x *= sensitivity->value;
 	mouse_y *= sensitivity->value;
 
-	if ( (in_strafe.state & 1) || (lookstrafe->value && (in_mlook.state & 1) ))
+	if ((in_strafe.state & 1) || (lookstrafe->int_val && freelook))
 		cmd->sidemove += m_side->value * mouse_x;
 	else
 		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
-	if (in_mlook.state & 1)
+		
+	if (freelook)
 		V_StopPitchDrift ();
 
-	if ( (in_mlook.state & 1) && !(in_strafe.state & 1)) {
+	if (freelook && !(in_strafe.state & 1)) {
 		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
 		cl.viewangles[PITCH] = bound (-70, cl.viewangles[PITCH], 80);
 	} else {
@@ -390,13 +396,14 @@ void
 IN_Shutdown (void)
 {
 	JOY_Shutdown ();
-	Con_Printf("IN_Shutdown\n");
+
+	Con_Printf ("IN_Shutdown\n");
 	mouse_avail = 0;
 	if (x_disp) {
-		XAutoRepeatOn(x_disp);
+		XAutoRepeatOn (x_disp);
 
 #ifdef HAVE_DGA
-		XF86DGADirectVideo(x_disp, DefaultScreen(x_disp), 0);
+		XF86DGADirectVideo (x_disp, DefaultScreen (x_disp), 0);
 #endif
 	}
 	x11_close_display();
@@ -404,7 +411,7 @@ IN_Shutdown (void)
 
 extern int scr_width, scr_height;
 
-int
+void
 IN_Init (void)
 {
 // open the display
@@ -433,7 +440,8 @@ IN_Init (void)
 
 	XAutoRepeatOff(x_disp);
 
-	if (COM_CheckParm("-nomouse")) return 1;
+	if (COM_CheckParm("-nomouse"))
+		return;
 #ifdef HAVE_DGA
 	in_dgamouse = Cvar_Get ("in_dgamouse", "0", CVAR_ROM,
 			"1 if you have DGA mouse support");
@@ -473,5 +481,5 @@ IN_Init (void)
 	x11_add_event(ButtonRelease, &event_button);
 	x11_add_event(MotionNotify, &event_motion);
 
-	return 1;
+	return;
 }

@@ -10,9 +10,7 @@ EXTRA_DIST = README.WIN newtree.dsw ChangeLog \
 	tools/gas2masm/gas2masm.mak tools/gas2masm/gas2masm.mdp \
 	tools/zpak
 
-bin_SCRIPTS = ChangeLog
-
-ChangeLog:
+changelog::
 	-touch ChangeLog
 	-tools/cvs2cl/cvs2cl.pl
 	-rm -f ChangeLog.bak

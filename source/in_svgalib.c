@@ -38,6 +38,7 @@
 #include "cvar.h"
 #include "cmd.h"
 #include "qargs.h"
+#include "input.h"
 #include "joystick.h"
 
 #include <stdio.h>
@@ -102,7 +103,8 @@ void Force_CenterView_f(void)
 }
 
 
-int IN_Init(void)
+void
+IN_Init (void)
 {
 	if (COM_CheckParm("-nokbd")) UseKeyboard = 0;
 	if (COM_CheckParm("-nomouse")) UseMouse = 0;
@@ -115,10 +117,11 @@ int IN_Init(void)
 	JOY_Init();
 
 	in_svgalib_inited = 1;
-	return 1;
+	return;
 }
 
-static void IN_init_kb()
+static void
+IN_init_kb (void)
 {
 	int i;
 
@@ -232,13 +235,14 @@ static void IN_init_kb()
 	scantokey[111] = K_DEL;
 	scantokey[119] = K_PAUSE;
 
-	if (keyboard_init()) {
-		Sys_Error("keyboard_init() failed");
+	if (keyboard_init ()) {
+		Sys_Error ("keyboard_init() failed");
 	}
 	keyboard_seteventhandler(keyhandler);
 }
 
-static void IN_init_mouse()
+static void
+IN_init_mouse()
 {
 	int mtype;
 	char *mousedev;
@@ -339,7 +343,7 @@ void IN_Move(usercmd_t *cmd)
 	while (mouse_update())
 		;
 
-	if (m_filter->value) {
+	if (m_filter->int_val) {
 		mouse_x = (mx + old_mouse_x) * 0.5;
 		mouse_y = (my + old_mouse_y) * 0.5;
 	} else {
@@ -355,23 +359,18 @@ void IN_Move(usercmd_t *cmd)
 	mouse_y *= sensitivity->value;
 
 	/* Add mouse X/Y movement to cmd */
-	if ( (in_strafe.state & 1) ||
-	     (lookstrafe->value && (in_mlook.state & 1) )) {
+	if ((in_strafe.state & 1) || (lookstrafe->int_val && freelook)) {
 		cmd->sidemove += m_side->value * mouse_x;
 	} else {
 		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
 	}
 
-	if ((in_mlook.state & 1)) V_StopPitchDrift();
+	if (freelook)
+		V_StopPitchDrift();
 
-	if ((in_mlook.state & 1) && !(in_strafe.state & 1)) {
+	if (freelook && !(in_strafe.state & 1)) {
 		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
-		if (cl.viewangles[PITCH] > 80) {
-			cl.viewangles[PITCH] = 80;
-		}
-		if (cl.viewangles[PITCH] < -70) {
-			cl.viewangles[PITCH] = -70;
-		}
+		cl.viewangles[PITCH] = bound (-70, cl.viewangles[PITCH], 80);
 	} else {
 		if ((in_strafe.state & 1) && noclip_anglehack) {
 			cmd->upmove -= m_forward->value * mouse_y;

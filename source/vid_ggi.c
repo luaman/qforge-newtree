@@ -67,6 +67,8 @@
 #include "d_local.h"
 #include "input.h"
 
+#include "joystick.h"
+
 extern viddef_t        vid; // global video state
 unsigned short	d_8to16table[256];
 
@@ -910,6 +912,8 @@ void IN_SendKeyEvents(void)
 void
 IN_Init(void)
 {
+	JOY_Init ();
+
 	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
 	old_windowed_mouse = -1; /* Force update */
 	m_filter = Cvar_Get("m_filter", "0", CVAR_ARCHIVE, "None");
@@ -923,6 +927,9 @@ IN_Init(void)
 void
 IN_Shutdown(void)
 {
+	JOY_Shutdown ();
+
+	Con_Printf("IN_Shutdown\n");
 	mouse_avail = 0;
 }
 
@@ -930,6 +937,8 @@ IN_Shutdown(void)
 void
 IN_Commands (void)
 {
+	JOY_Command ();
+
 	/* Only supported by LibGII 0.7 or later. */
 #ifdef GII_CMDCODE_PREFER_RELPTR
 	if (old_windowed_mouse != _windowed_mouse->value) {
@@ -952,9 +961,12 @@ IN_Commands (void)
 void
 IN_Move(usercmd_t *cmd)
 {
-	if (!mouse_avail) return;
+	JOY_Move (cmd);
+	
+	if (!mouse_avail)
+		return;
 
-	if (m_filter->value) {
+	if (m_filter->int_val) {
 		mouse_x = (mouse_x + old_mouse_x) * 0.5;
 		mouse_y = (mouse_y + old_mouse_y) * 0.5;
 	}
@@ -965,19 +977,16 @@ IN_Move(usercmd_t *cmd)
 	mouse_x *= sensitivity->value;
 	mouse_y *= sensitivity->value;
 
-	if ( (in_strafe.state & 1) || (lookstrafe->value && freelook ))
+	if ( (in_strafe.state & 1) || (lookstrafe->int_val && freelook))
 		cmd->sidemove += m_side->value * mouse_x;
 	else
 		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
 	if (freelook)
 		V_StopPitchDrift ();
 
-	if ( freelook && !(in_strafe.state & 1)) {
+	if (freelook && !(in_strafe.state & 1)) {
 		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
-		if (cl.viewangles[PITCH] > 80)
-			cl.viewangles[PITCH] = 80;
-		if (cl.viewangles[PITCH] < -70)
-			cl.viewangles[PITCH] = -70;
+		cl.viewangles[PITCH] = bound (-70, cl.viewangles[PITCH], 80);
 	} else {
 		if ((in_strafe.state & 1) && noclip_anglehack)
 			cmd->upmove -= m_forward->value * mouse_y;
