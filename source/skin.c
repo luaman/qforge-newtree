@@ -126,6 +126,8 @@ Skin_Cache (skin_t *skin)
 	QFile      *file;
 	tex_t      *tex;
 	int         pixels;
+	byte       *ipix, *opix;
+	int         i;
 
 	if (cls.downloadtype == dl_skin)
 		return NULL;					// use base until downloaded
@@ -161,13 +163,19 @@ Skin_Cache (skin_t *skin)
 		Con_Printf ("Bad skin %s\n", name);
 		return NULL;
 	}
-	pixels = tex->width * tex->height;
+	pixels = 320 * 200;
 
 	out = Cache_Alloc (&skin->cache, sizeof (tex_t) + pixels, skin->name);
 	if (!out)
 		Sys_Error ("Skin_Cache: couldn't allocate");
-
-	memcpy (out, tex, sizeof (tex_t) + pixels);
+	opix = out->data;
+	out->width = 320;
+	out->height = 200;
+	out->palette = tex->palette;
+	memset (opix, 0, pixels);
+	for (i = 0, ipix = tex->data; i < tex->height;
+	     i++, opix += 320, ipix += tex->width)
+		memcpy (opix, ipix, tex->width);
 
 	Skin_Process (skin, out);
 

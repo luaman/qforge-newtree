@@ -931,8 +931,10 @@ void
 SV_Kill_f (void)
 {
 	if (sv_player->v.health <= 0) {
+		SV_BeginRedirect (RD_CLIENT);
 		SV_ClientPrintf (host_client, PRINT_HIGH,
 						 "Can't suicide -- allready dead!\n");
+		SV_EndRedirect ();
 		return;
 	}
 
@@ -1206,7 +1208,7 @@ ucmd_t      ucmds[] = {
 
 // issued by hand at client consoles    
 	{"rate", SV_Rate_f},
-	{"kill", SV_Kill_f},
+	{"kill", SV_Kill_f, 1},
 	{"pause", SV_Pause_f},
 	{"msg", SV_Msg_f},
 
