@@ -742,8 +742,6 @@ bSetupPixelFormat (HDC hDC)
 	PIXELFORMATDESCRIPTOR pfd ;
 	int         pixelformat;
 
-	char test[1024];
-
 	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
 	pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR); 
 	pfd.nVersion   = 1;
