@@ -381,28 +381,28 @@ locs_loc (void)
 	
 	if (stricmp(Cmd_Argv(1),"add") == 0) {
 		if (Cmd_Argc () >= 3)
-			locs_mark(locfile,cl.simorg,desc);
+			locs_mark(cl.simorg,desc);
 		else
 			Con_Printf("loc add <description> :marks the current location with the description and records the information into a loc file.\n");
 	}
 
 	if (stricmp(Cmd_Argv(1),"rename") == 0) {
 		if (Cmd_Argc () >= 3)
-			locs_edit(locfile,cl.simorg,desc);
+			locs_edit(cl.simorg,desc);
 		else
 			Con_Printf("loc rename <description> :changes the description of the nearest location marker\n");
 	}
 	
 	if (stricmp(Cmd_Argv(1),"delete") == 0) {
 		if (Cmd_Argc () == 2)
-			locs_del(locfile,cl.simorg);
+			locs_del(cl.simorg);
 		else
 			Con_Printf("loc delete :removes nearest location marker\n");
 	}
 	
 	if (stricmp(Cmd_Argv(1),"move") == 0) {
 		if (Cmd_Argc () == 2)
-			locs_edit(locfile,cl.simorg,NULL);
+			locs_edit(cl.simorg,NULL);
 		else
 			Con_Printf("loc move :moves the nearest location marker to your current location\n");
 	}

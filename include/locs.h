@@ -42,9 +42,9 @@ void locs_load(char *filename);
 void locs_reset();
 void locs_add(vec3_t location, char *name);
 void map_to_loc (char *mapname, char *filename);
-void locs_del (char *filename, vec3_t loc);
-void locs_edit (char *filename, vec3_t loc, char *desc);
-void locs_mark (char *filename, vec3_t loc, char *desc);
+void locs_del (vec3_t loc);
+void locs_edit (vec3_t loc, char *desc);
+void locs_mark (vec3_t loc, char *desc);
 void locs_save (char *filename, qboolean gz);
 int locs_nearest (vec3_t loc);
 #endif // __locs_h

@@ -213,10 +213,9 @@ locs_save (char *filename, qboolean gz)
 }
 
 void
-locs_mark (char *filename, vec3_t loc, char *desc)
+locs_mark (vec3_t loc, char *desc)
 {
 	locs_add (loc,desc);
-	locs_save (filename);
 	Con_Printf ("Marked current location: %s\n",desc);
 }
 
@@ -227,7 +226,7 @@ locs_mark (char *filename, vec3_t loc, char *desc)
 */
 
 void
-locs_edit (char *filename, vec3_t loc, char *desc)
+locs_edit (vec3_t loc, char *desc)
 {
 	int i;
 	if (locations_count) {
@@ -242,13 +241,12 @@ locs_edit (char *filename, vec3_t loc, char *desc)
 			Con_Printf ("Changing location description to %s\n",
 					locations[i]->name);
 		}
-		locs_save (filename);
 	} else 
 		Con_Printf ("Error: No location markers to modify!\n");
 }
 
 void
-locs_del (char *filename, vec3_t loc)
+locs_del (vec3_t loc)
 {
 	int i;
 	if (locations_count) {
@@ -261,7 +259,6 @@ locs_del (char *filename, vec3_t loc)
 		for (; i < locations_count; i++)
 			locations[i] = locations[i+1];
 		locations[locations_count] = NULL;
-		locs_save(filename);
 	} else 
 		Con_Printf ("Error: No location markers to remove\n");
 }
