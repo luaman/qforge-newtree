@@ -116,6 +116,7 @@ EXT2=.obj
 # Dependency List
 #
 DEPEND = \
+   $(OBJS)\sv_progs.obj\
    $(OBJS)\sys_x86.obj\
    $(OBJS)\worlda.obj\
    $(OBJS)\ver_check.obj\
@@ -172,6 +173,7 @@ $(EXE)\qf-server.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0x32.obj+
+$(OBJS)\sv_progs.obj+
 $(OBJS)\sys_x86.obj\
 $(OBJS)\worlda.obj+
 $(OBJS)\ver_check.obj+
@@ -232,6 +234,11 @@ $(CROOT)\LIB\cw32.lib
 $(OBJS)\ver_check.obj :  $(QFROOT)\source\ver_check.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\ver_check.c
+
+|
+$(OBJS)\sv_progs.obj :  $(QFROOT)\source\sv_progs.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\sv_progs.c
 
 |
 $(OBJS)\model.obj :  $(QFROOT)\source\model.c
