@@ -150,7 +150,7 @@ CL_SVGA_dependencies = $(patsubst %,%.d,$(basename $(CL_SVGA_sources)))
 CL_SVGA_objects = $(patsubst %.d,%.o,$(CL_SVGA_dependencies))
 
 CL_X11_sources=\
-  vid_x.c
+  vid_x11.c
 
 CL_X11_dependencies = $(patsubst %,%.d,$(basename $(CL_X11_sources)))
 CL_X11_objects = $(patsubst %.d,%.o,$(CL_X11_dependencies))
