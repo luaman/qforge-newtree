@@ -114,8 +114,6 @@ static int	windowed_default;
 unsigned char	vid_curpal[256*3];
 static qboolean fullsbardraw = false;
 
-static float vid_gamma = 1.0;
-
 HGLRC	baseRC;
 HDC		maindc;
 
