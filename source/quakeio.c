@@ -242,7 +242,7 @@ Qprintf(QFile *file, const char *fmt, ...)
 		(void)vsprintf(buf, fmt, args);
 #endif
 		va_end(args);
-		ret = strlen(buf); /* some *sprintf don't return the nb of bytes written */
+		ret = strlen(buf); /* some *snprintf don't return the nb of bytes written */
 		if (ret>0)
 			ret=gzwrite(file, buf, (unsigned)ret);
 	}

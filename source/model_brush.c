@@ -699,7 +699,7 @@ void Mod_LoadLeafs (lump_t *l)
 
 	loadmodel->leafs = out;
 	loadmodel->numleafs = count;
-	//sprintf(s, "maps/%s.bsp", Info_ValueForKey(cl.serverinfo,"map"));
+	//snprintf(s, sizeof (s), "maps/%s.bsp", Info_ValueForKey(cl.serverinfo,"map"));
 	if (!strncmp("maps/", loadmodel->name,5))
 		isnotmap = false;
 	for ( i=0 ; i<count ; i++, in++, out++)

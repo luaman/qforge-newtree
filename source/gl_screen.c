@@ -473,7 +473,7 @@ void SCR_DrawFPS (void)
 		fps_count = 0;
 		lastframetime = t;
 	}
-	/* Misty: I really do need to read about sprintf a bit. This thing keeps chewing on my foot! */
+	/* Misty: I really do need to read about snprintf a bit. This thing keeps chewing on my foot! */
 	snprintf(st, sizeof(st), "%-3d FPS", lastfps);
 	/* Misty: New trick! (for me) the ? makes this work like a if then else - IE: if 
 	cl_hudswap->int_val is not null, do first case, else (else is a : here) do second case.
