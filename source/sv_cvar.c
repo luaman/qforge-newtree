@@ -51,7 +51,7 @@ Cvar_Info (cvar_t *var)
 	if (var->flags & CVAR_SERVERINFO) {
 		unsigned char info[1024], *p, *c;
 
-		if (!sv_highchars->int_val) {
+		if (!sv_highchars || !sv_highchars->int_val) {
 			for (p = info, c = var->string;
 				 *c && (p - info < sizeof (info) - 1);) {
 				*c &= 0x7f;
