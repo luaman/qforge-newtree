@@ -1179,7 +1179,7 @@ void SV_netDoSexpire_f (void)
 	if (Cmd_Argc() == 1)
 	{
 			Con_Printf ("Current DoS prot. expire settings: ");
-                        for (i=0;i<DOSFLOODCMDS;i++) Con_Printf("%d ",netdosexpire[i]);
+                        for (i=0;i<DOSFLOODCMDS;i++) Con_Printf("%f ",netdosexpire[i]);
 			Con_Printf("\n");
 			if (!sv_netdosprotect->value) Con_Printf("(disabled)\n");
 			return;
@@ -1211,7 +1211,7 @@ void SV_netDoSvalues_f (void)
 	if (Cmd_Argc() == 1)
 	{
 			Con_Printf ("Current DoS prot. value settings: ");
-                        for (i=0;i<DOSFLOODCMDS;i++) Con_Printf("%d ",netdosvalues[i]);
+                        for (i=0;i<DOSFLOODCMDS;i++) Con_Printf("%f ",netdosvalues[i]);
 			Con_Printf("\n");
 			if (!sv_netdosprotect->value) Con_Printf("(disabled)\n");
 			return;
