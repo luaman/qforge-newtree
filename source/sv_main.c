@@ -146,6 +146,7 @@ QFile      *sv_fraglogfile;
 
 void        SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
 void        Master_Shutdown (void);
+void        SV_Progs_Init_Cvars (void);
 void        PR_Init_Cvars (void);
 
 //============================================================================
@@ -1905,6 +1906,7 @@ SV_Init (void)
 	Mod_Init_Cvars ();
 	Netchan_Init_Cvars ();
 	Pmove_Init_Cvars ();
+	SV_Progs_Init_Cvars ();
 	PR_Init_Cvars ();
 
 	// and now reprocess the cmdline's sets for overrides
