@@ -61,6 +61,8 @@ char	**com_argv;
 char	*com_cmdline;
 cvar_t	*cmdline;
 
+qboolean	nouse = false;	// 1999-10-29 +USE fix by Maddes
+
 /*
 ================
 COM_CheckParm
@@ -132,6 +134,13 @@ void COM_InitArgv (int argc, char **argv)
 
 	largv[com_argc] = argvdummy;
 	com_argv = largv;
+
+// 1999-10-29 +USE fix by Maddes  start
+	if (COM_CheckParm ("-nouse"))
+	{
+		nouse = true;
+	}
+// 1999-10-29 +USE fix by Maddes  end
 }
 
 /*

@@ -382,6 +382,12 @@ void CL_FinishMove (usercmd_t *cmd)
 		cmd->buttons |= 2;
 	in_jump.state &= ~2;
 
+// 1999-10-29 +USE fix by Maddes  start
+	if (in_use.state & 3)
+		cmd->buttons |= 4;
+	in_use.state &= ~2;
+// 1999-10-29 +USE fix by Maddes  end
+
 	// send milliseconds of time to apply the move
 	ms = host_frametime * 1000;
 	if (ms > 250)
