@@ -7,7 +7,7 @@ CL_SVGA_name=qw-client-svga
 CL_SVGA_libs=-lvga
 
 CL_X11_name=qw-client-x11
-CL_X11_libs=-L/usr/X11R6/lib -lX11 -lXext
+CL_X11_libs=-lX11 -lXext
 
 DIRECTORIES=
 vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
@@ -15,7 +15,7 @@ vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
 CPPFLAGS=-I . -I ../include -DELF -Did386=1 -MMD -Dstricmp=strcasecmp -DSERVERONLY
 CFLAGS=-Wall -Werror
 CXXFLAGS=-Wall -Werror
-LDFLAGS=
+LDFLAGS=-L/usr/X11R6/lib 
 
 CC=gcc
 CXX=g++
@@ -160,14 +160,14 @@ CL_X11_objects = $(patsubst %.d,%.o,$(CL_X11_dependencies))
 
 all: $(SV_name) #$(CL_SVGA_name) $(CL_X11_name)
 
-$(SV_name): $(COM_objects) $(SV_objects) $(SV_libs)
-	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread
+$(SV_name): $(COM_objects) $(SV_objects)
+	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread $(SV_libs)
 
-$(CL_SVGA_name): $(COM_objects) $(CL_objects) $(CL_SVGA_objects) $(CL_SVGA_libs)
-	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread
+$(CL_SVGA_name): $(COM_objects) $(CL_objects) $(CL_SVGA_objects)
+	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread $(CL_SVGA_libs)
 
-$(CL_X11_name): $(COM_objects) $(CL_objects) $(CL_X11_objects) $(CL_X11_libs)
-	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread
+$(CL_X11_name): $(COM_objects) $(CL_objects) $(CL_X11_objects)
+	$(CC) $(LDFLAGS) -o $@ $^ -lm -ldl -lpthread $(CL_X11_libs)
 
 clean:
 	-rm -f *.[od] $(SV_name) $(CL_SVGA_name) $(CL_X11_name)
