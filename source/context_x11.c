@@ -93,7 +93,8 @@ static Atom aWMDelete = 0;
 static XF86VidModeModeInfo **vidmodes;
 static int  nummodes;
 #endif
-static int  hasvidmode = 0;
+static qboolean	vidmode_avail = false;
+static qboolean	vidmode_active = false;
 
 cvar_t     *vid_fullscreen;
 qboolean    vid_fullscreen_active;
@@ -255,44 +256,44 @@ x11_set_vidmode (int width, int height)
 {
 	const char *str = getenv ("MESA_GLX_FX");
 
-	if (str && *str != 'd') {
-		if (tolower (*str) == 'w') {
-			Cvar_Set (vid_fullscreen, "0");
-		} else {
-			Cvar_Set (vid_fullscreen, "1");
-		}
+	if (str && (tolower (*str) == 'f')) {
+		Cvar_Set (vid_fullscreen, "1");
 	}
 
 	XGetScreenSaver (x_disp, &xss_timeout, &xss_interval, &xss_blanking,
 					 &xss_exposures);
-	XSetScreenSaver (x_disp, 0, xss_interval, xss_blanking, xss_exposures);
 
 #ifdef HAVE_VIDMODE
-	if (!(hasvidmode = VID_CheckVMode (x_disp, NULL, NULL))) {
-		Cvar_Set (vid_fullscreen, "0");
-		return;
-	}
+	vidmode_avail = VID_CheckVMode (x_disp, NULL, NULL);
 
 	XF86VidModeGetAllModeLines (x_disp, x_screen, &nummodes, &vidmodes);
 
-	if (vid_fullscreen->int_val) {
-		int         i;
-		int         best_mode = 0, best_x = INT_MAX, best_y = INT_MAX;
+	if (vid_fullscreen->int_val && vidmode_avail) {
+
+		int 		i;
+		int 		best_mode = 0;
+		qboolean	found_mode = false;
 
 		for (i = 0; i < nummodes; i++) {
-			if ((best_x > vidmodes[i]->hdisplay) ||
-				(best_y > vidmodes[i]->vdisplay)) {
-				if ((vidmodes[i]->hdisplay >= width) &&
-					(vidmodes[i]->vdisplay >= height)) {
-					best_mode = i;
-					best_x = vidmodes[i]->hdisplay;
-					best_y = vidmodes[i]->vdisplay;
-				}
+			if ((vidmodes[i]->hdisplay == vid.width) &&
+					(vidmodes[i]->vdisplay == vid.height)) {
+				found_mode = true;
+				best_mode = i;
+				break;
 			}
-			printf ("%dx%d\n", vidmodes[i]->hdisplay, vidmodes[i]->vdisplay);
 		}
-		XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[best_mode]);
-		x11_force_view_port ();
+
+		if (found_mode) {
+			Con_Printf ("VID: Chose video mode: %dx%d\n", vid.width, vid.height);
+
+			XSetScreenSaver (x_disp, 0, xss_interval, xss_blanking, xss_exposures);
+			XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[best_mode]);
+			x11_force_view_port ();
+			vidmode_active = true;
+		} else {
+			Con_Printf ("VID: Mode %dx%d can't go fullscreen.\n", vid.width, vid.height);
+			vidmode_avail = vidmode_active = false;
+		}
 	}
 #endif
 }
@@ -320,7 +321,7 @@ x11_create_window (int width, int height)
 	attr.event_mask = X_MASK;
 	mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
 
-	if (hasvidmode && vid_fullscreen->int_val) {
+	if (vidmode_active && vid_fullscreen->int_val) {
 		attr.override_redirect = 1;
 		mask |= CWOverrideRedirect;
 	}
@@ -382,7 +383,7 @@ x11_restore_vidmode (void)
 					 xss_exposures);
 
 #ifdef HAVE_VIDMODE
-	if (hasvidmode) {
+	if (vidmode_active) {
 		XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[0]);
 		XFree (vidmodes);
 	}
@@ -393,7 +394,7 @@ void
 x11_grab_keyboard (void)
 {
 #ifdef HAVE_VIDMODE
-	if (hasvidmode && vid_fullscreen->int_val) {
+	if (vidmode_active && vid_fullscreen->int_val) {
 		XGrabKeyboard (x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
 					   CurrentTime);
 	}
