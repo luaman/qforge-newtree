@@ -151,10 +151,8 @@ R_AddDynamicLights (msurface_t *surf)
 		blue = cl_dlights[lnum].color[2];
 		brightness = max(red, max(green, blue));
 		
-		rada = cl_dlights[lnum].radius * cl_dlights[lnum].radius
-			* (4.0/16.0); // comparison to min acceptable light
-		if (rada*brightness >= (sd*sd + td*td + dist))
-		{
+		rada = (cl_dlights[lnum].radius * cl_dlights[lnum].radius * 8) / (4.0/16.0); // comparison to min acceptable light
+		if (rada*brightness >= (sd*sd + td*td + dist)) {
 			radb = cl_dlights[lnum].radius 
 				* cl_dlights[lnum].radius * (256.0*4.0);
 			bl = blocklights;
@@ -167,7 +165,7 @@ R_AddDynamicLights (msurface_t *surf)
 					for (s = 0; s < smax; s++)
 					{
 						sd = local[0] - s*16;
-						if (rada >= (sd*sd+td)) // minimum light
+						if (rada >= (sd*sd+td))	// minimum light
 						{
 							brightness = radb / (sd*sd+td);
 							*bl++ += brightness * red;

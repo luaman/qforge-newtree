@@ -545,7 +545,7 @@ void R_DrawAliasModel (entity_t *e)
 			VectorSubtract (currententity->origin,
 							cl_dlights[lnum].origin,
 							dist);
-			add = cl_dlights[lnum].radius - Length(dist);
+			add = (cl_dlights[lnum].radius * cl_dlights[lnum].radius * 8) / (Length(dist) * Length(dist)); // FIXME Deek
 
 			if (add > 0) {
 				ambientlight += add;
@@ -752,7 +752,8 @@ void R_DrawViewModel (void)
 			continue;
 
 		VectorSubtract (currententity->origin, dl->origin, dist);
-		add = dl->radius - Length(dist);
+		add = (dl->radius * dl->radius * 8) / (Length(dist) * Length(dist)); // FIXME Deek
+//		add = dl->radius - Length(dist);
 		if (add > 0)
 			ambientlight += add;
 	}
