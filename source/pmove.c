@@ -33,10 +33,11 @@
 #include "qtypes.h"
 #include "client.h"
 #include "pmove.h"
+#include "cvar.h"
 
 #include <math.h>
 
-
+cvar_t	*no_pogo_stick;
 movevars_t		movevars;
 
 playermove_t	pmove;
@@ -68,6 +69,8 @@ void PM_CategorizePosition (void);
 void Pmove_Init (void)
 {
 	PM_InitBoxHull ();
+	no_pogo_stick = Cvar_Get ("no_pogo_stick", "0", CVAR_SERVERINFO,
+							  "disable the ability to pogo stick");
 }
 
 #define	STEPSIZE	18
@@ -718,11 +721,10 @@ void PM_CategorizePosition (void)
 
 
 /*
-=============
-JumpButton
-=============
+	JumpButton
 */
-void JumpButton (void)
+void
+JumpButton (void)
 {
 	if (pmove.dead)
 	{
@@ -751,8 +753,11 @@ void JumpButton (void)
 		return;
 	}
 
-	if (onground == -1)
+	if (onground == -1) {
+		if (no_pogo_stick->int_val)
+			pmove.oldbuttons |= BUTTON_JUMP;// don't jump again until released
 		return;		// in air, so no effect
+	}
 
 	if ( pmove.oldbuttons & BUTTON_JUMP )
 		return;		// don't pogo stick

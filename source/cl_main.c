@@ -1478,6 +1478,9 @@ void Host_Frame (float time)
 	// fetch results from server
 	CL_ReadPackets ();
 
+	if (atoi(Info_ValueForKey(cl.serverinfo, "no_pogo_stick")))
+		Cvar_Set (no_pogo_stick, "1");
+
 	// send intentions now
 	// resend a connection request if necessary
 	if (cls.state == ca_disconnected) {
