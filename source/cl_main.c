@@ -90,7 +90,7 @@ cvar_t	*cl_timeout;
 /* cvar_t	cl_shownet = {"cl_shownet","0"};	// can be 0, 1, or 2
  CVAR_FIXME */
 cvar_t	*cl_shownet;	// can be 0, 1, or 2
-
+cvar_t	*cl_autoexec;
 /* cvar_t	cl_sbar		= {"cl_sbar", "0", true};
  CVAR_FIXME */
 cvar_t	*cl_sbar;
@@ -1288,8 +1288,7 @@ void CL_InitCvars (void)
  CVAR_FIXME */
 	developer = Cvar_Get("developer", "0", CVAR_NONE, "None");
 
-/* 	Cvar_RegisterVariable (&cl_warncmd);
- CVAR_FIXME */
+	cl_autoexec = Cvar_Get ("cl_autoexec","0",CVAR_ROM,"exec autoexec.cfg on gamedir change");
 	cl_warncmd = Cvar_Get("cl_warncmd",  "0", CVAR_NONE, "None");
 /* 	Cvar_RegisterVariable (&cl_upspeed);
  CVAR_FIXME */

@@ -44,6 +44,7 @@
 /* extern     cvar_t  gl_flashblend;
  CVAR_FIXME */
 extern     cvar_t  *gl_flashblend;
+extern     cvar_t  *cl_autoexec;
 
 char *svc_strings[] =
 {
@@ -596,14 +597,14 @@ void CL_ParseServerData (void)
 			Cbuf_AddText ("cl_warncmd 0\n");
 			Cbuf_AddText ("exec frontend.cfg\n");
 		}
-/*		if (cl_autoexec->value) {
+		if (cl_autoexec->value) {
 			snprintf(fn, sizeof(fn), "%s/%s", com_gamedir, "autoexec.cfg");
 			if ((f = Qopen(fn, "r")) != NULL) {
 				Qclose(f);
 				Cbuf_AddText ("cl_warncmd 0\n");
 				Cbuf_AddText ("exec autoexec.cfg\n");
 			}
-		}	*/
+		}
 		snprintf(fn,sizeof(fn), "cl_warncmd %d\n", cl_warncmd_val);
 		Cbuf_AddText(fn);
 	}
