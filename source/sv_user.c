@@ -1217,7 +1217,7 @@ ucmd_t      ucmds[] = {
 
 	{"serverinfo", SV_ShowServerinfo_f},
 
-	{"download", SV_BeginDownload_f},
+	{"download", SV_BeginDownload_f, 1},
 	{"nextdl", SV_NextDownload_f},
 
 	{"ptrack", SV_PTrack_f},			// ZOID - used with autocam
