@@ -39,6 +39,7 @@
 #else
 #include <netinet/in.h>
 #endif
+#include <cl_slist.h>
 
 #include "sys.h"
 #include "quakedef.h"
@@ -1160,6 +1161,7 @@ CL_Init
 */
 void CL_Init (void)
 {
+	FILE *servlist;
 /* 	extern	cvar_t		baseskin;
  CVAR_FIXME */
 	extern	cvar_t		*baseskin;
@@ -1184,6 +1186,13 @@ void CL_Init (void)
 	CL_InitPrediction ();
 	CL_InitCam ();
 	Pmove_Init ();
+	Server_List_Init (); //Init server list
+
+	if ((servlist = fopen("./servers.txt","r"))) {
+		Server_List_Load(servlist);
+		fclose(servlist);
+	}
+
 	
 //
 // register our commands
@@ -1743,6 +1752,8 @@ void Host_Shutdown(void)
 		return;
 	}
 	isdown = true;
+
+	Server_List_Shutdown ();
 
 	Host_WriteConfiguration (); 
 		

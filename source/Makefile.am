@@ -16,7 +16,7 @@ client_SOURCES= cl_cmd.c cl_cvar.c cl_demo.c cl_ents.c cl_input.c cl_main.c \
 		cl_math.S cl_misc.c cl_parse.c cl_pred.c cl_tent.c cl_cam.c \
 		snd_oss.c sys_linux.c cd_linux.c r_view.c wad.c snd_dma.c \
 		snd_mem.c snd_mix.c snd_mixa.S skin.c sbar.c nonintel.c \
-		menu.c keys.c console.c sys_x86.S
+		menu.c keys.c console.c sys_x86.S cl_slist.c
 soft_SOURCES=	cl_model.c cl_trans.c d_edge.c d_fill.c d_init.c d_modech.c \
 		d_part.c d_polyse.c d_scan.c d_sky.c d_sprite.c d_surf.c \
 		d_vars.c d_zpoint.c draw.c r_aclip.c r_alias.c r_bsp.c \
