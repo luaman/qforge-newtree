@@ -1344,13 +1344,15 @@ AddAllEntsToPmove (void)
 
 	pl = EDICT_TO_PROG (&sv_pr_state, sv_player);
 	check = NEXT_EDICT (&sv_pr_state, sv.edicts);
-	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (&sv_pr_state, check)) {
+	for (e = 1; e < sv.num_edicts; e++,
+								   check = NEXT_EDICT (&sv_pr_state, check)) {
 		if (check->free)
 			continue;
 		if (check->v.v.owner == pl)
 			continue;
 		if (check->v.v.solid == SOLID_BSP
-			|| check->v.v.solid == SOLID_BBOX || check->v.v.solid == SOLID_SLIDEBOX) {
+			|| check->v.v.solid == SOLID_BBOX
+			|| check->v.v.solid == SOLID_SLIDEBOX) {
 			if (check == sv_player)
 				continue;
 
@@ -1483,15 +1485,18 @@ SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 		sv_pr_state.pr_global_struct->frametime = sv_frametime;
 
 		sv_pr_state.pr_global_struct->time = sv.time;
-		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, sv_player);
-		PR_ExecuteProgram (&sv_pr_state, sv_pr_state.pr_global_struct->PlayerPreThink);
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state,
+															sv_player);
+		PR_ExecuteProgram (&sv_pr_state,
+						   sv_pr_state.pr_global_struct->PlayerPreThink);
 
 		SV_RunThink (sv_player);
 	}
 
 	for (i = 0; i < 3; i++)
 		pmove.origin[i] =
-			sv_player->v.v.origin[i] + (sv_player->v.v.mins[i] - player_mins[i]);
+			sv_player->v.v.origin[i]
+			+ (sv_player->v.v.mins[i] - player_mins[i]);
 	VectorCopy (sv_player->v.v.velocity, pmove.velocity);
 	VectorCopy (sv_player->v.v.v_angle, pmove.angles);
 
@@ -1589,12 +1594,15 @@ SV_PostRunCmd (void)
 
 	if (!host_client->spectator) {
 		sv_pr_state.pr_global_struct->time = sv.time;
-		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, sv_player);
-		PR_ExecuteProgram (&sv_pr_state, sv_pr_state.pr_global_struct->PlayerPostThink);
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state,
+															sv_player);
+		PR_ExecuteProgram (&sv_pr_state,
+						   sv_pr_state.pr_global_struct->PlayerPostThink);
 		SV_RunNewmis ();
 	} else if (SpectatorThink) {
 		sv_pr_state.pr_global_struct->time = sv.time;
-		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, sv_player);
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state,
+															sv_player);
 		PR_ExecuteProgram (&sv_pr_state, SpectatorThink);
 	}
 }
