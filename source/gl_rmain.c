@@ -1148,8 +1148,6 @@ void R_Mirror (void)
 
 	glLoadMatrixf (r_base_world_matrix);
 
-/* 	glColor4f (1,1,1,r_mirroralpha.value);
- CVAR_FIXME */
 	glColor4f (1,1,1,r_mirroralpha->value);
 	s = cl.worldmodel->textures[mirrortexturenum]->texturechain;
 	for ( ; s ; s=s->texturechain)

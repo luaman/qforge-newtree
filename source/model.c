@@ -63,8 +63,6 @@ int		mod_numknown;
 
 unsigned *model_checksum;
 texture_t *r_notexture_mip;
-/* cvar_t gl_subdivide_size = {"gl_subdivide_size", "128", true};
- CVAR_FIXME */
 cvar_t *gl_subdivide_size;
 
 /*
@@ -74,8 +72,6 @@ Mod_Init
 */
 void Mod_Init (void)
 {
-/* 	Cvar_RegisterVariable (&gl_subdivide_size);
- CVAR_FIXME */
 	gl_subdivide_size = Cvar_Get("gl_subdivide_size",  "128", CVAR_ARCHIVE, "None");
 	memset (mod_novis, 0xff, sizeof(mod_novis));
 }
