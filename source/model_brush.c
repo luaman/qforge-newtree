@@ -35,6 +35,7 @@
 #include <math.h>
 #include <string.h>
 
+#include "cvar.h"
 #include "model.h"
 #include "qendian.h"
 #include "server.h"
@@ -48,6 +49,7 @@ extern const int mod_lightmap_bytes;
 byte        mod_novis[MAX_MAP_LEAFS / 8];
 
 void        GL_SubdivideSurface (msurface_t *fa);
+extern cvar_t	*gl_sky_divide;
 
 /*
 ===============
@@ -578,9 +580,9 @@ Mod_LoadFaces (lump_t *l)
 
 		if (!strncmp (out->texinfo->texture->name, "sky", 3))	// sky
 		{
-			void        BuildSurfaceDisplayList (msurface_t *);
-
 			out->flags |= (SURF_DRAWSKY | SURF_DRAWTILED);
+			if (gl_sky_divide && gl_sky_divide->int_val)
+				GL_SubdivideSurface (out);
 			continue;
 		}
 

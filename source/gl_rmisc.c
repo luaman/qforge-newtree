@@ -270,6 +270,8 @@ R_Init_Cvars (void)
 								"controls whether the skydome is single or double pass");
 	gl_sky_clip = Cvar_Get ("gl_sky_clip", "0", CVAR_NONE,
 							"controls whether sky is drawn first (0) or later (1)");
+	gl_sky_divide = Cvar_Get ("gl_sky_divide", "1", CVAR_ARCHIVE,
+							  "subdivide sky polys");
 }
 
 /*

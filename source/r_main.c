@@ -164,6 +164,7 @@ cvar_t     *r_aliastransbase;
 cvar_t     *r_aliastransadj;
 
 cvar_t     *gl_flashblend;
+cvar_t     *gl_sky_divide;
 
 extern cvar_t *scr_fov;
 
@@ -282,11 +283,9 @@ R_Init_Cvars (void)
 	r_numedges = Cvar_Get ("r_numedges", "0", CVAR_NONE, "None");
 	r_aliastransbase = Cvar_Get ("r_aliastransbase", "200", CVAR_NONE, "None");
 	r_aliastransadj = Cvar_Get ("r_aliastransadj", "100", CVAR_NONE, "None");
-	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_NONE, "None");	// FIXME: 
-																		// remove 
-																		// this! 
-																		// --KB
-
+	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_NONE, "None");
+	gl_sky_divide = Cvar_Get ("gl_sky_divide", "1", CVAR_ARCHIVE,
+							  "subdivide sky polys");
 }
 
 /*

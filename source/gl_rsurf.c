@@ -1304,6 +1304,8 @@ GL_BuildLightmaps (void)
 		for (i = 0; i < m->numsurfaces; i++) {
 			if (m->surfaces[i].flags & SURF_DRAWTURB)
 				continue;
+			if (gl_sky_divide->int_val && (m->surfaces[i].flags & SURF_DRAWSKY))
+				continue;
 			GL_CreateSurfaceLightmap (m->surfaces + i);
 			BuildSurfaceDisplayList (m->surfaces + i);
 		}

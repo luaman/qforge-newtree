@@ -222,8 +222,9 @@ extern	cvar_t	*gl_max_size;
 extern	cvar_t	*gl_playermip;
 
 extern	cvar_t	*r_skyname;
-extern	cvar_t *gl_skymultipass;
+extern	cvar_t	*gl_skymultipass;
 extern	cvar_t	*gl_sky_clip;
+extern	cvar_t	*gl_sky_divide;
 
 extern	float	r_world_matrix[16];
 
