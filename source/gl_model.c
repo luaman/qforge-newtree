@@ -480,6 +480,8 @@ void Mod_LoadTextures (lump_t *l)
 	}
 }
 
+extern byte *COM_LoadFile (char *path, int usehunk);
+
 /*
 =================
 Mod_LoadLighting
@@ -502,9 +504,10 @@ void Mod_LoadLighting (lump_t *l)
 	COM_StripExtension(litfilename, litfilename);
 	strcat(litfilename, ".lit");
 
-	loadmodel->lightdata = Hunk_AllocName ( l->filelen*3, litfilename);
-	if (!loadmodel->lightdata) // LordHavoc: someone forgot this...  preventing .lit from working
+	loadmodel->lightdata = (byte*) COM_LoadHunkFile (litfilename);
+	if (!loadmodel->lightdata) // expand the white lighting data
 	{
+		loadmodel->lightdata = Hunk_AllocName ( l->filelen*3, litfilename);
 		in = loadmodel->lightdata + l->filelen*2; // place the file at the end, so it will not be overwritten until the very last write
 		out = loadmodel->lightdata;
 		memcpy (in, mod_base + l->fileofs, l->filelen);
