@@ -33,19 +33,31 @@ AC_SUBST(ISODATE)
 
 AC_LANG_C
 
+
+dnl ==================================================================
 dnl Checks for programs.
+dnl ==================================================================
+
 AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
+
+dnl ==================================================================
 dnl Checks for system services
+dnl ==================================================================
+
 AC_SYS_LONG_FILE_NAMES
 AC_EXEEXT
 AC_OBJEXT
 
+
+dnl ==================================================================
 dnl Checks for header files.
+dnl ==================================================================
+
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_MAJOR
@@ -62,7 +74,11 @@ AC_CHECK_HEADERS(
 	mgraph.h
 )
 
-dnl Checks for typedefs, structures, and compiler characteristics.
+
+dnl ==================================================================
+dnl Checks for typedefs, structures, and compiler characteristics
+dnl ==================================================================
+
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
@@ -130,7 +146,10 @@ AC_TRY_COMPILE(
 	AC_MSG_RESULT(no)
 )
 
+dnl ==================================================================
 dnl Checks for library functions.
+dnl ==================================================================
+
 AC_FUNC_ALLOCA
 AC_FUNC_MEMCMP
 AC_FUNC_MMAP
@@ -359,6 +378,29 @@ fi
 AC_SUBST(GLX_CFLAGS)
 AC_SUBST(GLX_LIBS)
 
+
+NET_LIBS=""
+if test "x$ac_cv_func_connect" != "xyes"; then
+  AC_MSG_CHECKING([for connect in -lwsock32])
+  SAVELIBS="$LIBS"
+  LIBS="$LIBS -lwsock32"
+  AC_TRY_LINK([
+#include <winsock.h>
+],[
+connect(0, NULL, 42);
+],
+    NET_LIBS="$NET_LIBS -lwsock32 -lwinmm"
+    AC_MSG_RESULT(yes),
+    AC_MSG_RESULT(no))
+  LIBS="$SAVELIBS"
+fi
+AC_SUBST(NET_LIBS)
+
+
+dnl ==================================================================
+dnl Misc checks
+dnl ==================================================================
+
 dnl Set $prefix and $exec_prefix to $ac_default_prefix if they are not set
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
@@ -429,7 +471,7 @@ if test "x$RELEASE" = xyes; then
 	CFLAGS="-O6 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations"
 	if test "x$GCC" = xyes; then
 		AC_MSG_CHECKING(for special release compiler settings)
-		case "${target}" in
+		case "${host}" in
 			i?86-*-*)
 				MORE_CFLAGS="-malign-loops=4 -malign-jumps=4 -malign-functions=4"
 				;;
@@ -453,7 +495,7 @@ dnl problems with any compiler that is ANSI/ISO-C compliant.
 dnl Make the compiler swallow its pride...
 if test "x$GCC" != xyes; then
    AC_MSG_CHECKING(for how to deal with C++ comments)
-   case "$target" in
+   case "${host}" in
    *-aix*)
 	CFLAGS="$CFLAGS -qcpluscmt"
         AC_MSG_RESULT([-qcpluscmt])
@@ -480,7 +522,7 @@ fi
 
 dnl Check for ia32
 AC_MSG_CHECKING(for an ia32 machine)
-case "${target}" in
+case "${host}" in
 	i?86-*-*)
 		AC_MSG_RESULT(yes)
 		AC_MSG_CHECKING(to see if we should disable asm optimizations)
@@ -498,34 +540,22 @@ AC_SUBST(ASM_ARCH)
 
 dnl Checks for which system driver to use
 AC_MSG_CHECKING(for system driver)
-case "${target}" in
-   *-*-linux-gnu*)
-      CL_SYS_SRC="sys_linux.c"
-      SV_SYS_SRC="sys_unix.c"
-      ;;
+case "${host}" in
    i?86-*-mingw32*)
-      CL_SYS_SRC="sys_win.c"
-      SV_SYS_SRC="sys_win.c"
-      ;;
-   i?86-*-*djgpp* | i?86-*-*msdos*)
-# XXX - dos  - conproc.c(?) sys_dos.c
-# XXX - need to add dos
-      CL_SYS_SRC=""
-      SV_SYS_SRC=""
-      ;;
+	SYSTYPE=WIN32
+	AC_MSG_RESULT([Win32 driver])
+	;;
    *)
-      CL_SYS_SRC="sys_linux.c"
-      SV_SYS_SRC="sys_unix.c"
-      DEFAULT_SYS=yes
-      ;;
+	SYSTYPE=POSIX
+	AC_MSG_RESULT([default POSIX driver])
+	;;
 esac
-if test "x$DEFAULT_SYS" = xyes; then
-	AC_MSG_RESULT([no, using default])
-else
-	AC_MSG_RESULT(yes ($CL_SYS_SRC $SV_SYS_SRC))
-fi
-AC_SUBST(CL_SYS_SRC)
-AC_SUBST(SV_SYS_SRC)
+AM_CONDITIONAL(SYSTYPE_WIN32, test "$SYSTYPE" = "WIN32")
+
+
+dnl ==================================================================
+dnl Find out what to build and finish
+dnl ==================================================================
 
 if test "x$HAVE_SVGA" = xyes; then
 	TARGETS="$TARGETS qf-client-svga\$(EXEEXT)"
