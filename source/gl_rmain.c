@@ -148,15 +148,18 @@ GL_CheckBrightness (unsigned char *pal)
 	int 	i, inf;
 	float	brightness;
 
-	brighten = Cvar_Get ("brighten", "1", CVAR_ROM,
+	brighten = Cvar_Get ("brighten", "1", CVAR_NONE,
 						 "Palette hack equivalent to brightness");
+
 	if ((i = COM_CheckParm ("-brighten"))) {
 		brightness = atof (com_argv[i + 1]);
 	} else {
 		brightness = brighten->value;
 	}
 	brightness = bound (1, brightness, 5);
-	Cvar_SetROM (brighten, va("%f", brightness));
+	
+	Cvar_SetValue (brighten, brightness);
+	Cvar_SetFlags (brighten, brighten->flags | CVAR_ROM);
 	
 	// Build gamma table
 	if (brightness == 1.0) {	// screw the math

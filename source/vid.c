@@ -47,33 +47,42 @@ VID_GetWindowSize (int def_w, int def_h)
 {
 	int pnum;
 
-	if ((pnum=COM_CheckParm("-winsize"))) {
-		if (pnum >= com_argc-2)
-			Sys_Error("VID: -winsize <width> <height>\n");
-		vid_width = Cvar_Get ("vid_width", com_argv[pnum+1], CVAR_ROM, "screen width");
-		vid_height = Cvar_Get ("vid_height", com_argv[pnum+2], CVAR_ROM, "screen height");
-		if (!vid_width->int_val || !vid_height->int_val)
-			Sys_Error("VID: Bad window width/height\n");
-	}
+	vid_width = Cvar_Get ("vid_width", va ("%d", def_w), CVAR_NONE, "screen width");
+	vid_height = Cvar_Get ("vid_height", va ("%d", def_h), CVAR_NONE, "screen height");
 
-	if ((pnum=COM_CheckParm("-width"))) {
+	if ((pnum = COM_CheckParm ("-width"))) {
 		if (pnum >= com_argc-1)
-			Sys_Error("VID: -width <width>\n");
-		vid_width = Cvar_Get ("vid_width", com_argv[pnum+1], CVAR_ROM, "screen width");
+			Sys_Error ("VID: -width <width>\n");
+
+		Cvar_Set (vid_width, com_argv[pnum+1]);
+
 		if (!vid_width->int_val)
-			Sys_Error("VID: Bad window width\n");
+			Sys_Error ("VID: Bad window width\n");
 	}
 
-	if ((pnum=COM_CheckParm("-height"))) {
+	if ((pnum = COM_CheckParm ("-height"))) {
 		if (pnum >= com_argc-1)
-			Sys_Error("VID: -height <height>\n");
-		vid_height = Cvar_Get ("vid_height", com_argv[pnum+1], CVAR_ROM, "screen height");
+			Sys_Error ("VID: -height <height>\n");
+
+		Cvar_Set (vid_height, com_argv[pnum+1]);
+
 		if (!vid_height->int_val)
-			Sys_Error("VID: Bad window height\n");
+			Sys_Error ("VID: Bad window height\n");
 	}
 
-	vid_width = Cvar_Get ("vid_width", va("%d",def_w), CVAR_ROM, "screen width");
-	vid_height = Cvar_Get ("vid_height", va("%d",def_h), CVAR_ROM, "screen height");
+	if ((pnum = COM_CheckParm ("-winsize"))) {
+		if (pnum >= com_argc-2)
+			Sys_Error ("VID: -winsize <width> <height>\n");
+
+		Cvar_Set (vid_width, com_argv[pnum+1]);
+		Cvar_Set (vid_height, com_argv[pnum+2]);
+
+		if (!vid_width->int_val || !vid_height->int_val)
+			Sys_Error ("VID: Bad window width/height\n");
+	}
+	
+	Cvar_SetFlags (vid_width, vid_width->flags | CVAR_ROM);
+	Cvar_SetFlags (vid_height, vid_height->flags | CVAR_ROM);
 
 	scr_width = vid.width = vid_width->int_val;
 	scr_height = vid.height = vid_height->int_val;
