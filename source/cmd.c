@@ -595,10 +595,6 @@ char *Cmd_CompleteCommand (char *partial)
 	return NULL;
 }
 
-void Cmd_ForwardToServer (void)
-{
-}
-
 /*
 ============
 Cmd_ExecuteString

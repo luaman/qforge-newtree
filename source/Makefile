@@ -4,10 +4,10 @@ SV_name=qw-server
 SV_libs=
 
 CL_SVGA_name=qw-client-svga
-SV_libs=
+CL_SVGA_libs=-lvga
 
 CL_X11_name=qw-client-x11
-SV_libs=
+CL_X11_libs=
 
 DIRECTORIES=
 vpath %.a $(patsubst @%,%,$(DIRECTORIES)) /usr/lib
@@ -65,6 +65,8 @@ SV_dependencies = $(patsubst %,%.d,$(basename $(SV_sources)))
 SV_objects = $(patsubst %.d,%.o,$(SV_dependencies))
 
 CL_sources=\
+  cl_cmd.c \
+  cl_cvar.c \
   cl_demo.c \
   cl_ents.c \
   cl_input.c \
@@ -127,7 +129,25 @@ CL_sources=\
   zone.c \
   cd_linux.c \
   sys_linux.c \
-  snd_linux.c
+  snd_linux.c \
+  d_copy.S \
+  d_draw.S \
+  d_draw16.S \
+  d_parta.S \
+  d_polysa.S \
+  d_scana.S \
+  d_spr8.S \
+  d_varsa.S \
+  math.S \
+  r_aclipa.S \
+  r_aliasa.S \
+  r_drawa.S \
+  r_edgea.S \
+  r_varsa.S \
+  snd_mixa.S \
+  surf16.S \
+  surf8.S \
+  sys_dosa.S
 
 CL_dependencies = $(patsubst %,%.d,$(basename $(CL_sources)))
 CL_objects = $(patsubst %.d,%.o,$(CL_dependencies))
