@@ -625,7 +625,7 @@ void Key_Bind_f (void)
 	
 	c = Cmd_Argc();
 
-	if (c != 2 && c != 3)
+	if (c < 2)
 	{
 		Con_Printf ("bind <key> [command] : attach a command to a key\n");
 		return;
