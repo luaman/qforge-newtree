@@ -466,9 +466,7 @@ void CL_Disconnect (void)
 
 	connect_time = -1;
 
-#ifdef _WIN32
-	SetWindowText (mainwindow, PROGRAM ": disconnected");
-#endif
+        VID_SetCaption(PROGRAM ": disconnected");
 
 // stop sounds (especially looping!)
 	S_StopAllSounds (true);
