@@ -55,7 +55,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 dxguid.lib mgllt.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libcmt" /out:"Release/qw-client-win.exe"
+# ADD LINK32 dxguid.lib mglfx.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libcmt" /out:"Release/qw-client-win.exe"
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
 
@@ -71,7 +71,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "id386" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "id386" /FR /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x419 /d "_DEBUG"
@@ -81,7 +81,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 dxguid.lib mgllt.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcmt" /out:"Debug/qw-client-win.exe" /pdbtype:sept
+# ADD LINK32 dxguid.lib mglfx.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcmt" /out:"Debug/qw-client-win.exe" /pdbtype:sept
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
 
@@ -93,8 +93,8 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug"
-# PROP Intermediate_Dir "Debug"
+# PROP Output_Dir "GLDebug"
+# PROP Intermediate_Dir "GLDebug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /I "../scitech/include" /I "../include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "id386" /YX /FD /GZ /c
@@ -108,7 +108,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 dxguid.lib ..\scitech\lib\win32\vc\mgllt.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 comctl32.lib opengl32.lib glu32.lib dxguid.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /out:"Debug/qw-client-wgl.exe" /pdbtype:sept
+# ADD LINK32 comctl32.lib opengl32.lib glu32.lib dxguid.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /out:"GLDebug/qw-client-wgl.exe" /pdbtype:sept
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
 
@@ -120,8 +120,8 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release"
-# PROP Intermediate_Dir "Release"
+# PROP Output_Dir "GLRelease"
+# PROP Intermediate_Dir "GLRelease"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /I "../scitech/include" /I "../include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "id386" /YX /FD /c
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 dxguid.lib ..\scitech\lib\win32\vc\mgllt.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 comctl32.lib opengl32.lib glu32.lib dxguid.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386 /out:"Release/qw-client-wgl.exe"
+# ADD LINK32 comctl32.lib opengl32.lib glu32.lib dxguid.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:windows /machine:I386 /out:"GLRelease/qw-client-wgl.exe"
 
 !ENDIF 
 
@@ -1230,6 +1230,19 @@ SOURCE=.\cl_math.S
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 
+# Begin Custom Build
+OutDir=.\Release
+InputPath=.\cl_math.S
+InputName=cl_math
+
+"$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
+	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
+	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
+	del $(OUTDIR)\$(InputName).spp 
+	
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
 
 # Begin Custom Build
@@ -1247,28 +1260,6 @@ InputName=cl_math
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
 
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-# PROP Exclude_From_Build 1
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\d_copy.S
-
-!IF  "$(CFG)" == "qw_client - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
-
-# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
@@ -1630,12 +1621,12 @@ InputName=math
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
 
 # Begin Custom Build
-OutDir=.\Debug
+OutDir=.\GLDebug
 InputPath=.\math.S
 InputName=math
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
+	cl /D "id386" /D "GLQUAKE" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
 	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
 	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
 	del $(OUTDIR)\$(InputName).spp 
@@ -1645,12 +1636,12 @@ InputName=math
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
 
 # Begin Custom Build
-OutDir=.\Release
+OutDir=.\GLRelease
 InputPath=.\math.S
 InputName=math
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
+	cl /D "id386" /D "GLQUAKE" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
 	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
 	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
 	del $(OUTDIR)\$(InputName).spp 
@@ -1922,12 +1913,12 @@ InputName=snd_mixa
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
 
 # Begin Custom Build
-OutDir=.\Debug
+OutDir=.\GLDebug
 InputPath=.\snd_mixa.S
 InputName=snd_mixa
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
+	cl /D "id386" /D "GLQUAKE" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
 	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
 	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
 	del $(OUTDIR)\$(InputName).spp 
@@ -1937,12 +1928,12 @@ InputName=snd_mixa
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
 
 # Begin Custom Build
-OutDir=.\Release
+OutDir=.\GLRelease
 InputPath=.\snd_mixa.S
 InputName=snd_mixa
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
+	cl /D "id386" /D "GLQUAKE" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
 	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
 	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
 	del $(OUTDIR)\$(InputName).spp 
@@ -2044,14 +2035,14 @@ InputName=surf8
 # End Source File
 # Begin Source File
 
-SOURCE=.\sys_wina.S
+SOURCE=.\sys_x86.S
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 
 # Begin Custom Build
 OutDir=.\Release
-InputPath=.\sys_wina.S
-InputName=sys_wina
+InputPath=.\sys_x86.S
+InputName=sys_x86
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
@@ -2065,8 +2056,8 @@ InputName=sys_wina
 
 # Begin Custom Build
 OutDir=.\Debug
-InputPath=.\sys_wina.S
-InputName=sys_wina
+InputPath=.\sys_x86.S
+InputName=sys_x86
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
@@ -2079,12 +2070,12 @@ InputName=sys_wina
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
 
 # Begin Custom Build
-OutDir=.\Debug
-InputPath=.\sys_wina.S
-InputName=sys_wina
+OutDir=.\GLDebug
+InputPath=.\sys_x86.S
+InputName=sys_x86
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
+	cl /D "id386" /D "GLQUAKE" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
 	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
 	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
 	del $(OUTDIR)\$(InputName).spp 
@@ -2094,12 +2085,12 @@ InputName=sys_wina
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
 
 # Begin Custom Build
-OutDir=.\Release
-InputPath=.\sys_wina.S
-InputName=sys_wina
+OutDir=.\GLRelease
+InputPath=.\sys_x86.S
+InputName=sys_x86
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
+	cl /D "id386" /D "GLQUAKE" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
 	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
 	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
 	del $(OUTDIR)\$(InputName).spp 
@@ -2146,12 +2137,12 @@ InputName=worlda
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
 
 # Begin Custom Build
-OutDir=.\Debug
+OutDir=.\GLDebug
 InputPath=.\worlda.S
 InputName=worlda
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
+	cl /D "id386" /D "GLQUAKE" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
 	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
 	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
 	del $(OUTDIR)\$(InputName).spp 
@@ -2161,12 +2152,12 @@ InputName=worlda
 !ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
 
 # Begin Custom Build
-OutDir=.\Release
+OutDir=.\GLRelease
 InputPath=.\worlda.S
 InputName=worlda
 
 "$(OUTDIR)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cl /D "id386" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
+	cl /D "id386" /D "GLQUAKE" /I "..\source" /I "..\include" /I "..\win32" /nologo /EP > $(OUTDIR)\$(InputName).spp $(InputPath) 
 	..\tools\gas2masm\debug\gas2masm < $(OUTDIR)\$(InputName).spp > $(OUTDIR)\$(InputName).asm 
 	ml /nologo /c /Cp /coff /Zi /H64 /Fo$(OUTDIR)\$(InputName).obj $(OUTDIR)\$(InputName).asm 
 	del $(OUTDIR)\$(InputName).spp 

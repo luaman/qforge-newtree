@@ -80,27 +80,6 @@ void Sys_Error (char *error, ...)
 
 /*
 ================
-Sys_DoubleTime
-================
-*/
-double Sys_DoubleTime (void)
-{
-	double t;
-    struct _timeb tstruct;
-	static int	starttime;
-
-	_ftime( &tstruct );
- 
-	if (!starttime)
-		starttime = tstruct.time;
-	t = (tstruct.time-starttime) + tstruct.millitm*0.001;
-	
-	return t;
-}
-
-
-/*
-================
 Sys_ConsoleInput
 ================
 */
@@ -183,6 +162,10 @@ is marked
 void Sys_Init (void)
 {
 	Cvar_RegisterVariable (&sys_nostdout);
+
+	// make sure the timer is high precision, otherwise
+	// NT gets 18ms resolution
+	timeBeginPeriod( 1 );
 }
 
 /*

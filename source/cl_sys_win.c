@@ -50,12 +50,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quakedef.h"
 #include "winquake.h"
 #include "resource.h"
-#include "errno.h"
-#include "fcntl.h"
+#include "sys.h"
+#include <errno.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <io.h>
 #include <conio.h>
-#include "sys.h"
+
 qboolean is_server = false;
 
 #define MINIMUM_WIN_MEMORY	0x0c00000
@@ -181,8 +182,6 @@ Sys_Init
 */
 void Sys_Init (void)
 {
-//	LARGE_INTEGER	PerformanceFreq;
-//	unsigned int	lowpart, highpart;
 	OSVERSIONINFO	vinfo;
 
 	// allocate a named semaphore on the client so the
@@ -275,30 +274,6 @@ void Sys_Quit (void)
 }
 
 
-
-double Sys_DoubleTime (void)
-{
-	static DWORD starttime;
-	static qboolean first = true;
-	DWORD now;
-//	double t;
-
-	now = timeGetTime();
-
-	if (first) {
-		first = false;
-		starttime = now;
-		return 0.0;
-	}
-	
-	if (now < starttime) // wrapped?
-		return (now / 1000.0) + (LONG_MAX - starttime / 1000.0);
-
-	if (now - starttime == 0)
-		return 0.0;
-
-	return (now - starttime) / 1000.0;
-}
 
 char *Sys_ConsoleInput (void)
 {
