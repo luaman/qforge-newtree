@@ -259,8 +259,6 @@ V_DriftPitch (void)
 ============================================================================== 
 */
 
-cvar_t     *gl_cshiftpercent;
-
 extern cvar_t	*cl_cshift_bonus;
 extern cvar_t	*cl_cshift_contents;
 extern cvar_t	*cl_cshift_damage;
@@ -842,8 +840,6 @@ V_Init_Cvars (void)
 	v_kicktime = Cvar_Get ("v_kicktime", "0.5", CVAR_NONE, "None");
 	v_kickroll = Cvar_Get ("v_kickroll", "0.6", CVAR_NONE, "None");
 	v_kickpitch = Cvar_Get ("v_kickpitch", "0.6", CVAR_NONE, "None");
-
-	gl_cshiftpercent = Cvar_Get ("gl_cshiftpercent", "100", CVAR_NONE, "None");
 
 	brightness = Cvar_Get ("brightness", "1", CVAR_ARCHIVE, "None");
 	contrast = Cvar_Get ("contrast", "1", CVAR_ARCHIVE, "None");
