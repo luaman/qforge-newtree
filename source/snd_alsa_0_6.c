@@ -35,20 +35,19 @@
 
 #include <sys/asoundlib.h>
 
+#include "console.h"
+#include "qargs.h"
 #include "qtypes.h"
 #include "sound.h"
-#include "qargs.h"
-#include "console.h"
+#include "va.h"
 
 static int snd_inited;
 
 static snd_pcm_t *pcm_handle;
-static snd_pcm_params_info_t cpinfo;
-static snd_pcm_params_t params;
-static snd_pcm_setup_t setup;
-static snd_pcm_channel_area_t mmap_stopped_areas[2];
+static snd_pcm_hw_info_t hwinfo;
+static snd_pcm_hw_params_t hwparams;
 static snd_pcm_channel_area_t mmap_running_areas[2];
-static int card=-1,dev=-1,subdev=-1;;
+static int card=-1,dev=-1;
 
 int check_card(int card)
 {
@@ -56,7 +55,7 @@ int check_card(int card)
 	snd_ctl_hw_info_t info;
 	int rc;
 
-	if ((rc = snd_ctl_hw_open(&handle, 0, card)) < 0) {
+	if ((rc = snd_ctl_open(&handle, va("hw:%d", card))) < 0) {
 		Con_Printf("Error: control open (%i): %s\n", card, snd_strerror(rc));
 		return rc;
 	}
@@ -69,17 +68,17 @@ int check_card(int card)
 	snd_ctl_close(handle);
 	if (dev==-1) {
 		for (dev = 0; dev < info.pcmdevs; dev++) {
-			if ((rc=snd_pcm_hw_open_subdevice(&pcm_handle,card,dev,subdev,
-								 SND_PCM_STREAM_PLAYBACK,
-								 SND_PCM_NONBLOCK))==0) {
+			if ((rc=snd_pcm_open (&pcm_handle, va ("hw:%d,%d", card, dev),
+								  SND_PCM_STREAM_PLAYBACK,
+								  SND_PCM_NONBLOCK))==0) {
 				return 0;
 			}
 		}
 	} else {
 		if (dev>=0 && dev <info.pcmdevs) {
-			if ((rc=snd_pcm_hw_open_subdevice(&pcm_handle,card,dev,subdev,
-								 SND_PCM_STREAM_PLAYBACK,
-								 SND_PCM_NONBLOCK))==0) {
+			if ((rc=snd_pcm_open (&pcm_handle, va ("hw:%d,%d", card, dev),
+								  SND_PCM_STREAM_PLAYBACK,
+								  SND_PCM_NONBLOCK))==0) {
 				return 0;
 			}
 		}
@@ -91,7 +90,7 @@ qboolean SNDDMA_Init(void)
 {
 	int rc=0,i;
 	char *err_msg="";
-	int rate=-1,format=-1,bps,stereo=-1,frag_size,frame_size;
+	int rate=-1,format=-1,stereo=-1,frag_size;
 	unsigned int mask;
 
 	mask = snd_cards_mask();
@@ -108,9 +107,9 @@ qboolean SNDDMA_Init(void)
 	if ((i=COM_CheckParm("-sndbits")) != 0) {
 		i = atoi(com_argv[i+1]);
 		if (i==16) {
-			format = SND_PCM_SFMT_S16_LE;
+			format = SND_PCM_FMTBIT_S16_LE;
 		} else if (i==8) {
-			format = SND_PCM_SFMT_U8;
+			format = SND_PCM_FMTBIT_U8;
 		} else {
 			Con_Printf("Error: invalid sample bits: %d\n", i);
 			return 0;
@@ -144,9 +143,9 @@ qboolean SNDDMA_Init(void)
 			if (!rc)
 				goto dev_openned;
 		} else {
-			if ((rc=snd_pcm_hw_open_subdevice(&pcm_handle,card,dev,subdev,
-								 SND_PCM_STREAM_PLAYBACK,
-								 SND_PCM_NONBLOCK))<0) {
+			if ((rc=snd_pcm_open (&pcm_handle, va ("hw:%d,%d", card, dev),
+								  SND_PCM_STREAM_PLAYBACK,
+								  SND_PCM_NONBLOCK))==0) {
 				Con_Printf("Error: audio open error: %s\n", snd_strerror(rc));
 				return 0;
 			}
@@ -158,79 +157,63 @@ qboolean SNDDMA_Init(void)
 
  dev_openned:
 	Con_Printf("Using card %d, device %d.\n", card, dev);
-	memset(&cpinfo, 0, sizeof(cpinfo));
-	snd_pcm_params_info(pcm_handle, &cpinfo);
-	Con_Printf("%08x %08x %08x\n",cpinfo.flags,cpinfo.formats,cpinfo.rates);
-	if ((rate==-1 || rate==44100) && cpinfo.rates & SND_PCM_RATE_44100) {
+	memset(&hwinfo, 0, sizeof(hwinfo));
+	err_msg="audio info";
+	if (snd_pcm_hw_info (pcm_handle, &hwinfo) < 0)
+		goto error;
+	Con_Printf("%08x %08x\n",hwinfo.access_mask,hwinfo.format_mask);
+	rate = 44100;
+	frag_size = 4;
+	format=SND_PCM_FMTBIT_S16_LE;
+#if 0// XXX
+	if ((rate==-1 || rate==44100) && hwinfo.rates & SND_PCM_RATE_44100) {
 		rate=44100;
 		frag_size=256;	/* assuming stereo 8 bit */
-	} else if ((rate==-1 || rate==22050) && cpinfo.rates & SND_PCM_RATE_22050) {
+	} else if ((rate==-1 || rate==22050) && hwinfo.rates & SND_PCM_RATE_22050) {
 		rate=22050;
 		frag_size=128;	/* assuming stereo 8 bit */
-	} else if ((rate==-1 || rate==11025) && cpinfo.rates & SND_PCM_RATE_11025) {
+	} else if ((rate==-1 || rate==11025) && hwinfo.rates & SND_PCM_RATE_11025) {
 		rate=11025;
 		frag_size=64;	/* assuming stereo 8 bit */
 	} else {
 		Con_Printf("ALSA: desired rates not supported\n");
 		goto error_2;
 	}
-	if ((format==-1 || format==SND_PCM_SFMT_S16_LE) && cpinfo.formats & SND_PCM_FMT_S16_LE) {
-		format=SND_PCM_SFMT_S16_LE;
-		bps=16;
-		frame_size=2;
-	} else if ((format==-1 || format==SND_PCM_SFMT_U8) && cpinfo.formats & SND_PCM_FMT_U8) {
-		format=SND_PCM_SFMT_U8;
-		bps=8;
-		frame_size=1;
+	if ((format==-1 || format==SND_PCM_FMTBIT_S16_LE) && hwinfo.format_mask & SND_PCM_FMTBIT_S16_LE) {
+		format=SND_PCM_FMTBIT_S16_LE;
+	} else if ((format==-1 || format==SND_PCM_FMTBIT_U8) && hwinfo.format_mask & SND_PCM_FMTBIT_U8) {
+		format=SND_PCM_FMTBIT_U8;
 	} else {
 		Con_Printf("ALSA: desired formats not supported\n");
 		goto error_2;
 	}
+#endif
 	//XXX can't support non-interleaved stereo
-	if (stereo && (cpinfo.flags & SND_PCM_INFO_INTERLEAVED) && cpinfo.max_channels>=2) {
+	if (stereo && (hwinfo.access_mask & SND_PCM_INFO_INTERLEAVED) && hwinfo.channels_max>=2) {
 		stereo=1;
-		frame_size*=2;
 	} else {
 		stereo=0;
 	}
 
-	memset(&params, 0, sizeof(params));
+	memset(&hwparams, 0, sizeof(hwparams));
 	//XXX can't support non-interleaved stereo
-	params.xfer_mode = stereo ? SND_PCM_XFER_INTERLEAVED
-							  : SND_PCM_XFER_NONINTERLEAVED;
-	params.mmap_shape = stereo ? SND_PCM_XFER_INTERLEAVED
-								: SND_PCM_XFER_NONINTERLEAVED;
-	params.format.sfmt=format;
-	params.format.rate=rate;
-	params.format.channels=stereo+1;
-	params.start_mode = SND_PCM_START_EXPLICIT;
-	params.xrun_mode = SND_PCM_XRUN_NONE;
+	hwparams.access = stereo ? SND_PCM_ACCESS_MMAP_INTERLEAVED
+							 : SND_PCM_ACCESS_MMAP_NONINTERLEAVED;
+	hwparams.format=format;
+	hwparams.rate=rate;
+	hwparams.channels=stereo+1;
 
-	params.buffer_size = (2<<16) / frame_size;
-	params.frag_size=frag_size;
-	params.avail_min = frag_size;
-
-	params.boundary = params.buffer_size;
+	hwparams.fragment_size = frag_size;
+	hwparams.fragments = (1 << 17) / frag_size;
 
 	while (1) {
 		err_msg="audio params";
-		if ((rc=snd_pcm_params(pcm_handle, &params))<0)
+		if ((rc=snd_pcm_hw_params(pcm_handle, &hwparams))<0)
 			goto error;
 
-		memset(&setup, 0, sizeof(setup));
-		err_msg="audio setup";
-		if ((rc=snd_pcm_setup(pcm_handle, &setup))<0)
-			goto error;
-		if (setup.buffer_size == params.buffer_size)
-			break;
-		params.boundary = params.buffer_size = setup.buffer_size;
+		break;//XXX
 	}
 
-	err_msg="audio mmap";
-	if ((rc=snd_pcm_mmap(pcm_handle))<0)
-		goto error;
-	if ((rc=snd_pcm_mmap_get_areas(pcm_handle, mmap_stopped_areas, mmap_running_areas)))
-		goto error;
 	err_msg="audio prepare";
 	if ((rc=snd_pcm_prepare(pcm_handle))<0)
 		goto error;
@@ -238,12 +221,12 @@ qboolean SNDDMA_Init(void)
 	shm=&sn;
 	memset((dma_t*)shm,0,sizeof(*shm));
     shm->splitbuffer = 0;
-	shm->channels=setup.format.channels;
+	shm->channels=hwparams.channels;
 	shm->submission_chunk=frag_size;			// don't mix less than this #
 	shm->samplepos=0;							// in mono samples
-	shm->samplebits=setup.format.sfmt==SND_PCM_SFMT_S16_LE?16:8;
-	shm->samples=setup.buffer_size*shm->channels;	// mono samples in buffer
-	shm->speed=setup.format.rate;
+	shm->samplebits=hwparams.format==SND_PCM_FMTBIT_S16_LE?16:8;
+	shm->samples=hwparams.fragments*shm->channels;	// mono samples in buffer
+	shm->speed=hwparams.rate;
 	shm->buffer=(unsigned char*)mmap_running_areas->addr;
     Con_Printf("%5d stereo\n", shm->channels - 1);
     Con_Printf("%5d samples\n", shm->samples);
@@ -258,7 +241,7 @@ qboolean SNDDMA_Init(void)
 	return 1;
  error:
 	Con_Printf("Error: %s: %s\n", err_msg, snd_strerror(rc));
- error_2:
+ //XXXerror_2:
 	snd_pcm_close(pcm_handle);
 	return 0;
 }
@@ -330,7 +313,7 @@ void SNDDMA_Submit(void)
 		if (offset > hw_ptr)
 			count -= (offset - hw_ptr);
 		else
-			count -= (setup.buffer_size - hw_ptr + offset);
+			count -= (hwparams.fragments - hw_ptr + offset);
 		if (count < 0) {
 			snd_pcm_rewind (pcm_handle, -count);
 		} else if (count > 0) {
