@@ -722,7 +722,9 @@ R_DrawAliasModel (entity_t *e)
 	float		an;
 	int 		anim;
 	qboolean	torch = false;
+	int         texture;
 	int         fb_texture = 0;
+	int         skinnum;
 
 	clmodel = currententity->model;
 
@@ -825,6 +827,16 @@ R_DrawAliasModel (entity_t *e)
 
 	anim = (int) (cl.time * 10) & 3;
 
+	skinnum = currententity->skinnum;
+	if ((skinnum >= paliashdr->mdl.numskins) || (skinnum < 0)) {
+		Con_DPrintf ("R_AliasSetupSkin: no such skin # %d\n", skinnum);
+		skinnum = 0;
+	}
+
+	texture = paliashdr->gl_texturenum[skinnum][anim];
+	if (gl_fb_models->int_val)
+		fb_texture = paliashdr->gl_fb_texturenum[skinnum][anim];
+
 	// we can't dynamically colormap textures, so they are cached
 	// seperately for the players.  Heads are just uncolored.
 	if (currententity->scoreboard && !gl_nocolors->int_val) {
@@ -836,23 +848,17 @@ R_DrawAliasModel (entity_t *e)
 			CL_NewTranslation (i);
 		}
 		skin = currententity->scoreboard->skin;
-		if (i >= 0 && i < MAX_CLIENTS)
-			glBindTexture (GL_TEXTURE_2D, playertextures + i);
+		if (skin && i >= 0 && i < MAX_CLIENTS)
+			texture = playertextures + i;
+		else
+			skin = 0;
 		if (gl_fb_models->int_val) {
 			if (skin)
 				fb_texture = skin->fb_texture;
-			else
-				fb_texture = paliashdr->gl_fb_texturenum[currententity->skinnum]
-				                                                    [anim];
 		}
-	} else {
-		glBindTexture (GL_TEXTURE_2D,
-					   paliashdr->gl_texturenum[currententity->skinnum][anim]);
-		if (clmodel->hasfullbrights && gl_fb_models->int_val &&
-			paliashdr->gl_fb_texturenum[currententity->skinnum][anim])
-			fb_texture = paliashdr->gl_fb_texturenum[currententity->skinnum]
-			                                        [anim];
 	}
+
+	glBindTexture (GL_TEXTURE_2D, texture);
 
 	if (gl_affinemodels->int_val)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
