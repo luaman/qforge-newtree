@@ -301,6 +301,92 @@ Log_Outgoing_Packet (char *p, int len)
 	return;
 }
 
+void
+Log_Delta(int bits)
+{
+        entity_state_t *to;
+        int i;
+
+        Net_LogPrintf ("\n\t");
+
+	// set everything to the state we are delta'ing from
+
+	to->number = bits & 511;
+	bits &= ~511;
+
+	if (bits & U_MOREBITS) {			// read in the low order bits
+		i = MSG_ReadByte ();
+		bits |= i;
+	}
+
+	// LordHavoc: Endy neglected to mark this as being part of the QSG
+	// version 2 stuff...
+	if (bits & U_EXTEND1) {
+		bits |= MSG_ReadByte () << 16;
+		if (bits & U_EXTEND2)
+			bits |= MSG_ReadByte () << 24;
+	}
+
+	to->flags = bits;
+
+	if (bits & U_MODEL)
+                Net_LogPrintf (" MdlIdx: %d", MSG_ReadByte ());
+
+        if (bits & U_FRAME) {
+                to->frame = MSG_ReadByte ();
+                Net_LogPrintf (" Frame: %d", to->frame);
+        }
+
+	if (bits & U_COLORMAP)
+                Net_LogPrintf (" Colormap: %d", MSG_ReadByte ());
+
+	if (bits & U_SKIN)
+                Net_LogPrintf (" Skinnum: %d", MSG_ReadByte ());
+
+        if (bits & U_EFFECTS) {
+                to->effects = MSG_ReadByte ();
+                Net_LogPrintf (" Effects: %d", to->effects);
+        }
+
+	if (bits & U_ORIGIN1)
+                Net_LogPrintf (" X: %f", MSG_ReadCoord ());
+
+	if (bits & U_ANGLE1)
+                Net_LogPrintf (" Pitch: %d", MSG_ReadAngle ());
+
+	if (bits & U_ORIGIN2)
+                Net_LogPrintf (" Y: %f", MSG_ReadCoord ());
+
+	if (bits & U_ANGLE2)
+                Net_LogPrintf (" Yaw: %d", MSG_ReadAngle ());
+
+	if (bits & U_ORIGIN3)
+                Net_LogPrintf (" Z: %f", MSG_ReadCoord ());
+
+	if (bits & U_ANGLE3)
+                Net_LogPrintf (" Roll: %d", MSG_ReadAngle ());
+
+// Ender (QSG - Begin)
+	if (bits & U_ALPHA)
+                Net_LogPrintf(" Alpha: %d", MSG_ReadByte ());
+	if (bits & U_SCALE)
+                Net_LogPrintf(" Scale: %d", MSG_ReadByte ());
+	if (bits & U_EFFECTS2)
+                Net_LogPrintf(" U_EFFECTS2: %d", (to->effects & 0xFF) | (MSG_ReadByte () << 8));
+	if (bits & U_GLOWSIZE)
+                Net_LogPrintf(" GlowSize: %d", MSG_ReadByte ());
+	if (bits & U_GLOWCOLOR)
+                Net_LogPrintf(" ColorGlow: %d", MSG_ReadByte ());
+	if (bits & U_COLORMOD)
+                Net_LogPrintf(" Colormod: %d", MSG_ReadByte ());
+	if (bits & U_FRAME2)
+                Net_LogPrintf(" Uframe2: %d", ((to->frame & 0xFF) | (MSG_ReadByte () << 8)));
+// Ender (QSG - End)
+
+        return;
+}
+
+
 
 void
 Analyze_Server_Packet (byte * data, int len)
@@ -722,45 +808,22 @@ Parse_Server_Packet ()
 						Net_LogPrintf ("\n\t*End of sound list*");
 					break;
 				case svc_packetentities:
-                                        // fixme:
-                                        Net_LogPrintf ("Not parsed (parser broken ;-)");
-                                        return;
-					while ((mask1 = MSG_ReadShort ())) {
-						if (msg_badread)
-							break;
-						Net_LogPrintf ("\n\t");
-						if (mask1 & 0x8000)
-							mask1 |= MSG_ReadByte ();
 
-						if (mask1 & U_MODEL)
-							Net_LogPrintf (" Mdl: %d", MSG_ReadByte ());
-						if (mask1 & U_FRAME)
-							Net_LogPrintf (" Frame: %d", MSG_ReadByte ());
-						if (mask1 & U_COLORMAP)
-							Net_LogPrintf (" Colormap:%d", MSG_ReadByte ());
-						if (mask1 & U_SKIN)
-							Net_LogPrintf (" Skin: %d", MSG_ReadByte ());
-						if (mask1 & U_EFFECTS)
-							Net_LogPrintf (" Effects: %d", MSG_ReadByte ());
-						if (mask1 & U_ORIGIN1)
-							Net_LogPrintf (" X: %f", MSG_ReadCoord ());
-						if (mask1 & U_ANGLE1)
-							Net_LogPrintf (" Pitch: %d", MSG_ReadAngle ());
-						if (mask1 & U_ORIGIN2)
-							Net_LogPrintf (" Y: %f", MSG_ReadCoord ());
-						if (mask1 & U_ANGLE2)
-							Net_LogPrintf (" Yaw: %d", MSG_ReadAngle ());
-						if (mask1 & U_ORIGIN3)
-							Net_LogPrintf (" Z: %f", MSG_ReadCoord ());
-						if (mask1 & U_ANGLE3)
-							Net_LogPrintf (" Roll: %d", MSG_ReadAngle ());
-//                  if(mask1 & U_SOLID) return;
-					}
+                                        while (1) {
+                                                mask1 = (unsigned short) MSG_ReadShort();
+                                                if (msg_badread) {
+                                                        Net_LogPrintf ("Badread\n");
+                                                        return;
+                                                }
+                                                if (!mask1) break;
+						if (mask1 & U_REMOVE) Net_LogPrintf("UREMOVE ");
+                                                Log_Delta(mask1);
+                                        }
 					break;
 				case svc_deltapacketentities:
 					Net_LogPrintf ("idx: %d", MSG_ReadByte ());
 					return;
-//                                break;
+                                        break;
 				case svc_maxspeed:
 					Net_LogPrintf ("%f", MSG_ReadFloat ());
 					break;
