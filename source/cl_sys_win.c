@@ -55,7 +55,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <limits.h>
 #include <io.h>
 #include <conio.h>
-
+#include "sys.h"
 qboolean is_server = false;
 
 #define MINIMUM_WIN_MEMORY	0x0c00000
