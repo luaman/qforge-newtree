@@ -65,7 +65,7 @@
 #else
 #include <netinet/in.h>
 #endif
-#include "cl_slist.h"
+#include <cl_slist.h>
 
 extern cvar_t *fs_basepath;
 extern cvar_t *fs_sharepath;
@@ -1206,10 +1206,9 @@ void CL_Init (void)
 	CL_InitPrediction ();
 	CL_InitCam ();
 	Pmove_Init ();
-	Server_List_Init (); //Init server list
-
-	if ((servlist = Qopen("./servers.txt","r"))) {
-		Server_List_Load(servlist);
+	
+	if ((servlist = Qopen(va("%s/servers.txt",fs_basepath->string),"r"))) {
+		slist = Server_List_LoadF(servlist,slist);
 		Qclose(servlist);
 	}
 	
@@ -1808,7 +1807,7 @@ void Host_Shutdown(void)
 	}
 	isdown = true;
 
-	Server_List_Shutdown ();
+	Server_List_Shutdown (slist);
 
 	Host_WriteConfiguration (); 
 		

@@ -30,24 +30,28 @@
 	$Id$
 */
 #include "quakeio.h"
-#define MAX_SERVER_LIST 256
 
-typedef struct {
-	char *server;
-	char *description;
-	int ping;
-} server_entry_t;
+typedef struct server_entry_s {
+  	char *server;
+	char *desc;
+	struct server_entry_s *next;
+	struct server_entry_s *prev;
+  } server_entry_t;
+  
+extern server_entry_t	*slist;
+  
+server_entry_t *Server_List_Add(server_entry_t *start, char *ip, char *desc);
+server_entry_t *Server_List_Del(server_entry_t *start, server_entry_t *del);
+server_entry_t *Server_List_InsB(server_entry_t *start, server_entry_t *place, char *ip, char *desc);
+void Server_List_Swap(server_entry_t *swap1, server_entry_t *swap2);
+server_entry_t *Server_List_Get_By_Num(server_entry_t *start, int n);
+int Server_List_Len(server_entry_t *start);
 
-extern server_entry_t	slist[MAX_SERVER_LIST];
+server_entry_t *Server_List_LoadF(QFile *f, server_entry_t *start);
+void Server_List_SaveF(QFile *f, server_entry_t *start);
 
-void Server_List_Init(void);
-void Server_List_Shutdown(void);
-int Server_List_Set(int i,char *addr,char *desc);
-int Server_List_Reset_NoFree(int i);
-int Server_List_Reset(int i);
-void Server_List_Switch(int a,int b);
-int Server_List_Len(void);
-int Server_List_Load(QFile *f);
-int Server_List_Save(QFile *f);
-char *gettokstart (char *str, int req, char delim);
+void Server_List_Del_All(server_entry_t *start);
+void Server_List_Shutdown(server_entry_t *start);
+
+char *gettokstart(char *str, int req, char delim);
 int gettoklen(char *str, int req, char delim);

@@ -1164,6 +1164,7 @@ void M_Menu_MultiPlayer_f (void) {
 void M_MultiPlayer_Draw (void) {
 	int serv;
 	int line = 1;
+	server_entry_t *cp;
 	qpic_t *p;
 	//int f;
 
@@ -1171,26 +1172,25 @@ void M_MultiPlayer_Draw (void) {
 	p = Draw_CachePic("gfx/p_multi.lmp");
 	M_DrawPic((320-p->width)/2,4,p);
 	
-	if (!(slist[0].server)) {
+	if (!slist) {
 		M_DrawTextBox(60,80,23,4);
 		M_PrintWhite(110,12*8,"No server list");
 		M_PrintWhite(140,13*8,"found.");
 		return;
 	}
 	M_DrawTextBox(STAT_X,STAT_Y,23,4);
-	//M_DrawTextBox(STAT_X+96,STAT_Y+38,12,3);
 	M_DrawTextBox(STAT_X,STAT_Y+38,23,3);
 	M_DrawTextBox(MENU_X,MENU_Y,23,(m_multip_maxs - m_multip_mins)+1);
-	for (serv = m_multip_mins; serv <= m_multip_maxs; serv++) {
-		if (slist[serv].server) {
-			M_Print(MENU_X+18,line*8+MENU_Y,
-				va("%1.21s",
-				strlen(slist[serv].description) <= m_multip_horiz ? "" : slist[serv].description+m_multip_horiz));
-			line++;
-		}
+	for (serv = m_multip_mins; serv <= m_multip_maxs && serv < Server_List_Len(slist); serv++) {
+		cp = Server_List_Get_By_Num(slist,serv);
+		M_Print(MENU_X+18,line*8+MENU_Y,
+			va("%1.21s",
+			strlen(cp->desc) <= m_multip_horiz ? "" : cp->desc+m_multip_horiz));
+		line++;
 	}
+	cp = Server_List_Get_By_Num(slist,m_multip_cursor);
 	M_PrintWhite(STAT_X+18,STAT_Y+16,"IP/Hostname:");
-	M_Print(STAT_X+18,STAT_Y+24,slist[m_multip_cursor].server);
+	M_Print(STAT_X+18,STAT_Y+24,cp->server);
 	M_DrawCharacter(MENU_X+8,(m_multip_cursor - m_multip_mins + 1) * 8+MENU_Y,
 		12+((int)(realtime*4)&1));
 	//f = (int)(realtime * 10) % 6;
@@ -1199,8 +1199,8 @@ void M_MultiPlayer_Draw (void) {
 }
 
 void M_MultiPlayer_Key (key) {
-//	server_entry_t *pt;
-	if (!(slist[0].server) && key != K_ESCAPE && key != K_INS)
+	server_entry_t *temp;
+	if (!slist && key != K_ESCAPE && key != K_INS)
 		return;
 	switch(key) {
 	case K_ESCAPE:
@@ -1209,7 +1209,7 @@ void M_MultiPlayer_Key (key) {
 	case KP_DOWNARROW:
 	case K_DOWNARROW:
 		S_LocalSound("misc/menu1.wav");
-		if (m_multip_cursor < (MAX_SERVER_LIST-1) && slist[m_multip_cursor+1].server) {
+		if (Server_List_Get_By_Num(slist,m_multip_cursor+1)) {
 			m_multip_cursor++;
 		}
 		break;
@@ -1229,10 +1229,8 @@ void M_MultiPlayer_Key (key) {
 	case K_PGDN:
 		S_LocalSound("misc/menu1.wav");
 		m_multip_cursor += (m_multip_maxs - m_multip_mins);
-		if (m_multip_cursor >= MAX_SERVER_LIST)
-			m_multip_cursor = MAX_SERVER_LIST - 1;
-		while (!(slist[m_multip_cursor].server))
-			m_multip_cursor--;
+		if (Server_List_Len(slist) - 1  < m_multip_cursor )
+			m_multip_cursor = Server_List_Len(slist) - 1;
 		break;
 	case K_RIGHTARROW:
 		S_LocalSound("misc/menu1.wav");
@@ -1248,7 +1246,7 @@ void M_MultiPlayer_Key (key) {
 		m_state = m_main;
 		M_ToggleMenu_f();
 		CL_Disconnect();
-		strncpy(cls.servername,slist[m_multip_cursor].server,sizeof(cls.servername)-1);
+		strncpy(cls.servername,Server_List_Get_By_Num(slist,m_multip_cursor)->server,sizeof(cls.servername)-1);
 		CL_BeginServerConnect();
 		break;
 	case 'e':
@@ -1257,37 +1255,28 @@ void M_MultiPlayer_Key (key) {
 		break;
 	case K_INS:
 		S_LocalSound("misc/menu2.wav");
-		if (Server_List_Len() < (MAX_SERVER_LIST-1)) {
-			memmove(&slist[m_multip_cursor+1],
-				&slist[m_multip_cursor],
-				(Server_List_Len() - m_multip_cursor)*sizeof(slist[0]));
-			Server_List_Reset_NoFree(m_multip_cursor);
-			Server_List_Set(m_multip_cursor,"127.0.0.1","<BLANK>");
+		if (!slist) {
+			m_multip_cursor = 0;
+			slist = Server_List_Add(slist, "127.0.0.1","<BLANK>");
+		}
+		else {
+		temp = Server_List_Get_By_Num(slist,m_multip_cursor);
+		slist = Server_List_InsB(slist, temp, "127.0.0.1","<BLANK>");
 		}
 		break;
 	case K_DEL:
 		S_LocalSound("misc/menu2.wav");
-		if (Server_List_Len() > 0) {
-			free(slist[m_multip_cursor].server);
-			free(slist[m_multip_cursor].description);
-			if (Server_List_Len()-1 == m_multip_cursor) {
-				Server_List_Reset_NoFree(m_multip_cursor);
-				m_multip_cursor = !m_multip_cursor ? 0 : m_multip_cursor-1;
-				
-			}
-			else {
-				memmove(&slist[m_multip_cursor],
-				&slist[m_multip_cursor+1],
-				(Server_List_Len()-m_multip_cursor-1) * sizeof(slist[0]));
-				Server_List_Reset_NoFree(Server_List_Len()-1);
-			}
+		if (Server_List_Len(slist) > 0) {
+			slist = Server_List_Del(slist, Server_List_Get_By_Num(slist,m_multip_cursor));
+			if (Server_List_Len(slist) == m_multip_cursor && slist)
+				m_multip_cursor--;
 		}
 		break;
 	case ']':
 	case '}':
 		S_LocalSound("misc/menu1.wav");
-		if (m_multip_cursor != Server_List_Len() - 1) {
-			Server_List_Switch(m_multip_cursor,m_multip_cursor+1);
+		if (m_multip_cursor != Server_List_Len(slist) - 1) {
+			Server_List_Swap(Server_List_Get_By_Num(slist,m_multip_cursor),Server_List_Get_By_Num(slist,m_multip_cursor+1));
 			m_multip_cursor++;
 		}
 		break;
@@ -1295,7 +1284,7 @@ void M_MultiPlayer_Key (key) {
 	case '{':
 		S_LocalSound("misc/menu1.wav");
 		if (m_multip_cursor) {
-			Server_List_Switch(m_multip_cursor,m_multip_cursor-1);
+			Server_List_Swap(Server_List_Get_By_Num(slist,m_multip_cursor),Server_List_Get_By_Num(slist,m_multip_cursor-1));
 			m_multip_cursor--;
 		}
 		break;
@@ -1327,14 +1316,16 @@ int desc_min;
 int sedit_state;
 
 void M_Menu_SEdit_f (void) {
+	server_entry_t *c;
 	key_dest = key_menu;
 	m_entersound = true;
 	m_state = m_sedit;
 	sedit_state = 0;
-	strncpy(serv,slist[m_multip_cursor].server,255);
-	serv[strlen(slist[m_multip_cursor].server) + 1] = 0;
-	strncpy(desc,slist[m_multip_cursor].description,255);
-	desc[strlen(slist[m_multip_cursor].description) + 1] = 0;
+	c = Server_List_Get_By_Num(slist,m_multip_cursor);
+	strncpy(serv,c->server,255);
+	serv[strlen(c->server) + 1] = 0;
+	strncpy(desc,c->desc,255);
+	desc[strlen(c->desc) + 1] = 0;
 	serv_max = strlen(serv) > SERV_L ? strlen(serv) : SERV_L;
 	serv_min = serv_max - (SERV_L);
 	desc_max = strlen(desc) > DESC_L ? strlen(desc) : DESC_L;
@@ -1362,14 +1353,22 @@ void M_SEdit_Draw (void) {
 			DESC_Y+8,10+((int)(realtime*4)&1));
 }
 
+
 void M_SEdit_Key (int key) {
 	int	l;
+	server_entry_t *c;
 	switch (key) {
 		case K_ESCAPE:
 			M_Menu_MultiPlayer_f ();
 			break;
 		case K_ENTER:
-			Server_List_Set(m_multip_cursor,serv,desc);
+			c = Server_List_Get_By_Num(slist,m_multip_cursor);
+			free(c->server);
+			free(c->desc);
+			c->server = malloc(strlen(serv) + 1);
+			c->desc = malloc(strlen(desc) + 1);
+			strcpy(c->server,serv);
+			strcpy(c->desc,desc);
 			M_Menu_MultiPlayer_f ();
 			break;
 		case K_UPARROW:
