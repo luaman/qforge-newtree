@@ -47,7 +47,8 @@ TASM32  = Tasm32
 QFROOT = D:\PROJECT\QUAKE1\NEWTREE
 
 # Complier root directory
-CROOT = D:\BORLAND\BCC55
+#CROOT = D:\BORLAND\BCC55
+CROOT = D:\progra\BCC55
 # For 5.02
 #CROOT = D:\BC5
 
@@ -105,8 +106,8 @@ EXT2=.obj
 
 # TASM32
 #ASSEMBLER = $(TASM32)
-#ASMIN = $(QFROOT)\common
-#ASMOUT = ,
+#ASMIN = $(QFROOT)\source
+#ASMOUT = ,$(QFROOT)\source
 #ASMOPTS = /ml
 #EXT1=.obj
 #EXT2=.asm

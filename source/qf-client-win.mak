@@ -50,6 +50,8 @@ QFROOT = D:\PROJECT\QUAKE1\NEWTREE
 CROOT = D:\BORLAND\BCC55
 # For 5.02
 #CROOT = D:\BC5
+# For C++ Builder
+#CROOT = D:\PROGRA~1\BORLAND\CBUILDER5
 
 # Where you want to put those .obj files
 #OBJS = $(QFROOT)\TARGETS\QW_CLIENT
@@ -123,8 +125,8 @@ EXT2=.obj
 
 # TASM32
 #ASSEMBLER = $(TASM32)
-#ASMIN = $(QFROOT)\common
-#ASMOUT = ,
+#ASMIN = $(QFROOT)\source
+#ASMOUT = ,$(QFROOT)\source
 #ASMOPTS = /ml
 #EXT1=.obj
 #EXT2=.asm
