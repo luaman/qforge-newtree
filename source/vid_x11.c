@@ -74,8 +74,6 @@
 #include "dga_check.h"
 #include "draw.h"
 #include "host.h"
-#include "input.h"
-#include "keys.h"
 #include "menu.h"
 #include "qargs.h"
 #include "qendian.h"
