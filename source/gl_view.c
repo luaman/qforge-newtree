@@ -51,9 +51,7 @@ extern      double          host_frametime;
 extern int	onground;
 extern	byte	gammatable[256];
 
-/* cvar_t  gl_cshiftpercent = {"gl_cshiftpercent", "100", false};
- CVAR_FIXME */
-cvar_t  *gl_cshiftpercent;
+extern cvar_t  *gl_cshiftpercent;
 
 byte ramps[3][256];
 float	v_blend[4];

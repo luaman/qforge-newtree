@@ -451,6 +451,7 @@ void signal_handler(int sig)
 
 void InitSig(void)
 {
+#if 0
 	signal(SIGHUP, signal_handler);
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, signal_handler);
@@ -461,6 +462,7 @@ void InitSig(void)
 	signal(SIGFPE, signal_handler);
 	signal(SIGSEGV, signal_handler);
 	signal(SIGTERM, signal_handler);
+#endif
 }
 
 void VID_ShiftPalette(unsigned char *p)

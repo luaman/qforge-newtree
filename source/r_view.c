@@ -111,6 +111,8 @@ cvar_t  *cl_crossy;
  CVAR_FIXME */
 cvar_t  *v_contentblend;
 
+cvar_t *gl_cshiftpercent;
+
 float	v_dmg_time, v_dmg_roll, v_dmg_pitch;
 
 extern	int			in_forward, in_forward2, in_back;
@@ -1007,6 +1009,8 @@ void V_Init (void)
 /* 	Cvar_RegisterVariable (&v_kickpitch);	
  CVAR_FIXME */
 	v_kickpitch = Cvar_Get("v_kickpitch",  "0.6", CVAR_NONE, "None");	
+
+	gl_cshiftpercent = Cvar_Get("gl_cshiftpercent", "100", CVAR_NONE, "None");
 
 	BuildGammaTable (1.0);	// no gamma yet
 /* 	Cvar_RegisterVariable (&v_gamma);
