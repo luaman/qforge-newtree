@@ -421,16 +421,17 @@ IN_Shutdown(void)
 {
 	Con_Printf("IN_Shutdown\n");
 	mouse_avail = 0;
-	XAutoRepeatOn(x_disp);
-	if (nullcursor != None) {
-		XFreeCursor(x_disp, nullcursor);
-		nullcursor = None;
-	}
-	
+	if (x_disp) {
+		XAutoRepeatOn(x_disp);
+		if (nullcursor != None) {
+			XFreeCursor(x_disp, nullcursor);
+			nullcursor = None;
+		}
+
 #ifdef HAS_DGA
-	XF86DGADirectVideo(x_disp, DefaultScreen(x_disp), 0);
+		XF86DGADirectVideo(x_disp, DefaultScreen(x_disp), 0);
 #endif
-	
+	}
 	x11_close_display();
 }
 
