@@ -1084,8 +1084,13 @@ COM_Filesystem_Init_Cvars (void)
 							"location of your game directories");
 	fs_basegame = Cvar_Get ("fs_basegame", BASEGAME, CVAR_ROM,
 							"game to use by default");
+#ifdef NEWSTYLE
+	fs_skinbase= Cvar_Get ("fs_skinbase", fs_basegame->string, CVAR_ROM,
+							"location of skins dir for downloads");
+#else
 	fs_skinbase= Cvar_Get ("fs_skinbase", SKINBASE, CVAR_ROM,
 							"location of skins dir for downloads");
+#endif
 }
 
 /*
