@@ -30,21 +30,18 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 #include <SDL.h>
 
-#include "client.h"
-#include "console.h"
 #include "cvar.h"
-#include "draw.h"
 #include "d_local.h"
-#include "input.h"
-#include "keys.h"
-#include "menu.h"
-#include "sys.h"
-#include "qargs.h"
 #include "qendian.h"
 #include "quakedef.h"
+#include "sys.h"
 #include "va.h"
+#include "vid.h"
 
 // static float oldin_grab = 0;
 

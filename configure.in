@@ -410,6 +410,7 @@ if test "x$HAVE_GLX" != xno; then
 		AC_DEFINE(HAVE_GL_COLOR_INDEX8_EXT) AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no)
 	)
+	AC_CHECK_HEADERS(GL/glext.h)
 fi
 CPPFLAGS="$save_CPPFLAGS"
 

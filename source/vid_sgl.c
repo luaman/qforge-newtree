@@ -26,9 +26,21 @@
 	$Id$
 */
 
-#include "vid_common.h"
-#include "va.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#include <sys/signal.h>
 #include <SDL.h>
+
+#include "console.h"
+#include "qargs.h"
+#include "qendian.h"
+#include "quakedef.h"
+#include "sys.h"
+#include "va.h"
 #include "glquake.h"
 
 #define	WARP_WIDTH	320
@@ -105,7 +117,6 @@ VID_Init (unsigned char *palette)
 {
 	Uint32 flags = SDL_OPENGL;
 	int i;
-	char gldir[MAX_OSPATH];
 
 	VID_GetWindowSize (640, 480);
 
@@ -176,9 +187,6 @@ VID_Init (unsigned char *palette)
 #endif
 
 	GL_Init();
-
-	snprintf(gldir, sizeof(gldir), "%s/glquake", com_gamedir);
-	Sys_mkdir (gldir);
 
 	VID_SetPalette (palette);
 

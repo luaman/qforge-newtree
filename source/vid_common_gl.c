@@ -31,7 +31,9 @@
 #endif
 
 #include <GL/gl.h>
+#ifdef HAVE_GL_GLEXT_H
 #include <GL/glext.h>
+#endif
 
 #include <string.h>
 
@@ -46,12 +48,12 @@
 # endif
 #endif
 
-#include "quakefs.h"
-#include "input.h"
-#include "sbar.h"
-#include "glquake.h"
 #include "console.h"
+#include "glquake.h"
+#include "input.h"
 #include "qargs.h"
+#include "quakefs.h"
+#include "sbar.h"
 
 #define WARP_WIDTH              320
 #define WARP_HEIGHT             200
@@ -350,8 +352,7 @@ Shared_Init8bitPalette()
 #ifdef HAVE_TDFXGL
 		load_texture(GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
 #endif
-	}
-	else
+	} else
 		glColorTable(GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, (void *) thePalette);
 }
 #endif
