@@ -483,15 +483,25 @@ CL_LinkPacketEntities (void)
 
 		// spawn light flashes, even ones coming from invisible objects
 		if ((s1->effects & (EF_BLUE | EF_RED)) == (EF_BLUE | EF_RED))
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2], 200 + (rand () & 31), 0.1, 3);
+			CL_NewDlight (s1->number,
+						  s1->origin[0], s1->origin[1], s1->origin[2],
+						  200 + (rand () & 31), 0.1, 3);
 		else if (s1->effects & EF_BLUE)
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2], 200 + (rand () & 31), 0.1, 1);
+			CL_NewDlight (s1->number,
+						  s1->origin[0], s1->origin[1], s1->origin[2],
+						  200 + (rand () & 31), 0.1, 1);
 		else if (s1->effects & EF_RED)
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2], 200 + (rand () & 31), 0.1, 2);
+			CL_NewDlight (s1->number,
+						  s1->origin[0], s1->origin[1], s1->origin[2],
+						  200 + (rand () & 31), 0.1, 2);
 		else if (s1->effects & EF_BRIGHTLIGHT)
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2] + 16, 400 + (rand () & 31), 0.1, 0);
+			CL_NewDlight (s1->number,
+						  s1->origin[0], s1->origin[1], s1->origin[2] + 16,
+						  400 + (rand () & 31), 0.1, 0);
 		else if (s1->effects & EF_DIMLIGHT)
-			CL_NewDlight (s1->number, s1->origin[0], s1->origin[1], s1->origin[2], 200 + (rand () & 31), 0.1, 0);
+			CL_NewDlight (s1->number,
+						  s1->origin[0], s1->origin[1], s1->origin[2],
+						  200 + (rand () & 31), 0.1, 0);
 
 		// if set to invisible, skip
 		if (!s1->modelindex)
@@ -573,10 +583,6 @@ CL_LinkPacketEntities (void)
 		for (i = 0; i < 3; i++)
 			ent->origin[i] = s2->origin[i] + f * (s1->origin[i] - s2->origin[i]);
 
-		// add automatic particle trails
-		if (!model->flags)
-			continue;
-
 		// scan the old entity display list for a matching
 		for (i = 0; i < cl_oldnumvisedicts; i++) {
 			if (cl_oldvisedicts[i].keynum == ent->keynum) {
@@ -589,7 +595,14 @@ CL_LinkPacketEntities (void)
 			}
 		}
 
-		if (i == cl_oldnumvisedicts)	// not in last message
+		if (i == cl_oldnumvisedicts) {
+			// not in last message
+			ent->pose1 = ent->pose2 = -1;		// don't lerp 
+			continue;
+		}
+
+		// add automatic particle trails
+		if (!model->flags)
 			continue;
 
 		for (i = 0; i < 3; i++)

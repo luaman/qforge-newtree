@@ -668,7 +668,11 @@ R_SetupAliasBlendedFrame (int frame, aliashdr_t *paliashdr, entity_t *e, qboolea
 
 	if (e->pose2 != pose) {
 		e->frame_start_time = realtime;
-		e->pose1 = e->pose2;
+		if (e->pose2 == -1) {
+			e->pose1 = pose;
+		} else {
+			e->pose1 = e->pose2;
+		}
 		e->pose2 = pose;
 		blend = 0;
 	} else {

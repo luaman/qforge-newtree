@@ -259,7 +259,7 @@ main (int c, char **v)
 
 	oldtime = Sys_DoubleTime ();
 	while (1) {
-// find time spent rendering last frame
+		// find time spent rendering last frame
 		newtime = Sys_DoubleTime ();
 		time = newtime - oldtime;
 
