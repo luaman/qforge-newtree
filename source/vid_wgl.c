@@ -159,15 +159,6 @@ qboolean gl_mtexable = false;
 
 //====================================
 
-cvar_t		*vid_mode;
-cvar_t		*_vid_default_mode;
-cvar_t		*_vid_default_mode_win;
-cvar_t		*vid_wait;
-cvar_t		*vid_nopageflip;
-cvar_t		*_vid_wait_override;
-cvar_t		*vid_config_x;
-cvar_t		*vid_config_y;
-cvar_t		*vid_stretch_by_2;
 cvar_t		*_windowed_mouse;
 
 int			window_center_x, window_center_y, window_x, window_y, window_width, window_height;
@@ -469,7 +460,6 @@ int VID_SetMode (int modenum, unsigned char *palette)
 	SetForegroundWindow (mainwindow);
 	VID_SetPalette (palette);
 	vid_modenum = modenum;
-	Cvar_SetValue (vid_mode, (float)vid_modenum);
 
 	while (PeekMessage (&msg, NULL, 0, 0, PM_REMOVE))
 	{
@@ -1591,18 +1581,6 @@ void	VID_Init (unsigned char *palette)
 
 	memset(&devmode, 0, sizeof(devmode));
 
-// Note that 0 is MODE_WINDOWED
-	vid_mode = Cvar_Get("vid_mode", "0", CVAR_NONE, "None");
-	_vid_default_mode = Cvar_Get("_vid_default_mode", "0", CVAR_ARCHIVE, "None");
-// Note that 3 is MODE_FULLSCREEN_DEFAULT
-	_vid_default_mode_win = Cvar_Get("_vid_default_mode_win", "3", CVAR_ARCHIVE, "None");
-
-	vid_wait = Cvar_Get("vid_wait", "0", CVAR_NONE, "None");
-	vid_nopageflip = Cvar_Get("vid_nopageflip", "0", CVAR_ARCHIVE, "None");
-	_vid_wait_override = Cvar_Get("_vid_wait_override",  "0", CVAR_ARCHIVE, "None");
-	vid_config_x = Cvar_Get("vid_config_x", "800", CVAR_ARCHIVE, "None");
-	vid_config_y = Cvar_Get("vid_config_y", "600", CVAR_ARCHIVE, "None");
-	vid_stretch_by_2 = Cvar_Get("vid_stretch_by_2", "1", CVAR_ARCHIVE, "None");
 	_windowed_mouse = Cvar_Get("_windowed_mouse", "0", CVAR_ARCHIVE, "None");
 
 	Cmd_AddCommand ("vid_nummodes", VID_NumModes_f);

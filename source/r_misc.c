@@ -47,15 +47,6 @@ R_CheckVariables
 */
 void R_CheckVariables (void)
 {
-#if 0
-	static float	oldbright;
-
-	if (r_fullbright->value != oldbright)
-	{
-		oldbright = r_fullbright->value;
-		D_FlushCaches ();	// so all lighting changes
-	}
-#endif
 }
 
 
@@ -481,7 +472,6 @@ void R_SetupFrame (void)
 
 	// don't allow cheats in multiplayer
 	Cvar_SetValue(r_draworder, 0);
-	Cvar_SetValue(r_fullbright, 0);
 	Cvar_SetValue(r_ambient, 0);
 	Cvar_SetValue(r_drawflat, 0);
 

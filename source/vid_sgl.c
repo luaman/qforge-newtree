@@ -55,9 +55,7 @@
 
 static qboolean		vid_initialized = false;
 
-cvar_t  *vid_mode;
 cvar_t  *vid_fullscreen;
-extern cvar_t   *gl_triplebuffer;
 extern cvar_t   *in_dga_mouseaccel;
 cvar_t	  *_windowed_mouse;
 cvar_t	  *m_filter;
@@ -80,8 +78,6 @@ int texture_mode = GL_LINEAR;
 int texture_extension_number = 1;
 
 float	gldepthmin, gldepthmax;
-
-cvar_t	*gl_ztrick;
 
 const char	*gl_vendor;
 const char	*gl_renderer;
@@ -335,8 +331,6 @@ VID_Init (unsigned char *palette)
 	char gldir[MAX_OSPATH];
 	int width = 640, height = 480;
 
-	vid_mode = Cvar_Get ("vid_mode","0",0,"None");
-	gl_ztrick = Cvar_Get ("gl_ztrick","0",CVAR_ARCHIVE,"None");
 	vid_fullscreen = Cvar_Get ("vid_fullscreen","0",0,"None");
 
 	vid.maxwarpwidth = WARP_WIDTH;
@@ -437,7 +431,6 @@ VID_Init (unsigned char *palette)
 
 void VID_InitCvars()
 {
-	gl_triplebuffer = Cvar_Get("gl_triplebuffer","1",CVAR_ARCHIVE,"None");
 }
 
 /*

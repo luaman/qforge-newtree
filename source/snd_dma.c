@@ -97,7 +97,6 @@ cvar_t *volume;
 cvar_t *nosound;
 cvar_t *precache;
 cvar_t *loadas8bit;
-cvar_t *bgmbuffer;
 cvar_t *ambient_level;
 cvar_t *ambient_fade;
 cvar_t *snd_noextraupdate;
@@ -203,7 +202,6 @@ void S_Init (void)
 	precache = Cvar_Get("precache",  "1", CVAR_NONE, "None");
 	loadas8bit = Cvar_Get("loadas8bit",  "0", CVAR_NONE, "None");
 	bgmvolume = Cvar_Get("bgmvolume",  "1", CVAR_ARCHIVE, "None");
-	bgmbuffer = Cvar_Get("bgmbuffer",  "4096", CVAR_NONE, "None");
 	ambient_level = Cvar_Get("ambient_level",  "0.3", CVAR_NONE, "None");
 	ambient_fade = Cvar_Get("ambient_fade",  "100", CVAR_NONE, "None");
 	snd_noextraupdate = Cvar_Get("snd_noextraupdate",  "0", CVAR_NONE, "None");

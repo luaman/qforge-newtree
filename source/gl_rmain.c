@@ -92,8 +92,6 @@ cvar_t	*r_norefresh;
 cvar_t	*r_drawentities;
 cvar_t	*r_drawviewmodel;
 cvar_t	*r_speeds;
-cvar_t	*r_fullbright;
-cvar_t	*r_lightmap;
 cvar_t	*r_shadows;
 cvar_t	*r_wateralpha;
 cvar_t	*r_waterripple;
@@ -112,7 +110,6 @@ cvar_t	*gl_flashblend;
 cvar_t	*gl_playermip;
 cvar_t	*gl_nocolors;
 cvar_t	*gl_keeptjunctions;
-cvar_t	*gl_reporttjunctions;
 cvar_t	*gl_particles;
 
 cvar_t	*r_skyname;
@@ -799,8 +796,6 @@ R_SetupFrame
 static void R_SetupFrame (void)
 {
 // don't allow cheats in multiplayer
-	Cvar_SetValue (r_fullbright, 0);
-	Cvar_SetValue (r_lightmap, 0);
 	if (!atoi(Info_ValueForKey(cl.serverinfo, "watervis")))
 		Cvar_SetValue(r_wateralpha, 1);
 

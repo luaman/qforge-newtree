@@ -112,7 +112,6 @@ cvar_t	*m_yaw;
 cvar_t	*m_forward;
 cvar_t	*m_side;
 
-cvar_t	*entlatency;
 cvar_t	*cl_predict_players;
 cvar_t	*cl_predict_players2;
 cvar_t	*cl_solid_players;
@@ -1256,7 +1255,6 @@ void CL_InitCvars (void)
 	rcon_password = Cvar_Get("rcon_password",  "", CVAR_NONE, "None");
 	rcon_address = Cvar_Get("rcon_address",  "", CVAR_NONE, "None");
 
-	entlatency = Cvar_Get("entlatency",  "20", CVAR_NONE, "None");
 	cl_predict_players2 = Cvar_Get("cl_predict_players2",  "1", CVAR_NONE, "None");
 	cl_predict_players = Cvar_Get("cl_predict_players",  "1", CVAR_NONE, "None");
 	cl_solid_players = Cvar_Get("cl_solid_players",  "1", CVAR_NONE, "None");

@@ -91,7 +91,6 @@ unsigned int	d_8to24table[256];
 unsigned char	d_15to8table[65536];
 
 cvar_t	*vid_mode;
-extern cvar_t	*gl_triplebuffer;
 extern cvar_t	*in_dga_mouseaccel;
 
 #ifdef HAVE_DGA
@@ -595,7 +594,6 @@ void VID_Init(unsigned char *palette)
 
 void VID_InitCvars()
 {
-	gl_triplebuffer = Cvar_Get("gl_triplebuffer","1",CVAR_ARCHIVE,"None");
 }
 
 void

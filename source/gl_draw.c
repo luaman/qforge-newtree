@@ -63,7 +63,6 @@ extern  byte            *host_basepal;
 extern unsigned char d_15to8table[65536];
 extern cvar_t *crosshair, *cl_crossx, *cl_crossy, *crosshaircolor;
 
-cvar_t		*gl_nobind;
 cvar_t		*gl_max_size;
 cvar_t		*gl_picmip;
 
@@ -403,8 +402,6 @@ void Draw_Init (void)
 	// LordHavoc: lighting mode
 	gl_lightmode = Cvar_Get("gl_lightmode", "1", CVAR_ARCHIVE,
 			"Lighting mode (0 = GLQuake style, 1 = new style)");
-	gl_nobind = Cvar_Get("gl_nobind",  "0", CVAR_NONE,
-			"whether or not to inhibit texture binding");
 	gl_max_size = Cvar_Get("gl_max_size",  "1024", CVAR_NONE,
 			"None");  // CVAR_FIXME - set a description
 	gl_picmip = Cvar_Get("gl_picmip",  "0", CVAR_NONE,

@@ -95,12 +95,9 @@ extern viddef_t	vid;				// global video state
 // Note that 0 is MODE_WINDOWED
 cvar_t		*vid_mode;
 // Note that 0 is MODE_WINDOWED
-cvar_t		*_vid_default_mode;
 // Note that 3 is MODE_FULLSCREEN_DEFAULT
 cvar_t		*_vid_default_mode_win;
-cvar_t		*vid_wait;
 cvar_t		*vid_nopageflip;
-cvar_t		*_vid_wait_override;
 cvar_t		*vid_config_x;
 cvar_t		*vid_config_y;
 cvar_t		*vid_stretch_by_2;
@@ -1809,13 +1806,6 @@ void VID_LockBuffer (void)
 		screenwidth = WARP_WIDTH;
 	else
 		screenwidth = vid.rowbytes;
-
-/*
-// disabled until someone fixes, not defined right or anything
-        if (lcd_x->value)
-                screenwidth <<= 1;
-                */
-
 }
 		
 		
@@ -2123,10 +2113,7 @@ void	VID_Init (unsigned char *palette)
 	byte	*ptmp;
 
 	vid_mode = Cvar_Get("vid_mode", "0", CVAR_NONE, "None");
-	vid_wait = Cvar_Get("vid_wait", "0", CVAR_NONE, "None");
 	vid_nopageflip = Cvar_Get("vid_nopageflip", "0", CVAR_ARCHIVE, "None");
-	_vid_wait_override = Cvar_Get("_vid_wait_override",  "0", CVAR_ARCHIVE, "None");
-	_vid_default_mode = Cvar_Get("_vid_default_mode", "0", CVAR_ARCHIVE, "None");
 	_vid_default_mode_win = Cvar_Get("_vid_default_mode_win", "3", CVAR_ARCHIVE, "None");
 	vid_config_x = Cvar_Get("vid_config_x", "800", CVAR_ARCHIVE, "None");
 	vid_config_y = Cvar_Get("vid_config_y", "600", CVAR_ARCHIVE, "None");

@@ -51,8 +51,6 @@ when crossing a water boudnary.
 
 */
 
-cvar_t	*lcd_x;	// FIXME: make this work sometime...
-
 cvar_t	*cl_rollspeed;
 cvar_t	*cl_rollangle;
 

@@ -53,8 +53,6 @@ qboolean	is_server = false;
 
 #define BASEDIR	"."
 
-cvar_t  *sys_linerefresh;// set for entity display
-
 
 // =======================================================================
 // General routines

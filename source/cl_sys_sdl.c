@@ -63,7 +63,6 @@
 #include "client.h"
 
 qboolean is_server = false;
-extern cvar_t	*sys_nostd_out;
 
 int		starttime;
 

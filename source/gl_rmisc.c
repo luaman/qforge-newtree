@@ -232,8 +232,6 @@ void R_Init (void)
 	Cmd_AddCommand ("r_firecolor", R_FireColor_f);
 
 	r_norefresh = Cvar_Get("r_norefresh", "0", CVAR_NONE, "None");
-	r_lightmap = Cvar_Get("r_lightmap", "0", CVAR_NONE, "None");
-	r_fullbright = Cvar_Get("r_fullbright", "0", CVAR_NONE, "None");
 	r_drawentities = Cvar_Get("r_drawentities", "1", CVAR_NONE, "None");
 	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_NONE, "None");
 	r_shadows = Cvar_Get("r_shadows", "0", CVAR_NONE, "None");
@@ -272,7 +270,6 @@ void R_Init (void)
 			"Toggles fullbright color support for bmodels");
 
 	gl_keeptjunctions = Cvar_Get("gl_keeptjunctions", "1", CVAR_NONE, "None");
-	gl_reporttjunctions = Cvar_Get("gl_reporttjunctions", "0", CVAR_NONE, "None");
 	
 	r_skyname = Cvar_Get("r_skyname", "none", CVAR_NONE, 
 			"name of the current skybox");

@@ -67,11 +67,6 @@
 unsigned int	d_8to24table[256];
 unsigned char	d_15to8table[65536];
 
-static cvar_t	*vid_mode;
-static cvar_t	*vid_redrawfull;
-static cvar_t	*vid_waitforrefresh;
-extern cvar_t	*gl_triplebuffer;
-
 #ifdef HAVE_DLOPEN
 static void	*dlhand = NULL;
 #endif
@@ -538,11 +533,6 @@ void VID_Init(unsigned char *palette)
 	char	gldir[MAX_OSPATH];
 	int width = 640, height = 480;
 
-	vid_mode = Cvar_Get ("vid_mode", "5", 0, "None");
-	vid_redrawfull = Cvar_Get ("vid_redrawfull", "0", 0," None");
-	vid_waitforrefresh = Cvar_Get ("vid_waitforrefresh", "0", CVAR_ARCHIVE,
-			"None");
-
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.colormap = host_colormap;
@@ -635,7 +625,6 @@ void VID_ExtraOptionCmd(int option_cursor)
 }
 void VID_InitCvars ()
 {
-	gl_triplebuffer = Cvar_Get ("gl_triplebuffer","1",CVAR_ARCHIVE,"None");
 }
 
 void

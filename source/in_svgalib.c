@@ -68,7 +68,6 @@ static void IN_init_mouse();
 
 cvar_t	*_windowed_mouse;
 cvar_t	*m_filter;
-static cvar_t	*mouse_button_commands[3];
 
 static void keyhandler(int scancode, int state)
 {
@@ -245,9 +244,6 @@ static void IN_init_mouse()
 	char *mousedev;
 	int mouserate = MOUSE_DEFAULTSAMPLERATE;
 
-	mouse_button_commands[0] = Cvar_Get ("mouse1","+attack",0,"None");
-	mouse_button_commands[1] = Cvar_Get ("mouse2","+strafe",0,"None");
-	mouse_button_commands[2] = Cvar_Get ("mouse2","+forward",0,"None");
 	m_filter = Cvar_Get ("m_filter","0",0,"None");
 	Cmd_AddCommand("force_centerview", Force_CenterView_f);
 

@@ -140,7 +140,6 @@ cvar_t	*r_zgraph;
 cvar_t	*r_graphheight;
 cvar_t	*r_clearcolor;
 cvar_t	*r_waterwarp;
-cvar_t	*r_fullbright;
 cvar_t	*r_drawentities;
 cvar_t	*r_drawviewmodel;
 cvar_t	*r_aliasstats;
@@ -231,7 +230,6 @@ void R_Init (void)
 	r_ambient = Cvar_Get("r_ambient",  "0", CVAR_NONE, "None");
 	r_clearcolor = Cvar_Get("r_clearcolor", "2", CVAR_NONE, "None");
 	r_waterwarp = Cvar_Get("r_waterwarp", "1", CVAR_NONE, "None");
-	r_fullbright = Cvar_Get("r_fullbright", "0", CVAR_NONE, "None");
 	r_drawentities = Cvar_Get("r_drawentities", "1", CVAR_NONE, "None");
 	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_NONE, "None");
 	r_aliasstats = Cvar_Get("r_polymodelstats", "0", CVAR_NONE, "None");

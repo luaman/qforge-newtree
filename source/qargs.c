@@ -59,7 +59,6 @@ static char	*safeargvs[] =
 int		com_argc;
 char	**com_argv;
 char	*com_cmdline;
-cvar_t	*cmdline;
 
 qboolean	nouse = false;	// 1999-10-29 +USE fix by Maddes
 
