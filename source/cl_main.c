@@ -37,7 +37,7 @@
 #endif
 
 #include <ctype.h>
-
+#include <sys/types.h>
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
