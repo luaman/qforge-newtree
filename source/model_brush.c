@@ -597,14 +597,12 @@ void Mod_LoadFaces (lump_t *l)
 
 		if (!strncmp(out->texinfo->texture->name,"sky",3))	// sky
 		{
+			void BuildSurfaceDisplayList (msurface_t*);
 			out->flags |= (SURF_DRAWSKY | SURF_DRAWTILED);
-#ifndef QUAKE2
-			GL_SubdivideSurface (out);	// cut up polygon for warps
-#endif
 			continue;
 		}
 		
-		if (!strncmp(out->texinfo->texture->name,"*",1))		// turbulent
+		if (out->texinfo->texture->name[0] == '*')		// turbulent
 		{
 			out->flags |= (SURF_DRAWTURB | SURF_DRAWTILED);
 			for (i=0 ; i<2 ; i++)

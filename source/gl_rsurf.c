@@ -1296,8 +1296,6 @@ void GL_BuildLightmaps (void)
 		{
 			if ( m->surfaces[i].flags & SURF_DRAWTURB )
 				continue;
-			if ( m->surfaces[i].flags & SURF_DRAWSKY )
-				continue;
 			GL_CreateSurfaceLightmap (m->surfaces + i);
 			BuildSurfaceDisplayList (m->surfaces + i);
 		}
