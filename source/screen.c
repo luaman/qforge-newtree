@@ -869,7 +869,7 @@ void SCR_RSShot_f (void)
 	fracw = (float)vid.width / (float)w;
 	frach = (float)vid.height / (float)h;
 
-	newbuf = malloc(w*h);
+	newbuf = calloc(1, w*h);
 
 	for (y = 0; y < h; y++) {
 		dest = newbuf + (w * y);

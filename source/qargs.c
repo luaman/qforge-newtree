@@ -96,7 +96,7 @@ void COM_InitArgv (int argc, char **argv)
 
 	safe = false;
 
-	largv = (char**)malloc ((argc + NUM_SAFE_ARGVS + 1) * sizeof (char**));
+	largv = (char**)calloc (1, (argc + NUM_SAFE_ARGVS + 1) * sizeof (char**));
 
 	for (com_argc=0, len=0 ; com_argc < argc ; com_argc++)
 	{
@@ -107,7 +107,7 @@ void COM_InitArgv (int argc, char **argv)
 			len += strlen (argv[com_argc]) + 1;
 	}
 
-	com_cmdline = (char*)malloc (len+1); // need strlen(com_cmdline)+2
+	com_cmdline = (char*)calloc (1, len+1); // need strlen(com_cmdline)+2
 	com_cmdline[0] = 0;
 	if (len) {
 		for (i=1; i < argc; i++)

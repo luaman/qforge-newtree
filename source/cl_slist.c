@@ -45,7 +45,7 @@ server_entry_t *SL_Add (server_entry_t *start, char *ip, char *desc) {
 	server_entry_t *p;
 	p = start;
 	if (!start) { //Nothing at beginning of list, create it
-		start = malloc(sizeof(server_entry_t));
+		start = calloc(1, sizeof(server_entry_t));
 		start->prev = 0;
 		start->next = 0;
 		start->server = malloc(strlen(ip) + 1);
@@ -57,7 +57,7 @@ server_entry_t *SL_Add (server_entry_t *start, char *ip, char *desc) {
 
 	for(p=start;p->next;p=p->next); //Get to end of list
 
-	p->next = malloc(sizeof(server_entry_t));
+	p->next = calloc(1, sizeof(server_entry_t));
 	p->next->prev = p;
 	p->next->server = malloc(strlen(ip) + 1);
 	p->next->desc = malloc(strlen(desc) + 1);
@@ -95,7 +95,7 @@ server_entry_t *SL_InsB (server_entry_t *start, server_entry_t *place, char *ip,
 		server_entry_t *new;
 		server_entry_t *other;
 	
-		new = malloc(sizeof(server_entry_t));
+		new = calloc(1, sizeof(server_entry_t));
 		new->server = malloc(strlen(ip) + 1);
 		new->desc = malloc(strlen(desc) + 1);
 		strcpy(new->server,ip);

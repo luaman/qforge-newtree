@@ -96,7 +96,7 @@ void Cvar_Alias_Get (char *name, cvar_t *cvar)
 	var = Cvar_FindAlias(name);	
 	if (!var)
 	{
-		alias = (cvar_alias_t *) malloc(sizeof(cvar_alias_t));
+		alias = (cvar_alias_t *) calloc(1, sizeof(cvar_alias_t));
 		alias->next = calias_vars;
 		calias_vars = alias;
 		alias->name = strdup(name);	
@@ -442,7 +442,7 @@ cvar_t *Cvar_Get(char *name, char *string, int cvarflags, char *description)
 	v = Cvar_FindVar(name);
 	if (!v)
 	{
-		v = (cvar_t *) malloc(sizeof(cvar_t));
+		v = (cvar_t *) calloc(1, sizeof(cvar_t));
 		// Cvar doesn't exist, so we create it
 		v->next = cvar_vars;
 		cvar_vars = v;

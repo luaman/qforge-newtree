@@ -425,7 +425,7 @@ void Cmd_Alias_f (void)
 
 	if (!a)
 	{
-		a = malloc (sizeof(cmdalias_t));
+		a = calloc (1, sizeof(cmdalias_t));
 		a->next = cmd_alias;
 		cmd_alias = a;
 	}

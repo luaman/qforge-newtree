@@ -509,7 +509,7 @@ COM_LoadFile (char *path, int usehunk)
 	else if (usehunk == 2)
 		buf = Hunk_TempAlloc (len+1);
 	else if (usehunk == 0)
-		buf = malloc (len+1);
+		buf = calloc (1, len+1);
 	else if (usehunk == 3)
 		buf = Cache_Alloc (loadcache, len+1, base);
 	else if (usehunk == 4)
@@ -604,7 +604,7 @@ COM_LoadPackFile (char *packfile)
 	if (numpackfiles > MAX_FILES_IN_PACK)
 		Sys_Error ("%s has %i files", packfile, numpackfiles);
 
-	newfiles = malloc (numpackfiles * sizeof(packfile_t));
+	newfiles = calloc (1, numpackfiles * sizeof(packfile_t));
 
 	fseek (packhandle, header.dirofs, SEEK_SET);
 	fread (info, 1, header.dirlen, packhandle);
@@ -618,7 +618,7 @@ COM_LoadPackFile (char *packfile)
 		newfiles[i].filelen = LittleLong(info[i].filelen);
 	}
 
-	pack = malloc (sizeof (pack_t));
+	pack = calloc (1, sizeof (pack_t));
 	strcpy (pack->filename, packfile);
 	pack->handle = packhandle;
 	pack->numfiles = numpackfiles;
@@ -676,7 +676,7 @@ COM_LoadGameDirectory(char *dir)
 
 	Con_DPrintf ("COM_LoadGameDirectory (\"%s\")\n", dir);
 
-	pakfiles = malloc(FBLOCK_SIZE * sizeof(char *));
+	pakfiles = calloc(1, FBLOCK_SIZE * sizeof(char *));
 	bufsize += FBLOCK_SIZE;
 	if (!pakfiles)
 		goto COM_LoadGameDirectory_free;
@@ -720,7 +720,7 @@ COM_LoadGameDirectory(char *dir)
 		if (!pak) {
 			Sys_Error(va("Bad pakfile %s!!", pakfiles[i]));
 		} else {
-			search = malloc (sizeof(searchpath_t));
+			search = calloc (1, sizeof(searchpath_t));
 			search->pack = pak;
 			search->next = com_searchpaths;
 			com_searchpaths = search;
@@ -760,7 +760,7 @@ COM_AddDirectory (char *dir)
 //
 // add the directory to the search path
 //
-	search = malloc (sizeof(searchpath_t));
+	search = calloc (1, sizeof(searchpath_t));
 	strcpy (search->filename, dir);
 	search->next = com_searchpaths;
 	com_searchpaths = search;
