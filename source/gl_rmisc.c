@@ -245,8 +245,8 @@ void R_Init (void)
 	gl_clear = Cvar_Get("gl_clear", "0", CVAR_NONE, "None");
 	gl_texsort = Cvar_Get("gl_texsort", "1", CVAR_NONE, "None");
  
- 	if (gl_mtexable)
-		Cvar_SetValue(gl_texsort, 0.0);
+//	if (gl_mtexable)
+//		Cvar_SetValue(gl_texsort, 0);
 
 	gl_cull = Cvar_Get("gl_cull", "1", CVAR_NONE, "None");
 	gl_smooth = Cvar_Get("gl_smooth", "1", CVAR_NONE, "None");
