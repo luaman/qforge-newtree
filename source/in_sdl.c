@@ -50,7 +50,7 @@
 
 #ifdef WIN32
 // fixme: this is evil...
-#include <windows.h>
+# include <windows.h>
 HWND        mainwindow;
 #endif
 

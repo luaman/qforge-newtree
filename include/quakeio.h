@@ -35,8 +35,9 @@
 #endif
 
 #include <stdio.h>
+
 #ifdef HAVE_ZLIB
-#include <zlib.h>
+# include <zlib.h>
 #endif
 
 #include "gcc_attr.h"

@@ -30,7 +30,7 @@
 #ifndef _MDFOUR_H
 #define _MDFOUR_H
 
-#include	"uint32.h"
+#include "uint32.h"
 
 #define MDFOUR_DIGEST_BYTES 16
 

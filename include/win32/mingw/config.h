@@ -73,16 +73,16 @@
 
 /* Define this to the subdirectory name of the default game */
 #ifdef NEWSTYLE
-#	define BASEGAME "base"
+# define BASEGAME "base"
 #else
-#	define BASEGAME "id1"
+# define BASEGAME "id1"
 #endif
 
 /* Define this to the base directory for the client to download skins to */
 #ifdef NEWSTYLE
-#	define SKINBASE "base"
+# define SKINBASE "base"
 #else
-#	define SKINBASE "qw"
+# define SKINBASE "qw"
 #endif
 
 /* Define if you have the XFree86 DGA extension */
@@ -284,26 +284,26 @@
 
 /* Experimental 3DNOW support */
 #ifdef HAVE_3DNOW_ASM
-        #define atan  _atan
-        #define atan2 _atan2
-        #define acos _acos
-        #define asin _asin
-        #define log _log
-        #define log10 _log10
-        #define pow _pow
-        #define exp _exp
-        #define sqrt _sqrt
-        #define fabs _fabs
-        #define ceil _ceil
-        #define floor  _floor
-        #define frexp _frexp
-        #define ldexp _ldexp
-        #define modf _modf
-        #define fmod _fmod
-        #define sincos _sincos
-        #define sin _sin
-        #define cos _cos
-        #define tan _tan
+# define atan  _atan
+# define atan2 _atan2
+# define acos _acos
+# define asin _asin
+# define log _log
+# define log10 _log10
+# define pow _pow
+# define exp _exp
+# define sqrt _sqrt
+# define fabs _fabs
+# define ceil _ceil
+# define floor  _floor
+# define frexp _frexp
+# define ldexp _ldexp
+# define modf _modf
+# define fmod _fmod
+# define sincos _sincos
+# define sin _sin
+# define cos _cos
+# define tan _tan
 #endif
 
 #endif	// _CONFIG_H

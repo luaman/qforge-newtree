@@ -42,17 +42,17 @@ void Sys_HighFPPrecision(void)
 
 void Sys_LowFPPrecision(void)
 {
-return;
+	return;
 }
 
 void MaskExceptions(void)
 {
-return;
+	return;
 }
 
 void Sys_SetFPCW(void)
 {
-return;
+	return;
 }
 #endif
 
@@ -74,5 +74,3 @@ void snprintf(char * buffer, size_t n, const char * format, ...)
 #endif
 
 #endif
-
-

@@ -27,11 +27,11 @@ extern "C" {
 #endif
 
 #if defined (__cplusplus) || (defined (__STDC__) && __STDC__)
-#undef	__P
-#define	__P(args)	args
+# undef	__P
+# define	__P(args)	args
 #else /* Not C++ or ANSI C.  */
-#undef	__P
-#define	__P(args)	()
+# undef	__P
+# define	__P(args)	()
 /* We can get away without defining `const' here only because in this file
    it is used only inside the prototype for `fnmatch', which is elided in
    non-ANSI C where `const' is problematical.  */
@@ -50,9 +50,9 @@ extern "C" {
 #define	FNM_PERIOD	(1 << 2) /* Leading `.' is matched only explicitly.  */
 
 #if !defined (_POSIX_C_SOURCE) || _POSIX_C_SOURCE < 2 || defined (_GNU_SOURCE)
-#define	FNM_FILE_NAME	FNM_PATHNAME /* Preferred GNU name.  */
-#define	FNM_LEADING_DIR	(1 << 3) /* Ignore `/...' after a match.  */
-#define	FNM_CASEFOLD	(1 << 4) /* Compare without regard to case.  */
+# define	FNM_FILE_NAME	FNM_PATHNAME /* Preferred GNU name.  */
+# define	FNM_LEADING_DIR	(1 << 3) /* Ignore `/...' after a match.  */
+# define	FNM_CASEFOLD	(1 << 4) /* Compare without regard to case.  */
 #endif
 
 /* Value returned by `fnmatch' if STRING does not match PATTERN.  */

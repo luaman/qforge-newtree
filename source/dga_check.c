@@ -36,10 +36,10 @@
 #include <X11/Xlib.h>
 
 #ifdef HAVE_DGA
-#include <X11/extensions/xf86dga.h>
+# include <X11/extensions/xf86dga.h>
 #endif
 #ifdef HAVE_VIDMODE
-#include <X11/extensions/xf86vmode.h>
+# include <X11/extensions/xf86vmode.h>
 #endif
 
 #include "dga_check.h"

@@ -51,8 +51,8 @@
 
 #ifdef WIN32
 /* fixme: this is evil hack to get full DirectSound support with SDL */
-#include <windows.h>
-#include <SDL_syswm.h>
+# include <windows.h>
+# include <SDL_syswm.h>
 HWND 		mainwindow;
 #endif
 

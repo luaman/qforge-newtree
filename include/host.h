@@ -38,7 +38,7 @@
 //define	PARANOID			// speed sapping error checking
 
 #if defined(_WIN32) && !defined(__GNUC__)
-#pragma warning( disable : 4244 4127 4201 4214 4514 4305 4115 4018)
+# pragma warning( disable : 4244 4127 4201 4214 4514 4305 4115 4018)
 #endif
 
 #define MAX_NUM_ARGVS	50

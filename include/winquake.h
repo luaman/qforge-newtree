@@ -38,6 +38,7 @@
 #include <windows.h>
 #include <ddraw.h>
 #include <dsound.h>
+
 #ifdef HAVE_MGRAPH_H
 # include <mgraph.h>
 #endif

@@ -29,8 +29,9 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <string.h>
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif
 
 #include "cmd.h"
 #include "msg.h"

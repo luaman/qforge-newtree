@@ -30,7 +30,7 @@
 #define _GCC_ATTR_H
 
 #ifndef __GNUC__
-#define __attribute__(x)
+# define __attribute__(x)
 #endif
 
 #endif	// _GCC_ATTR_H

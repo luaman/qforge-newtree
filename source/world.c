@@ -29,15 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <stdio.h>
-
 #ifdef HAVE_STRING_H
 # include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
 # include <strings.h>
 #endif
+
+#include <stdio.h>
 
 #include "commdef.h"
 #include "console.h"

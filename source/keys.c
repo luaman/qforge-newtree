@@ -29,18 +29,18 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
 #ifdef _WIN32
-#include <windows.h>
+# include <windows.h>
 #endif
-#include <stdlib.h>
-#include <ctype.h>
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
+
+#include <stdlib.h>
+#include <ctype.h>
 
 #include "client.h"
 #include "cmd.h"

@@ -57,15 +57,16 @@
 #endif
 
 #ifndef _WIN32
-#include <unistd.h>
+# include <unistd.h>
 #endif
+
 #include <sys/types.h>
 
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
@@ -89,7 +90,7 @@
 #undef model_t
 
 #ifdef NeXT
-#include <libc.h>
+# include <libc.h>
 #endif
 
 #include "console.h"
@@ -99,12 +100,12 @@
 #include "sys.h"
 
 #ifndef MAXHOSTNAMELEN
-#define MAXHOSTNAMELEN	512
+# define MAXHOSTNAMELEN	512
 #endif
 
 #ifdef __GLIBC__						// glibc macro
-#define s6_addr32 in6_u.u6_addr32
-#define ss_family __ss_family
+# define s6_addr32 in6_u.u6_addr32
+# define ss_family __ss_family
 #endif
 
 netadr_t    net_local_adr;
@@ -117,7 +118,7 @@ int         net_socket;
 byte        net_message_buffer[MAX_UDP_PACKET];
 
 #ifdef _WIN32
-WSADATA     winsockdata;
+ WSADATA     winsockdata;
 #endif
 
 //=============================================================================

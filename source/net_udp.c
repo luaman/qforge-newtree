@@ -37,7 +37,7 @@
 #include <errno.h>
 
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+# include <unistd.h>
 #endif
 
 #include <sys/types.h>
@@ -65,7 +65,7 @@
 #endif
 
 #ifdef NeXT
-#include <libc.h>
+# include <libc.h>
 #endif
 
 #include "console.h"
@@ -74,7 +74,7 @@
 #include "qargs.h"
 
 #ifdef _WIN32
-#include <windows.h>
+# include <windows.h>
 # undef EWOULDBLOCK
 # define EWOULDBLOCK    WSAEWOULDBLOCK
 #endif
@@ -85,9 +85,9 @@
 
 #ifndef HAVE_SOCKLEN_T
 # ifdef HAVE_SIZE
-typedef size_t socklen_t;
+   typedef size_t socklen_t;
 # else
-typedef unsigned int socklen_t;
+   typedef unsigned int socklen_t;
 # endif
 #endif
 
@@ -103,7 +103,7 @@ extern qboolean is_server;
 byte        net_message_buffer[MAX_UDP_PACKET];
 
 #ifdef _WIN32
-WSADATA     winsockdata;
+ WSADATA     winsockdata;
 #endif
 
 //=============================================================================

@@ -32,30 +32,27 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #define _BSD
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <errno.h>
-
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
 #ifdef HAVE_DGA
-#include <X11/extensions/XShm.h>
-#include <X11/extensions/xf86dga.h>
+# include <X11/extensions/XShm.h>
+# include <X11/extensions/xf86dga.h>
 #endif
 
 #include "cl_input.h"

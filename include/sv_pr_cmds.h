@@ -32,7 +32,7 @@
 
 #ifndef PROGS_T
 typedef struct progs_s progs_t;
-#define PROGS_T
+# define PROGS_T
 #endif
 
 char *PF_VarString (progs_t *pr, int first);

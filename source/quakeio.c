@@ -31,17 +31,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
 #ifdef HAVE_MALLOC_H
 # include <malloc.h>
 #endif
-#include <stdarg.h>
-#include <stdlib.h>
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
 #ifdef WIN32
 # include <io.h>
@@ -55,6 +52,9 @@
 #ifdef _MSC_VER
 # define _POSIX_
 #endif
+
+#include <stdarg.h>
+#include <stdlib.h>
 #include <limits.h>
 
 #include "quakefs.h"

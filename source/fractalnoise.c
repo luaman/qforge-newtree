@@ -1,7 +1,7 @@
 /*
 	fractalnoise.c
 
-	LordHavocs fractial noise generator.
+	LordHavocs fractal noise generator.
 
 	Copyright (C) 2000  Forest `LordHavoc` Hale.
 

@@ -26,7 +26,7 @@
 	$Id$
 */
 #if defined(_WIN32) && !defined(__GNUC__)
-#pragma warning(disable:4305)
+# pragma warning(disable:4305)
 #endif
 {-0.525731, 0.000000, 0.850651}, 
 {-0.442863, 0.238856, 0.864188}, 

@@ -30,9 +30,9 @@
 #define __ASM_I386__
 
 #ifdef HAVE_SYM_PREFIX_UNDERSCORE
-#define C(label) _##label
+# define C(label) _##label
 #else
-#define C(label) label
+# define C(label) label
 #endif
 
 //

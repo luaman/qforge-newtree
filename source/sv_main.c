@@ -29,15 +29,15 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <stdarg.h>
-#include <stdlib.h>
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
 # include <strings.h>
 #endif
+
+#include <stdarg.h>
+#include <stdlib.h>
 
 #include "bothdefs.h"
 #include "buildnum.h"

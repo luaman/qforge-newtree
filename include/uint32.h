@@ -33,21 +33,21 @@
 #define _UINT32_H
 
 #ifndef int32
-#if (SIZEOF_INT == 4)
-#define int32 int
-#elif (SIZEOF_LONG == 4)
-#define int32 long
-#elif (SIZEOF_SHORT == 4)
-#define int32 short
-#else
+# if (SIZEOF_INT == 4)
+#  define int32 int
+# elif (SIZEOF_LONG == 4)
+#  define int32 long
+# elif (SIZEOF_SHORT == 4)
+#  define int32 short
+# else
 /* I hope this works */
-#define int32 int
-#define LARGE_INT32
-#endif
+#  define int32 int
+#  define LARGE_INT32
+# endif
 #endif
 
 #ifndef uint32
-#define uint32 unsigned int32
+# define uint32 unsigned int32
 #endif
 
 #endif	// _UINT32_H

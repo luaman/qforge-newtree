@@ -29,6 +29,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include <SDL_audio.h>
 #include <SDL_byteorder.h>
 

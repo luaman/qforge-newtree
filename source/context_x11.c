@@ -29,14 +29,18 @@
 	$Id$
 */
 
+#ifdef HAVE_CONFIG_H
 # include "config.h"
+#endif
 
 #include <ctype.h>
 #include <sys/time.h>
 #include <sys/types.h>
+
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+# include <unistd.h>
 #endif
+
 #include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>

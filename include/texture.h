@@ -33,7 +33,7 @@
 #define __texture_h
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
 
 // could not use texture_t as that is used for models.

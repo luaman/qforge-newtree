@@ -30,18 +30,15 @@
 # include "config.h"
 #endif
 
+#include <termios.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+
 #include "protocol.h"
 #include "cvar.h"
 #include "keys.h"
 
-#include <termios.h>
-#include <unistd.h>
-
 cvar_t		*_windowed_mouse;
-
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
 
 int
 fd_blocking (int fd, int on)

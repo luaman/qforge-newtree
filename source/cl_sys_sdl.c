@@ -42,15 +42,15 @@
 #include <conio.h>
 
 #ifndef _WIN32
-#include <unistd.h>
-#include <stdarg.h>
-#include <string.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <limits.h>
-#include <sys/types.h>
-#include <sys/mman.h>
+# include <unistd.h>
+# include <stdarg.h>
+# include <string.h>
+# include <ctype.h>
+# include <fcntl.h>
+# include <signal.h>
+# include <limits.h>
+# include <sys/types.h>
+# include <sys/mman.h>
 #endif
 
 #include <SDL.H>

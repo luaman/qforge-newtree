@@ -29,26 +29,19 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <stdlib.h>
-#include <stdarg.h>
-
 #ifdef HAVE_STRING_H
 # include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
 # include <strings.h>
 #endif
-
-#include <ctype.h>
-
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
-#ifdef HAVE_STRINGS_H
-# include <strings.h>
-#endif
 
+#include <stdlib.h>
+#include <stdarg.h>
+#include <ctype.h>
 #include <fcntl.h>
 #include <dirent.h>
 

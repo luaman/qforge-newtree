@@ -30,19 +30,19 @@
 # include "config.h"
 #endif
 #ifdef HAVE_STRING_H
-#include <string.h>
+# include <string.h>
 #endif
 #ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <strings.h>
 #endif
 
 #include "console.h"
 #include "sound.h"
 
 #ifdef _WIN32
-#include "winquake.h"
+# include "winquake.h"
 #else
-#define DWORD	unsigned long
+# define DWORD	unsigned long
 #endif
 
 #define	PAINTBUFFER_SIZE	512

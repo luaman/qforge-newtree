@@ -16,7 +16,7 @@
 #include <sys/types.h>
 
 #ifdef __GLIBC__
-#include <asm/types.h>
+# include <asm/types.h>
 #endif
 
 #include <linux/fb.h>

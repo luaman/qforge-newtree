@@ -30,12 +30,12 @@
 # include "config.h"
 #endif
 
+#include <stdlib.h>
+
 #include "d_local.h"
 #include "qargs.h"
 #include "r_local.h"
 #include "sys.h"
-
-#include <stdlib.h>
 
 float       surfscale;
 qboolean    r_cache_thrash;				// set if surface cache is thrashing
