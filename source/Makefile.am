@@ -157,7 +157,7 @@ if JOYTYPE_NULL
 libqfjs_a_SOURCES=	joy_null.c
 endif
 libqfjs_a_CFLAGS=	$(JOY_CFLAGS)
-EXTRA_libqfjs_a_SOURCES= joy_linux.c joy_null.c
+EXTRA_libqfjs_a_SOURCES= joy_linux.c joy_win.c joy_null.c
 
 CLIENT_LIBS=	-L. -lqfsys_cl -lqfsnd -lqfcd -lqfjs $(SOUND_LIBS) $(NET_LIBS) $(CD_LIBS) $(JOY_LIBS) $(Z_LIBS)
 
