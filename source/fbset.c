@@ -153,9 +153,15 @@ static struct textentry {
 };
 
 static struct textentry VGAModes[] = {
-//    { FB_AUX_VGA_PLANES_VGA4, "VGA 16 colors in 4 planes" },
-//    { FB_AUX_VGA_PLANES_CFB4, "VGA 16 colors in 1 plane" },
-//    { FB_AUX_VGA_PLANES_CFB8, "VGA 256 colors in 4 planes" },
+#ifdef HAVE_FB_AUX_VGA_PLANES_VGA4
+    { FB_AUX_VGA_PLANES_VGA4, "VGA 16 colors in 4 planes" },
+#endif
+#ifdef HAVE_FB_AUX_VGA_PLANES_CFB4
+    { FB_AUX_VGA_PLANES_CFB4, "VGA 16 colors in 1 plane" },
+#endif
+#ifdef HAVE_FB_AUX_VGA_PLANES_CFB8
+    { FB_AUX_VGA_PLANES_CFB8, "VGA 256 colors in 4 planes" },
+#endif
     /* last entry has name == NULL */
     { 0,                      NULL}
 };

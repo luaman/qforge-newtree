@@ -109,5 +109,14 @@
 /* Define this if you have fnmatch.h */
 #undef HAVE_FNMATCH_H
 
+/* Define this if you have FB_AUX_VGA_PLANES_VGA4 */
+#undef HAVE_FB_AUX_VGA_PLANES_VGA4
+
+/* Define this if you have FB_AUX_VGA_PLANES_VGA4 */
+#undef HAVE_FB_AUX_VGA_PLANES_CFB4
+
+/* Define this if you have FB_AUX_VGA_PLANES_VGA4 */
+#undef HAVE_FB_AUX_VGA_PLANES_CFB8
+
 @BOTTOM@
 #endif // __config_h_
