@@ -1,4 +1,17 @@
 -----------------------------------------------------------------------
+COMPILING NEWTREE FOR WIN32 (Win95/98,NT/2000)
+
+We've succesfully compiled newtree source code with following
+compilers:
+
+- Microsoft Visual C 6.0 (commercial)
+- Borland C++ compiler v5.5 (free) and v5.02
+- Borland C++ Builder 5 (commercial)
+- Mingw (free, GPL), (GCC 2.95.2, http://www.mingw.org)
+
+* Mingw compiling instructions will be added shortly.
+
+-----------------------------------------------------------------------
 Steps to compile standalone on win32 platforms with VC++.
 
 To compile under "free" Borland C++, see couple of paragraphs below.
