@@ -370,7 +370,7 @@ CL_UpdateBeams
 void
 CL_UpdateBeams (void)
 {
-	int         i, j;
+	int         i;
 	beam_t     *b;
 	vec3_t      dist, org;
 	float       d;
