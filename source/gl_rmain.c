@@ -288,7 +288,7 @@ void R_DrawSpriteModel (entity_t *e)
 		right = vright;
 	}
 
-	glColor3f (0.5, 0.5, 0.5);
+	glColor4f (0.5, 0.5, 0.5, 1);
 
 	GL_DisableMultitexture();
 
@@ -370,6 +370,15 @@ void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 	verts = (trivertx_t *)((byte *)paliashdr + paliashdr->posedata);
 	verts += posenum * paliashdr->poseverts;
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
+
+	if (modelalpha == 0)
+		modelalpha = 1;
+	if (shadecolor[0] == 0)
+		shadecolor[0] = 1;
+	if (shadecolor[1] == 0)
+		shadecolor[1] = 1;
+	if (shadecolor[2] == 0)
+		shadecolor[2] = 1;
 
 	if (modelalpha != 1.0)
 		glDepthMask(0);
@@ -661,7 +670,7 @@ void R_DrawAliasModel (entity_t *e)
 		glColor4f (0,0,0,0.5);
 		GL_DrawAliasShadow (paliashdr, lastposenum);
 		glEnable (GL_TEXTURE_2D);
-		glColor3f (0.5, 0.5, 0.5);
+		glColor4f (0.5, 0.5, 0.5, 1);
 		glPopMatrix ();
 	}
 
