@@ -305,6 +305,53 @@ determine_face (vec3_t v)
 	return i;
 }
 
+/*
+	find_intersect (for want of a better name)
+
+	finds the point of intersection of the plane formed by the eye and the two
+	points on the cube and the edge of the cube defined by the two faces.
+	Currently, this will break if the two points are not on adjoining cube
+	faces (ie either on opposing faces or the same face).
+
+	The equation for the point of intersection of a line and a plane is:
+
+		        (x - p).n
+		y = x - _________ v
+		           v.n
+
+	where n is the normal to the plane, p is a point on the plane, x is a
+	point on the line, and v is the direction vector of the line. n is found
+	by (x1 - e) cross (x2 - e) and p is taken to be e (e = eye coords) for
+	simplicity. However, because e is at 0,0,0, this simplifies to n = x1
+	cross x2 and p = 0,0,0, so the equation above simplifies to:
+
+		        x.n
+		y = x - ___ v
+		        v.n
+*/
+static void
+find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
+{
+	vec3_t n;					// normal to the plane formed by the eye and
+								// the two points on the cube.
+	vec3_t x = {0, 0, 0};		// point on cube edge of adjoining faces.
+								// always on an axis plane.
+	vec3_t v = {0, 0, 0};		// direction vector of cube edge. always +ve
+	vec_t x_n, v_n;				// x.n and v.n
+
+	x[face1 % 3] = 2 * (face1 / 3) - 1;
+	x[face2 % 3] = 2 * (face2 / 3) - 1;
+
+	v[3 - ((face1 % 3) + (face2 % 3))] = 1;
+
+	CrossProduct (x1, x2, n);
+
+	x_n = DotProduct (x, n);
+	v_n = DotProduct (v, n);
+	VectorScale (v, x_n / v_n, v);
+	VectorSubtract (x, v, y);
+}
+
 static void
 set_vertex (glpoly_t *p, vec3_t v, int face)
 {
@@ -375,9 +422,7 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 				// ouch, miss a face
 			} else {
 				vec3_t l;
-				VectorSubtract (v, last_v, l);
-				l[prev_face % 3] = 0;
-				VectorAdd (last_v, l, l);
+				find_intersect (prev_face, last_v, face, v, l);
 
 				set_vertex(&box[prev_face].poly, l, prev_face);
 				set_vertex(&box[face].poly, l, face);
