@@ -1887,6 +1887,8 @@ void SV_Init (quakeparms_t *parms)
 	// execute sets again after the config file has been parsed ..
 	Cbuf_Execute_Sets ();
 
+	COM_Filesystem_Init_Cvars ();
+
 	// and now reprocess the cmdline's sets for overrides
 	Cmd_StuffCmds_f ();
 	Cbuf_Execute_Sets ();

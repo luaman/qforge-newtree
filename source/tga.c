@@ -53,7 +53,7 @@ fgetLittleShort (QFile *f)
 
 	return (short)(b1 + b2*256);
 }
-
+/*
 static int
 fgetLittleLong (QFile *f)
 {
@@ -66,6 +66,7 @@ fgetLittleLong (QFile *f)
 
 	return b1 + (b2<<8) + (b3<<16) + (b4<<24);
 }
+*/
 
 
 /*
