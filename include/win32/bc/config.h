@@ -267,6 +267,9 @@
 /* Define if you have the fnmatch proto file.  */
 #define HAVE_FNMATCH_PROTO 1
 
+/* Define if you have the <netinet/in.h> header file */
+#undef HAVE_NETINET_IN_H
+
 /* Experimental 3DNOW support */
 #ifdef HAVE_3DNOW_ASM
         #define atan  _atan
