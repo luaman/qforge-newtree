@@ -328,8 +328,9 @@ static void SCR_CalcRefdef (void)
 	if (scr_viewsize->value >= 100.0) {
 		full = true;
 		size = 100.0;
-	} else
+	} else {
 		size = scr_viewsize->value;
+	}
 	if (cl.intermission)
 	{
 		full = true;

@@ -483,10 +483,7 @@ addpinginfo:
 
 int	Sbar_ColorForMap (int m)
 {
-	m = (m < 0) ? 0 : ((m > 13) ? 13 : m);
-
-	m *= 16;
-	return m < 128 ? m + 8 : m + 8;
+	return (bound (0, m, 13) * 16) + 8;
 }
 
 
