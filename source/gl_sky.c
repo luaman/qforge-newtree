@@ -436,13 +436,31 @@ leave_face (struct box_def *box, int prev_face, int face)
 	box[prev_face].enter = -1;
 }
 
+static void
+render_box (struct box_def *box)
+{
+	int i,j;
+
+	for (i = 0; i < 6; i++) {
+		if (box[i].poly.numverts < 2)
+			continue;
+		glBindTexture (GL_TEXTURE_2D, box[i].tex);
+		glBegin (GL_POLYGON);
+		for (j=0; j < box[i].poly.numverts; j++) {
+			glTexCoord2fv (box[i].poly.verts[j]+3);
+			glVertex3fv (box[i].poly.verts[j]);
+		}
+		glEnd ();
+	}
+}
+
 void
 R_DrawSkyBoxPoly (glpoly_t *poly)
 {
 	static int skytex_offs[] = {3, 0, 4, 1, 2, 5};
 	vec3_t v, last_v;
 	struct box_def box[6];
-	int i, j;
+	int i;
 	int face, prev_face;
 
 	memset (box, 0, sizeof (box));
@@ -465,6 +483,26 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		face = determine_face (v);
 		if (face != prev_face) {
 			if (face % 3 == prev_face % 3) {
+				vec3_t l, x;
+				int x_face;
+
+				VectorSubtract (v, last_v, x);
+				VectorScale (x, 0.5, x);
+				VectorAdd (last_v, x, x);
+
+				x_face = determine_face (x);
+
+				find_intersect (prev_face, last_v, x_face, v, l);
+
+				set_vertex(&box[prev_face].poly, l, prev_face);
+				leave_face (box, prev_face, x_face);
+				//enter_face (box, prev_face, x_face);
+
+				find_intersect (x_face, last_v, face, v, l);
+
+				//leave_face (box, x_face, face);
+				enter_face (box, x_face, face);
+				set_vertex(&box[face].poly, l, face);
 			} else {
 				vec3_t l;
 				find_intersect (prev_face, last_v, face, v, l);
@@ -481,17 +519,7 @@ R_DrawSkyBoxPoly (glpoly_t *poly)
 		prev_face = face;
 	}
 
-	for (i = 0; i < 6; i++) {
-		if (box[i].poly.numverts < 2)
-			continue;
-		glBindTexture (GL_TEXTURE_2D, box[i].tex);
-		glBegin (GL_POLYGON);
-		for (j=0; j < box[i].poly.numverts; j++) {
-			glTexCoord2fv (box[i].poly.verts[j]+3);
-			glVertex3fv (box[i].poly.verts[j]);
-		}
-		glEnd ();
-	}
+	render_box (box);
 }
 
 void
@@ -541,11 +569,10 @@ R_DrawSkyChain (msurface_t *sky_chain)
 		glpoly_t *p = sky_chain->polys;
 		while (p) {
 			int i;
-			glBegin (GL_LINES);
+			glBegin (GL_LINE_LOOP);
 			for (i=0; i<p->numverts; i++) {
 				glVertex3fv (p->verts[i]);
 			}
-			glVertex3fv (p->verts[0]);
 			glEnd();
 			p = p->next;
 		}
@@ -556,16 +583,12 @@ R_DrawSkyChain (msurface_t *sky_chain)
 		glColor3f (1, 0, 0);
 		for (i=0; i<6; i++) {
 			vec3_t v;
-			glBegin (GL_LINES);
+			glBegin (GL_LINE_LOOP);
 			for (j=0; j<4; j++) {
 				memcpy (v, &skyvec[i][j][2], sizeof(v));
-				VectorScale (v, 1023.0/1024, v);
 				VectorAdd (v, r_refdef.vieworg, v);
 				glVertex3fv (v);
 			}
-			memcpy (v, &skyvec[i][j][2], sizeof(v));
-			VectorAdd (v, r_refdef.vieworg, v);
-			glVertex3fv (&skyvec[i][0][2]);
 			glEnd ();
 		}
 	}
