@@ -1250,13 +1250,23 @@ void CL_ParseServerMessage (void)
 			break;
 
 		case svc_intermission:
+			Con_DPrintf ("svc_intermission\n");
 			cl.intermission = 1;
 			cl.completed_time = realtime;
 			vid.recalc_refdef = true;	// go to full screen
+			Con_DPrintf ("intermission simorg: ");
 			for (i=0 ; i<3 ; i++)
-				cl.simorg[i] = MSG_ReadCoord ();			
+			{
+				cl.simorg[i] = MSG_ReadCoord ();
+				Con_DPrintf ("%i ", cl.simorg[i]);
+			}
+			Con_DPrintf ("\nintermission simangles: ");
 			for (i=0 ; i<3 ; i++)
+			{
 				cl.simangles[i] = MSG_ReadAngle ();
+				Con_DPrintf ("%i ", cl.simangles[i]);
+			}
+			Con_DPrintf ("\n");
 			VectorCopy (vec3_origin, cl.simvel);
 			break;
 
