@@ -1487,10 +1487,6 @@ void Host_Init (quakeparms_t *parms)
 	Draw_Init ();
 	SCR_Init ();
 	R_Init ();
-//	S_Init ();		// S_Init is now done as part of VID. Sigh.
-#ifdef GLQUAKE
-	S_Init();
-#endif
 
 	cls.state = ca_disconnected;
 	CDAudio_Init ();

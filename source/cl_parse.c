@@ -1069,11 +1069,9 @@ void CL_MuzzleFlash (void)
 	if ((unsigned)(i-1) >= MAX_CLIENTS)
 		return;
 
-#ifdef GLQUAKE
 	// don't draw our own muzzle flash in gl if flashblending
 	if (i-1 == cl.playernum && gl_flashblend.value)
 		return;
-#endif
 
 	pl = &cl.frames[parsecountmod].playerstate[i-1];
 
