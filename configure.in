@@ -10,7 +10,6 @@ AC_VALIDATE_CACHED_SYSTEM_TUPLE(
 	exit 1
 )
 
-
 dnl This is the only place where the package version appears
 AM_INIT_AUTOMAKE(quakeforge, 0.3.1)
 
@@ -57,7 +56,9 @@ AC_PROG_RANLIB
 AM_PROG_LEX
 AC_PROG_YACC
 
-AC_CHECK_LIB(l, main, LEXLIB="-ll", AC_CHECK_LIB(fl, main, LEXLIB="-lfl"))
+AC_CHECK_LIB(l, main, LEXLIB="-ll",
+	AC_CHECK_LIB(fl, main, LEXLIB="-lfl")
+)
 AC_SUBST(LEXLIB)
 
 dnl ==================================================================
@@ -67,7 +68,6 @@ dnl ==================================================================
 AC_SYS_LONG_FILE_NAMES
 AC_EXEEXT
 AC_OBJEXT
-
 
 dnl ==================================================================
 dnl Checks for header files.
@@ -90,6 +90,7 @@ AC_CHECK_HEADERS(
 	sys/time.h sys/types.h sys/wait.h time.h unistd.h vga.h \
 	vgakeyboard.h vgamouse.h windows.h winsock.h zlib.h
 )
+
 if test "x$mingw" = xyes; then
 	AC_MSG_CHECKING(for fnmatch.h)
 	AC_MSG_RESULT(yes)
@@ -234,10 +235,22 @@ AC_FUNC_MMAP
 AC_TYPE_SIGNAL
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(
-	gethostname gethostbyname connect gettimeofday getwd mkdir \
-	ftime _ftime fcntl stat putenv select socket strerror strstr \
-	snprintf _snprintf vsnprintf _vsnprintf strsep dlopen getaddrinfo \
-	getnameinfo
+	connect dlopen fcntl ftime getaddrinfo gethostname gethostbyname \
+	getnameinfo gettimeofday mkdir select socket snprintf stat strerror \
+	strstr snprintf vsnprintf
+)
+
+dnl Checks for stricmp/strcasecmp
+AC_CHECK_FUNC(strcasecmp,,
+	AC_CHECK_FUNC(stricmp,
+		AC_DEFINE(strcasecmp, stricmp),
+		AC_MSG_ERROR([Neither stricmp nor strcasecmp found])
+	)
+)
+
+dnl Checks for working -lm
+AC_CHECK_LIB(m, pow,,
+	AC_MSG_ERROR([math library (-lm) appears broken])
 )
 
 DL_LIBS=""
@@ -248,19 +261,12 @@ if test "x$ac_cv_func_dlopen" != "xyes"; then
 fi
 AC_SUBST(DL_LIBS)
 
-dnl Checks for stricmp/strcasecmp
-AC_CHECK_FUNC(stricmp,,
-	AC_CHECK_FUNC(strcasecmp, AC_DEFINE(stricmp,strcasecmp)))
-
 dnl Check for vsnprintf
 if test "x$ac_cv_func_vsnprintf" = "xno" -a \
 	"x$ac_cv_func__vsnprintf" = "xno"; then
 	dnl libdb may have this
-	AC_CHECK_LIB(db,vsnprintf)
+	AC_CHECK_LIB(db, vsnprintf)
 fi
-
-dnl Checks for working -lm
-AC_CHECK_LIB(m, pow,, AC_MSG_ERROR([math library (-lm) appears broken]))
 
 AC_ARG_ENABLE(zlib,
 [  --disable-zlib          disable zlib support],
@@ -704,7 +710,7 @@ dnl ==================================================================
 AC_CHECK_LIB(mme,waveOutOpen,HAVE_LIBMME=yes)
 
 AC_ARG_ENABLE(alsa,
-[  --disable-alsa          disable alsa support],
+	[  --disable-alsa          disable alsa support],
 )      
 
 SNDTYPE=""
@@ -948,15 +954,16 @@ dnl ==================================================================
 
 if test "x$ac_cv_func_connect" != "xyes"; then
 	AC_CHECK_LIB(socket, connect,
-					NET_LIBS="$NET_LIBS -lsocket"
-					ac_cv_func_connect=yes
-				)
+		NET_LIBS="$NET_LIBS -lsocket"
+		ac_cv_func_connect=yes
+	)
 fi
+
 if test "x$ac_cv_func_gethostbyname" != "xyes"; then
 	AC_CHECK_LIB(nsl, gethostbyname,
-					NET_LIBS="$NET_LIBS -lnsl"
-					ac_cv_func_gethostbyname=yes
-				)
+		NET_LIBS="$NET_LIBS -lnsl"
+		ac_cv_func_gethostbyname=yes
+	)
 fi
 
 AC_MSG_CHECKING([for connect in -lwsock32])
@@ -965,7 +972,7 @@ LIBS="$LIBS -lwsock32"
 AC_TRY_LINK([
 #include <winsock.h>
 ],[
-connect(0, NULL, 42);
+connect (0, NULL, 42);
 ],
 	NET_LIBS="$NET_LIBS -lwsock32 -lwinmm"
 	ac_cv_func_connect=yes
@@ -982,22 +989,6 @@ if test "x$ac_cv_func_connect" = "xyes" -a "x$ac_cv_func_gethostbyname" = "xyes"
 	AC_MSG_RESULT(yes)
 else
 	AC_MSG_RESULT(no)
-fi
-
-if test "x$ac_cv_func_connect" != "xyes"; then
-	AC_MSG_CHECKING([for connect in -lwsock32])
-	SAVELIBS="$LIBS"
-	LIBS="$LIBS -lwsock32"
-	AC_TRY_LINK([
-#include <winsock.h>
-],[
-connect(0, NULL, 42);
-],
-	    NET_LIBS="$NET_LIBS -lwsock32 -lwinmm"
-	    AC_MSG_RESULT(yes),
-	    AC_MSG_RESULT(no)
-	)
-	LIBS="$SAVELIBS"
 fi
 AC_SUBST(NET_LIBS)
 
@@ -1093,6 +1084,7 @@ AC_ARG_ENABLE(debug,
 	[  --enable-debug          compile with debugging (for development)],
 	debug=$enable_debug
 )
+
 AC_MSG_CHECKING(for debugging)
 if test "x$debug" = xyes; then
 	AC_MSG_RESULT(yes)
@@ -1112,6 +1104,7 @@ AC_ARG_ENABLE(optimize,
 	optimize=$disable_optimize,
 	optimize=yes
 )
+
 AC_ARG_WITH(amd,
 	[  --with-amd              Optimize for AMD processors instead of Intel],
 	HAVE_AMD="yes",
@@ -1122,7 +1115,7 @@ if test "x$optimize" = xyes; then
 	AC_MSG_RESULT(yes)
 	BUILD_TYPE="$BUILD_TYPE Optimize"
 	if test "x$GCC" = xyes; then
-		CFLAGS="$CFLAGS -O6 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations"
+		CFLAGS="$CFLAGS -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations"
 		AC_MSG_CHECKING(for special compiler settings)
 		case "${host_cpu}" in
 			i?86)

@@ -91,14 +91,11 @@
 /* Define if you have pthread support. */
 #undef HAVE_LIBPTHREAD
 
-/* Define this to something sane if you don't have stricmp */
-#undef stricmp
+/* Define this to something sane if you don't have strcasecmp */
+#undef strcasecmp
 
 /* If your version of OpenGL uses APIENTRY, define GLAPIENTRY to be APIENTRY */
 #undef GLAPIENTRY
-
-/* Define this to something sane if you don't have stricmp */
-#undef stricmp
 
 /* Define this if fnmatch is prototyped in fnmatch.h */
 #undef HAVE_FNMATCH_PROTO
