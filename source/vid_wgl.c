@@ -1621,7 +1621,9 @@ VID_Init (unsigned char *palette)
 		lasterror=GetLastError();
 		if (maindc && mainwindow)
 			ReleaseDC (mainwindow, maindc);
-		Sys_Error("Could not initialize GL (wglCreateContext failed).\n\nMake sure you in are 65535 color mode, and try running -window. \nError code: (%lx)\r\n",lasterror);
+		Sys_Error("Could not initialize GL (wglCreateContext failed).\n\n"
+				  "Make sure you in are 65535 color mode, and try running "
+				  "-window. \nError code: (%lx)\r\n", lasterror);
 	}
 
 	if (!wglMakeCurrent (maindc, baseRC)) {
