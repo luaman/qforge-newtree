@@ -1577,6 +1577,28 @@ Host_Frame (float time)
 
 //============================================================================
 
+static int
+check_quakerc (void)
+{
+	QFile *f;
+	char *l, *p;
+	int ret = 1;
+
+	COM_FOpenFile ("quake.rc", &f);
+	if (!f)
+		return 1;
+	while ((l = Qgetline (f))) {
+		if ((p = strstr (l, "stuffcmds"))) {
+			if (p == l) {				// only known case so far
+				ret = 0;
+				break;
+			}
+		}
+	}
+	Qclose (f);
+	return ret;
+}
+
 /*
 ====================
 Host_Init
@@ -1697,8 +1719,10 @@ Host_Init (void)
 
 	// Reparse the command line for + commands.
 	// (Note, no non-base commands exist yet)
-	Cmd_StuffCmds_f ();
-	Cbuf_Execute ();
+	if (check_quakerc ()) {
+		Cmd_StuffCmds_f ();
+		Cbuf_Execute ();
+	}
 
 	Cbuf_InsertText ("exec quake.rc\n");
 	Cbuf_AddText
