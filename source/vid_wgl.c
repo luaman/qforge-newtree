@@ -30,8 +30,6 @@
 # include "config.h"
 #endif
 
-#include <commctrl.h>
-
 #include "cdaudio.h"
 #include "cmd.h"
 #include "console.h"
@@ -48,6 +46,8 @@
 #include "sys.h"
 #include "va.h"
 #include "winquake.h"
+
+#include <commctrl.h>
 
 extern void (*vid_menudrawfn) (void);
 extern void (*vid_menukeyfn) (int);
