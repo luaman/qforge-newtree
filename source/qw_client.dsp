@@ -851,6 +851,10 @@ SOURCE=.\link.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\locs.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\mathlib.c
 # End Source File
 # Begin Source File
