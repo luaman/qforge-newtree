@@ -1,5 +1,5 @@
 /*
-	gl_trans.c
+	gl_skin.c
 
 	(description)
 

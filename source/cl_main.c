@@ -151,9 +151,6 @@ cvar_t     *password;
 cvar_t     *spectator;
 cvar_t     *name;
 cvar_t     *team;
-cvar_t     *skin;
-cvar_t     *topcolor;
-cvar_t     *bottomcolor;
 cvar_t     *rate;
 cvar_t     *noaim;
 cvar_t     *msg;
@@ -578,41 +575,6 @@ CL_Users_f (void)
 	}
 
 	Con_Printf ("%i total users\n", c);
-}
-
-void
-CL_Color_f (void)
-{
-	// just for quake compatability...
-	int         top, bottom;
-	char        num[16];
-
-	if (Cmd_Argc () == 1) {
-		Con_Printf ("\"color\" is \"%s %s\"\n",
-					Info_ValueForKey (cls.userinfo, "topcolor"),
-					Info_ValueForKey (cls.userinfo, "bottomcolor"));
-		Con_Printf ("color <0-13> [0-13]\n");
-		return;
-	}
-
-	if (Cmd_Argc () == 2)
-		top = bottom = atoi (Cmd_Argv (1));
-	else {
-		top = atoi (Cmd_Argv (1));
-		bottom = atoi (Cmd_Argv (2));
-	}
-
-	top &= 15;
-	if (top > 13)
-		top = 13;
-	bottom &= 15;
-	if (bottom > 13)
-		bottom = 13;
-
-	snprintf (num, sizeof (num), "%i", top);
-	Cvar_Set (topcolor, num);
-	snprintf (num, sizeof (num), "%i", bottom);
-	Cvar_Set (bottomcolor, num);
 }
 
 /*
@@ -1251,9 +1213,6 @@ CL_Init (void)
 	Cmd_AddCommand ("playdemo", CL_PlayDemo_f, "No Description");
 	Cmd_AddCommand ("timedemo", CL_TimeDemo_f, "No Description");
 
-	Cmd_AddCommand ("skins", Skin_Skins_f, "No Description");
-	Cmd_AddCommand ("allskins", Skin_AllSkins_f, "No Description");
-
 	Cmd_AddCommand ("maplist", COM_Maplist_f, "No Description");
 
 	Cmd_AddCommand ("quit", CL_Quit_f, "No Description");
@@ -1270,7 +1229,6 @@ CL_Init (void)
 	Cmd_AddCommand ("fullinfo", CL_FullInfo_f, "No Description");
 	Cmd_AddCommand ("fullserverinfo", CL_FullServerinfo_f, "No Description");
 
-	Cmd_AddCommand ("color", CL_Color_f, "No Description");
 	Cmd_AddCommand ("download", CL_Download_f, "No Description");
 
 	Cmd_AddCommand ("nextul", CL_NextUpload, "No Description");
@@ -1297,9 +1255,6 @@ CL_Init (void)
 void
 CL_Init_Cvars (void)
 {
-	extern cvar_t *baseskin;
-	extern cvar_t *noskins;
-
 	// LordHavoc: some people like it asking on quit, others don't...
 	confirm_quit =
 		Cvar_Get ("confirm_quit", "1", CVAR_ARCHIVE, "confirm quit command");
@@ -1383,11 +1338,6 @@ CL_Init_Cvars (void)
 	localid = Cvar_Get ("localid", "", CVAR_NONE,
 						"FIXME: nobody knows what this does.");
 
-	baseskin = Cvar_Get ("baseskin", "base", CVAR_NONE,
-						 "default base skin name");
-	noskins = Cvar_Get ("noskins", "0", CVAR_NONE,
-						"set to 1 to not download new skins");
-
 	// 
 	// info mirrors
 	// 
@@ -1396,13 +1346,8 @@ CL_Init_Cvars (void)
 	password = Cvar_Get ("password", "", CVAR_USERINFO, "Server password");
 	spectator = Cvar_Get ("spectator", "", CVAR_USERINFO,
 						  "Set to 1 before connecting to become a spectator");
-	skin = Cvar_Get ("skin", "", CVAR_ARCHIVE | CVAR_USERINFO, "Players skin");
 	team = Cvar_Get ("team", "", CVAR_ARCHIVE | CVAR_USERINFO,
 					 "Team player is on.");
-	topcolor = Cvar_Get ("topcolor", "0", CVAR_ARCHIVE | CVAR_USERINFO,
-						 "Players color on top");
-	bottomcolor = Cvar_Get ("bottomcolor", "0", CVAR_ARCHIVE | CVAR_USERINFO,
-							"Players color on bottom");
 	rate = Cvar_Get ("rate", "2500", CVAR_ARCHIVE | CVAR_USERINFO,
 					 "Amount of bytes per second server will send/download to you");
 	msg = Cvar_Get ("msg", "1", CVAR_ARCHIVE | CVAR_USERINFO, "Determines the type of messages reported 0 is maximum, 4 is none");
@@ -1677,6 +1622,7 @@ Host_Init (void)
 
 	CL_Cam_Init_Cvars ();
 	CL_Input_Init_Cvars ();
+	Skin_Init_Cvars ();
 	CL_Init_Cvars ();
 	CL_Prediction_Init_Cvars ();
 	COM_Init_Cvars ();
@@ -1731,6 +1677,7 @@ Host_Init (void)
 
 	cls.state = ca_disconnected;
 	Sbar_Init ();
+	Skin_Init ();
 	CL_Init ();
 #else
 	VID_Init (host_basepal);

@@ -36,6 +36,8 @@ byte	*Skin_Cache (skin_t *skin);
 void	Skin_Skins_f (void);
 void	Skin_AllSkins_f (void);
 void	Skin_NextDownload (void);
+void	Skin_Init (void);
+void	Skin_Init_Cvars (void);
 
 #define RSSHOT_WIDTH 320
 #define RSSHOT_HEIGHT 200
