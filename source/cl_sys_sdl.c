@@ -38,10 +38,10 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
-#include <io.h>
-#include <conio.h>
 
 #ifndef _WIN32
+# include <io.h>
+# include <conio.h>
 # include <unistd.h>
 # include <stdarg.h>
 # include <string.h>
@@ -235,7 +235,11 @@ Sys_Init_Cvars (void)
 		Cvar_Set (sys_nostdout, "1");
 }
 
-C_LINKAGE int
+#ifndef SDL_main
+# define SDL_main main
+#endif
+
+int
 SDL_main (int c, char **v)
 {
 
