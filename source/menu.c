@@ -591,7 +591,7 @@ void M_Options_Key (int k)
 		case 2:
 			Cbuf_AddText ("exec default.cfg\n");
 			break;
-		case 14:
+		case 15:
 			if (vid_menudrawfn)
 				M_Menu_Video_f ();
 			break;
