@@ -43,6 +43,7 @@
 #include "msg.h"
 #include "pcx.h"
 #include "qendian.h"
+#include "screen.h"
 #include "skin.h"
 #include "sys.h"
 #include "va.h"
@@ -247,8 +248,10 @@ Skin_NextDownload (void)
 	player_info_t *sc;
 	int         i;
 
-	if (cls.downloadnumber == 0)
+	if (cls.downloadnumber == 0) {
 		Con_Printf ("Checking skins...\n");
+		SCR_UpdateScreen ();
+	}
 	cls.downloadtype = dl_skin;
 
 	for (; cls.downloadnumber != MAX_CLIENTS; cls.downloadnumber++) {

@@ -264,6 +264,7 @@ Model_NextDownload (void)
 
 	if (cls.downloadnumber == 0) {
 		Con_Printf ("Checking models...\n");
+		SCR_UpdateScreen ();
 		cls.downloadnumber = 1;
 	}
 
@@ -328,6 +329,7 @@ Sound_NextDownload (void)
 
 	if (cls.downloadnumber == 0) {
 		Con_Printf ("Checking sounds...\n");
+		SCR_UpdateScreen ();
 		cls.downloadnumber = 1;
 	}
 
