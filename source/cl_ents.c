@@ -822,6 +822,7 @@ void CL_LinkPlayers (void)
 		if (state->messagenum != cl.parsecount)
 			continue;	// not present this frame
 
+		// FIXME: Use a findvar or something for gl_flashblend  --KB
 		// spawn light flashes, even ones coming from invisible objects
 		if (!gl_flashblend.value || j != cl.playernum) {
 			if ((state->effects & (EF_BLUE | EF_RED)) == (EF_BLUE | EF_RED))
