@@ -370,29 +370,17 @@ void CL_Rcon_f (void)
 	char	message[1024];
 	int		i;
 	netadr_t	to;
+	int		len;
 
-	if (!rcon_password->string)
-	{
-		Con_Printf ("You must set 'rcon_password' before\n"
-					"issuing an rcon command.\n");
-		return;
-	}
+	snprintf (message, sizeof (message), "\377\377\377\377rcon %s ",
+			  rcon_password->string);
+	len = strlen (message);
 
-	message[0] = 255;
-	message[1] = 255;
-	message[2] = 255;
-	message[3] = 255;
-	message[4] = 0;
-
-	strcat (message, "rcon ");
-
-	strcat (message, rcon_password->string);
-	strcat (message, " ");
-
-	for (i=1 ; i<Cmd_Argc() ; i++)
-	{
-		strcat (message, Cmd_Argv(i));
-		strcat (message, " ");
+	for (i=1 ; i<Cmd_Argc() ; i++) {
+		strncat (message, Cmd_Argv(i), sizeof (message) - len - 1);
+		len += strlen (Cmd_Argv(i));
+		strncat (message, " ", sizeof (message) - len - 1);
+		len += strlen (" ");
 	}
 
 	if (cls.state >= ca_connected)
