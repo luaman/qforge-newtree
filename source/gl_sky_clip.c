@@ -50,13 +50,13 @@ static const int face_loop[6][5] = {
 	{0, 2, 3, 5, 0},
 	{0, 4, 3, 1, 0},
 };
-/* convert axis and face distance into face*/
+/* convert axis and face distance into face */
 static const int faces_table[3][6] = {
 	{-1, 0, 0, -1, 3, 3},
 	{-1, 4, 4, -1, 1, 1},
 	{-1, 2, 2, -1, 5, 5},
 };
-/* axis the cube face cuts (also index into vec3_t for) */
+/* axis the cube face cuts (also index into vec3_t and n % 3 for 0 <= n < 6) */
 static const int face_axis[] = {0, 1, 2, 0, 1, 2};
 /* offset on the axis the cube face cuts */
 static const vec_t face_offset[] = {1024, 1024, 1024, -1024, -1024, -1024};
@@ -206,6 +206,8 @@ set_vertex (struct box_def *box, int face, int ind, vec3_t v)
 
 /*
  	add_vertex
+
+	append a vertex to the poly vertex list.
 */
 static void
 add_vertex (struct box_def *box, int face, vec3_t v)
