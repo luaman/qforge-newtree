@@ -710,6 +710,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	glEnable (GL_BLEND);
 //	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glCullFace(GL_FRONT);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glColor4f (1,1,1,alpha);
 	GL_Bind (gl->texnum);
 	glBegin (GL_QUADS);
@@ -723,6 +724,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	glVertex2f (x, y+pic->height);
 	glEnd ();
 	glColor4f (1,1,1,1);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glEnable(GL_ALPHA_TEST);
 	glDisable (GL_BLEND);
 }
