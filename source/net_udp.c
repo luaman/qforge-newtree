@@ -249,6 +249,7 @@ NET_GetPacket (void)
 	int         ret;
 	struct sockaddr_in from;
 	socklen_t   fromlen;
+	int i;
 
 	fromlen = sizeof (from);
 	ret =
@@ -257,6 +258,7 @@ NET_GetPacket (void)
 				  &fromlen);
 
 	SockadrToNetadr (&from, &net_from);
+
 
 	if (ret == -1) {
 #ifdef _WIN32
@@ -280,6 +282,19 @@ NET_GetPacket (void)
 		if (err == EWOULDBLOCK)
 			return false;
 		Sys_Printf ("NET_GetPacket: %s\n", strerror (err));
+		return false;
+	}
+
+// Check for malformed packets
+
+	if (is_server && ntohs(net_from.port)<1024) {
+		Con_Printf ("Warning: Packet from %s dropped: Bad port\n",
+				NET_AdrToString (net_from));
+		return false;
+	}
+
+	if (from.sin_addr.s_addr==INADDR_ANY || from.sin_addr.s_addr==INADDR_BROADCAST) {
+		Con_Printf ("Warning: Packet dropped - bad address\n");
 		return false;
 	}
 
