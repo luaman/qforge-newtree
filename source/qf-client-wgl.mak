@@ -134,6 +134,12 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\tga.obj\
+   $(OBJS)\fractalnoise.obj\
+   $(OBJS)\gl_dyn_textures.obj\
+   $(OBJS)\gl_sky.obj\
+   $(OBJS)\gl_dyn_fires.obj\
+   $(OBJS)\gl_dyn_part.obj\
    $(OBJS)\locs.obj\
    $(ZLIB)\zlib.lib\
    $(OBJS)\model.obj\
@@ -157,7 +163,6 @@ DEPEND = \
    $(OBJS)\gl_rmain.obj\
    $(OBJS)\gl_rlight.obj\
    $(OBJS)\gl_refrag.obj\
-   $(OBJS)\gl_part.obj\
    $(OBJS)\gl_ngraph.obj\
    $(OBJS)\gl_mesh.obj\
    $(OBJS)\gl_warp.obj\
@@ -222,6 +227,12 @@ $(EXE)\qf-client-wgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\tga.obj+
+$(OBJS)\fractalnoise.obj+
+$(OBJS)\gl_dyn_textures.obj+
+$(OBJS)\gl_sky.obj+
+$(OBJS)\gl_dyn_fires.obj+
+$(OBJS)\gl_dyn_part.obj+
 $(OBJS)\locs.obj+
 $(ZLIB)\zlib.lib+
 $(OBJS)\model.obj+
@@ -244,7 +255,6 @@ $(OBJS)\gl_rmisc.obj+
 $(OBJS)\gl_rmain.obj+
 $(OBJS)\gl_rlight.obj+
 $(OBJS)\gl_refrag.obj+
-$(OBJS)\gl_part.obj+
 $(OBJS)\gl_ngraph.obj+
 $(OBJS)\gl_mesh.obj+
 $(OBJS)\gl_warp.obj+
@@ -308,6 +318,36 @@ $(QFROOT)\opengl32.lib+
 $(DIRECTXSDK)\lib\borland\dxguid.lib+
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
+
+|
+$(OBJS)\tga.obj :  $(QFROOT)\source\tga.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\tga.c
+
+|
+$(OBJS)\fractalnoise.obj :  $(QFROOT)\source\fractalnoise.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\fractalnoise.c
+
+|
+$(OBJS)\gl_dyn_textures.obj :  $(QFROOT)\source\gl_dyn_textures.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_dyn_textures.c
+
+|
+$(OBJS)\gl_sky.obj :  $(QFROOT)\source\gl_sky.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_sky.c
+
+|
+$(OBJS)\gl_dyn_fires.obj :  $(QFROOT)\source\gl_dyn_fires.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_dyn_fires.c
+
+|
+$(OBJS)\gl_dyn_part.obj :  $(QFROOT)\source\gl_dyn_part.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_dyn_part.c
 
 |
 $(OBJS)\locs.obj :  $(QFROOT)\source\locs.c
@@ -414,11 +454,6 @@ $(OBJS)\gl_rlight.obj :  $(QFROOT)\source\gl_rlight.c
 $(OBJS)\gl_refrag.obj :  $(QFROOT)\source\gl_refrag.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_refrag.c
-|
-
-$(OBJS)\gl_part.obj :  $(QFROOT)\source\gl_part.c
-  $(BCC32) -P- -c @&&|
- $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\gl_part.c
 |
 
 $(OBJS)\gl_ngraph.obj :  $(QFROOT)\source\gl_ngraph.c
