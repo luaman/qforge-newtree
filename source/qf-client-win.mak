@@ -132,6 +132,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\joy_win.obj\
    $(OBJS)\pcx.obj\
    $(OBJS)\quakeforge.res\
    $(OBJS)\locs.obj\
@@ -252,6 +253,7 @@ $(EXE)\qf-client-win.exe : $(DEPEND)
   $(TLINK32) /v @&&|
  $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\joy_win.obj+
 $(OBJS)\pcx.obj+
 $(OBJS)\locs.obj+
 $(ZLIB)\zlib.lib+
@@ -376,6 +378,11 @@ quakeforge.res
 $(OBJS)\quakeforge.res :  $(QFROOT)\include\win32\resources\quakeforge.rc
   $(BRC32) -R @&&|
  -FO$@ $(QFROOT)\include\win32\resources\quakeforge.rc
+
+|
+$(OBJS)\joy_win.obj :  $(QFROOT)\source\joy_win.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\joy_win.c
 
 |
 $(OBJS)\pcx.obj :  $(QFROOT)\source\pcx.c

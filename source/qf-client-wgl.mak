@@ -134,6 +134,7 @@ EXT2=.obj
 #EXT2=.asm
 
 DEPEND = \
+   $(OBJS)\joy_win.obj\
    $(OBJS)\pcx.obj\
    $(OBJS)\quakeforge.res\
    $(OBJS)\tga.obj\
@@ -230,6 +231,7 @@ $(EXE)\qf-client-wgl.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0w32.obj+
+$(OBJS)\joy_win.obj+
 $(OBJS)\pcx.obj+
 $(OBJS)\tga.obj+
 $(OBJS)\fractalnoise.obj+
@@ -335,6 +337,11 @@ $(OBJS)\quakeforge.res :  $(QFROOT)\include\win32\resources\quakeforge.rc
 $(OBJS)\pcx.obj :  $(QFROOT)\source\pcx.c
   $(BCC32) -P- -c @&&|
  $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\pcx.c
+
+|
+$(OBJS)\joy_win.obj :  $(QFROOT)\source\joy_win.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\joy_win.c
 
 |
 $(OBJS)\tga.obj :  $(QFROOT)\source\tga.c
