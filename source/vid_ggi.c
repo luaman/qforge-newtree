@@ -941,15 +941,15 @@ IN_Commands (void)
 
 	/* Only supported by LibGII 0.7 or later. */
 #ifdef GII_CMDCODE_PREFER_RELPTR
-	if (old_windowed_mouse != _windowed_mouse->value) {
+	if (old_windowed_mouse != _windowed_mouse->int_val) {
 		gii_event ev;
 
-		old_windowed_mouse = _windowed_mouse->value;
+		old_windowed_mouse = _windowed_mouse->int_val;
 
 		ev.cmd.size = sizeof(gii_cmd_nodata_event);
 		ev.cmd.type = evCommand;
 		ev.cmd.target = GII_EV_TARGET_ALL;
-		ev.cmd.code = (int)_windowed_mouse->value ? GII_CMDCODE_PREFER_RELPTR
+		ev.cmd.code = _windowed_mouse->int_val ? GII_CMDCODE_PREFER_RELPTR
 			: GII_CMDCODE_PREFER_ABSPTR;
 
 		ggiEventSend(ggivis, &ev);

@@ -182,7 +182,7 @@ void R_ParticleExplosion (vec3_t org)
 	int			i, j;
 	particle_t	*p;
 
-	if (!gl_particles->value)
+	if (!gl_particles->int_val)
 		return;
 
 	for (i=0 ; i<1024 ; i++)
@@ -229,7 +229,7 @@ void R_BlobExplosion (vec3_t org)
 	int			i, j;
 	particle_t	*p;
 	
-	if (!gl_particles->value)
+	if (!gl_particles->int_val)
 		return;
 
 	for (i=0 ; i<1024 ; i++)
@@ -278,7 +278,7 @@ void R_RunParticleEffect (vec3_t org, vec3_t dir, int color, int count)
 	particle_t	*p;
 	int			scale;
 
-	if (!gl_particles->value)
+	if (!gl_particles->int_val)
 		return;
 
 	if (count > 130)
@@ -322,7 +322,7 @@ void R_LavaSplash (vec3_t org)
 	float		vel;
 	vec3_t		dir;
 
-	if (!gl_particles->value)
+	if (!gl_particles->int_val)
 		return;
 
 	for (i=-16 ; i<16 ; i++)
@@ -367,7 +367,7 @@ void R_TeleportSplash (vec3_t org)
 	float		vel;
 	vec3_t		dir;
 
-	if (!gl_particles->value)
+	if (!gl_particles->int_val)
 		return;
 
 	for (i=-16 ; i<16 ; i+=4)
@@ -409,7 +409,7 @@ void R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 	if (type == 0)
 		R_AddFire (start, end, ent);
 
-	if (!gl_particles->value)
+	if (!gl_particles->int_val)
 		return;
 	
 	VectorSubtract (end, start, vec);
@@ -674,7 +674,7 @@ R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
 	vec3_t		vec;
 	int			key;
 
-	if (!gl_fires->value)
+	if (!gl_fires->int_val)
 		return;
 
 	VectorSubtract (end, start, vec);
@@ -808,7 +808,7 @@ R_UpdateFires (void)
 	int		i;
 	fire_t	*f;
 
-	if (!gl_fires->value)
+	if (!gl_fires->int_val)
 		return;
 
 	glDepthMask(GL_FALSE);

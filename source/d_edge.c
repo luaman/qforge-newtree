@@ -194,7 +194,7 @@ void D_DrawSurfaces (void)
 	VectorCopy (transformed_modelorg, world_transformed_modelorg);
 
 // TODO: could preset a lot of this at mode set time
-	if (r_drawflat->value)
+	if (r_drawflat->int_val)
 	{
 		for (s = &surfaces[1] ; s<surface_p ; s++)
 		{
@@ -240,7 +240,7 @@ void D_DrawSurfaces (void)
 				d_zistepv = 0;
 				d_ziorigin = -0.9;
 
-				D_DrawSolidSurface (s, (int)r_clearcolor->value & 0xFF);
+				D_DrawSolidSurface (s, r_clearcolor->int_val & 0xFF);
 				D_DrawZSpans (s->spans);
 			}
 			else if (s->flags & SURF_DRAWTURB)

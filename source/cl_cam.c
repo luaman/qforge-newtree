@@ -118,7 +118,7 @@ qboolean Cam_DrawViewModel(void)
 	if (!cl.spectator)
 		return true;
 
-	if (autocam && locked && cl_chasecam->value)
+	if (autocam && locked && cl_chasecam->int_val)
 		return true;
 	return false;
 }
@@ -126,7 +126,7 @@ qboolean Cam_DrawViewModel(void)
 // returns true if we should draw this player, we don't if we are chase camming
 qboolean Cam_DrawPlayer(int playernum)
 {
-	if (cl.spectator && autocam && locked && cl_chasecam->value && 
+	if (cl.spectator && autocam && locked && cl_chasecam->int_val && 
 		spec_track == playernum)
 		return false;
 	return true;
@@ -345,7 +345,7 @@ void Cam_Track(usercmd_t *cmd)
 	if (!cl.spectator)
 		return;
 	
-	if (cl_hightrack->value && !locked)
+	if (cl_hightrack->int_val && !locked)
 		Cam_CheckHighTarget();
 
 	if (!autocam || cls.state != ca_active)
@@ -353,7 +353,7 @@ void Cam_Track(usercmd_t *cmd)
 
 	if (locked && (!cl.players[spec_track].name[0] || cl.players[spec_track].spectator)) {
 		locked = false;
-		if (cl_hightrack->value)
+		if (cl_hightrack->int_val)
 			Cam_CheckHighTarget();
 		else
 			Cam_Unlock();
@@ -377,7 +377,7 @@ void Cam_Track(usercmd_t *cmd)
 	if (!locked || !autocam)
 		return;
 
-	if (cl_chasecam->value) {
+	if (cl_chasecam->int_val) {
 		cmd->forwardmove = cmd->sidemove = cmd->upmove = 0;
 
 		VectorCopy(player->viewangles, cl.viewangles);
@@ -538,7 +538,7 @@ void Cam_FinishMove(usercmd_t *cmd)
 			return;
 	}
 
-	if (autocam && cl_hightrack->value) {
+	if (autocam && cl_hightrack->int_val) {
 		Cam_CheckHighTarget();
 		return;
 	}

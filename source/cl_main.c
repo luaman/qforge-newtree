@@ -1457,7 +1457,7 @@ qboolean Host_SimulationTime(float time)
 	if (oldrealtime > realtime)
 		oldrealtime = 0;
 
-	if (cl_maxfps->value)
+	if (cl_maxfps->int_val)
 		fps = max(30.0, min(cl_maxfps->value, 72.0));
 	else
 		fps = max(30.0, min(rate->value/80.0, 72.0));
@@ -1540,12 +1540,12 @@ void Host_Frame (float time)
 	CL_EmitEntities ();
 
 	// update video
-	if (host_speeds->value)
+	if (host_speeds->int_val)
 		time1 = Sys_DoubleTime ();
 
 	SCR_UpdateScreen ();
 
-	if (host_speeds->value)
+	if (host_speeds->int_val)
 		time2 = Sys_DoubleTime ();
 		
 	// update audio
@@ -1559,7 +1559,7 @@ void Host_Frame (float time)
 	
 	CDAudio_Update();
 
-	if (host_speeds->value)
+	if (host_speeds->int_val)
 	{
 		pass1 = (time1 - time3)*1000;
 		time3 = Sys_DoubleTime ();

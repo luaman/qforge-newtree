@@ -332,7 +332,7 @@ void Netchan_Transmit (netchan_t *chan, int length, byte *data)
 	if (ServerPaused())
 		chan->cleartime = realtime;
 
-	if (showpackets->value)
+	if (showpackets->int_val)
 		Con_Printf ("--> s=%i(%i) a=%i(%i) %i\n"
 			, chan->outgoing_sequence
 			, send_reliable
@@ -383,7 +383,7 @@ qboolean Netchan_Process (netchan_t *chan)
 	sequence &= ~(1<<31);	
 	sequence_ack &= ~(1<<31);	
 
-	if (showpackets->value)
+	if (showpackets->int_val)
 		Con_Printf ("<-- s=%i(%i) a=%i(%i) %i\n"
 			, sequence
 			, reliable_message
@@ -426,7 +426,7 @@ qboolean Netchan_Process (netchan_t *chan)
 //
 	if (sequence <= (unsigned int)chan->incoming_sequence)
 	{
-		if (showdrop->value)
+		if (showdrop->int_val)
 			Con_Printf ("%s:Out of order packet %i at %i\n"
 				, NET_AdrToString (chan->remote_address)
 				,  sequence
@@ -442,7 +442,7 @@ qboolean Netchan_Process (netchan_t *chan)
 	{
 		chan->drop_count += 1;
 
-		if (showdrop->value)
+		if (showdrop->int_val)
 			Con_Printf ("%s:Dropped %i packets at %i\n"
 			, NET_AdrToString (chan->remote_address)
 			, sequence-(chan->incoming_sequence+1)

@@ -404,7 +404,7 @@ Underwater, lava, etc each has a color shift
 */
 void V_SetContentsColor (int contents)
 {
-	if (!v_contentblend->value) {
+	if (!v_contentblend->int_val) {
 		cl.cshifts[CSHIFT_CONTENTS] = cshift_empty;
 		return;
 	}
@@ -686,13 +686,13 @@ void V_CalcRefdef (void)
 
 // fudge position around to keep amount of weapon visible
 // roughly equal with different FOV
-	if (scr_viewsize->value == 110)
+	if (scr_viewsize->int_val == 110)
 		view->origin[2] += 1;
-	else if (scr_viewsize->value == 100)
+	else if (scr_viewsize->int_val == 100)
 		view->origin[2] += 2;
-	else if (scr_viewsize->value == 90)
+	else if (scr_viewsize->int_val == 90)
 		view->origin[2] += 1;
-	else if (scr_viewsize->value == 80)
+	else if (scr_viewsize->int_val == 80)
 		view->origin[2] += 0.5;
 
 	if (view_message->flags & (PF_GIB|PF_DEAD) )

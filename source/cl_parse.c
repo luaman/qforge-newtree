@@ -609,11 +609,11 @@ void CL_ParseServerData (void)
 	//ZOID--run the autoexec.cfg in the gamedir
 	//if it exists
 	if (cflag) {
-		int cl_warncmd_val = cl_warncmd->value;
+		int cl_warncmd_val = cl_warncmd->int_val;
 		Cbuf_AddText ("cl_warncmd 0\n");
 		Cbuf_AddText ("exec config.cfg\n");
 		Cbuf_AddText ("exec frontend.cfg\n");
-		if (cl_autoexec->value) {
+		if (cl_autoexec->int_val) {
 			Cbuf_AddText ("exec autoexec.cfg\n");
 		}
 		snprintf(fn,sizeof(fn), "cl_warncmd %d\n", cl_warncmd_val);
@@ -1093,7 +1093,7 @@ void CL_MuzzleFlash (void)
 		return;
 
 	// don't draw our own muzzle flash in gl if flashblending
-	if (i-1 == cl.playernum && gl_flashblend->value)
+	if (i-1 == cl.playernum && gl_flashblend->int_val)
 		return;
 
 	pl = &cl.frames[parsecountmod].playerstate[i-1];
@@ -1112,7 +1112,7 @@ void CL_MuzzleFlash (void)
 }
 
 
-#define SHOWNET(x) if (cl_shownet->value == 2) Con_Printf ("%3i:%s\n", msg_readcount-1, x);
+#define SHOWNET(x) if (cl_shownet->int_val == 2) Con_Printf ("%3i:%s\n", msg_readcount-1, x);
 /*
 =====================
 CL_ParseServerMessage
@@ -1132,9 +1132,9 @@ void CL_ParseServerMessage (void)
 //
 // if recording demos, copy the message out
 //
-	if (cl_shownet->value == 1)
+	if (cl_shownet->int_val == 1)
 		Con_Printf ("%i ",net_message.cursize);
-	else if (cl_shownet->value == 2)
+	else if (cl_shownet->int_val == 2)
 		Con_Printf ("------------------\n");
 
 
@@ -1188,7 +1188,7 @@ void CL_ParseServerMessage (void)
 			{
 				// TODO: cl_nofake 2 -- accept fake messages from teammates
 				char *p;
-				if (cl_nofake->value) {
+				if (cl_nofake->int_val) {
 					for (p = s; *p; p++)
 						if (*p == 13)
 							*p = '#';

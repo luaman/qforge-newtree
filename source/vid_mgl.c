@@ -199,8 +199,8 @@ void VID_RememberWindowPos (void)
 			(rect.right > 0)                             &&
 			(rect.bottom > 0))
 		{
-			Cvar_SetValue (vid_window_x, (float)rect.left);
-			Cvar_SetValue (vid_window_y, (float)rect.top);
+			Cvar_SetValue (vid_window_x, rect.left);
+			Cvar_SetValue (vid_window_y, rect.top);
 		}
 	}
 }
@@ -214,10 +214,10 @@ VID_CheckWindowXY
 void VID_CheckWindowXY (void)
 {
 
-	if (((int)vid_window_x->value > (GetSystemMetrics (SM_CXSCREEN) - 160)) ||
-		((int)vid_window_y->value > (GetSystemMetrics (SM_CYSCREEN) - 120)) ||
-		((int)vid_window_x->value < 0)									   ||
-		((int)vid_window_y->value < 0))
+	if ((vid_window_x->int_val > (GetSystemMetrics (SM_CXSCREEN) - 160)) ||
+		(vid_window_y->int_val > (GetSystemMetrics (SM_CYSCREEN) - 120)) ||
+		(vid_window_x->int_val < 0)									   ||
+		(vid_window_y->int_val < 0))
 	{
 		Cvar_SetValue (vid_window_x, 0.0);
 		Cvar_SetValue (vid_window_y, 0.0 );
@@ -378,7 +378,7 @@ int VID_Suspend (MGLDC *dc, int flags)
 	if (flags & MGL_DEACTIVATE)
 	{
 	// FIXME: this doesn't currently work on NT
-		if (block_switch->value && !WinNT)
+		if (block_switch->int_val && !WinNT)
 		{
 			return MGL_NO_DEACTIVATE;
 		}
@@ -1094,14 +1094,14 @@ void VID_CheckModedescFixup (int mode)
 	int		x, y, stretch;
 
 	if (mode == MODE_SETTABLE_WINDOW) {
-		modelist[mode].stretched = (int) vid_stretch_by_2->value;
+		modelist[mode].stretched = vid_stretch_by_2->int_val;
 		stretch = modelist[mode].stretched;
 
-		Cvar_SetValue (vid_config_x, max (vid_config_x->value, 320 << stretch));
-		Cvar_SetValue (vid_config_y, max (vid_config_y->value, 200 << stretch));
+		Cvar_SetValue (vid_config_x, max (vid_config_x->int_val, 320 << stretch));
+		Cvar_SetValue (vid_config_y, max (vid_config_y->int_val, 200 << stretch));
 
-		x = (int) vid_config_x->value;
-		y = (int) vid_config_y->value;
+		x = vid_config_x->int_val;
+		y = vid_config_y->int_val;
 		snprintf (modelist[mode].modedesc, sizeof(modelist[mode].modedesc), "%dx%d", x, y);
 		modelist[mode].width = x;
 		modelist[mode].height = y;
@@ -1374,8 +1374,8 @@ qboolean VID_SetWindowedMode (int modenum)
 
 // position and show the DIB window
 	VID_CheckWindowXY ();
-	SetWindowPos (mainwindow, NULL, (int)vid_window_x->value,
-				  (int)vid_window_y->value, 0, 0,
+	SetWindowPos (mainwindow, NULL, vid_window_x->int_val,
+				  vid_window_y->int_val, 0, 0,
 				  SWP_NOSIZE | SWP_NOZORDER | SWP_SHOWWINDOW | SWP_DRAWFRAME);
 
 	if (force_minimized)
@@ -1442,7 +1442,7 @@ qboolean VID_SetFullscreenMode (int modenum)
 	mgldc = memdc = NULL;
 
 	if ((mgldc = createDisplayDC (modelist[modenum].stretched ||
-		 (int)vid_nopageflip->value)) == NULL)
+		 vid_nopageflip->int_val)) == NULL)
 	{
 		return false;
 	}
@@ -1638,11 +1638,11 @@ int VID_SetMode (int modenum, unsigned char *palette)
 				modenum = vid_default;
 			}
 
-			Cvar_SetValue (vid_mode, (float)modenum);
+			Cvar_SetValue (vid_mode, modenum);
 		}
 		else
 		{
-			Cvar_SetValue (vid_mode, (float)vid_modenum);
+			Cvar_SetValue (vid_mode, vid_modenum);
 			return 0;
 		}
 	}
@@ -1666,7 +1666,7 @@ int VID_SetMode (int modenum, unsigned char *palette)
 	// Set either the fullscreen or windowed mode
 	if (modelist[modenum].type == MS_WINDOWED)
 	{
-		if (_windowed_mouse->value && key_dest == key_game)
+		if (_windowed_mouse->int_val && key_dest == key_game)
 		{
 			stat = VID_SetWindowedMode(modenum);
 			IN_ActivateMouse ();
@@ -1729,7 +1729,7 @@ int VID_SetMode (int modenum, unsigned char *palette)
 	ReleaseDC(NULL,hdc);
 
 	vid_modenum = modenum;
-	Cvar_SetValue (vid_mode, (float)vid_modenum);
+	Cvar_SetValue (vid_mode, vid_modenum);
 
 	if (!VID_AllocBuffers (vid.width, vid.height))
 	{
@@ -2055,7 +2055,7 @@ VID_Windowed_f
 void VID_Windowed_f (void)
 {
 
-	VID_SetMode ((int)vid_windowed_mode->value, vid_curpal);
+	VID_SetMode (vid_windowed_mode->int_val, vid_curpal);
 }
 
 
@@ -2067,7 +2067,7 @@ VID_Fullscreen_f
 void VID_Fullscreen_f (void)
 {
 
-	VID_SetMode ((int)vid_fullscreen_mode->value, vid_curpal);
+	VID_SetMode (vid_fullscreen_mode->int_val, vid_curpal);
 }
 
 /*
@@ -2366,8 +2366,8 @@ void	VID_Update (vrect_t *rects)
 		{
 			GetWindowRect (mainwindow, &trect);
 
-			if ((trect.left != (int)vid_window_x->value) ||
-				(trect.top  != (int)vid_window_y->value))
+			if ((trect.left != vid_window_x->int_val) ||
+				(trect.top  != vid_window_y->int_val))
 			{
 				if (COM_CheckParm ("-resetwinpos"))
 				{
@@ -2376,14 +2376,14 @@ void	VID_Update (vrect_t *rects)
 				}
 
 				VID_CheckWindowXY ();
-				SetWindowPos (mainwindow, NULL, (int)vid_window_x->value,
-				  (int)vid_window_y->value, 0, 0,
+				SetWindowPos (mainwindow, NULL, vid_window_x->int_val,
+				  vid_window_y->int_val, 0, 0,
 				  SWP_NOSIZE | SWP_NOZORDER | SWP_SHOWWINDOW | SWP_DRAWFRAME);
 			}
 		}
 
-		if ((_vid_default_mode_win->value != vid_default) &&
-			(!startwindowed || (_vid_default_mode_win->value < MODE_FULLSCREEN_DEFAULT)))
+		if ((_vid_default_mode_win->int_val != vid_default) &&
+			(!startwindowed || (_vid_default_mode_win->int_val < MODE_FULLSCREEN_DEFAULT)))
 		{
 			firstupdate = 0;
 
@@ -2393,13 +2393,13 @@ void	VID_Update (vrect_t *rects)
 				Cvar_SetValue (vid_window_y, 0.0);
 			}
 
-			if ((_vid_default_mode_win->value < 0) ||
-				(_vid_default_mode_win->value >= nummodes))
+			if ((_vid_default_mode_win->int_val < 0) ||
+				(_vid_default_mode_win->int_val >= nummodes))
 			{
 				Cvar_SetValue (_vid_default_mode_win, windowed_default);
 			}
 
-			Cvar_SetValue (vid_mode, _vid_default_mode_win->value);
+			Cvar_SetValue (vid_mode, _vid_default_mode_win->int_val);
 		}
 	}
 
@@ -2416,10 +2416,10 @@ void	VID_Update (vrect_t *rects)
 	}
 	else
 	{
-		if ((int)vid_mode->value != vid_realmode)
+		if (vid_mode->int_val != vid_realmode)
 		{
-			VID_SetMode ((int)vid_mode->value, vid_curpal);
-			Cvar_SetValue (vid_mode, (float)vid_modenum);
+			VID_SetMode (vid_mode->int_val, vid_curpal);
+			Cvar_SetValue (vid_mode, vid_modenum);
 								// so if mode set fails, we don't keep on
 								//  trying to set that mode
 			vid_realmode = vid_modenum;
@@ -2429,7 +2429,7 @@ void	VID_Update (vrect_t *rects)
 // handle the mouse state when windowed if that's changed
 	if (modestate == MS_WINDOWED)
 	{
-		if (!_windowed_mouse->value) {
+		if (!_windowed_mouse->int_val) {
 			if (windowed_mouse)	{
 				IN_DeactivateMouse ();
 				IN_ShowMouse ();
@@ -2810,7 +2810,7 @@ void AppActivate(BOOL fActive, BOOL minimize)
 				IN_ActivateMouse ();
 				IN_HideMouse ();
 			}
-			else if ((modestate == MS_WINDOWED) && _windowed_mouse->value && key_dest == key_game)
+			else if ((modestate == MS_WINDOWED) && _windowed_mouse->int_val && key_dest == key_game)
 			{
 				IN_ActivateMouse ();
 				IN_HideMouse ();
@@ -2842,7 +2842,7 @@ void AppActivate(BOOL fActive, BOOL minimize)
 				IN_DeactivateMouse ();
 				IN_ShowMouse ();
 			}
-			else if ((modestate == MS_WINDOWED) && _windowed_mouse->value /* && mouseactive */)
+			else if ((modestate == MS_WINDOWED) && _windowed_mouse->int_val /* && mouseactive */)
 			{
 				IN_DeactivateMouse ();
 				IN_ShowMouse ();
@@ -2860,7 +2860,7 @@ VID_HandlePause
 void VID_HandlePause (qboolean pause)
 {
 #if 0
-	if ((modestate == MS_WINDOWED) && _windowed_mouse->value)
+	if ((modestate == MS_WINDOWED) && _windowed_mouse->int_val)
 	{
 		if (pause)
 		{
@@ -2926,7 +2926,7 @@ LONG WINAPI MainWndProc (
 						force_mode_set = false;
 					}
 
-					VID_SetMode ((int)vid_fullscreen_mode->value, vid_curpal);
+					VID_SetMode (vid_fullscreen_mode->int_val, vid_curpal);
 					break;
 
                 case SC_SCREENSAVE:
@@ -3306,7 +3306,7 @@ void VID_MenuDraw (void)
 			M_Print (2*8, 36 + MODE_AREA_HEIGHT * 8 + 8*5, temp);
 		}
 
-		ptr = VID_GetModeDescription2 ((int)_vid_default_mode_win->value);
+		ptr = VID_GetModeDescription2 (_vid_default_mode_win->int_val);
 
 		if (ptr)
 		{

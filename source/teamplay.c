@@ -107,7 +107,7 @@ char *Team_ParseSay (char *s)
 	char	c, chr, *t1, t2[128], t3[128];
 	static location_t	*location = NULL;
 
-	if (!cl_parsesay->value)
+	if (!cl_parsesay->int_val)
 		return s;
 
 	i = 0;

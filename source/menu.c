@@ -407,7 +407,7 @@ void M_AdjustSliders (int dir)
 
 	switch (options_cursor) {
 		case 3:	// screen size
-			Cvar_SetValue (scr_viewsize, bound (30, (int)scr_viewsize->value + (dir * 10), 120));
+			Cvar_SetValue (scr_viewsize, bound (30, scr_viewsize->int_val + (dir * 10), 120));
 			break;
 		case 4:	// Brightness
 			Cvar_SetValue (brightness, bound (1, brightness->value + (dir * 0.25), 5));
@@ -444,23 +444,23 @@ void M_AdjustSliders (int dir)
 			break;
 
 		case 11:	// lookspring
-			Cvar_SetValue (lookspring, !lookspring->value);
+			Cvar_SetValue (lookspring, !lookspring->int_val);
 			break;
 
 		case 12:	// lookstrafe
-			Cvar_SetValue (lookstrafe, !lookstrafe->value);
+			Cvar_SetValue (lookstrafe, !lookstrafe->int_val);
 			break;
 
 		case 13:	// Use old-style sbar
-			Cvar_SetValue (cl_sbar, !cl_sbar->value);
+			Cvar_SetValue (cl_sbar, !cl_sbar->int_val);
 			break;
 	
 		case 14:	// HUD on left side
-			Cvar_SetValue (cl_hudswap, !cl_hudswap->value);
+			Cvar_SetValue (cl_hudswap, !cl_hudswap->int_val);
 			break;
 
 		case 16:	// _windowed_mouse
-			Cvar_SetValue (_windowed_mouse, !_windowed_mouse->value);
+			Cvar_SetValue (_windowed_mouse, !_windowed_mouse->int_val);
 			break;
 	}
 }
@@ -506,7 +506,7 @@ void M_Options_Draw (void)
 	M_Print (16, 48, "     Reset to defaults");
 
 	M_Print (16, 56, "           Screen size");
-	r = (scr_viewsize->value - 30) / (120 - 30);
+	r = (scr_viewsize->int_val - 30) / (120 - 30);
 	M_DrawSlider (220, 56, r);
 
 	M_Print (16, 64, "            Brightness");
@@ -536,16 +536,16 @@ void M_Options_Draw (void)
 	M_DrawCheckbox (220, 112, m_pitch->value < 0);
 
 	M_Print (16, 120, "            Lookspring");
-	M_DrawCheckbox (220, 120, lookspring->value);
+	M_DrawCheckbox (220, 120, lookspring->int_val);
 
 	M_Print (16, 128, "            Lookstrafe");
-	M_DrawCheckbox (220, 128, lookstrafe->value);
+	M_DrawCheckbox (220, 128, lookstrafe->int_val);
 
 	M_Print (16, 136, "    Use old status bar");
-	M_DrawCheckbox (220, 136, cl_sbar->value);
+	M_DrawCheckbox (220, 136, cl_sbar->int_val);
 
 	M_Print (16, 144, "      HUD on left side");
-	M_DrawCheckbox (220, 144, cl_hudswap->value);
+	M_DrawCheckbox (220, 144, cl_hudswap->int_val);
 
 	if (vid_menudrawfn)
 		M_Print (16, 152, "         Video Options");
@@ -555,7 +555,7 @@ void M_Options_Draw (void)
 #endif
 		if (_windowed_mouse) {
 			M_Print (16, 160, "             Use Mouse");
-			M_DrawCheckbox (220, 160, _windowed_mouse->value);
+			M_DrawCheckbox (220, 160, _windowed_mouse->int_val);
 		}
 #ifdef _WIN32
 	}

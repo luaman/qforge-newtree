@@ -392,12 +392,12 @@ void R_TranslatePlayerSkin (int playernum)
 #endif
 
 		// FIXME deek: This 512x256 limit sucks!
- 		scaled_width = min(gl_max_size->value, 512);
- 		scaled_height = min(gl_max_size->value, 256);
+ 		scaled_width = min(gl_max_size->int_val, 512);
+ 		scaled_height = min(gl_max_size->int_val, 256);
 
 		// allow users to crunch sizes down even more if they want
-		scaled_width >>= (int)gl_playermip->value;
-		scaled_height >>= (int)gl_playermip->value;
+		scaled_width >>= gl_playermip->int_val;
+		scaled_height >>= gl_playermip->int_val;
 
 		if (VID_Is8bit()) { // 8bit texture upload
 			byte *out2;

@@ -293,7 +293,7 @@ void SV_PreSpawn_f (void)
 
 //		Con_DPrintf("Client check = %d\n", check);
 
-		if (sv_mapcheck->value && check != sv.worldmodel->checksum &&
+		if (sv_mapcheck->int_val && check != sv.worldmodel->checksum &&
 			check != sv.worldmodel->checksum2) {
 			SV_ClientPrintf (host_client, PRINT_HIGH, 
 				"Map model file does not match (%s), %i != %i/%i.\n"
@@ -700,19 +700,19 @@ void SV_BeginDownload_f(void)
 	name = Cmd_Argv(1);
 // hacked by zoid to allow more conrol over download
 		// first off, no .. or global allow check
-	if (strstr (name, "..") || !allow_download->value
+	if (strstr (name, "..") || !allow_download->int_val
 		// leading dot is no good
 		|| *name == '.' 
 		// leading slash bad as well, must be in subdir
 		|| *name == '/'
 		// next up, skin check
-		|| (strncmp(name, "skins/", 6) == 0 && !allow_download_skins->value)
+		|| (strncmp(name, "skins/", 6) == 0 && !allow_download_skins->int_val)
 		// now models
-		|| (strncmp(name, "progs/", 6) == 0 && !allow_download_models->value)
+		|| (strncmp(name, "progs/", 6) == 0 && !allow_download_models->int_val)
 		// now sounds
-		|| (strncmp(name, "sound/", 6) == 0 && !allow_download_sounds->value)
+		|| (strncmp(name, "sound/", 6) == 0 && !allow_download_sounds->int_val)
 		// now maps (note special case for maps, must not be in pak)
-		|| (strncmp(name, "maps/", 6) == 0 && !allow_download_maps->value)
+		|| (strncmp(name, "maps/", 6) == 0 && !allow_download_maps->int_val)
 		// MUST be in a subdirectory	
 		|| !strstr (name, "/") )	
 	{	// don't allow anything with .. path
@@ -798,7 +798,7 @@ void SV_Say (qboolean team)
 		t1[31] = 0;
 	}
 
-	if (host_client->spectator && (!sv_spectalk->value || team))
+	if (host_client->spectator && (!sv_spectalk->int_val || team))
 		snprintf (text, sizeof(text), "[SPEC] %s: ", host_client->name);
 	else if (team)
 		snprintf (text, sizeof(text), "(%s): ", host_client->name);
@@ -850,7 +850,7 @@ void SV_Say (qboolean team)
 	{
 		if (client->state != cs_spawned)
 			continue;
-		if (host_client->spectator && !sv_spectalk->value)
+		if (host_client->spectator && !sv_spectalk->int_val)
 			if (!client->spectator)
 				continue;
 
@@ -987,7 +987,7 @@ void SV_Pause_f (void)
 
         lastpausetime=currenttime;
 
-	if (!pausable->value) {
+	if (!pausable->int_val) {
 		SV_ClientPrintf (host_client, PRINT_HIGH, "Pause not allowed.\n");
 		return;
 	}
@@ -1449,7 +1449,7 @@ void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 	if (!inside) {
 		host_client->msecs += ucmd->msec;
 
-		if ((sv_timekick->value >= 1) &&
+		if ((sv_timekick->int_val >= 1) &&
 			(tmp_time = realtime - host_client->last_check) >=
 			 sv_timekick_interval->value) {
 			tmp_time *= (1000 + sv_timekick_fuzz->value);
@@ -1458,9 +1458,9 @@ void SV_RunCmd (usercmd_t *ucmd, qboolean inside)
 				SV_BroadcastPrintf( PRINT_HIGH,
 								va("%s thinks %d msecs pass in %f msecs. (Strike %d/%d)\n",
 								host_client->name, host_client->msecs, tmp_time,
-								host_client->msec_cheating, (int)sv_timekick->value));
+								host_client->msec_cheating, sv_timekick->int_val));
 
-				if (host_client->msec_cheating >= sv_timekick->value) {
+				if (host_client->msec_cheating >= sv_timekick->int_val) {
 					SV_BroadcastPrintf(PRINT_HIGH, va("Strike %d for %s!!\n",
 								host_client->msec_cheating, host_client->name));
 					SV_BroadcastPrintf(PRINT_HIGH, "Please see http://www.quakeforge.net/speed_cheat.php for infomation on QuakeForge's time cheat protection, and to explain how some may be cheating without knowing it.\n"

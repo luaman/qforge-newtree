@@ -51,7 +51,7 @@ void Cvar_Info (cvar_t *var)
 	{
 		unsigned char info[1024], *p, *c;
 
-		if (! sv_highchars->value) {
+		if (! sv_highchars->int_val) {
 			for (p=info, c=var->string; *c && (p-info<sizeof(info)-1); ) {
 				*c &= 0x7f;
 				if (*c >= 32) *p++ = *c;

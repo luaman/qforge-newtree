@@ -103,8 +103,8 @@ int			scr_copyeverything;
 float		scr_con_current;
 float		scr_conlines;		// lines of console to display
 
-float		oldscreensize, oldfov;
-float		oldsbar;
+int			oldscreensize, oldfov;
+int			oldsbar;
 cvar_t		*scr_viewsize;
 cvar_t		*scr_fov;	// 10 - 170
 cvar_t		*scr_conspeed;
@@ -309,16 +309,16 @@ static void SCR_CalcRefdef (void)
 //========================================
 	
 // bound viewsize
-	if (scr_viewsize->value < 30)
+	if (scr_viewsize->int_val < 30)
 		Cvar_Set (scr_viewsize,"30");
-	if (scr_viewsize->value > 120)
+	if (scr_viewsize->int_val > 120)
 		Cvar_Set (scr_viewsize,"120");
 
 // intermission is always full screen	
 	if (cl.intermission)
 		size = 120;
 	else
-		size = scr_viewsize->value;
+		size = scr_viewsize->int_val;
 
 	if (size >= 120)
 		sb_lines = 0;		// no status bar at all
@@ -365,8 +365,8 @@ Keybinding command
 */
 void SCR_SizeUp_f (void)
 {
-	if (scr_viewsize->value < 120) {
- 		Cvar_SetValue (scr_viewsize, scr_viewsize->value+10);
+	if (scr_viewsize->int_val < 120) {
+ 		Cvar_SetValue (scr_viewsize, scr_viewsize->int_val+10);
 		vid.recalc_refdef = 1;
 	}
 }
@@ -381,7 +381,7 @@ Keybinding command
 */
 void SCR_SizeDown_f (void)
 {
- 	Cvar_SetValue (scr_viewsize, scr_viewsize->value-10);
+ 	Cvar_SetValue (scr_viewsize, scr_viewsize->int_val-10);
 	vid.recalc_refdef = 1;
 }
 
@@ -432,7 +432,7 @@ SCR_DrawRam
 */
 void SCR_DrawRam (void)
 {
-	if (!scr_showram->value)
+	if (!scr_showram->int_val)
 		return;
 
 	if (!r_cache_thrash)
@@ -450,7 +450,7 @@ void SCR_DrawTurtle (void)
 {
 	static int	count;
 	
-	if (!scr_showturtle->value)
+	if (!scr_showturtle->int_val)
 		return;
 
 	if (host_frametime < 0.1)
@@ -491,7 +491,7 @@ void SCR_DrawFPS (void)
 	int x, y;
 	char st[80];
 
-	if (!show_fps->value)
+	if (!show_fps->int_val)
 		return;
 
 	t = Sys_DoubleTime();
@@ -516,7 +516,7 @@ void SCR_DrawPause (void)
 {
 	qpic_t	*pic;
 
-	if (!scr_showpause->value)		// turn off for screenshots
+	if (!scr_showpause->int_val)		// turn off for screenshots
 		return;
 
 	if (!cl.paused)
@@ -827,7 +827,7 @@ void SCR_RSShot_f (void)
 	if (cls.state < ca_onserver)
 		return; // gotta be connected
 
-	if (!scr_allowsnap->value) {
+	if (!scr_allowsnap->int_val) {
 		MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
 		SZ_Print (&cls.netchan.message, "snap\n");
 		Con_Printf("Refusing remote screen shot request.\n");
@@ -1003,9 +1003,9 @@ void SCR_UpdateScreen (void)
 	if (!scr_initialized || !con_initialized)
 		return;				// not initialized yet
 
-	if (scr_viewsize->value != oldscr_viewsize)
+	if (scr_viewsize->int_val != oldscr_viewsize)
 	{
-		oldscr_viewsize = scr_viewsize->value;
+		oldscr_viewsize = scr_viewsize->int_val;
 		vid.recalc_refdef = 1;
 	}
 	
@@ -1018,15 +1018,15 @@ void SCR_UpdateScreen (void)
 		vid.recalc_refdef = true;
 	}
 	
-	if (oldscreensize != scr_viewsize->value)
+	if (oldscreensize != scr_viewsize->int_val)
 	{
-		oldscreensize = scr_viewsize->value;
+		oldscreensize = scr_viewsize->int_val;
 		vid.recalc_refdef = true;
 	}
 
-	if (oldsbar != cl_sbar->value)
+	if (oldsbar != cl_sbar->int_val)
 	{
-		oldsbar = cl_sbar->value;
+		oldsbar = cl_sbar->int_val;
 		vid.recalc_refdef = true;
 	}
 	
@@ -1074,7 +1074,7 @@ void SCR_UpdateScreen (void)
 	}
 	else
 	{
-		if (crosshair->value)
+		if (crosshair->int_val)
 			Draw_Crosshair ();
 
 		SCR_DrawRam ();

@@ -737,7 +737,7 @@ R_DrawSkyDome (void)
 	glEnable (GL_BLEND);
 
 	// clouds
-	if (gl_skymultipass->value) {
+	if (gl_skymultipass->int_val) {
 		glBindTexture (GL_TEXTURE_2D, alphaskytexture);
 		domescale[0] = 512;
 		domescale[1] = 512;

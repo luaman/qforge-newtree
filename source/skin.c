@@ -122,7 +122,7 @@ byte	*Skin_Cache (skin_t *skin)
 	if (cls.downloadtype == dl_skin)
 		return NULL;		// use base until downloaded
 
-	if (noskins->value == 1) // JACK: So NOSKINS > 1 will show skins, but
+	if (noskins->int_val == 1) // JACK: So NOSKINS > 1 will show skins, but
 		return NULL;	  // not download new ones.
 
 	if (skin->failedload)
@@ -251,7 +251,7 @@ void Skin_NextDownload (void)
 		if (!sc->name[0])
 			continue;
 		Skin_Find (sc);
-		if (noskins->value)
+		if (noskins->int_val)
 			continue;
 		if (!CL_CheckOrDownloadFile(va("skins/%s.pcx", sc->skin->name)))
 			return;		// started a download

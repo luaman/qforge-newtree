@@ -246,7 +246,7 @@ int main (int argc, char **argv)
 	{
 	// Now we want to give some processing time to other applications,
 	// such as qw_client, running on this machine.
-		sleep_msec = sys_sleep->value;
+		sleep_msec = sys_sleep->int_val;
 		if (sleep_msec > 0)
 		{
 			if (sleep_msec > 13)

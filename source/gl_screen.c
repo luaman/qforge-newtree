@@ -307,7 +307,7 @@ static void SCR_CalcRefdef (void)
 //========================================
 	
 // bound viewsize
-	Cvar_SetValue (scr_viewsize, bound (30, scr_viewsize->value, 120));
+	Cvar_SetValue (scr_viewsize, bound (30, scr_viewsize->int_val, 120));
 
 // bound field of view
 	Cvar_SetValue (scr_fov, bound (10, scr_fov->value, 170));
@@ -316,7 +316,7 @@ static void SCR_CalcRefdef (void)
 	if (cl.intermission)
 		size = 120;
 	else
-		size = scr_viewsize->value;
+		size = scr_viewsize->int_val;
 
 	if (size >= 120)
 		sb_lines = 0;           // no status bar at all
@@ -325,11 +325,11 @@ static void SCR_CalcRefdef (void)
 	else
 		sb_lines = 24+16+8;
 
-	if (scr_viewsize->value >= 100.0) {
+	if (scr_viewsize->int_val >= 100) {
 		full = true;
 		size = 100.0;
 	} else {
-		size = scr_viewsize->value;
+		size = scr_viewsize->int_val;
 	}
 	if (cl.intermission)
 	{
@@ -339,7 +339,7 @@ static void SCR_CalcRefdef (void)
 	}
 	size /= 100.0;
 
-	if (!cl_sbar->value && full)
+	if (!cl_sbar->int_val && full)
 		h = vid.height;
 	else
 		h = vid.height - sb_lines;
@@ -352,7 +352,7 @@ static void SCR_CalcRefdef (void)
 	}
 
 	r_refdef.vrect.height = vid.height * size;
-	if (cl_sbar->value || !full) {
+	if (cl_sbar->int_val || !full) {
   		if (r_refdef.vrect.height > vid.height - sb_lines)
   			r_refdef.vrect.height = vid.height - sb_lines;
 	} else if (r_refdef.vrect.height > vid.height)
@@ -379,7 +379,7 @@ Keybinding command
 */
 void SCR_SizeUp_f (void)
 {
-	Cvar_SetValue (scr_viewsize, scr_viewsize->value+10);
+	Cvar_SetValue (scr_viewsize, scr_viewsize->int_val+10);
 
 	vid.recalc_refdef = 1;
 }
@@ -394,7 +394,7 @@ Keybinding command
 */
 void SCR_SizeDown_f (void)
 {
-	Cvar_SetValue (scr_viewsize, scr_viewsize->value-10);
+	Cvar_SetValue (scr_viewsize, scr_viewsize->int_val-10);
 	vid.recalc_refdef = 1;
 }
 
@@ -446,7 +446,7 @@ void SCR_DrawTurtle (void)
 {
 	static int      count;
 	
-	if (!scr_showturtle->value)
+	if (!scr_showturtle->int_val)
 		return;
 
 	if (host_frametime < 0.1)
@@ -487,7 +487,7 @@ void SCR_DrawFPS (void)
 	int x, y;
 	char st[80];
 
-	if (!show_fps->value)
+	if (!show_fps->int_val)
 		return;
 
 	t = Sys_DoubleTime();
@@ -513,7 +513,7 @@ void SCR_DrawPause (void)
 {
 	qpic_t  *pic;
 
-	if (!scr_showpause->value)               // turn off for screenshots
+	if (!scr_showpause->int_val)               // turn off for screenshots
 		return;
 
 	if (!cl.paused)
@@ -1025,7 +1025,7 @@ void SCR_UpdateScreen (void)
 	if (block_drawing)
 		return;
 
-	vid.numpages = 2 + (int) gl_triplebuffer->value;
+	vid.numpages = 2 + gl_triplebuffer->int_val;
 
 	scr_copytop = 0;
 	scr_copyeverything = 0;
@@ -1045,14 +1045,14 @@ void SCR_UpdateScreen (void)
 		return;                         // not initialized yet
 
 
-	if (oldsbar != cl_sbar->value) {
-		oldsbar = cl_sbar->value;
+	if (oldsbar != cl_sbar->int_val) {
+		oldsbar = cl_sbar->int_val;
 		vid.recalc_refdef = true;
 	}
 
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	
-	if (r_speeds->value)
+	if (r_speeds->int_val)
 	{
 		time1 = Sys_DoubleTime ();
 		c_brush_polys = 0;
@@ -1097,7 +1097,7 @@ void SCR_UpdateScreen (void)
 	//
 	SCR_TileClear ();
 
-	if (r_netgraph->value)
+	if (r_netgraph->int_val)
 		R_NetGraph ();
 
 	if (cl.intermission == 1 && key_dest == key_game) {
@@ -1148,7 +1148,7 @@ void SCR_UpdateScreen (void)
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	Cvar_SetValue (contrast, bound (0.1, contrast->value, 1));
-	if ((gl_polyblend->value && v_blend[3]) || contrast->value < 0.999) // epsilon
+	if ((gl_polyblend->int_val && v_blend[3]) || contrast->value < 0.999) // epsilon
 	{
 		glBegin (GL_QUADS);
 		if (contrast->value < 0.999) // epsilon
@@ -1160,7 +1160,7 @@ void SCR_UpdateScreen (void)
 			glVertex2f (0, vid.height);
 		}
 		
-		if (gl_polyblend->value && v_blend[3])
+		if (gl_polyblend->int_val && v_blend[3])
 		{
 			glColor4fv (v_blend);
 			glVertex2f (0,0);
@@ -1176,7 +1176,7 @@ void SCR_UpdateScreen (void)
 
 	V_UpdatePalette ();
 
-	if (r_speeds->value)
+	if (r_speeds->int_val)
 	{
 //		glFinish ();
 		time2 = Sys_DoubleTime ();

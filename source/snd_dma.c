@@ -357,13 +357,13 @@ sfx_t *S_PrecacheSound (char *name)
 {
 	sfx_t	*sfx;
 
-	if (!sound_started || nosound->value)
+	if (!sound_started || nosound->int_val)
 		return NULL;
 
 	sfx = S_FindName (name);
 	
 // cache it in
-	if (precache->value)
+	if (precache->int_val)
 		S_LoadSound (sfx);
 	
 	return sfx;
@@ -488,7 +488,7 @@ void S_StartSound(int entnum, int entchannel, sfx_t *sfx, vec3_t origin, float f
 	if (!sfx)
 		return;
 
-	if (nosound->value)
+	if (nosound->int_val)
 		return;
 
 	vol = fvol*255;
@@ -817,7 +817,7 @@ void S_Update(vec3_t origin, vec3_t forward, vec3_t right, vec3_t up)
 //
 // debugging output
 //
-	if (snd_show->value)
+	if (snd_show->int_val)
 	{
 		total = 0;
 		ch = channels;
@@ -871,7 +871,7 @@ void S_ExtraUpdate (void)
 	IN_Accumulate ();
 #endif
 
-	if (snd_noextraupdate->value)
+	if (snd_noextraupdate->int_val)
 		return;		// don't pollute timings
 	S_Update_();
 }
@@ -1011,7 +1011,7 @@ void S_LocalSound (char *sound)
 {
 	sfx_t	*sfx;
 
-	if (nosound->value)
+	if (nosound->int_val)
 		return;
 	if (!sound_started)
 		return;

@@ -171,7 +171,7 @@ void CL_PredictMove (void)
 		cls.state = ca_active;
 	}
 
-	if (cl_nopred->value)
+	if (cl_nopred->int_val)
 	{
 		VectorCopy (from->playerstate[cl.playernum].velocity, cl.simvel);
 		VectorCopy (from->playerstate[cl.playernum].origin, cl.simorg);

@@ -208,8 +208,8 @@ int main(int argc, char *argv[])
 		
 		// extrasleep is just a way to generate a fucked up connection on
 		// purpose
-		if (sys_extrasleep->value)
-			usleep (sys_extrasleep->value);
+		if (sys_extrasleep->int_val)
+			usleep (sys_extrasleep->int_val);
 	}	
 	return 1;
 }

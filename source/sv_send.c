@@ -165,7 +165,7 @@ void Con_Printf (char *fmt, ...)
 			}
 		}
 
-		if (sv_timestamps && sv_timefmt && sv_timefmt->string && sv_timestamps->value)
+		if (sv_timestamps && sv_timefmt && sv_timefmt->string && sv_timestamps->int_val)
 			timestamps = true;
 
 		if (timestamps) {
@@ -196,7 +196,7 @@ void Con_DPrintf (char *fmt, ...)
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
 
-	if (!developer->value)
+	if (!developer->int_val)
 		return;
 
 	va_start (argptr, fmt);
@@ -438,7 +438,7 @@ void SV_StartSound (edict_t *entity, int channel, char *sample, int volume,
     
 	ent = NUM_FOR_EDICT(entity);
 
-	if ((channel & 8) || !sv_phs->value)	// no PHS flag
+	if ((channel & 8) || !sv_phs->int_val)	// no PHS flag
 	{
 		if (channel & 8)
 			reliable = true; // sounds that break the phs are reliable

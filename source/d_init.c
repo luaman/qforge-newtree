@@ -153,7 +153,7 @@ void D_SetupFrame (void)
 		d_scalemip[i] = basemip[i] * d_mipscale->value;
 
 #ifdef USE_INTEL_ASM
-				if (d_subdiv16->value)
+				if (d_subdiv16->int_val)
 					d_drawspans = D_DrawSpans16;
 				else
 					d_drawspans = D_DrawSpans8;

@@ -394,7 +394,7 @@ void IN_SendKeyEvents (void)
 		break;
 
 			case SDL_MOUSEMOTION:
-				if (_windowed_mouse->value)
+				if (_windowed_mouse->int_val)
 		{
 		   if ((event.motion.x != (vid.width/2))
 			   || (event.motion.y != (vid.height/2)) )
@@ -451,7 +451,7 @@ IN_Init (void)
 	
 	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
 
-	if ( COM_CheckParm("-nomouse") && !_windowed_mouse->value)
+	if ( COM_CheckParm("-nomouse") && !_windowed_mouse->int_val)
 		return;
 
 	mouse_x = mouse_y = 0.0;
@@ -498,7 +498,7 @@ IN_Move (usercmd_t *cmd)
 	mouse_x *= sensitivity->value;
 	mouse_y *= sensitivity->value;
 
-	if ( (in_strafe.state & 1) || (lookstrafe->value && freelook))
+	if ( (in_strafe.state & 1) || (lookstrafe->int_val && freelook))
 		cmd->sidemove += m_side->value * mouse_x;
 	else
 		cl.viewangles[YAW] -= m_yaw->value * mouse_x;

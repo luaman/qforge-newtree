@@ -147,7 +147,7 @@ void R_LineGraph (int x, int y, int h)
 	
 	dest = vid.buffer + vid.rowbytes*y + x;
 	
-	s = r_graphheight->value;
+	s = r_graphheight->int_val;
 
 	if (h == 10000)
 		color = 0x6f;	// yellow
@@ -244,9 +244,9 @@ void R_NetGraph (void)
 		w = NET_TIMINGS;
 
 	x = w - ((vid.width - 320)>>1);
-	y = vid.height - sb_lines - 24 - (int)r_graphheight->value*2 - 2;
+	y = vid.height - sb_lines - 24 - r_graphheight->int_val*2 - 2;
 
-	M_DrawTextBox (x, y, (w+7)/8, ((int)r_graphheight->value*2+7)/8 + 1);
+	M_DrawTextBox (x, y, (w+7)/8, (r_graphheight->int_val*2+7)/8 + 1);
 	y2 = y + 8;
 	y = vid.height - sb_lines - 8 - 2;
 
@@ -475,7 +475,7 @@ void R_SetupFrame (void)
 	Cvar_SetValue(r_ambient, 0);
 	Cvar_SetValue(r_drawflat, 0);
 
-	if (r_numsurfs->value) {
+	if (r_numsurfs->int_val) {
 		if ((surface_p - surfaces) > r_maxsurfsseen)
 			r_maxsurfsseen = surface_p - surfaces;
 
@@ -483,7 +483,7 @@ void R_SetupFrame (void)
 				surf_max - surfaces, r_maxsurfsseen);
 	}
 
-	if (r_numedges->value) {
+	if (r_numedges->int_val) {
 		edgecount = edge_p - r_edges;
 
 		if (edgecount > r_maxedgesseen)
@@ -526,7 +526,7 @@ void R_SetupFrame (void)
 	r_viewleaf = Mod_PointInLeaf (r_origin, cl.worldmodel);
 
 	r_dowarpold = r_dowarp;
-	r_dowarp = r_waterwarp->value && (r_viewleaf->contents <= CONTENTS_WATER);
+	r_dowarp = r_waterwarp->int_val && (r_viewleaf->contents <= CONTENTS_WATER);
 
 	if ((r_dowarp != r_dowarpold) || r_viewchanged)
 	{

@@ -520,10 +520,10 @@ void CL_LinkPacketEntities (void)
 			continue;
 
 		// Hack hack hack
-		if (cl_deadbodyfilter->value && s1->modelindex == cl_playerindex
+		if (cl_deadbodyfilter->int_val && s1->modelindex == cl_playerindex
 			&& ( (i=s1->frame)==49 || i==60 || i==69 || i==84 || i==93 || i==102) )
 			continue;
-		if (cl_gibfilter->value &&
+		if (cl_gibfilter->int_val &&
 			(s1->modelindex == cl_h_playerindex || s1->modelindex == cl_gib1index
 			|| s1->modelindex == cl_gib2index || s1->modelindex == cl_gib3index))
 			continue;
@@ -936,7 +936,7 @@ void CL_LinkPlayers (void)
 
 		// FIXME: Use a findvar or something for gl_flashblend  --KB
 		// spawn light flashes, even ones coming from invisible objects
-		if (!gl_flashblend->value || j != cl.playernum) {
+		if (!gl_flashblend->int_val || j != cl.playernum) {
 
 			if (j == cl.playernum) {
 				VectorCopy (cl.simorg, org);
@@ -963,7 +963,7 @@ void CL_LinkPlayers (void)
 			continue;
 
 		// Hack hack hack
-		if (cl_deadbodyfilter->value && state->modelindex == cl_playerindex
+		if (cl_deadbodyfilter->int_val && state->modelindex == cl_playerindex
 			&& ( (i=state->frame)==49 || i==60 || i==69 || i==84 || i==93 || i==102) )
 			continue;
 
@@ -1003,7 +1003,7 @@ void CL_LinkPlayers (void)
 
 		// only predict half the move to minimize overruns
 		msec = 500*(playertime - state->state_time);
-		if (msec <= 0 || (!cl_predict_players->value && !cl_predict_players2->value))
+		if (msec <= 0 || (!cl_predict_players->int_val && !cl_predict_players2->int_val))
 		{
 			VectorCopy (state->origin, ent->origin);
 //Con_DPrintf ("nopredict\n");
@@ -1124,7 +1124,7 @@ void CL_SetUpPlayerPrediction(qboolean dopred)
 			// only predict half the move to minimize overruns
 			msec = 500*(playertime - state->state_time);
 			if (msec <= 0 ||
-				(!cl_predict_players->value && !cl_predict_players2->value) ||
+				(!cl_predict_players->int_val && !cl_predict_players2->int_val) ||
 				!dopred)
 			{
 				VectorCopy (state->origin, pplayer->origin);
@@ -1163,7 +1163,7 @@ void CL_SetSolidPlayers (int playernum)
 	struct predicted_player *pplayer;
 	physent_t *pent;
 
-	if (!cl_solid_players->value)
+	if (!cl_solid_players->int_val)
 		return;
 
 	pent = pmove.physents + pmove.numphysent;

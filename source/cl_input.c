@@ -145,7 +145,7 @@ void IN_KLookUp (void) {KeyUp(&in_klook);}
 void IN_MLookDown (void) {KeyDown(&in_mlook);}
 void IN_MLookUp (void) {
 KeyUp(&in_mlook);
-if ( !freelook &&  lookspring->value)
+if ( !freelook &&  lookspring->int_val)
 	V_StartPitchDrift();
 }
 void IN_UpDown(void) {KeyDown(&in_up);}
@@ -499,7 +499,7 @@ void CL_SendCmd (void)
 	if (cls.netchan.outgoing_sequence - cl.validsequence >= UPDATE_BACKUP-1)
 		cl.validsequence = 0;
 
-	if (cl.validsequence && !cl_nodelta->value && cls.state == ca_active &&
+	if (cl.validsequence && !cl_nodelta->int_val && cls.state == ca_active &&
 		!cls.demorecording)
 	{
 		cl.frames[cls.netchan.outgoing_sequence&UPDATE_MASK].delta_sequence = cl.validsequence;

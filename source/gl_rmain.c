@@ -573,7 +573,7 @@ static void R_DrawAliasModel (entity_t *e)
 	if (!strcmp(clmodel->name, "progs/player.mdl"))
 	{
 		shadelight = max(shadelight, 8);
-	} else if (!gl_fb_models->value && (
+	} else if (!gl_fb_models->int_val && (
 			!strcmp (clmodel->name, "progs/flame.mdl") ||
 			!strcmp (clmodel->name, "progs/flame2.mdl"))) {
 		// HACK HACK HACK -- no fullbright colors, so make torches full light
@@ -620,7 +620,7 @@ static void R_DrawAliasModel (entity_t *e)
 
 	// we can't dynamically colormap textures, so they are cached
 	// seperately for the players.  Heads are just uncolored.
-	if (currententity->scoreboard && !gl_nocolors->value)
+	if (currententity->scoreboard && !gl_nocolors->int_val)
 	{
 		i = currententity->scoreboard - cl.players;
 		if (!currententity->scoreboard->skin)
@@ -632,24 +632,24 @@ static void R_DrawAliasModel (entity_t *e)
 		    glBindTexture (GL_TEXTURE_2D, playertextures + i);
 	}
 
-	if (gl_affinemodels->value)
+	if (gl_affinemodels->int_val)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	R_SetupAliasFrame (currententity->frame, paliashdr, false);
 
 	// This block is GL fullbright support for objects...
-	if (clmodel->hasfullbrights && gl_fb_models->value &&
+	if (clmodel->hasfullbrights && gl_fb_models->int_val &&
 			paliashdr->gl_fb_texturenum[currententity->skinnum][anim]) {
 		glBindTexture (GL_TEXTURE_2D, paliashdr->gl_fb_texturenum[currententity->skinnum][anim]);
 		R_SetupAliasFrame (currententity->frame, paliashdr, true);
 	}
 
-	if (gl_affinemodels->value)
+	if (gl_affinemodels->int_val)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
 	glPopMatrix ();
 
-	if (r_shadows->value)
+	if (r_shadows->int_val)
 	{
 		glPushMatrix ();
 		R_RotateForEntity (e);
@@ -674,7 +674,7 @@ static void R_DrawEntitiesOnList (void)
 {
 	int		i;
 
-	if (!r_drawentities->value)
+	if (!r_drawentities->int_val)
 		return;
 
 	// LordHavoc: split into 3 loops to simplify state changes
@@ -717,10 +717,10 @@ R_DrawViewModel
 static void R_DrawViewModel (void)
 {
 	currententity = &cl.viewent;
-	if (!r_drawviewmodel->value
+	if (!r_drawviewmodel->int_val
 	 || !Cam_DrawViewModel()
 	 || envmap
-	 || !r_drawentities->value
+	 || !r_drawentities->int_val
 	 || (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
 	 || cl.stats[STAT_HEALTH] <= 0
 	 || !currententity->model)
@@ -899,7 +899,7 @@ static void R_SetupGL (void)
 	//
 	// set drawing parms
 	//
-	if (gl_cull->value)
+	if (gl_cull->int_val)
 		glEnable (GL_CULL_FACE);
 	else
 		glDisable (GL_CULL_FACE);
@@ -907,7 +907,7 @@ static void R_SetupGL (void)
 	glDisable (GL_ALPHA_TEST);
 	glAlphaFunc (GL_GREATER, 0.5);
 	glEnable (GL_DEPTH_TEST);
-	if (gl_smooth->value)
+	if (gl_smooth->int_val)
 		glShadeModel (GL_SMOOTH);
 	else
 		glShadeModel (GL_FLAT);
@@ -949,7 +949,7 @@ R_Clear
 */
 static void R_Clear (void)
 {
-	if (gl_clear->value)
+	if (gl_clear->int_val)
 		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	else
 		glClear (GL_DEPTH_BUFFER_BIT);
@@ -969,7 +969,7 @@ r_refdef must be set before the first call
 */
 void R_RenderView (void)
 {
-	if (r_norefresh->value)
+	if (r_norefresh->int_val)
 		return;
 
 	if (!r_worldentity.model || !cl.worldmodel)

@@ -304,11 +304,11 @@ void Draw_Crosshair(void)
 	int x, y;
 	extern cvar_t *crosshair, *cl_crossx, *cl_crossy, *crosshaircolor;
 	extern vrect_t		scr_vrect;
-	byte c = (byte)crosshaircolor->value;
+	byte c = crosshaircolor->int_val;
 
-	if (crosshair->value == 2) {
-		x = scr_vrect.x + scr_vrect.width/2 + cl_crossx->value; 
-		y = scr_vrect.y + scr_vrect.height/2 + cl_crossy->value;
+	if (crosshair->int_val == 2) {
+		x = scr_vrect.x + scr_vrect.width/2 + cl_crossx->int_val; 
+		y = scr_vrect.y + scr_vrect.height/2 + cl_crossy->int_val;
 		Draw_Pixel(x - 1, y, c);
 		Draw_Pixel(x - 3, y, c);
 		Draw_Pixel(x + 1, y, c);
@@ -317,10 +317,10 @@ void Draw_Crosshair(void)
 		Draw_Pixel(x, y - 3, c);
 		Draw_Pixel(x, y + 1, c);
 		Draw_Pixel(x, y + 3, c);
-	} else if (crosshair->value)
+	} else if (crosshair->int_val)
 		Draw_Character8 (
-			scr_vrect.x + scr_vrect.width/2-4 + cl_crossx->value, 
-			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy->value, 
+			scr_vrect.x + scr_vrect.width/2-4 + cl_crossx->int_val, 
+			scr_vrect.y + scr_vrect.height/2-4 + cl_crossy->int_val, 
 			'+');
 }
 

@@ -364,7 +364,7 @@ void Cvar_Toggle_f (void)
 		return;
 	}
 
-	Cvar_Set (var, var->value ? "0" : "1");
+	Cvar_Set (var, var->int_val ? "0" : "1");
 }
 
 void Cvar_Help_f (void)

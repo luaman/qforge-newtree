@@ -403,7 +403,7 @@ int CheckForFlood(flood_enum_t cmdtype)
 	static double lastmessagetime=0;
 	int oldest;
 
-	if (!sv_netdosprotect->value) 
+	if (!sv_netdosprotect->int_val) 
 		return 0;
 
 	oldestTime = 0x7fffffff;
@@ -471,7 +471,7 @@ void SVC_Status (void)
 	int		ping;
 	int		top, bottom;
 
-	if (!sv_allow_status->value) return;
+	if (!sv_allow_status->int_val) return;
 	if (CheckForFlood(FLOOD_STATUS)) return;
 
 	Cmd_TokenizeString ("status");
@@ -539,7 +539,7 @@ void SVC_Log (void)
 	int		seq;
 	char	data[MAX_DATAGRAM+64];
 
-	if (!sv_allow_log->value) return;
+	if (!sv_allow_log->int_val) return;
 	if (CheckForFlood(FLOOD_LOG)) return;
 
 	if (Cmd_Argc() == 2)
@@ -576,7 +576,7 @@ void SVC_Ping (void)
 {
 	char	data;
 
-	if (!sv_allow_ping->value) return;
+	if (!sv_allow_ping->int_val) return;
 	if (CheckForFlood(FLOOD_PING)) return;
 
 	data = A2A_ACK;
@@ -729,7 +729,7 @@ void SVC_DirectConnect (void)
 	newcl->userid = userid;
 
 	// works properly
-	if (!sv_highchars->value) {
+	if (!sv_highchars->int_val) {
 		byte *p, *q;
 
 		for (p = (byte *)newcl->userinfo, q = (byte *)userinfo;
@@ -774,14 +774,14 @@ void SVC_DirectConnect (void)
 	}
 
 	// if at server limits, refuse connection
-	if ( maxclients->value > MAX_CLIENTS )
+	if ( maxclients->int_val > MAX_CLIENTS )
 		Cvar_SetValue (maxclients, MAX_CLIENTS);
-	if (maxspectators->value > MAX_CLIENTS)
+	if (maxspectators->int_val > MAX_CLIENTS)
 		Cvar_SetValue (maxspectators, MAX_CLIENTS);
-	if (maxspectators->value + maxclients->value > MAX_CLIENTS)
- 		Cvar_SetValue (maxspectators, MAX_CLIENTS - maxclients->value);
-	if ( (spectator && spectators >= (int)maxspectators->value)
-		|| (!spectator && clients >= (int)maxclients->value) )
+	if (maxspectators->int_val + maxclients->int_val > MAX_CLIENTS)
+ 		Cvar_SetValue (maxspectators, MAX_CLIENTS - maxclients->int_val);
+	if ( (spectator && spectators >= maxspectators->int_val)
+		|| (!spectator && clients >= maxclients->int_val) )
 	{
 		Con_Printf ("%s:full connect\n", NET_AdrToString (adr));
 		Netchan_OutOfBandPrint (adr, "%c\nserver is full\n\n", A2C_PRINT);
@@ -1182,7 +1182,7 @@ void SV_netDoSexpire_f (void)
 			Con_Printf ("Current DoS prot. expire settings: ");
                         for (i=0;i<DOSFLOODCMDS;i++) Con_Printf("%f ",netdosexpire[i]);
 			Con_Printf("\n");
-			if (!sv_netdosprotect->value) Con_Printf("(disabled)\n");
+			if (!sv_netdosprotect->int_val) Con_Printf("(disabled)\n");
 			return;
 	}
 
@@ -1214,7 +1214,7 @@ void SV_netDoSvalues_f (void)
 			Con_Printf ("Current DoS prot. value settings: ");
                         for (i=0;i<DOSFLOODCMDS;i++) Con_Printf("%f ",netdosvalues[i]);
 			Con_Printf("\n");
-			if (!sv_netdosprotect->value) Con_Printf("(disabled)\n");
+			if (!sv_netdosprotect->int_val) Con_Printf("(disabled)\n");
 			return;
 	}
 
@@ -1264,9 +1264,9 @@ qboolean SV_FilterPacket (void)
 
 	for (i=0 ; i<numipfilters ; i++)
 		if ( (in & ipfilters[i].mask) == ipfilters[i].compare)
-			return filterban->value;
+			return filterban->int_val;
 
-	return !filterban->value;
+	return !filterban->int_val;	// FIXME eh?
 }
 
 //============================================================================

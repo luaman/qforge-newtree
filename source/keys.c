@@ -282,9 +282,9 @@ Key_Console ( int key )
 				goto no_lf;
 			else if (key_lines[edit_line][1] == '\\' || key_lines[edit_line][1] == '/')
 				Cbuf_AddText (key_lines[edit_line]+2);	// skip the ]/
-			else if (cl_chatmode->value != 1 && CheckForCommand())
+			else if (cl_chatmode->int_val != 1 && CheckForCommand())
 				Cbuf_AddText (key_lines[edit_line]+1);	// valid command
-			else if ((cls.state >= ca_connected && cl_chatmode->value == 2) || cl_chatmode->value == 1)
+			else if ((cls.state >= ca_connected && cl_chatmode->int_val == 2) || cl_chatmode->int_val == 1)
 			{
 				if (cls.state < ca_connected)	// can happen if cl_chatmode is 1
 					goto no_lf;					// the text goes to /dev/null :)
