@@ -75,6 +75,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define min(a,b) ((a) < (b) ? (a) : (b))
 #endif
 
+#ifdef _WIN32
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#endif
+
 //=============================================================================
 
 // the host system specifies the base of the directory tree, the
