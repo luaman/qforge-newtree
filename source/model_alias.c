@@ -57,7 +57,7 @@ extern model_t *loadmodel;
 void       *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype,
 
 							  int *pskinindex);
-void        GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr);
+void        GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr, void *model, int size);
 
 /*
 ==============================================================================
@@ -254,7 +254,7 @@ Mod_LoadAliasModel (model_t *mod, void *buffer)
 	// 
 	// build the draw lists
 	// 
-	GL_MakeAliasModelDisplayLists (mod, pheader);
+	GL_MakeAliasModelDisplayLists (mod, pheader, buffer, com_filesize);
 
 //
 // move the complete, relocatable alias model to the cache

@@ -169,7 +169,7 @@ Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, int *pskinindex)
 }
 
 void
-GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
+GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr, void *_m, int _s)
 {
 	int         i, j;
 	stvert_t   *pstverts;

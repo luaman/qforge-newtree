@@ -32,6 +32,8 @@
 
 #include	"uint32.h"
 
+#define MDFOUR_DIGEST_BYTES 16
+
 struct mdfour {
 	uint32 A, B, C, D;
 	uint32 totalN;

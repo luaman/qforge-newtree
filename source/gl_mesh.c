@@ -39,6 +39,7 @@
 #include <stdio.h>
 
 #include "console.h"
+#include "mdfour.h"
 #include "model.h"
 #include "quakefs.h"
 
@@ -301,16 +302,21 @@ GL_MakeAliasModelDisplayLists
 ================
 */
 void
-GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
+GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr, void *_m, int _s)
 {
 	int         i, j;
 	int        *cmds;
 	trivertx_t *verts;
 	char        cache[MAX_QPATH], fullpath[MAX_OSPATH];
 	QFile      *f;
+	unsigned char model_digest[MDFOUR_DIGEST_BYTES];
+	unsigned char mesh_digest[MDFOUR_DIGEST_BYTES];
+	qboolean    remesh = true;
 
 	aliasmodel = m;
 	paliashdr = hdr;					// (aliashdr_t *)Mod_Extradata (m);
+
+	mdfour (model_digest, (unsigned char*)_m, _s);
 
 	// 
 	// look for a cached version
@@ -322,12 +328,37 @@ GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 
 	COM_FOpenFile (cache, &f);
 	if (f) {
-		Qread (f, &numcommands, 4);
-		Qread (f, &numorder, 4);
-		Qread (f, &commands, numcommands * sizeof (commands[0]));
-		Qread (f, &vertexorder, numorder * sizeof (vertexorder[0]));
+		unsigned char d1[MDFOUR_DIGEST_BYTES];
+		unsigned char d2[MDFOUR_DIGEST_BYTES];
+		struct mdfour md;
+		int nc;
+		int no;
+
+		memset (d1, 0, sizeof (d1));
+		memset (d2, 0, sizeof (d2));
+		Qread (f, &nc, 4);
+		Qread (f, &no, 4);
+		Qread (f, &commands, nc * sizeof (commands[0]));
+		Qread (f, &vertexorder, no * sizeof (vertexorder[0]));
+		Qread (f, d1, MDFOUR_DIGEST_BYTES);
+		Qread (f, d2, MDFOUR_DIGEST_BYTES);
 		Qclose (f);
-	} else {
+
+		mdfour_begin (&md);
+		mdfour_update (&md, (unsigned char*)&nc, 4);
+		mdfour_update (&md, (unsigned char*)&no, 4);
+		mdfour_update (&md, (unsigned char*)&commands, nc * sizeof (commands[0]));
+		mdfour_update (&md, (unsigned char*)&vertexorder, no * sizeof (vertexorder[0]));
+		mdfour_update (&md, d1, MDFOUR_DIGEST_BYTES);
+		mdfour_result (&md, mesh_digest);
+
+		if (memcmp (d2, mesh_digest, MDFOUR_DIGEST_BYTES) == 0 && memcmp (d1, model_digest, MDFOUR_DIGEST_BYTES) == 0) {
+			remesh = false;
+			numcommands = nc;
+			numorder = no;
+		}
+	}
+	if (remesh) {
 		// 
 		// build it from scratch
 		// 
@@ -346,10 +377,23 @@ GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 		}
 
 		if (f) {
+			struct mdfour md;
+
+			mdfour_begin (&md);
+			mdfour_update (&md, (unsigned char*)&numcommands, 4);
+			mdfour_update (&md, (unsigned char*)&numorder, 4);
+			mdfour_update (&md, (unsigned char*)&commands, numcommands * sizeof (commands[0]));
+			mdfour_update (&md, (unsigned char*)&vertexorder,
+						   numorder * sizeof (vertexorder[0]));
+			mdfour_update (&md, model_digest, MDFOUR_DIGEST_BYTES);
+			mdfour_result (&md, mesh_digest);
+
 			Qwrite (f, &numcommands, 4);
 			Qwrite (f, &numorder, 4);
 			Qwrite (f, &commands, numcommands * sizeof (commands[0]));
 			Qwrite (f, &vertexorder, numorder * sizeof (vertexorder[0]));
+			Qwrite (f, model_digest, MDFOUR_DIGEST_BYTES);
+			Qwrite (f, mesh_digest, MDFOUR_DIGEST_BYTES);
 			Qclose (f);
 		}
 	}
