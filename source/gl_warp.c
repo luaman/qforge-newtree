@@ -689,7 +689,7 @@ R_DrawSkyLayer (float s)
 		a2y = -bubble_sintable[a+1];
 
 		glBegin (GL_TRIANGLE_STRIP);
-		glTexCoord2f(0.5,0.5);
+		glTexCoord2f(0.5 + s * (1.0 / 128.0), 0.5 + s * (1.0 / 128.0));
 		glVertex3f(r_refdef.vieworg[0],
 			   r_refdef.vieworg[1],
 			   r_refdef.vieworg[2]+domescale[2]);
@@ -716,7 +716,7 @@ R_DrawSkyLayer (float s)
 					v[1] + r_refdef.vieworg[1],
 					v[2] + r_refdef.vieworg[2]);
 		}
-		glTexCoord2f(0.5,0.5);
+		glTexCoord2f(0.5 + s * (1.0 / 128.0), 0.5 + s * (1.0 / 128.0));
 		glVertex3f(r_refdef.vieworg[0],
 			   r_refdef.vieworg[1],
 			   r_refdef.vieworg[2]-domescale[2]);
