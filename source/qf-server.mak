@@ -116,6 +116,7 @@ EXT2=.obj
 # Dependency List
 #
 DEPEND = \
+   $(OBJS)\hash.obj\
    $(OBJS)\sv_progs.obj\
    $(OBJS)\sys_x86.obj\
    $(OBJS)\worlda.obj\
@@ -173,6 +174,7 @@ $(EXE)\qf-server.exe : $(DEPEND)
   $(TLINK32) @&&|
  /v $(LINKOPTS) +
 $(CROOT)\LIB\c0x32.obj+
+$(OBJS)\hash.obj+
 $(OBJS)\sv_progs.obj+
 $(OBJS)\sys_x86.obj\
 $(OBJS)\worlda.obj+
@@ -229,6 +231,11 @@ $<,$*
 $(CROOT)\LIB\import32.lib+
 $(CROOT)\LIB\cw32.lib
 #$(CROOT)\LIB\cw32mt.lib
+
+|
+$(OBJS)\hash.obj :  $(QFROOT)\source\hash.c
+  $(BCC32) -P- -c @&&|
+ $(COMPOPTS) -I$(INCLUDES) -D$(DEFINES) -o$@ $(QFROOT)\source\hash.c
 
 |
 $(OBJS)\ver_check.obj :  $(QFROOT)\source\ver_check.c

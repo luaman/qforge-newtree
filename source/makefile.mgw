@@ -60,7 +60,7 @@ qf_server_PROGRAM = qfserver.exe
 common_SOURCES= buildnum.c checksum.c cmd.c com.c crc.c cvar.c info.c link.c \
 		locs.c mathlib.c mdfour.c model.c model_brush.c msg.c \
 		net_chan.c net_com.c net_udp.c pmove.c pmovetst.c qargs.c \
-		qendian.c quakefs.c quakeio.c sizebuf.c va.c zone.c \
+                qendian.c quakefs.c quakeio.c sizebuf.c va.c zone.c hash.c \
 		$(math_ASM)
 
 sound_SOURCES= snd_dma.c snd_mem.c snd_mix.c
