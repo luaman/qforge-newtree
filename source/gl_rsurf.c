@@ -507,6 +507,7 @@ void R_DrawWorldSequentialPoly (msurface_t *s)
 	else
 	{
 		glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		glBegin (GL_POLYGON);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -517,6 +518,9 @@ void R_DrawWorldSequentialPoly (msurface_t *s)
 		glEnd ();
 
 		glBindTexture (GL_TEXTURE_2D, lightmap_textures + s->lightmaptexturenum);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+		glEnable(GL_BLEND);
 		glBegin (GL_POLYGON);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -524,6 +528,7 @@ void R_DrawWorldSequentialPoly (msurface_t *s)
 			glTexCoord2fv (&v[5]);
 			glVertex3fv (v);
 		}
+		glDisable(GL_BLEND);
 	}
 	glEnd ();
 }
@@ -549,7 +554,7 @@ void R_DrawModelSequentialPoly (msurface_t *s)
 			// Binds world to texture env 0
 			GL_SelectTexture(0);
 			glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
-//			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			// Binds lightmap to texenv 1
 			GL_EnableMultitexture(); // Same as SelectTexture (TEXTURE1)
 			glBindTexture (GL_TEXTURE_2D, lightmap_textures + s->lightmaptexturenum);
@@ -570,6 +575,7 @@ void R_DrawModelSequentialPoly (msurface_t *s)
 		else
 		{
 			glBindTexture (GL_TEXTURE_2D, t->gl_texturenum);
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			glBegin (GL_POLYGON);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -580,6 +586,9 @@ void R_DrawModelSequentialPoly (msurface_t *s)
 			glEnd ();
 
 			glBindTexture (GL_TEXTURE_2D, lightmap_textures + s->lightmaptexturenum);
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+			glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+			glEnable(GL_BLEND);
 			glBegin (GL_POLYGON);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -587,6 +596,7 @@ void R_DrawModelSequentialPoly (msurface_t *s)
 				glTexCoord2fv (&v[5]);
 				glVertex3fv (v);
 			}
+			glDisable(GL_BLEND);
 		}
 		glEnd ();
 		return;
@@ -700,6 +710,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 		return;
 	}
 
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	DrawGLPoly (fa->polys);
 
 	// add the poly to the proper lightmap chain
