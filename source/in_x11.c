@@ -299,8 +299,9 @@ event_motion(XEvent *event)
 
 
 void
-IN_Commands(void)
+IN_Commands (void)
 {
+	JOY_Command ();
 	if (old__windowed_mouse != _windowed_mouse->value) {
 		old__windowed_mouse = _windowed_mouse->value;
 
@@ -319,7 +320,7 @@ IN_Commands(void)
 
 
 void
-IN_SendKeyEvents(void)
+IN_SendKeyEvents (void)
 {
 	/* Get events from X server. */
 	x11_process_events();
@@ -327,8 +328,10 @@ IN_SendKeyEvents(void)
 
 
 void
-IN_Move(usercmd_t *cmd)
+IN_Move (usercmd_t *cmd)
 {
+	JOY_Move (cmd);
+	
 	if (!mouse_avail)
 		return;
 
@@ -352,10 +355,7 @@ IN_Move(usercmd_t *cmd)
 
 	if ( (in_mlook.state & 1) && !(in_strafe.state & 1)) {
 		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
-		if (cl.viewangles[PITCH] > 80)
-			cl.viewangles[PITCH] = 80;
-		if (cl.viewangles[PITCH] < -70)
-			cl.viewangles[PITCH] = -70;
+		cl.viewangles[PITCH] = bound (-70, cl.viewangles[PITCH], 80);
 	} else {
 		if ((in_strafe.state & 1) && noclip_anglehack)
 			cmd->upmove -= m_forward->value * mouse_y;
@@ -387,8 +387,9 @@ static void IN_ExtraOptionCmd(int option_cursor)
   Called at shutdown
 */
 void
-IN_Shutdown(void)
+IN_Shutdown (void)
 {
+	JOY_Shutdown ();
 	Con_Printf("IN_Shutdown\n");
 	mouse_avail = 0;
 	if (x_disp) {
@@ -404,7 +405,7 @@ IN_Shutdown(void)
 extern int scr_width, scr_height;
 
 int
-IN_Init(void)
+IN_Init (void)
 {
 // open the display
 	if (!x_disp)
@@ -412,7 +413,7 @@ IN_Init(void)
 	if (!x_win)
 		Sys_Error("IN: No window!!\n");
 
-	x11_open_display();	// call to increment the reference counter
+	x11_open_display ();	// call to increment the reference counter
 	{
 		int attribmask = CWEventMask;
 		XWindowAttributes attribs_1;
@@ -425,7 +426,7 @@ IN_Init(void)
 		XChangeWindowAttributes(x_disp, x_win, attribmask, &attribs_2);
 	}
 
-	joystick_init();
+	JOY_Init ();
 
 	_windowed_mouse = Cvar_Get ("_windowed_mouse","0",CVAR_ARCHIVE,"None");
 	m_filter = Cvar_Get ("m_filter","0",CVAR_ARCHIVE,"None");
@@ -441,8 +442,7 @@ IN_Init(void)
 	in_nodga_grab = Cvar_Get ("in_nodga_grab", "0", CVAR_ROM,
 			"grab keyboard and mouse input when using -nodga");
 
-	if (COM_CheckParm("-nodga"))
-	{
+	if (COM_CheckParm ("-nodga")) {
 		if (in_nodga_grab->value) {
 			XGrabKeyboard (x_disp, x_win, True, GrabModeAsync, 
 				GrabModeAsync, CurrentTime);
