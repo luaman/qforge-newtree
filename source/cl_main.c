@@ -1643,6 +1643,8 @@ void Host_Init (quakeparms_t *parms)
 	cl_Cmd_Init ();
 	V_Init ();
 
+	SCR_InitCvars ();
+	VID_InitCvars ();
 	COM_Init ();
 
 	Host_FixupModelNames();

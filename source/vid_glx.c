@@ -670,6 +670,11 @@ void VID_Init8bitPalette(void)
 }
 #endif
 
+void VID_InitCvars ()
+{
+	// It may not look like it, but this is important
+}
+
 void VID_Init(unsigned char *palette)
 {
 	int i;

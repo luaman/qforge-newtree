@@ -416,7 +416,7 @@ void SCR_SizeDown_f (void)
 SCR_Init
 ==================
 */
-void SCR_Init (void)
+void SCR_InitCvars (void)
 {
 /* 	Cvar_RegisterVariable (&scr_fov);
  CVAR_FIXME */
@@ -445,7 +445,11 @@ void SCR_Init (void)
 /* 	Cvar_RegisterVariable (&scr_allowsnap);
  CVAR_FIXME */
 	scr_allowsnap = Cvar_Get("scr_allowsnap",  "1", CVAR_NONE, "None");
+}
 
+void
+SCR_Init (void)
+{
 //
 // register our commands
 //

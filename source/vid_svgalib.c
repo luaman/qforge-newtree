@@ -574,6 +574,11 @@ int VID_SetMode (int modenum, unsigned char *palette)
 	return 0;
 }
 
+void VID_InitCvars ()
+{
+	// It may not look like it, but this is important
+}
+
 void VID_Init(unsigned char *palette)
 {
 

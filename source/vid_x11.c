@@ -381,6 +381,11 @@ void ResetSharedFrameBuffers(void)
 // the palette data will go away after the call, so it must be copied off if
 // the video driver will need it again
 
+void VID_InitCvars ()
+{
+	// It may not look like it, but this is important
+}
+
 void	VID_Init (unsigned char *palette)
 {
 

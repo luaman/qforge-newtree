@@ -466,39 +466,23 @@ void SCR_SizeDown_f (void)
 SCR_Init
 ==================
 */
-void SCR_Init (void)
+void SCR_InitCvars (void)
 {
-/* 	Cvar_RegisterVariable (&scr_fov);
- CVAR_FIXME */
 	scr_fov = Cvar_Get("fov", "90", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&scr_viewsize);
- CVAR_FIXME */
 	scr_viewsize = Cvar_Get("viewsize", "100", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&scr_conspeed);
- CVAR_FIXME */
 	scr_conspeed = Cvar_Get("scr_conspeed", "300", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&scr_showram);
- CVAR_FIXME */
 	scr_showram = Cvar_Get("showram", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&scr_showturtle);
- CVAR_FIXME */
 	scr_showturtle = Cvar_Get("showturtle", "0", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&scr_showpause);
- CVAR_FIXME */
 	scr_showpause = Cvar_Get("showpause", "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&scr_centertime);
- CVAR_FIXME */
 	scr_centertime = Cvar_Get("scr_centertime", "2", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&scr_printspeed);
- CVAR_FIXME */
 	scr_printspeed = Cvar_Get("scr_printspeed", "8", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&scr_allowsnap);
- CVAR_FIXME */
 	scr_allowsnap = Cvar_Get("scr_allowsnap",  "1", CVAR_NONE, "None");
-/* 	Cvar_RegisterVariable (&gl_triplebuffer);
- CVAR_FIXME */
 	gl_triplebuffer = Cvar_Get("gl_triplebuffer",  "1", CVAR_NONE, "None");
+}
 
+void
+SCR_Init (void)
+{
 //
 // register our commands
 //
