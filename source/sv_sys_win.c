@@ -1,5 +1,5 @@
 /*
-	sys_win.c
+	sv_sys_win.c
 
 	(description)
 
@@ -35,6 +35,7 @@
 #include <winsock.h>
 #include <conio.h>
 
+#include "compat.h"
 #include "qargs.h"
 #include "cvar.h"
 #include "server.h"
@@ -49,29 +50,65 @@ char       *svs_info = svs.info;
 extern cvar_t *sys_nostdout;
 cvar_t     *sys_sleep;
 
+
 /*
-	Sys_FileTime
+	Sys_Init_Cvars
+
+	Quake calls this so the system can register variables before host_hunklevel
+	is marked
 */
-int
-Sys_FileTime (char *path)
+void
+Sys_Init_Cvars (void)
 {
-	QFile      *f;
-
-	f = Qopen (path, "rb");
-	if (f) {
-		Qclose (f);
-		return 1;
-	}
-
-	return -1;
+	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, NULL,
+			"Toggle console output");
+	sys_sleep = Cvar_Get ("sys_sleep", "8", CVAR_NONE, NULL, 
+		"Sleep how long in seconds between checking for connections. minimum is 0, maximum is 13");
 }
 
+void
+Sys_Init (void)
+{
+	OSVERSIONINFO vinfo;
+
+#ifdef USE_INTEL_ASM
+	Sys_SetFPCW ();
+#endif
+	// make sure the timer is high precision, otherwise
+	// NT gets 18ms resolution
+	timeBeginPeriod (1);
+
+	vinfo.dwOSVersionInfoSize = sizeof (vinfo);
+
+	if (!GetVersionEx (&vinfo))
+		Sys_Error ("Couldn't get OS info");
+
+	if ((vinfo.dwMajorVersion < 4) ||
+		(vinfo.dwPlatformId == VER_PLATFORM_WIN32s)) {
+		Sys_Error (PROGRAM " requires at least Win95 or NT 4.0");
+	}
+
+	if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
+		WinNT = true;
+	else
+		WinNT = false;
+}
+
+/*
+	Sys_Quit
+*/
+void
+Sys_Quit (void)
+{
+	//Net_LogStop();
+	exit (0);
+}
 
 /*
 	Sys_Error
 */
 void
-Sys_Error (char *error, ...)
+Sys_Error (const char *error, ...)
 {
 	va_list     argptr;
 	char        text[1024];
@@ -89,8 +126,11 @@ Sys_Error (char *error, ...)
 
 /*
 	Sys_ConsoleInput
+
+	Checks for a complete line of text typed in at the console, then forwards
+	it to the host command processor
 */
-char       *
+const char *
 Sys_ConsoleInput (void)
 {
 	static char text[256];
@@ -127,70 +167,9 @@ Sys_ConsoleInput (void)
 }
 
 /*
-	Sys_Quit
-*/
-void
-Sys_Quit (void)
-{
-#ifdef PACKET_LOGGING
-        Net_LogStop();
-#endif
-	exit (0);
-}
-
-/*
-	Sys_Init
-
-	Quake calls this so the system can register variables before host_hunklevel
-	is marked
-*/
-
-void
-Sys_Init_Cvars (void)
-{
-	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, NULL, "Toggle console output");
-	sys_sleep = Cvar_Get ("sys_sleep", "8", CVAR_NONE, NULL, 
-		"Sleep how long in seconds between checking for connections. minimum is 0, maximum is 13");
-}
-
-void
-Sys_Init (void)
-{
-	OSVERSIONINFO vinfo;
-
-#ifdef USE_INTEL_ASM
-	Sys_SetFPCW ();
-#endif
-	// make sure the timer is high precision, otherwise
-	// NT gets 18ms resolution
-	timeBeginPeriod (1);
-
-	vinfo.dwOSVersionInfoSize = sizeof (vinfo);
-
-	if (!GetVersionEx (&vinfo))
-		Sys_Error ("Couldn't get OS info");
-
-	if ((vinfo.dwMajorVersion < 4) ||
-		(vinfo.dwPlatformId == VER_PLATFORM_WIN32s)) {
-		Sys_Error (PROGRAM " requires at least Win95 or NT 4.0");
-	}
-
-	if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
-		WinNT = true;
-	else
-		WinNT = false;
-}
-
-/*
 	main
 */
 char       *newargv[256];
-
-#ifdef main
-# if main == SDL_main
-#  undef main
-# endif
-#endif
 
 int
 main (int argc, char **argv)

@@ -31,7 +31,7 @@ AUTOMAKE_OPTIONS=	foreign
 #
 # Stuff that is common to both client and server
 #
-INCLUDES=	-I$(top_srcdir)/include $(GGI_CFLAGS) $(MGL_CFLAGS) $(SDL_CFLAGS) $(SVGA_CFLAGS) $(X_CFLAGS) $(GLX_CFLAGS) $(TDFXGL_CFLAGS)
+INCLUDES=	-I$(top_srcdir)/include $(GGI_CFLAGS) $(MGL_CFLAGS) $(SVGA_CFLAGS) $(X_CFLAGS) $(GLX_CFLAGS) $(TDFXGL_CFLAGS)
 
 bin_PROGRAMS =	@TARGETS@
 
@@ -71,11 +71,11 @@ EXTRA_libqfnet_a_SOURCES= net_chan.c net_com.c net_udp.c net_udp6.c
 # ... System type
 #
 if SYSTYPE_WIN32
-libqfsys_sv_a_SOURCES=	fnmatch.c dirent.c sv_sys_win.c sys_win.c
+libqfsys_sv_a_SOURCES=	fnmatch.c dirent.c sv_sys_win.c sys.c
 else
-libqfsys_sv_a_SOURCES=	sv_sys_unix.c sys_unix.c
+libqfsys_sv_a_SOURCES=	sv_sys_unix.c sys.c
 endif
-EXTRA_libqfsys_sv_a_SOURCES= fnmatch.c dirent.c sv_sys_unix.c sv_sys_win.c sys_unix.c sys_win.c
+EXTRA_libqfsys_sv_a_SOURCES= fnmatch.c dirent.c sv_sys_unix.c sv_sys_win.c sys.c sys.c
 
 server_SOURCES=	pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
 		sv_ents.c sv_init.c sv_main.c sv_misc.c sv_model.c \
@@ -92,11 +92,11 @@ qf_server_DEPENDENCIES= libqfnet.a libqfsys_sv.a
 # ... System type
 #
 if SYSTYPE_WIN32
-libqfsys_cl_a_SOURCES=	cl_sys_win.c fnmatch.c dirent.c sys_win.c
+libqfsys_cl_a_SOURCES=	cl_sys_win.c fnmatch.c dirent.c sys.c
 else
-libqfsys_cl_a_SOURCES=	cl_sys_unix.c sys_unix.c
+libqfsys_cl_a_SOURCES=	cl_sys_unix.c sys.c
 endif
-EXTRA_libqfsys_cl_a_SOURCES= cl_sys_sdl.c cl_sys_unix.c cl_sys_win.c sys_win.c sys_unix.c fnmatch.c dirent.c
+EXTRA_libqfsys_cl_a_SOURCES= cl_sys_sdl.c cl_sys_unix.c cl_sys_win.c sys.c sys.c fnmatch.c dirent.c
 
 #
 # ... Digital audio
@@ -115,6 +115,7 @@ libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_oss.c
 endif
 if SNDTYPE_SDL
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_sdl.c
+libqfsnd_a_INCLUDES= $(SDL_CFLAGS)
 endif
 if SNDTYPE_SGI
 libqfsnd_a_SOURCES=	snd_dma.c snd_mem.c snd_mix.c snd_sgi.c
@@ -140,6 +141,7 @@ libqfcd_a_SOURCES=	cd_linux.c
 endif
 if CDTYPE_SDL
 libqfcd_a_SOURCES=	cd_sdl.c
+libqfcd_a_INCLUDES=$(SDL_CFLAGS)
 endif
 if CDTYPE_SGI
 libqfcd_a_SOURCES=	cd_sgi.c
@@ -319,3 +321,39 @@ EXTRA_DIST=	makefile.mgw makefile.win \
 
 # Kill the temp files, hopefully.
 CLEANFILES	= *.i *.s $(YACCLEX_CLEANFILES)
+
+cl_sys_sdl.o: cl_sys_sdl.c
+	@echo '$(COMPILE) $(SDL_CFLAGS) -c $<'; \
+	$(COMPILE) $(SDL_CFLAGS) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+in_sdl.o: in_sdl.c
+	@echo '$(COMPILE) $(SDL_CFLAGS) -c $<'; \
+	$(COMPILE) $(SDL_CFLAGS) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+vid_sdl.o: vid_sdl.c
+	@echo '$(COMPILE) $(SDL_CFLAGS) -c $<'; \
+	$(COMPILE) $(SDL_CFLAGS) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+vid_sgl.o: vid_sgl.c
+	@echo '$(COMPILE) $(SDL_CFLAGS) -c $<'; \
+	$(COMPILE) $(SDL_CFLAGS) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp

@@ -1373,7 +1373,7 @@ SV_GetConsoleCommands (void)
 	char       *cmd;
 
 	while (1) {
-		cmd = Sys_ConsoleInput ();
+		cmd = (char*)Sys_ConsoleInput ();
 		if (!cmd)
 			break;
 		Cbuf_AddText (cmd);

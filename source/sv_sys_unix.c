@@ -47,8 +47,9 @@
 
 #include "cvar.h"
 #include "qargs.h"
-#include "server.h"
 #include "sys.h"
+
+#include "server.h"
 
 #ifdef NeXT
 # include <libc.h>
@@ -64,14 +65,49 @@ char       *svs_info = svs.info;
 
 
 /*
-				REQUIRED SYS FUNCTIONS
+	Sys_Init_Cvars
+
+	Quake calls this so the system can register variables before host_hunklevel
+	is marked
 */
+void
+Sys_Init_Cvars (void)
+{
+	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, NULL,
+			"Toggles console screen output");
+	sys_extrasleep = Cvar_Get ("sys_extrasleep", "0", CVAR_NONE, NULL, 
+		"Set to cause whatever amount delay in microseconds you want. Mostly useful to generate simulated bad connections.");
+	sys_dead_sleep = Cvar_Get ("sys_dead_sleep", "1", CVAR_NONE, NULL,
+		"When set, the server gets NO cpu if no clients are connected"
+		"and there's no other activity. *MIGHT* cause problems with"
+		"some mods.");
+}
+
+void
+Sys_Init (void)
+{
+#ifdef USE_INTEL_ASM
+	Sys_SetFPCW ();
+#endif
+}
+
+/*
+	Sys_Quit
+*/
+void
+Sys_Quit (void)
+{
+
+	//Net_LogStop();
+
+	exit (0);
+}
 
 /*
 	Sys_Error
 */
 void
-Sys_Error (char *error, ...)
+Sys_Error (const char *error, ...)
 {
 	va_list     argptr;
 	char        string[1024];
@@ -85,20 +121,6 @@ Sys_Error (char *error, ...)
 }
 
 
-/*
-	Sys_Quit
-*/
-void
-Sys_Quit (void)
-{
-
-#ifdef PACKET_LOGGING
-        Net_LogStop();
-#endif
-
-	exit (0);							// appkit isn't running
-}
-
 static int  do_stdin = 1;
 
 /*
@@ -107,7 +129,7 @@ static int  do_stdin = 1;
 	Checks for a complete line of text typed in at the console, then forwards
 	it to the host command processor
 */
-char       *
+const char *
 Sys_ConsoleInput (void)
 {
 	static char text[256];
@@ -128,32 +150,6 @@ Sys_ConsoleInput (void)
 	text[len - 1] = 0;					// rip off the /n and terminate
 
 	return text;
-}
-
-/*
-	Sys_Init
-
-	Quake calls this so the system can register variables before host_hunklevel
-	is marked
-*/
-void
-Sys_Init_Cvars (void)
-{
-	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, NULL, "Toggles console screen output");
-	sys_extrasleep = Cvar_Get ("sys_extrasleep", "0", CVAR_NONE, NULL, 
-		"Set to cause whatever amount delay in microseconds you want. Mostly useful to generate simulated bad connections.");
-	sys_dead_sleep = Cvar_Get ("sys_dead_sleep", "1", CVAR_NONE, NULL,
-		"When set, the server gets NO cpu if no clients are connected"
-		"and there's no other activity. *MIGHT* cause problems with"
-		"some mods.");
-}
-
-void
-Sys_Init (void)
-{
-#ifdef USE_INTEL_ASM
-	Sys_SetFPCW ();
-#endif
 }
 
 /*

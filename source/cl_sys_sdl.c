@@ -26,15 +26,12 @@
 	$Id$
 */
 
-
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -60,111 +57,51 @@
 #include <SDL.h>
 #include <SDL_main.h>
 
+#include "cvar.h"
 #include "sys.h"
 #include "qargs.h"
 #include "qargs.h"
+
 #include "client.h"
+#include "compat.h"
 #include "host.h"
 
 qboolean    is_server = false;
-qboolean    noconinput = false;
 char       *svs_info;
 
 int         starttime;
+int         noconinput;
 
 #ifdef _WIN32
 # include "winquake.h"
-						// fixme: minimized is not currently supported under
+						// FIXME: minimized is not currently supported under
 						// SDL
 qboolean    Minimized = false;
 void        MaskExceptions (void);
 #endif
 
-void
-Sys_DebugLog (char *file, char *fmt, ...)
-{
-	int         fd;
-	static char data[1024];				// why static ?
-	va_list     argptr;
-
-	va_start (argptr, fmt);
-	vsnprintf (data, sizeof (data), fmt, argptr);
-	va_end (argptr);
-	fd = open (file, O_WRONLY | O_CREAT | O_APPEND, 0666);
-	write (fd, data, strlen (data));
-	close (fd);
-};
 
 /*
-	FILE IO
-*/
+	Sys_Init_Cvars
 
-int
-Sys_FileTime (char *path)
-{
-	QFile      *f;
-	int         retval;
-
-	f = Qopen (path, "rb");
-
-	if (f) {
-		Qclose (f);
-		retval = 1;
-	} else {
-		retval = -1;
-	}
-
-	return retval;
-}
-
-
-/*
-	SYSTEM IO
-*/
-
-/*
-	Sys_MakeCodeWriteable
+	Quake calls this so the system can register variables before host_hunklevel
+	is marked
 */
 void
-Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
+Sys_Init_Cvars (void)
 {
-
-#ifdef _WIN32
-	DWORD       flOldProtect;
-
-	// copy on write or just read-write?
-	if (!VirtualProtect
-		((LPVOID) startaddr, length, PAGE_READWRITE,
-		 &flOldProtect)) Sys_Error ("Protection change failed\n");
-#else
-	int         r;
-	unsigned long addr;
-	int         psize = getpagesize ();
-
-	addr = (startaddr & ~(psize - 1)) - psize;
-
-//  fprintf(stderr, "writable code %lx(%lx)-%lx, length=%lx\n", startaddr,
-//          addr, startaddr+length, length);
-
-	r = mprotect ((char *) addr, length + startaddr - addr + psize, 7);
-
-	if (r < 0)
-		Sys_Error ("Protection change failed\n");
-#endif
+	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, NULL,
+							 "set to disable std out");
+	if (COM_CheckParm ("-nostdout"))
+		Cvar_Set (sys_nostdout, "1");
 }
 
-
-/*
-	Sys_Init
-*/
 void
 Sys_Init (void)
 {
-
 #ifdef WIN32
 	OSVERSIONINFO vinfo;
 #endif
-
 #ifdef USE_INTEL_ASM
 #ifdef _WIN32
 	MaskExceptions ();
@@ -190,9 +127,22 @@ Sys_Init (void)
 #endif
 }
 
-
+/*
+	Sys_Quit
+*/
 void
-Sys_Error (char *error, ...)
+Sys_Quit (void)
+{
+	Host_Shutdown ();
+	exit (0);
+}
+
+
+/*
+	Sys_Error
+*/
+void
+Sys_Error (const char *error, ...)
 {
 	va_list     argptr;
 	char        text[1024];
@@ -213,18 +163,36 @@ Sys_Error (char *error, ...)
 	exit (1);
 }
 
-void
-Sys_Quit (void)
-{
-	Host_Shutdown ();
-	exit (0);
-}
 
-char       *
+
+void
+Sys_DebugLog (const char *file, const char *fmt, ...)
+{
+	int         fd;
+	static char data[1024];				// why static ?
+	va_list     argptr;
+
+	va_start (argptr, fmt);
+	vsnprintf (data, sizeof (data), fmt, argptr);
+	va_end (argptr);
+	fd = open (file, O_WRONLY | O_CREAT | O_APPEND, 0666);
+	write (fd, data, strlen (data));
+	close (fd);
+};
+
+
+/*
+	Sys_ConsoleInput
+
+	Checks for a complete line of text typed in at the console, then forwards
+	it to the host command processor
+*/
+const char *
 Sys_ConsoleInput (void)
 {
 	return NULL;
 }
+
 
 void
 Sys_Sleep (void)
@@ -232,22 +200,16 @@ Sys_Sleep (void)
 }
 
 
-void
-Sys_Init_Cvars (void)
-{
-	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, NULL, "Set to disable std out");
-	if (COM_CheckParm ("-nostdout"))
-		Cvar_Set (sys_nostdout, "1");
-}
-
 #ifndef SDL_main
 # define SDL_main main
 #endif
 
+/*
+	main
+*/
 int
 SDL_main (int c, char **v)
 {
-
 	double      time, oldtime, newtime;
 	int         j;
 
@@ -261,7 +223,7 @@ SDL_main (int c, char **v)
 	host_parms.argc = com_argc;
 	host_parms.argv = com_argv;
 
-	host_parms.memsize = 16 * 1024 * 1024;
+	host_parms.memsize = 16 * 1024 * 1024;  // 16MB default heap
 
 	j = COM_CheckParm ("-mem");
 	if (j)
@@ -272,6 +234,7 @@ SDL_main (int c, char **v)
 		printf ("Can't allocate memory for zone.\n");
 		return 1;
 	}
+
 #ifndef WIN32
 	noconinput = COM_CheckParm ("-noconinput");
 	if (!noconinput)
@@ -282,17 +245,15 @@ SDL_main (int c, char **v)
 
 	oldtime = Sys_DoubleTime ();
 	while (1) {
-// find time spent rendering last frame
+		// find time spent rendering last frame
 		newtime = Sys_DoubleTime ();
 		time = newtime - oldtime;
 
 		Host_Frame (time);
 		oldtime = newtime;
 	}
-
 }
 
-/* fixme: evil stub for directsound crap */
 void
 IN_Accumulate (void)
 {

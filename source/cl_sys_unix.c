@@ -45,39 +45,28 @@
 #include <sys/mman.h>
 
 #include "cvar.h"
-#include "host.h"
 #include "qargs.h"
 #include "sys.h"
+
+#include "host.h"
+#include "net.h"
 
 int         noconinput = 0;
 qboolean    is_server = false;
 char       *svs_info;
 
-#ifdef PACKET_LOGGING
-void Net_LogStop (void);
-#endif
 
-// =======================================================================
-// General routines
-// =======================================================================
+/*
+	Sys_Init_Cvars
 
-void
-Sys_Quit (void)
-{
-	Host_Shutdown ();
-	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~O_NONBLOCK);
-
-#ifdef PACKET_LOGGING
-        Net_LogStop();
-#endif
-
-	exit (0);
-}
-
+	Quake calls this so the system can register variables before host_hunklevel
+	is marked
+*/
 void
 Sys_Init_Cvars (void)
 {
-	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, NULL, "set to disable std out");
+	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, NULL,
+							 "set to disable std out");
 	if (COM_CheckParm ("-nostdout"))
 		Cvar_Set (sys_nostdout, "1");
 }
@@ -90,8 +79,25 @@ Sys_Init (void)
 #endif
 }
 
+/*
+	Sys_Quit
+*/
 void
-Sys_Error (char *error, ...)
+Sys_Quit (void)
+{
+	Host_Shutdown ();
+	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~O_NONBLOCK);
+
+	//Net_LogStop();
+
+	exit (0);
+}
+
+/*
+	Sys_Error
+*/
+void
+Sys_Error (const char *error, ...)
 {
 	va_list     argptr;
 	char        string[1024];
@@ -106,7 +112,6 @@ Sys_Error (char *error, ...)
 
 	Host_Shutdown ();
 	exit (1);
-
 }
 
 void
@@ -122,7 +127,7 @@ Sys_Warn (char *warning, ...)
 }
 
 void
-Sys_DebugLog (char *file, char *fmt, ...)
+Sys_DebugLog (const char *file, const char *fmt, ...)
 {
 	va_list     argptr;
 	static char data[1024];				// why static ?
@@ -131,20 +136,28 @@ Sys_DebugLog (char *file, char *fmt, ...)
 	va_start (argptr, fmt);
 	vsnprintf (data, sizeof (data), fmt, argptr);
 	va_end (argptr);
-//    fd = open(file, O_WRONLY | O_BINARY | O_CREAT | O_APPEND, 0666);
+//	fd = open(file, O_WRONLY | O_BINARY | O_CREAT | O_APPEND, 0666);
 	fd = open (file, O_WRONLY | O_CREAT | O_APPEND, 0666);
 	write (fd, data, strlen (data));
 	close (fd);
 }
 
+
 void
 floating_point_exception_handler (int whatever)
 {
-//  Sys_Warn("floating point exception\n");
+//	Sys_Warn("floating point exception\n");
 	signal (SIGFPE, floating_point_exception_handler);
 }
 
-char       *
+
+/*
+	Sys_ConsoleInput
+
+	Checks for a complete line of text typed in at the console, then forwards
+	it to the host command processor
+*/
+const char *
 Sys_ConsoleInput (void)
 {
 #if 0
@@ -163,11 +176,13 @@ Sys_ConsoleInput (void)
 	return NULL;
 }
 
+
 #ifndef USE_INTEL_ASM
 void
 Sys_HighFPPrecision (void)
 {
 }
+
 
 void
 Sys_LowFPPrecision (void)
@@ -177,15 +192,18 @@ Sys_LowFPPrecision (void)
 
 int         skipframes;
 
+/*
+	main
+*/
 int
-main (int c, char **v)
+main (int c, char *v[])
 {
 	double      time, oldtime, newtime;
 	int         j;
 
-//  static char cwd[1024];
+//	static char cwd[1024];
 
-//  signal(SIGFPE, floating_point_exception_handler);
+//	signal(SIGFPE, floating_point_exception_handler);
 	signal (SIGFPE, SIG_IGN);
 
 	memset (&host_parms, 0, sizeof (host_parms));
@@ -194,12 +212,13 @@ main (int c, char **v)
 	host_parms.argc = com_argc;
 	host_parms.argv = com_argv;
 
-	host_parms.memsize = 16 * 1024 * 1024;	// 8MB default heap
+	host_parms.memsize = 16 * 1024 * 1024;	// 16MB default heap
 
 	j = COM_CheckParm ("-mem");
 	if (j)
 		host_parms.memsize = (int) (atof (com_argv[j + 1]) * 1024 * 1024);
 	host_parms.membase = malloc (host_parms.memsize);
+
 	if (!host_parms.membase) {
 		printf ("Can't allocate memory for zone.\n");
 		return 1;
@@ -220,28 +239,4 @@ main (int c, char **v)
 		Host_Frame (time);
 		oldtime = newtime;
 	}
-}
-
-
-/*
-	Sys_MakeCodeWriteable
-*/
-void
-Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
-{
-
-	int         r;
-	unsigned long addr;
-	int         psize = getpagesize ();
-
-	addr = (startaddr & ~(psize - 1)) - psize;
-
-//  fprintf(stderr, "writable code %lx(%lx)-%lx, length=%lx\n", startaddr,
-//          addr, startaddr+length, length);
-
-	r = mprotect ((char *) addr, length + startaddr - addr + psize, 7);
-
-	if (r < 0)
-		Sys_Error ("Protection change failed\n");
-
 }

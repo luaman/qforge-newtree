@@ -38,15 +38,19 @@
 #include <conio.h>
 #include <windows.h>
 
-#include "client.h"
 #include "console.h"
-#include "host.h"
+#include "cvar.h"
 #include "qargs.h"
-#include "resource.h"
 #include "screen.h"
 #include "sound.h"
 #include "sys.h"
 #include "vid.h"
+
+#include "client.h"
+#include "compat.h"
+#include "host.h"
+#include "net.h"
+#include "resource.h"
 
 qboolean    is_server = false;
 char       *svs_info;
@@ -78,92 +82,18 @@ void        MaskExceptions (void);
 void        Sys_PopFPCW (void);
 void        Sys_PushFPCW_SetHigh (void);
 
-void
-Sys_DebugLog (char *file, char *fmt, ...)
-{
-	va_list     argptr;
-	static char data[1024];
-	int         fd;
-
-	va_start (argptr, fmt);
-	vsnprintf (data, sizeof (data), fmt, argptr);
-	va_end (argptr);
-	fd = open (file, O_WRONLY | O_CREAT | O_APPEND, 0666);
-	write (fd, data, strlen (data));
-	close (fd);
-};
 
 /*
-	FILE IO
+	Sys_Init_Cvars
+
+	Quake calls this so the system can register variables before host_hunklevel
+	is marked
 */
-
-/*
-	wfilelength
-*/
-int
-wfilelength (QFile *f)
-{
-	int         pos;
-	int         end;
-
-	pos = Qtell (f);
-	Qseek (f, 0, SEEK_END);
-	end = Qtell (f);
-	Qseek (f, pos, SEEK_SET);
-
-	return end;
-}
-
-
-int
-Sys_FileTime (char *path)
-{
-	QFile      *f;
-	int         t, retval;
-
-	t = VID_ForceUnlockedAndReturnState ();
-
-	f = Qopen (path, "rb");
-
-	if (f) {
-		Qclose (f);
-		retval = 1;
-	} else {
-		retval = -1;
-	}
-
-	VID_ForceLockState (t);
-	return retval;
-}
-
-
-/*
-	SYSTEM IO
-*/
-
-/*
-	Sys_MakeCodeWriteable
-*/
-void
-Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
-{
-	DWORD       flOldProtect;
-
-//@@@ copy on write or just read-write?
-	if (!VirtualProtect
-		((LPVOID) startaddr, length, PAGE_READWRITE,
-		 &flOldProtect)) Sys_Error ("Protection change failed\n");
-}
-
-
-/*
-	Sys_Init
-*/
-
 void
 Sys_Init_Cvars (void)
 {
-	sys_nostdout = Cvar_Get ("sys_nostdout", "1", CVAR_NONE, NULL, "unset to enable std out - windows does NOT support this");
+	sys_nostdout = Cvar_Get ("sys_nostdout", "1", CVAR_NONE, NULL,
+							 "unset to enable std out - windows does NOT support this");
 }
 
 void
@@ -213,9 +143,32 @@ Sys_Init (void)
 		WinNT = false;
 }
 
-
+/*
+	Sys_Quit
+*/
 void
-Sys_Error (char *error, ...)
+Sys_Quit (void)
+{
+	VID_ForceUnlockedAndReturnState ();
+
+	Host_Shutdown ();
+
+	if (tevent)
+		CloseHandle (tevent);
+
+	if (qwclsemaphore)
+		CloseHandle (qwclsemaphore);
+
+	//Net_LogStop();
+
+	exit (0);
+}
+
+/*
+	Sys_Error
+*/
+void
+Sys_Error (const char *error, ...)
 {
 	va_list     argptr;
 	char        text[1024];				// , text2[1024];
@@ -236,28 +189,42 @@ Sys_Error (char *error, ...)
 }
 
 void
-Sys_Quit (void)
+Sys_DebugLog (const char *file, const char *fmt, ...)
 {
-	VID_ForceUnlockedAndReturnState ();
+	va_list     argptr;
+	static char data[1024];
+	int         fd;
 
-	Host_Shutdown ();
+	va_start (argptr, fmt);
+	vsnprintf (data, sizeof (data), fmt, argptr);
+	va_end (argptr);
+	fd = open (file, O_WRONLY | O_CREAT | O_APPEND, 0666);
+	write (fd, data, strlen (data));
+	close (fd);
+};
 
-	if (tevent)
-		CloseHandle (tevent);
 
-	if (qwclsemaphore)
-		CloseHandle (qwclsemaphore);
+int
+wfilelength (QFile *f)
+{
+	int         pos;
+	int         end;
 
-#ifdef PACKET_LOGGING
-        Net_LogStop();
-#endif
+	pos = Qtell (f);
+	Qseek (f, 0, SEEK_END);
+	end = Qtell (f);
+	Qseek (f, pos, SEEK_SET);
 
-	exit (0);
+	return end;
 }
 
+/*
+	Sys_ConsoleInput
 
-
-char       *
+	Checks for a complete line of text typed in at the console, then forwards
+	it to the host command processor
+*/
+const char *
 Sys_ConsoleInput (void)
 {
 	static char text[256];
@@ -362,13 +329,19 @@ Sys_ConsoleInput (void)
 			}
 		}
 	}
-
 	return NULL;
 }
 
 void
 Sys_Sleep (void)
 {
+}
+
+void
+SleepUntilInput (int time)
+{
+
+	MsgWaitForMultipleObjects (1, &tevent, FALSE, time, QS_ALLINPUT);
 }
 
 
@@ -389,37 +362,20 @@ IN_SendKeyEvents (void)
 }
 
 
-
-/*
-	WINDOWS CRAP
-*/
-
-/*
-	WinMain
-*/
-void
-SleepUntilInput (int time)
-{
-
-	MsgWaitForMultipleObjects (1, &tevent, FALSE, time, QS_ALLINPUT);
-}
-
-
-
-/*
-	WinMain
-*/
 HINSTANCE   global_hInstance;
 int         global_nCmdShow;
 char       *argv[MAX_NUM_ARGVS];
 static char *empty_string = "";
 
 
+/*
+	main
+*/
 int WINAPI
 WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 		 int nCmdShow)
 {
-//    MSG               msg;
+//	MSG               msg;
 	double      time, oldtime, newtime;
 	MEMORYSTATUS lpBuffer;
 	static char cwd[1024];
@@ -462,7 +418,6 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 				*lpCmdLine = 0;
 				lpCmdLine++;
 			}
-
 		}
 	}
 
@@ -523,8 +478,8 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 	if (!tevent)
 		Sys_Error ("Couldn't create event");
 
-// because sound is off until we become active
-	S_BlockSound ();
+	// because sound is off until we become active
+	//XXX S_BlockSound ();
 
 	Sys_Printf ("Host_Init\n");
 	Host_Init ();
