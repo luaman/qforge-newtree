@@ -491,11 +491,15 @@ IN_Init(void)
 	mouse_avail = 1;
 
 	/* Invisible cursor */
+#ifdef HAVE_DGA
 	if (!in_dgamouse->value)
 	{
+#endif
 		CreateNullCursor(x_disp, x_win);
 		XDefineCursor(x_disp, x_win, nullcursor);
+#ifdef HAVE_DGA
 	}
+#endif
 
 	x11_add_event(KeyPress, &event_key);
 	x11_add_event(KeyRelease, &event_key);
