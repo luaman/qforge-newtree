@@ -29,6 +29,9 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
+#define CINTERFACE
+
 #include "winquake.h"
 #include "qargs.h"
 #include "console.h"
@@ -130,17 +133,17 @@ FreeSound (void)
 	int         i;
 
 	if (pDSBuf) {
-		pDSBuf->lpVtbl->Stop (pDSBuf);
-		pDSBuf->lpVtbl->Release (pDSBuf);
+		IDirectSoundBuffer_Stop (pDSBuf);
+		IDirectSound_Release (pDSBuf);
 	}
 // only release primary buffer if it's not also the mixing buffer we just released
 	if (pDSPBuf && (pDSBuf != pDSPBuf)) {
-		pDSPBuf->lpVtbl->Release (pDSPBuf);
+		IDirectSound_Release (pDSPBuf);
 	}
 
 	if (pDS) {
-		pDS->lpVtbl->SetCooperativeLevel (pDS, mainwindow, DSSCL_NORMAL);
-		pDS->lpVtbl->Release (pDS);
+		IDirectSound_SetCooperativeLevel (pDS, mainwindow, DSSCL_NORMAL);
+		IDirectSound_Release (pDS);
 	}
 
 	if (hWaveOut) {
@@ -242,8 +245,7 @@ SNDDMA_InitDirect (void)
 	}
 
 	dscaps.dwSize = sizeof (dscaps);
-
-	if (DS_OK != pDS->lpVtbl->GetCaps (pDS, &dscaps)) {
+	if (DS_OK != IDirectSound_GetCaps (pDS, &dscaps)) {
 		Con_Printf ("Couldn't get DS caps\n");
 	}
 
@@ -254,7 +256,7 @@ SNDDMA_InitDirect (void)
 	}
 
 	if (DS_OK !=
-		pDS->lpVtbl->SetCooperativeLevel (pDS, mainwindow, DSSCL_EXCLUSIVE)) {
+		IDirectSound_SetCooperativeLevel (pDS, mainwindow, DSSCL_EXCLUSIVE)) {
 		Con_Printf ("Set coop level failed\n");
 		FreeSound ();
 		return SIS_FAILURE;
@@ -273,10 +275,10 @@ SNDDMA_InitDirect (void)
 
 	if (!COM_CheckParm ("-snoforceformat")) {
 		if (DS_OK ==
-			pDS->lpVtbl->CreateSoundBuffer (pDS, &dsbuf, &pDSPBuf, NULL)) {
+			IDirectSound_CreateSoundBuffer (pDS, &dsbuf, &pDSPBuf, NULL)) {
 			pformat = format;
-
-			if (DS_OK != pDSPBuf->lpVtbl->SetFormat (pDSPBuf, &pformat)) {
+	
+			if (DS_OK != IDirectSoundBuffer_SetFormat (pDSPBuf, &pformat)) {
 			} else primary_format_set = true;
 		}
 	}
@@ -293,7 +295,7 @@ SNDDMA_InitDirect (void)
 		dsbcaps.dwSize = sizeof (dsbcaps);
 
 		if (DS_OK !=
-			pDS->lpVtbl->CreateSoundBuffer (pDS, &dsbuf, &pDSBuf, NULL)) {
+			IDirectSound_CreateSoundBuffer (pDS, &dsbuf, &pDSBuf, NULL)) {
 			Con_Printf ("DS:CreateSoundBuffer Failed");
 			FreeSound ();
 			return SIS_FAILURE;
@@ -303,21 +305,21 @@ SNDDMA_InitDirect (void)
 		shm->samplebits = format.wBitsPerSample;
 		shm->speed = format.nSamplesPerSec;
 
-		if (DS_OK != pDSBuf->lpVtbl->GetCaps (pDSBuf, &dsbcaps)) {
+		if (DS_OK != IDirectSound_GetCaps (pDSBuf, &dsbcaps)) {
 			Con_Printf ("DS:GetCaps failed\n");
 			FreeSound ();
 			return SIS_FAILURE;
 		}
 	} else {
 		if (DS_OK !=
-			pDS->lpVtbl->SetCooperativeLevel (pDS, mainwindow,
-											  DSSCL_WRITEPRIMARY)) {
+			IDirectSound_SetCooperativeLevel (pDS, mainwindow,
+				  DSSCL_WRITEPRIMARY)) {
 			Con_Printf ("Set coop level failed\n");
 			FreeSound ();
 			return SIS_FAILURE;
 		}
 
-		if (DS_OK != pDSPBuf->lpVtbl->GetCaps (pDSPBuf, &dsbcaps)) {
+		if (DS_OK != IDirectSound_GetCaps (pDSPBuf, &dsbcaps)) {
 			Con_Printf ("DS:GetCaps failed\n");
 			return SIS_FAILURE;
 		}
@@ -326,14 +328,14 @@ SNDDMA_InitDirect (void)
 	}
 
 	// Make sure mixer is active
-	pDSBuf->lpVtbl->Play (pDSBuf, 0, 0, DSBPLAY_LOOPING);
+	IDirectSoundBuffer_Play (pDSBuf, 0, 0, DSBPLAY_LOOPING);
 
 	gSndBufSize = dsbcaps.dwBufferBytes;
 
 // initialize the buffer
 	reps = 0;
 
-	while ((hresult = pDSBuf->lpVtbl->Lock (pDSBuf, 0, gSndBufSize,
+	while ((hresult = IDirectSoundBuffer_Lock (pDSBuf, 0, gSndBufSize,
 			(LPVOID *) & lpData, &dwSize, NULL,NULL, 0)) != DS_OK) {
 		if (hresult != DSERR_BUFFERLOST) {
 			Con_Printf ("SNDDMA_InitDirect: DS::Lock Sound Buffer Failed\n");
@@ -352,16 +354,16 @@ SNDDMA_InitDirect (void)
 	memset (lpData, 0, dwSize);
 //      lpData[4] = lpData[5] = 0x7f;   // force a pop for debugging
 
-	pDSBuf->lpVtbl->Unlock (pDSBuf, lpData, dwSize, NULL, 0);
+	IDirectSoundBuffer_Unlock (pDSBuf, lpData, dwSize, NULL, 0);
 
 	/* we don't want anyone to access the buffer directly w/o locking it
 	   first. */
 	lpData = NULL;
 
-	pDSBuf->lpVtbl->Stop (pDSBuf);
-	pDSBuf->lpVtbl->GetCurrentPosition (pDSBuf, &mmstarttime.u.sample,
-										&dwWrite);
-	pDSBuf->lpVtbl->Play (pDSBuf, 0, 0, DSBPLAY_LOOPING);
+	IDirectSoundBuffer_Stop (pDSBuf);
+	IDirectSoundBuffer_GetCurrentPosition (pDSBuf, &mmstarttime.u.sample,
+		&dwWrite);
+	IDirectSoundBuffer_Play (pDSBuf, 0, 0, DSBPLAY_LOOPING);
 
 	shm->soundalive = true;
 	shm->splitbuffer = false;
@@ -411,8 +413,7 @@ SNDDMA_InitWav (void)
 
 	/* Open a waveform device for output using window callback. */
 	while ((hr = waveOutOpen ((LPHWAVEOUT) & hWaveOut, WAVE_MAPPER,
-							  &format,
-							  0, 0L, CALLBACK_NULL)) != MMSYSERR_NOERROR) {
+			  &format,0, 0L, CALLBACK_NULL)) != MMSYSERR_NOERROR) {
 		if (hr != MMSYSERR_ALLOCATED) {
 			Con_Printf ("waveOutOpen failed\n");
 			return false;
@@ -578,7 +579,7 @@ SNDDMA_GetDMAPos (void)
 
 	if (dsound_init) {
 		mmtime.wType = TIME_SAMPLES;
-		pDSBuf->lpVtbl->GetCurrentPosition (pDSBuf, &mmtime.u.sample, &dwWrite);
+		IDirectSoundBuffer_GetCurrentPosition (pDSBuf, &mmtime.u.sample, &dwWrite);
 		s = mmtime.u.sample - mmstarttime.u.sample;
 	} else if (wav_init) {
 		s = snd_sent * WAV_BUFFER_SIZE;
@@ -674,7 +675,7 @@ DSOUND_LockBuffer(qboolean lockit)
 
 	if (lockit) {
 		reps = 0;
-		while ((hresult = pDSBuf->lpVtbl->Lock (pDSBuf, 0, gSndBufSize,
+		while ((hresult = IDirectSoundBuffer_Lock (pDSBuf, 0, gSndBufSize,
 		(LPVOID *) & pbuf1, &dwSize,
 		(LPVOID *) & pbuf2, &dwSize2,0)) != DS_OK) {
 			if (hresult != DSERR_BUFFERLOST) {
@@ -694,7 +695,7 @@ DSOUND_LockBuffer(qboolean lockit)
 			}
 		}
 	} else {
-		pDSBuf->lpVtbl->Unlock (pDSBuf, pbuf1, dwSize, NULL, 0);
+		IDirectSoundBuffer_Unlock (pDSBuf, pbuf1, dwSize, NULL, 0);
 		pbuf1=NULL;
 		pbuf2=NULL;
 		dwSize=0;
@@ -720,14 +721,14 @@ void DSOUND_Restore(void)
 
         if (!pDSBuf) return;
 
-	if (pDSBuf->lpVtbl->GetStatus (pDSBuf, &dwStatus) != DD_OK)
+	if (IDirectSoundBuffer_GetStatus (pDSBuf, &dwStatus) != DD_OK)
         	Con_Printf ("Couldn't get sound buffer status\n");
 
 	if (dwStatus & DSBSTATUS_BUFFERLOST)
-		pDSBuf->lpVtbl->Restore (pDSBuf);
+		IDirectSoundBuffer_Restore (pDSBuf);
 
 	if (!(dwStatus & DSBSTATUS_PLAYING))
-		pDSBuf->lpVtbl->Play (pDSBuf, 0, 0, DSBPLAY_LOOPING);
+		IDirectSoundBuffer_Play (pDSBuf, 0, 0, DSBPLAY_LOOPING);
 
         return;
 }
