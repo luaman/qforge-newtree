@@ -188,12 +188,10 @@ IN_SendKeyEvents (void)
 						  == SDL_MOUSEBUTTONDOWN);
 				break;
 			case 4:
-				Key_Event(K_MWHEELUP, 1);
-				Key_Event(K_MWHEELUP, 0);
+				Key_Event(K_MWHEELUP, event.type == SDL_MOUSEBUTTONDOWN);
 				break;
 			case 5:
-				Key_Event(K_MWHEELDOWN, 1);
-				Key_Event(K_MWHEELDOWN, 0);
+				Key_Event(K_MWHEELDOWN, event.type == SDL_MOUSEBUTTONDOWN);
 				break;
 			}
 			break;
