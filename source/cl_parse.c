@@ -1009,6 +1009,7 @@ CL_ProcessUserInfo (int slot, player_info_t *player)
 {
 	strncpy (player->name, Info_ValueForKey (player->userinfo, "name"),
 			 sizeof (player->name) - 1);
+	player->_topcolor = player->_bottomcolor = -1;
 	player->topcolor = atoi (Info_ValueForKey (player->userinfo, "topcolor"));
 	player->bottomcolor =
 		atoi (Info_ValueForKey (player->userinfo, "bottomcolor"));
