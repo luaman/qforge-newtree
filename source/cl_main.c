@@ -1201,8 +1201,8 @@ CL_Init_Cvars (void)
 	// LordHavoc: some people like it asking on quit, others don't...
 	confirm_quit =
 		Cvar_Get ("confirm_quit", "1", CVAR_ARCHIVE, "confirm quit command");
-	cl_allow_cmd_pkt = Cvar_Get ("cl_allow_cmd_pkt", "0", CVAR_NONE,
-								 "set to enable packets from the likes of gamespy");
+	cl_allow_cmd_pkt = Cvar_Get ("cl_allow_cmd_pkt", "1", CVAR_NONE,
+								 "enables packets from the likes of gamespy");
 	show_fps = Cvar_Get ("show_fps", "0", CVAR_NONE,
 						 "display realtime frames per second");
 	// Misty: I like to be able to see the time when I play
