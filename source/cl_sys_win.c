@@ -74,10 +74,6 @@ qboolean	WinNT;
 
 HWND	hwnd_dialog;		// startup dialog box
 
-static double		pfreq;
-static double		curtime = 0.0;
-static double		lastcurtime = 0.0;
-static int			lowshift;
 static HANDLE		hinput, houtput;
 
 HANDLE		qwclsemaphore;
@@ -284,8 +280,9 @@ char *Sys_ConsoleInput (void)
 	static int		len;
 	INPUT_RECORD	recs[1024];
 //	int		count;
-	int		i, dummy;
-	int		ch, numread, numevents;
+	int		i;
+	int		ch;
+	DWORD	numread, numevents, dummy;
 	HANDLE	th;
 	char	*clipText, *textCopied;
 
@@ -546,8 +543,6 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	if (!tevent)
 		Sys_Error ("Couldn't create event");
-
-	Sys_Init ();
 
 // because sound is off until we become active
 	S_BlockSound ();
