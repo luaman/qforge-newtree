@@ -669,7 +669,9 @@ R_DrawViewModel (void)
 	dlight_t   *dl;
 
 	if (!r_drawviewmodel->int_val || r_fov_greater_than_90
-		|| !Cam_DrawViewModel ())return;
+		|| !Cam_DrawViewModel ()
+		|| !r_drawentities->int_val)
+		return;
 
 	if (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
 		return;
