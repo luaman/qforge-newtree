@@ -87,13 +87,16 @@ V_CalcBlend (void)
 		a = 1.0 - a3;
 	}
 
-	if ((a2 = 1 - bound (0.0, contrast->value, 1.0)) < 0.999) { // add contrast
-		r += (128 - r) * a2;
-		g += (128 - g) * a2;
-		b += (128 - b) * a2;
+	if (contrast) {
+		if ((a2 = 1 - bound (0.0, contrast->value, 1.0)) < 0.999) {
+			// add contrast
+			r += (128 - r) * a2;
+			g += (128 - g) * a2;
+			b += (128 - b) * a2;
 
-		a3 = (1.0 - a) * (1.0 - a2);
-		a = 1.0 - a3;
+			a3 = (1.0 - a) * (1.0 - a2);
+			a = 1.0 - a3;
+		}
 	}
 
 	// LordHavoc: saturate color
