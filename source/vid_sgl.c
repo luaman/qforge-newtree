@@ -32,7 +32,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifndef WIN32
 #include <sys/signal.h>
+#endif
 #include <SDL.h>
 
 #include "console.h"
