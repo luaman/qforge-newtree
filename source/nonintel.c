@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #ifndef USE_INTEL_ASM
@@ -37,7 +37,8 @@
 R_Surf8Patch
 ================
 */
-void R_Surf8Patch ()
+void
+R_Surf8Patch ()
 {
 	// we only patch code on Intel
 }
@@ -48,7 +49,8 @@ void R_Surf8Patch ()
 R_Surf16Patch
 ================
 */
-void R_Surf16Patch ()
+void
+R_Surf16Patch ()
 {
 	// we only patch code on Intel
 }
@@ -59,11 +61,11 @@ void R_Surf16Patch ()
 R_SurfacePatch
 ================
 */
-void R_SurfacePatch (void)
+void
+R_SurfacePatch (void)
 {
 	// we only patch code on Intel
 }
 
 
-#endif	// !USE_INTEL_ASM
-
+#endif // !USE_INTEL_ASM

@@ -29,7 +29,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include <ctype.h>
@@ -43,21 +43,21 @@
 ============================================================================
 */
 
-qboolean	bigendien;
-short		(*BigShort) (short l);
-short		(*LittleShort) (short l);
-int			(*BigLong) (int l);
-int			(*LittleLong) (int l);
-float		(*BigFloat) (float l);
-float		(*LittleFloat) (float l);
+qboolean    bigendien;
+short       (*BigShort) (short l);
+short       (*LittleShort) (short l);
+int         (*BigLong) (int l);
+int         (*LittleLong) (int l);
+float       (*BigFloat) (float l);
+float       (*LittleFloat) (float l);
 
 short
 ShortSwap (short l)
 {
-	byte    b1, b2;
+	byte        b1, b2;
 
 	b1 = l & 255;
-	b2 = (l >> 8)&255;
+	b2 = (l >> 8) & 255;
 
 	return (b1 << 8) + b2;
 }
@@ -71,7 +71,7 @@ ShortNoSwap (short l)
 int
 LongSwap (int l)
 {
-	byte    b1, b2, b3, b4;
+	byte        b1, b2, b3, b4;
 
 	b1 = l & 255;
 	b2 = (l >> 8) & 255;
@@ -91,9 +91,9 @@ float
 FloatSwap (float f)
 {
 	union {
-		float	f;
-		byte	b[4];
-	} dat1, dat2;
+		float       f;
+		byte        b[4];
+	} dat1     , dat2;
 
 
 	dat1.f = f;

@@ -28,7 +28,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include <time.h>
@@ -308,8 +308,8 @@ SCR_CalcRefdef (void)
 {
 	vrect_t     vrect;
 	float       size;
-	int			h;
-	qboolean	full = false;
+	int         h;
+	qboolean    full = false;
 
 	scr_fullupdate = 0;					// force a background redraw
 	vid.recalc_refdef = 0;
@@ -550,8 +550,8 @@ SCR_DrawFPS (void)
 	}
 	snprintf (st, sizeof (st), "%-3d FPS", lastfps);
 	/* Misty: New trick! (for me) the ? makes this work like a if then else - 
-	   IE: if cl_hudswap->int_val is not null, do first case, else (else is
-	   a : here) do second case. Deek taught me this trick */
+	   IE: if cl_hudswap->int_val is not null, do first case, else (else is a 
+	   : here) do second case. Deek taught me this trick */
 	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + 8) : 8;
 	y = vid.height - sb_lines - 8;
 	Draw_String8 (x, y, st);
@@ -787,14 +787,14 @@ SCR_ScreenShot_f (void)
 // save the pcx file 
 // 
 	D_EnableBackBufferAccess ();		// enable direct drawing of console
-										// to back
+	// to back
 	// buffer
 
 	WritePCXfile (pcxname, vid.buffer, vid.width, vid.height, vid.rowbytes,
 				  host_basepal, false);
 
 	D_DisableBackBufferAccess ();		// for adapters that can't stay
-										// mapped in
+	// mapped in
 	// for linear writes all the time
 
 	Con_Printf ("Wrote %s\n", pcxname);
@@ -932,7 +932,7 @@ SCR_RSShot_f (void)
 // save the pcx file 
 // 
 	D_EnableBackBufferAccess ();		// enable direct drawing of console
-										// to back
+	// to back
 	// buffer
 
 	w = (vid.width < RSSHOT_WIDTH) ? vid.width : RSSHOT_WIDTH;
@@ -994,7 +994,7 @@ SCR_RSShot_f (void)
 	free (newbuf);
 
 	D_DisableBackBufferAccess ();		// for adapters that can't stay
-										// mapped in
+	// mapped in
 	// for linear writes all the time
 
 //  Con_Printf ("Wrote %s\n", pcxname);
@@ -1109,7 +1109,7 @@ SCR_UpdateScreen (void)
 // do 3D refresh drawing, and then update the screen
 //
 	D_EnableBackBufferAccess ();		// of all overlay stuff if drawing
-										// directly
+	// directly
 
 	if (scr_fullupdate++ < vid.numpages) {	// clear the entire screen
 		scr_copyeverything = 1;
@@ -1124,7 +1124,7 @@ SCR_UpdateScreen (void)
 	SCR_EraseCenterString ();
 
 	D_DisableBackBufferAccess ();		// for adapters that can't stay
-										// mapped in
+	// mapped in
 	// for linear writes all the time
 
 	VID_LockBuffer ();
@@ -1132,7 +1132,7 @@ SCR_UpdateScreen (void)
 	VID_UnlockBuffer ();
 
 	D_EnableBackBufferAccess ();		// of all overlay stuff if drawing
-										// directly
+	// directly
 
 	if (cl.intermission == 1 && key_dest == key_game) {
 		Sbar_IntermissionOverlay ();
@@ -1157,7 +1157,7 @@ SCR_UpdateScreen (void)
 
 
 	D_DisableBackBufferAccess ();		// for adapters that can't stay
-										// mapped in
+	// mapped in
 	// for linear writes all the time
 	if (pconupdate) {
 		D_UpdateRects (pconupdate);

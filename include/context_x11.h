@@ -57,7 +57,7 @@ void x11_process_events (void);
 void x11_open_display (void);
 void x11_close_display (void);
 void x11_create_null_cursor (void);
-void x11_set_vidmode (int, int);
+void x11_update_vidmode (int, int);
 void x11_restore_vidmode (void);
 void x11_create_window (int, int);
 void x11_grab_keyboard (void);

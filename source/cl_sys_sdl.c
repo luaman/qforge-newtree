@@ -62,30 +62,31 @@
 #include "client.h"
 #include "host.h"
 
-qboolean is_server = false;
+qboolean    is_server = false;
 
-int		starttime;
+int         starttime;
 
 #ifdef _WIN32
 # include "winquake.h"
-						// fixme: minimized is not currently supported under SDL
-qboolean Minimized=false;
-void MaskExceptions (void);
+						// fixme: minimized is not currently supported under
+						// SDL
+qboolean    Minimized = false;
+void        MaskExceptions (void);
 #endif
 
 void
 Sys_DebugLog (char *file, char *fmt, ...)
 {
-    int 		fd;
-    static char data[1024]; 	// why static ?
-    va_list 	argptr;
+	int         fd;
+	static char data[1024];				// why static ?
+	va_list     argptr;
 
-    va_start (argptr, fmt);
-    vsnprintf (data, sizeof (data), fmt, argptr);
-    va_end (argptr);
-    fd = open (file, O_WRONLY | O_CREAT | O_APPEND, 0666);
-    write (fd, data, strlen (data));
-    close (fd);
+	va_start (argptr, fmt);
+	vsnprintf (data, sizeof (data), fmt, argptr);
+	va_end (argptr);
+	fd = open (file, O_WRONLY | O_CREAT | O_APPEND, 0666);
+	write (fd, data, strlen (data));
+	close (fd);
 };
 
 /*
@@ -99,13 +100,13 @@ FILE IO
 int
 Sys_FileTime (char *path)
 {
-	QFile	*f;
-	int		t, retval;
+	QFile      *f;
+	int         t, retval;
 
 	f = Qopen (path, "rb");
 
 	if (f) {
-		Qclose(f);
+		Qclose (f);
 		retval = 1;
 	} else {
 		retval = -1;
@@ -133,25 +134,26 @@ Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
 {
 
 #ifdef _WIN32
-	DWORD	flOldProtect;
+	DWORD       flOldProtect;
 
 	// copy on write or just read-write?
-	if (!VirtualProtect ((LPVOID) startaddr, length, PAGE_READWRITE, &flOldProtect))
-   		Sys_Error ("Protection change failed\n");
+	if (!VirtualProtect
+		((LPVOID) startaddr, length, PAGE_READWRITE,
+		 &flOldProtect)) Sys_Error ("Protection change failed\n");
 #else
-	int 			r;
-	unsigned long	addr;
-	int 			psize = getpagesize ();
+	int         r;
+	unsigned long addr;
+	int         psize = getpagesize ();
 
-	addr = (startaddr & ~(psize-1)) - psize;
+	addr = (startaddr & ~(psize - 1)) - psize;
 
-//	fprintf(stderr, "writable code %lx(%lx)-%lx, length=%lx\n", startaddr,
-//			addr, startaddr+length, length);
+//  fprintf(stderr, "writable code %lx(%lx)-%lx, length=%lx\n", startaddr,
+//          addr, startaddr+length, length);
 
-	r = mprotect((char *) addr, length + startaddr - addr + psize, 7);
+	r = mprotect ((char *) addr, length + startaddr - addr + psize, 7);
 
 	if (r < 0)
-    		Sys_Error ("Protection change failed\n");
+		Sys_Error ("Protection change failed\n");
 #endif
 }
 
@@ -166,7 +168,7 @@ Sys_Init (void)
 {
 
 #ifdef WIN32
-	OSVERSIONINFO	vinfo;
+	OSVERSIONINFO vinfo;
 #endif
 
 #ifdef USE_INTEL_ASM
@@ -181,13 +183,15 @@ Sys_Init (void)
 	// NT gets 18ms resolution
 	timeBeginPeriod (1);
 
-	vinfo.dwOSVersionInfoSize = sizeof(vinfo);
+	vinfo.dwOSVersionInfoSize = sizeof (vinfo);
 
 	if (!GetVersionEx (&vinfo))
 		Sys_Error ("Couldn't get OS info");
 
-	if ((vinfo.dwMajorVersion < 4) || (vinfo.dwPlatformId == VER_PLATFORM_WIN32s)) {
-		Sys_Error ("This version of " PROGRAM " requires at least Win95 or NT 4.0");
+	if ((vinfo.dwMajorVersion < 4)
+		|| (vinfo.dwPlatformId == VER_PLATFORM_WIN32s)) {
+		Sys_Error ("This version of " PROGRAM
+				   " requires at least Win95 or NT 4.0");
 	}
 #endif
 }
@@ -196,47 +200,51 @@ Sys_Init (void)
 void
 Sys_Error (char *error, ...)
 {
-	va_list		argptr;
-	char		text[1024];
+	va_list     argptr;
+	char        text[1024];
 
 #ifndef _WIN32
-        fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~O_NONBLOCK);
+	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~O_NONBLOCK);
 #endif
 	va_start (argptr, error);
-	vsnprintf (text, sizeof(text), error, argptr);
+	vsnprintf (text, sizeof (text), error, argptr);
 	va_end (argptr);
 
 #ifdef WIN32
 	MessageBox (NULL, text, "Error", 0 /* MB_OK */ );
 #endif
-        fprintf (stderr, "Error: %s\n", text);
+	fprintf (stderr, "Error: %s\n", text);
 
-        Host_Shutdown ();
+	Host_Shutdown ();
 	exit (1);
 }
 
-void Sys_Printf (char *fmt, ...)
+void
+Sys_Printf (char *fmt, ...)
 {
-	va_list		argptr;
+	va_list     argptr;
 
-	va_start (argptr,fmt);
+	va_start (argptr, fmt);
 	vprintf (fmt, argptr);
 
 	va_end (argptr);
 }
 
-void Sys_Quit (void)
+void
+Sys_Quit (void)
 {
-	Host_Shutdown();
+	Host_Shutdown ();
 	exit (0);
 }
 
-char *Sys_ConsoleInput (void)
+char       *
+Sys_ConsoleInput (void)
 {
 	return NULL;
 }
 
-void Sys_Sleep (void)
+void
+Sys_Sleep (void)
 {
 }
 
@@ -244,60 +252,58 @@ void Sys_Sleep (void)
 void
 Sys_Init_Cvars (void)
 {
-	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
-	if (COM_CheckParm("-nostdout"))
-		Cvar_Set(sys_nostdout, "1");
+	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, "None");
+	if (COM_CheckParm ("-nostdout"))
+		Cvar_Set (sys_nostdout, "1");
 }
 
-C_LINKAGE int SDL_main(int c, char **v)
+C_LINKAGE int
+SDL_main (int c, char **v)
 {
 
-	double		time, oldtime, newtime;
-	int j;
+	double      time, oldtime, newtime;
+	int         j;
 
-	static	char	cwd[1024];
-	int	t;
+	static char cwd[1024];
+	int         t;
 
 #ifndef WIN32
-        signal(SIGFPE, SIG_IGN);
+	signal (SIGFPE, SIG_IGN);
 #endif
 
-	memset(&host_parms, 0, sizeof(host_parms));
+	memset (&host_parms, 0, sizeof (host_parms));
 
-	COM_InitArgv(c, v);
+	COM_InitArgv (c, v);
 	host_parms.argc = com_argc;
 	host_parms.argv = com_argv;
 
-	host_parms.memsize = 16*1024*1024;
+	host_parms.memsize = 16 * 1024 * 1024;
 
-	j = COM_CheckParm("-mem");
+	j = COM_CheckParm ("-mem");
 	if (j)
-		host_parms.memsize = (int) (atof(com_argv[j+1]) * 1024 * 1024);
+		host_parms.memsize = (int) (atof (com_argv[j + 1]) * 1024 * 1024);
 	host_parms.membase = malloc (host_parms.memsize);
 
 	if (!host_parms.membase) {
-		printf("Can't allocate memory for zone.\n");
+		printf ("Can't allocate memory for zone.\n");
 		return 1;
 	}
-
 #ifndef WIN32
-	noconinput = COM_CheckParm("-noconinput");
+	noconinput = COM_CheckParm ("-noconinput");
 	if (!noconinput)
-		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | O_NONBLOCK);
+		fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) | O_NONBLOCK);
 #endif
 
-	Host_Init();
+	Host_Init ();
 
 	oldtime = Sys_DoubleTime ();
-	while (1)
-	{
+	while (1) {
 // find time spent rendering last frame
-        newtime = Sys_DoubleTime ();
-        time = newtime - oldtime;
+		newtime = Sys_DoubleTime ();
+		time = newtime - oldtime;
 
-		Host_Frame(time);
+		Host_Frame (time);
 		oldtime = newtime;
 	}
 
 }
-

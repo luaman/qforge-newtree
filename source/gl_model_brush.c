@@ -30,7 +30,7 @@
 // on the same machine.
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include <string.h>
 
@@ -40,24 +40,27 @@
 #include "qendian.h"
 #include "quakefs.h"
 
-int Mod_Fullbright(byte *skin, int width, int height, char *name);
+int         Mod_Fullbright (byte * skin, int width, int height, char *name);
 
-extern	model_t	*loadmodel;
-extern	char	loadname[];
+extern model_t *loadmodel;
+extern char loadname[];
 
-extern	byte	*mod_base;
+extern byte *mod_base;
 
-const int mod_lightmap_bytes=3;
+const int   mod_lightmap_bytes = 3;
 
 void
-Mod_ProcessTexture(miptex_t *mt, texture_t   *tx)
+Mod_ProcessTexture (miptex_t *mt, texture_t *tx)
 {
-	char name[32];
+	char        name[32];
 
-	texture_mode = GL_LINEAR_MIPMAP_NEAREST; //_LINEAR;
-	snprintf (name, sizeof(name), "fb_%s", mt->name);
-	tx->gl_fb_texturenum = Mod_Fullbright ((byte *)(tx+1), tx->width, tx->height, name);
-	tx->gl_texturenum = GL_LoadTexture (mt->name, tx->width, tx->height, (byte *)(tx+1), true, false, 1);
+	texture_mode = GL_LINEAR_MIPMAP_NEAREST;	// _LINEAR;
+	snprintf (name, sizeof (name), "fb_%s", mt->name);
+	tx->gl_fb_texturenum =
+		Mod_Fullbright ((byte *) (tx + 1), tx->width, tx->height, name);
+	tx->gl_texturenum =
+		GL_LoadTexture (mt->name, tx->width, tx->height, (byte *) (tx + 1),
+						true, false, 1);
 	texture_mode = GL_LINEAR;
 }
 
@@ -66,44 +69,44 @@ Mod_ProcessTexture(miptex_t *mt, texture_t   *tx)
 Mod_LoadLighting
 =================
 */
-void Mod_LoadLighting (lump_t *l)
+void
+Mod_LoadLighting (lump_t *l)
 {
-	int i;
-	byte *in, *out, *data;
-	byte d;
-	char litfilename[1024];
+	int         i;
+	byte       *in, *out, *data;
+	byte        d;
+	char        litfilename[1024];
+
 	loadmodel->lightdata = NULL;
 	// LordHavoc: check for a .lit file to load
-	strcpy(litfilename, loadmodel->name);
-	COM_StripExtension(litfilename, litfilename);
-	strncat (litfilename, ".lit", sizeof(litfilename) - strlen (litfilename));
-	data = (byte*) COM_LoadHunkFile (litfilename);
-	if (data)
-	{
-		if (data[0] == 'Q' && data[1] == 'L' && data[2] == 'I' && data[3] == 'T')
-		{
-			i = LittleLong(((int *)data)[1]);
-			if (i == 1)
-			{
-				Con_DPrintf("%s loaded", litfilename);
+	strcpy (litfilename, loadmodel->name);
+	COM_StripExtension (litfilename, litfilename);
+	strncat (litfilename, ".lit", sizeof (litfilename) - strlen (litfilename));
+	data = (byte *) COM_LoadHunkFile (litfilename);
+	if (data) {
+		if (data[0] == 'Q' && data[1] == 'L' && data[2] == 'I'
+			&& data[3] == 'T') {
+			i = LittleLong (((int *) data)[1]);
+			if (i == 1) {
+				Con_DPrintf ("%s loaded", litfilename);
 				loadmodel->lightdata = data + 8;
 				return;
-			}
-			else
-				Con_Printf("Unknown .lit file version (%d)\n", i);
-		}
-		else
-			Con_Printf("Corrupt .lit file (old version?), ignoring\n");
+			} else
+				Con_Printf ("Unknown .lit file version (%d)\n", i);
+		} else
+			Con_Printf ("Corrupt .lit file (old version?), ignoring\n");
 	}
 	// LordHavoc: oh well, expand the white lighting data
 	if (!l->filelen)
 		return;
-	loadmodel->lightdata = Hunk_AllocName ( l->filelen*3, litfilename);
-	in = loadmodel->lightdata + l->filelen*2; // place the file at the end, so it will not be overwritten until the very last write
+	loadmodel->lightdata = Hunk_AllocName (l->filelen * 3, litfilename);
+	in = loadmodel->lightdata + l->filelen * 2;	// place the file at the end, 
+												// so it will not be
+												// overwritten until the very 
+												// last write
 	out = loadmodel->lightdata;
 	memcpy (in, mod_base + l->fileofs, l->filelen);
-	for (i = 0;i < l->filelen;i++)
-	{
+	for (i = 0; i < l->filelen; i++) {
 		d = *in++;
 		*out++ = d;
 		*out++ = d;

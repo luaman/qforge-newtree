@@ -51,88 +51,91 @@
 #include "view.h"
 
 
-entity_t	r_worldentity;
+entity_t    r_worldentity;
 
-vec3_t		modelorg, r_entorigin;
-entity_t	*currententity;
+vec3_t      modelorg, r_entorigin;
+entity_t   *currententity;
 
-int			r_visframecount;	// bumped when going to a new PVS
-int			r_framecount;		// used for dlight push checking
+int         r_visframecount;			// bumped when going to a new PVS
+int         r_framecount;				// used for dlight push checking
 
-mplane_t	frustum[4];
+mplane_t    frustum[4];
 
-int			c_brush_polys, c_alias_polys;
+int         c_brush_polys, c_alias_polys;
 
-qboolean	envmap;				// true during envmap command capture 
+qboolean    envmap;						// true during envmap command capture 
+
+										// 
 
 
-int			playertextures;		// up to 16 color translated skins
+int         playertextures;				// up to 16 color translated skins
 
 //
 // view origin
 //
-vec3_t	vup;
-vec3_t	vpn;
-vec3_t	vright;
-vec3_t	r_origin;
+vec3_t      vup;
+vec3_t      vpn;
+vec3_t      vright;
+vec3_t      r_origin;
 
-float	r_world_matrix[16];
-float	r_base_world_matrix[16];
+float       r_world_matrix[16];
+float       r_base_world_matrix[16];
 
 //
 // screen size info
 //
-refdef_t	r_refdef;
+refdef_t    r_refdef;
 
-mleaf_t		*r_viewleaf, *r_oldviewleaf;
+mleaf_t    *r_viewleaf, *r_oldviewleaf;
 
-int		d_lightstylevalue[256];	// 8.8 fraction of base light value
+int         d_lightstylevalue[256];		// 8.8 fraction of base light value
 
 
-vec3_t  shadecolor; // Ender (Extend) Colormod
-float   modelalpha; // Ender (EXtend) Alpha
+vec3_t      shadecolor;					// Ender (Extend) Colormod
+float       modelalpha;					// Ender (EXtend) Alpha
 
-void R_MarkLeaves (void);
+void        R_MarkLeaves (void);
 
-cvar_t	*r_norefresh;
-cvar_t	*r_drawentities;
-cvar_t	*r_drawviewmodel;
-cvar_t	*r_speeds;
-cvar_t	*r_shadows;
-cvar_t	*r_wateralpha;
-cvar_t	*r_waterripple;
-cvar_t	*r_dynamic;
-cvar_t	*r_novis;
-cvar_t	*r_netgraph;
+cvar_t     *r_norefresh;
+cvar_t     *r_drawentities;
+cvar_t     *r_drawviewmodel;
+cvar_t     *r_speeds;
+cvar_t     *r_shadows;
+cvar_t     *r_wateralpha;
+cvar_t     *r_waterripple;
+cvar_t     *r_dynamic;
+cvar_t     *r_novis;
+cvar_t     *r_netgraph;
 
-cvar_t	*gl_clear;
-cvar_t	*gl_cull;
-cvar_t	*gl_texsort;
-cvar_t	*gl_smooth;
-cvar_t	*gl_smoothdlights;
-cvar_t	*gl_affinemodels;
-cvar_t	*gl_flashblend;
-cvar_t	*gl_playermip;
-cvar_t	*gl_nocolors;
-cvar_t	*gl_keeptjunctions;
-cvar_t	*gl_particles;
+cvar_t     *gl_clear;
+cvar_t     *gl_cull;
+cvar_t     *gl_texsort;
+cvar_t     *gl_smooth;
+cvar_t     *gl_smoothdlights;
+cvar_t     *gl_affinemodels;
+cvar_t     *gl_flashblend;
+cvar_t     *gl_playermip;
+cvar_t     *gl_nocolors;
+cvar_t     *gl_keeptjunctions;
+cvar_t     *gl_particles;
 
-cvar_t	*r_skyname;
-cvar_t	*gl_skymultipass;
-cvar_t	*gl_sky_clip;
+cvar_t     *r_skyname;
+cvar_t     *gl_skymultipass;
+cvar_t     *gl_sky_clip;
 
-cvar_t *gl_fb_models;
-cvar_t *gl_fb_bmodels;
+cvar_t     *gl_fb_models;
+cvar_t     *gl_fb_bmodels;
 
-cvar_t *brighten;
+cvar_t     *brighten;
 
-extern	cvar_t	*scr_fov;
+extern cvar_t *scr_fov;
 
 extern byte gammatable[256];
 extern qboolean lighthalf;
 
 // LordHavoc: place for gl_rmain setup code
-void glrmain_init()
+void
+glrmain_init ()
 {
 };
 
@@ -145,8 +148,8 @@ void glrmain_init()
 void
 GL_CheckBrightness (unsigned char *pal)
 {
-	int 	i, inf;
-	float	brightness;
+	int         i, inf;
+	float       brightness;
 
 	brighten = Cvar_Get ("brighten", "1", CVAR_NONE,
 						 "Palette hack equivalent to brightness");
@@ -157,23 +160,23 @@ GL_CheckBrightness (unsigned char *pal)
 		brightness = brighten->value;
 	}
 	brightness = bound (1, brightness, 5);
-	
+
 	Cvar_SetValue (brighten, brightness);
 	Cvar_SetFlags (brighten, brighten->flags | CVAR_ROM);
-	
+
 	// Build gamma table
-	if (brightness == 1.0) {	// screw the math
+	if (brightness == 1.0) {			// screw the math
 		for (i = 0; i < 256; i++) {
 			gammatable[i] = i;
 		}
 	} else {
-		for (i = 0; i < 256; i++) {	// brighten up the palette
+		for (i = 0; i < 256; i++) {		// brighten up the palette
 			inf = (i * brightness);
 			inf = bound (0, inf, 255);
 			gammatable[i] = inf;
 		}
 	}
-	
+
 	// correct the palette
 	for (i = 0; i < 768; i++) {
 		pal[i] = gammatable[pal[i]];
@@ -200,14 +203,15 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 */
 
 
-void R_RotateForEntity (entity_t *e)
+void
+R_RotateForEntity (entity_t *e)
 {
-	glTranslatef (e->origin[0],  e->origin[1],  e->origin[2]);
+	glTranslatef (e->origin[0], e->origin[1], e->origin[2]);
 
-	glRotatef (e->angles[1],  0, 0, 1);
-	glRotatef (-e->angles[0],  0, 1, 0);
-	//ZOID: fixed z angle
-	glRotatef (e->angles[2],  1, 0, 0);
+	glRotatef (e->angles[1], 0, 0, 1);
+	glRotatef (-e->angles[0], 0, 1, 0);
+	// ZOID: fixed z angle
+	glRotatef (e->angles[2], 1, 0, 0);
 }
 
 /*
@@ -223,42 +227,39 @@ void R_RotateForEntity (entity_t *e)
 R_GetSpriteFrame
 ================
 */
-static mspriteframe_t *R_GetSpriteFrame (entity_t *currententity)
+static mspriteframe_t *
+R_GetSpriteFrame (entity_t *currententity)
 {
-	msprite_t		*psprite;
-	mspritegroup_t	*pspritegroup;
-	mspriteframe_t	*pspriteframe;
-	int				i, numframes, frame;
-	float			*pintervals, fullinterval, targettime, time;
+	msprite_t  *psprite;
+	mspritegroup_t *pspritegroup;
+	mspriteframe_t *pspriteframe;
+	int         i, numframes, frame;
+	float      *pintervals, fullinterval, targettime, time;
 
 	psprite = currententity->model->cache.data;
 	frame = currententity->frame;
 
-	if ((frame >= psprite->numframes) || (frame < 0))
-	{
+	if ((frame >= psprite->numframes) || (frame < 0)) {
 		Con_Printf ("R_DrawSprite: no such frame %d\n", frame);
 		frame = 0;
 	}
 
-	if (psprite->frames[frame].type == SPR_SINGLE)
-	{
+	if (psprite->frames[frame].type == SPR_SINGLE) {
 		pspriteframe = psprite->frames[frame].frameptr;
-	}
-	else
-	{
-		pspritegroup = (mspritegroup_t *)psprite->frames[frame].frameptr;
+	} else {
+		pspritegroup = (mspritegroup_t *) psprite->frames[frame].frameptr;
 		pintervals = pspritegroup->intervals;
 		numframes = pspritegroup->numframes;
-		fullinterval = pintervals[numframes-1];
+		fullinterval = pintervals[numframes - 1];
 
 		time = cl.time + currententity->syncbase;
 
-	// when loading in Mod_LoadSpriteGroup, we guaranteed all interval values
-	// are positive, so we don't have to worry about division by 0
-		targettime = time - ((int)(time / fullinterval)) * fullinterval;
+		// when loading in Mod_LoadSpriteGroup, we guaranteed all interval
+		// values
+		// are positive, so we don't have to worry about division by 0
+		targettime = time - ((int) (time / fullinterval)) * fullinterval;
 
-		for (i=0 ; i<(numframes-1) ; i++)
-		{
+		for (i = 0; i < (numframes - 1); i++) {
 			if (pintervals[i] > targettime)
 				break;
 		}
@@ -276,27 +277,25 @@ R_DrawSpriteModel
 
 =================
 */
-static void R_DrawSpriteModel (entity_t *e)
+static void
+R_DrawSpriteModel (entity_t *e)
 {
-	vec3_t	point;
-	mspriteframe_t	*frame;
-	float		*up, *right;
-	vec3_t		v_forward, v_right, v_up;
-	msprite_t		*psprite;
+	vec3_t      point;
+	mspriteframe_t *frame;
+	float      *up, *right;
+	vec3_t      v_forward, v_right, v_up;
+	msprite_t  *psprite;
 
 	// don't even bother culling, because it's just a single
 	// polygon without a surface cache
 	frame = R_GetSpriteFrame (e);
 	psprite = currententity->model->cache.data;
 
-	if (psprite->type == SPR_ORIENTED)
-	{	// bullet marks on walls
+	if (psprite->type == SPR_ORIENTED) {	// bullet marks on walls
 		AngleVectors (currententity->angles, v_forward, v_right, v_up);
 		up = v_up;
 		right = v_right;
-	}
-	else
-	{	// normal sprite
+	} else {							// normal sprite
 		up = vup;
 		right = vright;
 	}
@@ -325,7 +324,7 @@ static void R_DrawSpriteModel (entity_t *e)
 	VectorMA (e->origin, frame->down, up, point);
 	VectorMA (point, frame->right, right, point);
 	glVertex3fv (point);
-	
+
 	glEnd ();
 
 	glDisable (GL_ALPHA_TEST);
@@ -342,43 +341,44 @@ static void R_DrawSpriteModel (entity_t *e)
 
 #define NUMVERTEXNORMALS	162
 
-float	r_avertexnormals[NUMVERTEXNORMALS][3] = {
+float       r_avertexnormals[NUMVERTEXNORMALS][3] = {
 #include "anorms.h"
 };
 
-vec3_t	shadevector;
-float	shadelight;
+vec3_t      shadevector;
+float       shadelight;
 
 // precalculated dot products for quantized angles
 #define SHADEDOT_QUANT 16
-float	r_avertexnormal_dots[SHADEDOT_QUANT][256] =
+float       r_avertexnormal_dots[SHADEDOT_QUANT][256] =
 #include "anorm_dots.h"
-;
+           ;
 
-float	*shadedots = r_avertexnormal_dots[0];
+float      *shadedots = r_avertexnormal_dots[0];
 
-int	lastposenum;
+int         lastposenum;
 
 /*
 =============
 GL_DrawAliasFrame
 =============
 */
-static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
+static void
+GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 {
-	float 	l;
-	trivertx_t	*verts;
-	int		*order;
-	int		count;
-	
+	float       l;
+	trivertx_t *verts;
+	int        *order;
+	int         count;
+
 	lastposenum = posenum;
 
-	verts = (trivertx_t *)((byte *)paliashdr + paliashdr->posedata);
+	verts = (trivertx_t *) ((byte *) paliashdr + paliashdr->posedata);
 	verts += posenum * paliashdr->poseverts;
-	order = (int *)((byte *)paliashdr + paliashdr->commands);
+	order = (int *) ((byte *) paliashdr + paliashdr->commands);
 
 	if (modelalpha != 1.0)
-		glDepthMask(GL_FALSE);
+		glDepthMask (GL_FALSE);
 
 	while ((count = *order++)) {
 		// get the vertex count and primitive type
@@ -390,7 +390,7 @@ static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 
 		do {
 			// texture coordinates come from the draw list
-			glTexCoord2f (((float *)order)[0], ((float *)order)[1]);
+			glTexCoord2f (((float *) order)[0], ((float *) order)[1]);
 			order += 2;
 
 			if (fb) {
@@ -400,7 +400,8 @@ static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 				l = shadedots[verts->lightnormalindex] * shadelight;
 
 				// LordHavoc: cleanup after Endy
-				glColor4f(shadecolor[0] * l, shadecolor[1] * l, shadecolor[2] * l, modelalpha);
+				glColor4f (shadecolor[0] * l, shadecolor[1] * l,
+						   shadecolor[2] * l, modelalpha);
 			}
 
 			glVertex3f (verts->v[0], verts->v[1], verts->v[2]);
@@ -411,8 +412,8 @@ static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 	}
 
 	if (modelalpha != 1.0)
-		glDepthMask(GL_TRUE);
-	glColor3ubv(lighthalf_v);
+		glDepthMask (GL_TRUE);
+	glColor3ubv (lighthalf_v);
 }
 
 
@@ -421,61 +422,64 @@ static void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum, qboolean fb)
 GL_DrawAliasShadow
 =============
 */
-extern	vec3_t			lightspot;
+extern vec3_t lightspot;
 
-static void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
+static void
+GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 {
-	trivertx_t	*verts;
-	int		*order;
-	vec3_t	point;
-	float	height, lheight;
-	int		count;
+	trivertx_t *verts;
+	int        *order;
+	vec3_t      point;
+	float       height, lheight;
+	int         count;
 
 	lheight = currententity->origin[2] - lightspot[2];
 
 	height = 0;
-	verts = (trivertx_t *)((byte *)paliashdr + paliashdr->posedata);
+	verts = (trivertx_t *) ((byte *) paliashdr + paliashdr->posedata);
 	verts += posenum * paliashdr->poseverts;
-	order = (int *)((byte *)paliashdr + paliashdr->commands);
+	order = (int *) ((byte *) paliashdr + paliashdr->commands);
 
 	height = -lheight + 1.0;
 
-	while (1)
-	{
+	while (1) {
 		// get the vertex count and primitive type
 		count = *order++;
 		if (!count)
-			break;		// done
-		if (count < 0)
-		{
+			break;						// done
+		if (count < 0) {
 			count = -count;
 			glBegin (GL_TRIANGLE_FAN);
-		}
-		else
+		} else
 			glBegin (GL_TRIANGLE_STRIP);
 
-		do
-		{
+		do {
 			// texture coordinates come from the draw list
 			// (skipped for shadows) glTexCoord2fv ((float *)order);
 			order += 2;
 
 			// normals and vertexes come from the frame list
-			point[0] = verts->v[0] * paliashdr->mdl.scale[0] + paliashdr->mdl.scale_origin[0];
-			point[1] = verts->v[1] * paliashdr->mdl.scale[1] + paliashdr->mdl.scale_origin[1];
-			point[2] = verts->v[2] * paliashdr->mdl.scale[2] + paliashdr->mdl.scale_origin[2];
+			point[0] =
+				verts->v[0] * paliashdr->mdl.scale[0] +
+				paliashdr->mdl.scale_origin[0];
+			point[1] =
+				verts->v[1] * paliashdr->mdl.scale[1] +
+				paliashdr->mdl.scale_origin[1];
+			point[2] =
+				verts->v[2] * paliashdr->mdl.scale[2] +
+				paliashdr->mdl.scale_origin[2];
 
-			point[0] -= shadevector[0]*(point[2]+lheight);
-			point[1] -= shadevector[1]*(point[2]+lheight);
+			point[0] -= shadevector[0] * (point[2] + lheight);
+			point[1] -= shadevector[1] * (point[2] + lheight);
 			point[2] = height;
-//			height -= 0.001;
+//          height -= 0.001;
 			glVertex3fv (point);
 
 			verts++;
 		} while (--count);
 
 		glEnd ();
-	}	
+	}
 }
 
 
@@ -486,13 +490,13 @@ R_SetupAliasFrame
 
 =================
 */
-static void R_SetupAliasFrame (int frame, aliashdr_t *paliashdr, qboolean fb)
+static void
+R_SetupAliasFrame (int frame, aliashdr_t *paliashdr, qboolean fb)
 {
-	int				pose, numposes;
-	float			interval;
+	int         pose, numposes;
+	float       interval;
 
-	if ((frame >= paliashdr->mdl.numframes) || (frame < 0))
-	{
+	if ((frame >= paliashdr->mdl.numframes) || (frame < 0)) {
 		Con_DPrintf ("R_AliasSetupFrame: no such frame %d\n", frame);
 		frame = 0;
 	}
@@ -500,10 +504,9 @@ static void R_SetupAliasFrame (int frame, aliashdr_t *paliashdr, qboolean fb)
 	pose = paliashdr->frames[frame].firstpose;
 	numposes = paliashdr->frames[frame].numposes;
 
-	if (numposes > 1)
-	{
+	if (numposes > 1) {
 		interval = paliashdr->frames[frame].interval;
-		pose += (int)(cl.time / interval) % numposes;
+		pose += (int) (cl.time / interval) % numposes;
 	}
 
 	GL_DrawAliasFrame (paliashdr, pose, fb);
@@ -516,17 +519,18 @@ R_DrawAliasModel
 
 =================
 */
-static void R_DrawAliasModel (entity_t *e)
+static void
+R_DrawAliasModel (entity_t *e)
 {
-	int			i;
-	int			lnum;
-	vec3_t		dist;
-	float		add;
-	model_t		*clmodel;
-	vec3_t		mins, maxs;
-	aliashdr_t	*paliashdr;
-	float		an;
-	int			anim;
+	int         i;
+	int         lnum;
+	vec3_t      dist;
+	float       add;
+	model_t    *clmodel;
+	vec3_t      mins, maxs;
+	aliashdr_t *paliashdr;
+	float       an;
+	int         anim;
 
 	clmodel = currententity->model;
 
@@ -536,12 +540,12 @@ static void R_DrawAliasModel (entity_t *e)
 	if (R_CullBox (mins, maxs))
 		return;
 
-	// FIXME: shadecolor is supposed to be the lighting for the model, not just colormod
+	// FIXME: shadecolor is supposed to be the lighting for the model, not
+	// just colormod
 	shadecolor[0] = currententity->colormod[0];
 	shadecolor[1] = currententity->colormod[1];
 	shadecolor[2] = currententity->colormod[2];
-	if (!lighthalf)
-	{
+	if (!lighthalf) {
 		shadecolor[0] *= 2.0;
 		shadecolor[1] *= 2.0;
 		shadecolor[2] *= 2.0;
@@ -550,95 +554,96 @@ static void R_DrawAliasModel (entity_t *e)
 	VectorCopy (currententity->origin, r_entorigin);
 	VectorSubtract (r_origin, r_entorigin, modelorg);
 
-	//
+	// 
 	// get lighting information
-	//
+	// 
 
 	shadelight = R_LightPoint (currententity->origin);
 
 	// allways give the gun some light
 	if (e == &cl.viewent)
-		shadelight = max(shadelight, 24);
+		shadelight = max (shadelight, 24);
 
-	for (lnum=0 ; lnum<MAX_DLIGHTS ; lnum++)
-	{
-		if (cl_dlights[lnum].die >= cl.time)
-		{
+	for (lnum = 0; lnum < MAX_DLIGHTS; lnum++) {
+		if (cl_dlights[lnum].die >= cl.time) {
 			VectorSubtract (currententity->origin,
-							cl_dlights[lnum].origin,
-							dist);
-			add = (cl_dlights[lnum].radius * cl_dlights[lnum].radius * 8) / (DotProduct(dist, dist)); // FIXME Deek
+							cl_dlights[lnum].origin, dist);
+			add =
+				(cl_dlights[lnum].radius * cl_dlights[lnum].radius * 8) /
+				(DotProduct (dist, dist));	// FIXME Deek
 
-			if (add > 0)
-			{
+			if (add > 0) {
 				shadelight += add;
 			}
 		}
 	}
 
 	// clamp lighting so it doesn't overbright as much
-	shadelight = min(shadelight, 100);
+	shadelight = min (shadelight, 100);
 
 	// ZOID: never allow players to go totally black
-	if (!strcmp(clmodel->name, "progs/player.mdl"))
-	{
-		shadelight = max(shadelight, 8);
-	} else if (!gl_fb_models->int_val && (
-			!strcmp (clmodel->name, "progs/flame.mdl") ||
-			!strcmp (clmodel->name, "progs/flame2.mdl"))) {
+	if (!strcmp (clmodel->name, "progs/player.mdl")) {
+		shadelight = max (shadelight, 8);
+	} else if (!gl_fb_models->int_val
+			   && (!strcmp (clmodel->name, "progs/flame.mdl")
+				   || !strcmp (clmodel->name, "progs/flame2.mdl"))) {
 		// HACK HACK HACK -- no fullbright colors, so make torches full light
 		shadelight = 256;
 	}
 
-	shadedots = r_avertexnormal_dots[((int)(e->angles[1] * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
+	shadedots =
+		r_avertexnormal_dots[((int) (e->angles[1] * (SHADEDOT_QUANT / 360.0))) &
+							 (SHADEDOT_QUANT - 1)];
 	shadelight /= 200.0;
-	
-	an = e->angles[1]/180*M_PI;
-	shadevector[0] = cos(-an);
-	shadevector[1] = sin(-an);
+
+	an = e->angles[1] / 180 * M_PI;
+	shadevector[0] = cos (-an);
+	shadevector[1] = sin (-an);
 	shadevector[2] = 1;
 	VectorNormalize (shadevector);
 
-	//
+	// 
 	// locate the proper data
-	//
-	paliashdr = (aliashdr_t *)Mod_Extradata (currententity->model);
+	// 
+	paliashdr = (aliashdr_t *) Mod_Extradata (currententity->model);
 
 	c_alias_polys += paliashdr->mdl.numtris;
 
-	//
+	// 
 	// draw all the triangles
-	//
+	// 
 
 	glPushMatrix ();
 	R_RotateForEntity (e);
 
-	if (!strcmp (clmodel->name, "progs/eyes.mdl") )
-	{
-		glTranslatef (paliashdr->mdl.scale_origin[0], paliashdr->mdl.scale_origin[1], paliashdr->mdl.scale_origin[2] - (22 + 8));
-	// double size of eyes, since they are really hard to see in gl
-		glScalef (paliashdr->mdl.scale[0]*2, paliashdr->mdl.scale[1]*2, paliashdr->mdl.scale[2]*2);
-	}
-	else
-	{
-		glTranslatef (paliashdr->mdl.scale_origin[0], paliashdr->mdl.scale_origin[1], paliashdr->mdl.scale_origin[2]);
-		glScalef (paliashdr->mdl.scale[0], paliashdr->mdl.scale[1], paliashdr->mdl.scale[2]);
+	if (!strcmp (clmodel->name, "progs/eyes.mdl")) {
+		glTranslatef (paliashdr->mdl.scale_origin[0],
+					  paliashdr->mdl.scale_origin[1],
+					  paliashdr->mdl.scale_origin[2] - (22 + 8));
+		// double size of eyes, since they are really hard to see in gl
+		glScalef (paliashdr->mdl.scale[0] * 2, paliashdr->mdl.scale[1] * 2,
+				  paliashdr->mdl.scale[2] * 2);
+	} else {
+		glTranslatef (paliashdr->mdl.scale_origin[0],
+					  paliashdr->mdl.scale_origin[1],
+					  paliashdr->mdl.scale_origin[2]);
+		glScalef (paliashdr->mdl.scale[0], paliashdr->mdl.scale[1],
+				  paliashdr->mdl.scale[2]);
 	}
 
-	anim = (int)(cl.time*10) & 3;
-	glBindTexture (GL_TEXTURE_2D, paliashdr->gl_texturenum[currententity->skinnum][anim]);
+	anim = (int) (cl.time * 10) & 3;
+	glBindTexture (GL_TEXTURE_2D,
+				   paliashdr->gl_texturenum[currententity->skinnum][anim]);
 
 	// we can't dynamically colormap textures, so they are cached
 	// seperately for the players.  Heads are just uncolored.
-	if (currententity->scoreboard && !gl_nocolors->int_val)
-	{
+	if (currententity->scoreboard && !gl_nocolors->int_val) {
 		i = currententity->scoreboard - cl.players;
-		if (!currententity->scoreboard->skin)
-		{
-			Skin_Find(currententity->scoreboard);
-			R_TranslatePlayerSkin(i);
+		if (!currententity->scoreboard->skin) {
+			Skin_Find (currententity->scoreboard);
+			R_TranslatePlayerSkin (i);
 		}
-		if (i >= 0 && i<MAX_CLIENTS)
+		if (i >= 0 && i < MAX_CLIENTS)
 			glBindTexture (GL_TEXTURE_2D, playertextures + i);
 	}
 
@@ -649,8 +654,10 @@ static void R_DrawAliasModel (entity_t *e)
 
 	// This block is GL fullbright support for objects...
 	if (clmodel->hasfullbrights && gl_fb_models->int_val &&
-			paliashdr->gl_fb_texturenum[currententity->skinnum][anim]) {
-		glBindTexture (GL_TEXTURE_2D, paliashdr->gl_fb_texturenum[currententity->skinnum][anim]);
+		paliashdr->gl_fb_texturenum[currententity->skinnum][anim]) {
+		glBindTexture (GL_TEXTURE_2D,
+					   paliashdr->gl_fb_texturenum[currententity->
+												   skinnum][anim]);
 		R_SetupAliasFrame (currententity->frame, paliashdr, true);
 	}
 
@@ -659,15 +666,14 @@ static void R_DrawAliasModel (entity_t *e)
 
 	glPopMatrix ();
 
-	if (r_shadows->int_val)
-	{
+	if (r_shadows->int_val) {
 		glPushMatrix ();
 		R_RotateForEntity (e);
 		glDisable (GL_TEXTURE_2D);
-		glColor4f (0,0,0,0.5);
+		glColor4f (0, 0, 0, 0.5);
 		GL_DrawAliasShadow (paliashdr, lastposenum);
 		glEnable (GL_TEXTURE_2D);
-		glColor3ubv(lighthalf_v);
+		glColor3ubv (lighthalf_v);
 		glPopMatrix ();
 	}
 
@@ -680,40 +686,38 @@ static void R_DrawAliasModel (entity_t *e)
 R_DrawEntitiesOnList
 =============
 */
-static void R_DrawEntitiesOnList (void)
+static void
+R_DrawEntitiesOnList (void)
 {
-	int		i;
+	int         i;
 
 	if (!r_drawentities->int_val)
 		return;
 
 	// LordHavoc: split into 3 loops to simplify state changes
-	for (i=0 ; i<cl_numvisedicts ; i++)
-	{
+	for (i = 0; i < cl_numvisedicts; i++) {
 		if (cl_visedicts[i].model->type != mod_brush)
 			continue;
 		currententity = &cl_visedicts[i];
-		modelalpha    = currententity->alpha;
+		modelalpha = currententity->alpha;
 
 		R_DrawBrushModel (currententity);
 	}
 
-	for (i=0 ; i<cl_numvisedicts ; i++)
-	{
+	for (i = 0; i < cl_numvisedicts; i++) {
 		if (cl_visedicts[i].model->type != mod_alias)
 			continue;
 		currententity = &cl_visedicts[i];
-		modelalpha    = currententity->alpha;
+		modelalpha = currententity->alpha;
 
 		R_DrawAliasModel (currententity);
 	}
 
-	for (i=0 ; i<cl_numvisedicts ; i++)
-	{
+	for (i = 0; i < cl_numvisedicts; i++) {
 		if (cl_visedicts[i].model->type != mod_sprite)
 			continue;
 		currententity = &cl_visedicts[i];
-		modelalpha    = currententity->alpha;
+		modelalpha = currententity->alpha;
 
 		R_DrawSpriteModel (currententity);
 	}
@@ -724,49 +728,48 @@ static void R_DrawEntitiesOnList (void)
 R_DrawViewModel
 =============
 */
-static void R_DrawViewModel (void)
+static void
+R_DrawViewModel (void)
 {
 	currententity = &cl.viewent;
-	if (!r_drawviewmodel->int_val
-	 || !Cam_DrawViewModel()
-	 || envmap
-	 || !r_drawentities->int_val
-	 || (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
-	 || cl.stats[STAT_HEALTH] <= 0
-	 || !currententity->model)
+	if (!r_drawviewmodel->int_val || !Cam_DrawViewModel ()
+		|| envmap
+		|| !r_drawentities->int_val
+		|| (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
+		|| cl.stats[STAT_HEALTH] <= 0 || !currententity->model)
 		return;
 
 	// this is a HACK!  --KB
 	modelalpha = currententity->alpha;
 
 	// hack the depth range to prevent view model from poking into walls
-	glDepthRange (gldepthmin, gldepthmin + 0.3*(gldepthmax-gldepthmin));
+	glDepthRange (gldepthmin, gldepthmin + 0.3 * (gldepthmax - gldepthmin));
 	R_DrawAliasModel (currententity);
 	glDepthRange (gldepthmin, gldepthmax);
 }
 
-static int SignbitsForPlane (mplane_t *out)
+static int
+SignbitsForPlane (mplane_t *out)
 {
-	int	bits, j;
+	int         bits, j;
 
 	// for fast box on planeside test
 
 	bits = 0;
-	for (j=0 ; j<3 ; j++)
-	{
+	for (j = 0; j < 3; j++) {
 		if (out->normal[j] < 0)
-			bits |= 1<<j;
+			bits |= 1 << j;
 	}
 	return bits;
 }
 
 
-static void R_SetFrustum (void)
+static void
+R_SetFrustum (void)
 {
-	int		i;
+	int         i;
 
-	if (r_refdef.fov_x == 90) 
-	{
+	if (r_refdef.fov_x == 90) {
 		// front side is visible
 
 		VectorAdd (vpn, vright, frustum[0].normal);
@@ -774,22 +777,23 @@ static void R_SetFrustum (void)
 
 		VectorAdd (vpn, vup, frustum[2].normal);
 		VectorSubtract (vpn, vup, frustum[3].normal);
-	}
-	else
-	{
+	} else {
 
 		// rotate VPN right by FOV_X/2 degrees
-		RotatePointAroundVector( frustum[0].normal, vup, vpn, -(90-r_refdef.fov_x / 2 ) );
+		RotatePointAroundVector (frustum[0].normal, vup, vpn,
+								 -(90 - r_refdef.fov_x / 2));
 		// rotate VPN left by FOV_X/2 degrees
-		RotatePointAroundVector( frustum[1].normal, vup, vpn, 90-r_refdef.fov_x / 2 );
+		RotatePointAroundVector (frustum[1].normal, vup, vpn,
+								 90 - r_refdef.fov_x / 2);
 		// rotate VPN up by FOV_X/2 degrees
-		RotatePointAroundVector( frustum[2].normal, vright, vpn, 90-r_refdef.fov_y / 2 );
+		RotatePointAroundVector (frustum[2].normal, vright, vpn,
+								 90 - r_refdef.fov_y / 2);
 		// rotate VPN down by FOV_X/2 degrees
-		RotatePointAroundVector( frustum[3].normal, vright, vpn, -( 90 - r_refdef.fov_y / 2 ) );
+		RotatePointAroundVector (frustum[3].normal, vright, vpn,
+								 -(90 - r_refdef.fov_y / 2));
 	}
 
-	for (i=0 ; i<4 ; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		frustum[i].type = PLANE_ANYZ;
 		frustum[i].dist = DotProduct (r_origin, frustum[i].normal);
 		frustum[i].signbits = SignbitsForPlane (&frustum[i]);
@@ -803,11 +807,12 @@ static void R_SetFrustum (void)
 R_SetupFrame
 ===============
 */
-static void R_SetupFrame (void)
+static void
+R_SetupFrame (void)
 {
 // don't allow cheats in multiplayer
-	if (!atoi(Info_ValueForKey(cl.serverinfo, "watervis")))
-		Cvar_SetValue(r_wateralpha, 1);
+	if (!atoi (Info_ValueForKey (cl.serverinfo, "watervis")))
+		Cvar_SetValue (r_wateralpha, 1);
 
 	R_AnimateLight ();
 
@@ -831,18 +836,18 @@ static void R_SetupFrame (void)
 }
 
 
-static void MYgluPerspective( GLdouble fovy, GLdouble aspect,
-			 GLdouble zNear, GLdouble zFar )
+static void
+MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
 {
-   GLdouble xmin, xmax, ymin, ymax;
+	GLdouble    xmin, xmax, ymin, ymax;
 
-   ymax = zNear * tan( fovy * M_PI / 360.0 );
-   ymin = -ymax;
+	ymax = zNear * tan (fovy * M_PI / 360.0);
+	ymin = -ymax;
 
-   xmin = ymin * aspect;
-   xmax = ymax * aspect;
+	xmin = ymin * aspect;
+	xmax = ymax * aspect;
 
-   glFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
+	glFrustum (xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
 
@@ -851,21 +856,24 @@ static void MYgluPerspective( GLdouble fovy, GLdouble aspect,
 R_SetupGL
 =============
 */
-static void R_SetupGL (void)
+static void
+R_SetupGL (void)
 {
-	float	screenaspect;
-	extern	int glwidth, glheight;
-	int		x, x2, y2, y, w, h;
+	float       screenaspect;
+	extern int  glwidth, glheight;
+	int         x, x2, y2, y, w, h;
 
-	//
+	// 
 	// set up viewpoint
-	//
-	glMatrixMode(GL_PROJECTION);
+	// 
+	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	x = r_refdef.vrect.x * glwidth/vid.width;
-	x2 = (r_refdef.vrect.x + r_refdef.vrect.width) * glwidth/vid.width;
-	y = (vid.height-r_refdef.vrect.y) * glheight/vid.height;
-	y2 = (vid.height - (r_refdef.vrect.y + r_refdef.vrect.height)) * glheight/vid.height;
+	x = r_refdef.vrect.x * glwidth / vid.width;
+	x2 = (r_refdef.vrect.x + r_refdef.vrect.width) * glwidth / vid.width;
+	y = (vid.height - r_refdef.vrect.y) * glheight / vid.height;
+	y2 =
+		(vid.height -
+		 (r_refdef.vrect.y + r_refdef.vrect.height)) * glheight / vid.height;
 
 	// fudge around because of frac screen scale
 	if (x > 0)
@@ -880,35 +888,35 @@ static void R_SetupGL (void)
 	w = x2 - x;
 	h = y - y2;
 
-	if (envmap)
-	{
+	if (envmap) {
 		x = y2 = 0;
 		w = h = 256;
 	}
 
 	glViewport (glx + x, gly + y2, w, h);
-	screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
-//	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
-//	yfov = (2.0 * tan (scr_fov->value/360*M_PI)) / screenaspect;
-//	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*(scr_fov->value*2)/M_PI;
-//	MYgluPerspective (yfov,  screenaspect,  4,  4096);
-	MYgluPerspective (r_refdef.fov_y,  screenaspect,  4,  4096);
+	screenaspect = (float) r_refdef.vrect.width / r_refdef.vrect.height;
+//  yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
+//  yfov = (2.0 * tan (scr_fov->value/360*M_PI)) / screenaspect;
+//  yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*(scr_fov->value*2)/M_PI;
+//  MYgluPerspective (yfov,  screenaspect,  4,  4096);
+	MYgluPerspective (r_refdef.fov_y, screenaspect, 4, 4096);
 
-	glMatrixMode(GL_MODELVIEW);
+	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
 
-	glRotatef (-90,  1, 0, 0);	    // put Z going up
-	glRotatef (90,  0, 0, 1);	    // put Z going up
-	glRotatef (-r_refdef.viewangles[2],  1, 0, 0);
-	glRotatef (-r_refdef.viewangles[0],  0, 1, 0);
-	glRotatef (-r_refdef.viewangles[1],  0, 0, 1);
-	glTranslatef (-r_refdef.vieworg[0],  -r_refdef.vieworg[1],  -r_refdef.vieworg[2]);
+	glRotatef (-90, 1, 0, 0);			// put Z going up
+	glRotatef (90, 0, 0, 1);			// put Z going up
+	glRotatef (-r_refdef.viewangles[2], 1, 0, 0);
+	glRotatef (-r_refdef.viewangles[0], 0, 1, 0);
+	glRotatef (-r_refdef.viewangles[1], 0, 0, 1);
+	glTranslatef (-r_refdef.vieworg[0], -r_refdef.vieworg[1],
+				  -r_refdef.vieworg[2]);
 
 	glGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
 
-	//
+	// 
 	// set drawing parms
-	//
+	// 
 	if (gl_cull->int_val)
 		glEnable (GL_CULL_FACE);
 	else
@@ -929,7 +937,8 @@ static void R_SetupGL (void)
 R_Clear
 =============
 */
-static void R_Clear (void)
+static void
+R_Clear (void)
 {
 	if (gl_clear->int_val)
 		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -949,7 +958,8 @@ R_RenderView
 r_refdef must be set before the first call
 ================
 */
-void R_RenderView (void)
+void
+R_RenderView (void)
 {
 	if (r_norefresh->int_val)
 		return;
@@ -957,22 +967,24 @@ void R_RenderView (void)
 	if (!r_worldentity.model || !cl.worldmodel)
 		Sys_Error ("R_RenderView: NULL worldmodel");
 
-//	glFinish ();
+//  glFinish ();
 
 	R_Clear ();
 
 	// render normal view
-	R_SetupFrame ();	// Setup stuff for frame.
+	R_SetupFrame ();					// Setup stuff for frame.
 
 	R_SetFrustum ();
 
 	R_SetupGL ();
 
-	R_MarkLeaves ();	// done here so we know if we're in water
+	R_MarkLeaves ();					// done here so we know if we're in
+										// water
 
-	R_DrawWorld ();		// adds static entities to the list
+	R_DrawWorld ();						// adds static entities to the list
 
-	S_ExtraUpdate ();	// don't let sound get messed up if going slow
+	S_ExtraUpdate ();					// don't let sound get messed up if
+										// going slow
 
 	R_DrawEntitiesOnList ();
 

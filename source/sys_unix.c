@@ -28,7 +28,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include <stdio.h>
@@ -45,46 +45,45 @@
 #include "server.h"
 
 /* This is unused in the client, but we need the symbol there too. */
-server_static_t	svs;
+server_static_t svs;
 
-cvar_t	*sys_nostdout;
+cvar_t     *sys_nostdout;
 
 /* The translation table between the graphical font and plain ASCII  --KB */
-static char qfont_table[256] =
-{
-	'\0', '#',  '#',  '#',  '#',  '.',  '#',  '#',
-	'#',  9,    10,   '#',  ' ',  13,   '.',  '.',
-	'[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
-	'6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
-	' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
-	'(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
-	'0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
-	'8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
-	'@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
-	'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
-	'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
-	'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
-	'`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
-	'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
-	'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
-	'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<',
+static char qfont_table[256] = {
+	'\0', '#', '#', '#', '#', '.', '#', '#',
+	'#', 9, 10, '#', ' ', 13, '.', '.',
+	'[', ']', '0', '1', '2', '3', '4', '5',
+	'6', '7', '8', '9', '.', '<', '=', '>',
+	' ', '!', '"', '#', '$', '%', '&', '\'',
+	'(', ')', '*', '+', ',', '-', '.', '/',
+	'0', '1', '2', '3', '4', '5', '6', '7',
+	'8', '9', ':', ';', '<', '=', '>', '?',
+	'@', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+	'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+	'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+	'X', 'Y', 'Z', '[', '\\', ']', '^', '_',
+	'`', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+	'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+	'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+	'x', 'y', 'z', '{', '|', '}', '~', '<',
 
-	'<',  '=',  '>',  '#',  '#',  '.',  '#',  '#',
-	'#',  '#',  ' ',  '#',  ' ',  '>',  '.',  '.',
-	'[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
-	'6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
-	' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
-	'(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
-	'0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
-	'8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
-	'@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
-	'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
-	'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
-	'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
-	'`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
-	'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
-	'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
-	'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<'
+	'<', '=', '>', '#', '#', '.', '#', '#',
+	'#', '#', ' ', '#', ' ', '>', '.', '.',
+	'[', ']', '0', '1', '2', '3', '4', '5',
+	'6', '7', '8', '9', '.', '<', '=', '>',
+	' ', '!', '"', '#', '$', '%', '&', '\'',
+	'(', ')', '*', '+', ',', '-', '.', '/',
+	'0', '1', '2', '3', '4', '5', '6', '7',
+	'8', '9', ':', ';', '<', '=', '>', '?',
+	'@', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+	'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+	'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+	'X', 'Y', 'Z', '[', '\\', ']', '^', '_',
+	'`', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+	'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+	'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+	'x', 'y', 'z', '{', '|', '}', '~', '<'
 };
 
 #define MAXPRINTMSG 4096
@@ -93,18 +92,19 @@ static char qfont_table[256] =
 Sys_Printf
 ================
 */
-void Sys_Printf (char *fmt, ...)
+void
+Sys_Printf (char *fmt, ...)
 {
-	va_list		argptr;
-	char		msg[MAXPRINTMSG];
+	va_list     argptr;
+	char        msg[MAXPRINTMSG];
 
-	unsigned char	*p;
+	unsigned char *p;
 
 	if (sys_nostdout && sys_nostdout->int_val)
 		return;
 
 	va_start (argptr, fmt);
-	vsnprintf(msg, sizeof (msg), fmt, argptr);
+	vsnprintf (msg, sizeof (msg), fmt, argptr);
 	va_end (argptr);
 
 	/* translate to ASCII instead of printing [xx]  --KB */
@@ -122,12 +122,14 @@ Sys_FileTime
 returns -1 if not present
 ============
 */
-int	Sys_FileTime (char *path)
+int
+Sys_FileTime (char *path)
 {
-	struct stat	buf;
-	
-	if (stat(path,&buf) == -1) return -1;
-	
+	struct stat buf;
+
+	if (stat (path, &buf) == -1)
+		return -1;
+
 	return buf.st_mtime;
 }
 
@@ -138,10 +140,13 @@ Sys_mkdir
 
 ============
 */
-void Sys_mkdir (char *path)
+void
+Sys_mkdir (char *path)
 {
-	if (mkdir(path, 0777) == 0) return;
-	if (errno != EEXIST) Sys_Error("mkdir %s: %s",path, strerror(errno)); 
+	if (mkdir (path, 0777) == 0)
+		return;
+	if (errno != EEXIST)
+		Sys_Error ("mkdir %s: %s", path, strerror (errno));
 }
 
 
@@ -150,19 +155,19 @@ void Sys_mkdir (char *path)
 Sys_DoubleTime
 ================
 */
-double Sys_DoubleTime (void)
+double
+Sys_DoubleTime (void)
 {
 	struct timeval tp;
 	struct timezone tzp;
-	static int		secbase;
+	static int  secbase;
 
-	gettimeofday(&tp, &tzp);
-	
-	if (!secbase)
-	{
+	gettimeofday (&tp, &tzp);
+
+	if (!secbase) {
 		secbase = tp.tv_sec;
-		return tp.tv_usec/1000000.0;
+		return tp.tv_usec / 1000000.0;
 	}
-	
-	return (tp.tv_sec - secbase) + tp.tv_usec/1000000.0;
+
+	return (tp.tv_sec - secbase) + tp.tv_usec / 1000000.0;
 }

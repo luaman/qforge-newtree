@@ -41,28 +41,28 @@
 #include "sys.h"
 
 
-qboolean is_server = true;
-qboolean WinNT;
+qboolean    is_server = true;
+qboolean    WinNT;
 
-extern cvar_t	*sys_nostdout;
-cvar_t	*sys_sleep;
+extern cvar_t *sys_nostdout;
+cvar_t     *sys_sleep;
 
 /*
 ================
 Sys_FileTime
 ================
 */
-int	Sys_FileTime (char *path)
+int
+Sys_FileTime (char *path)
 {
-	QFile	*f;
-	
-	f = Qopen(path, "rb");
-	if (f)
-	{
-		Qclose(f);
+	QFile      *f;
+
+	f = Qopen (path, "rb");
+	if (f) {
+		Qclose (f);
 		return 1;
 	}
-	
+
 	return -1;
 }
 
@@ -72,13 +72,14 @@ int	Sys_FileTime (char *path)
 Sys_Error
 ================
 */
-void Sys_Error (char *error, ...)
+void
+Sys_Error (char *error, ...)
 {
-	va_list		argptr;
-	char		text[1024];
+	va_list     argptr;
+	char        text[1024];
 
-	va_start (argptr,error);
-	vsnprintf (text, sizeof(text), error,argptr);
+	va_start (argptr, error);
+	vsnprintf (text, sizeof (text), error, argptr);
 	va_end (argptr);
 
 //    MessageBox(NULL, text, "Error", 0 /* MB_OK */ );
@@ -93,28 +94,25 @@ void Sys_Error (char *error, ...)
 Sys_ConsoleInput
 ================
 */
-char *Sys_ConsoleInput (void)
+char       *
+Sys_ConsoleInput (void)
 {
-	static char	text[256];
-	static int		len;
-	int		c;
+	static char text[256];
+	static int  len;
+	int         c;
 
 	// read a line out
-	while (kbhit())
-	{
-		c = _getch();
+	while (kbhit ()) {
+		c = _getch ();
 		putch (c);
-		if (c == '\r')
-		{
+		if (c == '\r') {
 			text[len] = 0;
 			putch ('\n');
 			len = 0;
 			return text;
 		}
-		if (c == 8)
-		{
-			if (len)
-			{
+		if (c == 8) {
+			if (len) {
 				putch (' ');
 				putch (c);
 				len--;
@@ -125,7 +123,7 @@ char *Sys_ConsoleInput (void)
 		text[len] = c;
 		len++;
 		text[len] = 0;
-		if (len == sizeof(text))
+		if (len == sizeof (text))
 			len = 0;
 	}
 
@@ -137,7 +135,8 @@ char *Sys_ConsoleInput (void)
 Sys_Quit
 ================
 */
-void Sys_Quit (void)
+void
+Sys_Quit (void)
 {
 	exit (0);
 }
@@ -154,29 +153,29 @@ is marked
 void
 Sys_Init_Cvars (void)
 {
-	sys_nostdout = Cvar_Get("sys_nostdout", "0", CVAR_NONE, "None");
-	sys_sleep = Cvar_Get("sys_sleep", "8", CVAR_NONE, "None");
+	sys_nostdout = Cvar_Get ("sys_nostdout", "0", CVAR_NONE, "None");
+	sys_sleep = Cvar_Get ("sys_sleep", "8", CVAR_NONE, "None");
 }
 
-void Sys_Init (void)
+void
+Sys_Init (void)
 {
-	OSVERSIONINFO	vinfo;
+	OSVERSIONINFO vinfo;
 
 #ifdef USE_INTEL_ASM
-	Sys_SetFPCW();
+	Sys_SetFPCW ();
 #endif
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution
-	timeBeginPeriod( 1 );
+	timeBeginPeriod (1);
 
-	vinfo.dwOSVersionInfoSize = sizeof(vinfo);
+	vinfo.dwOSVersionInfoSize = sizeof (vinfo);
 
 	if (!GetVersionEx (&vinfo))
 		Sys_Error ("Couldn't get OS info");
 
 	if ((vinfo.dwMajorVersion < 4) ||
-		(vinfo.dwPlatformId == VER_PLATFORM_WIN32s))
-	{
+		(vinfo.dwPlatformId == VER_PLATFORM_WIN32s)) {
 		Sys_Error (PROGRAM " requires at least Win95 or NT 4.0");
 	}
 
@@ -192,45 +191,41 @@ main
 
 ==================
 */
-char	*newargv[256];
+char       *newargv[256];
 
-int main (int argc, char **argv)
+int
+main (int argc, char **argv)
 {
-	double			newtime, time, oldtime;
-	struct timeval	timeout;
-	fd_set			fdset;
-	int				t;
-	int				sleep_msec;
+	double      newtime, time, oldtime;
+	struct timeval timeout;
+	fd_set      fdset;
+	int         t;
+	int         sleep_msec;
 
 	COM_InitArgv (argc, argv);
-	
+
 	host_parms.argc = com_argc;
 	host_parms.argv = com_argv;
 
-	host_parms.memsize = 16*1024*1024;
+	host_parms.memsize = 16 * 1024 * 1024;
 
-	if ((t = COM_CheckParm ("-heapsize")) != 0 &&
-		t + 1 < com_argc)
+	if ((t = COM_CheckParm ("-heapsize")) != 0 && t + 1 < com_argc)
 		host_parms.memsize = atoi (com_argv[t + 1]) * 1024;
 
-	if ((t = COM_CheckParm ("-mem")) != 0 &&
-		t + 1 < com_argc)
+	if ((t = COM_CheckParm ("-mem")) != 0 && t + 1 < com_argc)
 		host_parms.memsize = atoi (com_argv[t + 1]) * 1024 * 1024;
 
 	host_parms.membase = malloc (host_parms.memsize);
 
 	if (!host_parms.membase)
-		Sys_Error("Insufficient memory.\n");
+		Sys_Error ("Insufficient memory.\n");
 
 	SV_Init ();
 
-	if (COM_CheckParm ("-nopriority"))
-	{
+	if (COM_CheckParm ("-nopriority")) {
 		Cvar_Set (sys_sleep, "0");
-	}
-	else
-	{
-		if ( ! SetPriorityClass (GetCurrentProcess(), HIGH_PRIORITY_CLASS))
+	} else {
+		if (!SetPriorityClass (GetCurrentProcess (), HIGH_PRIORITY_CLASS))
 			Con_Printf ("SetPriorityClass() failed\n");
 		else
 			Con_Printf ("Process priority class set to HIGH\n");
@@ -241,44 +236,39 @@ int main (int argc, char **argv)
 		Cvar_Set (sys_sleep, "0");
 
 // run one frame immediately for first heartbeat
-	SV_Frame (0.1);		
+	SV_Frame (0.1);
 
 //
 // main loop
 //
 	oldtime = Sys_DoubleTime () - 0.1;
-	while (1)
-	{
-	// Now we want to give some processing time to other applications,
-	// such as qw_client, running on this machine.
+	while (1) {
+		// Now we want to give some processing time to other applications,
+		// such as qw_client, running on this machine.
 		sleep_msec = sys_sleep->int_val;
-		if (sleep_msec > 0)
-		{
+		if (sleep_msec > 0) {
 			if (sleep_msec > 13)
 				sleep_msec = 13;
 			Sleep (sleep_msec);
 		}
-
-	// select on the net socket and stdin
-	// the only reason we have a timeout at all is so that if the last
-	// connected client times out, the message would not otherwise
-	// be printed until the next event.
-		FD_ZERO(&fdset);
-		FD_SET(net_socket, &fdset);
+		// select on the net socket and stdin
+		// the only reason we have a timeout at all is so that if the last
+		// connected client times out, the message would not otherwise
+		// be printed until the next event.
+		FD_ZERO (&fdset);
+		FD_SET (net_socket, &fdset);
 		timeout.tv_sec = 0;
 		timeout.tv_usec = 100;
-		if (select (net_socket+1, &fdset, NULL, NULL, &timeout) == -1)
+		if (select (net_socket + 1, &fdset, NULL, NULL, &timeout) == -1)
 			continue;
 
-	// find time passed since last cycle
+		// find time passed since last cycle
 		newtime = Sys_DoubleTime ();
 		time = newtime - oldtime;
 		oldtime = newtime;
-		
-		SV_Frame (time);				
-	}	
+
+		SV_Frame (time);
+	}
 
 	return true;
 }
-
-

@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "errno.h"
 
@@ -37,10 +37,11 @@
 filelength
 ================
 */
-int filelength (QFile *f)
+int
+filelength (QFile *f)
 {
-	int		pos;
-	int		end;
+	int         pos;
+	int         end;
 
 	pos = Qtell (f);
 	Qseek (f, 0, SEEK_END);
@@ -51,21 +52,22 @@ int filelength (QFile *f)
 }
 
 
-int	Sys_FileTime (char *path)
+int
+Sys_FileTime (char *path)
 {
-	QFile	*f;
-	
-	f = Qopen(path, "rb");
-	if (f)
-	{
-		Qclose(f);
+	QFile      *f;
+
+	f = Qopen (path, "rb");
+	if (f) {
+		Qclose (f);
 		return 1;
 	}
-	
+
 	return -1;
 }
 
-void Sys_mkdir (char *path)
+void
+Sys_mkdir (char *path)
 {
 }
 
@@ -78,75 +80,87 @@ SYSTEM IO
 ===============================================================================
 */
 
-void Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
+void
+Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
 {
 }
 
 
-void Sys_DebugLog(char *file, char *fmt, ...)
+void
+Sys_DebugLog (char *file, char *fmt, ...)
 {
 }
 
-void Sys_Error (char *error, ...)
+void
+Sys_Error (char *error, ...)
 {
-	va_list		argptr;
+	va_list     argptr;
 
-	printf ("I_Error: ");	
-	va_start (argptr,error);
-	vprintf (error,argptr);
+	printf ("I_Error: ");
+	va_start (argptr, error);
+	vprintf (error, argptr);
 	va_end (argptr);
 	printf ("\n");
 
 	exit (1);
 }
 
-void Sys_Printf (char *fmt, ...)
+void
+Sys_Printf (char *fmt, ...)
 {
-	va_list		argptr;
-	
-	va_start (argptr,fmt);
-	vprintf (fmt,argptr);
+	va_list     argptr;
+
+	va_start (argptr, fmt);
+	vprintf (fmt, argptr);
 	va_end (argptr);
 }
 
-void Sys_Quit (void)
+void
+Sys_Quit (void)
 {
 	exit (0);
 }
 
-double Sys_FloatTime (void)
+double
+Sys_FloatTime (void)
 {
 	static double t;
-	
+
 	t += 0.1;
-	
+
 	return t;
 }
 
-char *Sys_ConsoleInput (void)
+char       *
+Sys_ConsoleInput (void)
 {
 	return NULL;
 }
 
-void Sys_Sleep (void)
+void
+Sys_Sleep (void)
 {
 }
 
-void IN_SendKeyEvents (void)
+void
+IN_SendKeyEvents (void)
 {
 }
 
-void Sys_HighFPPrecision (void)
+void
+Sys_HighFPPrecision (void)
 {
 }
 
-void Sys_LowFPPrecision (void)
+void
+Sys_LowFPPrecision (void)
 {
 }
 
 //=============================================================================
 
-void main (int argc, char **argv)
+void
+main (int argc, char **argv)
 {
 	host_parms.memsize = 5861376;
 	host_parms.membase = malloc (host_parms.memsize);
@@ -158,10 +172,7 @@ void main (int argc, char **argv)
 
 	printf ("Host_Init\n");
 	Host_Init ();
-	while (1)
-	{
+	while (1) {
 		Host_Frame (0.1);
 	}
 }
-
-

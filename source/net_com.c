@@ -30,24 +30,25 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include <mdfour.h>
 
-unsigned int Com_BlockChecksum (void *buffer, int length)
+unsigned int
+Com_BlockChecksum (void *buffer, int length)
 {
-	int				digest[4];
-	unsigned int	val;
+	int         digest[4];
+	unsigned int val;
 
-	mdfour ( (unsigned char *) digest, (unsigned char *) buffer, length );
+	mdfour ((unsigned char *) digest, (unsigned char *) buffer, length);
 
 	val = digest[0] ^ digest[1] ^ digest[2] ^ digest[3];
 
 	return val;
 }
 
-void Com_BlockFullChecksum (void *buffer, int len, unsigned char *outbuf)
+void
+Com_BlockFullChecksum (void *buffer, int len, unsigned char *outbuf)
 {
-	mdfour ( outbuf, (unsigned char *) buffer, len );
+	mdfour (outbuf, (unsigned char *) buffer, len);
 }
-

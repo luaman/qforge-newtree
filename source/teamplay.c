@@ -38,31 +38,30 @@
 #include "console.h"
 #include "quakefs.h"
 
-extern cvar_t	*skin;
-cvar_t	*cl_deadbodyfilter;
-cvar_t	*cl_gibfilter;
-cvar_t	*cl_parsesay;
-cvar_t	*cl_nofake;
-static qboolean	died = false, recorded_location = false;
-static vec3_t	death_location, last_recorded_location;
+extern cvar_t *skin;
+cvar_t     *cl_deadbodyfilter;
+cvar_t     *cl_gibfilter;
+cvar_t     *cl_parsesay;
+cvar_t     *cl_nofake;
+static qboolean died = false, recorded_location = false;
+static vec3_t death_location, last_recorded_location;
 
 
-void Team_BestWeaponImpulse (void)
+void
+Team_BestWeaponImpulse (void)
 {
-	int			best, i, imp, items;
-	extern int	in_impulse;
+	int         best, i, imp, items;
+	extern int  in_impulse;
 
 	items = cl.stats[STAT_ITEMS];
 	best = 0;
 
-	for (i = Cmd_Argc() - 1; i > 0; i--)
-	{
-		imp = atoi(Cmd_Argv(i));
+	for (i = Cmd_Argc () - 1; i > 0; i--) {
+		imp = atoi (Cmd_Argv (i));
 		if (imp < 1 || imp > 8)
 			continue;
 
-		switch (imp)
-		{
+		switch (imp) {
 			case 1:
 				if (items & IT_AXE)
 					best = 1;
@@ -94,40 +93,55 @@ void Team_BestWeaponImpulse (void)
 			case 8:
 				if (items & IT_LIGHTNING && cl.stats[STAT_CELLS] >= 1)
 					best = 8;
-			
+
 		}
 	}
-	
+
 	if (best)
 		in_impulse = best;
 }
 
 
-char *Team_ParseSay (char *s)
+char       *
+Team_ParseSay (char *s)
 {
-	static char	buf[1024];
-	int		i, bracket;
-	char	c, chr, *t1, t2[128], t3[128];
-	static location_t	*location = NULL;
+	static char buf[1024];
+	int         i, bracket;
+	char        c, chr, *t1, t2[128], t3[128];
+	static location_t *location = NULL;
 
 	if (!cl_parsesay->int_val)
 		return s;
 
 	i = 0;
 
-	while (*s && (i <= sizeof(buf))) {
+	while (*s && (i <= sizeof (buf))) {
 		if (*s == '$') {
 			c = 0;
 			switch (s[1]) {
-				case '\\': c = 13; break;	// fake message
-				case '[': c = 0x90; break;	// colored brackets
-				case ']': c = 0x91; break;
-				case 'G': c = 0x86; break;	// ocrana leds
-				case 'R': c = 0x87; break;
-				case 'Y': c = 0x88; break;
-				case 'B': c = 0x89; break;
+				case '\\':
+					c = 13;
+					break;				// fake message
+				case '[':
+					c = 0x90;
+					break;				// colored brackets
+				case ']':
+					c = 0x91;
+					break;
+				case 'G':
+					c = 0x86;
+					break;				// ocrana leds
+				case 'R':
+					c = 0x87;
+					break;
+				case 'Y':
+					c = 0x88;
+					break;
+				case 'B':
+					c = 0x89;
+					break;
 			}
-			
+
 			if (c) {
 				buf[i++] = c;
 				s += 2;
@@ -135,8 +149,8 @@ char *Team_ParseSay (char *s)
 			}
 		} else if (*s == '%') {
 			t1 = NULL;
-			memset(t2, '\0', sizeof(t2));
-			memset(t3, '\0', sizeof(t3));
+			memset (t2, '\0', sizeof (t2));
+			memset (t3, '\0', sizeof (t3));
 
 			if ((s[1] == '[') && (s[3] == ']')) {
 				bracket = 1;
@@ -160,10 +174,10 @@ char *Team_ParseSay (char *s)
 				case 'd':
 					bracket = 0;
 					if (died) {
-						location = locs_find(death_location);
+						location = locs_find (death_location);
 						if (location) {
 							recorded_location = true;
-							VectorCopy(death_location, last_recorded_location);
+							VectorCopy (death_location, last_recorded_location);
 							t1 = location->name;
 							break;
 						}
@@ -172,7 +186,7 @@ char *Team_ParseSay (char *s)
 				case 'r':
 					bracket = 0;
 					if (recorded_location) {
-						location = locs_find(last_recorded_location);
+						location = locs_find (last_recorded_location);
 						if (location) {
 							t1 = location->name;
 							break;
@@ -180,15 +194,15 @@ char *Team_ParseSay (char *s)
 					}
 					goto location;
 				case 'l':
-location:
+				  location:
 					bracket = 0;
-					location = locs_find(cl.simorg);
+					location = locs_find (cl.simorg);
 					if (location) {
 						recorded_location = true;
-						VectorCopy(cl.simorg, last_recorded_location);
+						VectorCopy (cl.simorg, last_recorded_location);
 						t1 = location->name;
 					} else
-						snprintf(t2, sizeof(t2), "Unknown!\n");
+						snprintf (t2, sizeof (t2), "Unknown!\n");
 					break;
 				case 'a':
 					if (bracket) {
@@ -209,9 +223,10 @@ location:
 							t2[4] = '!' | 0x80;
 						}
 
-						snprintf(t2, sizeof(t2), "%sa:%i", t3, cl.stats[STAT_ARMOR]);
+						snprintf (t2, sizeof (t2), "%sa:%i", t3,
+								  cl.stats[STAT_ARMOR]);
 					} else
-						snprintf(t2, sizeof(t2), "%i", cl.stats[STAT_ARMOR]);
+						snprintf (t2, sizeof (t2), "%i", cl.stats[STAT_ARMOR]);
 					break;
 				case 'A':
 					bracket = 0;
@@ -233,9 +248,10 @@ location:
 					if (bracket) {
 						if (cl.stats[STAT_HEALTH] > 50)
 							bracket = 0;
-						snprintf(t2, sizeof(t2), "h:%i", cl.stats[STAT_HEALTH]);
+						snprintf (t2, sizeof (t2), "h:%i",
+								  cl.stats[STAT_HEALTH]);
 					} else
-						snprintf(t2, sizeof(t2), "%i", cl.stats[STAT_HEALTH]);
+						snprintf (t2, sizeof (t2), "%i", cl.stats[STAT_HEALTH]);
 					break;
 				default:
 					bracket = 0;
@@ -251,19 +267,20 @@ location:
 			}
 
 			if (bracket)
-				buf[i++] = 0x90; // '['
+				buf[i++] = 0x90;		// '['
 
 			if (t1) {
-				int len;
-				len = strlen(t1);
-				if (i + len >= sizeof(buf))
-					continue;	// No more space in buffer, icky.
-				strncpy(buf + i, t1, len);
+				int         len;
+
+				len = strlen (t1);
+				if (i + len >= sizeof (buf))
+					continue;			// No more space in buffer, icky.
+				strncpy (buf + i, t1, len);
 				i += len;
 			}
 
 			if (bracket)
-				buf[i++] = 0x91; // ']'
+				buf[i++] = 0x91;		// ']'
 
 			continue;
 		}
@@ -271,43 +288,48 @@ location:
 	}
 	buf[i] = 0;
 
-	return	buf;
+	return buf;
 }
 
-void Team_Dead ()
+void
+Team_Dead ()
 {
 	died = true;
-	VectorCopy(cl.simorg, death_location);
+	VectorCopy (cl.simorg, death_location);
 }
 
-void Team_NewMap ()
+void
+Team_NewMap ()
 {
-	char *mapname, *t1, *t2;
+	char       *mapname, *t1, *t2;
 
 	died = false;
 	recorded_location = false;
 
-	mapname = strdup(cl.worldmodel->name);
+	mapname = strdup (cl.worldmodel->name);
 	if (!mapname)
-		Sys_Error("Can't duplicate mapname!");
-	t1 = strrchr(mapname, '/');
-	t2 = strrchr(mapname, '.');
+		Sys_Error ("Can't duplicate mapname!");
+	t1 = strrchr (mapname, '/');
+	t2 = strrchr (mapname, '.');
 	if (!t1 || !t2)
-		Sys_Error("Can't find / or .!");
-	t1++;	// skip over /
+		Sys_Error ("Can't find / or .!");
+	t1++;								// skip over /
 	t2[0] = '\0';
 
-	locs_reset();
-	locs_load(t1);
-	free(mapname);
+	locs_reset ();
+	locs_load (t1);
+	free (mapname);
 }
 
-void Team_Init_Cvars (void)
+void
+Team_Init_Cvars (void)
 {
-	cl_deadbodyfilter = Cvar_Get("cl_deadbodyfilter", "0", CVAR_NONE, "Hide dead player models");
-	cl_gibfilter = Cvar_Get("cl_gibfilter", "0", CVAR_NONE, "Hide gibs");
-	cl_parsesay = Cvar_Get("cl_parsesay", "0", CVAR_NONE, "None");
-	cl_nofake = Cvar_Get("cl_nofake", "0", CVAR_NONE, "Unhide fake messages");
+	cl_deadbodyfilter =
+		Cvar_Get ("cl_deadbodyfilter", "0", CVAR_NONE,
+				  "Hide dead player models");
+	cl_gibfilter = Cvar_Get ("cl_gibfilter", "0", CVAR_NONE, "Hide gibs");
+	cl_parsesay = Cvar_Get ("cl_parsesay", "0", CVAR_NONE, "None");
+	cl_nofake = Cvar_Get ("cl_nofake", "0", CVAR_NONE, "Unhide fake messages");
 }
 
 /*
@@ -318,48 +340,53 @@ void Team_Init_Cvars (void)
 
 // FIXME: No gzip'd loc file support
 
-void locs_markloc()
+void
+locs_markloc ()
 {
-	vec3_t loc;
-	char *mapname, *t1;
-	QFile *locfd;
-	char locfile[MAX_OSPATH];
-	
-	if (Cmd_Argc() != 2) {
-		Con_Printf("markloc <description> :marks the current location with the description and records the information into a loc file.\n");
+	vec3_t      loc;
+	char       *mapname, *t1;
+	QFile      *locfd;
+	char        locfile[MAX_OSPATH];
+
+	if (Cmd_Argc () != 2) {
+		Con_Printf
+			("markloc <description> :marks the current location with the description and records the information into a loc file.\n");
 		return;
 	}
-	VectorCopy(cl.simorg,loc);
-        locs_add(loc,Cmd_Argv(1));
+	VectorCopy (cl.simorg, loc);
+	locs_add (loc, Cmd_Argv (1));
 	loc[0] *= 8;
 	loc[1] *= 8;
 	loc[2] *= 8;
-	mapname = strdup(cl.worldmodel->name);
+	mapname = strdup (cl.worldmodel->name);
 	if (!mapname)
-		Sys_Error("Can't duplicate mapname!");
-	t1 = strrchr(mapname, '.');
+		Sys_Error ("Can't duplicate mapname!");
+	t1 = strrchr (mapname, '.');
 	if (!t1)
-		Sys_Error("Can't find / or .!");
-	t1++;   // skip over /
+		Sys_Error ("Can't find / or .!");
+	t1++;								// skip over /
 	t1[0] = 'l';
 	t1[1] = 'o';
 	t1[2] = 'c';
-	snprintf(locfile, sizeof(locfile), "%s/%s",com_gamedir,mapname);
-	locfd = Qopen(locfile,"a+");
+	snprintf (locfile, sizeof (locfile), "%s/%s", com_gamedir, mapname);
+	locfd = Qopen (locfile, "a+");
 	if (locfd == 0) {
-		Qopen(locfile,"w+");
+		Qopen (locfile, "w+");
 		if (locfd == 0) {
-			Con_Printf("ERROR: Unable to open %s : %s\n",mapname,strerror(errno));
-			free(mapname);
+			Con_Printf ("ERROR: Unable to open %s : %s\n", mapname,
+						strerror (errno));
+			free (mapname);
 			return;
 		}
 	}
-	Qprintf(locfd,"%.0f %.0f %.0f %s\n",loc[0],loc[1],loc[2],Cmd_Argv(1));
-	Qclose(locfd);
-	free(mapname);
+	Qprintf (locfd, "%.0f %.0f %.0f %s\n", loc[0], loc[1], loc[2],
+			 Cmd_Argv (1));
+	Qclose (locfd);
+	free (mapname);
 }
-                                                                                void Locs_Init()
+
+void
+Locs_Init ()
 {
-	Cmd_AddCommand("markloc",locs_markloc);
+	Cmd_AddCommand ("markloc", locs_markloc);
 }
-                                                                               

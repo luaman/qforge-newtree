@@ -43,10 +43,10 @@
 
 #include <math.h>
 
-cvar_t	*cl_nopred;
-cvar_t	*cl_pushlatency;
+cvar_t     *cl_nopred;
+cvar_t     *cl_pushlatency;
 
-extern	frame_t		*view_frame;
+extern frame_t *view_frame;
 
 /*
 =================
@@ -57,23 +57,24 @@ try nudging slightly on all axis to
 allow for the cut precision of the net coordinates
 =================
 */
-void CL_NudgePosition (void)
+void
+CL_NudgePosition (void)
 {
-	vec3_t	base;
-	int		x, y;
+	vec3_t      base;
+	int         x, y;
 
-	if (PM_HullPointContents (&cl.model_precache[1]->hulls[1], 0, pmove.origin) == CONTENTS_EMPTY)
+	if (PM_HullPointContents (&cl.model_precache[1]->hulls[1], 0, pmove.origin)
+		== CONTENTS_EMPTY)
 		return;
 
 	VectorCopy (pmove.origin, base);
-	for (x=-1 ; x<=1 ; x++)
-	{
-		for (y=-1 ; y<=1 ; y++)
-		{
-			pmove.origin[0] = base[0] + x * 1.0/8;
-			pmove.origin[1] = base[1] + y * 1.0/8;
-			if (PM_HullPointContents (&cl.model_precache[1]->hulls[1], 0, pmove.origin) == CONTENTS_EMPTY)
-				return;
+	for (x = -1; x <= 1; x++) {
+		for (y = -1; y <= 1; y++) {
+			pmove.origin[0] = base[0] + x * 1.0 / 8;
+			pmove.origin[1] = base[1] + y * 1.0 / 8;
+			if (PM_HullPointContents
+				(&cl.model_precache[1]->hulls[1], 0,
+				 pmove.origin) == CONTENTS_EMPTY) return;
 		}
 	}
 	Con_DPrintf ("CL_NudgePosition: stuck\n");
@@ -84,13 +85,14 @@ void CL_NudgePosition (void)
 CL_PredictUsercmd
 ==============
 */
-void CL_PredictUsercmd (player_state_t *from, player_state_t *to, usercmd_t *u, qboolean spectator)
+void
+CL_PredictUsercmd (player_state_t * from, player_state_t * to, usercmd_t *u,
+				   qboolean spectator)
 {
 	// split up very long moves
-	if (u->msec > 50)
-	{
-		player_state_t	temp;
-		usercmd_t	split;
+	if (u->msec > 50) {
+		player_state_t temp;
+		usercmd_t   split;
 
 		split = *u;
 		split.msec /= 2;
@@ -101,7 +103,7 @@ void CL_PredictUsercmd (player_state_t *from, player_state_t *to, usercmd_t *u, 
 	}
 
 	VectorCopy (from->origin, pmove.origin);
-//	VectorCopy (from->viewangles, pmove.angles);
+//  VectorCopy (from->viewangles, pmove.angles);
 	VectorCopy (u->angles, pmove.angles);
 	VectorCopy (from->velocity, pmove.velocity);
 
@@ -118,7 +120,7 @@ void CL_PredictUsercmd (player_state_t *from, player_state_t *to, usercmd_t *u, 
 //pmove.origin[i] = ((int)(pmove.origin[i]*8))*0.125;
 	to->waterjumptime = pmove.waterjumptime;
 	to->oldbuttons = pmove.oldbuttons;	// Tonik
-//	to->oldbuttons = pmove.cmd.buttons;
+//  to->oldbuttons = pmove.cmd.buttons;
 	VectorCopy (pmove.origin, to->origin);
 	VectorCopy (pmove.angles, to->viewangles);
 	VectorCopy (pmove.velocity, to->velocity);
@@ -134,12 +136,13 @@ void CL_PredictUsercmd (player_state_t *from, player_state_t *to, usercmd_t *u, 
 CL_PredictMove
 ==============
 */
-void CL_PredictMove (void)
+void
+CL_PredictMove (void)
 {
-	int			i;
-	float		f;
-	frame_t		*from, *to = NULL;
-	int			oldphysent;
+	int         i;
+	float       f;
+	frame_t    *from, *to = NULL;
+	int         oldphysent;
 
 	if (cl_pushlatency->value > 0)
 		Cvar_Set (cl_pushlatency, "0");
@@ -147,7 +150,7 @@ void CL_PredictMove (void)
 	if (cl.paused)
 		return;
 
-	cl.time = realtime - cls.latency - cl_pushlatency->value*0.001;
+	cl.time = realtime - cls.latency - cl_pushlatency->value * 0.001;
 	if (cl.time > realtime)
 		cl.time = realtime;
 
@@ -157,7 +160,8 @@ void CL_PredictMove (void)
 	if (!cl.validsequence)
 		return;
 
-	if (cls.netchan.outgoing_sequence - cls.netchan.incoming_sequence >= UPDATE_BACKUP-1)
+	if (cls.netchan.outgoing_sequence - cls.netchan.incoming_sequence >=
+		UPDATE_BACKUP - 1)
 		return;
 
 	VectorCopy (cl.viewangles, cl.simangles);
@@ -166,31 +170,29 @@ void CL_PredictMove (void)
 	from = &cl.frames[cls.netchan.incoming_sequence & UPDATE_MASK];
 
 	// we can now render a frame
-	if (cls.state == ca_onserver)
-	{	// first update is the final signon stage
-		VID_SetCaption(cls.servername);
+	if (cls.state == ca_onserver) {		// first update is the final signon
+										// stage
+		VID_SetCaption (cls.servername);
 		cls.state = ca_active;
 	}
 
-	if (cl_nopred->int_val)
-	{
+	if (cl_nopred->int_val) {
 		VectorCopy (from->playerstate[cl.playernum].velocity, cl.simvel);
 		VectorCopy (from->playerstate[cl.playernum].origin, cl.simorg);
 		return;
 	}
-
 	// predict forward until cl.time <= to->senttime
 	oldphysent = pmove.numphysent;
 	CL_SetSolidPlayers (cl.playernum);
 
-//	to = &cl.frames[cls.netchan.incoming_sequence & UPDATE_MASK];
+//  to = &cl.frames[cls.netchan.incoming_sequence & UPDATE_MASK];
 
-	for (i=1 ; i<UPDATE_BACKUP-1 && cls.netchan.incoming_sequence+i <
-			cls.netchan.outgoing_sequence; i++)
-	{
-		to = &cl.frames[(cls.netchan.incoming_sequence+i) & UPDATE_MASK];
+	for (i = 1; i < UPDATE_BACKUP - 1 && cls.netchan.incoming_sequence + i <
+		 cls.netchan.outgoing_sequence; i++) {
+		to = &cl.frames[(cls.netchan.incoming_sequence + i) & UPDATE_MASK];
 		CL_PredictUsercmd (&from->playerstate[cl.playernum]
-			, &to->playerstate[cl.playernum], &to->cmd, cl.spectator);
+						   , &to->playerstate[cl.playernum], &to->cmd,
+						   cl.spectator);
 		if (to->senttime >= cl.time)
 			break;
 		from = to;
@@ -198,14 +200,14 @@ void CL_PredictMove (void)
 
 	pmove.numphysent = oldphysent;
 
-	if (i == UPDATE_BACKUP-1 || !to)
-		return;		// net hasn't deliver packets in a long time...
+	if (i == UPDATE_BACKUP - 1 || !to)
+		return;							// net hasn't deliver packets in a
+										// long time...
 
 	// now interpolate some fraction of the final frame
 	if (to->senttime == from->senttime)
 		f = 0;
-	else
-	{
+	else {
 		f = (cl.time - from->senttime) / (to->senttime - from->senttime);
 
 		if (f < 0)
@@ -214,21 +216,25 @@ void CL_PredictMove (void)
 			f = 1;
 	}
 
-	for (i=0 ; i<3 ; i++)
-		if ( fabs(from->playerstate[cl.playernum].origin[i] - to->playerstate[cl.playernum].origin[i]) > 128)
-		{	// teleported, so don't lerp
+	for (i = 0; i < 3; i++)
+		if (fabs
+			(from->playerstate[cl.playernum].origin[i] -
+			 to->playerstate[cl.playernum].origin[i]) > 128) {	// teleported, 
+																// so don't
+																// lerp
 			VectorCopy (to->playerstate[cl.playernum].velocity, cl.simvel);
 			VectorCopy (to->playerstate[cl.playernum].origin, cl.simorg);
 			return;
 		}
-		
-	for (i=0 ; i<3 ; i++)
-	{
-		cl.simorg[i] = from->playerstate[cl.playernum].origin[i] 
-			+ f*(to->playerstate[cl.playernum].origin[i] - from->playerstate[cl.playernum].origin[i]);
-		cl.simvel[i] = from->playerstate[cl.playernum].velocity[i] 
-			+ f*(to->playerstate[cl.playernum].velocity[i] - from->playerstate[cl.playernum].velocity[i]);
-	}		
+
+	for (i = 0; i < 3; i++) {
+		cl.simorg[i] = from->playerstate[cl.playernum].origin[i]
+			+ f * (to->playerstate[cl.playernum].origin[i] -
+				   from->playerstate[cl.playernum].origin[i]);
+		cl.simvel[i] = from->playerstate[cl.playernum].velocity[i]
+			+ f * (to->playerstate[cl.playernum].velocity[i] -
+				   from->playerstate[cl.playernum].velocity[i]);
+	}
 }
 
 
@@ -237,9 +243,9 @@ void CL_PredictMove (void)
 CL_Prediction_Init_Cvars
 ==============
 */
-void CL_Prediction_Init_Cvars (void)
+void
+CL_Prediction_Init_Cvars (void)
 {
-	cl_pushlatency = Cvar_Get("pushlatency", "-999", CVAR_NONE, "None");
-	cl_nopred = Cvar_Get("cl_nopred", "0", CVAR_NONE, "None");
+	cl_pushlatency = Cvar_Get ("pushlatency", "-999", CVAR_NONE, "None");
+	cl_nopred = Cvar_Get ("cl_nopred", "0", CVAR_NONE, "None");
 }
-

@@ -35,24 +35,25 @@
 #include "tga.h"
 
 typedef struct _TargaHeader {
-	unsigned char 	id_length, colormap_type, image_type;
-	unsigned short	colormap_index, colormap_length;
-	unsigned char	colormap_size;
-	unsigned short	x_origin, y_origin, width, height;
-	unsigned char	pixel_size, attributes;
+	unsigned char id_length, colormap_type, image_type;
+	unsigned short colormap_index, colormap_length;
+	unsigned char colormap_size;
+	unsigned short x_origin, y_origin, width, height;
+	unsigned char pixel_size, attributes;
 } TargaHeader;
 
 
 static int
 fgetLittleShort (QFile *f)
 {
-	byte	b1, b2;
+	byte        b1, b2;
 
-	b1 = Qgetc(f);
-	b2 = Qgetc(f);
+	b1 = Qgetc (f);
+	b2 = Qgetc (f);
 
-	return (short)(b1 + b2*256);
+	return (short) (b1 + b2 * 256);
 }
+
 /*
 static int
 fgetLittleLong (QFile *f)
@@ -74,154 +75,157 @@ fgetLittleLong (QFile *f)
 LoadTGA
 =============
 */
-byte *
+byte       *
 LoadTGA (QFile *fin)
 {
-	int				columns, rows, numPixels;
-	byte			*pixbuf;
-	int				row, column;
-	unsigned char	red = 0, green = 0, blue = 0, alphabyte = 0;
+	int         columns, rows, numPixels;
+	byte       *pixbuf;
+	int         row, column;
+	unsigned char red = 0, green = 0, blue = 0, alphabyte = 0;
 
-	TargaHeader		targa_header;
-	byte			*targa_rgba;
+	TargaHeader targa_header;
+	byte       *targa_rgba;
 
-	targa_header.id_length = Qgetc(fin);
-	targa_header.colormap_type = Qgetc(fin);
-	targa_header.image_type = Qgetc(fin);
-	
-	targa_header.colormap_index = fgetLittleShort(fin);
-	targa_header.colormap_length = fgetLittleShort(fin);
-	targa_header.colormap_size = Qgetc(fin);
-	targa_header.x_origin = fgetLittleShort(fin);
-	targa_header.y_origin = fgetLittleShort(fin);
-	targa_header.width = fgetLittleShort(fin);
-	targa_header.height = fgetLittleShort(fin);
-	targa_header.pixel_size = Qgetc(fin);
-	targa_header.attributes = Qgetc(fin);
+	targa_header.id_length = Qgetc (fin);
+	targa_header.colormap_type = Qgetc (fin);
+	targa_header.image_type = Qgetc (fin);
 
-	if (targa_header.image_type!=2 
-		&& targa_header.image_type!=10) 
+	targa_header.colormap_index = fgetLittleShort (fin);
+	targa_header.colormap_length = fgetLittleShort (fin);
+	targa_header.colormap_size = Qgetc (fin);
+	targa_header.x_origin = fgetLittleShort (fin);
+	targa_header.y_origin = fgetLittleShort (fin);
+	targa_header.width = fgetLittleShort (fin);
+	targa_header.height = fgetLittleShort (fin);
+	targa_header.pixel_size = Qgetc (fin);
+	targa_header.attributes = Qgetc (fin);
+
+	if (targa_header.image_type != 2 && targa_header.image_type != 10)
 		Sys_Error ("LoadTGA: Only type 2 and 10 targa RGB images supported\n");
 
-	if (targa_header.colormap_type !=0 
-		|| (targa_header.pixel_size!=32 && targa_header.pixel_size!=24))
-		Sys_Error ("Texture_LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n");
+	if (targa_header.colormap_type != 0
+		|| (targa_header.pixel_size != 32 && targa_header.pixel_size != 24))
+		Sys_Error
+			("Texture_LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n");
 
 	columns = targa_header.width;
 	rows = targa_header.height;
 	numPixels = columns * rows;
 
-	targa_rgba = malloc (numPixels*4);
-	
+	targa_rgba = malloc (numPixels * 4);
+
 	if (targa_header.id_length != 0)
-		Qseek(fin, targa_header.id_length, SEEK_CUR);  // skip TARGA image comment
-	
-	if (targa_header.image_type==2) {  // Uncompressed, RGB images
-		for(row=rows-1; row>=0; row--) {
-			pixbuf = targa_rgba + row*columns*4;
-			for(column=0; column<columns; column++) {
+		Qseek (fin, targa_header.id_length, SEEK_CUR);	// skip TARGA image
+														// comment
+
+	if (targa_header.image_type == 2) {	// Uncompressed, RGB images
+		for (row = rows - 1; row >= 0; row--) {
+			pixbuf = targa_rgba + row * columns * 4;
+			for (column = 0; column < columns; column++) {
 				switch (targa_header.pixel_size) {
 					case 24:
-							
-							blue = Qgetc(fin);
-							green = Qgetc(fin);
-							red = Qgetc(fin);
-							*pixbuf++ = red;
-							*pixbuf++ = green;
-							*pixbuf++ = blue;
-							*pixbuf++ = 255;
-							break;
+
+						blue = Qgetc (fin);
+						green = Qgetc (fin);
+						red = Qgetc (fin);
+						*pixbuf++ = red;
+						*pixbuf++ = green;
+						*pixbuf++ = blue;
+						*pixbuf++ = 255;
+						break;
 					case 32:
-							blue = Qgetc(fin);
-							green = Qgetc(fin);
-							red = Qgetc(fin);
-							alphabyte = Qgetc(fin);
-							*pixbuf++ = red;
-							*pixbuf++ = green;
-							*pixbuf++ = blue;
-							*pixbuf++ = alphabyte;
-							break;
+						blue = Qgetc (fin);
+						green = Qgetc (fin);
+						red = Qgetc (fin);
+						alphabyte = Qgetc (fin);
+						*pixbuf++ = red;
+						*pixbuf++ = green;
+						*pixbuf++ = blue;
+						*pixbuf++ = alphabyte;
+						break;
 				}
 			}
 		}
-	}
-	else if (targa_header.image_type==10) {   // Runlength encoded RGB images
+	} else if (targa_header.image_type == 10) {	// Runlength encoded RGB
+												// images
 		unsigned char packetHeader, packetSize, j;
-		for(row=rows-1; row>=0; row--) {
-			pixbuf = targa_rgba + row*columns*4;
-			for(column=0; column<columns; ) {
-				packetHeader=Qgetc(fin);
+
+		for (row = rows - 1; row >= 0; row--) {
+			pixbuf = targa_rgba + row * columns * 4;
+			for (column = 0; column < columns;) {
+				packetHeader = Qgetc (fin);
 				packetSize = 1 + (packetHeader & 0x7f);
-				if (packetHeader & 0x80) {        // run-length packet
+				if (packetHeader & 0x80) {	// run-length packet
 					switch (targa_header.pixel_size) {
 						case 24:
-								blue = Qgetc(fin);
-								green = Qgetc(fin);
-								red = Qgetc(fin);
-								alphabyte = 255;
-								break;
+							blue = Qgetc (fin);
+							green = Qgetc (fin);
+							red = Qgetc (fin);
+							alphabyte = 255;
+							break;
 						case 32:
-								blue = Qgetc(fin);
-								green = Qgetc(fin);
-								red = Qgetc(fin);
-								alphabyte = Qgetc(fin);
-								break;
+							blue = Qgetc (fin);
+							green = Qgetc (fin);
+							red = Qgetc (fin);
+							alphabyte = Qgetc (fin);
+							break;
 					}
-	
-					for(j=0;j<packetSize;j++) {
-						*pixbuf++=red;
-						*pixbuf++=green;
-						*pixbuf++=blue;
-						*pixbuf++=alphabyte;
+
+					for (j = 0; j < packetSize; j++) {
+						*pixbuf++ = red;
+						*pixbuf++ = green;
+						*pixbuf++ = blue;
+						*pixbuf++ = alphabyte;
 						column++;
-						if (column==columns) { // run spans across rows
-							column=0;
-							if (row>0)
+						if (column == columns) {	// run spans across rows
+							column = 0;
+							if (row > 0)
 								row--;
 							else
 								goto breakOut;
-							pixbuf = targa_rgba + row*columns*4;
+							pixbuf = targa_rgba + row * columns * 4;
 						}
 					}
-				} else {                            // non run-length packet
-					for(j=0;j<packetSize;j++) {
+				} else {				// non run-length packet
+					for (j = 0; j < packetSize; j++) {
 						switch (targa_header.pixel_size) {
 							case 24:
-									blue = Qgetc(fin);
-									green = Qgetc(fin);
-									red = Qgetc(fin);
-									*pixbuf++ = red;
-									*pixbuf++ = green;
-									*pixbuf++ = blue;
-									*pixbuf++ = 255;
-									break;
+								blue = Qgetc (fin);
+								green = Qgetc (fin);
+								red = Qgetc (fin);
+								*pixbuf++ = red;
+								*pixbuf++ = green;
+								*pixbuf++ = blue;
+								*pixbuf++ = 255;
+								break;
 							case 32:
-									blue = Qgetc(fin);
-									green = Qgetc(fin);
-									red = Qgetc(fin);
-									alphabyte = Qgetc(fin);
-									*pixbuf++ = red;
-									*pixbuf++ = green;
-									*pixbuf++ = blue;
-									*pixbuf++ = alphabyte;
-									break;
+								blue = Qgetc (fin);
+								green = Qgetc (fin);
+								red = Qgetc (fin);
+								alphabyte = Qgetc (fin);
+								*pixbuf++ = red;
+								*pixbuf++ = green;
+								*pixbuf++ = blue;
+								*pixbuf++ = alphabyte;
+								break;
 						}
 						column++;
-						if (column==columns) { // pixel packet run spans across rows
-							column=0;
-							if (row>0)
+						if (column == columns) {	// pixel packet run spans 
+													// across rows
+							column = 0;
+							if (row > 0)
 								row--;
 							else
 								goto breakOut;
-							pixbuf = targa_rgba + row*columns*4;
-						}						
+							pixbuf = targa_rgba + row * columns * 4;
+						}
 					}
 				}
 			}
-			breakOut:;
+		  breakOut:;
 		}
 	}
-	
-	Qclose(fin);
+
+	Qclose (fin);
 	return targa_rgba;
 }

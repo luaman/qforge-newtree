@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include <string.h>
 #include <stdio.h>
@@ -35,66 +35,71 @@
 #include <strings.h>
 #endif
 
-#include "bothdefs.h"   // needed by: common.h, net.h, client.h
+#include "bothdefs.h"					// needed by: common.h, net.h,
+										// client.h
 
-#include "bspfile.h"    // needed by: glquake.h
+#include "bspfile.h"					// needed by: glquake.h
 #include "vid.h"
 #include "sys.h"
-#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
-                        //  modelgen.h, glmodel.h
+#include "mathlib.h"					// needed by: protocol.h, render.h,
+										// client.h,
+						// modelgen.h, glmodel.h
 #include "wad.h"
 #include "draw.h"
 #include "cvar.h"
-#include "net.h"        // needed by: client.h
-#include "protocol.h"   // needed by: client.h
+#include "net.h"						// needed by: client.h
+#include "protocol.h"					// needed by: client.h
 #include "cmd.h"
 #include "sbar.h"
-#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
-#include "client.h"     // need cls in this file
-#include "model.h"   // needed by: glquake.h
+#include "render.h"						// needed by: client.h, gl_model.h,
+										// glquake.h
+#include "client.h"						// need cls in this file
+#include "model.h"						// needed by: glquake.h
 #include "console.h"
 #include "glquake.h"
 #include "r_dynamic.h"
 #include "skin.h"
 
-qboolean VID_Is8bit(void);
-void R_InitBubble();
-void R_FireColor_f(void);
+qboolean    VID_Is8bit (void);
+void        R_InitBubble ();
+void        R_FireColor_f (void);
 
-cvar_t *gl_fires;
-qboolean	allowskybox;		// allow skyboxes?  --KB
+cvar_t     *gl_fires;
+qboolean    allowskybox;				// allow skyboxes?  --KB
 
 /*
 ==================
 R_Textures_Init
 ==================
 */
-void	R_Textures_Init (void)
+void
+R_Textures_Init (void)
 {
-	int		x,y, m;
-	byte	*dest;
+	int         x, y, m;
+	byte       *dest;
 
 // create a simple checkerboard texture for the default
-	r_notexture_mip = Hunk_AllocName (sizeof(texture_t) + 16*16+8*8+4*4+2*2, "notexture");
-	
+	r_notexture_mip =
+		Hunk_AllocName (sizeof (texture_t) + 16 * 16 + 8 * 8 + 4 * 4 + 2 * 2,
+						"notexture");
+
 	r_notexture_mip->width = r_notexture_mip->height = 16;
-	r_notexture_mip->offsets[0] = sizeof(texture_t);
-	r_notexture_mip->offsets[1] = r_notexture_mip->offsets[0] + 16*16;
-	r_notexture_mip->offsets[2] = r_notexture_mip->offsets[1] + 8*8;
-	r_notexture_mip->offsets[3] = r_notexture_mip->offsets[2] + 4*4;
-	
-	for (m=0 ; m<4 ; m++)
-	{
-		dest = (byte *)r_notexture_mip + r_notexture_mip->offsets[m];
-		for (y=0 ; y< (16>>m) ; y++)
-			for (x=0 ; x< (16>>m) ; x++)
-			{
-				if (  (y< (8>>m) ) ^ (x< (8>>m) ) )
+	r_notexture_mip->offsets[0] = sizeof (texture_t);
+
+	r_notexture_mip->offsets[1] = r_notexture_mip->offsets[0] + 16 * 16;
+	r_notexture_mip->offsets[2] = r_notexture_mip->offsets[1] + 8 * 8;
+	r_notexture_mip->offsets[3] = r_notexture_mip->offsets[2] + 4 * 4;
+
+	for (m = 0; m < 4; m++) {
+		dest = (byte *) r_notexture_mip + r_notexture_mip->offsets[m];
+		for (y = 0; y < (16 >> m); y++)
+			for (x = 0; x < (16 >> m); x++) {
+				if ((y < (8 >> m)) ^ (x < (8 >> m)))
 					*dest++ = 0;
 				else
 					*dest++ = 0xff;
 			}
-	}	
+	}
 }
 
 /*
@@ -104,12 +109,13 @@ R_Envmap_f
 Grab six views for environment mapping tests
 ===============
 */
-void R_Envmap_f (void)
+void
+R_Envmap_f (void)
 {
-	byte	buffer[256*256*4];
+	byte        buffer[256 * 256 * 4];
 
-	glDrawBuffer  (GL_FRONT);
-	glReadBuffer  (GL_FRONT);
+	glDrawBuffer (GL_FRONT);
+	glReadBuffer (GL_FRONT);
 	envmap = true;
 
 	r_refdef.vrect.x = 0;
@@ -123,43 +129,43 @@ void R_Envmap_f (void)
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env0.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env0.rgb", buffer, sizeof (buffer));
 
 	r_refdef.viewangles[1] = 90;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env1.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env1.rgb", buffer, sizeof (buffer));
 
 	r_refdef.viewangles[1] = 180;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env2.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env2.rgb", buffer, sizeof (buffer));
 
 	r_refdef.viewangles[1] = 270;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env3.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env3.rgb", buffer, sizeof (buffer));
 
 	r_refdef.viewangles[0] = -90;
 	r_refdef.viewangles[1] = 0;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env4.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env4.rgb", buffer, sizeof (buffer));
 
 	r_refdef.viewangles[0] = 90;
 	r_refdef.viewangles[1] = 0;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env5.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env5.rgb", buffer, sizeof (buffer));
 
 	envmap = false;
-	glDrawBuffer  (GL_BACK);
-	glReadBuffer  (GL_BACK);
+	glDrawBuffer (GL_BACK);
+	glReadBuffer (GL_BACK);
 	GL_EndRendering ();
 }
 
@@ -169,13 +175,12 @@ void R_Envmap_f (void)
 void
 R_LoadSky_f (void)
 {
-	if (Cmd_Argc () != 2)
-	{
+	if (Cmd_Argc () != 2) {
 		Con_Printf ("loadsky <name> : load a skybox\n");
 		return;
 	}
 
-	R_LoadSkys (Cmd_Argv(1));
+	R_LoadSkys (Cmd_Argv (1));
 }
 
 
@@ -184,19 +189,21 @@ R_LoadSky_f (void)
 R_Init
 ===============
 */
-void R_Init (void)
+void
+R_Init (void)
 {
-	allowskybox = false;	// server will decide if this is allowed  --KB
+	allowskybox = false;				// server will decide if this is
+										// allowed  --KB
 
-	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);	
-	Cmd_AddCommand ("envmap", R_Envmap_f);	
+	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);
+	Cmd_AddCommand ("envmap", R_Envmap_f);
 	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);
 	Cmd_AddCommand ("loadsky", R_LoadSky_f);
 
 	Cmd_AddCommand ("r_firecolor", R_FireColor_f);
 
-	R_InitBubble();
-	
+	R_InitBubble ();
+
 	R_InitParticles ();
 
 	netgraphtexture = texture_extension_number;
@@ -206,50 +213,51 @@ void R_Init (void)
 	texture_extension_number += MAX_CLIENTS;
 }
 
-void R_Init_Cvars (void)
+void
+R_Init_Cvars (void)
 {
-	r_norefresh = Cvar_Get("r_norefresh", "0", CVAR_NONE, "None");
-	r_drawentities = Cvar_Get("r_drawentities", "1", CVAR_NONE, "None");
-	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_ARCHIVE, "None");
-	r_shadows = Cvar_Get("r_shadows", "0", CVAR_NONE, "None");
-	r_wateralpha = Cvar_Get("r_wateralpha", "1", CVAR_NONE, "None");
+	r_norefresh = Cvar_Get ("r_norefresh", "0", CVAR_NONE, "None");
+	r_drawentities = Cvar_Get ("r_drawentities", "1", CVAR_NONE, "None");
+	r_drawviewmodel = Cvar_Get ("r_drawviewmodel", "1", CVAR_ARCHIVE, "None");
+	r_shadows = Cvar_Get ("r_shadows", "0", CVAR_NONE, "None");
+	r_wateralpha = Cvar_Get ("r_wateralpha", "1", CVAR_NONE, "None");
 	r_waterripple = Cvar_Get ("r_waterripple", "0", CVAR_NONE, "None");
-	r_dynamic = Cvar_Get("r_dynamic", "1", CVAR_NONE, "None");
-	r_novis = Cvar_Get("r_novis", "0", CVAR_NONE, "None");
-	r_speeds = Cvar_Get("r_speeds", "0", CVAR_NONE, "None");
-	r_netgraph = Cvar_Get("r_netgraph", "0", CVAR_NONE, "None");
+	r_dynamic = Cvar_Get ("r_dynamic", "1", CVAR_NONE, "None");
+	r_novis = Cvar_Get ("r_novis", "0", CVAR_NONE, "None");
+	r_speeds = Cvar_Get ("r_speeds", "0", CVAR_NONE, "None");
+	r_netgraph = Cvar_Get ("r_netgraph", "0", CVAR_NONE, "None");
 
-	gl_clear = Cvar_Get("gl_clear", "0", CVAR_NONE, "None");
-	gl_texsort = Cvar_Get("gl_texsort", "1", CVAR_NONE, "None");
- 
-	gl_cull = Cvar_Get("gl_cull", "1", CVAR_NONE, "None");
-	gl_smooth = Cvar_Get("gl_smooth", "1", CVAR_NONE, "None");
-	gl_smoothdlights = Cvar_Get("gl_smoothdlights", "1", CVAR_NONE, "None");
-	gl_affinemodels = Cvar_Get("gl_affinemodels", "0", CVAR_NONE, "None");
-	gl_flashblend = Cvar_Get("gl_flashblend",  "0", CVAR_NONE, "None");
-	gl_playermip = Cvar_Get("gl_playermip", "0", CVAR_NONE, "None");
-	gl_nocolors = Cvar_Get("gl_nocolors", "0", CVAR_NONE, "None");
+	gl_clear = Cvar_Get ("gl_clear", "0", CVAR_NONE, "None");
+	gl_texsort = Cvar_Get ("gl_texsort", "1", CVAR_NONE, "None");
+
+	gl_cull = Cvar_Get ("gl_cull", "1", CVAR_NONE, "None");
+	gl_smooth = Cvar_Get ("gl_smooth", "1", CVAR_NONE, "None");
+	gl_smoothdlights = Cvar_Get ("gl_smoothdlights", "1", CVAR_NONE, "None");
+	gl_affinemodels = Cvar_Get ("gl_affinemodels", "0", CVAR_NONE, "None");
+	gl_flashblend = Cvar_Get ("gl_flashblend", "0", CVAR_NONE, "None");
+	gl_playermip = Cvar_Get ("gl_playermip", "0", CVAR_NONE, "None");
+	gl_nocolors = Cvar_Get ("gl_nocolors", "0", CVAR_NONE, "None");
 
 	gl_fires = Cvar_Get ("gl_fires", "0", CVAR_ARCHIVE,
-			"Toggles lavaball and rocket fireballs");
+						 "Toggles lavaball and rocket fireballs");
 
 	gl_particles = Cvar_Get ("gl_particles", "1", CVAR_ARCHIVE,
-			"whether or not to draw particles");
+							 "whether or not to draw particles");
 
 	gl_fb_models = Cvar_Get ("gl_fb_models", "1", CVAR_ARCHIVE,
-			"Toggles fullbright color support for models..  "
-			"This is very handy, but costs me 2 FPS.. (=:]");
+							 "Toggles fullbright color support for models..  "
+							 "This is very handy, but costs me 2 FPS.. (=:]");
 	gl_fb_bmodels = Cvar_Get ("gl_fb_bmodels", "1", CVAR_ARCHIVE,
-			"Toggles fullbright color support for bmodels");
+							  "Toggles fullbright color support for bmodels");
 
-	gl_keeptjunctions = Cvar_Get("gl_keeptjunctions", "1", CVAR_NONE, "None");
-	
-	r_skyname = Cvar_Get("r_skyname", "none", CVAR_NONE, 
-			"name of the current skybox");
-	gl_skymultipass = Cvar_Get("gl_skymultipass", "1", CVAR_NONE,
-			"controls whether the skydome is single or double pass");
+	gl_keeptjunctions = Cvar_Get ("gl_keeptjunctions", "1", CVAR_NONE, "None");
+
+	r_skyname = Cvar_Get ("r_skyname", "none", CVAR_NONE,
+						  "name of the current skybox");
+	gl_skymultipass = Cvar_Get ("gl_skymultipass", "1", CVAR_NONE,
+								"controls whether the skydome is single or double pass");
 	gl_sky_clip = Cvar_Get ("gl_sky_clip", "0", CVAR_NONE,
-			"controls whether sky is drawn first (0) or later (1)");
+							"controls whether sky is drawn first (0) or later (1)");
 }
 
 /*
@@ -259,30 +267,31 @@ R_TranslatePlayerSkin
 Translates a skin texture by the per-player color lookup
 ===============
 */
-void R_TranslatePlayerSkin (int playernum)
+void
+R_TranslatePlayerSkin (int playernum)
 {
-	int		top, bottom;
-	byte	translate[256];
-	unsigned int	translate32[256];
-	int		i, j;
-	byte	*original;
-	unsigned int	pixels[512*256], *out;
-	unsigned int	scaled_width, scaled_height;
-	int			inwidth, inheight;
-	int			tinwidth, tinheight;
-	byte		*inrow;
-	unsigned int	frac, fracstep;
+	int         top, bottom;
+	byte        translate[256];
+	unsigned int translate32[256];
+	int         i, j;
+	byte       *original;
+	unsigned int pixels[512 * 256], *out;
+	unsigned int scaled_width, scaled_height;
+	int         inwidth, inheight;
+	int         tinwidth, tinheight;
+	byte       *inrow;
+	unsigned int frac, fracstep;
 	player_info_t *player;
-	extern	byte		player_8bit_texels[320*200];
-	char s[512];
+	extern byte player_8bit_texels[320 * 200];
+	char        s[512];
 
 	player = &cl.players[playernum];
 	if (!player->name[0])
 		return;
 
-	strcpy(s, Info_ValueForKey(player->userinfo, "skin"));
-	COM_StripExtension(s, s);
-	if (player->skin && !stricmp(s, player->skin->name))
+	strcpy (s, Info_ValueForKey (player->userinfo, "skin"));
+	COM_StripExtension (s, s);
+	if (player->skin && !stricmp (s, player->skin->name))
 		player->skin = NULL;
 
 	if (player->_topcolor != player->topcolor ||
@@ -297,33 +306,33 @@ void R_TranslatePlayerSkin (int playernum)
 		top *= 16;
 		bottom *= 16;
 
-		for (i=0 ; i<256 ; i++)
+		for (i = 0; i < 256; i++)
 			translate[i] = i;
 
-		for (i=0 ; i<16 ; i++)
-		{
-			if (top < 128)	// the artists made some backwards ranges.  sigh.
-				translate[TOP_RANGE+i] = top+i;
+		for (i = 0; i < 16; i++) {
+			if (top < 128)				// the artists made some backwards
+										// ranges.  sigh.
+				translate[TOP_RANGE + i] = top + i;
 			else
-				translate[TOP_RANGE+i] = top+15-i;
-					
+				translate[TOP_RANGE + i] = top + 15 - i;
+
 			if (bottom < 128)
-				translate[BOTTOM_RANGE+i] = bottom+i;
+				translate[BOTTOM_RANGE + i] = bottom + i;
 			else
-				translate[BOTTOM_RANGE+i] = bottom+15-i;
+				translate[BOTTOM_RANGE + i] = bottom + 15 - i;
 		}
 
-		//
+		// 
 		// locate the original skin pixels
-		//
+		// 
 		// real model width
 		tinwidth = 296;
 		tinheight = 194;
 
 		if (!player->skin)
-			Skin_Find(player);
-		if ((original = Skin_Cache(player->skin)) != NULL) {
-			//skin data width
+			Skin_Find (player);
+		if ((original = Skin_Cache (player->skin)) != NULL) {
+			// skin data width
 			inwidth = 320;
 			inheight = 200;
 		} else {
@@ -338,87 +347,83 @@ void R_TranslatePlayerSkin (int playernum)
 		glBindTexture (GL_TEXTURE_2D, playertextures + playernum);
 
 #if 0
-		s = 320*200;
-		byte	translated[320*200];
+		s = 320 * 200;
+		byte        translated[320 * 200];
 
-		for (i=0 ; i<s ; i+=4)
-		{
+		for (i = 0; i < s; i += 4) {
 			translated[i] = translate[original[i]];
-			translated[i+1] = translate[original[i+1]];
-			translated[i+2] = translate[original[i+2]];
-			translated[i+3] = translate[original[i+3]];
+			translated[i + 1] = translate[original[i + 1]];
+			translated[i + 2] = translate[original[i + 2]];
+			translated[i + 3] = translate[original[i + 3]];
 		}
 
 
 		// don't mipmap these, because it takes too long
-		GL_Upload8 (translated, paliashdr->skinwidth, paliashdr->skinheight, 
-			false, false, true);
+		GL_Upload8 (translated, paliashdr->skinwidth, paliashdr->skinheight,
+					false, false, true);
 #endif
 
 		// FIXME deek: This 512x256 limit sucks!
- 		scaled_width = min(gl_max_size->int_val, 512);
- 		scaled_height = min(gl_max_size->int_val, 256);
+		scaled_width = min (gl_max_size->int_val, 512);
+		scaled_height = min (gl_max_size->int_val, 256);
 
 		// allow users to crunch sizes down even more if they want
 		scaled_width >>= gl_playermip->int_val;
 		scaled_height >>= gl_playermip->int_val;
 
-		if (VID_Is8bit()) { // 8bit texture upload
-			byte *out2;
+		if (VID_Is8bit ()) {			// 8bit texture upload
+			byte       *out2;
 
-			out2 = (byte *)pixels;
-			memset(pixels, 0, sizeof(pixels));
-			fracstep = tinwidth*0x10000/scaled_width;
-			for (i=0 ; i<scaled_height ; i++, out2 += scaled_width)
-			{
-				inrow = original + inwidth*(i*tinheight/scaled_height);
+			out2 = (byte *) pixels;
+			memset (pixels, 0, sizeof (pixels));
+			fracstep = tinwidth * 0x10000 / scaled_width;
+			for (i = 0; i < scaled_height; i++, out2 += scaled_width) {
+				inrow = original + inwidth * (i * tinheight / scaled_height);
 				frac = fracstep >> 1;
-				for (j=0 ; j<scaled_width ; j+=4)
-				{
-					out2[j] = translate[inrow[frac>>16]];
+				for (j = 0; j < scaled_width; j += 4) {
+					out2[j] = translate[inrow[frac >> 16]];
 					frac += fracstep;
-					out2[j+1] = translate[inrow[frac>>16]];
+					out2[j + 1] = translate[inrow[frac >> 16]];
 					frac += fracstep;
-					out2[j+2] = translate[inrow[frac>>16]];
+					out2[j + 2] = translate[inrow[frac >> 16]];
 					frac += fracstep;
-					out2[j+3] = translate[inrow[frac>>16]];
+					out2[j + 3] = translate[inrow[frac >> 16]];
 					frac += fracstep;
 				}
 			}
 
-			GL_Upload8_EXT ((byte *)pixels, scaled_width, scaled_height, false, false);
+			GL_Upload8_EXT ((byte *) pixels, scaled_width, scaled_height, false,
+							false);
 			return;
 		}
 
-		for (i=0 ; i<256 ; i++)
+		for (i = 0; i < 256; i++)
 			translate32[i] = d_8to24table[translate[i]];
 
 		out = pixels;
-		memset(pixels, 0, sizeof(pixels));
-		fracstep = tinwidth*0x10000/scaled_width;
-		for (i=0 ; i<scaled_height ; i++, out += scaled_width)
-		{
-			inrow = original + inwidth*(i*tinheight/scaled_height);
+		memset (pixels, 0, sizeof (pixels));
+		fracstep = tinwidth * 0x10000 / scaled_width;
+		for (i = 0; i < scaled_height; i++, out += scaled_width) {
+			inrow = original + inwidth * (i * tinheight / scaled_height);
 			frac = fracstep >> 1;
-			for (j=0 ; j<scaled_width ; j+=4)
-			{
-				out[j] = translate32[inrow[frac>>16]];
+			for (j = 0; j < scaled_width; j += 4) {
+				out[j] = translate32[inrow[frac >> 16]];
 				frac += fracstep;
-				out[j+1] = translate32[inrow[frac>>16]];
+				out[j + 1] = translate32[inrow[frac >> 16]];
 				frac += fracstep;
-				out[j+2] = translate32[inrow[frac>>16]];
+				out[j + 2] = translate32[inrow[frac >> 16]];
 				frac += fracstep;
-				out[j+3] = translate32[inrow[frac>>16]];
+				out[j + 3] = translate32[inrow[frac >> 16]];
 				frac += fracstep;
 			}
 		}
 
-		glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 
-			scaled_width, scaled_height, 0, GL_RGBA, 
-			GL_UNSIGNED_BYTE, pixels);
+		glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format,
+					  scaled_width, scaled_height, 0, GL_RGBA,
+					  GL_UNSIGNED_BYTE, pixels);
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 }
 
@@ -427,22 +432,23 @@ void R_TranslatePlayerSkin (int playernum)
 R_NewMap
 ===============
 */
-void R_NewMap (void)
+void
+R_NewMap (void)
 {
-	int		i;
-	cvar_t		*r_skyname;
-	
-	for (i=0 ; i<256 ; i++)
+	int         i;
+	cvar_t     *r_skyname;
+
+	for (i = 0; i < 256; i++)
 		d_lightstylevalue[i] = 264;		// normal light value
 
-	memset (&r_worldentity, 0, sizeof(r_worldentity));
+	memset (&r_worldentity, 0, sizeof (r_worldentity));
 	r_worldentity.model = cl.worldmodel;
 
 // clear out efrags in case the level hasn't been reloaded
 // FIXME: is this one short?
-	for (i=0 ; i<cl.worldmodel->numleafs ; i++)
+	for (i = 0; i < cl.worldmodel->numleafs; i++)
 		cl.worldmodel->leafs[i].efrags = NULL;
-		 	
+
 	r_viewleaf = NULL;
 	R_ClearParticles ();
 
@@ -450,13 +456,12 @@ void R_NewMap (void)
 
 	// identify sky texture
 	skytexturenum = -1;
-	for (i=0 ; i<cl.worldmodel->numtextures ; i++)
-	{
+	for (i = 0; i < cl.worldmodel->numtextures; i++) {
 		if (!cl.worldmodel->textures[i])
 			continue;
-		if (!strncmp(cl.worldmodel->textures[i]->name,"sky",3) )
+		if (!strncmp (cl.worldmodel->textures[i]->name, "sky", 3))
 			skytexturenum = i;
- 		cl.worldmodel->textures[i]->texturechain = NULL;
+		cl.worldmodel->textures[i]->texturechain = NULL;
 	}
 	r_skyname = Cvar_FindVar ("r_skyname");
 	if (r_skyname != NULL)
@@ -474,37 +479,36 @@ For program optimization
 ====================
 */
 // LordHavoc: improved appearance and accuracy of timerefresh
-void R_TimeRefresh_f (void)
+void
+R_TimeRefresh_f (void)
 {
-	int			i;
-	double		start, stop, time;
+	int         i;
+	double      start, stop, time;
 
-//	glDrawBuffer  (GL_FRONT);
+//  glDrawBuffer  (GL_FRONT);
 	glFinish ();
 	GL_EndRendering ();
 
 	start = Sys_DoubleTime ();
-	for (i=0 ; i<128 ; i++)
-	{
+	for (i = 0; i < 128; i++) {
 		GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
-		r_refdef.viewangles[1] = i/128.0*360.0;
+		r_refdef.viewangles[1] = i / 128.0 * 360.0;
 		R_RenderView ();
 		glFinish ();
 		GL_EndRendering ();
 	}
 
-//	glFinish ();
+//  glFinish ();
 	stop = Sys_DoubleTime ();
-	time = stop-start;
-	Con_Printf ("%f seconds (%f fps)\n", time, 128/time);
+	time = stop - start;
+	Con_Printf ("%f seconds (%f fps)\n", time, 128 / time);
 
-//	glDrawBuffer  (GL_BACK);
-//	GL_EndRendering ();
+//  glDrawBuffer  (GL_BACK);
+//  GL_EndRendering ();
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 }
 
-void D_FlushCaches (void)
+void
+D_FlushCaches (void)
 {
 }
-
-

@@ -28,7 +28,7 @@
 
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "server.h"
 #include "crc.h"
@@ -39,35 +39,35 @@
 #include "sys.h"
 #include "pmove.h"
 
-const int	mod_lightmap_bytes=1;
-mplane_t	frustum[4];
+const int   mod_lightmap_bytes = 1;
+mplane_t    frustum[4];
 
-void Mod_LoadBrushModel (model_t *mod, void *buffer);
+void        Mod_LoadBrushModel (model_t *mod, void *buffer);
 
 void
-Mod_LoadLighting(lump_t *l)
+Mod_LoadLighting (lump_t *l)
 {
 }
 
 void
-Mod_LoadAliasModel(model_t *mod, void *buf)
-{
-	Mod_LoadBrushModel (mod, buf);
-}
-
-void
-Mod_LoadSpriteModel(model_t *mod, void *buf)
+Mod_LoadAliasModel (model_t *mod, void *buf)
 {
 	Mod_LoadBrushModel (mod, buf);
 }
 
 void
-R_InitSky(struct texture_s *mt)
+Mod_LoadSpriteModel (model_t *mod, void *buf)
+{
+	Mod_LoadBrushModel (mod, buf);
+}
+
+void
+R_InitSky (struct texture_s *mt)
 {
 }
 
 void
-Mod_ProcessTexture(miptex_t *mx, texture_t	*tx)
+Mod_ProcessTexture (miptex_t *mx, texture_t *tx)
 {
 }
 

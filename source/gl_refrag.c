@@ -32,30 +32,33 @@
 
 #include "sys.h"
 #include "qargs.h"
-#include "bothdefs.h"   // needed by: common.h, net.h, client.h
+#include "bothdefs.h"					// needed by: common.h, net.h,
+										// client.h
 #include "d_iface.h"
-#include "bspfile.h"    // needed by: glquake.h
+#include "bspfile.h"					// needed by: glquake.h
 #include "vid.h"
 #include "sys.h"
-#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
-                        //  modelgen.h, glmodel.h
+#include "mathlib.h"					// needed by: protocol.h, render.h,
+										// client.h,
+						// modelgen.h, glmodel.h
 #include "wad.h"
 #include "draw.h"
 #include "cvar.h"
 #include "menu.h"
-#include "net.h"        // needed by: client.h
-#include "protocol.h"   // needed by: client.h
+#include "net.h"						// needed by: client.h
+#include "protocol.h"					// needed by: client.h
 #include "cmd.h"
 #include "sbar.h"
-#include "render.h"     // needed by: client.h, gl_model.h, glquake.h
-#include "client.h"     // need cls in this file
-#include "model.h"   // needed by: glquake.h
+#include "render.h"						// needed by: client.h, gl_model.h,
+										// glquake.h
+#include "client.h"						// need cls in this file
+#include "model.h"						// needed by: glquake.h
 #include "console.h"
 #include "glquake.h"
 #include "quakefs.h"
 #include "cl_main.h"
 
-mnode_t	*r_pefragtopnode;
+mnode_t    *r_pefragtopnode;
 
 
 //===========================================================================
@@ -68,11 +71,11 @@ mnode_t	*r_pefragtopnode;
 ===============================================================================
 */
 
-efrag_t		**lastlink;
+efrag_t   **lastlink;
 
-vec3_t		r_emins, r_emaxs;
+vec3_t      r_emins, r_emaxs;
 
-entity_t	*r_addent;
+entity_t   *r_addent;
 
 
 /*
@@ -82,38 +85,35 @@ R_RemoveEfrags
 Call when removing an object from the world or moving it to another position
 ================
 */
-void R_RemoveEfrags (entity_t *ent)
+void
+R_RemoveEfrags (entity_t *ent)
 {
-	efrag_t		*ef, *old, *walk, **prev;
-	
+	efrag_t    *ef, *old, *walk, **prev;
+
 	ef = ent->efrag;
-	
-	while (ef)
-	{
+
+	while (ef) {
 		prev = &ef->leaf->efrags;
-		while (1)
-		{
+		while (1) {
 			walk = *prev;
 			if (!walk)
 				break;
-			if (walk == ef)
-			{	// remove this fragment
+			if (walk == ef) {			// remove this fragment
 				*prev = ef->leafnext;
 				break;
-			}
-			else
+			} else
 				prev = &walk->leafnext;
 		}
-				
+
 		old = ef;
 		ef = ef->entnext;
-		
-	// put it on the free list
+
+		// put it on the free list
 		old->entnext = cl.free_efrags;
 		cl.free_efrags = old;
 	}
-	
-	ent->efrag = NULL; 
+
+	ent->efrag = NULL;
 }
 
 /*
@@ -121,68 +121,62 @@ void R_RemoveEfrags (entity_t *ent)
 R_SplitEntityOnNode
 ===================
 */
-void R_SplitEntityOnNode (mnode_t *node)
+void
+R_SplitEntityOnNode (mnode_t *node)
 {
-	efrag_t		*ef;
-	mplane_t	*splitplane;
-	mleaf_t		*leaf;
-	int			sides;
-	
-	if (node->contents == CONTENTS_SOLID)
-	{
+	efrag_t    *ef;
+	mplane_t   *splitplane;
+	mleaf_t    *leaf;
+	int         sides;
+
+	if (node->contents == CONTENTS_SOLID) {
 		return;
 	}
-	
 // add an efrag if the node is a leaf
 
-	if ( node->contents < 0)
-	{
+	if (node->contents < 0) {
 		if (!r_pefragtopnode)
 			r_pefragtopnode = node;
 
-		leaf = (mleaf_t *)node;
+		leaf = (mleaf_t *) node;
 
 // grab an efrag off the free list
 		ef = cl.free_efrags;
-		if (!ef)
-		{
+		if (!ef) {
 			Con_Printf ("Too many efrags!\n");
-			return;		// no free fragments...
+			return;						// no free fragments...
 		}
 		cl.free_efrags = cl.free_efrags->entnext;
 
 		ef->entity = r_addent;
-		
-// add the entity link	
+
+// add the entity link  
 		*lastlink = ef;
 		lastlink = &ef->entnext;
 		ef->entnext = NULL;
-		
+
 // set the leaf links
 		ef->leaf = leaf;
 		ef->leafnext = leaf->efrags;
 		leaf->efrags = ef;
-			
+
 		return;
 	}
-	
 // NODE_MIXED
 
 	splitplane = node->plane;
-	sides = BOX_ON_PLANE_SIDE(r_emins, r_emaxs, splitplane);
-	
-	if (sides == 3)
-	{
-	// split on this plane
-	// if this is the first splitter of this bmodel, remember it
+	sides = BOX_ON_PLANE_SIDE (r_emins, r_emaxs, splitplane);
+
+	if (sides == 3) {
+		// split on this plane
+		// if this is the first splitter of this bmodel, remember it
 		if (!r_pefragtopnode)
 			r_pefragtopnode = node;
 	}
-	
 // recurse down the contacted sides
 	if (sides & 1)
 		R_SplitEntityOnNode (node->children[0]);
-		
+
 	if (sides & 2)
 		R_SplitEntityOnNode (node->children[1]);
 }
@@ -194,23 +188,23 @@ void R_SplitEntityOnNode (mnode_t *node)
 R_AddEfrags
 ===========
 */
-void R_AddEfrags (entity_t *ent)
+void
+R_AddEfrags (entity_t *ent)
 {
-	model_t		*entmodel;
-	int			i;
-		
+	model_t    *entmodel;
+	int         i;
+
 	if (!ent->model)
 		return;
 
 	r_addent = ent;
-			
+
 	lastlink = &ent->efrag;
 	r_pefragtopnode = NULL;
-	
+
 	entmodel = ent->model;
 
-	for (i=0 ; i<3 ; i++)
-	{
+	for (i = 0; i < 3; i++) {
 		r_emins[i] = ent->origin[i] + entmodel->mins[i];
 		r_emaxs[i] = ent->origin[i] + entmodel->maxs[i];
 	}
@@ -228,41 +222,38 @@ R_StoreEfrags
 // FIXME: a lot of this goes away with edge-based
 ================
 */
-void R_StoreEfrags (efrag_t **ppefrag)
+void
+R_StoreEfrags (efrag_t **ppefrag)
 {
-	entity_t	*pent;
-	model_t		*clmodel;
-	efrag_t		*pefrag;
+	entity_t   *pent;
+	model_t    *clmodel;
+	efrag_t    *pefrag;
 
 
-	while ((pefrag = *ppefrag) != NULL)
-	{
+	while ((pefrag = *ppefrag) != NULL) {
 		pent = pefrag->entity;
 		clmodel = pent->model;
 
-		switch (clmodel->type)
-		{
-		case mod_alias:
-		case mod_brush:
-		case mod_sprite:
-			pent = pefrag->entity;
+		switch (clmodel->type) {
+			case mod_alias:
+			case mod_brush:
+			case mod_sprite:
+				pent = pefrag->entity;
 
-			if ((pent->visframe != r_framecount) &&
-				(cl_numvisedicts < MAX_VISEDICTS))
-			{
-				cl_visedicts[cl_numvisedicts++] = *pent;
+				if ((pent->visframe != r_framecount) &&
+					(cl_numvisedicts < MAX_VISEDICTS)) {
+					cl_visedicts[cl_numvisedicts++] = *pent;
 
-			// mark that we've recorded this entity for this frame
-				pent->visframe = r_framecount;
-			}
+					// mark that we've recorded this entity for this frame
+					pent->visframe = r_framecount;
+				}
 
-			ppefrag = &pefrag->leafnext;
-			break;
+				ppefrag = &pefrag->leafnext;
+				break;
 
-		default:	
-			Sys_Error ("R_StoreEfrags: Bad entity type %d\n", clmodel->type);
+			default:
+				Sys_Error ("R_StoreEfrags: Bad entity type %d\n",
+						   clmodel->type);
 		}
 	}
 }
-
-

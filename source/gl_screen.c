@@ -423,9 +423,8 @@ SCR_Init (void)
 	scr_initialized = true;
 }
 
- /*
-	SCR_DrawRam
- */
+ /* 
+    SCR_DrawRam */
 void
 SCR_DrawRam (void)
 {
@@ -505,8 +504,8 @@ SCR_DrawFPS (void)
 	   chewing on my foot! */
 	snprintf (st, sizeof (st), "%-3d FPS", lastfps);
 	/* Misty: New trick! (for me) the ? makes this work like a if then else - 
-	   IE: if cl_hudswap->int_val is not null, do first case, else (else is
-	   a : here) do second case. Deek taught me this trick */
+	   IE: if cl_hudswap->int_val is not null, do first case, else (else is a 
+	   : here) do second case. Deek taught me this trick */
 	x = cl_hudswap->int_val ? vid.width - ((strlen (st) * 8) + 8) : 8;
 	y = vid.height - sb_lines - 8;
 	Draw_String8 (x, y, st);
@@ -1157,12 +1156,13 @@ SCR_UpdateScreen (void)
 
 	Cvar_SetValue (brightness, bound (1, brightness->value, 5));
 	if (lighthalf)						// LordHavoc: render was done at half 
-										// brightness
+										// 
+		// brightness
 		f = brightness->value * 2;
 	else
 		f = brightness->value;
 	if (f >= 1.002) {					// Make sure we don't get bit by
-										// roundoff errors
+		// roundoff errors
 		glBlendFunc (GL_DST_COLOR, GL_ONE);
 		glBegin (GL_QUADS);
 		while (f >= 1.002) {			// precision

@@ -32,7 +32,7 @@
 
 #define _BSD
 
-#include <config.h>
+# include "config.h"
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
@@ -79,43 +79,43 @@
 #include "sys.h"
 #include "va.h"
 
-extern viddef_t vid;	// global video state
-unsigned short	d_8to16table[256];
+extern viddef_t vid;					// global video state
+unsigned short d_8to16table[256];
 
-static Colormap	x_cmap;
-static GC		x_gc;
+static Colormap x_cmap;
+static GC   x_gc;
 
-int XShmQueryExtension (Display *);
-int XShmGetEventBase (Display *);
+int         XShmQueryExtension (Display *);
+int         XShmGetEventBase (Display *);
 
-static qboolean				doShm;
-static XShmSegmentInfo	x_shminfo[2];
+static qboolean doShm;
+static XShmSegmentInfo x_shminfo[2];
 
-static int		current_framebuffer;
-static XImage	*x_framebuffer[2] = { 0, 0 };
+static int  current_framebuffer;
+static XImage *x_framebuffer[2] = { 0, 0 };
 
-static int	verbose = 0;
+static int  verbose = 0;
 
-int VID_options_items = 1;
+int         VID_options_items = 1;
 
-static byte 			current_palette[768];
+static byte current_palette[768];
 
-typedef unsigned short	PIXEL16;
-typedef unsigned long	PIXEL24;
+typedef unsigned short PIXEL16;
+typedef unsigned long PIXEL24;
 
-static PIXEL16			st2d_8to16table[256];
-static PIXEL24			st2d_8to24table[256];
-static int				shiftmask_fl = 0;
-static long 			r_shift, g_shift, b_shift;
-static unsigned long	r_mask, g_mask, b_mask;
+static PIXEL16 st2d_8to16table[256];
+static PIXEL24 st2d_8to24table[256];
+static int  shiftmask_fl = 0;
+static long r_shift, g_shift, b_shift;
+static unsigned long r_mask, g_mask, b_mask;
 
-cvar_t	*vid_width;
-cvar_t	*vid_height;
+cvar_t     *vid_width;
+cvar_t     *vid_height;
 
 static void
 shiftmask_init (void)
 {
-	unsigned int	x;
+	unsigned int x;
 
 	r_mask = x_vis->red_mask;
 	g_mask = x_vis->green_mask;
@@ -130,19 +130,19 @@ shiftmask_init (void)
 	shiftmask_fl = 1;
 }
 
-static PIXEL16
-xlib_rgb16(int r, int g, int b)
+static      PIXEL16
+xlib_rgb16 (int r, int g, int b)
 {
-	PIXEL16 p = 0;
+	PIXEL16     p = 0;
 
 	if (!shiftmask_fl)
 		shiftmask_init ();
 
 	if (r_shift > 0) {
-		p=(r << (r_shift)) & r_mask;
+		p = (r << (r_shift)) & r_mask;
 	} else {
 		if (r_shift < 0) {
-			p =(r >> (-r_shift)) & r_mask;
+			p = (r >> (-r_shift)) & r_mask;
 		} else {
 			p |= (r & r_mask);
 		}
@@ -172,10 +172,10 @@ xlib_rgb16(int r, int g, int b)
 }
 
 
-static PIXEL24
+static      PIXEL24
 xlib_rgb24 (int r, int g, int b)
 {
-	PIXEL24 p = 0;
+	PIXEL24     p = 0;
 
 	if (!shiftmask_fl)
 		shiftmask_init ();
@@ -214,11 +214,11 @@ xlib_rgb24 (int r, int g, int b)
 }
 
 static void
-st2_fixup (XImage *framebuf, int x, int y, int width, int height)
+st2_fixup (XImage * framebuf, int x, int y, int width, int height)
 {
-	int 			xi, yi;
-	unsigned char	*src;
-	PIXEL16 		*dest;
+	int         xi, yi;
+	unsigned char *src;
+	PIXEL16    *dest;
 
 	if (x < 0 || y < 0)
 		return;
@@ -226,7 +226,7 @@ st2_fixup (XImage *framebuf, int x, int y, int width, int height)
 	for (yi = y; yi < (y + height); yi++) {
 		src = &framebuf->data[yi * framebuf->bytes_per_line];
 		dest = (PIXEL16 *) src;
-		for(xi = (x + width - 1); xi >= x; xi--) {
+		for (xi = (x + width - 1); xi >= x; xi--) {
 			dest[xi] = st2d_8to16table[src[xi]];
 		}
 	}
@@ -234,39 +234,49 @@ st2_fixup (XImage *framebuf, int x, int y, int width, int height)
 
 
 static void
-st3_fixup (XImage *framebuf, int x, int y, int width, int height)
+st3_fixup (XImage * framebuf, int x, int y, int width, int height)
 {
-	int 			yi;
-	unsigned char	*src;
-	PIXEL24 		*dest;
-	register int	count, n;
+	int         yi;
+	unsigned char *src;
+	PIXEL24    *dest;
+	register int count, n;
 
-	if (x < 0 || y < 0) return;
+	if (x < 0 || y < 0)
+		return;
 
-	for (yi = y; yi < (y+height); yi++) {
-		src = &framebuf->data [yi * framebuf->bytes_per_line];
+	for (yi = y; yi < (y + height); yi++) {
+		src = &framebuf->data[yi * framebuf->bytes_per_line];
 
 		// Duff's Device
 		count = width;
 		n = (count + 7) / 8;
-		dest = ((PIXEL24 *)src) + x+width - 1;
-		src += x+width - 1;
+		dest = ((PIXEL24 *) src) + x + width - 1;
+		src += x + width - 1;
 
 		switch (count % 8) {
-			case 0:	do {	*dest-- = st2d_8to24table[*src--];
-			case 7:			*dest-- = st2d_8to24table[*src--];
-			case 6:			*dest-- = st2d_8to24table[*src--];
-			case 5:			*dest-- = st2d_8to24table[*src--];
-			case 4:			*dest-- = st2d_8to24table[*src--];
-			case 3:			*dest-- = st2d_8to24table[*src--];
-			case 2:			*dest-- = st2d_8to24table[*src--];
-			case 1:			*dest-- = st2d_8to24table[*src--];
-					} while (--n > 0);
+			case 0:
+				do {
+					*dest-- = st2d_8to24table[*src--];
+			case 7:
+					*dest-- = st2d_8to24table[*src--];
+			case 6:
+					*dest-- = st2d_8to24table[*src--];
+			case 5:
+					*dest-- = st2d_8to24table[*src--];
+			case 4:
+					*dest-- = st2d_8to24table[*src--];
+			case 3:
+					*dest-- = st2d_8to24table[*src--];
+			case 2:
+					*dest-- = st2d_8to24table[*src--];
+			case 1:
+					*dest-- = st2d_8to24table[*src--];
+				} while (--n > 0);
 		}
 
-//		for(xi = (x+width-1); xi >= x; xi--) {
-//			dest[xi] = st2d_8to16table[src[xi]];
-//		}
+//      for(xi = (x+width-1); xi >= x; xi--) {
+//          dest[xi] = st2d_8to16table[src[xi]];
+//      }
 	}
 }
 
@@ -276,7 +286,7 @@ D_BeginDirectRect
 ================
 */
 void
-D_BeginDirectRect (int x, int y, byte *pbitmap, int width, int height)
+D_BeginDirectRect (int x, int y, byte * pbitmap, int width, int height)
 {
 // direct drawing of the "accessing disk" icon isn't supported
 }
@@ -302,28 +312,28 @@ Keybinding command
 =================
 */
 
-byte	vid_gamma[256];
+byte        vid_gamma[256];
 
 void
 VID_Gamma_f (void)
 {
 
-	float	g, f, inf;
-	int		i;
+	float       g, f, inf;
+	int         i;
 
 	if (Cmd_Argc () == 2) {
 		g = atof (Cmd_Argv (1));
 
 		for (i = 0; i < 255; i++) {
 			f = pow ((i + 1) / 256.0, g);
-			inf = f*255 + 0.5;
+			inf = f * 255 + 0.5;
 			inf = bound (0, inf, 255);
 			vid_gamma[i] = inf;
 		}
 
 		VID_SetPalette (current_palette);
 
-		vid.recalc_refdef = 1;	// force a surface cache flush
+		vid.recalc_refdef = 1;			// force a surface cache flush
 	}
 }
 
@@ -331,10 +341,10 @@ VID_Gamma_f (void)
 static void
 ResetFrameBuffer (void)
 {
-	int 	tbuffersize, tcachesize;
-	
-	void	*vid_surfcache;
-	int 	mem, pwidth;
+	int         tbuffersize, tcachesize;
+
+	void       *vid_surfcache;
+	int         mem, pwidth;
 
 	// Calculate the sizes we want first
 	tbuffersize = vid.width * vid.height * sizeof (*d_pzbuffer);
@@ -343,13 +353,11 @@ ResetFrameBuffer (void)
 	if (x_framebuffer[0]) {
 		XDestroyImage (x_framebuffer[0]);
 	}
-
 	// Free the old z-buffer
 	if (d_pzbuffer) {
 		free (d_pzbuffer);
 		d_pzbuffer = NULL;
 	}
-	
 	// Free the old surface cache
 	vid_surfcache = D_SurfaceCacheAddress ();
 	if (vid_surfcache) {
@@ -357,13 +365,11 @@ ResetFrameBuffer (void)
 		free (vid_surfcache);
 		vid_surfcache = NULL;
 	}
-
 	// Allocate the new z-buffer
 	d_pzbuffer = calloc (tbuffersize, 1);
 	if (!d_pzbuffer) {
 		Sys_Error ("Not enough memory for video mode\n");
 	}
-
 	// Allocate the new surface cache; free the z-buffer if we fail
 	vid_surfcache = calloc (tcachesize, 1);
 	if (!vid_surfcache) {
@@ -378,11 +384,11 @@ ResetFrameBuffer (void)
 
 	if (pwidth == 3)
 		pwidth = 4;
-	mem = ((vid.width * pwidth + 7) &~ 7) * vid.height;
+	mem = ((vid.width * pwidth + 7) & ~7) * vid.height;
 
 	x_framebuffer[0] = XCreateImage (x_disp, x_vis, x_visinfo->depth,
-									ZPixmap, 0,	malloc (mem), vid.width,
-									vid.height,	32, 0);
+									 ZPixmap, 0, malloc (mem), vid.width,
+									 vid.height, 32, 0);
 
 	if (!x_framebuffer[0]) {
 		Sys_Error ("VID: XCreateImage failed\n");
@@ -392,13 +398,13 @@ ResetFrameBuffer (void)
 static void
 ResetSharedFrameBuffers (void)
 {
-	int 	tbuffersize, tcachesize;
-	void	*vid_surfcache;
-	
-	int size;
-	int key;
-	int minsize = getpagesize ();
-	int frm;
+	int         tbuffersize, tcachesize;
+	void       *vid_surfcache;
+
+	int         size;
+	int         key;
+	int         minsize = getpagesize ();
+	int         frm;
 
 	// Calculate the sizes we want first
 	tbuffersize = vid.width * vid.height * sizeof (*d_pzbuffer);
@@ -409,7 +415,6 @@ ResetSharedFrameBuffers (void)
 		free (d_pzbuffer);
 		d_pzbuffer = NULL;
 	}
-	
 	// Free the old surface cache
 	vid_surfcache = D_SurfaceCacheAddress ();
 	if (vid_surfcache) {
@@ -417,13 +422,11 @@ ResetSharedFrameBuffers (void)
 		free (vid_surfcache);
 		vid_surfcache = NULL;
 	}
-
 	// Allocate the new z-buffer
 	d_pzbuffer = calloc (tbuffersize, 1);
 	if (!d_pzbuffer) {
 		Sys_Error ("Not enough memory for video mode\n");
 	}
-
 	// Allocate the new surface cache; free the z-buffer if we fail
 	vid_surfcache = calloc (tcachesize, 1);
 	if (!vid_surfcache) {
@@ -437,16 +440,15 @@ ResetSharedFrameBuffers (void)
 	for (frm = 0; frm < 2; frm++) {
 
 		// free up old frame buffer memory
-		if (x_framebuffer[frm])	{
+		if (x_framebuffer[frm]) {
 			XShmDetach (x_disp, &x_shminfo[frm]);
 			free (x_framebuffer[frm]);
 			shmdt (x_shminfo[frm].shmaddr);
 		}
-
 		// create the image
 		x_framebuffer[frm] = XShmCreateImage (x_disp, x_vis, x_visinfo->depth,
-												ZPixmap, 0,	&x_shminfo[frm],
-												vid.width, vid.height );
+											  ZPixmap, 0, &x_shminfo[frm],
+											  vid.width, vid.height);
 
 		// grab shared memory
 		size = x_framebuffer[frm]->bytes_per_line * x_framebuffer[frm]->height;
@@ -454,16 +456,16 @@ ResetSharedFrameBuffers (void)
 		if (size < minsize)
 			Sys_Error ("VID: Window must use at least %d bytes\n", minsize);
 
-		key = random();
-		x_shminfo[frm].shmid = shmget((key_t)key, size, IPC_CREAT|0777);
-		if (x_shminfo[frm].shmid==-1)
+		key = random ();
+		x_shminfo[frm].shmid = shmget ((key_t) key, size, IPC_CREAT | 0777);
+		if (x_shminfo[frm].shmid == -1)
 			Sys_Error ("VID: Could not get any shared memory\n");
 
 		// attach to the shared memory segment
 		x_shminfo[frm].shmaddr = (void *) shmat (x_shminfo[frm].shmid, 0, 0);
 
 		printf ("VID: shared memory id=%d, addr=0x%lx\n", x_shminfo[frm].shmid,
-			(long) x_shminfo[frm].shmaddr);
+				(long) x_shminfo[frm].shmaddr);
 
 		x_framebuffer[frm]->data = x_shminfo[frm].shmaddr;
 
@@ -478,9 +480,9 @@ ResetSharedFrameBuffers (void)
 }
 
 static void
-event_shm (XEvent *event)
+event_shm (XEvent * event)
 {
-    if (doShm)
+	if (doShm)
 		oktodraw = true;
 }
 
@@ -494,16 +496,17 @@ event_shm (XEvent *event)
 void
 VID_Init (unsigned char *palette)
 {
-	int 		pnum, i;
+	int         pnum, i;
 	XVisualInfo template;
-	int 		num_visuals;
-	int 		template_mask;
+	int         num_visuals;
+	int         template_mask;
 
 	VID_GetWindowSize (320, 200);
 
-//	plugin_load ("in_x11.so");
-//	Cmd_AddCommand ("gamma", VID_Gamma_f);
-	for (i=0; i < 256; i++)	vid_gamma[i] = i;
+//  plugin_load ("in_x11.so");
+//  Cmd_AddCommand ("gamma", VID_Gamma_f);
+	for (i = 0; i < 256; i++)
+		vid_gamma[i] = i;
 
 	vid.width = vid_width->int_val;
 	vid.height = vid_height->int_val;
@@ -524,11 +527,12 @@ VID_Init (unsigned char *palette)
 
 	// specify a visual id
 	if ((pnum = COM_CheckParm ("-visualid"))) {
-		if (pnum >= com_argc-1)
+		if (pnum >= com_argc - 1)
 			Sys_Error ("VID: -visualid <id#>\n");
-		template.visualid = atoi (com_argv[pnum+1]);
+		template.visualid = atoi (com_argv[pnum + 1]);
 		template_mask = VisualIDMask;
-	} else {	// If not specified, use default visual
+	} else {							// If not specified, use default
+										// visual
 		template.visualid =
 			XVisualIDFromVisual (XDefaultVisual (x_disp, x_screen));
 		template_mask = VisualIDMask;
@@ -553,14 +557,14 @@ VID_Init (unsigned char *palette)
 	}
 
 	if (verbose) {
-		printf ("Using visualid %d:\n",	(int) x_visinfo->visualid);
-		printf ("	class %d\n",		x_visinfo->class);
-		printf ("	screen %d\n",		x_visinfo->screen);
-		printf ("	depth %d\n",		x_visinfo->depth);
-		printf ("	red_mask 0x%x\n",	(int) x_visinfo->red_mask);
+		printf ("Using visualid %d:\n", (int) x_visinfo->visualid);
+		printf ("	class %d\n", x_visinfo->class);
+		printf ("	screen %d\n", x_visinfo->screen);
+		printf ("	depth %d\n", x_visinfo->depth);
+		printf ("	red_mask 0x%x\n", (int) x_visinfo->red_mask);
 		printf ("	green_mask 0x%x\n", (int) x_visinfo->green_mask);
-		printf ("	blue_mask 0x%x\n",	(int) x_visinfo->blue_mask);
-		printf ("	colormap_size %d\n",x_visinfo->colormap_size);
+		printf ("	blue_mask 0x%x\n", (int) x_visinfo->blue_mask);
+		printf ("	colormap_size %d\n", x_visinfo->colormap_size);
 		printf ("	bits_per_rgb %d\n", x_visinfo->bits_per_rgb);
 	}
 
@@ -581,21 +585,21 @@ VID_Init (unsigned char *palette)
 			XSetWindowColormap (x_disp, x_win, x_cmap);
 		}
 	}
-
 	// create the GC
 	{
-		XGCValues	xgcvalues;
-		int 		valuemask = GCGraphicsExposures;
+		XGCValues   xgcvalues;
+		int         valuemask = GCGraphicsExposures;
 
 		xgcvalues.graphics_exposures = False;
-		x_gc = XCreateGC (x_disp, x_win, valuemask, &xgcvalues );
+		x_gc = XCreateGC (x_disp, x_win, valuemask, &xgcvalues);
 	}
 
 	x11_grab_keyboard ();
 
 	// wait for first exposure event
 	{
-		XEvent	event;
+		XEvent      event;
+
 		do {
 			XNextEvent (x_disp, &event);
 			if (event.type == Expose && !event.xexpose.count)
@@ -606,8 +610,8 @@ VID_Init (unsigned char *palette)
 
 	// even if MITSHM is available, make sure it's a local connection
 	if (XShmQueryExtension (x_disp)) {
-		char *displayname;
-		char *d;
+		char       *displayname;
+		char       *d;
 
 		doShm = true;
 
@@ -615,7 +619,7 @@ VID_Init (unsigned char *palette)
 			if ((d = strchr (displayname, ':')))
 				*d = '\0';
 
-			if (!(!strcasecmp(displayname, "unix") || !*displayname))
+			if (!(!strcasecmp (displayname, "unix") || !*displayname))
 				doShm = false;
 		}
 	}
@@ -637,7 +641,7 @@ VID_Init (unsigned char *palette)
 	vid.conheight = vid.height;
 	vid.aspect = ((float) vid.height / (float) vid.width) * (320.0 / 240.0);
 
-//	XSynchronize (x_disp, False);
+//  XSynchronize (x_disp, False);
 	x11_add_event (x_shmeventtype, event_shm);
 }
 
@@ -658,14 +662,14 @@ VID_ShiftPalette (unsigned char *p)
 void
 VID_SetPalette (unsigned char *palette)
 {
-	int 	i;
-	XColor	colors[256];
+	int         i;
+	XColor      colors[256];
 
 	for (i = 0; i < 256; i++) {
-		st2d_8to16table[i] = xlib_rgb16 (palette[i*3], palette[i*3+1],
-											palette[i*3+2]);
-		st2d_8to24table[i] = xlib_rgb24 (palette[i*3], palette[i*3+1],
-											palette[i*3+2]);
+		st2d_8to16table[i] = xlib_rgb16 (palette[i * 3], palette[i * 3 + 1],
+										 palette[i * 3 + 2]);
+		st2d_8to24table[i] = xlib_rgb24 (palette[i * 3], palette[i * 3 + 1],
+										 palette[i * 3 + 2]);
 	}
 
 	if (x_visinfo->class == PseudoColor && x_visinfo->depth == 8) {
@@ -673,11 +677,11 @@ VID_SetPalette (unsigned char *palette)
 			memcpy (current_palette, palette, 768);
 		}
 		for (i = 0; i < 256; i++) {
-			colors[i].pixel	= i;
-			colors[i].flags	= DoRed|DoGreen|DoBlue;
-			colors[i].red	= vid_gamma[palette[i*3]] * 256;
-			colors[i].green	= vid_gamma[palette[i*3+1]] * 256;
-			colors[i].blue	= vid_gamma[palette[i*3+2]] * 256;
+			colors[i].pixel = i;
+			colors[i].flags = DoRed | DoGreen | DoBlue;
+			colors[i].red = vid_gamma[palette[i * 3]] * 256;
+			colors[i].green = vid_gamma[palette[i * 3 + 1]] * 256;
+			colors[i].blue = vid_gamma[palette[i * 3 + 2]] * 256;
 		}
 		XStoreColors (x_disp, x_cmap, colors, 256);
 	}
@@ -699,9 +703,9 @@ VID_Shutdown (void)
 	}
 }
 
-static int	config_notify = 0;
-static int	config_notify_width;
-static int	config_notify_height;
+static int  config_notify = 0;
+static int  config_notify_width;
+static int  config_notify_height;
 
 /*
 	VID_Update
@@ -715,7 +719,7 @@ VID_Update (vrect_t *rects)
 	if (config_notify) {
 		fprintf (stderr, "config notify\n");
 		config_notify = 0;
-		vid.width = config_notify_width &~ 7;
+		vid.width = config_notify_width & ~7;
 		vid.height = config_notify_height;
 
 		if (doShm)
@@ -729,7 +733,7 @@ VID_Update (vrect_t *rects)
 		vid.conwidth = vid.width;
 		vid.conheight = vid.height;
 		vid.conrowbytes = vid.rowbytes;
-		vid.recalc_refdef = 1;	/* force a surface cache flush */
+		vid.recalc_refdef = 1;			/* force a surface cache flush */
 		Con_CheckResize ();
 		Con_Clear_f ();
 		return;
@@ -739,20 +743,18 @@ VID_Update (vrect_t *rects)
 		switch (x_visinfo->depth) {
 			case 16:
 				st2_fixup (x_framebuffer[current_framebuffer],
-							rects->x, rects->y, rects->width,
-							rects->height);
+						   rects->x, rects->y, rects->width, rects->height);
 				break;
 			case 24:
 				st3_fixup (x_framebuffer[current_framebuffer],
-							rects->x, rects->y, rects->width,
-							rects->height);
+						   rects->x, rects->y, rects->width, rects->height);
 				break;
 		}
 		if (doShm) {
 			if (!XShmPutImage (x_disp, x_win, x_gc,
-								x_framebuffer[current_framebuffer],
-								rects->x, rects->y,	rects->x, rects->y,
-								rects->width, rects->height, True)) {
+							   x_framebuffer[current_framebuffer],
+							   rects->x, rects->y, rects->x, rects->y,
+							   rects->width, rects->height, True)) {
 				Sys_Error ("VID_Update: XShmPutImage failed\n");
 			}
 			oktodraw = false;
@@ -796,21 +798,22 @@ VID_DitherOff (void)
 	}
 }
 
-void    
+void
 VID_LockBuffer (void)
-{       
-}       
+{
+}
 
 void
 VID_UnlockBuffer (void)
-{       
-}       
+{
+}
 
 void
 VID_SetCaption (char *text)
 {
 	if (text && *text) {
-		char *temp = strdup (text);
+		char       *temp = strdup (text);
+
 		x11_set_caption (va ("%s %s: %s", PROGRAM, VERSION, temp));
 		free (temp);
 	} else {

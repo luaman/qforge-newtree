@@ -36,23 +36,24 @@
 #include "qtypes.h"
 #include "quakefs.h"
 
-byte	*pcx_rgb;
+byte       *pcx_rgb;
 
 /*
 	LoadPCX
 */
-void LoadPCX (QFile *f)
+void
+LoadPCX (QFile *f)
 {
-	pcx_t	*pcx, pcxbuf;
-	byte	palette[768];
-	byte	*pix;
-	int		x, y;
-	int		dataByte, runLength;
-	int		count;
+	pcx_t      *pcx, pcxbuf;
+	byte        palette[768];
+	byte       *pix;
+	int         x, y;
+	int         dataByte, runLength;
+	int         count;
 
-	//
+	// 
 	// parse the PCX file
-	//
+	// 
 	Qread (f, &pcxbuf, sizeof (pcxbuf));
 
 	pcx = &pcxbuf;
@@ -69,13 +70,10 @@ void LoadPCX (QFile *f)
 	if (pcx->manufacturer != 0x0a
 		|| pcx->version != 5
 		|| pcx->encoding != 1
-		|| pcx->bits_per_pixel != 8
-		|| pcx->xmax >= 320
-		|| pcx->ymax >= 256) {
+		|| pcx->bits_per_pixel != 8 || pcx->xmax >= 320 || pcx->ymax >= 256) {
 		Con_Printf ("Bad pcx file\n");
 		return;
 	}
-
 	// seek to palette
 	Qseek (f, -768, SEEK_END);
 	Qread (f, palette, 768);
@@ -86,11 +84,11 @@ void LoadPCX (QFile *f)
 	pcx_rgb = malloc (count * 4);
 
 	for (y = 0; y <= pcx->ymax; y++) {
-		pix = pcx_rgb + 4*y*(pcx->xmax+1);
+		pix = pcx_rgb + 4 * y * (pcx->xmax + 1);
 		for (x = 0; x <= pcx->ymax;) {
 			dataByte = Qgetc (f);
 
-			if((dataByte & 0xC0) == 0xC0) {
+			if ((dataByte & 0xC0) == 0xC0) {
 				runLength = dataByte & 0x3F;
 				dataByte = Qgetc (f);
 			} else {

@@ -158,13 +158,16 @@ static int
 find_intersect (int face1, vec3_t x1, int face2, vec3_t x2, vec3_t y)
 {
 	vec3_t      n;						// normal to the plane formed by the
-										// eye and the two points on the cube.
+
+	// eye and the two points on the cube.
 
 	vec3_t      x = { 0, 0, 0 };		// point on cube edge of adjoining
-										// faces. always on an axis plane.
+
+	// faces. always on an axis plane.
 
 	vec3_t      v = { 0, 0, 0 };		// direction vector of cube edge.
-										// always +ve
+
+	// always +ve
 
 	vec_t       x_n, v_n;				// x.n and v.n
 	int         axis;
@@ -217,30 +220,30 @@ set_vertex (struct box_def *box, int face, int ind, vec3_t v)
 	VectorCopy (v, box->face[face].poly.verts[ind]);
 	VectorAdd (v, r_refdef.vieworg, box->face[face].poly.verts[ind]);
 	switch (face) {
-	case 0:
-		box->face[face].poly.verts[ind][3] = (1024 - v[1]) / 2048;
-		box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
-		break;
-	case 1:
-		box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
-		box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
-		break;
-	case 2:
-		box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
-		box->face[face].poly.verts[ind][4] = (1024 + v[1]) / 2048;
-		break;
-	case 3:
-		box->face[face].poly.verts[ind][3] = (1024 + v[1]) / 2048;
-		box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
-		break;
-	case 4:
-		box->face[face].poly.verts[ind][3] = (1024 - v[0]) / 2048;
-		box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
-		break;
-	case 5:
-		box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
-		box->face[face].poly.verts[ind][4] = (1024 - v[1]) / 2048;
-		break;
+		case 0:
+			box->face[face].poly.verts[ind][3] = (1024 - v[1]) / 2048;
+			box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+			break;
+		case 1:
+			box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
+			box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+			break;
+		case 2:
+			box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
+			box->face[face].poly.verts[ind][4] = (1024 + v[1]) / 2048;
+			break;
+		case 3:
+			box->face[face].poly.verts[ind][3] = (1024 + v[1]) / 2048;
+			box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+			break;
+		case 4:
+			box->face[face].poly.verts[ind][3] = (1024 - v[0]) / 2048;
+			box->face[face].poly.verts[ind][4] = (1024 - v[2]) / 2048;
+			break;
+		case 5:
+			box->face[face].poly.verts[ind][3] = (1024 + v[0]) / 2048;
+			box->face[face].poly.verts[ind][4] = (1024 - v[1]) / 2048;
+			break;
 	}
 }
 
@@ -365,172 +368,182 @@ process_corners (struct box_def *box)
 	}
 
 	switch (box->face_count) {
-	case 1:
-	case 2:
-	case 8:
-		// no corners
-		return;
-	case 3:
-		// one corner, no edges
-		{
-			vec3_t      v;
-
-			find_cube_vertex (visit[0].face, visit[1].face, visit[2].face, v);
-			insert_cube_vertices (box, visit[0], 1, v);
-			insert_cube_vertices (box, visit[1], 1, v);
-			insert_cube_vertices (box, visit[2], 1, v);
-		}
-		break;
-	case 4:
-		if (max_visit > 1)
+		case 1:
+		case 2:
+		case 8:
+			// no corners
 			return;
-		if (abs (visit[2].face - visit[0].face) == 3
-			&& abs (visit[3].face - visit[1].face) == 3) {
-			// 4 vertices
-			int         sum, diff;
-			vec3_t      v[4];
+		case 3:
+			// one corner, no edges
+			{
+				vec3_t      v;
 
-			sum = visit[0].face + visit[1].face + visit[2].face + visit[3].face;
-			diff = visit[1].face - visit[0].face;
-			sum %= 3;
-			diff = (diff + 6) % 6;
-
-			center = faces_table[sum][diff];
-			for (i = 0; i < 4; i++) {
-				find_cube_vertex (visit[i].face, visit[(i + 1) & 3].face,
-								  center, v[i]);
-				add_vertex (box, center, v[i]);
+				find_cube_vertex (visit[0].face, visit[1].face, visit[2].face,
+								  v);
+				insert_cube_vertices (box, visit[0], 1, v);
+				insert_cube_vertices (box, visit[1], 1, v);
+				insert_cube_vertices (box, visit[2], 1, v);
 			}
-			for (i = 0; i < 4; i++)
-				insert_cube_vertices (box, visit[i], 2, v[i], v[(i - 1) & 3]);
-		} else {
-			// 2 vertices
-			int         l_f, t_f, r_f, b_f;
-			vec3_t      v_l, v_r;
-
-			if (abs (visit[2].face - visit[0].face) == 3) {
-				l_f = 0;
-				t_f = 1;
-				r_f = 2;
-				b_f = 3;
-			} else if (abs (visit[3].face - visit[1].face) == 3) {
-				l_f = 1;
-				t_f = 2;
-				r_f = 3;
-				b_f = 0;
-			} else {
+			break;
+		case 4:
+			if (max_visit > 1)
 				return;
+			if (abs (visit[2].face - visit[0].face) == 3
+				&& abs (visit[3].face - visit[1].face) == 3) {
+				// 4 vertices
+				int         sum, diff;
+				vec3_t      v[4];
+
+				sum =
+					visit[0].face + visit[1].face + visit[2].face +
+					visit[3].face;
+				diff = visit[1].face - visit[0].face;
+				sum %= 3;
+				diff = (diff + 6) % 6;
+
+				center = faces_table[sum][diff];
+				for (i = 0; i < 4; i++) {
+					find_cube_vertex (visit[i].face, visit[(i + 1) & 3].face,
+									  center, v[i]);
+					add_vertex (box, center, v[i]);
+				}
+				for (i = 0; i < 4; i++)
+					insert_cube_vertices (box, visit[i], 2, v[i],
+										  v[(i - 1) & 3]);
+			} else {
+				// 2 vertices
+				int         l_f, t_f, r_f, b_f;
+				vec3_t      v_l, v_r;
+
+				if (abs (visit[2].face - visit[0].face) == 3) {
+					l_f = 0;
+					t_f = 1;
+					r_f = 2;
+					b_f = 3;
+				} else if (abs (visit[3].face - visit[1].face) == 3) {
+					l_f = 1;
+					t_f = 2;
+					r_f = 3;
+					b_f = 0;
+				} else {
+					return;
+				}
+				find_cube_vertex (visit[l_f].face, visit[t_f].face,
+								  visit[b_f].face, v_l);
+				find_cube_vertex (visit[r_f].face, visit[t_f].face,
+								  visit[b_f].face, v_r);
+
+				insert_cube_vertices (box, visit[t_f], 2, v_r, v_l);
+				insert_cube_vertices (box, visit[b_f], 2, v_l, v_r);
+
+				insert_cube_vertices (box, visit[l_f], 1, v_l);
+				insert_cube_vertices (box, visit[r_f], 1, v_r);
 			}
-			find_cube_vertex (visit[l_f].face, visit[t_f].face, visit[b_f].face,
-							  v_l);
-			find_cube_vertex (visit[r_f].face, visit[t_f].face, visit[b_f].face,
-							  v_r);
+			break;
+		case 5:
+			if (max_visit > 1) {
+				// one vertex
+				vec3_t      v;
 
-			insert_cube_vertices (box, visit[t_f], 2, v_r, v_l);
-			insert_cube_vertices (box, visit[b_f], 2, v_l, v_r);
+				for (i = 0; i < 4; i++) {
+					// don't need to check the 5th visit
+					if (visit[(i + 2) % 5].face == visit[(i + 4) % 5].face)
+						break;
+				}
+				find_cube_vertex (visit[i].face, visit[(i + 1) % 5].face,
+								  visit[(i + 2) % 5].face, v);
+				insert_cube_vertices (box, visit[i], 1, v);
+				insert_cube_vertices (box, visit[(i + 1) % 5], 1, v);
+				insert_cube_vertices (box, visit[(i + 4) % 5], 1, v);
 
-			insert_cube_vertices (box, visit[l_f], 1, v_l);
-			insert_cube_vertices (box, visit[r_f], 1, v_r);
-		}
-		break;
-	case 5:
-		if (max_visit > 1) {
-			// one vertex
-			vec3_t      v;
+			} else {
+				// 3 vertices
+				unsigned int sel =
+					(((abs (visit[2].face - visit[0].face) == 3) << 2) |
+					 ((abs (visit[3].face - visit[1].face) == 3) << 1)
+					 | ((abs (visit[4].face - visit[2].face) == 3) << 0));
+				vec3_t      v[3];
 
-			for (i = 0; i < 4; i++) {
-				// don't need to check the 5th visit
-				if (visit[(i + 2) % 5].face == visit[(i + 4) % 5].face)
+				center = faces_bit_magic[sel];
+				// printf ("%02o %d  %d %d %d %d %d\n", sel, center,
+				// visit[0].face,
+				// visit[1].face, visit[2].face, visit[3].face,
+				// visit[4].face);
+				for (i = 0; i < 3; i++)
+					find_cube_vertex (visit[center].face,
+									  visit[(center + 1 + i) % 5].face,
+									  visit[(center + 2 + i) % 5].face, v[i]);
+				insert_cube_vertices (box, visit[center], 3, v[0], v[1], v[2]);
+				insert_cube_vertices (box, visit[(center + 1) % 5], 1, v[0]);
+				insert_cube_vertices (box, visit[(center + 2) % 5], 2, v[1],
+									  v[0]);
+				insert_cube_vertices (box, visit[(center + 3) % 5], 2, v[2],
+									  v[1]);
+				insert_cube_vertices (box, visit[(center + 4) % 5], 1, v[2]);
+			}
+			break;
+		case 6:
+			if (max_visit > 2)
+				return;
+			for (i = 0; i < 5; i++) {
+				// don't need to check the last point
+				if (visit[(i + 3) % 6].face == visit[(i + 5) % 6].face
+					|| visit[(i + 2) % 6].face == visit[(i + 5) % 6].face)
 					break;
 			}
-			find_cube_vertex (visit[i].face, visit[(i + 1) % 5].face,
-							  visit[(i + 2) % 5].face, v);
-			insert_cube_vertices (box, visit[i], 1, v);
-			insert_cube_vertices (box, visit[(i + 1) % 5], 1, v);
-			insert_cube_vertices (box, visit[(i + 4) % 5], 1, v);
+			if (visit[(i + 3) % 6].face == visit[(i + 5) % 6].face) {
+				// adjacant vertices
+				vec3_t      v[2];
 
-		} else {
-			// 3 vertices
-			unsigned int sel =
-				(((abs (visit[2].face - visit[0].face) == 3) << 2) |
-				 ((abs (visit[3].face - visit[1].face) == 3) << 1)
-				 | ((abs (visit[4].face - visit[2].face) == 3) << 0));
-			vec3_t      v[3];
+				find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face,
+								  visit[(i + 2) % 6].face, v[0]);
+				find_cube_vertex (visit[(i + 1) % 6].face,
+								  visit[(i + 2) % 6].face,
+								  visit[(i + 3) % 6].face, v[1]);
 
-			center = faces_bit_magic[sel];
-			//printf ("%02o %d  %d %d %d %d %d\n", sel, center, visit[0].face,
-			//		visit[1].face, visit[2].face, visit[3].face, visit[4].face);
-			for (i = 0; i < 3; i++)
-				find_cube_vertex (visit[center].face,
-								  visit[(center + 1 + i) % 5].face,
-								  visit[(center + 2 + i) % 5].face, v[i]);
-			insert_cube_vertices (box, visit[center], 3, v[0], v[1], v[2]);
-			insert_cube_vertices (box, visit[(center + 1) % 5], 1, v[0]);
-			insert_cube_vertices (box, visit[(center + 2) % 5], 2, v[1], v[0]);
-			insert_cube_vertices (box, visit[(center + 3) % 5], 2, v[2], v[1]);
-			insert_cube_vertices (box, visit[(center + 4) % 5], 1, v[2]);
-		}
-		break;
-	case 6:
-		if (max_visit > 2)
-			return;
-		for (i = 0; i < 5; i++) {
-			// don't need to check the last point
-			if (visit[(i + 3) % 6].face == visit[(i + 5) % 6].face
-				|| visit[(i + 2) % 6].face == visit[(i + 5) % 6].face)
-				break;
-		}
-		if (visit[(i + 3) % 6].face == visit[(i + 5) % 6].face) {
-			// adjacant vertices
-			vec3_t      v[2];
+				insert_cube_vertices (box, visit[(i + 5) % 6], 2, v[2], v[1]);
 
-			find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face,
-							  visit[(i + 2) % 6].face, v[0]);
-			find_cube_vertex (visit[(i + 1) % 6].face, visit[(i + 2) % 6].face,
-							  visit[(i + 3) % 6].face, v[1]);
+				insert_cube_vertices (box, visit[i], 1, v[0]);
+				insert_cube_vertices (box, visit[(i + 1) % 6], 2, v[1], v[0]);
+				insert_cube_vertices (box, visit[(i + 2) % 6], 1, v[1]);
+			} else {
+				// opposing vertices
+				vec3_t      v[2];
 
-			insert_cube_vertices (box, visit[(i + 5) % 6], 2, v[2], v[1]);
+				find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face,
+								  visit[(i + 2) % 6].face, v[0]);
+				find_cube_vertex (visit[(i + 3) % 6].face,
+								  visit[(i + 4) % 6].face,
+								  visit[(i + 5) % 6].face, v[1]);
 
-			insert_cube_vertices (box, visit[i], 1, v[0]);
-			insert_cube_vertices (box, visit[(i + 1) % 6], 2, v[1], v[0]);
-			insert_cube_vertices (box, visit[(i + 2) % 6], 1, v[1]);
-		} else {
-			// opposing vertices
-			vec3_t      v[2];
+				insert_cube_vertices (box, visit[i], 1, v[0]);
+				insert_cube_vertices (box, visit[(i + 1) % 6], 1, v[0]);
 
-			find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face,
-							  visit[(i + 2) % 6].face, v[0]);
-			find_cube_vertex (visit[(i + 3) % 6].face, visit[(i + 4) % 6].face,
-							  visit[(i + 5) % 6].face, v[1]);
+				insert_cube_vertices (box, visit[(i + 3) % 6], 1, v[1]);
+				insert_cube_vertices (box, visit[(i + 4) % 6], 1, v[1]);
 
-			insert_cube_vertices (box, visit[i], 1, v[0]);
-			insert_cube_vertices (box, visit[(i + 1) % 6], 1, v[0]);
+				insert_cube_vertices (box, visit[(i + 2) % 6], 1, v[1]);
+				insert_cube_vertices (box, visit[(i + 5) % 6], 1, v[0]);
+			}
+			break;
+		case 7:
+			for (i = 0; i < 6; i++) {
+				// don't need to check the last point
+				if (visit[(i + 2) % 6].face == visit[(i + 4) % 6].face
+					&& visit[(i + 4) % 6].face == visit[(i + 6) % 6].face)
+					break;
+			}
+			{
+				vec3_t      v;
 
-			insert_cube_vertices (box, visit[(i + 3) % 6], 1, v[1]);
-			insert_cube_vertices (box, visit[(i + 4) % 6], 1, v[1]);
+				find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face,
+								  visit[(i + 2) % 6].face, v);
 
-			insert_cube_vertices (box, visit[(i + 2) % 6], 1, v[1]);
-			insert_cube_vertices (box, visit[(i + 5) % 6], 1, v[0]);
-		}
-		break;
-	case 7:
-		for (i = 0; i < 6; i++) {
-			// don't need to check the last point
-			if (visit[(i + 2) % 6].face == visit[(i + 4) % 6].face
-				&& visit[(i + 4) % 6].face == visit[(i + 6) % 6].face)
-				break;
-		}
-		{
-			vec3_t      v;
-
-			find_cube_vertex (visit[i].face, visit[(i + 1) % 6].face,
-							  visit[(i + 2) % 6].face, v);
-
-			insert_cube_vertices (box, visit[i], 1, v);
-			insert_cube_vertices (box, visit[(i + 1) % 7], 1, v);
-			insert_cube_vertices (box, visit[(i + 6) % 7], 1, v);
-		}
-		break;
+				insert_cube_vertices (box, visit[i], 1, v);
+				insert_cube_vertices (box, visit[(i + 1) % 7], 1, v);
+				insert_cube_vertices (box, visit[(i + 6) % 7], 1, v);
+			}
+			break;
 	}
 }
 

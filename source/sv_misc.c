@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "client.h"
 #include "server.h"
@@ -42,12 +42,12 @@
 client_static_t cls;
 
 void
-Draw_BeginDisc(void)
+Draw_BeginDisc (void)
 {
 }
 
 void
-Draw_EndDisc(void)
+Draw_EndDisc (void)
 {
 }
 

@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #ifndef USE_INTEL_ASM
@@ -42,7 +42,6 @@
 // FIXME: make into one big structure, like cl or sv
 // FIXME: do separately for refresh engine and driver
 
-int	r_bmodelactive;
+int         r_bmodelactive;
 
-#endif	// !USE_INTEL_ASM
-
+#endif // !USE_INTEL_ASM

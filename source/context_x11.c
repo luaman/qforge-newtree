@@ -29,7 +29,7 @@
 	$Id$
 */
 
-#include <config.h>
+# include "config.h"
 
 #include <ctype.h>
 #include <sys/time.h>
@@ -68,19 +68,19 @@
 #include "cvar.h"
 #include "input.h"
 
-static void (*event_handlers[LASTEvent])	(XEvent *);
-qboolean	oktodraw = false;
-int 		x_shmeventtype;
+static void (*event_handlers[LASTEvent]) (XEvent *);
+qboolean    oktodraw = false;
+int         x_shmeventtype;
 
-static int	x_disp_ref_count = 0;
+static int  x_disp_ref_count = 0;
 
-Display		*x_disp = NULL;
-int			x_screen;
-Window		x_root = None;
-XVisualInfo	*x_visinfo;
-Visual		*x_vis;
-Window		x_win;
-Cursor		nullcursor = None;
+Display    *x_disp = NULL;
+int         x_screen;
+Window      x_root = None;
+XVisualInfo *x_visinfo;
+Visual     *x_vis;
+Window      x_win;
+Cursor      nullcursor = None;
 static Atom aWMDelete = 0;
 
 #define X_MASK (VisibilityChangeMask | StructureNotifyMask | ExposureMask)
@@ -89,21 +89,21 @@ static Atom aWMDelete = 0;
 static XF86VidModeModeInfo **vidmodes;
 static int  nummodes;
 #endif
-static int	hasvidmode = 0;
+static int  hasvidmode = 0;
 
-cvar_t	*vid_fullscreen;
-qboolean vid_fullscreen_active;
+cvar_t     *vid_fullscreen;
+qboolean    vid_fullscreen_active;
 
-static int xss_timeout;
-static int xss_interval;
-static int xss_blanking;
-static int xss_exposures;
+static int  xss_timeout;
+static int  xss_interval;
+static int  xss_blanking;
+static int  xss_exposures;
 
 qboolean
 x11_add_event (int event, void (*event_handler) (XEvent *))
 {
 	if (event >= LASTEvent) {
-		printf("event: %d, LASTEvent: %d\n", event, LASTEvent);
+		printf ("event: %d, LASTEvent: %d\n", event, LASTEvent);
 		return false;
 	}
 	if (event_handlers[event] != NULL)
@@ -128,10 +128,10 @@ x11_del_event (int event, void (*event_handler) (XEvent *))
 void
 x11_process_event (void)
 {
-	XEvent	x_event;
+	XEvent      x_event;
 
-	XNextEvent(x_disp, &x_event);
-	if ( x_event.type >= LASTEvent ) {
+	XNextEvent (x_disp, &x_event);
+	if (x_event.type >= LASTEvent) {
 		// FIXME: KLUGE!!!!!!
 		if (x_event.type == x_shmeventtype)
 			oktodraw = 1;
@@ -160,39 +160,40 @@ TragicDeath (int sig)
 	printf ("Received signal %d, exiting...\n", sig);
 	Sys_Quit ();
 	exit (sig);
-	//XCloseDisplay(x_disp);
-	//VID_Shutdown();
-	//Sys_Error("This death brought to you by the number %d\n", signal_num);
+	// XCloseDisplay(x_disp);
+	// VID_Shutdown();
+	// Sys_Error("This death brought to you by the number %d\n", signal_num);
 }
 
 void
 x11_open_display (void)
 {
-	if ( !x_disp ) {
+	if (!x_disp) {
 		x_disp = XOpenDisplay (NULL);
-		if ( !x_disp ) {
-			Sys_Error ("x11_open_display: Could not open display [%s]\n", XDisplayName( NULL ));
+		if (!x_disp) {
+			Sys_Error ("x11_open_display: Could not open display [%s]\n",
+					   XDisplayName (NULL));
 		}
 
 		x_screen = DefaultScreen (x_disp);
 		x_root = RootWindow (x_disp, x_screen);
 
 		// catch signals
-		signal(SIGHUP, TragicDeath);
-		signal(SIGINT, TragicDeath);
-		signal(SIGQUIT, TragicDeath);
-		signal(SIGILL, TragicDeath);
-		signal(SIGTRAP, TragicDeath);
-		signal(SIGIOT, TragicDeath);
-		signal(SIGBUS, TragicDeath);
-		/*	signal(SIGFPE, TragicDeath); */
-		signal(SIGSEGV, TragicDeath);
-		signal(SIGTERM, TragicDeath);
+		signal (SIGHUP, TragicDeath);
+		signal (SIGINT, TragicDeath);
+		signal (SIGQUIT, TragicDeath);
+		signal (SIGILL, TragicDeath);
+		signal (SIGTRAP, TragicDeath);
+		signal (SIGIOT, TragicDeath);
+		signal (SIGBUS, TragicDeath);
+		/* signal(SIGFPE, TragicDeath); */
+		signal (SIGSEGV, TragicDeath);
+		signal (SIGTERM, TragicDeath);
 
 		// for debugging only
-		XSynchronize( x_disp, True );
+		XSynchronize (x_disp, True);
 
-		x_disp_ref_count=1;
+		x_disp_ref_count = 1;
 	} else {
 		x_disp_ref_count++;
 	}
@@ -220,37 +221,38 @@ x11_close_display (void)
 void
 x11_create_null_cursor (void)
 {
-	Pixmap		cursormask;
-	XGCValues	xgc;
-	GC			gc;
-	XColor		dummycolour;
+	Pixmap      cursormask;
+	XGCValues   xgc;
+	GC          gc;
+	XColor      dummycolour;
 
 	if (nullcursor != None)
 		return;
 
 	cursormask = XCreatePixmap (x_disp, x_root, 1, 1, 1);
 	xgc.function = GXclear;
-	
-	gc =  XCreateGC (x_disp, cursormask, GCFunction, &xgc);
-	
+
+	gc = XCreateGC (x_disp, cursormask, GCFunction, &xgc);
+
 	XFillRectangle (x_disp, cursormask, gc, 0, 0, 1, 1);
-	
+
 	dummycolour.pixel = 0;
 	dummycolour.red = 0;
 	dummycolour.flags = 04;
 	nullcursor = XCreatePixmapCursor (x_disp, cursormask, cursormask,
-										&dummycolour,&dummycolour, 0, 0);
-	XFreePixmap (x_disp,cursormask);
-	XFreeGC (x_disp,gc);
+									  &dummycolour, &dummycolour, 0, 0);
+	XFreePixmap (x_disp, cursormask);
+	XFreeGC (x_disp, gc);
 	XDefineCursor (x_disp, x_win, nullcursor);
 }
 
 void
 x11_set_vidmode (int width, int height)
 {
-	const char *str = getenv("MESA_GLX_FX");
+	const char *str = getenv ("MESA_GLX_FX");
+
 	if (str && *str != 'd') {
-		if (tolower(*str) == 'w') {
+		if (tolower (*str) == 'w') {
 			Cvar_Set (vid_fullscreen, "0");
 		} else {
 			Cvar_Set (vid_fullscreen, "1");
@@ -258,33 +260,32 @@ x11_set_vidmode (int width, int height)
 	}
 
 	XGetScreenSaver (x_disp, &xss_timeout, &xss_interval, &xss_blanking,
-					&xss_exposures);
-	XSetScreenSaver (x_disp, 0, xss_interval, xss_blanking,
-					xss_exposures);
+					 &xss_exposures);
+	XSetScreenSaver (x_disp, 0, xss_interval, xss_blanking, xss_exposures);
 
 #ifdef HAVE_VIDMODE
-	if (!(hasvidmode = VID_CheckVMode(x_disp, NULL, NULL))) {
+	if (!(hasvidmode = VID_CheckVMode (x_disp, NULL, NULL))) {
 		Cvar_Set (vid_fullscreen, "0");
 		return;
 	}
 
-	XF86VidModeGetAllModeLines(x_disp, x_screen, &nummodes, &vidmodes);
+	XF86VidModeGetAllModeLines (x_disp, x_screen, &nummodes, &vidmodes);
 
 	if (vid_fullscreen->int_val) {
-		int i;
-		int best_mode = 0, best_x = INT_MAX, best_y = INT_MAX;
+		int         i;
+		int         best_mode = 0, best_x = INT_MAX, best_y = INT_MAX;
 
 		for (i = 0; i < nummodes; i++) {
-			if ((best_x > vidmodes[i]->hdisplay) || 
-					(best_y > vidmodes[i]->vdisplay)) {
-				if ((vidmodes[i]->hdisplay >= width) && 
-						(vidmodes[i]->vdisplay >= height)) {
+			if ((best_x > vidmodes[i]->hdisplay) ||
+				(best_y > vidmodes[i]->vdisplay)) {
+				if ((vidmodes[i]->hdisplay >= width) &&
+					(vidmodes[i]->vdisplay >= height)) {
 					best_mode = i;
 					best_x = vidmodes[i]->hdisplay;
 					best_y = vidmodes[i]->vdisplay;
 				}
 			}
-			printf("%dx%d\n", vidmodes[i]->hdisplay, vidmodes[i]->vdisplay);
+			printf ("%dx%d\n", vidmodes[i]->hdisplay, vidmodes[i]->vdisplay);
 		}
 		XF86VidModeSwitchToMode (x_disp, x_screen, vidmodes[best_mode]);
 		x11_force_view_port ();
@@ -303,26 +304,26 @@ void
 x11_create_window (int width, int height)
 {
 	XSetWindowAttributes attr;
-	XClassHint			*ClassHint;
-	XSizeHints			*SizeHints;
-	char				*resname;
-	unsigned long		mask;
+	XClassHint *ClassHint;
+	XSizeHints *SizeHints;
+	char       *resname;
+	unsigned long mask;
 
 	/* window attributes */
 	attr.background_pixel = 0;
 	attr.border_pixel = 0;
-	attr.colormap = XCreateColormap(x_disp, x_root, x_vis, AllocNone);
+	attr.colormap = XCreateColormap (x_disp, x_root, x_vis, AllocNone);
 	attr.event_mask = X_MASK;
 	mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
 
 	if (hasvidmode && vid_fullscreen->int_val) {
-		attr.override_redirect=1;
-		mask|=CWOverrideRedirect;
+		attr.override_redirect = 1;
+		mask |= CWOverrideRedirect;
 	}
 
 	x_win = XCreateWindow (x_disp, x_root, 0, 0, width, height,
-							0, x_visinfo->depth, InputOutput,
-							x_vis, mask, &attr);
+						   0, x_visinfo->depth, InputOutput,
+						   x_vis, mask, &attr);
 
 	// Set window size hints
 	SizeHints = XAllocSizeHints ();
@@ -336,7 +337,6 @@ x11_create_window (int width, int height)
 
 		XFree (SizeHints);
 	}
-	
 	// Set window title
 	x11_set_caption (va ("%s %s", PROGRAM, VERSION));
 
@@ -353,15 +353,14 @@ x11_create_window (int width, int height)
 		XSetClassHint (x_disp, x_win, ClassHint);
 		XFree (ClassHint);
 	}
-
 	// Make window respond to Delete events
 	aWMDelete = XInternAtom (x_disp, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols (x_disp, x_win, &aWMDelete, 1);
-	
+
 	if (vid_fullscreen->int_val) {
 		XMoveWindow (x_disp, x_win, 0, 0);
 		XWarpPointer (x_disp, None, x_win, 0, 0, 0, 0,
-						vid.width+2, vid.height+2);
+					  vid.width + 2, vid.height + 2);
 		x11_force_view_port ();
 	}
 
@@ -373,7 +372,7 @@ void
 x11_restore_vidmode (void)
 {
 	XSetScreenSaver (x_disp, xss_timeout, xss_interval, xss_blanking,
-						xss_exposures);
+					 xss_exposures);
 
 #ifdef HAVE_VIDMODE
 	if (hasvidmode) {
@@ -389,7 +388,7 @@ x11_grab_keyboard (void)
 #ifdef HAVE_VIDMODE
 	if (hasvidmode && vid_fullscreen->int_val) {
 		XGrabKeyboard (x_disp, x_win, 1, GrabModeAsync, GrabModeAsync,
-						CurrentTime);
+					   CurrentTime);
 	}
 #endif
 }
@@ -405,7 +404,7 @@ void
 x11_force_view_port (void)
 {
 #ifdef HAVE_VIDMODE
-	int x, y;
+	int         x, y;
 
 	if (vid_fullscreen->int_val) {
 		do {

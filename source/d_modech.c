@@ -27,37 +27,37 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "sys.h"
 #include "d_local.h"
 
-int	d_vrectx, d_vrecty, d_vrectright_particle, d_vrectbottom_particle;
+int         d_vrectx, d_vrecty, d_vrectright_particle, d_vrectbottom_particle;
 
-int	d_y_aspect_shift, d_pix_min, d_pix_max, d_pix_shift;
+int         d_y_aspect_shift, d_pix_min, d_pix_max, d_pix_shift;
 
-int		d_scantable[MAXHEIGHT];
-short	*zspantable[MAXHEIGHT]; 
+int         d_scantable[MAXHEIGHT];
+short      *zspantable[MAXHEIGHT];
 
 /*
 ================
 D_Patch
 ================
 */
-void D_Patch (void)
+void
+D_Patch (void)
 {
 #ifdef USE_INTEL_ASM
 
 	static qboolean protectset8 = false;
 
-	if (!protectset8)
-	{
-		Sys_MakeCodeWriteable ((int)D_PolysetAff8Start,
-						     (int)D_PolysetAff8End - (int)D_PolysetAff8Start);
+	if (!protectset8) {
+		Sys_MakeCodeWriteable ((int) D_PolysetAff8Start,
+							   (int) D_PolysetAff8End -
+							   (int) D_PolysetAff8Start);
 		protectset8 = true;
 	}
-
-#endif	// USE_INTEL_ASM
+#endif // USE_INTEL_ASM
 }
 
 
@@ -66,9 +66,10 @@ void D_Patch (void)
 D_ViewChanged
 ================
 */
-void D_ViewChanged (void)
+void
+D_ViewChanged (void)
 {
-	int rowbytes;
+	int         rowbytes;
 
 	if (r_dowarp)
 		rowbytes = WARP_WIDTH;
@@ -86,8 +87,8 @@ void D_ViewChanged (void)
 	if (d_pix_min < 1)
 		d_pix_min = 1;
 
-	d_pix_max = (int)((float)r_refdef.vrect.width / (320.0 / 4.0) + 0.5);
-	d_pix_shift = 8 - (int)((float)r_refdef.vrect.width / 320.0 + 0.5);
+	d_pix_max = (int) ((float) r_refdef.vrect.width / (320.0 / 4.0) + 0.5);
+	d_pix_shift = 8 - (int) ((float) r_refdef.vrect.width / 320.0 + 0.5);
 	if (d_pix_max < 1)
 		d_pix_max = 1;
 
@@ -100,18 +101,16 @@ void D_ViewChanged (void)
 	d_vrecty = r_refdef.vrect.y;
 	d_vrectright_particle = r_refdef.vrectright - d_pix_max;
 	d_vrectbottom_particle =
-			r_refdef.vrectbottom - (d_pix_max << d_y_aspect_shift);
+		r_refdef.vrectbottom - (d_pix_max << d_y_aspect_shift);
 
 	{
-		int		i;
+		int         i;
 
-		for (i=0 ; i<vid.height; i++)
-		{
-			d_scantable[i] = i*rowbytes;
-			zspantable[i] = d_pzbuffer + i*d_zwidth;
+		for (i = 0; i < vid.height; i++) {
+			d_scantable[i] = i * rowbytes;
+			zspantable[i] = d_pzbuffer + i * d_zwidth;
 		}
 	}
 
 	D_Patch ();
 }
-

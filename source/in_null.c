@@ -27,26 +27,31 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
-void IN_Init (void)
+void
+IN_Init (void)
 {
 }
 
-void IN_Init_Cvars (void)
+void
+IN_Init_Cvars (void)
 {
 }
 
-void IN_Shutdown (void)
+void
+IN_Shutdown (void)
 {
 }
 
-void IN_Commands (void)
+void
+IN_Commands (void)
 {
 }
 
-void IN_Move (usercmd_t *cmd)
+void
+IN_Move (usercmd_t *cmd)
 {
 }
 
@@ -55,7 +60,7 @@ void IN_Move (usercmd_t *cmd)
 IN_ModeChanged
 ===========
 */
-void IN_ModeChanged (void)
+void
+IN_ModeChanged (void)
 {
 }
-

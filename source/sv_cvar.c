@@ -27,14 +27,14 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "cvar.h"
 #include "server.h"
 
-void SV_SendServerInfoChange(char *key, char *value);
+void        SV_SendServerInfoChange (char *key, char *value);
 
-extern cvar_t *sv_highchars; 
+extern cvar_t *sv_highchars;
 
 /*
 
@@ -45,25 +45,28 @@ extern cvar_t *sv_highchars;
 
 */
 
-void Cvar_Info (cvar_t *var)
+void
+Cvar_Info (cvar_t *var)
 {
-	if (var->flags & CVAR_SERVERINFO)
-	{
+	if (var->flags & CVAR_SERVERINFO) {
 		unsigned char info[1024], *p, *c;
 
-		if (! sv_highchars->int_val) {
-			for (p=info, c=var->string; *c && (p-info<sizeof(info)-1); ) {
+		if (!sv_highchars->int_val) {
+			for (p = info, c = var->string;
+				 *c && (p - info < sizeof (info) - 1);) {
 				*c &= 0x7f;
-				if (*c >= 32) *p++ = *c;
+				if (*c >= 32)
+					*p++ = *c;
 				c++;
 			}
-			*p=0;
-			Info_SetValueForKey (svs.info, var->name, info, MAX_SERVERINFO_STRING);
-		}
-		else
-			Info_SetValueForKey (svs.info, var->name, var->string, MAX_SERVERINFO_STRING);
+			*p = 0;
+			Info_SetValueForKey (svs.info, var->name, info,
+								 MAX_SERVERINFO_STRING);
+		} else
+			Info_SetValueForKey (svs.info, var->name, var->string,
+								 MAX_SERVERINFO_STRING);
 
 		SV_SendServerInfoChange (var->name, var->string);
-//		SV_BroadcastCommand ("fullserverinfo \"%s\"\n", svs.info);
+//      SV_BroadcastCommand ("fullserverinfo \"%s\"\n", svs.info);
 	}
 }

@@ -30,7 +30,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "string.h"
 #include "ctype.h"
@@ -46,21 +46,22 @@
 
 #include <string.h>
 
-usercmd_t nullcmd; // guarenteed to be zero
+usercmd_t   nullcmd;					// guarenteed to be zero
 
-static char	**largv;
-static char	*argvdummy = " ";
+static char **largv;
+static char *argvdummy = " ";
 
-static char	*safeargvs[] =
-	{"-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse", "-dibonly"};
+static char *safeargvs[] =
+	{ "-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse",
+		"-dibonly" };
 
 #define NUM_SAFE_ARGVS (sizeof(safeargvs)/sizeof(safeargvs[0]))
 
-int		com_argc;
-char	**com_argv;
-char	*com_cmdline;
+int         com_argc;
+char      **com_argv;
+char       *com_cmdline;
 
-qboolean	nouse = false;	// 1999-10-29 +USE fix by Maddes
+qboolean    nouse = false;				// 1999-10-29 +USE fix by Maddes
 
 /*
 ================
@@ -70,15 +71,16 @@ Returns the position (1 to argc-1) in the program's argument list
 where the given parameter apears, or 0 if not present
 ================
 */
-int COM_CheckParm (char *parm)
+int
+COM_CheckParm (char *parm)
 {
-	int		i;
+	int         i;
 
-	for (i=1 ; i<com_argc ; i++)
-	{
+	for (i = 1; i < com_argc; i++) {
 		if (!com_argv[i])
-			continue;		// NEXTSTEP sometimes clears appkit vars.
-		if (!strcmp (parm,com_argv[i]))
+			continue;					// NEXTSTEP sometimes clears appkit
+										// vars.
+		if (!strcmp (parm, com_argv[i]))
 			return i;
 	}
 
@@ -90,17 +92,19 @@ int COM_CheckParm (char *parm)
 COM_InitArgv
 ================
 */
-void COM_InitArgv (int argc, char **argv)
+void
+COM_InitArgv (int argc, char **argv)
 {
-	qboolean	safe;
-	int			i, len;
+	qboolean    safe;
+	int         i, len;
 
 	safe = false;
 
-	largv = (char**)calloc (1, (argc + NUM_SAFE_ARGVS + 1) * sizeof (char**));
+	largv =
 
-	for (com_argc=0, len=0 ; com_argc < argc ; com_argc++)
-	{
+		(char **) calloc (1, (argc + NUM_SAFE_ARGVS + 1) * sizeof (char **));
+
+	for (com_argc = 0, len = 0; com_argc < argc; com_argc++) {
 		largv[com_argc] = argv[com_argc];
 		if ((argv[com_argc]) && !strcmp ("-safe", argv[com_argc]))
 			safe = true;
@@ -108,24 +112,22 @@ void COM_InitArgv (int argc, char **argv)
 			len += strlen (argv[com_argc]) + 1;
 	}
 
-	com_cmdline = (char*)calloc (1, len+1); // need strlen(com_cmdline)+2
+	com_cmdline = (char *) calloc (1, len + 1);	// need strlen(com_cmdline)+2
 	com_cmdline[0] = 0;
 	if (len) {
-		for (i=1; i < argc; i++)
-		{
+		for (i = 1; i < argc; i++) {
 			strncat (com_cmdline, argv[i], len - strlen (com_cmdline));
-			assert(len - strlen(com_cmdline) > 0);
-			strncat (com_cmdline,  " ", len - strlen (com_cmdline));
+			assert (len - strlen (com_cmdline) > 0);
+			strncat (com_cmdline, " ", len - strlen (com_cmdline));
 		}
 		com_cmdline[len - 1] = '\0';
 	}
 
-	if (safe)
-	{
-	// force all the safe-mode switches. Note that we reserved extra space in
-	// case we need to add these, so we don't need an overflow check
-		for (i=0 ; i<NUM_SAFE_ARGVS ; i++)
-		{
+	if (safe) {
+		// force all the safe-mode switches. Note that we reserved extra
+		// space in
+		// case we need to add these, so we don't need an overflow check
+		for (i = 0; i < NUM_SAFE_ARGVS; i++) {
 			largv[com_argc] = safeargvs[i];
 			com_argc++;
 		}
@@ -135,8 +137,7 @@ void COM_InitArgv (int argc, char **argv)
 	com_argv = largv;
 
 // 1999-10-29 +USE fix by Maddes  start
-	if (COM_CheckParm ("-nouse"))
-	{
+	if (COM_CheckParm ("-nouse")) {
 		nouse = true;
 	}
 // 1999-10-29 +USE fix by Maddes  end
@@ -149,7 +150,8 @@ COM_AddParm
 Adds the given string at the end of the current argument list
 ================
 */
-void COM_AddParm (char *parm)
+void
+COM_AddParm (char *parm)
 {
 	largv[com_argc++] = parm;
 }

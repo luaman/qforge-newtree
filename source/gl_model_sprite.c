@@ -30,7 +30,7 @@
 // on the same machine.
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #ifdef HAVE_STRING_H
@@ -44,28 +44,29 @@
 #include "qendian.h"
 #include "glquake.h"
 
-extern	model_t	*loadmodel;
-extern	char	loadname[];
+extern model_t *loadmodel;
+extern char loadname[];
 
 /*
 =================
 Mod_LoadSpriteFrame
 =================
 */
-void * Mod_LoadSpriteFrame (void * pin, mspriteframe_t **ppframe, int framenum)
+void       *
+Mod_LoadSpriteFrame (void *pin, mspriteframe_t **ppframe, int framenum)
 {
-	dspriteframe_t		*pinframe;
-	mspriteframe_t		*pspriteframe;
-	int					width, height, size, origin[2];
-	char				name[64];
+	dspriteframe_t *pinframe;
+	mspriteframe_t *pspriteframe;
+	int         width, height, size, origin[2];
+	char        name[64];
 
-	pinframe = (dspriteframe_t *)pin;
+	pinframe = (dspriteframe_t *) pin;
 
 	width = LittleLong (pinframe->width);
 	height = LittleLong (pinframe->height);
 	size = width * height;
 
-	pspriteframe = Hunk_AllocName (sizeof (mspriteframe_t),loadname);
+	pspriteframe = Hunk_AllocName (sizeof (mspriteframe_t), loadname);
 
 	memset (pspriteframe, 0, sizeof (mspriteframe_t));
 
@@ -81,8 +82,10 @@ void * Mod_LoadSpriteFrame (void * pin, mspriteframe_t **ppframe, int framenum)
 	pspriteframe->left = origin[0];
 	pspriteframe->right = width + origin[0];
 
-	snprintf (name, sizeof(name), "%s_%i", loadmodel->name, framenum);
-	pspriteframe->gl_texturenum = GL_LoadTexture (name, width, height, (byte *)(pinframe + 1), true, true, 1);
+	snprintf (name, sizeof (name), "%s_%i", loadmodel->name, framenum);
+	pspriteframe->gl_texturenum =
+		GL_LoadTexture (name, width, height, (byte *) (pinframe + 1), true,
+						true, 1);
 
-	return (void *)((byte *)pinframe + sizeof (dspriteframe_t) + size);
+	return (void *) ((byte *) pinframe + sizeof (dspriteframe_t) + size);
 }

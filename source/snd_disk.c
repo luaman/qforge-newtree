@@ -28,7 +28,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include <stdio.h>
@@ -44,45 +44,48 @@
 #include "qargs.h"
 #include "console.h"
 
-static int snd_inited;
-QFile	*snd_file;
+static int  snd_inited;
+QFile      *snd_file;
 
-qboolean SNDDMA_Init(void)
+qboolean
+SNDDMA_Init (void)
 {
-	shm=&sn;
-	memset((dma_t*)shm,0,sizeof(*shm));
-    shm->splitbuffer = 0;
-	shm->channels=2;
-	shm->submission_chunk=1;					// don't mix less than this #
-	shm->samplepos=0;							// in mono samples
-	shm->samplebits=16;
-	shm->samples=16384;							// mono samples in buffer
-	shm->speed=44100;
-	shm->buffer=malloc (shm->samples * shm->channels * shm->samplebits / 8);
+	shm = &sn;
+	memset ((dma_t *) shm, 0, sizeof (*shm));
+	shm->splitbuffer = 0;
+	shm->channels = 2;
+	shm->submission_chunk = 1;			// don't mix less than this #
+	shm->samplepos = 0;					// in mono samples
+	shm->samplebits = 16;
+	shm->samples = 16384;				// mono samples in buffer
+	shm->speed = 44100;
+	shm->buffer = malloc (shm->samples * shm->channels * shm->samplebits / 8);
 
-    Con_Printf("%5d stereo\n", shm->channels - 1);
-    Con_Printf("%5d samples\n", shm->samples);
-    Con_Printf("%5d samplepos\n", shm->samplepos);
-    Con_Printf("%5d samplebits\n", shm->samplebits);
-    Con_Printf("%5d submission_chunk\n", shm->submission_chunk);
-    Con_Printf("%5d speed\n", shm->speed);
-    Con_Printf("0x%x dma buffer\n", (int)shm->buffer);
-	Con_Printf("%5d total_channels\n", total_channels);
+	Con_Printf ("%5d stereo\n", shm->channels - 1);
+	Con_Printf ("%5d samples\n", shm->samples);
+	Con_Printf ("%5d samplepos\n", shm->samplepos);
+	Con_Printf ("%5d samplebits\n", shm->samplebits);
+	Con_Printf ("%5d submission_chunk\n", shm->submission_chunk);
+	Con_Printf ("%5d speed\n", shm->speed);
+	Con_Printf ("0x%x dma buffer\n", (int) shm->buffer);
+	Con_Printf ("%5d total_channels\n", total_channels);
 
 	if (!(snd_file = Qopen ("qf.raw", "wb")))
 		return 0;
 
-	snd_inited=1;
+	snd_inited = 1;
 	return 1;
 }
 
-int SNDDMA_GetDMAPos(void)
+int
+SNDDMA_GetDMAPos (void)
 {
 	shm->samplepos = 0;
 	return shm->samplepos;
 }
 
-void SNDDMA_Shutdown(void)
+void
+SNDDMA_Shutdown (void)
 {
 	if (snd_inited) {
 		Qclose (snd_file);
@@ -99,8 +102,10 @@ SNDDMA_Submit
 Send sound to device if buffer isn't really the dma buffer
 ===============
 */
-void SNDDMA_Submit(void)
+void
+SNDDMA_Submit (void)
 {
-	int count = (paintedtime - soundtime) * shm->samplebits / 8;
+	int         count = (paintedtime - soundtime) * shm->samplebits / 8;
+
 	Qwrite (snd_file, shm->buffer, count);
 }

@@ -28,7 +28,7 @@
 	$Id$
 */
 
-#include <config.h>
+# include "config.h"
 #include <qtypes.h>
 #include <sound.h>
 #include <qargs.h>
@@ -48,56 +48,56 @@
 #include <sys/audioio.h>
 #include <errno.h>
 
-int audio_fd;
-int snd_inited;
+int         audio_fd;
+int         snd_inited;
 
-static int wbufp;
+static int  wbufp;
 static audio_info_t info;
 
 #define BUFFER_SIZE		8192
 
 unsigned char dma_buffer[BUFFER_SIZE];
 unsigned char pend_buffer[BUFFER_SIZE];
-int pending;
+int         pending;
 
-qboolean SNDDMA_Init(void)
+qboolean
+SNDDMA_Init (void)
 {
 	if (snd_inited) {
-		printf("Sound already init'd\n");
+		printf ("Sound already init'd\n");
 		return 0;
 	}
 
 	shm = &sn;
 	shm->splitbuffer = 0;
 
-	audio_fd = open("/dev/audio", O_WRONLY|O_NDELAY);
+	audio_fd = open ("/dev/audio", O_WRONLY | O_NDELAY);
 
 	if (audio_fd < 0) {
 		if (errno == EBUSY) {
-			Con_Printf("Audio device is being used by another process\n");
+			Con_Printf ("Audio device is being used by another process\n");
 		}
-		perror("/dev/audio");
-		Con_Printf("Could not open /dev/audio\n");
+		perror ("/dev/audio");
+		Con_Printf ("Could not open /dev/audio\n");
 		return (0);
 	}
 
-	if (ioctl(audio_fd, AUDIO_GETINFO, &info) < 0) {
-		perror("/dev/audio");
-		Con_Printf("Could not communicate with audio device.\n");
-		close(audio_fd);
+	if (ioctl (audio_fd, AUDIO_GETINFO, &info) < 0) {
+		perror ("/dev/audio");
+		Con_Printf ("Could not communicate with audio device.\n");
+		close (audio_fd);
 		return 0;
 	}
-
-	//
+	// 
 	// set to nonblock
-	//
-	if (fcntl(audio_fd, F_SETFL, O_NONBLOCK) < 0) {
-		perror("/dev/audio");
-		close(audio_fd);
+	// 
+	if (fcntl (audio_fd, F_SETFL, O_NONBLOCK) < 0) {
+		perror ("/dev/audio");
+		close (audio_fd);
 		return 0;
 	}
 
-	AUDIO_INITINFO(&info);
+	AUDIO_INITINFO (&info);
 
 	shm->speed = 11025;
 
@@ -107,61 +107,63 @@ qboolean SNDDMA_Init(void)
 	info.play.channels = 2;
 	info.play.precision = 16;
 
-	if (ioctl(audio_fd, AUDIO_SETINFO, &info) < 0) {
+	if (ioctl (audio_fd, AUDIO_SETINFO, &info) < 0) {
 		info.play.encoding = AUDIO_ENCODING_LINEAR;
 		info.play.sample_rate = 11025;
 		info.play.channels = 1;
 		info.play.precision = 16;
-		if (ioctl(audio_fd, AUDIO_SETINFO, &info) < 0) {
-			Con_Printf("Incapable sound hardware.\n");
-			close(audio_fd);
+		if (ioctl (audio_fd, AUDIO_SETINFO, &info) < 0) {
+			Con_Printf ("Incapable sound hardware.\n");
+			close (audio_fd);
 			return 0;
 		}
-		Con_Printf("16 bit mono sound initialized\n");
+		Con_Printf ("16 bit mono sound initialized\n");
 		shm->samplebits = 16;
 		shm->channels = 1;
-	} else { // 16 bit stereo
-		Con_Printf("16 bit stereo sound initialized\n");
+	} else {							// 16 bit stereo
+		Con_Printf ("16 bit stereo sound initialized\n");
 		shm->samplebits = 16;
 		shm->channels = 2;
 	}
 
 	shm->soundalive = true;
-	shm->samples = sizeof(dma_buffer) / (shm->samplebits/8);
+	shm->samples = sizeof (dma_buffer) / (shm->samplebits / 8);
 	shm->samplepos = 0;
 	shm->submission_chunk = 1;
-	shm->buffer = (unsigned char *)dma_buffer;
+	shm->buffer = (unsigned char *) dma_buffer;
 
 	snd_inited = 1;
 
 	return 1;
 }
 
-int SNDDMA_GetDMAPos(void)
+int
+SNDDMA_GetDMAPos (void)
 {
 	if (!snd_inited)
 		return (0);
 
-	if (ioctl(audio_fd, AUDIO_GETINFO, &info) < 0) {
-		perror("/dev/audio");
-		Con_Printf("Could not communicate with audio device.\n");
-		close(audio_fd);
+	if (ioctl (audio_fd, AUDIO_GETINFO, &info) < 0) {
+		perror ("/dev/audio");
+		Con_Printf ("Could not communicate with audio device.\n");
+		close (audio_fd);
 		snd_inited = 0;
 		return (0);
 	}
 
-	return ((info.play.samples*shm->channels) % shm->samples);
+	return ((info.play.samples * shm->channels) % shm->samples);
 }
 
-int SNDDMA_GetSamples(void)
+int
+SNDDMA_GetSamples (void)
 {
 	if (!snd_inited)
 		return (0);
 
-	if (ioctl(audio_fd, AUDIO_GETINFO, &info) < 0) {
-		perror("/dev/audio");
-		Con_Printf("Could not communicate with audio device.\n");
-		close(audio_fd);
+	if (ioctl (audio_fd, AUDIO_GETINFO, &info) < 0) {
+		perror ("/dev/audio");
+		Con_Printf ("Could not communicate with audio device.\n");
+		close (audio_fd);
 		snd_inited = 0;
 		return (0);
 	}
@@ -169,10 +171,11 @@ int SNDDMA_GetSamples(void)
 	return info.play.samples;
 }
 
-void SNDDMA_Shutdown(void)
+void
+SNDDMA_Shutdown (void)
 {
 	if (snd_inited) {
-		close(audio_fd);
+		close (audio_fd);
 		snd_inited = 0;
 	}
 }
@@ -184,31 +187,32 @@ SNDDMA_Submit
 Send sound to device if buffer isn't really the dma buffer
 ===============
 */
-void SNDDMA_Submit(void)
+void
+SNDDMA_Submit (void)
 {
-	int bsize;
-	int bytes, b;
+	int         bsize;
+	int         bytes, b;
 	static unsigned char writebuf[1024];
 	unsigned char *p;
-	int idx;
-	int stop = paintedtime;
+	int         idx;
+	int         stop = paintedtime;
 
 	if (paintedtime < wbufp)
-		wbufp = 0; // reset
+		wbufp = 0;						// reset
 
-	bsize = shm->channels * (shm->samplebits/8);
+	bsize = shm->channels * (shm->samplebits / 8);
 	bytes = (paintedtime - wbufp) * bsize;
 
 	if (!bytes)
 		return;
 
-	if (bytes > sizeof(writebuf)) {
-		bytes = sizeof(writebuf);
-		stop = wbufp + bytes/bsize;
+	if (bytes > sizeof (writebuf)) {
+		bytes = sizeof (writebuf);
+		stop = wbufp + bytes / bsize;
 	}
 
 	p = writebuf;
-	idx = (wbufp*bsize) & (BUFFER_SIZE - 1);
+	idx = (wbufp * bsize) & (BUFFER_SIZE - 1);
 
 	for (b = bytes; b; b--) {
 		*p++ = dma_buffer[idx];
@@ -217,8 +221,7 @@ void SNDDMA_Submit(void)
 
 	wbufp = stop;
 
-	if (write(audio_fd, writebuf, bytes) < bytes)
-		printf("audio can't keep up!\n");
+	if (write (audio_fd, writebuf, bytes) < bytes)
+		printf ("audio can't keep up!\n");
 
 }
-

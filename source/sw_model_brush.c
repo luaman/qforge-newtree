@@ -30,24 +30,24 @@
 // on the same machine.
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include "model.h"
 
-extern	model_t	*loadmodel;
-extern	char	loadname[];
-extern	byte	*mod_base;
+extern model_t *loadmodel;
+extern char loadname[];
+extern byte *mod_base;
 
-const int mod_lightmap_bytes=1;
+const int   mod_lightmap_bytes = 1;
 
 void
-GL_SubdivideSurface(msurface_t *fa)
+GL_SubdivideSurface (msurface_t *fa)
 {
 }
 
 void
-Mod_ProcessTexture(miptex_t *mt, texture_t   *tx)
+Mod_ProcessTexture (miptex_t *mt, texture_t *tx)
 {
 }
 
@@ -56,13 +56,13 @@ Mod_ProcessTexture(miptex_t *mt, texture_t   *tx)
 Mod_LoadLighting
 =================
 */
-void Mod_LoadLighting (lump_t *l)
+void
+Mod_LoadLighting (lump_t *l)
 {
-	if (!l->filelen)
-	{
+	if (!l->filelen) {
 		loadmodel->lightdata = NULL;
 		return;
 	}
-	loadmodel->lightdata = Hunk_AllocName ( l->filelen, loadname);	
+	loadmodel->lightdata = Hunk_AllocName (l->filelen, loadname);
 	memcpy (loadmodel->lightdata, mod_base + l->fileofs, l->filelen);
 }

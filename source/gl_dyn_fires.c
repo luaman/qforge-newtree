@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "cmd.h"
 #include "console.h"
@@ -38,8 +38,8 @@
 
 #define MAX_FIRES				128		// rocket flames
 
-static fire_t		r_fires[MAX_FIRES];
-extern cvar_t		*gl_fires;
+static fire_t r_fires[MAX_FIRES];
+extern cvar_t *gl_fires;
 
 /*
 	R_AddFire
@@ -47,39 +47,38 @@ extern cvar_t		*gl_fires;
 	Nifty ball of fire GL effect.  Kinda a meshing of the dlight and
 	particle engine code.
 */
-float r_firecolor[3] = {0.9, 0.4, 0};
+float       r_firecolor[3] = { 0.9, 0.4, 0 };
 
 void
 R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
 {
-	float		len;
-	fire_t		*f;
-	dlight_t	*dl;
-	vec3_t		vec;
-	int			key;
+	float       len;
+	fire_t     *f;
+	dlight_t   *dl;
+	vec3_t      vec;
+	int         key;
 
 	if (!gl_fires->int_val)
 		return;
 
 	VectorSubtract (end, start, vec);
 	len = VectorNormalize (vec);
-	key = ent-cl_visedicts+1;
+	key = ent - cl_visedicts + 1;
 
-	if (len)
-	{
+	if (len) {
 		f = R_AllocFire (key);
 		VectorCopy (end, f->origin);
 		VectorCopy (start, f->owner);
 		f->size = 20;
 		f->die = cl.time + 0.5;
 		f->decay = -1;
-		f->color=r_firecolor;
+		f->color = r_firecolor;
 
 		dl = CL_AllocDlight (key);
 		VectorCopy (end, dl->origin);
 		dl->radius = 200;
 		dl->die = cl.time + 0.5;
-		dl->color=r_firecolor;
+		dl->color = r_firecolor;
 	}
 }
 
@@ -88,30 +87,29 @@ R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
 
 	Clears out and returns a new fireball
 */
-fire_t *
+fire_t     *
 R_AllocFire (int key)
 {
-	int		i;
-	fire_t		*f;
-	if (key)	// first try to find/reuse a keyed spot
+	int         i;
+	fire_t     *f;
+
+	if (key)							// first try to find/reuse a keyed
+										// spot
 	{
 		f = r_fires;
 		for (i = 0; i < MAX_FIRES; i++, f++)
-			if (f->key == key)
-			{
-				memset (f, 0, sizeof(*f));
+			if (f->key == key) {
+				memset (f, 0, sizeof (*f));
 				f->key = key;
 				f->color = f->_color;
 				return f;
 			}
 	}
 
-	f = r_fires;	// no match, look for a free spot
-	for (i = 0; i < MAX_FIRES; i++, f++)
-	{
-		if (f->die < cl.time)
-		{
-			memset (f, 0, sizeof(*f));
+	f = r_fires;						// no match, look for a free spot
+	for (i = 0; i < MAX_FIRES; i++, f++) {
+		if (f->die < cl.time) {
+			memset (f, 0, sizeof (*f));
 			f->key = key;
 			f->color = f->_color;
 			return f;
@@ -119,10 +117,10 @@ R_AllocFire (int key)
 	}
 
 	f = &r_fires[0];
-	memset (f, 0, sizeof(*f));
+	memset (f, 0, sizeof (*f));
 	f->key = key;
 	f->color = f->_color;
-	return f;	
+	return f;
 }
 
 /*
@@ -133,10 +131,10 @@ R_AllocFire (int key)
 void
 R_DrawFire (fire_t *f)
 {
-	int			i, j;
-	vec3_t		vec,vec2;
-	float		radius;
-	float		*b_sin, *b_cos;
+	int         i, j;
+	vec3_t      vec, vec2;
+	float       radius;
+	float      *b_sin, *b_cos;
 
 	b_sin = bubble_sintable;
 	b_cos = bubble_costable;
@@ -145,40 +143,37 @@ R_DrawFire (fire_t *f)
 
 	// figure out if we're inside the area of effect
 	VectorSubtract (f->origin, r_origin, vec);
-	if (Length (vec) < radius)
-	{
+	if (Length (vec) < radius) {
 		AddLightBlend (1, 0.5, 0, f->size * 0.0003);	// we are
 		return;
 	}
-
 	// we're not - draw it
 	glBegin (GL_TRIANGLE_FAN);
 	if (lighthalf)
-		glColor3f(f->color[0]*0.5,f->color[1]*0.5,f->color[2]*0.5);
+		glColor3f (f->color[0] * 0.5, f->color[1] * 0.5, f->color[2] * 0.5);
 	else
-		glColor3fv(f->color);
-	for (i=0 ; i<3 ; i++)
+		glColor3fv (f->color);
+	for (i = 0; i < 3; i++)
 		vec[i] = f->origin[i] - vpn[i] * radius;
 	glVertex3fv (vec);
 	glColor3f (0.0, 0.0, 0.0);
 
 	// don't panic, this just draws a bubble...
-	for (i=16 ; i>=0 ; i--)
-	{
-		for (j=0 ; j<3 ; j++) {
+	for (i = 16; i >= 0; i--) {
+		for (j = 0; j < 3; j++) {
 			vec[j] = f->origin[j] + (*b_cos * vright[j]
-				+ vup[j]*(*b_sin)) * radius;
+									 + vup[j] * (*b_sin)) * radius;
 			vec2[j] = f->owner[j] + (*b_cos * vright[j]
-				+ vup[j]*(*b_sin)) * radius;
+									 + vup[j] * (*b_sin)) * radius;
 		}
 		glVertex3fv (vec);
 		glVertex3fv (vec2);
 
-		b_sin+=2;
-		b_cos+=2;
+		b_sin += 2;
+		b_cos += 2;
 	}
 	glEnd ();
-	glColor3ubv(lighthalf_v);
+	glColor3ubv (lighthalf_v);
 }
 
 /*
@@ -189,19 +184,18 @@ R_DrawFire (fire_t *f)
 void
 R_UpdateFires (void)
 {
-	int		i;
-	fire_t	*f;
+	int         i;
+	fire_t     *f;
 
 	if (!gl_fires->int_val)
 		return;
 
-	glDepthMask(GL_FALSE);
+	glDepthMask (GL_FALSE);
 	glDisable (GL_TEXTURE_2D);
 	glBlendFunc (GL_ONE, GL_ONE);
 
 	f = r_fires;
-	for (i = 0; i < MAX_FIRES; i++, f++)
-	{
+	for (i = 0; i < MAX_FIRES; i++, f++) {
 		if (f->die < cl.time || !f->size)
 			continue;
 		f->size += f->decay;
@@ -210,28 +204,27 @@ R_UpdateFires (void)
 
 	glEnable (GL_TEXTURE_2D);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthMask(GL_TRUE);
+	glDepthMask (GL_TRUE);
 }
 
 void
 R_FireColor_f (void)
 {
-	int i;
+	int         i;
 
-	if (Cmd_Argc() == 1) {
+	if (Cmd_Argc () == 1) {
 		Con_Printf ("r_firecolor %g %g %g\n",
-					r_firecolor[0],
-					r_firecolor[1],
-					r_firecolor[2]);
+					r_firecolor[0], r_firecolor[1], r_firecolor[2]);
 		return;
 	}
-	if (Cmd_Argc() == 5 || Cmd_Argc() == 6) {
-		Con_Printf ("Warning: obsolete 4th and 5th parameters to r_firecolor ignored\n");
-	} else if (Cmd_Argc() !=4) {
+	if (Cmd_Argc () == 5 || Cmd_Argc () == 6) {
+		Con_Printf
+			("Warning: obsolete 4th and 5th parameters to r_firecolor ignored\n");
+	} else if (Cmd_Argc () != 4) {
 		Con_Printf ("Usage r_firecolor R G B\n");
 		return;
 	}
-	for (i=0; i<4; i++) {
-		r_firecolor[i]=atof(Cmd_Argv(i+1));
+	for (i = 0; i < 4; i++) {
+		r_firecolor[i] = atof (Cmd_Argv (i + 1));
 	}
 }

@@ -27,43 +27,46 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include <string.h>
 #include <stdio.h>
 
-#include "bothdefs.h"   // needed by: common.h, net.h, client.h
+#include "bothdefs.h"					// needed by: common.h, net.h,
+										// client.h
 
-#include "bspfile.h"    // needed by: glquake.h
+#include "bspfile.h"					// needed by: glquake.h
 #include "vid.h"
 #include "sys.h"
-#include "mathlib.h"    // needed by: protocol.h, render.h, client.h,
-                        //  modelgen.h, glmodel.h
+#include "mathlib.h"					// needed by: protocol.h, render.h,
+										// client.h,
+						// modelgen.h, glmodel.h
 #include "wad.h"
 #include "draw.h"
 #include "cvar.h"
-#include "net.h"        // needed by: client.h
-#include "protocol.h"   // needed by: client.h
+#include "net.h"						// needed by: client.h
+#include "protocol.h"					// needed by: client.h
 #include "cmd.h"
 #include "sbar.h"
-#include "render.h"     // needed by: client.h, model.h, glquake.h
-#include "client.h"     // need cls in this file
-#include "model.h"      // needed by: glquake.h
+#include "render.h"						// needed by: client.h, model.h,
+										// glquake.h
+#include "client.h"						// need cls in this file
+#include "model.h"						// needed by: glquake.h
 #include "console.h"
 #include "glquake.h"
 
-extern  byte            *host_basepal;
-extern      double          host_frametime;
-extern int	onground;
-extern	byte	gammatable[256];
+extern byte *host_basepal;
+extern double host_frametime;
+extern int  onground;
+extern byte gammatable[256];
 
-extern cvar_t  *gl_cshiftpercent;
+extern cvar_t *gl_cshiftpercent;
 
-byte ramps[3][256];
-float	v_blend[4];
+byte        ramps[3][256];
+float       v_blend[4];
 
-void V_CalcPowerupCshift (void);
-qboolean V_CheckGamma (void);
+void        V_CalcPowerupCshift (void);
+qboolean    V_CheckGamma (void);
 
 /*
 	V_CalcBlend
@@ -74,47 +77,46 @@ qboolean V_CheckGamma (void);
 void
 V_CalcBlend (void)
 {
-	float		r, g, b, a, a2, a3;
-	int		j;
+	float       r, g, b, a, a2, a3;
+	int         j;
 
 	r = 0;
 	g = 0;
 	b = 0;
 	a = 0;
 
-	for (j=0 ; j<NUM_CSHIFTS ; j++)
-	{
+	for (j = 0; j < NUM_CSHIFTS; j++) {
 		if (!gl_cshiftpercent->value)
 			continue;
 
-		a2 = ((cl.cshifts[j].percent * gl_cshiftpercent->value) / 100.0) / 255.0;
+		a2 =
+			((cl.cshifts[j].percent * gl_cshiftpercent->value) / 100.0) / 255.0;
 
 		if (!a2)
 			continue;
 
-		a2 = min(a2, 1.0);
-		r += (cl.cshifts[j].destcolor[0]-r) * a2;
-		g += (cl.cshifts[j].destcolor[1]-g) * a2;
-		b += (cl.cshifts[j].destcolor[2]-b) * a2;
-		
+		a2 = min (a2, 1.0);
+		r += (cl.cshifts[j].destcolor[0] - r) * a2;
+		g += (cl.cshifts[j].destcolor[1] - g) * a2;
+		b += (cl.cshifts[j].destcolor[2] - b) * a2;
+
 		a3 = (1.0 - a) * (1.0 - a2);
 		a = 1.0 - a3;
 	}
 
 	// LordHavoc: saturate color
-	if (a)
-	{
+	if (a) {
 		a2 = 1.0 / a;
 		r *= a2;
 		g *= a2;
 		b *= a2;
-		if (a > 1) // clamp alpha blend too
+		if (a > 1)						// clamp alpha blend too
 			a = 1;
 	}
 
-	v_blend[0] = min(r, 255.0)/255.0;
-	v_blend[1] = min(g, 255.0)/255.0;
-	v_blend[2] = min(b, 255.0)/255.0;
+	v_blend[0] = min (r, 255.0) / 255.0;
+	v_blend[1] = min (g, 255.0) / 255.0;
+	v_blend[2] = min (b, 255.0) / 255.0;
 	v_blend[3] = bound (0.0, a, 1.0);
 }
 
@@ -124,16 +126,17 @@ V_UpdatePalette
 =============
 */
 
-void V_UpdatePalette (void)
+void
+V_UpdatePalette (void)
 {
-	int 		i, j;
-	qboolean	new;
-	qboolean	force;
+	int         i, j;
+	qboolean    new;
+	qboolean    force;
 
 	V_CalcPowerupCshift ();
-	
+
 	new = false;
-	
+
 	for (i = 0; i < NUM_CSHIFTS; i++) {
 		if (cl.cshifts[i].percent != cl.prev_cshifts[i].percent) {
 			new = true;
@@ -148,12 +151,12 @@ void V_UpdatePalette (void)
 	}
 
 	// drop the damage value
-	cl.cshifts[CSHIFT_DAMAGE].percent -= host_frametime*150;
+	cl.cshifts[CSHIFT_DAMAGE].percent -= host_frametime * 150;
 	if (cl.cshifts[CSHIFT_DAMAGE].percent <= 0)
 		cl.cshifts[CSHIFT_DAMAGE].percent = 0;
 
 	// drop the bonus value
-	cl.cshifts[CSHIFT_BONUS].percent -= host_frametime*100;
+	cl.cshifts[CSHIFT_BONUS].percent -= host_frametime * 100;
 	if (cl.cshifts[CSHIFT_BONUS].percent <= 0)
 		cl.cshifts[CSHIFT_BONUS].percent = 0;
 
@@ -174,7 +177,7 @@ void V_UpdatePalette (void)
 void
 BuildGammaTable (float b, float c)
 {
-	int		i;
+	int         i;
 
 	for (i = 0; i < 256; i++)
 		gammatable[i] = i;

@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include <stdio.h>
 #include <stdarg.h>
@@ -41,15 +41,15 @@
 	varargs versions of all text functions.
 	FIXME: make this buffer size safe someday
 */
-char *
-va(char *format, ...)
+char       *
+va (char *format, ...)
 {
-	va_list		argptr;
-	static char		string[1024];
-	
+	va_list     argptr;
+	static char string[1024];
+
 	va_start (argptr, format);
-	vsnprintf (string, sizeof(string), format, argptr);
+	vsnprintf (string, sizeof (string), format, argptr);
 	va_end (argptr);
 
-	return string;	
+	return string;
 }

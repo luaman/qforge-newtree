@@ -27,7 +27,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include <limits.h>
@@ -39,28 +39,29 @@
 #include "locs.h"
 #include "console.h"
 
-#define LOCATION_BLOCK	128	// 128 locations per block.
+#define LOCATION_BLOCK	128				// 128 locations per block.
 
-location_t	**locations = NULL;
-int		locations_alloced = 0;
-int		locations_count = 0;
-int		location_blocks = 0;
+location_t **locations = NULL;
+int         locations_alloced = 0;
+int         locations_count = 0;
+int         location_blocks = 0;
 
-void locs_add(vec3_t location, char *name);
-void locs_load(char *mapname);
-void locs_free();
-void locs_more();
+void        locs_add (vec3_t location, char *name);
+void        locs_load (char *mapname);
+void        locs_free ();
+void        locs_more ();
 
-location_t *locs_find(vec3_t target)
+location_t *
+locs_find (vec3_t target)
 {
-	location_t	*best = NULL, *cur;
-	float		best_distance = 9999999, distance;
-	int			i;
+	location_t *best = NULL, *cur;
+	float       best_distance = 9999999, distance;
+	int         i;
 
 	for (i = 0; i < locations_count; i++) {
 		cur = locations[i];
-		distance = VectorDistance_fast(target, cur->loc);
-		//distance = VectorDistance(target, cur->loc);
+		distance = VectorDistance_fast (target, cur->loc);
+		// distance = VectorDistance(target, cur->loc);
 		if ((distance < best_distance) || !best) {
 			best = cur;
 			best_distance = distance;
@@ -70,48 +71,51 @@ location_t *locs_find(vec3_t target)
 	return best;
 }
 
-void locs_add(vec3_t location, char *name)
+void
+locs_add (vec3_t location, char *name)
 {
-	int num;
+	int         num;
 
 	locations_count++;
 	if (locations_count >= locations_alloced)
-		locs_more();
+		locs_more ();
 
 	num = locations_count - 1;
 
-	locations[num] = malloc(sizeof(location_t));
+	locations[num] = malloc (sizeof (location_t));
+
 	locations[num]->loc[0] = location[0];
 	locations[num]->loc[1] = location[1];
 	locations[num]->loc[2] = location[2];
-	locations[num]->name = strdup(name);
+	locations[num]->name = strdup (name);
 	if (!locations[num]->name)
-		Sys_Error("locs_add: Can't strdup name!");
+		Sys_Error ("locs_add: Can't strdup name!");
 }
 
-void locs_load(char *mapname)
+void
+locs_load (char *mapname)
 {
-	QFile *file;
-	char *line, *t1, *t2;
-	vec3_t loc;
-	char tmp[PATH_MAX];
+	QFile      *file;
+	char       *line, *t1, *t2;
+	vec3_t      loc;
+	char        tmp[PATH_MAX];
 
-	snprintf(tmp, sizeof(tmp), "maps/%s.loc", mapname);
-	COM_FOpenFile(tmp, &file);
+	snprintf (tmp, sizeof (tmp), "maps/%s.loc", mapname);
+	COM_FOpenFile (tmp, &file);
 	if (!file) {
-		Con_Printf("Couldn't load %s\n", tmp);
+		Con_Printf ("Couldn't load %s\n", tmp);
 		return;
 	}
 
-	while ((line = Qgetline(file))) {
+	while ((line = Qgetline (file))) {
 		if (line[0] == '#')
 			continue;
 
-		loc[0] = strtol(line, &t1, 0) * (1.0/8);
-		loc[1] = strtol(t1, &t2, 0) * (1.0/8);
-		loc[2] = strtol(t2, &t1, 0) * (1.0/8);
+		loc[0] = strtol (line, &t1, 0) * (1.0 / 8);
+		loc[1] = strtol (t1, &t2, 0) * (1.0 / 8);
+		loc[2] = strtol (t2, &t1, 0) * (1.0 / 8);
 		t1++;
-		t2 = strrchr(t1, '\n');
+		t2 = strrchr (t1, '\n');
 		if (t2) {
 			t2[0] = '\0';
 			// handle dos format lines (COM_FOpenFile is binary only)
@@ -119,40 +123,42 @@ void locs_load(char *mapname)
 			if (t2 > t1 && t2[-1] == '\r')
 				t2[-1] = '\0';
 		}
-		locs_add(loc, t1);
+		locs_add (loc, t1);
 	}
-	Qclose(file);
+	Qclose (file);
 }
 
-void locs_reset()
+void
+locs_reset ()
 {
-	int i;
+	int         i;
 
 	for (i = 0; i < locations_count; i++) {
-		free((void *) locations[i]->name);
-		free((void *) locations[i]);
+		free ((void *) locations[i]->name);
+		free ((void *) locations[i]);
 		locations[i] = NULL;
 	}
 
-	free(locations);
+	free (locations);
 	locations_alloced = 0;
 	locations_count = 0;
 	locations = NULL;
 }
 
-void locs_more()
+void
+locs_more ()
 {
-	size_t	size;
+	size_t      size;
 
 	location_blocks++;
 	locations_alloced += LOCATION_BLOCK;
-	size = (sizeof(location_t *) * LOCATION_BLOCK * location_blocks);
+	size = (sizeof (location_t *) * LOCATION_BLOCK * location_blocks);
 
 	if (locations)
-		locations = realloc(locations, size);
+		locations = realloc (locations, size);
 	else
-		locations = malloc(size);
+		locations = malloc (size);
 
 	if (!locations)
-		Sys_Error("ERROR! Can not alloc memory for location block!");
+		Sys_Error ("ERROR! Can not alloc memory for location block!");
 }

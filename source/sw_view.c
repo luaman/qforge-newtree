@@ -27,36 +27,37 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include "host.h"
 #include "r_local.h"
 
-extern byte 	gammatable[256];
+extern byte gammatable[256];
 
-void V_CalcPowerupCshift (void);
-qboolean V_CheckGamma (void);
+void        V_CalcPowerupCshift (void);
+qboolean    V_CheckGamma (void);
 
 /*
 =============
 V_UpdatePalette
 =============
 */
-void V_UpdatePalette (void)
+void
+V_UpdatePalette (void)
 {
-	int 		i, j;
-	qboolean	new;
-	byte		*basepal, *newpal;
-	byte		pal[768];
-	int 		r,g,b;
-	qboolean	force;
+	int         i, j;
+	qboolean    new;
+	byte       *basepal, *newpal;
+	byte        pal[768];
+	int         r, g, b;
+	qboolean    force;
 
 	V_CalcPowerupCshift ();
 
 	new = false;
 
-	for (i=0; i < NUM_CSHIFTS; i++) {
+	for (i = 0; i < NUM_CSHIFTS; i++) {
 		if (cl.cshifts[i].percent != cl.prev_cshifts[i].percent) {
 			new = true;
 			cl.prev_cshifts[i].percent = cl.cshifts[i].percent;
@@ -70,12 +71,12 @@ void V_UpdatePalette (void)
 	}
 
 	// drop the damage value
-	cl.cshifts[CSHIFT_DAMAGE].percent -= host_frametime*150;
+	cl.cshifts[CSHIFT_DAMAGE].percent -= host_frametime * 150;
 	if (cl.cshifts[CSHIFT_DAMAGE].percent <= 0)
 		cl.cshifts[CSHIFT_DAMAGE].percent = 0;
 
 	// drop the bonus value
-	cl.cshifts[CSHIFT_BONUS].percent -= host_frametime*100;
+	cl.cshifts[CSHIFT_BONUS].percent -= host_frametime * 100;
 	if (cl.cshifts[CSHIFT_BONUS].percent <= 0)
 		cl.cshifts[CSHIFT_BONUS].percent = 0;
 
@@ -86,16 +87,19 @@ void V_UpdatePalette (void)
 	basepal = host_basepal;
 	newpal = pal;
 
-	for (i=0 ; i<256 ; i++) {
+	for (i = 0; i < 256; i++) {
 		r = basepal[0];
 		g = basepal[1];
 		b = basepal[2];
 		basepal += 3;
 
-		for (j=0 ; j<NUM_CSHIFTS ; j++) {
-			r += (cl.cshifts[j].percent*(cl.cshifts[j].destcolor[0]-r))>>8;
-			g += (cl.cshifts[j].percent*(cl.cshifts[j].destcolor[1]-g))>>8;
-			b += (cl.cshifts[j].percent*(cl.cshifts[j].destcolor[2]-b))>>8;
+		for (j = 0; j < NUM_CSHIFTS; j++) {
+			r +=
+				(cl.cshifts[j].percent * (cl.cshifts[j].destcolor[0] - r)) >> 8;
+			g +=
+				(cl.cshifts[j].percent * (cl.cshifts[j].destcolor[1] - g)) >> 8;
+			b +=
+				(cl.cshifts[j].percent * (cl.cshifts[j].destcolor[2] - b)) >> 8;
 		}
 
 		newpal[0] = gammatable[r];
@@ -109,18 +113,19 @@ void V_UpdatePalette (void)
 void
 BuildGammaTable (float b, float c)
 {
-	int		i, inf;
-	
+	int         i, inf;
+
 	if ((b == 1.0) && (c == 1.0)) {
 		for (i = 0; i < 256; i++)
 			gammatable[i] = i;
 		return;
 	}
-	
-	for (i = 0; i < 256; i++) {	 // weighted average toward the median, 127
-		inf = (i * b);	// gamma is brightness now, and positive
+
+	for (i = 0; i < 256; i++) {			// weighted average toward the
+										// median, 127
+		inf = (i * b);					// gamma is brightness now, and
+										// positive
 		inf = bound (0, inf, 255);
 		gammatable[i] = inf + (int) ((127 - inf) * (1 - c));
 	}
 }
-

@@ -28,7 +28,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include <stdlib.h>
@@ -44,9 +44,9 @@
 int
 ver_compare (const char *value, const char *reference)
 {
-	const char	*valptr, *refptr;
-	int 		vc, rc;
-	long		vl, rl;
+	const char *valptr, *refptr;
+	int         vc, rc;
+	long        vl, rl;
 
 	if (!value)
 		value = "";
@@ -55,11 +55,13 @@ ver_compare (const char *value, const char *reference)
 
 	for (;;) {
 		valptr = value;
-		while (*valptr && !isdigit(*valptr))	// Scan past any non-digit chars
+		while (*valptr && !isdigit (*valptr))	// Scan past any non-digit
+												// chars
 			valptr++;
 
 		refptr = reference;
-		while (*refptr && !isdigit(*refptr))	// get past non-digits here too
+		while (*refptr && !isdigit (*refptr))	// get past non-digits here
+												// too
 			refptr++;
 
 		for (;;) {
@@ -68,9 +70,11 @@ ver_compare (const char *value, const char *reference)
 
 			if ((!vc) && (!rc))
 				break;
-		
-			if (vc && !isalpha (vc)) vc += 256; // ASCII charset
-			if (rc && !isalpha (rc)) rc += 256;
+
+			if (vc && !isalpha (vc))
+				vc += 256;				// ASCII charset
+			if (rc && !isalpha (rc))
+				rc += 256;
 
 			if (vc != rc)
 				return (vc - rc);
@@ -80,22 +84,22 @@ ver_compare (const char *value, const char *reference)
 		reference = refptr;
 
 		vl = rl = 0;
-	
+
 		if (isdigit (*valptr))
 			vl = strtol (value, (char **) &value, 10);
-	
+
 		if (isdigit (*refptr))
 			rl = strtol (reference, (char **) &reference, 10);
-	
+
 		if (vl != rl)
 			return (vl - rl);
-	
+
 		if ((!*value) && (!*reference))
 			return 0;
-	
+
 		if (!*value)
 			return -1;
-	
+
 		if (!*reference)
 			return 1;
 	}

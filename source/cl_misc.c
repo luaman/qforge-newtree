@@ -27,25 +27,27 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include "host.h"
 #include "sys.h"
 
-qboolean ServerPaused (void)
+qboolean
+ServerPaused (void)
 {
 	return false;
 }
 
-void SV_Error (char *error, ...)
+void
+SV_Error (char *error, ...)
 {
-	va_list		argptr;
-	static	char		string[1024];
+	va_list     argptr;
+	static char string[1024];
 
 	va_start (argptr, error);
-	vsnprintf (string, sizeof(string), error, argptr);
+	vsnprintf (string, sizeof (string), error, argptr);
 	va_end (argptr);
 
-	Sys_Error ("%s\n",string);
+	Sys_Error ("%s\n", string);
 }

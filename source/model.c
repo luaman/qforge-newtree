@@ -30,7 +30,7 @@
 // on the same machine.
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #ifdef HAVE_STRING_H
@@ -46,36 +46,39 @@
 #include "server.h"
 #include "qendian.h"
 
-void Mod_LoadAliasModel(model_t *mod, void *buf);
-void Mod_LoadSpriteModel(model_t *mod, void *buf);
-void Mod_LoadBrushModel(model_t *mod, void *buf);
+void        Mod_LoadAliasModel (model_t *mod, void *buf);
+void        Mod_LoadSpriteModel (model_t *mod, void *buf);
+void        Mod_LoadBrushModel (model_t *mod, void *buf);
 
-model_t	*loadmodel;
-char	loadname[32];	// for hunk tags
+model_t    *loadmodel;
+char        loadname[32];				// for hunk tags
 
 #define	MAX_MOD_KNOWN	512
-model_t	mod_known[MAX_MOD_KNOWN];
-int		mod_numknown;
+model_t     mod_known[MAX_MOD_KNOWN];
+int         mod_numknown;
 
-cvar_t	*gl_subdivide_size;
+cvar_t     *gl_subdivide_size;
 
-extern byte	mod_novis[MAX_MAP_LEAFS/8];
+extern byte mod_novis[MAX_MAP_LEAFS / 8];
 
-texture_t *r_notexture_mip;
+texture_t  *r_notexture_mip;
 
 /*
 ===============
 Mod_Init
 ===============
 */
-void Mod_Init (void)
+void
+Mod_Init (void)
 {
-	memset (mod_novis, 0xff, sizeof(mod_novis));
+	memset (mod_novis, 0xff, sizeof (mod_novis));
 }
 
-void Mod_Init_Cvars (void)
+void
+Mod_Init_Cvars (void)
 {
-	gl_subdivide_size = Cvar_Get("gl_subdivide_size",  "128", CVAR_ARCHIVE, "None");
+	gl_subdivide_size =
+		Cvar_Get ("gl_subdivide_size", "128", CVAR_ARCHIVE, "None");
 }
 
 /*
@@ -83,12 +86,13 @@ void Mod_Init_Cvars (void)
 Mod_ClearAll
 ===================
 */
-void Mod_ClearAll (void)
+void
+Mod_ClearAll (void)
 {
-	int		i;
-	model_t	*mod;
-	
-	for (i=0 , mod=mod_known ; i<mod_numknown ; i++, mod++)
+	int         i;
+	model_t    *mod;
+
+	for (i = 0, mod = mod_known; i < mod_numknown; i++, mod++)
 		if (mod->type != mod_alias)
 			mod->needload = true;
 }
@@ -99,23 +103,23 @@ Mod_FindName
 
 ==================
 */
-model_t *Mod_FindName (char *name)
+model_t    *
+Mod_FindName (char *name)
 {
-	int		i;
-	model_t	*mod;
-	
+	int         i;
+	model_t    *mod;
+
 	if (!name[0])
 		SV_Error ("Mod_ForName: NULL name");
-		
+
 //
 // search the currently loaded models
 //
-	for (i=0 , mod=mod_known ; i<mod_numknown ; i++, mod++)
-		if (!strcmp (mod->name, name) )
+	for (i = 0, mod = mod_known; i < mod_numknown; i++, mod++)
+		if (!strcmp (mod->name, name))
 			break;
-			
-	if (i == mod_numknown)
-	{
+
+	if (i == mod_numknown) {
 		if (mod_numknown == MAX_MOD_KNOWN)
 			SV_Error ("mod_numknown == MAX_MOD_KNOWN");
 		strcpy (mod->name, name);
@@ -133,40 +137,37 @@ Mod_LoadModel
 Loads a model into the cache
 ==================
 */
-model_t *Mod_LoadModel (model_t *mod, qboolean crash)
+model_t    *
+Mod_LoadModel (model_t *mod, qboolean crash)
 {
-	void	*d;
+	void       *d;
 	unsigned int *buf;
-	byte	stackbuf[1024];		// avoid dirtying the cache heap
+	byte        stackbuf[1024];			// avoid dirtying the cache heap
 
-	if (!mod->needload)
-	{
-		if (mod->type == mod_alias)
-		{
+	if (!mod->needload) {
+		if (mod->type == mod_alias) {
 			d = Cache_Check (&mod->cache);
 			if (d)
 				return mod;
-		}
-		else
-			return mod;		// not cached at all
+		} else
+			return mod;					// not cached at all
 	}
-
 //
 // load the file
 //
-	buf = (unsigned int *)COM_LoadStackFile (mod->name, stackbuf, sizeof(stackbuf));
-	if (!buf)
-	{
+	buf =
+		(unsigned int *) COM_LoadStackFile (mod->name, stackbuf,
+											sizeof (stackbuf));
+	if (!buf) {
 		if (crash)
 			SV_Error ("Mod_NumForName: %s not found", mod->name);
 		return NULL;
 	}
-	
 //
 // allocate a new model
 //
 	COM_FileBase (mod->name, loadname);
-	
+
 	loadmodel = mod;
 
 //
@@ -176,20 +177,19 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 // call the apropriate loader
 	mod->needload = false;
 	mod->hasfullbrights = false;
-	
-	switch (LittleLong(*(unsigned int *)buf))
-	{
-	case IDPOLYHEADER:
-		Mod_LoadAliasModel (mod, buf);
-		break;
-		
-	case IDSPRITEHEADER:
-		Mod_LoadSpriteModel (mod, buf);
-		break;
-	
-	default:
-		Mod_LoadBrushModel (mod, buf);
-		break;
+
+	switch (LittleLong (*(unsigned int *) buf)) {
+		case IDPOLYHEADER:
+			Mod_LoadAliasModel (mod, buf);
+			break;
+
+		case IDSPRITEHEADER:
+			Mod_LoadSpriteModel (mod, buf);
+			break;
+
+		default:
+			Mod_LoadBrushModel (mod, buf);
+			break;
 	}
 
 	return mod;
@@ -202,13 +202,14 @@ Mod_ForName
 Loads in a model for the given name
 ==================
 */
-model_t *Mod_ForName (char *name, qboolean crash)
+model_t    *
+Mod_ForName (char *name, qboolean crash)
 {
-	model_t	*mod;
-	
+	model_t    *mod;
+
 	mod = Mod_FindName (name);
-	
-	Con_DPrintf("Mod_ForName: %s, %p\n", name, mod);
+
+	Con_DPrintf ("Mod_ForName: %s, %p\n", name, mod);
 	return Mod_LoadModel (mod, crash);
 }
 
@@ -219,16 +220,17 @@ Mod_Init
 Caches the data if needed
 ===============
 */
-void *Mod_Extradata (model_t *mod)
+void       *
+Mod_Extradata (model_t *mod)
 {
-	void	*r;
-	
+	void       *r;
+
 	r = Cache_Check (&mod->cache);
 	if (r)
 		return r;
 
 	Mod_LoadModel (mod, true);
-	
+
 	if (!mod->cache.data)
 		SV_Error ("Mod_Extradata: caching failed");
 	return mod->cache.data;
@@ -240,14 +242,14 @@ Mod_TouchModel
 
 ==================
 */
-void Mod_TouchModel (char *name)
+void
+Mod_TouchModel (char *name)
 {
-	model_t	*mod;
-	
+	model_t    *mod;
+
 	mod = Mod_FindName (name);
-	
-	if (!mod->needload)
-	{
+
+	if (!mod->needload) {
 		if (mod->type == mod_alias)
 			Cache_Check (&mod->cache);
 	}
@@ -258,15 +260,14 @@ void Mod_TouchModel (char *name)
 Mod_Print
 ================
 */
-void Mod_Print (void)
+void
+Mod_Print (void)
 {
-	int		i;
-	model_t	*mod;
+	int         i;
+	model_t    *mod;
 
 	Con_Printf ("Cached models:\n");
-	for (i=0, mod=mod_known ; i < mod_numknown ; i++, mod++)
-	{
-		Con_Printf ("%8p : %s\n",mod->cache.data, mod->name);
+	for (i = 0, mod = mod_known; i < mod_numknown; i++, mod++) {
+		Con_Printf ("%8p : %s\n", mod->cache.data, mod->name);
 	}
 }
-

@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "sys.h"
 #include "cvar.h"
@@ -38,15 +38,15 @@
 
 #include <ctype.h>
 
-cvar_t	*registered;
+cvar_t     *registered;
 
-qboolean	com_modified;	// set true if using non-id files
+qboolean    com_modified;				// set true if using non-id files
 
-int		static_registered = 1;	// only for startup check, then set
+int         static_registered = 1;		// only for startup check, then set
 
-qboolean		msg_suppress_1 = 0;
+qboolean    msg_suppress_1 = 0;
 
-void COM_Path_f (void);
+void        COM_Path_f (void);
 
 
 /*
@@ -59,17 +59,18 @@ Immediately exits out if an alternate game was attempted to be started without
 being registered.
 ================
 */
-void COM_CheckRegistered (void)
+void
+COM_CheckRegistered (void)
 {
-	QFile		*h;
-	unsigned short	check[128];
+	QFile      *h;
+	unsigned short check[128];
 
-	COM_FOpenFile("gfx/pop.lmp", &h);
+	COM_FOpenFile ("gfx/pop.lmp", &h);
 	static_registered = 0;
 
 	if (h) {
 		static_registered = 1;
-		Qread (h, check, sizeof(check));
+		Qread (h, check, sizeof (check));
 		Qclose (h);
 	}
 
@@ -85,24 +86,25 @@ void COM_CheckRegistered (void)
 COM_Init
 ================
 */
-void COM_Init (void)
+void
+COM_Init (void)
 {
 #ifndef WORDS_BIGENDIAN
-		bigendien = false;
-		BigShort = ShortSwap;
-		LittleShort = ShortNoSwap;
-		BigLong = LongSwap;
-		LittleLong = LongNoSwap;
-		BigFloat = FloatSwap;
-		LittleFloat = FloatNoSwap;
+	bigendien = false;
+	BigShort = ShortSwap;
+	LittleShort = ShortNoSwap;
+	BigLong = LongSwap;
+	LittleLong = LongNoSwap;
+	BigFloat = FloatSwap;
+	LittleFloat = FloatNoSwap;
 #else
-		bigendien = true;
-		BigShort = ShortNoSwap;
-		LittleShort = ShortSwap;
-		BigLong = LongNoSwap;
-		LittleLong = LongSwap;
-		BigFloat = FloatNoSwap;
-		LittleFloat = FloatSwap;
+	bigendien = true;
+	BigShort = ShortNoSwap;
+	LittleShort = ShortSwap;
+	BigLong = LongNoSwap;
+	LittleLong = LongSwap;
+	BigFloat = FloatNoSwap;
+	LittleFloat = FloatSwap;
 #endif
 
 	Cmd_AddCommand ("path", COM_Path_f);
@@ -111,7 +113,8 @@ void COM_Init (void)
 	COM_CheckRegistered ();
 }
 
-void COM_Init_Cvars (void)
+void
+COM_Init_Cvars (void)
 {
-	registered = Cvar_Get("registered", "0", CVAR_NONE, "None");
+	registered = Cvar_Get ("registered", "0", CVAR_NONE, "None");
 }

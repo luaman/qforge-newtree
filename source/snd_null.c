@@ -37,14 +37,14 @@
 // FIXME - should be put in one place
 // =======================================================================
 channel_t   channels[MAX_CHANNELS];
-int			total_channels;
-volatile dma_t  *shm = 0;
-cvar_t	*loadas8bit;
-int    paintedtime;    // sample PAIRS
+int         total_channels;
+volatile dma_t *shm = 0;
+cvar_t     *loadas8bit;
+int         paintedtime;				// sample PAIRS
 
 
-cvar_t	*bgmvolume;
-cvar_t	*volume;
+cvar_t     *bgmvolume;
+cvar_t     *volume;
 
 
 void
@@ -56,9 +56,9 @@ S_Init (void)
 void
 S_Init_Cvars (void)
 {
-	volume = Cvar_Get("volume",  "0.7", CVAR_ARCHIVE, "None");
-	loadas8bit = Cvar_Get("loadas8bit",  "0", CVAR_NONE, "None");
-	bgmvolume = Cvar_Get("bgmvolume",  "1", CVAR_ARCHIVE, "None");
+	volume = Cvar_Get ("volume", "0.7", CVAR_ARCHIVE, "None");
+	loadas8bit = Cvar_Get ("loadas8bit", "0", CVAR_NONE, "None");
+	bgmvolume = Cvar_Get ("bgmvolume", "1", CVAR_ARCHIVE, "None");
 }
 
 void
@@ -92,7 +92,8 @@ S_StaticSound (sfx_t *sfx, vec3_t origin, float vol, float attenuation)
 }
 
 void
-S_StartSound (int entnum, int entchannel, sfx_t *sfx, vec3_t origin, float fvol,  float attenuation)
+S_StartSound (int entnum, int entchannel, sfx_t *sfx, vec3_t origin, float fvol,
+			  float attenuation)
 {
 }
 
@@ -101,7 +102,7 @@ S_StopSound (int entnum, int entchannel)
 {
 }
 
-sfx_t *
+sfx_t      *
 S_PrecacheSound (char *sample)
 {
 	return NULL;
@@ -141,4 +142,3 @@ void
 S_LocalSound (char *s)
 {
 }
-

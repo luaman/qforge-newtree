@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include <stdarg.h>
@@ -54,88 +54,98 @@
 #include "world.h"
 
 quakeparms_t host_parms;
-qboolean		host_initialized;	// true if into command execution
+qboolean    host_initialized;			// true if into command execution
 
-double	sv_frametime;
-double	realtime;					// without any filtering or bounding
+double      sv_frametime;
+double      realtime;					// without any filtering or bounding
 
-int 		host_hunklevel;
+int         host_hunklevel;
 
-netadr_t	master_adr[MAX_MASTERS];	// address of group servers
+netadr_t    master_adr[MAX_MASTERS];	// address of group servers
 
-client_t	*host_client;			// current client
+client_t   *host_client;				// current client
 
 // DoS protection
 // FLOOD_PING, FLOOD_LOG, FLOOD_CONNECT, FLOOD_STATUS, FLOOD_RCON, FLOOD_BAN
 // fixme: these default values need to be tweaked after more testing
 
-double	netdosexpire[DOSFLOODCMDS] = { 1, 1, 2, 0.9, 1, 5 };
-double	netdosvalues[DOSFLOODCMDS] = { 12, 1, 3, 1, 1, 1 };
+double      netdosexpire[DOSFLOODCMDS] = { 1, 1, 2, 0.9, 1, 5 };
+double      netdosvalues[DOSFLOODCMDS] = { 12, 1, 3, 1, 1, 1 };
 
-cvar_t	*sv_netdosprotect;		// tone down DoS from quake servers
+cvar_t     *sv_netdosprotect;			// tone down DoS from quake servers
 
-cvar_t	*sv_allow_status;
-cvar_t	*sv_allow_log;
-cvar_t	*sv_allow_ping;
+cvar_t     *sv_allow_status;
+cvar_t     *sv_allow_log;
+cvar_t     *sv_allow_ping;
 
-cvar_t	*fs_globalcfg;
+cvar_t     *fs_globalcfg;
 
-cvar_t	*sv_mintic;				// bound the size of the
-cvar_t	*sv_maxtic;				// physics time tic
+cvar_t     *sv_mintic;					// bound the size of the
+cvar_t     *sv_maxtic;					// physics time tic
 
-cvar_t	*developer;				// show extra messages
+cvar_t     *developer;					// show extra messages
 
-cvar_t	*timeout;				// seconds without any message
-cvar_t	*zombietime;			// seconds to sink messages after disconnect
+cvar_t     *timeout;					// seconds without any message
+cvar_t     *zombietime;					// seconds to sink messages after
 
-cvar_t	*rcon_password; 		// password for remote server commands
+										// disconnect
 
-cvar_t	*password;				// password for entering the game
-cvar_t	*spectator_password;	// password for entering as a spectator
+cvar_t     *rcon_password;				// password for remote server
 
-cvar_t	*allow_download;
-cvar_t	*allow_download_skins;
-cvar_t	*allow_download_models;
-cvar_t	*allow_download_sounds;
-cvar_t	*allow_download_maps;
+										// commands
 
-cvar_t	*sv_highchars;
+cvar_t     *password;					// password for entering the game
+cvar_t     *spectator_password;			// password for entering as a
 
-cvar_t	*sv_phs;
+										// spectator
 
-cvar_t	*pausable;
+cvar_t     *allow_download;
+cvar_t     *allow_download_skins;
+cvar_t     *allow_download_models;
+cvar_t     *allow_download_sounds;
+cvar_t     *allow_download_maps;
 
-extern cvar_t	*sv_timekick;
-extern cvar_t	*sv_timekick_fuzz;
-extern cvar_t	*sv_timekick_interval;
+cvar_t     *sv_highchars;
 
-cvar_t	*sv_minqfversion;		// Minimum QF version allowed to connect
-cvar_t	*sv_maxrate;			// Maximum allowable rate (silently capped)
+cvar_t     *sv_phs;
 
-cvar_t	*sv_timestamps;
-cvar_t	*sv_timefmt;
+cvar_t     *pausable;
+
+extern cvar_t *sv_timekick;
+extern cvar_t *sv_timekick_fuzz;
+extern cvar_t *sv_timekick_interval;
+
+cvar_t     *sv_minqfversion;			// Minimum QF version allowed to
+
+										// connect
+cvar_t     *sv_maxrate;					// Maximum allowable rate (silently
+
+										// capped)
+
+cvar_t     *sv_timestamps;
+cvar_t     *sv_timefmt;
 
 //
 // game rules mirrored in svs.info
 //
-cvar_t	*fraglimit;
-cvar_t	*timelimit;
-cvar_t	*teamplay;
-cvar_t	*samelevel;
-cvar_t	*maxclients;
-cvar_t	*maxspectators;
-cvar_t	*deathmatch;			// 0, 1, or 2
-cvar_t	*spawn;
-cvar_t	*watervis;
+cvar_t     *fraglimit;
+cvar_t     *timelimit;
+cvar_t     *teamplay;
+cvar_t     *samelevel;
+cvar_t     *maxclients;
+cvar_t     *maxspectators;
+cvar_t     *deathmatch;					// 0, 1, or 2
+cvar_t     *spawn;
+cvar_t     *watervis;
 
-cvar_t	*hostname;
+cvar_t     *hostname;
 
-QFile	*sv_logfile;
-QFile	*sv_fraglogfile;
+QFile      *sv_logfile;
+QFile      *sv_fraglogfile;
 
-void SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
-void Master_Shutdown (void);
-void PR_Init_Cvars (void);
+void        SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
+void        Master_Shutdown (void);
+void        PR_Init_Cvars (void);
 
 //============================================================================
 
@@ -317,7 +327,7 @@ SV_FullClientUpdate (client_t *client, sizebuf_t *buf)
 
 	i = client - svs.clients;
 
-//	Sys_Printf("SV_FullClientUpdate:  Updated frags for client %d\n", i);
+//  Sys_Printf("SV_FullClientUpdate:  Updated frags for client %d\n", i);
 
 	MSG_WriteByte (buf, svc_updatefrags);
 	MSG_WriteByte (buf, i);
@@ -532,10 +542,10 @@ SVC_Log (void)
 		seq = -1;
 
 	if (seq == svs.logsequence - 1 || !sv_fraglogfile) {	// they allready
-															// have this
-															// data, or we
-															// aren't logging 
-															// frags
+		// have this
+		// data, or we
+		// aren't logging 
+		// frags
 		data[0] = A2A_NACK;
 		NET_SendPacket (1, data, net_from);
 		return;
@@ -545,7 +555,8 @@ SVC_Log (void)
 				 NET_AdrToString (net_from));
 
 	// snprintf (data, sizeof (data), "stdlog %i\n", svs.logsequence-1);
-	// strncat (data,  (char *)svs.log_buf[((svs.logsequence-1)&1)], sizeof(data) - strlen (data));
+	// strncat (data,  (char *)svs.log_buf[((svs.logsequence-1)&1)],
+	// sizeof(data) - strlen (data));
 	snprintf (data, sizeof (data), "stdlog %i\n%s",
 			  svs.logsequence - 1,
 			  (char *) svs.log_buf[((svs.logsequence - 1) & 1)]);
@@ -673,7 +684,7 @@ SVC_DirectConnect (void)
 	}
 
 	s = Info_ValueForKey (userinfo, "*qf_version");
-	if ((!s[0]) || sv_minqfversion->value) { // kick old clients?
+	if ((!s[0]) || sv_minqfversion->value) {	// kick old clients?
 		if (ver_compare (s, sv_minqfversion->string) < 0) {
 			Con_Printf ("%s: Version %s is less than minimum version %s.\n",
 						NET_AdrToString (net_from), s, sv_minqfversion->string);
@@ -790,7 +801,6 @@ SVC_DirectConnect (void)
 		Con_Printf ("WARNING: miscounted available clients\n");
 		return;
 	}
-
 	// build a new connection
 	// accept the new client
 	// this is the only place a client_t is ever initialized
@@ -1210,7 +1220,7 @@ SV_SendBan (void)
 	data[0] = data[1] = data[2] = data[3] = 0xff;
 	data[4] = A2C_PRINT;
 	data[5] = 0;
-	strncat (data,  "\nbanned.\n", sizeof(data) - strlen (data));
+	strncat (data, "\nbanned.\n", sizeof (data) - strlen (data));
 
 	NET_SendPacket (strlen (data), data, net_from);
 }
@@ -1282,8 +1292,8 @@ SV_ReadPackets (void)
 				cl->netchan.remote_address.port = net_from.port;
 			}
 			if (Netchan_Process (&cl->netchan)) {	// this is a valid,
-													// sequenced packet, so
-													// process it
+				// sequenced packet, so
+				// process it
 				svs.stats.packets++;
 				good = true;
 				cl->send_message = true;	// reply at end of frame
@@ -1518,7 +1528,8 @@ SV_InitLocal (void)
 				  "Time cheat check interval");
 
 	sv_minqfversion =
-		Cvar_Get ("sv_minqfversion", "0", CVAR_SERVERINFO, "Minimum QF version on client");
+		Cvar_Get ("sv_minqfversion", "0", CVAR_SERVERINFO,
+				  "Minimum QF version on client");
 
 	sv_maxrate =
 		Cvar_Get ("sv_maxrate", "0", CVAR_SERVERINFO, "Maximum allowable rate");

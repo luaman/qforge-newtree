@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "client.h"
 #include "console.h"
@@ -49,67 +49,63 @@ things like godmode, noclip, etc, are commands directed to the server,
 so when they are typed in at the console, they will need to be forwarded.
 ===================
 */
-void Cmd_ForwardToServer (void)
+void
+Cmd_ForwardToServer (void)
 {
-	if (cls.state == ca_disconnected)
-	{
-		Con_Printf ("Can't \"%s\", not connected\n", Cmd_Argv(0));
+	if (cls.state == ca_disconnected) {
+		Con_Printf ("Can't \"%s\", not connected\n", Cmd_Argv (0));
 		return;
 	}
-	
+
 	if (cls.demoplayback)
-		return;		// not really connected
+		return;							// not really connected
 
 
 	MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
-	SZ_Print (&cls.netchan.message, Cmd_Argv(0));
-	if (Cmd_Argc() > 1)
-	{
+	SZ_Print (&cls.netchan.message, Cmd_Argv (0));
+	if (Cmd_Argc () > 1) {
 		SZ_Print (&cls.netchan.message, " ");
 
-		if (!strcasecmp(Cmd_Argv(0), "say") ||
-			!strcasecmp(Cmd_Argv(0), "say_team"))
-		{
-			char		*s;
-			s = Team_ParseSay(Cmd_Args());
-			if (*s && *s < 32 && *s != 10)
-			{
+		if (!strcasecmp (Cmd_Argv (0), "say") ||
+			!strcasecmp (Cmd_Argv (0), "say_team")) {
+			char       *s;
+
+			s = Team_ParseSay (Cmd_Args ());
+			if (*s && *s < 32 && *s != 10) {
 				// otherwise the server would eat leading characters
 				// less than 32 or greater than 127
 				SZ_Print (&cls.netchan.message, "\"");
 				SZ_Print (&cls.netchan.message, s);
 				SZ_Print (&cls.netchan.message, "\"");
-			}
-			else
+			} else
 				SZ_Print (&cls.netchan.message, s);
 			return;
 		}
 
-		SZ_Print (&cls.netchan.message, Cmd_Args());
+		SZ_Print (&cls.netchan.message, Cmd_Args ());
 	}
 }
 
 // don't forward the first argument
-void Cmd_ForwardToServer_f (void)
+void
+Cmd_ForwardToServer_f (void)
 {
-	if (cls.state == ca_disconnected)
-	{
-		Con_Printf ("Can't \"%s\", not connected\n", Cmd_Argv(0));
+	if (cls.state == ca_disconnected) {
+		Con_Printf ("Can't \"%s\", not connected\n", Cmd_Argv (0));
 		return;
 	}
 
-	if (strcasecmp(Cmd_Argv(1), "snap") == 0) {
+	if (strcasecmp (Cmd_Argv (1), "snap") == 0) {
 		Cbuf_InsertText ("snap\n");
 		return;
 	}
-	
-	if (cls.demoplayback)
-		return;		// not really connected
 
-	if (Cmd_Argc() > 1)
-	{
+	if (cls.demoplayback)
+		return;							// not really connected
+
+	if (Cmd_Argc () > 1) {
 		MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
-		SZ_Print (&cls.netchan.message, Cmd_Args());
+		SZ_Print (&cls.netchan.message, Cmd_Args ());
 	}
 }
 
@@ -118,11 +114,11 @@ void Cmd_ForwardToServer_f (void)
 Cmd_Init
 ============
 */
-void cl_Cmd_Init (void)
+void
+cl_Cmd_Init (void)
 {
 //
 // register our commands
 //
 	Cmd_AddCommand ("cmd", Cmd_ForwardToServer_f);
 }
-

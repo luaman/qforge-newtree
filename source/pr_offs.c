@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "pr_comp.h"
 #include "progs.h"
@@ -43,32 +43,38 @@
 #include <math.h>
 #include <string.h>
 
-int eval_alpha, eval_scale, eval_glowsize, eval_glowcolor, eval_colormod;
+int         eval_alpha, eval_scale, eval_glowsize, eval_glowcolor,
 
-int FindFieldOffset(char *field)
+	eval_colormod;
+
+int
+FindFieldOffset (char *field)
 {
-	ddef_t *d;
-	d = ED_FindField(field);
+	ddef_t     *d;
+
+	d = ED_FindField (field);
 	if (!d)
 		return 0;
 
-	return d->ofs*4;
+	return d->ofs * 4;
 }
 
 
-eval_t *GETEDICTFIELDVALUE(edict_t *ed, int fieldoffset)
+eval_t     *
+GETEDICTFIELDVALUE (edict_t *ed, int fieldoffset)
 {
 	if (!fieldoffset)
 		return NULL;
 
-	return (eval_t*)((char*)&ed->v + fieldoffset);
+	return (eval_t *) ((char *) &ed->v + fieldoffset);
 }
 
-void FindEdictFieldOffsets()
+void
+FindEdictFieldOffsets ()
 {
-	eval_alpha = FindFieldOffset("alpha");
-	eval_scale = FindFieldOffset("scale");
-	eval_glowsize = FindFieldOffset("glow_size");
-	eval_glowcolor = FindFieldOffset("glow_color");
-	eval_colormod = FindFieldOffset("colormod");
+	eval_alpha = FindFieldOffset ("alpha");
+	eval_scale = FindFieldOffset ("scale");
+	eval_glowsize = FindFieldOffset ("glow_size");
+	eval_glowcolor = FindFieldOffset ("glow_color");
+	eval_colormod = FindFieldOffset ("colormod");
 };

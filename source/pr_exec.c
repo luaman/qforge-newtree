@@ -27,7 +27,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include "pr_comp.h"
 #include "progs.h"
@@ -393,7 +393,7 @@ PR_ExecuteProgram (func_t fnum)
 
 	while (1) {
 		st++;
-		if (++profile > 1000000)	// LordHavoc: increased runaway loop
+		if (++profile > 1000000)		// LordHavoc: increased runaway loop
 			// limit 10x
 		{
 			pr_xstatement = st - pr_statements;
@@ -524,9 +524,9 @@ PR_ExecuteProgram (func_t fnum)
 				// ==================
 			case OP_STORE_F:
 			case OP_STORE_ENT:
-			case OP_STORE_FLD:		// integers
+			case OP_STORE_FLD:			// integers
 			case OP_STORE_S:
-			case OP_STORE_FNC:		// pointers
+			case OP_STORE_FNC:			// pointers
 				OPB->_int = OPA->_int;
 				break;
 			case OP_STORE_V:
@@ -537,9 +537,9 @@ PR_ExecuteProgram (func_t fnum)
 
 			case OP_STOREP_F:
 			case OP_STOREP_ENT:
-			case OP_STOREP_FLD:	// integers
+			case OP_STOREP_FLD:		// integers
 			case OP_STOREP_S:
-			case OP_STOREP_FNC:	// pointers
+			case OP_STOREP_FNC:		// pointers
 				if (pr_boundscheck->int_val
 					&& (OPB->_int < 0 || OPB->_int + 4 > pr_edictareasize)) {
 					pr_xstatement = st - pr_statements;
@@ -626,8 +626,7 @@ PR_ExecuteProgram (func_t fnum)
 					return;
 				}
 				if (pr_boundscheck->int_val
-					&& (OPB->_int < 0
-						|| OPB->_int + 2 >= progs->entityfields)) {
+					&& (OPB->_int < 0 || OPB->_int + 2 >= progs->entityfields)) {
 					pr_xstatement = st - pr_statements;
 					PR_RunError
 						("Progs attempted to read an invalid field in an edict\n");
@@ -651,7 +650,7 @@ PR_ExecuteProgram (func_t fnum)
 					st += st->b - 1;	// offset the s++
 				break;
 			case OP_GOTO:
-				st += st->a - 1;	// offset the s++
+				st += st->a - 1;		// offset the s++
 				break;
 			case OP_CALL0:
 			case OP_CALL1:
@@ -691,7 +690,7 @@ PR_ExecuteProgram (func_t fnum)
 					pr_globals[(unsigned short) st->a + 2];
 				st = &pr_statements[PR_LeaveFunction ()];
 				if (pr_depth == exitdepth)
-					return;			// all done
+					return;				// all done
 				break;
 			case OP_STATE:
 				ed = PROG_TO_EDICT (pr_global_struct->self);
@@ -984,7 +983,7 @@ char       *
 PR_GetString (int num)
 {
 	if (num < 0) {
-		//Con_DPrintf("GET:%d == %s\n", num, pr_strtbl[-num]);
+		// Con_DPrintf("GET:%d == %s\n", num, pr_strtbl[-num]);
 		return pr_strtbl[-num];
 	}
 	return pr_strings + num;
@@ -1005,7 +1004,7 @@ PR_SetString (char *s)
 			Sys_Error ("MAX_PRSTR");
 		num_prstr++;
 		pr_strtbl[num_prstr] = s;
-		//Con_DPrintf("SET:%d == %s\n", -num_prstr, s);
+		// Con_DPrintf("SET:%d == %s\n", -num_prstr, s);
 		return -num_prstr;
 	}
 	return (int) (s - pr_strings);
