@@ -179,6 +179,9 @@
 /* Define if you have the <fcntl.h> header file.  */
 #undef HAVE_FCNTL_H
 
+/* Define if you have the <fnmatch.h> header file.  */
+#define HAVE_FNMATCH_H
+
 /* Define if you have the <initguid.h> header file.  */
 #undef HAVE_INITGUID_H
 
@@ -250,9 +253,6 @@
 
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
-
-/* Define if dirent.h is in your include path somewhere */
-#define HAVE_FNMATCH_H 1
 
 /* Define if you want the QSG standards */
 #define QSG_VERSION "1"
