@@ -107,7 +107,7 @@ void	VID_Shutdown (void)
 
 	SDL_Quit();
 }
-
+#ifndef WIN32
 static void
 signal_handler(int sig)
 {
@@ -130,7 +130,7 @@ InitSig(void)
 	signal(SIGSEGV, signal_handler);
 	signal(SIGTERM, signal_handler);
 }
-
+#endif
 void	VID_SetPalette (unsigned char *palette)
 {
         byte    *pal;
@@ -363,9 +363,11 @@ void	VID_Init (unsigned char *palette)
 	{
 		flags |= SDL_FULLSCREEN;
 		// Don't annoy Mesa/3dfx folks
+#ifndef WIN32
 		setenv ("MESA_GLX_FX","fullscreen", 1);
 	} else {
 		setenv ("MESA_GLX_FX","disable",1);
+#endif
 	}
 
 	// Setup GL Attributes
@@ -393,8 +395,9 @@ void	VID_Init (unsigned char *palette)
 
 	vid.aspect = ((float)vid.height / (float)vid.width) * (320.0 / 240.0);
 	vid.numpages = 2;
-
+#ifndef WIN32
 	InitSig(); // trap evil signals
+#endif
 
 	GL_Init();
 
