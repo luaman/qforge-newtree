@@ -19,6 +19,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // winquake.h: Win32-specific Quake header file
 
+#ifndef WINQUAKE_H
+#define WINQUAKE_H
+
 #ifdef _WIN32 
 #pragma warning( disable : 4229 )  // mgraph gets this
 
@@ -56,7 +59,7 @@ extern qboolean	WinNT;
 
 int VID_ForceUnlockedAndReturnState (void);
 void VID_ForceLockState (int lk);
-
+/*
 void IN_ShowMouse (void);
 void IN_DeactivateMouse (void);
 void IN_HideMouse (void);
@@ -64,7 +67,7 @@ void IN_ActivateMouse (void);
 void IN_RestoreOriginalMouseState (void);
 void IN_SetQuakeMouseState (void);
 void IN_MouseEvent (int mstate);
-
+*/
 extern qboolean	winsock_lib_initialized;
 
 extern int		window_center_x, window_center_y;
@@ -101,4 +104,6 @@ struct hostent FAR * (PASCAL FAR *pgethostbyaddr)(const char FAR * addr,
 												  int len, int type);
 int (PASCAL FAR *pgetsockname)(SOCKET s, struct sockaddr FAR *name,
 							   int FAR * namelen);
-#endif
+#endif // _WIN32
+
+#endif // WINQUAKE_H
