@@ -59,6 +59,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <limits.h>
 #include <io.h>
 #include <conio.h>
+#include "screen.h"
+#include "qargs.h"
+#include "client.h"
 
 qboolean is_server = false;
 
@@ -454,8 +457,8 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	if (!GetCurrentDirectory (sizeof(cwd), cwd))
 		Sys_Error ("Couldn't determine current directory");
 
-	if (cwd[Q_strlen(cwd)-1] == '/')
-		cwd[Q_strlen(cwd)-1] = 0;
+	if (cwd[strlen(cwd)-1] == '/')
+		cwd[strlen(cwd)-1] = 0;
 
 	parms.basedir = cwd;
 	parms.cachedir = NULL;
@@ -481,7 +484,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 				*lpCmdLine = 0;
 				lpCmdLine++;
 			}
-			
+
 		}
 	}
 
@@ -531,7 +534,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		t = COM_CheckParm("-heapsize") + 1;
 
 		if (t < com_argc)
-			parms.memsize = Q_atoi (com_argv[t]) * 1024;
+			parms.memsize = atoi (com_argv[t]) * 1024;
 	}
 
 	parms.membase = malloc (parms.memsize);

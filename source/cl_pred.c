@@ -36,6 +36,10 @@
 #include "console.h"
 #include "commdef.h"
 
+#ifdef WIN32
+#include "winquake.h"
+#endif
+
 #include <math.h>
 
 /* cvar_t	cl_nopred = {"cl_nopred","0"};

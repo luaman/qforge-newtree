@@ -37,7 +37,8 @@
 #include "quakedef.h"
 #include "winquake.h"
 #include <dinput.h>
-
+#include "client.h"
+#include "keys.h"
 //#include "dosisms.h"
 
 #define DINPUT_BUFFERSIZE           16
@@ -913,7 +914,7 @@ static void IN_StartupJoystick (void)
 	joy_avail = false; 
 
 	// abort startup if user requests no joystick
-	if ( COM_CheckParm ("-nojoy") ) 
+	if ( COM_CheckParm ("-nojoy") )
 		return; 
  
 	// verify joystick driver is present
@@ -946,7 +947,7 @@ static void IN_StartupJoystick (void)
 	memset (&jc, 0, sizeof(jc));
 	if ((mmr = joyGetDevCaps (joy_id, &jc, sizeof(jc))) != JOYERR_NOERROR)
 	{
-		Con_Printf ("\njoystick not found -- invalid joystick capabilities (%x)\n\n", mmr); 
+		Con_Printf ("\njoystick not found -- invalid joystick capabilities (%x)\n\n", mmr);
 		return;
 	}
 
@@ -963,7 +964,7 @@ static void IN_StartupJoystick (void)
 	joy_avail = true; 
 	joy_advancedinit = false;
 
-	Con_Printf ("\njoystick detected\n\n"); 
+	Con_Printf ("\njoystick detected\n\n");
 }
 
 
@@ -1026,7 +1027,7 @@ static void Joy_AdvancedUpdate_f (void)
 	}
 	else
 	{
-		if (Q_strcmp (joy_name->string, "joystick") != 0)
+		if (strcmp (joy_name->string, "joystick") != 0)
 		{
 			// notify user of advanced controller
 			Con_Printf ("\n%s configured\n\n", joy_name->string);

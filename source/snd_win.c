@@ -31,6 +31,7 @@
 #endif
 #include "quakedef.h"
 #include "winquake.h"
+#include "sound.h"
 
 #define iDirectSoundCreate(a,b,c)	pDirectSoundCreate(a,b,c)
 

@@ -30,6 +30,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+#include <stdlib.h>
 #include "quakedef.h"
 #include "winquake.h"
 #include "sys.h"
@@ -39,6 +40,8 @@
 #include "keys.h"
 #include "screen.h"
 #include "wad.h"
+#include "cmd.h"
+
 #define	MINIMUM_MEMORY	0x550000
 
 #define MAX_MODE_LIST	30
@@ -2057,7 +2060,7 @@ void VID_DescribeMode_f (void)
 {
 	int		modenum;
 	
-	modenum = Q_atoi (Cmd_Argv(1));
+	modenum = atoi (Cmd_Argv(1));
 
 	Con_Printf ("%s\n", VID_GetExtModeDescription (modenum));
 }
@@ -2114,12 +2117,12 @@ void VID_TestMode_f (void)
 
 	if (!vid_testingmode)
 	{
-		modenum = Q_atoi (Cmd_Argv(1));
+		modenum = atoi (Cmd_Argv(1));
 
 		if (VID_SetMode (modenum, vid_curpal))
 		{
 			vid_testingmode = 1;
-			testduration = Q_atof (Cmd_Argv(2));
+			testduration = atof (Cmd_Argv(2));
 			if (testduration == 0)
 				testduration = 5.0;
 			vid_testendtime = realtime + testduration;
@@ -2181,7 +2184,7 @@ void VID_ForceMode_f (void)
 
 	if (!vid_testingmode)
 	{
-		modenum = Q_atoi (Cmd_Argv(1));
+		modenum = atoi (Cmd_Argv(1));
 
 		force_mode_set = 1;
 		VID_SetMode (modenum, vid_curpal);
