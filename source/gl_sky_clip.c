@@ -458,8 +458,8 @@ process_corners (struct box_def *box)
 			vec3_t      v[3];
 
 			center = faces_bit_magic[sel];
-			printf ("%02o %d  %d %d %d %d %d\n", sel, center, visit[0].face,
-					visit[1].face, visit[2].face, visit[3].face, visit[4].face);
+			//printf ("%02o %d  %d %d %d %d %d\n", sel, center, visit[0].face,
+			//		visit[1].face, visit[2].face, visit[3].face, visit[4].face);
 			for (i = 0; i < 3; i++)
 				find_cube_vertex (visit[center].face,
 								  visit[(center + 1 + i) % 5].face,
