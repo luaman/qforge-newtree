@@ -35,7 +35,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <signal.h>
-#include <values.h>
 #include <string.h>
 
 #ifdef HAVE_DLFCN_H
