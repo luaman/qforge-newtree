@@ -146,9 +146,7 @@ void IN_KLookUp (void) {KeyUp(&in_klook);}
 void IN_MLookDown (void) {KeyDown(&in_mlook);}
 void IN_MLookUp (void) {
 KeyUp(&in_mlook);
-/* if ( !(in_mlook.state&1) &&  lookspring.value)
- CVAR_FIXME */
-if ( !(in_mlook.state&1) &&  lookspring->value)
+if ( !(in_mlook.state&1 || cl_freelook->value) &&  lookspring->value)
 	V_StartPitchDrift();
 }
 void IN_UpDown(void) {KeyDown(&in_up);}

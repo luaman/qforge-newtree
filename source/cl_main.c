@@ -110,6 +110,7 @@ cvar_t	*lookstrafe;
 /* cvar_t	sensitivity = {"sensitivity","3", true};
  CVAR_FIXME */
 cvar_t	*sensitivity;
+cvar_t	*cl_freelook;
 
 /* cvar_t	m_pitch = {"m_pitch","0.022", true};
  CVAR_FIXME */
@@ -1338,6 +1339,7 @@ void CL_InitCvars (void)
 /* 	Cvar_RegisterVariable (&sensitivity);
  CVAR_FIXME */
 	sensitivity = Cvar_Get("sensitivity", "3", CVAR_ARCHIVE, "None");
+	cl_freelook = Cvar_Get("freelook", "0", CVAR_ARCHIVE, "None");
 
 /* 	Cvar_RegisterVariable (&m_pitch);
  CVAR_FIXME */

@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "protocol.h"
 
+#define freelook (in_mlook.state&1 || cl_freelook->value)
+
 void IN_Init (void);
 
 void IN_Shutdown (void);

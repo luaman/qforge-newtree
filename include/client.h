@@ -367,6 +367,7 @@ extern	cvar_t	*lookstrafe;
 /* extern	cvar_t	sensitivity;
  CVAR_FIXME */
 extern	cvar_t	*sensitivity;
+extern	cvar_t	*cl_freelook;
 
 /* extern	cvar_t	m_pitch;
  CVAR_FIXME */
