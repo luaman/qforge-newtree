@@ -173,7 +173,7 @@ VID_SetPalette (unsigned char *palette)
 		v = (255<<24) + (r<<0) + (g<<8) + (b<<16);
 		*table++ = v;
 	}
-	d_8to24table[255] &= 0xffffff;  // 255 is transparent
+	d_8to24table[255] = 0;	// 255 is transparent
 
 	// JACK: 3D distance calcs - k is last closest, l is the distance.
 	// FIXME: Precalculate this and cache to disk.
