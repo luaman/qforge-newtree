@@ -43,8 +43,9 @@
 #include "world.h"
 
 int eval_alpha, eval_scale, eval_glowsize, eval_glowcolor, eval_colormod;
-progs_t	sv_progs;
+progs_t	    sv_pr_state;
 cvar_t     *r_skyname;
+cvar_t     *sv_progs;
 
 func_t	EndFrame;
 func_t	SpectatorConnect;
@@ -56,34 +57,34 @@ FindEdictFieldOffsets (progs_t *pr)
 {
 	dfunction_t *f;
 
-	if (pr == &sv_progs) {
+	if (pr == &sv_pr_state) {
 		// Zoid, find the spectator functions
 		SpectatorConnect = SpectatorThink = SpectatorDisconnect = 0;
 
-		if ((f = ED_FindFunction (&sv_progs, "SpectatorConnect")) != NULL)
-			SpectatorConnect = (func_t) (f - sv_progs.pr_functions);
-		if ((f = ED_FindFunction (&sv_progs, "SpectatorThink")) != NULL)
-			SpectatorThink = (func_t) (f - sv_progs.pr_functions);
-		if ((f = ED_FindFunction (&sv_progs, "SpectatorDisconnect")) != NULL)
-			SpectatorDisconnect = (func_t) (f - sv_progs.pr_functions);
+		if ((f = ED_FindFunction (&sv_pr_state, "SpectatorConnect")) != NULL)
+			SpectatorConnect = (func_t) (f - sv_pr_state.pr_functions);
+		if ((f = ED_FindFunction (&sv_pr_state, "SpectatorThink")) != NULL)
+			SpectatorThink = (func_t) (f - sv_pr_state.pr_functions);
+		if ((f = ED_FindFunction (&sv_pr_state, "SpectatorDisconnect")) != NULL)
+			SpectatorDisconnect = (func_t) (f - sv_pr_state.pr_functions);
 
 		// 2000-01-02 EndFrame function by Maddes/FrikaC
 		EndFrame = 0;
-		if ((f = ED_FindFunction (&sv_progs, "EndFrame")) != NULL)
-			EndFrame = (func_t) (f - sv_progs.pr_functions);
+		if ((f = ED_FindFunction (&sv_pr_state, "EndFrame")) != NULL)
+			EndFrame = (func_t) (f - sv_pr_state.pr_functions);
 
-		eval_alpha = FindFieldOffset (&sv_progs, "alpha");
-		eval_scale = FindFieldOffset (&sv_progs, "scale");
-		eval_glowsize = FindFieldOffset (&sv_progs, "glow_size");
-		eval_glowcolor = FindFieldOffset (&sv_progs, "glow_color");
-		eval_colormod = FindFieldOffset (&sv_progs, "colormod");
+		eval_alpha = FindFieldOffset (&sv_pr_state, "alpha");
+		eval_scale = FindFieldOffset (&sv_pr_state, "scale");
+		eval_glowsize = FindFieldOffset (&sv_pr_state, "glow_size");
+		eval_glowcolor = FindFieldOffset (&sv_pr_state, "glow_color");
+		eval_colormod = FindFieldOffset (&sv_pr_state, "colormod");
 	}
 }
 
 void
 ED_PrintEdicts_f (void)
 {
-	ED_PrintEdicts (&sv_progs);
+	ED_PrintEdicts (&sv_pr_state);
 }
 
 /*
@@ -98,19 +99,19 @@ ED_PrintEdict_f (void)
 
 	i = atoi (Cmd_Argv (1));
 	Con_Printf ("\n EDICT %i:\n", i);
-	ED_PrintNum (&sv_progs, i);
+	ED_PrintNum (&sv_pr_state, i);
 }
 
 void
 ED_Count_f (void)
 {
-	ED_Count (&sv_progs);
+	ED_Count (&sv_pr_state);
 }
 
 void
 PR_Profile_f (void)
 {
-	PR_Profile (&sv_progs);
+	PR_Profile (&sv_pr_state);
 }
 
 int
@@ -133,13 +134,21 @@ ED_Parse_Extra_Fields (progs_t *pr, char *key, char *value)
 }
 
 void
+SV_LoadProgs (void)
+{
+	PR_LoadProgs (&sv_pr_state, sv_progs->string);
+	if (!sv_pr_state.progs)
+		SV_Error ("SV_LoadProgs: couldn't load %s", sv_progs->string);
+}
+
+void
 SV_Progs_Init (void)
 {
-	sv_progs.edicts = &sv.edicts;
-	sv_progs.num_edicts = &sv.num_edicts;
-	sv_progs.time = &sv.time;
-	sv_progs.unlink = SV_UnlinkEdict;
-	sv_progs.flush = SV_FlushSignon;
+	sv_pr_state.edicts = &sv.edicts;
+	sv_pr_state.num_edicts = &sv.num_edicts;
+	sv_pr_state.time = &sv.time;
+	sv_pr_state.unlink = SV_UnlinkEdict;
+	sv_pr_state.flush = SV_FlushSignon;
 
 	Cmd_AddCommand ("edict", ED_PrintEdict_f, "No Description");
 	Cmd_AddCommand ("edicts", ED_PrintEdicts_f, "No Description");
@@ -152,4 +161,7 @@ SV_Progs_Init_Cvars (void)
 {
 	r_skyname =
 		Cvar_Get ("r_skyname", "", CVAR_SERVERINFO, "name of skybox");
+	sv_progs = Cvar_Get ("sv_progs", "qwprogs.dat", CVAR_ROM,
+						 "Allows selectable game progs if you have several "
+						 "of them in the gamedir");
 }

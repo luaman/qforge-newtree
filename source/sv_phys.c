@@ -84,8 +84,8 @@ SV_CheckAllEnts (void)
 	edict_t    *check;
 
 // see if any solid entities are inside the final position
-	check = NEXT_EDICT (&sv_progs, sv.edicts);
-	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (&sv_progs, check)) {
+	check = NEXT_EDICT (&sv_pr_state, sv.edicts);
+	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (&sv_pr_state, check)) {
 		if (check->free)
 			continue;
 		if (check->v.movetype == MOVETYPE_PUSH
@@ -114,12 +114,12 @@ SV_CheckVelocity (edict_t *ent)
 	for (i = 0; i < 3; i++) {
 		if (IS_NAN (ent->v.velocity[i])) {
 			Con_Printf ("Got a NaN velocity on %s\n",
-						PR_GetString (&sv_progs, ent->v.classname));
+						PR_GetString (&sv_pr_state, ent->v.classname));
 			ent->v.velocity[i] = 0;
 		}
 		if (IS_NAN (ent->v.origin[i])) {
 			Con_Printf ("Got a NaN origin on %s\n",
-						PR_GetString (&sv_progs, ent->v.classname));
+						PR_GetString (&sv_pr_state, ent->v.classname));
 			ent->v.origin[i] = 0;
 		}
 	}
@@ -160,10 +160,10 @@ SV_RunThink (edict_t *ent)
 		// it is possible to start that way
 		// by a trigger with a local time.
 		ent->v.nextthink = 0;
-		sv_progs.pr_global_struct->time = thinktime;
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, ent);
-		sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, sv.edicts);
-		PR_ExecuteProgram (&sv_progs, ent->v.think);
+		sv_pr_state.pr_global_struct->time = thinktime;
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, ent);
+		sv_pr_state.pr_global_struct->other = EDICT_TO_PROG (&sv_pr_state, sv.edicts);
+		PR_ExecuteProgram (&sv_pr_state, ent->v.think);
 
 		if (ent->free)
 			return false;
@@ -184,24 +184,24 @@ SV_Impact (edict_t *e1, edict_t *e2)
 {
 	int         old_self, old_other;
 
-	old_self = sv_progs.pr_global_struct->self;
-	old_other = sv_progs.pr_global_struct->other;
+	old_self = sv_pr_state.pr_global_struct->self;
+	old_other = sv_pr_state.pr_global_struct->other;
 
-	sv_progs.pr_global_struct->time = sv.time;
+	sv_pr_state.pr_global_struct->time = sv.time;
 	if (e1->v.touch && e1->v.solid != SOLID_NOT) {
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, e1);
-		sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, e2);
-		PR_ExecuteProgram (&sv_progs, e1->v.touch);
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, e1);
+		sv_pr_state.pr_global_struct->other = EDICT_TO_PROG (&sv_pr_state, e2);
+		PR_ExecuteProgram (&sv_pr_state, e1->v.touch);
 	}
 
 	if (e2->v.touch && e2->v.solid != SOLID_NOT) {
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, e2);
-		sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, e1);
-		PR_ExecuteProgram (&sv_progs, e2->v.touch);
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, e2);
+		sv_pr_state.pr_global_struct->other = EDICT_TO_PROG (&sv_pr_state, e1);
+		PR_ExecuteProgram (&sv_pr_state, e2->v.touch);
 	}
 
-	sv_progs.pr_global_struct->self = old_self;
-	sv_progs.pr_global_struct->other = old_other;
+	sv_pr_state.pr_global_struct->self = old_self;
+	sv_pr_state.pr_global_struct->other = old_other;
 }
 
 
@@ -305,7 +305,7 @@ SV_FlyMove (edict_t *ent, float time, trace_t *steptrace)
 			if ((trace.ent->v.solid == SOLID_BSP)
 				|| (trace.ent->v.movetype == MOVETYPE_PPUSH)) {
 				ent->v.flags = (int) ent->v.flags | FL_ONGROUND;
-				ent->v.groundentity = EDICT_TO_PROG (&sv_progs, trace.ent);
+				ent->v.groundentity = EDICT_TO_PROG (&sv_pr_state, trace.ent);
 			}
 		}
 		if (!trace.plane.normal[2]) {
@@ -466,8 +466,8 @@ SV_Push (edict_t *pusher, vec3_t move)
 
 // see if any solid entities are inside the final position
 	num_moved = 0;
-	check = NEXT_EDICT (&sv_progs, sv.edicts);
-	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (&sv_progs, check)) {
+	check = NEXT_EDICT (&sv_pr_state, sv.edicts);
+	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (&sv_pr_state, check)) {
 		if (check->free)
 			continue;
 		if (check->v.movetype == MOVETYPE_PUSH
@@ -487,7 +487,7 @@ SV_Push (edict_t *pusher, vec3_t move)
 		// if the entity is standing on the pusher, it will definately be
 		// moved
 		if (!(((int) check->v.flags & FL_ONGROUND)
-			  && PROG_TO_EDICT (&sv_progs, check->v.groundentity) == pusher)) {
+			  && PROG_TO_EDICT (&sv_pr_state, check->v.groundentity) == pusher)) {
 			if (check->v.absmin[0] >= maxs[0]
 				|| check->v.absmin[1] >= maxs[1]
 				|| check->v.absmin[2] >= maxs[2]
@@ -537,9 +537,9 @@ SV_Push (edict_t *pusher, vec3_t move)
 		// if the pusher has a "blocked" function, call it
 		// otherwise, just stay in place until the obstacle is gone
 		if (pusher->v.blocked) {
-			sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, pusher);
-			sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, check);
-			PR_ExecuteProgram (&sv_progs, pusher->v.blocked);
+			sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, pusher);
+			sv_pr_state.pr_global_struct->other = EDICT_TO_PROG (&sv_pr_state, check);
+			PR_ExecuteProgram (&sv_pr_state, pusher->v.blocked);
 		}
 		// move back any entities we already moved
 		for (i = 0; i < num_moved; i++) {
@@ -611,10 +611,10 @@ SV_Physics_Pusher (edict_t *ent)
 	if (thinktime > oldltime && thinktime <= ent->v.ltime) {
 		VectorCopy (ent->v.origin, oldorg);
 		ent->v.nextthink = 0;
-		sv_progs.pr_global_struct->time = sv.time;
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, ent);
-		sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, sv.edicts);
-		PR_ExecuteProgram (&sv_progs, ent->v.think);
+		sv_pr_state.pr_global_struct->time = sv.time;
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, ent);
+		sv_pr_state.pr_global_struct->other = EDICT_TO_PROG (&sv_pr_state, sv.edicts);
+		PR_ExecuteProgram (&sv_pr_state, ent->v.think);
 		if (ent->free)
 			return;
 		VectorSubtract (ent->v.origin, oldorg, move);
@@ -760,7 +760,7 @@ SV_Physics_Toss (edict_t *ent)
 	if (trace.plane.normal[2] > 0.7) {
 		if (ent->v.velocity[2] < 60 || ent->v.movetype != MOVETYPE_BOUNCE) {
 			ent->v.flags = (int) ent->v.flags | FL_ONGROUND;
-			ent->v.groundentity = EDICT_TO_PROG (&sv_progs, trace.ent);
+			ent->v.groundentity = EDICT_TO_PROG (&sv_pr_state, trace.ent);
 			VectorCopy (vec3_origin, ent->v.velocity);
 			VectorCopy (vec3_origin, ent->v.avelocity);
 		}
@@ -851,8 +851,8 @@ SV_PPushMove (edict_t *pusher, float movetime)	// player push
 
 	oldsolid = pusher->v.solid;
 
-	check = NEXT_EDICT (&sv_progs, sv.edicts);
-	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (&sv_progs, check)) {
+	check = NEXT_EDICT (&sv_pr_state, sv.edicts);
+	for (e = 1; e < sv.num_edicts; e++, check = NEXT_EDICT (&sv_pr_state, check)) {
 		if (check->free)				// What entity?
 			continue;
 
@@ -877,9 +877,9 @@ SV_PPushMove (edict_t *pusher, float movetime)	// player push
 		// Stage 4: Yes, it must be. Fail the move.
 		VectorCopy (pusher->v.origin, pusher->v.oldorigin);	// Revert
 		if (pusher->v.blocked) {		// Blocked func?
-			sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, pusher);
-			sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, check);
-			PR_ExecuteProgram (&sv_progs, pusher->v.blocked);
+			sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, pusher);
+			sv_pr_state.pr_global_struct->other = EDICT_TO_PROG (&sv_pr_state, check);
+			PR_ExecuteProgram (&sv_pr_state, pusher->v.blocked);
 		}
 
 		return;
@@ -913,10 +913,10 @@ SV_Physics_PPusher (edict_t *ent)
 
 	if (thinktime > oldltime && thinktime <= ent->v.ltime) {
 		ent->v.nextthink = 0;
-		sv_progs.pr_global_struct->time = sv.time;
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, ent);
-		sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, sv.edicts);
-		PR_ExecuteProgram (&sv_progs, ent->v.think);
+		sv_pr_state.pr_global_struct->time = sv.time;
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, ent);
+		sv_pr_state.pr_global_struct->other = EDICT_TO_PROG (&sv_pr_state, sv.edicts);
+		PR_ExecuteProgram (&sv_pr_state, ent->v.think);
 		if (ent->free)
 			return;
 	}
@@ -928,10 +928,10 @@ void
 SV_ProgStartFrame (void)
 {
 // let the progs know that a new frame has started
-	sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, sv.edicts);
-	sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, sv.edicts);
-	sv_progs.pr_global_struct->time = sv.time;
-	PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->StartFrame);
+	sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, sv.edicts);
+	sv_pr_state.pr_global_struct->other = EDICT_TO_PROG (&sv_pr_state, sv.edicts);
+	sv_pr_state.pr_global_struct->time = sv.time;
+	PR_ExecuteProgram (&sv_pr_state, sv_pr_state.pr_global_struct->StartFrame);
 }
 
 /*
@@ -985,11 +985,11 @@ SV_RunNewmis (void)
 {
 	edict_t    *ent;
 
-	if (!sv_progs.pr_global_struct->newmis)
+	if (!sv_pr_state.pr_global_struct->newmis)
 		return;
-	ent = PROG_TO_EDICT (&sv_progs, sv_progs.pr_global_struct->newmis);
+	ent = PROG_TO_EDICT (&sv_pr_state, sv_pr_state.pr_global_struct->newmis);
 	sv_frametime = 0.05;
-	sv_progs.pr_global_struct->newmis = 0;
+	sv_pr_state.pr_global_struct->newmis = 0;
 
 	SV_RunEntity (ent);
 }
@@ -1015,7 +1015,7 @@ SV_Physics (void)
 		sv_frametime = sv_maxtic->value;
 	old_time = realtime;
 
-	sv_progs.pr_global_struct->frametime = sv_frametime;
+	sv_pr_state.pr_global_struct->frametime = sv_frametime;
 
 	SV_ProgStartFrame ();
 
@@ -1024,11 +1024,11 @@ SV_Physics (void)
 // even the world gets a chance to think
 //
 	ent = sv.edicts;
-	for (i = 0; i < sv.num_edicts; i++, ent = NEXT_EDICT (&sv_progs, ent)) {
+	for (i = 0; i < sv.num_edicts; i++, ent = NEXT_EDICT (&sv_pr_state, ent)) {
 		if (ent->free)
 			continue;
 
-		if (sv_progs.pr_global_struct->force_retouch)
+		if (sv_pr_state.pr_global_struct->force_retouch)
 			SV_LinkEdict (ent, true);	// force retouch even for stationary
 
 		if (i > 0 && i <= MAX_CLIENTS)
@@ -1039,16 +1039,16 @@ SV_Physics (void)
 		SV_RunNewmis ();
 	}
 
-	if (sv_progs.pr_global_struct->force_retouch)
-		sv_progs.pr_global_struct->force_retouch--;
+	if (sv_pr_state.pr_global_struct->force_retouch)
+		sv_pr_state.pr_global_struct->force_retouch--;
 
 // 2000-01-02 EndFrame function by Maddes/FrikaC  start
 	if (EndFrame) {
 		// let the progs know that the frame has ended
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, sv.edicts);
-		sv_progs.pr_global_struct->other = EDICT_TO_PROG (&sv_progs, sv.edicts);
-		sv_progs.pr_global_struct->time = sv.time;
-		PR_ExecuteProgram (&sv_progs, EndFrame);
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, sv.edicts);
+		sv_pr_state.pr_global_struct->other = EDICT_TO_PROG (&sv_pr_state, sv.edicts);
+		sv_pr_state.pr_global_struct->time = sv.time;
+		PR_ExecuteProgram (&sv_pr_state, EndFrame);
 	}
 // 2000-01-02 EndFrame function by Maddes/FrikaC  end
 }

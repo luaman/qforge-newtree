@@ -48,9 +48,7 @@
 #include "server.h"
 #include "world.h"
 
-cvar_t	*r_skyname;
 cvar_t	*pr_boundscheck;
-cvar_t	*qwprog;
 
 int type_size[8] = {
 	1,
@@ -914,7 +912,7 @@ ED_LoadFromFile (progs_t *pr, char *data)
 	PR_LoadProgs
 */
 void
-PR_LoadProgs (progs_t *pr)
+PR_LoadProgs (progs_t *pr, char *progsname)
 {
 	int         i;
 	dstatement_t *st;
@@ -923,13 +921,9 @@ PR_LoadProgs (progs_t *pr)
 	for (i = 0; i < GEFV_CACHESIZE; i++)
 		gefvCache[i].field[0] = 0;
 
-	pr->progs = (dprograms_t *) COM_LoadHunkFile (qwprog->string);
-	if ((!pr->progs) && (!strcmp(qwprog->string,"qwprogs.dat")))
-		pr->progs = (dprograms_t *) COM_LoadHunkFile ("qwprogs.dat");
-	if ((!pr->progs) && (!strcmp(qwprog->string,"progs.dat")))
-		pr->progs = (dprograms_t *) COM_LoadHunkFile ("progs.dat");
+	pr->progs = (dprograms_t *) COM_LoadHunkFile (progsname);
 	if (!pr->progs)
-		SV_Error ("PR_LoadProgs: couldn't load progs.dat");
+		return;
 
 	Con_DPrintf ("Programs occupy %iK.\n", com_filesize / 1024);
 
@@ -1126,7 +1120,6 @@ PR_Init_Cvars (void)
 	pr_boundscheck =
 		Cvar_Get ("pr_boundscheck", "1", CVAR_NONE,
 				  "Server progs bounds checking");
-	qwprog = Cvar_Get ("qwprog", "qwprogs.dat", CVAR_ROM, "Allows selectable qwprogs.dat if you have several of them in the gamedir");
 }
 
 void

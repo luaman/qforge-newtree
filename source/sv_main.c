@@ -146,8 +146,6 @@ QFile      *sv_fraglogfile;
 
 void        SV_AcceptClient (netadr_t adr, int userid, char *userinfo);
 void        Master_Shutdown (void);
-void        SV_Progs_Init_Cvars (void);
-void        PR_Init_Cvars (void);
 
 //============================================================================
 
@@ -251,13 +249,13 @@ SV_DropClient (client_t *drop)
 		if (!drop->spectator) {
 			// call the prog function for removing a client
 			// this will set the body to a dead frame, among other things
-			sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, drop->edict);
-			PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->ClientDisconnect);
+			sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, drop->edict);
+			PR_ExecuteProgram (&sv_pr_state, sv_pr_state.pr_global_struct->ClientDisconnect);
 		} else if (SpectatorDisconnect) {
 			// call the prog function for removing a client
 			// this will set the body to a dead frame, among other things
-			sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, drop->edict);
-			PR_ExecuteProgram (&sv_progs, SpectatorDisconnect);
+			sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, drop->edict);
+			PR_ExecuteProgram (&sv_pr_state, SpectatorDisconnect);
 		}
 	}
 	if (drop->spectator)
@@ -828,7 +826,7 @@ SVC_DirectConnect (void)
 	// spectator mode can ONLY be set at join time
 	newcl->spectator = spectator;
 
-	ent = EDICT_NUM (&sv_progs, edictnum);
+	ent = EDICT_NUM (&sv_pr_state, edictnum);
 	newcl->edict = ent;
 
 	// parse some info from the info strings
@@ -841,9 +839,9 @@ SVC_DirectConnect (void)
 	newcl->lockedtill = 0;
 
 	// call the progs to get default spawn parms for the new client
-	PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->SetNewParms);
+	PR_ExecuteProgram (&sv_pr_state, sv_pr_state.pr_global_struct->SetNewParms);
 	for (i = 0; i < NUM_SPAWN_PARMS; i++)
-		newcl->spawn_parms[i] = (&sv_progs.pr_global_struct->parm1)[i];
+		newcl->spawn_parms[i] = (&sv_pr_state.pr_global_struct->parm1)[i];
 
 	if (newcl->spectator)
 		Con_Printf ("Spectator %s connected\n", newcl->name);

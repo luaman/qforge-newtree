@@ -111,7 +111,7 @@ SV_CreateBaseline (void)
 	int         entnum;
 
 	for (entnum = 0; entnum < sv.num_edicts; entnum++) {
-		svent = EDICT_NUM (&sv_progs, entnum);
+		svent = EDICT_NUM (&sv_pr_state, entnum);
 		if (svent->free)
 			continue;
 		// create baselines for all player slots,
@@ -132,7 +132,7 @@ SV_CreateBaseline (void)
 		} else {
 			svent->baseline.colormap = 0;
 			svent->baseline.modelindex =
-				SV_ModelIndex (PR_GetString (&sv_progs, svent->v.model));
+				SV_ModelIndex (PR_GetString (&sv_pr_state, svent->v.model));
 		}
 		// LordHavoc: setup baseline to include new effects
 		svent->baseline.alpha = 255;
@@ -183,7 +183,7 @@ SV_SaveSpawnparms (void)
 		return;							// no progs loaded yet
 
 	// serverflags is the only game related thing maintained
-	svs.serverflags = sv_progs.pr_global_struct->serverflags;
+	svs.serverflags = sv_pr_state.pr_global_struct->serverflags;
 
 	for (i = 0, host_client = svs.clients; i < MAX_CLIENTS; i++, host_client++) {
 		if (host_client->state != cs_spawned)
@@ -193,10 +193,10 @@ SV_SaveSpawnparms (void)
 		host_client->state = cs_connected;
 
 		// call the progs to get default spawn parms for the new client
-		sv_progs.pr_global_struct->self = EDICT_TO_PROG (&sv_progs, host_client->edict);
-		PR_ExecuteProgram (&sv_progs, sv_progs.pr_global_struct->SetChangeParms);
+		sv_pr_state.pr_global_struct->self = EDICT_TO_PROG (&sv_pr_state, host_client->edict);
+		PR_ExecuteProgram (&sv_pr_state, sv_pr_state.pr_global_struct->SetChangeParms);
 		for (j = 0; j < NUM_SPAWN_PARMS; j++)
-			host_client->spawn_parms[j] = (&sv_progs.pr_global_struct->parm1)[j];
+			host_client->spawn_parms[j] = (&sv_pr_state.pr_global_struct->parm1)[j];
 	}
 }
 
@@ -319,7 +319,7 @@ SV_SpawnServer (char *server)
 	// restarted
 
 	sv.state = ss_dead;
-	sv_progs.null_bad = 0;
+	sv_pr_state.null_bad = 0;
 
 	Mod_ClearAll ();
 	Hunk_FreeToLowMark (host_hunklevel);
@@ -348,17 +348,17 @@ SV_SpawnServer (char *server)
 
 	// load progs to get entity field count
 	// which determines how big each edict is
-	PR_LoadProgs (&sv_progs);
-	Info_SetValueForStarKey (svs.info, "*progs", va ("%i", sv_progs.crc),
+	SV_LoadProgs ();
+	Info_SetValueForStarKey (svs.info, "*progs", va ("%i", sv_pr_state.crc),
 							 MAX_SERVERINFO_STRING);
 
 	// allocate edicts
-	sv.edicts = Hunk_AllocName (MAX_EDICTS * sv_progs.pr_edict_size, "edicts");
+	sv.edicts = Hunk_AllocName (MAX_EDICTS * sv_pr_state.pr_edict_size, "edicts");
 
 	// leave slots at start for clients only
 	sv.num_edicts = MAX_CLIENTS + 1;
 	for (i = 0; i < MAX_CLIENTS; i++) {
-		ent = EDICT_NUM (&sv_progs, i + 1);
+		ent = EDICT_NUM (&sv_pr_state, i + 1);
 		svs.clients[i].edict = ent;
 //ZOID - make sure we update frags right
 		svs.clients[i].old_frags = 0;
@@ -376,9 +376,9 @@ SV_SpawnServer (char *server)
 	// 
 	SV_ClearWorld ();
 
-	sv.sound_precache[0] = sv_progs.pr_strings;
+	sv.sound_precache[0] = sv_pr_state.pr_strings;
 
-	sv.model_precache[0] = sv_progs.pr_strings;
+	sv.model_precache[0] = sv_pr_state.pr_strings;
 	sv.model_precache[1] = sv.modelname;
 	sv.models[1] = sv.worldmodel;
 	for (i = 1; i < sv.worldmodel->numsubmodels; i++) {
@@ -397,24 +397,24 @@ SV_SpawnServer (char *server)
 	// precache and static commands can be issued during
 	// map initialization
 	sv.state = ss_loading;
-	sv_progs.null_bad = 0;
+	sv_pr_state.null_bad = 0;
 
-	ent = EDICT_NUM (&sv_progs, 0);
+	ent = EDICT_NUM (&sv_pr_state, 0);
 	ent->free = false;
-	ent->v.model = PR_SetString (&sv_progs, sv.worldmodel->name);
+	ent->v.model = PR_SetString (&sv_pr_state, sv.worldmodel->name);
 	ent->v.modelindex = 1;				// world model
 	ent->v.solid = SOLID_BSP;
 	ent->v.movetype = MOVETYPE_PUSH;
 
-	sv_progs.pr_global_struct->mapname = PR_SetString (&sv_progs, sv.name);
+	sv_pr_state.pr_global_struct->mapname = PR_SetString (&sv_pr_state, sv.name);
 	// serverflags are for cross level information (sigils)
-	sv_progs.pr_global_struct->serverflags = svs.serverflags;
+	sv_pr_state.pr_global_struct->serverflags = svs.serverflags;
 
 	// run the frame start qc function to let progs check cvars
 	SV_ProgStartFrame ();
 
 	// load and spawn all other entities
-	ED_LoadFromFile (&sv_progs, sv.worldmodel->entities);
+	ED_LoadFromFile (&sv_pr_state, sv.worldmodel->entities);
 
 	// look up some model indexes for specialized message compression
 	SV_FindModelNumbers ();
@@ -422,7 +422,7 @@ SV_SpawnServer (char *server)
 	// all spawning is completed, any further precache statements
 	// or prog writes to the signon message are errors
 	sv.state = ss_active;
-	sv_progs.null_bad = 1;
+	sv_pr_state.null_bad = 1;
 
 	// run two frames to allow everything to settle
 	sv_frametime = 0.1;

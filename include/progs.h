@@ -71,9 +71,10 @@ typedef struct progs_s progs_t;
 //============================================================================
 
 void PR_Init (void);
+void PR_Init_Cvars (void);
 
 void PR_ExecuteProgram (progs_t *pr, func_t fnum);
-void PR_LoadProgs (progs_t *pr);
+void PR_LoadProgs (progs_t *pr, char *progsname);
 
 void PR_Profile_f (void);
 
