@@ -87,7 +87,8 @@ static float mouse_x, mouse_y;
 static float old_mouse_x, old_mouse_y;
 static int  p_mouse_x, p_mouse_y;
 
-static float save_volume = -1, save_bgmvolume = -1;
+static float save_volume, save_bgmvolume;
+int saved_volume = 0;
 
 #define KEY_MASK (KeyPressMask | KeyReleaseMask)
 #define MOUSE_MASK (ButtonPressMask | ButtonReleaseMask | PointerMotionMask)
@@ -350,21 +351,30 @@ event_button (XEvent * event)
 static void
 event_focusout (XEvent * event)
 {
-	XAutoRepeatOn (x_disp);
-	save_volume = volume->value;
-	save_bgmvolume = bgmvolume->value;
-	volume->value = 0;
-	bgmvolume->value = 0;
+	/* it is possible to receive multiple out of focus events, so only
+	 * handle the first one.
+	 */
+	if (saved_volume == 0)
+	{
+		XAutoRepeatOn (x_disp);
+		save_volume = volume->value;
+		save_bgmvolume = bgmvolume->value;
+		volume->value = 0;
+		bgmvolume->value = 0;
+		saved_volume = 1;
+	}
 }
 
 static void
 event_focusin (XEvent * event)
 {
-	XAutoRepeatOff (x_disp);
-	if (save_volume != -1)
+	if (saved_volume == 1)
+	{
+		XAutoRepeatOff (x_disp);
 		volume->value = save_volume;
-	if (save_bgmvolume != -1)
 		bgmvolume->value = save_bgmvolume;
+		saved_volume = 0;
+	}
 }
 
 static void
