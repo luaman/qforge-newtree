@@ -29,13 +29,16 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include <stdlib.h>
+#include <ctype.h>
+#include <winsock.h>
+#include <conio.h>
+
 #include "qargs.h"
 #include "cvar.h"
 #include "server.h"
 #include "sys.h"
-
-#include <winsock.h>
-#include <conio.h>
 
 
 qboolean is_server = true;

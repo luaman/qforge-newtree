@@ -24,34 +24,16 @@
 	$Id$
 */
 
-#ifdef HAVE_CONFIG_H
-#if defined (CONFIG_BROKETS)
-/* We use <config.h> instead of "config.h" so that a compilation
-   using -I. -I$srcdir will use ./config.h rather than $srcdir/config.h
-   (which it would do because it found this file in $srcdir).  */
-#include <config.h>
-#else
 #include "config.h"
-#endif
-#endif
-
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
 
-/* This code to undef const added in libiberty.  */
-#ifndef __STDC__
-/* This is a separate conditional since some stdc systems
-   reject `defined (const)'.  */
-#ifndef const
-#define const
-#endif
-#endif
-
 #include <errno.h>
-#include <fnmatch.h>
 #include <ctype.h>
+
+#include "win32/fnmatch.h"
 
 
 /* Comment out all this code if we are using the GNU C Library, and are not

@@ -39,6 +39,9 @@
 #include <dinput.h>
 #include "client.h"
 #include "keys.h"
+#include "console.h"
+#include "qargs.h"
+#include "cmd.h"
 //#include "dosisms.h"
 
 #define DINPUT_BUFFERSIZE           16

@@ -26,12 +26,15 @@
 	$Id$
 */
 
-#ifdef _WIN32
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#ifdef _WIN32
 #include <windows.h>
 #endif
+
+#include <stdlib.h>
+#include <string.h>
 
 #include "qtypes.h"
 #include "sys.h"
@@ -43,8 +46,6 @@
 #include "cvar.h"
 #include "screen.h"
 #include "client.h"
-
-#include <string.h>
 
 /*
 

@@ -31,6 +31,7 @@
 # include <config.h>
 #endif
 #include "sound.h"
+#include "console.h"
 
 #ifdef _WIN32
 #include "winquake.h"

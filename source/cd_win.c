@@ -31,6 +31,8 @@
 #endif
 #include <windows.h>
 #include "quakedef.h"
+#include "qargs.h"
+#include "console.h"
 #include "cdaudio.h"
 #include "cmd.h"
 

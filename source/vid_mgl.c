@@ -31,6 +31,7 @@
 # include "config.h"
 #endif
 #include <stdlib.h>
+
 #include "quakedef.h"
 #include "winquake.h"
 #include "sys.h"
@@ -42,6 +43,11 @@
 #include "wad.h"
 #include "cmd.h"
 #include "qendian.h"
+#include "draw.h"
+#include "console.h"
+#include "sound.h"
+#include "cdaudio.h"
+#include "qargs.h"
 
 #define	MINIMUM_MEMORY	0x550000
 
