@@ -470,10 +470,7 @@ void M_DrawSlider (int x, int y, float range)
 {
 	int	i;
 
-	if (range < 0)
-		range = 0;
-	if (range > 1)
-		range = 1;
+	range = bound (0, range, 1);
 	M_DrawCharacter (x-8, y, 128);
 	for (i=0 ; i<SLIDER_RANGE ; i++)
 		M_DrawCharacter (x + i*8, y, 129);
