@@ -41,6 +41,7 @@
 #include "cvar.h"
 #include "cmd.h"
 #include "console.h"
+#include "hash.h"
 #include "host.h"
 #include "qargs.h"
 #include "qendian.h"
@@ -64,6 +65,9 @@ cmdalias_t *cmd_alias;
 qboolean    cmd_wait;
 
 cvar_t     *cl_warncmd;
+
+hashtab_t  *cmd_alias_hash;
+hashtab_t  *cmd_hash;
 
 //=============================================================================
 
@@ -452,19 +456,18 @@ Cmd_Alias_f (void)
 		return;
 	}
 	// if the alias allready exists, reuse it
-	for (a = cmd_alias; a; a = a->next) {
-		if (!strcmp (s, a->name)) {
-			free (a->value);
-			break;
-		}
+	a = (cmdalias_t*)Hash_Find (cmd_alias_hash, s);
+	if (a) {
+		free (a->value);
 	}
 
 	if (!a) {
 		a = calloc (1, sizeof (cmdalias_t));
 		a->next = cmd_alias;
 		cmd_alias = a;
+		strcpy (a->name, s);
+		Hash_Add (cmd_alias_hash, a);
 	}
-	strcpy (a->name, s);
 
 // copy the rest of the command line
 	cmd[0] = 0;							// start out with a null string
@@ -499,6 +502,7 @@ Cmd_UnAlias_f (void)
 	prev = cmd_alias;
 	for (a = cmd_alias; a; a = a->next) {
 		if (!strcmp (s, a->name)) {
+			Hash_Del (cmd_alias_hash, s);
 			free (a->value);
 			prev->next = a->next;
 			if (a == cmd_alias)
@@ -634,9 +638,7 @@ Cmd_TokenizeString (char *text)
 
 
 /*
-============
-Cmd_AddCommand
-============
+	Cmd_AddCommand
 */
 void
 Cmd_AddCommand (char *cmd_name, xcommand_t function)
@@ -647,17 +649,16 @@ Cmd_AddCommand (char *cmd_name, xcommand_t function)
 										// stomped
 		Sys_Error ("Cmd_AddCommand after host_initialized");
 
-// fail if the command is a variable name
-	if (Cvar_VariableString (cmd_name)[0]) {
+	// fail if the command is a variable name
+	if (Cvar_FindVar (cmd_name)) {
 		Con_Printf ("Cmd_AddCommand: %s already defined as a var\n", cmd_name);
 		return;
 	}
-// fail if the command already exists
-	for (cmd = cmd_functions; cmd; cmd = cmd->next) {
-		if (!strcmp (cmd_name, cmd->name)) {
-			Con_Printf ("Cmd_AddCommand: %s already defined\n", cmd_name);
-			return;
-		}
+	// fail if the command already exists
+	cmd = (cmd_function_t*)Hash_Find (cmd_hash, cmd_name);
+	if (cmd) {
+		Con_Printf ("Cmd_AddCommand: %s already defined\n", cmd_name);
+		return;
 	}
 
 	cmd = Hunk_Alloc (sizeof (cmd_function_t));
@@ -665,6 +666,7 @@ Cmd_AddCommand (char *cmd_name, xcommand_t function)
 	cmd->function = function;
 	cmd->next = cmd_functions;
 	cmd_functions = cmd;
+	Hash_Add (cmd_hash, cmd);
 }
 
 /*
@@ -677,9 +679,9 @@ Cmd_Exists (char *cmd_name)
 {
 	cmd_function_t *cmd;
 
-	for (cmd = cmd_functions; cmd; cmd = cmd->next) {
-		if (!strcmp (cmd_name, cmd->name))
-			return true;
+	cmd = (cmd_function_t*)Hash_Find (cmd_hash, cmd_name);
+	if (cmd) {
+		return true;
 	}
 
 	return false;
@@ -823,14 +825,13 @@ Cmd_ExecuteString (char *text)
 		return;							// no tokens
 
 // check functions
-	for (cmd = cmd_functions; cmd; cmd = cmd->next) {
-		if (!strcasecmp (cmd_argv[0], cmd->name)) {
-			if (!cmd->function)
-				Cmd_ForwardToServer ();
-			else
-				cmd->function ();
-			return;
-		}
+	cmd = (cmd_function_t*)Hash_Find (cmd_hash, cmd_argv[0]);
+	if (cmd) {
+		if (!cmd->function)
+			Cmd_ForwardToServer ();
+		else
+			cmd->function ();
+		return;
 	}
 
 // Tonik: check cvars
@@ -838,16 +839,14 @@ Cmd_ExecuteString (char *text)
 		return;
 
 // check alias
-	for (a = cmd_alias; a; a = a->next) {
-		if (!strcasecmp (cmd_argv[0], a->name)) {
-			Cbuf_InsertText (a->value);
-			return;
-		}
+	a = (cmdalias_t*)Hash_Find (cmd_alias_hash, cmd_argv[0]);
+	if (a) {
+		Cbuf_InsertText (a->value);
+		return;
 	}
 
 	if (cl_warncmd->int_val || developer->int_val)
 		Con_Printf ("Unknown command \"%s\"\n", Cmd_Argv (0));
-
 }
 
 
@@ -886,6 +885,41 @@ Cmd_CmdList_f (void)
 	}
 
 	Con_Printf ("------------\n%d commands\n", i);
+}
+
+static void
+cmd_alias_free (void *_a)
+{
+	cmdalias_t *a = (cmdalias_t*)_a;
+	free (a->value);
+	free (a);
+}
+
+static char *
+cmd_alias_get_key (void *_a)
+{
+	cmdalias_t *a = (cmdalias_t*)_a;
+	return a->name;
+}
+
+static char *
+cmd_get_key (void *c)
+{
+	cmd_function_t *cmd = (cmd_function_t*)c;
+	return cmd->name;
+}
+
+/*
+	Cmd_Init_Hash
+
+	initialise the command and alias hash tables
+*/
+
+void
+Cmd_Init_Hash (void)
+{
+	cmd_hash = Hash_NewTable (1021, cmd_get_key, 0);
+	cmd_alias_hash = Hash_NewTable (1021, cmd_alias_get_key, cmd_alias_free);
 }
 
 /*

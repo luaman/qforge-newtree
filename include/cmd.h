@@ -75,6 +75,7 @@ then searches for a command or variable that matches the first token.
 
 typedef void (*xcommand_t) (void);
 
+void	Cmd_Init_Hash (void);
 void	Cmd_Init (void);
 void	cl_Cmd_Init (void);
 

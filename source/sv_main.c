@@ -1868,6 +1868,7 @@ SV_Init (void)
 				  host_parms.memsize / (float) 0x100000);
 
 	Cvar_Init_Hash ();
+	Cmd_Init_Hash ();
 	Memory_Init (host_parms.membase, host_parms.memsize);
 	Cvar_Init ();
 	Sys_Init_Cvars ();
