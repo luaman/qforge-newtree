@@ -167,8 +167,8 @@ dlight_t    cl_dlights[MAX_DLIGHTS];
 // this is double buffered so the last frame
 // can be scanned for oldorigins of trailing objects
 int         cl_numvisedicts, cl_oldnumvisedicts;
-entity_t   *cl_visedicts, *cl_oldvisedicts;
-entity_t    cl_visedicts_list[2][MAX_VISEDICTS];
+entity_t  **cl_visedicts, **cl_oldvisedicts;
+entity_t   *cl_visedicts_list[2][MAX_VISEDICTS];
 
 double      connect_time = -1;			// for connection retransmits
 
@@ -437,6 +437,7 @@ CL_ClearState (void)
 	if (host_hunklevel)					// FIXME: check this...
 		Hunk_FreeToLowMark (host_hunklevel);
 
+	CL_ClearEnts ();
 	CL_ClearTEnts ();
 
 // wipe the entire cl structure

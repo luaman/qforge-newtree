@@ -65,7 +65,7 @@ R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
 
 	VectorSubtract (end, start, vec);
 	len = VectorNormalize (vec);
-	key = ent - cl_visedicts + 1;
+	key = ent->keynum;
 
 	if (len) {
 		f = R_AllocFire (key);
@@ -76,7 +76,7 @@ R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
 		f->decay = -1;
 		f->color = r_firecolor;
 
-		dl = CL_AllocDlight (key);
+		dl = CL_AllocDlight (-key);
 		VectorCopy (end, dl->origin);
 		dl->radius = 200;
 		dl->die = cl.time + 0.5;

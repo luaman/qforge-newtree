@@ -441,7 +441,7 @@ R_TeleportSplash (vec3_t org)
 }
 
 void
-R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
+R_RocketTrail (int type, entity_t *ent)
 {
 	vec3_t      vec;
 	float       len;
@@ -452,12 +452,12 @@ R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 	byte        palpha, pcolor;
 
 	if (type == 0)
-		R_AddFire (start, end, ent);
+		R_AddFire (ent->old_origin, ent->origin, ent);
 
 	if (!gl_particles->int_val)
 		return;
 
-	VectorSubtract (end, start, vec);
+	VectorSubtract (ent->origin, ent->old_origin, vec);
 	len = VectorNormalize (vec);
 	while (len > 0) {
 		VectorCopy (vec3_origin, pvel);
@@ -483,7 +483,7 @@ R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 				palpha = 48 + (rand () & 31);
 				ptype = pt_smoke;
 				pdie = cl.time + 1;
-				VectorCopy (start, porg);
+				VectorCopy (ent->old_origin, porg);
 				break;
 			case 2:					// blood
 			case 4:					// slight blood
@@ -494,7 +494,7 @@ R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 				pdie = cl.time + 2;
 				for (j = 0; j < 3; j++) {
 					pvel[j] = (rand () & 15) - 8;
-					porg[j] = start[j] + ((rand () % 3) - 2);
+					porg[j] = ent->old_origin[j] + ((rand () % 3) - 2);
 				}
 				ptype = pt_grav;
 				palpha = 255;
@@ -506,7 +506,7 @@ R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 				pscale = lhrandom (1, 2);
 				pdie = cl.time + 0.3;
 				for (j = 0; j < 3; j++)
-					porg[j] = start[j] + ((rand () & 15) - 8);
+					porg[j] = ent->old_origin[j] + ((rand () & 15) - 8);
 				break;
 			case 3:
 			case 5:					// tracer
@@ -524,7 +524,7 @@ R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 
 					tracercount++;
 
-					VectorCopy (start, porg);
+					VectorCopy (ent->old_origin, porg);
 					if (tracercount & 1) {
 						pvel[0] = 30 * vec[1];
 						pvel[1] = 30 * -vec[0];
@@ -536,7 +536,7 @@ R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 				}
 		}
 
-		VectorAdd (start, vec, start);
+		VectorAdd (ent->old_origin, vec, ent->old_origin);
 
 		particle_new (ptype, ptex, porg, pscale, pvel, pdie, pcolor, palpha);
 	}

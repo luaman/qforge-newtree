@@ -259,7 +259,7 @@ R_StoreEfrags (efrag_t **ppefrag)
 
 				if ((pent->visframe != r_framecount) &&
 					(cl_numvisedicts < MAX_VISEDICTS)) {
-					cl_visedicts[cl_numvisedicts++] = *pent;
+					cl_visedicts[cl_numvisedicts++] = pent;
 
 					// mark that we've recorded this entity for this frame
 					pent->visframe = r_framecount;

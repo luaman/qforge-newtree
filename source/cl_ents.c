@@ -51,6 +51,7 @@
 #include "cl_main.h"
 #include "cl_ents.h"
 #include "cl_input.h"
+#include "cl_tent.h"
 
 extern cvar_t *cl_predict_players;
 extern cvar_t *cl_predict_players2;
@@ -64,7 +65,29 @@ static struct predicted_player {
 	vec3_t      origin;					// predicted origin
 } predicted_players[MAX_CLIENTS];
 
+entity_t  **CL_NewTempEntity (void);
+
+entity_t    cl_packet_ents[512];	// FIXME: magic number
+entity_t    cl_flag_ents[MAX_CLIENTS];
+entity_t    cl_player_ents[MAX_CLIENTS];
+
 //============================================================
+
+/*
+	CL_ClearEnts
+*/
+void
+CL_ClearEnts ()
+{
+	int i;
+
+	for (i = 0; i < sizeof (cl_packet_ents) / sizeof (cl_packet_ents[0]); i++)
+		CL_Init_Entity (&cl_packet_ents[i]);
+	for (i = 0; i < sizeof (cl_flag_ents) / sizeof (cl_flag_ents[0]); i++)
+		CL_Init_Entity (&cl_flag_ents[i]);
+	for (i = 0; i < sizeof (cl_player_ents) / sizeof (cl_player_ents[0]); i++)
+		CL_Init_Entity (&cl_player_ents[i]);
+}
 
 /*
 ===============
@@ -453,12 +476,11 @@ CL_LinkPacketEntities
 void
 CL_LinkPacketEntities (void)
 {
-	entity_t   *ent;
+	entity_t  **ent;
 	packet_entities_t *pack;
 	entity_state_t *s1, *s2;
 	float       f;
 	model_t    *model;
-	vec3_t      old_origin;
 	float       autorotate;
 	int         i;
 	int         pnum;
@@ -515,52 +537,52 @@ CL_LinkPacketEntities (void)
 			continue;
 
 		// create a new entity
-		if (cl_numvisedicts == MAX_VISEDICTS)
+		ent = CL_NewTempEntity ();
+		if (!ent)
 			break;						// object list is full
+		*ent = &cl_packet_ents[s1->number];
 
-		ent = &cl_visedicts[cl_numvisedicts++];
-
-		ent->keynum = s1->number;
-		ent->model = model = cl.model_precache[s1->modelindex];
+		(*ent)->keynum = s1->number;
+		(*ent)->model = model = cl.model_precache[s1->modelindex];
 
 		// set colormap
 		if (s1->colormap && (s1->colormap < MAX_CLIENTS)
-			&& !strcmp (ent->model->name, "progs/player.mdl")) {
-			ent->colormap = cl.players[s1->colormap - 1].translations;
-			ent->scoreboard = &cl.players[s1->colormap - 1];
+			&& !strcmp ((*ent)->model->name, "progs/player.mdl")) {
+			(*ent)->colormap = cl.players[s1->colormap - 1].translations;
+			(*ent)->scoreboard = &cl.players[s1->colormap - 1];
 		} else {
-			ent->colormap = vid.colormap;
-			ent->scoreboard = NULL;
+			(*ent)->colormap = vid.colormap;
+			(*ent)->scoreboard = NULL;
 		}
 
 		// LordHavoc: cleaned up Endy's coding style, and fixed Endy's bugs
 		// Ender: Extend (Colormod) [QSG - Begin]
 		// N.B: All messy code below is the sole fault of LordHavoc and
 		// his futile attempts to save bandwidth. :)
-		ent->glowsize =	s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
-		ent->glowcolor = s1->glowcolor;
-		ent->alpha = s1->alpha / 255.0;
-		ent->scale = s1->scale / 16.0;
+		(*ent)->glowsize =	s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
+		(*ent)->glowcolor = s1->glowcolor;
+		(*ent)->alpha = s1->alpha / 255.0;
+		(*ent)->scale = s1->scale / 16.0;
 
 		if (s1->colormod == 255) {
-			ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
+			(*ent)->colormod[0] = (*ent)->colormod[1] = (*ent)->colormod[2] = 1;
 		} else {
-			ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
-			ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
-			ent->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
+			(*ent)->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
+			(*ent)->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
+			(*ent)->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
 		}
 		// Ender: Extend (Colormod) [QSG - End]
 
 		// set skin
-		ent->skinnum = s1->skinnum;
+		(*ent)->skinnum = s1->skinnum;
 
 		// set frame
-		ent->frame = s1->frame;
+		(*ent)->frame = s1->frame;
 
 		if (model->flags & EF_ROTATE) { // rotate binary objects locally
-			ent->angles[0] = 0;
-			ent->angles[1] = autorotate;
-			ent->angles[2] = 0;
+			(*ent)->angles[0] = 0;
+			(*ent)->angles[1] = autorotate;
+			(*ent)->angles[2] = 0;
 		} else {
 			float       a1, a2;
 
@@ -571,60 +593,44 @@ CL_LinkPacketEntities (void)
 					a1 -= 360;
 				if (a1 - a2 < -180)
 					a1 += 360;
-				ent->angles[i] = a2 + f * (a1 - a2);
+				(*ent)->angles[i] = a2 + f * (a1 - a2);
 			}
 		}
 
+		VectorCopy ((*ent)->origin, (*ent)->old_origin);
 		// calculate origin
 		for (i = 0; i < 3; i++)
-			ent->origin[i] = s2->origin[i] + f * (s1->origin[i] - s2->origin[i]);
-
-		// scan the old entity display list for a matching
-		for (i = 0; i < cl_oldnumvisedicts; i++) {
-			if (cl_oldvisedicts[i].keynum == ent->keynum) {
-				ent->frame_start_time = cl_oldvisedicts[i].frame_start_time;
-				ent->frame_interval = cl_oldvisedicts[i].frame_interval;
-				ent->pose1 = cl_oldvisedicts[i].pose1;
-				ent->pose2 = cl_oldvisedicts[i].pose2;
-				VectorCopy (cl_oldvisedicts[i].origin, old_origin);
-				break;
-			}
-		}
-
-		if (i == cl_oldnumvisedicts) {	// not in last message, don't lerp 
-			ent->pose1 = ent->pose2 = -1;
-			continue;
-		}
+			(*ent)->origin[i] = s2->origin[i] + f * (s1->origin[i] - s2->origin[i]);
 
 		// add automatic particle trails
 		if (!model->flags)
 			continue;
 
 		for (i = 0; i < 3; i++)
-			if (abs (old_origin[i] - ent->origin[i]) > 128) {	// no trail
+			if (abs ((*ent)->old_origin[i] - (*ent)->origin[i]) > 128) {	// no trail
 																// if too far
-				VectorCopy (ent->origin, old_origin);
+				VectorCopy ((*ent)->origin, (*ent)->old_origin);
 				break;
 			}
 
 		if (model->flags & EF_ROCKET) {
-			R_RocketTrail (old_origin, ent->origin, 0, ent);
+			R_RocketTrail (0, (*ent));
 			dl = CL_AllocDlight (s1->number);
-			VectorCopy (ent->origin, dl->origin);
+			VectorCopy ((*ent)->origin, dl->origin);
 			dl->radius = 200;
 			dl->die = cl.time + 0.1;
 		} else if (model->flags & EF_GRENADE)
-			R_RocketTrail (old_origin, ent->origin, 1, ent);
+			R_RocketTrail (1, (*ent));
 		else if (model->flags & EF_GIB)
-			R_RocketTrail (old_origin, ent->origin, 2, ent);
+			R_RocketTrail (2, (*ent));
 		else if (model->flags & EF_ZOMGIB)
-			R_RocketTrail (old_origin, ent->origin, 4, ent);
+			R_RocketTrail (4, (*ent));
 		else if (model->flags & EF_TRACER)
-			R_RocketTrail (old_origin, ent->origin, 3, ent);
+			R_RocketTrail (3, (*ent));
 		else if (model->flags & EF_TRACER2)
-			R_RocketTrail (old_origin, ent->origin, 5, ent);
+			R_RocketTrail (5, (*ent));
 		else if (model->flags & EF_TRACER3)
-			R_RocketTrail (old_origin, ent->origin, 6, ent);
+			R_RocketTrail (6, (*ent));
 	}
 }
 
@@ -639,8 +645,7 @@ PROJECTILE PARSING / LINKING
 
 typedef struct {
 	int         modelindex;
-	vec3_t      origin;
-	vec3_t      angles;
+	entity_t	ent;
 } projectile_t;
 
 #define	MAX_PROJECTILES	32
@@ -681,11 +686,11 @@ CL_ParseProjectiles (void)
 		cl_num_projectiles++;
 
 		pr->modelindex = cl_spikeindex;
-		pr->origin[0] = ((bits[0] + ((bits[1] & 15) << 8)) << 1) - 4096;
-		pr->origin[1] = (((bits[1] >> 4) + (bits[2] << 4)) << 1) - 4096;
-		pr->origin[2] = ((bits[3] + ((bits[4] & 15) << 8)) << 1) - 4096;
-		pr->angles[0] = 360 * (bits[4] >> 4) / 16;
-		pr->angles[1] = 360 * bits[5] / 256;
+		pr->ent.origin[0] = ((bits[0] + ((bits[1] & 15) << 8)) << 1) - 4096;
+		pr->ent.origin[1] = (((bits[1] >> 4) + (bits[2] << 4)) << 1) - 4096;
+		pr->ent.origin[2] = ((bits[3] + ((bits[4] & 15) << 8)) << 1) - 4096;
+		pr->ent.angles[0] = 360 * (bits[4] >> 4) / 16;
+		pr->ent.angles[1] = 360 * bits[5] / 256;
 	}
 }
 
@@ -700,40 +705,36 @@ CL_LinkProjectiles (void)
 {
 	int         i;
 	projectile_t *pr;
-	entity_t   *ent;
+	entity_t  **ent;
 
 	for (i = 0, pr = cl_projectiles; i < cl_num_projectiles; i++, pr++) {
 		if (pr->modelindex < 1)
 			continue;
 
 		// grab an entity to fill in
-		if (cl_numvisedicts == MAX_VISEDICTS)
+		ent = CL_NewTempEntity ();
+		if (!ent)
 			break;						// object list is full
-		ent = &cl_visedicts[cl_numvisedicts];
+		*ent = &pr->ent;
 		cl_numvisedicts++;
-		ent->keynum = 0;
-		ent->model = cl.model_precache[pr->modelindex];
-		ent->skinnum = 0;
-		ent->frame = 0;
-		ent->colormap = vid.colormap;
-		ent->scoreboard = NULL;
-		VectorCopy (pr->origin, ent->origin);
-		VectorCopy (pr->angles, ent->angles);
+		(*ent)->model = cl.model_precache[pr->modelindex];
+		(*ent)->skinnum = 0;
+		(*ent)->frame = 0;
+		(*ent)->colormap = vid.colormap;
+		(*ent)->scoreboard = NULL;
 		// LordHavoc: Endy had neglected to do this as part of the QSG
 		// VERSION 2 stuff
-		ent->glowsize = 0;
-		ent->glowcolor = 254;
-		ent->alpha = 1;
-		ent->scale = 1;
-		ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
+		(*ent)->glowsize = 0;
+		(*ent)->glowcolor = 254;
+		(*ent)->alpha = 1;
+		(*ent)->scale = 1;
+		(*ent)->colormod[0] = (*ent)->colormod[1] = (*ent)->colormod[2] = 1;
 	}
 }
 
 //========================================
 
 extern int  cl_spikeindex, cl_playerindex, cl_flagindex;
-
-entity_t   *CL_NewTempEntity (void);
 
 /*
 ===================
@@ -826,7 +827,7 @@ CL_AddFlagModels (entity_t *ent, int team)
 	int         i;
 	float       f;
 	vec3_t      v_forward, v_right, v_up;
-	entity_t   *newent;
+	entity_t  **newent;
 
 	if (cl_flagindex == -1)
 		return;
@@ -872,17 +873,20 @@ CL_AddFlagModels (entity_t *ent, int team)
 	}
 
 	newent = CL_NewTempEntity ();
-	newent->model = cl.model_precache[cl_flagindex];
-	newent->skinnum = team;
+	if (!newent)
+		return;
+	*newent = &cl_flag_ents[ent->keynum];
+	(*newent)->model = cl.model_precache[cl_flagindex];
+	(*newent)->skinnum = team;
 
 	AngleVectors (ent->angles, v_forward, v_right, v_up);
 	v_forward[2] = -v_forward[2];		// reverse z component
 	for (i = 0; i < 3; i++)
-		newent->origin[i] = ent->origin[i] - f * v_forward[i] + 22 * v_right[i];
-	newent->origin[2] -= 16;
+		(*newent)->origin[i] = ent->origin[i] - f * v_forward[i] + 22 * v_right[i];
+	(*newent)->origin[2] -= 16;
 
-	VectorCopy (ent->angles, newent->angles)
-		newent->angles[2] -= 45;
+	VectorCopy (ent->angles, (*newent)->angles)
+		(*newent)->angles[2] -= 45;
 }
 
 /*
@@ -901,7 +905,7 @@ CL_LinkPlayers (void)
 	player_state_t *state;
 	player_state_t exact;
 	double      playertime;
-	entity_t   *ent;
+	entity_t  **ent;
 	int         msec;
 	frame_t    *frame;
 	int         oldphysent;
@@ -959,54 +963,41 @@ CL_LinkPlayers (void)
 			continue;
 
 		// grab an entity to fill in
-		if (cl_numvisedicts == MAX_VISEDICTS)	// object list is full
+		ent = CL_NewTempEntity ();
+		if (!ent)						// object list is full
 			break;
+		*ent = &cl_player_ents[state - frame->playerstate];
 
-		ent = &cl_visedicts[cl_numvisedicts++];
-
-		ent->frame = state->frame;
-
-		// scan the old entity display list for a matching player
-		for (i = 0; i < cl_oldnumvisedicts; i++) {
-			if (cl_oldvisedicts[i].keynum == state->number) {
-				ent->frame_start_time = cl_oldvisedicts[i].frame_start_time;
-				ent->frame_interval = cl_oldvisedicts[i].frame_interval;
-				ent->pose1 = cl_oldvisedicts[i].pose1;
-				ent->pose2 = cl_oldvisedicts[i].pose2;
-				break;
-			}
-		}
-
-		ent->keynum = 0;
-//		ent->keynum = state->number;
-		ent->model = cl.model_precache[state->modelindex];
-		ent->skinnum = state->skinnum;
-		ent->colormap = info->translations;
+		(*ent)->frame = state->frame;
+		(*ent)->keynum = state - frame->playerstate;
+		(*ent)->model = cl.model_precache[state->modelindex];
+		(*ent)->skinnum = state->skinnum;
+		(*ent)->colormap = info->translations;
 		if (state->modelindex == cl_playerindex)
-			ent->scoreboard = info;		// use custom skin
+			(*ent)->scoreboard = info;		// use custom skin
 		else
-			ent->scoreboard = NULL;
+			(*ent)->scoreboard = NULL;
 
 		// LordHavoc: more QSG VERSION 2 stuff, FIXME: players don't have
 		// extend stuff
-		ent->glowsize = 0;
-		ent->glowcolor = 254;
-		ent->alpha = 1;
-		ent->scale = 1;
-		ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
+		(*ent)->glowsize = 0;
+		(*ent)->glowcolor = 254;
+		(*ent)->alpha = 1;
+		(*ent)->scale = 1;
+		(*ent)->colormod[0] = (*ent)->colormod[1] = (*ent)->colormod[2] = 1;
 
 		// 
 		// angles
 		// 
-		ent->angles[PITCH] = -state->viewangles[PITCH] / 3;
-		ent->angles[YAW] = state->viewangles[YAW];
-		ent->angles[ROLL] = 0;
-		ent->angles[ROLL] = V_CalcRoll (ent->angles, state->velocity) * 4;
+		(*ent)->angles[PITCH] = -state->viewangles[PITCH] / 3;
+		(*ent)->angles[YAW] = state->viewangles[YAW];
+		(*ent)->angles[ROLL] = 0;
+		(*ent)->angles[ROLL] = V_CalcRoll ((*ent)->angles, state->velocity) * 4;
 
 		// only predict half the move to minimize overruns
 		msec = 500 * (playertime - state->state_time);
 		if (msec <= 0 || (!cl_predict_players->int_val && !cl_predict_players2->int_val)) {
-			VectorCopy (state->origin, ent->origin);
+			VectorCopy (state->origin, (*ent)->origin);
 		} else {	// predict players movement
 			state->command.msec = msec = min (msec, 255);
 
@@ -1014,13 +1005,13 @@ CL_LinkPlayers (void)
 			CL_SetSolidPlayers (j);
 			CL_PredictUsercmd (state, &exact, &state->command, false);
 			pmove.numphysent = oldphysent;
-			VectorCopy (exact.origin, ent->origin);
+			VectorCopy (exact.origin, (*ent)->origin);
 		}
 
 		if (state->effects & EF_FLAG1)
-			CL_AddFlagModels (ent, 0);
+			CL_AddFlagModels ((*ent), 0);
 		else if (state->effects & EF_FLAG2)
-			CL_AddFlagModels (ent, 1);
+			CL_AddFlagModels ((*ent), 1);
 
 	}
 }

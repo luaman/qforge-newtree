@@ -48,20 +48,22 @@
 #endif
 
 #define	MAX_BEAMS	8
+#define MAX_BEAM_ENTS 20
 typedef struct {
 	int         entity;
 	struct model_s *model;
 	float       endtime;
 	vec3_t      start, end;
+	entity_t    ent_list[MAX_BEAM_ENTS];
+	int         ent_count;
 } beam_t;
 
 beam_t      cl_beams[MAX_BEAMS];
 
 #define	MAX_EXPLOSIONS	8
 typedef struct {
-	vec3_t      origin;
 	float       start;
-	model_t    *model;
+	entity_t    ent;
 } explosion_t;
 
 explosion_t cl_explosions[MAX_EXPLOSIONS];
@@ -97,11 +99,38 @@ CL_TEnts_Init (void)
 CL_ClearTEnts
 =================
 */
+
+void
+CL_Init_Entity (entity_t *ent)
+{
+	memset (ent, 0, sizeof (*ent));
+
+	ent->colormap = vid.colormap;
+	// LordHavoc: Endy had neglected to do this as part of the QSG VERSION 2
+	// stuff
+	ent->glowsize = 0;
+	ent->glowcolor = 254;
+	ent->alpha = 1;
+	ent->scale = 1;
+	ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
+}
+
 void
 CL_ClearTEnts (void)
 {
+	int i;
+
 	memset (&cl_beams, 0, sizeof (cl_beams));
 	memset (&cl_explosions, 0, sizeof (cl_explosions));
+	for (i = 0; i < MAX_BEAMS; i++) {
+		int j;
+		for (j = 0; j < MAX_BEAM_ENTS; j++) {
+			CL_Init_Entity(&cl_beams[i].ent_list[j]);
+		}
+	}
+	for (i = 0; i < MAX_EXPLOSIONS; i++) {
+		CL_Init_Entity(&cl_explosions[i].ent);
+	}
 }
 
 /*
@@ -117,7 +146,7 @@ CL_AllocExplosion (void)
 	int         index;
 
 	for (i = 0; i < MAX_EXPLOSIONS; i++)
-		if (!cl_explosions[i].model)
+		if (!cl_explosions[i].ent.model)
 			return &cl_explosions[i];
 // find the oldest explosion
 	time = cl.time;
@@ -274,9 +303,9 @@ CL_ParseTEnt (void)
 
 			// sprite
 			ex = CL_AllocExplosion ();
-			VectorCopy (pos, ex->origin);
+			VectorCopy (pos, ex->ent.origin);
 			ex->start = cl.time;
-			ex->model = Mod_ForName ("progs/s_explod.spr", true);
+			ex->ent.model = Mod_ForName ("progs/s_explod.spr", true);
 			break;
 
 		case TE_TAREXPLOSION:			// tarbaby explosion
@@ -337,30 +366,14 @@ CL_ParseTEnt (void)
 CL_NewTempEntity
 =================
 */
-entity_t   *
+entity_t   **
 CL_NewTempEntity (void)
 {
-	entity_t   *ent;
 
 	if (cl_numvisedicts == MAX_VISEDICTS)
 		return NULL;
-	ent = &cl_visedicts[cl_numvisedicts];
-	cl_numvisedicts++;
-	ent->keynum = 0;
-
-	memset (ent, 0, sizeof (*ent));
-
-	ent->colormap = vid.colormap;
-	// LordHavoc: Endy had neglected to do this as part of the QSG VERSION 2
-	// stuff
-	ent->glowsize = 0;
-	ent->glowcolor = 254;
-	ent->alpha = 1;
-	ent->scale = 1;
-	ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
-	return ent;
+	return &cl_visedicts[cl_numvisedicts++];
 }
-
 
 /*
 =================
@@ -374,7 +387,7 @@ CL_UpdateBeams (void)
 	beam_t     *b;
 	vec3_t      dist, org;
 	float       d;
-	entity_t   *ent;
+	entity_t  **ent;
 	float       yaw, pitch;
 	float       forward;
 
@@ -412,21 +425,22 @@ CL_UpdateBeams (void)
 		// add new entities for the lightning
 		VectorCopy (b->start, org);
 		d = VectorNormalize (dist);
-		while (d > 0) {
+		b->ent_count = 0;
+		while (d > 0 && b->ent_count < MAX_BEAM_ENTS) {
 			ent = CL_NewTempEntity ();
 			if (!ent)
 				return;
-			VectorCopy (org, ent->origin);
-			ent->model = b->model;
-			ent->angles[0] = pitch;
-			ent->angles[1] = yaw;
-			ent->angles[2] = rand () % 360;
+			*ent = &b->ent_list[b->ent_count++];
+			VectorCopy (org, (*ent)->origin);
+			(*ent)->model = b->model;
+			(*ent)->angles[0] = pitch;
+			(*ent)->angles[1] = yaw;
+			(*ent)->angles[2] = rand () % 360;
 
 			VectorMA(org, 30, dist, org);
 			d -= 30;
 		}
 	}
-
 }
 
 /*
@@ -440,23 +454,22 @@ CL_UpdateExplosions (void)
 	int         i;
 	int         f;
 	explosion_t *ex;
-	entity_t   *ent;
+	entity_t   **ent;
 
 	for (i = 0, ex = cl_explosions; i < MAX_EXPLOSIONS; i++, ex++) {
-		if (!ex->model)
+		if (!ex->ent.model)
 			continue;
 		f = 10 * (cl.time - ex->start);
-		if (f >= ex->model->numframes) {
-			ex->model = NULL;
+		if (f >= ex->ent.model->numframes) {
+			ex->ent.model = NULL;
 			continue;
 		}
 
 		ent = CL_NewTempEntity ();
 		if (!ent)
 			return;
-		VectorCopy (ex->origin, ent->origin);
-		ent->model = ex->model;
-		ent->frame = f;
+		ex->ent.frame = f;
+		*ent = &ex->ent;
 	}
 }
 

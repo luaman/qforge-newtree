@@ -54,6 +54,7 @@ typedef struct entity_s
 {
 	int						keynum; // for matching entities in different frames
 	vec3_t					origin;
+	vec3_t					old_origin;
 	vec3_t					angles; 
 	struct model_s			*model; // NULL = no model
 	int						frame;

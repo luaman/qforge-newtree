@@ -30,6 +30,8 @@
 #define _CL_TENT_H
 
 void CL_TEnts_Init (void);
+void CL_ClearEnts (void);
 void CL_ClearTEnts (void);
+void CL_Init_Entity (struct entity_s *ent);
 
 #endif

@@ -901,27 +901,27 @@ R_DrawEntitiesOnList (void)
 
 	// LordHavoc: split into 3 loops to simplify state changes
 	for (i = 0; i < cl_numvisedicts; i++) {
-		if (cl_visedicts[i].model->type != mod_brush)
+		if (cl_visedicts[i]->model->type != mod_brush)
 			continue;
-		currententity = &cl_visedicts[i];
+		currententity = cl_visedicts[i];
 		modelalpha = currententity->alpha;
 
 		R_DrawBrushModel (currententity);
 	}
 
 	for (i = 0; i < cl_numvisedicts; i++) {
-		if (cl_visedicts[i].model->type != mod_alias)
+		if (cl_visedicts[i]->model->type != mod_alias)
 			continue;
-		currententity = &cl_visedicts[i];
+		currententity = cl_visedicts[i];
 		modelalpha = currententity->alpha;
 
 		R_DrawAliasModel (currententity);
 	}
 
 	for (i = 0; i < cl_numvisedicts; i++) {
-		if (cl_visedicts[i].model->type != mod_sprite)
+		if (cl_visedicts[i]->model->type != mod_sprite)
 			continue;
-		currententity = &cl_visedicts[i];
+		currententity = cl_visedicts[i];
 		modelalpha = currententity->alpha;
 
 		R_DrawSpriteModel (currententity);

@@ -388,14 +388,14 @@ R_TeleportSplash (vec3_t org)
 }
 
 void
-R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
+R_RocketTrail (int type, entity_t *ent)
 {
 	vec3_t      vec;
 	float       len;
 	int         j;
 	particle_t *p;
 
-	VectorSubtract (end, start, vec);
+	VectorSubtract (ent->origin, ent->old_origin, vec);
 	len = VectorNormalize (vec);
 	while (len > 0) {
 		len -= 3;
@@ -414,31 +414,31 @@ R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 			p->type = pt_slowgrav;
 			p->color = 67 + (rand () & 3);
 			for (j = 0; j < 3; j++)
-				p->org[j] = start[j] + ((rand () % 6) - 3);
+				p->org[j] = ent->old_origin[j] + ((rand () % 6) - 3);
 			len -= 3;
 		} else if (type == 2) {			// blood
 			p->type = pt_slowgrav;
 			p->color = 67 + (rand () & 3);
 			for (j = 0; j < 3; j++)
-				p->org[j] = start[j] + ((rand () % 6) - 3);
+				p->org[j] = ent->old_origin[j] + ((rand () % 6) - 3);
 		} else if (type == 6) {			// voor trail
 			p->color = 9 * 16 + 8 + (rand () & 3);
 			p->type = pt_static;
 			p->die = cl.time + 0.3;
 			for (j = 0; j < 3; j++)
-				p->org[j] = start[j] + ((rand () & 15) - 8);
+				p->org[j] = ent->old_origin[j] + ((rand () & 15) - 8);
 		} else if (type == 1) {			// smoke smoke
 			p->ramp = (rand () & 3) + 2;
 			p->color = ramp3[(int) p->ramp];
 			p->type = pt_fire;
 			for (j = 0; j < 3; j++)
-				p->org[j] = start[j] + ((rand () % 6) - 3);
+				p->org[j] = ent->old_origin[j] + ((rand () % 6) - 3);
 		} else if (type == 0) {			// rocket trail
 			p->ramp = (rand () & 3);
 			p->color = ramp3[(int) p->ramp];
 			p->type = pt_fire;
 			for (j = 0; j < 3; j++)
-				p->org[j] = start[j] + ((rand () % 6) - 3);
+				p->org[j] = ent->old_origin[j] + ((rand () % 6) - 3);
 		} else if (type == 3 || type == 5) {	// tracer
 			static int  tracercount;
 
@@ -451,7 +451,7 @@ R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 
 			tracercount++;
 
-			VectorCopy (start, p->org);
+			VectorCopy (ent->old_origin, p->org);
 			if (tracercount & 1) {
 				p->vel[0] = 30 * vec[1];
 				p->vel[1] = 30 * -vec[0];
@@ -463,7 +463,7 @@ R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 		}
 
 
-		VectorAdd (start, vec, start);
+		VectorAdd (ent->old_origin, vec, ent->old_origin);
 	}
 }
 
