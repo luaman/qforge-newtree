@@ -73,7 +73,8 @@ int			r_numparticles;
 
 vec3_t			r_pright, r_pup, r_ppn;
 
-fire_t		r_firs[MAX_FIRES];
+fire_t		r_fires[MAX_FIRES];
+extern cvar_t	*gl_fires;
 
 /*
 ===============
@@ -381,7 +382,7 @@ void R_TeleportSplash (vec3_t org)
 			}
 }
 
-void R_RocketTrail (vec3_t start, vec3_t end, int type)
+void R_RocketTrail (vec3_t start, vec3_t end, int type, entity_t *ent)
 {
 	vec3_t	vec;
 	float	len;
@@ -653,7 +654,7 @@ R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
 
 	VectorSubtract (end, start, vec);
 	len = VectorNormalize (vec);
-	key = ent-cl_entities+1;
+	key = ent-cl_visedicts+1;
 
 	if (len)
 	{

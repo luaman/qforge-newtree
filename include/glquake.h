@@ -296,12 +296,14 @@ void R_RotateForEntity (entity_t *e);
 // gl_rlight.c
 //
 
+extern float bubble_sintable[17], bubble_costable[17];
 extern float v_blend[4];
 
 void R_MarkLights (dlight_t *light, int bit, mnode_t *node);
 void R_AnimateLight (void);
 void R_RenderDlights (void);
 int R_LightPoint (vec3_t p);
+void AddLightBlend (float, float, float, float);
 
 //
 // gl_refrag.c
