@@ -34,10 +34,11 @@
 #include "cdaudio.h"
 #include "cmd.h"
 #include "console.h"
+#include "cvar.h"
 #include "qargs.h"
+#include "sound.h"
 
 extern HWND mainwindow;
-extern cvar_t *bgmvolume;
 
 static qboolean cdValid = false;
 static qboolean playing = false;
