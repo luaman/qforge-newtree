@@ -21,11 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <ctype.h>
 
-#ifdef SERVERONLY 
-#include "qwsvdef.h"
-#else
 #include "quakedef.h"
-#endif
 
 #define MAX_NUM_ARGVS	50
 #define NUM_SAFE_ARGVS	6
@@ -57,27 +53,6 @@ void COM_Path_f (void);
 qboolean		standard_quake = true, rogue, hipnotic;
 
 char	gamedirfile[MAX_OSPATH];
-
-// this graphic needs to be in the pak file to use registered features
-unsigned short pop[] =
-{
- 0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000
-,0x0000,0x0000,0x6600,0x0000,0x0000,0x0000,0x6600,0x0000
-,0x0000,0x0066,0x0000,0x0000,0x0000,0x0000,0x0067,0x0000
-,0x0000,0x6665,0x0000,0x0000,0x0000,0x0000,0x0065,0x6600
-,0x0063,0x6561,0x0000,0x0000,0x0000,0x0000,0x0061,0x6563
-,0x0064,0x6561,0x0000,0x0000,0x0000,0x0000,0x0061,0x6564
-,0x0064,0x6564,0x0000,0x6469,0x6969,0x6400,0x0064,0x6564
-,0x0063,0x6568,0x6200,0x0064,0x6864,0x0000,0x6268,0x6563
-,0x0000,0x6567,0x6963,0x0064,0x6764,0x0063,0x6967,0x6500
-,0x0000,0x6266,0x6769,0x6a68,0x6768,0x6a69,0x6766,0x6200
-,0x0000,0x0062,0x6566,0x6666,0x6666,0x6666,0x6562,0x0000
-,0x0000,0x0000,0x0062,0x6364,0x6664,0x6362,0x0000,0x0000
-,0x0000,0x0000,0x0000,0x0062,0x6662,0x0000,0x0000,0x0000
-,0x0000,0x0000,0x0000,0x0061,0x6661,0x0000,0x0000,0x0000
-,0x0000,0x0000,0x0000,0x0000,0x6500,0x0000,0x0000,0x0000
-,0x0000,0x0000,0x0000,0x0000,0x6400,0x0000,0x0000,0x0000
-};
 
 /*
 
@@ -1112,32 +1087,20 @@ void COM_CheckRegistered (void)
 {
 	FILE		*h;
 	unsigned short	check[128];
-	int			i;
 
 	COM_FOpenFile("gfx/pop.lmp", &h);
 	static_registered = 0;
 
-	if (!h)
-	{
-		Con_Printf ("Playing shareware version.\n");
-#ifndef SERVERONLY
-// FIXME DEBUG -- only temporary
-		if (com_modified)
-			Sys_Error ("You must have the registered version to play QuakeWorld");
-#endif
-		return;
+	if (h) {
+		static_registered = 1;
+		fread (check, 1, sizeof(check), h);
+		fclose (h);
 	}
 
-	fread (check, 1, sizeof(check), h);
-	fclose (h);
-	
-	for (i=0 ; i<128 ; i++)
-		if (pop[i] != (unsigned short)BigShort (check[i]))
-			Sys_Error ("Corrupted data file.");
-	
-	Cvar_Set ("registered", "1");
-	static_registered = 1;
-	Con_Printf ("Playing registered version.\n");
+	if (static_registered) {
+		Cvar_Set ("registered", "1");
+		Con_Printf ("Playing registered version.\n");
+	}
 }
 
 
@@ -1587,14 +1550,10 @@ byte *COM_LoadFile (char *path, int usehunk)
 		Sys_Error ("COM_LoadFile: not enough space for %s", path);
 		
 	((byte *)buf)[len] = 0;
-#ifndef SERVERONLY
 	Draw_BeginDisc ();
-#endif
 	fread (buf, 1, len, h);
 	fclose (h);
-#ifndef SERVERONLY
 	Draw_EndDisc ();
-#endif
 
 	return buf;
 }
@@ -2007,10 +1966,7 @@ void Info_RemovePrefixedKeys (char *start, char prefix)
 void Info_SetValueForStarKey (char *s, char *key, char *value, int maxsize)
 {
 	char	new[1024], *v;
-	int		c;
-#ifdef SERVERONLY
-	extern cvar_t sv_highchars;
-#endif
+	int		c, is_name, is_team;
 
 	if (strstr (key, "\\") || strstr (value, "\\") )
 	{
@@ -2054,28 +2010,21 @@ void Info_SetValueForStarKey (char *s, char *key, char *value, int maxsize)
 	// only copy ascii values
 	s += strlen(s);
 	v = new;
+	is_name = stricmp(key, "name") == 0;
+	is_team = stricmp(key, "team") == 0;
 	while (*v)
 	{
 		c = (unsigned char)*v++;
-#ifndef SERVERONLY
 		// client only allows highbits on name
-		if (stricmp(key, "name") != 0) {
+		if (!is_name) {
 			c &= 127;
 			if (c < 32 || c > 127)
 				continue;
 			// auto lowercase team
-			if (stricmp(key, "team") == 0)
+			if (is_team)
 				c = tolower(c);
 		}
-#else
-		if (!sv_highchars.value) {
-			c &= 127;
-			if (c < 32 || c > 127)
-				continue;
-		}
-#endif
-//		c &= 127;		// strip high bits
-		if (c > 13) // && c < 127)
+		if (c > 13)
 			*s++ = c;
 	}
 	*s = 0;

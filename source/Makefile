@@ -28,6 +28,7 @@ EXE_sources=\
   pr_exec.c \
   sv_init.c \
   sv_main.c \
+  sv_misc.c \
   sv_nchan.c \
   sv_ents.c \
   sv_send.c \

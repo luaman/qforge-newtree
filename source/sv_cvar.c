@@ -21,13 +21,26 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "qwsvdef.h"
 
 void SV_SendServerInfoChange(char *key, char *value);
+extern cvar_t sv_highchars;
 
 void
 Cvar_Info(cvar_t *var)
 {
 	if (var->info)
 	{
-		Info_SetValueForKey (svs.info, var->name, var->string, MAX_SERVERINFO_STRING);
+		unsigned char info[1024],*p, *c;
+
+		for (p=info, c=var->string; *c && (p-info<sizeof(info)-1); c++, p++) {
+			if (!sv_highchars.value) {
+				*c &= 127;
+				if (*c < 32 || *c > 127)
+					continue;
+				*p = *c;
+			}
+		}
+		*p=0;
+
+		Info_SetValueForKey (svs.info, var->name, info, MAX_SERVERINFO_STRING);
 		SV_SendServerInfoChange(var->name, var->string);
 //		SV_BroadcastCommand ("fullserverinfo \"%s\"\n", svs.info);
 	}
