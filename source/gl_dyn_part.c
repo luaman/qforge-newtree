@@ -204,8 +204,8 @@ R_ReadPointFile_f (void)
 			break;
 		c++;
 
-		if (!particle_new (pt_static, part_tex_dot, org, 2, vec3_origin, 99999,
-						   (-c) & 15, 255)) {
+		if (!particle_new (pt_static, part_tex_dot, org, 1.5, vec3_origin,
+						   99999, (-c) & 15, 255)) {
 			Con_Printf ("Not enough free particles\n");
 			break;
 		}
@@ -227,7 +227,7 @@ R_ParticleExplosion (vec3_t org)
 	if (!gl_particles->int_val)
 		return;
 
-	particle_new_random (pt_smokecloud, part_tex_smoke[rand () & 7], org, 8, 30,
+	particle_new_random (pt_smokecloud, part_tex_smoke[rand () & 7], org, 4, 30,
 						 8, cl.time + 5, (rand () & 7) + 8,
 						 128 + (rand () & 63));
 }
@@ -247,12 +247,12 @@ R_BlobExplosion (vec3_t org)
 		return;
 
 	for (i = 0; i < 512; i++) {
-		particle_new_random (pt_blob, part_tex_dot, org, 16, 2, 256,
+		particle_new_random (pt_blob, part_tex_dot, org, 12, 2, 256,
 							 (cl.time + 1 + (rand () & 8) * 0.05),
 							 (66 + rand () % 6), 255);
 	}
 	for (i = 0; i < 512; i++) {
-		particle_new_random (pt_blob2, part_tex_dot, org, 16, 2, 256,
+		particle_new_random (pt_blob2, part_tex_dot, org, 12, 2, 256,
 							 (cl.time + 1 + (rand () & 8) * 0.05),
 							 (150 + rand () % 6), 255);
 	}
@@ -264,11 +264,13 @@ R_RunSparkEffect (vec3_t org, int count, int ofuzz)
 	if (!gl_particles->int_val)
 		return;
 
-	particle_new (pt_smokecloud, part_tex_smoke[rand () & 7], org, ofuzz / 8,
-				  vec3_origin, cl.time + 99, 12 + (rand () & 3), 96);
+	particle_new (pt_smokecloud, part_tex_smoke[rand () & 7], org, 
+				  (ofuzz / 8) * .75, vec3_origin, cl.time + 99, 
+				  12 + (rand () & 3), 96);
 	while (count--)
-		particle_new_random (pt_fallfadespark, part_tex_dot, org, ofuzz, 1, 96,
-							 cl.time + 5, ramp[rand () % 6], lhrandom (0, 255));
+		particle_new_random (pt_fallfadespark, part_tex_dot, org, ofuzz * .75, 
+							 1, 96, cl.time + 5, ramp[rand () % 6], 
+							 lhrandom (0, 255));
 }
 
 static void
@@ -294,7 +296,7 @@ R_BloodPuff (vec3_t org, int count)
 	if (!gl_particles->int_val)
 		return;
 
-	particle_new (pt_bloodcloud, part_tex_smoke[rand () & 7], org, 12,
+	particle_new (pt_bloodcloud, part_tex_smoke[rand () & 7], org, 9,
 				  vec3_origin, cl.time + 99, 68 + (rand () & 3), 128);
 }
 
@@ -349,7 +351,7 @@ R_RunParticleEffect (vec3_t org, int color, int count)
 		for (j = 0; j < 3; j++) {
 			porg[j] = org[j] + scale * ((rand () & 15) - 8);
 		}
-		particle_new (pt_grav, part_tex_dot, porg, 2, vec3_origin,
+		particle_new (pt_grav, part_tex_dot, porg, 1.5, vec3_origin,
 					  (cl.time + 0.1 * (rand () % 5)),
 					  (color & ~7) + (rand () & 7), 255);
 	}
@@ -403,7 +405,7 @@ R_LavaSplash (vec3_t org)
 			VectorNormalize (dir);
 			vel = 50 + (rand () & 63);
 			VectorScale (dir, vel, pvel);
-			particle_new (pt_grav, part_tex_dot, porg, 2, pvel,
+			particle_new (pt_grav, part_tex_dot, porg, 1.5, pvel,
 						  (cl.time + 2 + (rand () & 31) * 0.02),
 						  (224 + (rand () & 7)), 255);
 		}
@@ -440,7 +442,7 @@ R_TeleportSplash (vec3_t org)
 				VectorNormalize (dir);
 				vel = 50 + (rand () & 63);
 				VectorScale (dir, vel, pvel);
-				particle_new (pt_grav, part_tex_dot, porg, 2, pvel,
+				particle_new (pt_grav, part_tex_dot, porg, 1.5, pvel,
 							  (cl.time + 0.2 + (rand () & 7) * 0.02),
 							  (7 + (rand () & 7)), 255);
 			}
@@ -471,7 +473,7 @@ R_RocketTrail (int type, entity_t *ent)
 		ptype = pt_static;
 		ptex = part_tex_dot;
 		pcolor = 0;
-		pscale = 1;
+		pscale = .75;
 		palpha = 255;
 
 		switch (type) {
@@ -485,7 +487,7 @@ R_RocketTrail (int type, entity_t *ent)
 			  common_rocket_gren_trail:
 				len -= 4;
 				ptex = part_tex_smoke[rand () & 7];
-				pscale = lhrandom (8, 12);
+				pscale = lhrandom (6, 9);
 				palpha = 48 + (rand () & 31);
 				ptype = pt_smoke;
 				pdie = cl.time + 1;
@@ -495,7 +497,7 @@ R_RocketTrail (int type, entity_t *ent)
 			case 4:					// slight blood
 				len -= 5;
 				ptex = part_tex_dot;
-				pscale = 1;
+				pscale = .75;
 				pcolor = 68 + (rand () & 3);
 				pdie = cl.time + 2;
 				for (j = 0; j < 3; j++) {
@@ -509,7 +511,7 @@ R_RocketTrail (int type, entity_t *ent)
 				len -= 3;
 				pcolor = 9 * 16 + 8 + (rand () & 3);
 				ptype = pt_static;
-				pscale = lhrandom (1, 2);
+				pscale = lhrandom (.75, 1.5);
 				pdie = cl.time + 0.3;
 				for (j = 0; j < 3; j++)
 					porg[j] = ent->old_origin[j] + ((rand () & 15) - 8);
@@ -522,7 +524,7 @@ R_RocketTrail (int type, entity_t *ent)
 					len -= 3;
 					pdie = cl.time + 0.5;
 					ptype = pt_static;
-					pscale = lhrandom (2, 4);
+					pscale = lhrandom (1.5, 3);
 					if (type == 3)
 						pcolor = 52 + ((tracercount & 4) << 1);
 					else
@@ -604,30 +606,29 @@ R_DrawParticles (void)
 			else
 				glColor4ub (at[0], at[1], at[2], alpha);
 
-			scale = part->scale * 0.75;
-			scale2 = part->scale * -0.75;
+			scale = part->scale;
 
 			glBindTexture (GL_TEXTURE_2D, part->tex);
 			glBegin (GL_QUADS);
 			glTexCoord2f (0, 1);
-			glVertex3f ((part->org[0] + up[0] * scale + right[0] * scale),
-						(part->org[1] + up[1] * scale + right[1] * scale),
-						(part->org[2] + up[2] * scale + right[2] * scale));
+			glVertex3f ((part->org[0] + ((up[0] + right[0]) * scale))
+						(part->org[1] + ((up[1] + right[1]) * scale))
+						(part->org[2] + ((up[2] + right[2]) * scale)));
 
 			glTexCoord2f (0, 0);
-			glVertex3f ((part->org[0] + up[0] * scale2 + right[0] * scale),
-						(part->org[1] + up[1] * scale2 + right[1] * scale),
-						(part->org[2] + up[2] * scale2 + right[2] * scale));
+			glVertex3f ((part->org[0] + (up[0] * -scale) + (right[0] * scale)),
+						(part->org[1] + (up[1] * -scale) + (right[1] * scale)),
+						(part->org[2] + (up[2] * -scale) + (right[2] * scale)));
 
 			glTexCoord2f (1, 0);
-			glVertex3f ((part->org[0] + up[0] * scale2 + right[0] * scale2),
-						(part->org[1] + up[1] * scale2 + right[1] * scale2),
-						(part->org[2] + up[2] * scale2 + right[2] * scale2));
+			glVertex3f ((part->org[0] + ((up[0] + right[0]) * -scale))
+						(part->org[1] + ((up[1] + right[1]) * -scale))
+						(part->org[2] + ((up[2] + right[2]) * -scale)));
 
 			glTexCoord2f (1, 1);
-			glVertex3f ((part->org[0] + up[0] * scale + right[0] * scale2),
-						(part->org[1] + up[1] * scale + right[1] * scale2),
-						(part->org[2] + up[2] * scale + right[2] * scale2));
+			glVertex3f ((part->org[0] + (up[0] * scale) + (right[0] * -scale)),
+						(part->org[1] + (up[1] * scale) + (right[1] * -scale)),
+						(part->org[2] + (up[2] * scale) + (right[2] * -scale)));
 
 			glEnd ();
 		}

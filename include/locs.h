@@ -45,12 +45,6 @@ void map_to_loc (char *mapname, char *filename);
 void locs_del (char *filename, vec3_t loc);
 void locs_edit (char *filename, vec3_t loc, char *desc);
 void locs_mark (char *filename, vec3_t loc, char *desc);
-void locs_save (char *filename);
+void locs_save (char *filename, qboolean gz);
 int locs_nearest (vec3_t loc);
-	
-extern location_t **locations;
-extern int locations_count;
-#ifdef HAVE_ZLIB
-extern int locisgz;
-#endif
 #endif // __locs_h

@@ -51,7 +51,6 @@ location_t **locations = NULL;
 int         locations_alloced = 0;
 int         locations_count = 0;
 int         location_blocks = 0;
-int         locisgz = 0;
 
 void locs_add (vec3_t location, char *name);
 void locs_load (char *filename);
@@ -123,12 +122,6 @@ locs_load (char *filename)
 		Con_Printf ("Couldn't load %s\n", tmp);
 		return;
 	}
-#ifdef HAVE_ZLIB
-	if (strncmp(foundname + strlen(foundname) - 3,".gz",3) == 0) 
-		locisgz = 1;
-	else 
-		locisgz = 0;
-#endif
 	while ((line = Qgetline (file))) {
 		if (line[0] == '#')
 			continue;
@@ -192,13 +185,13 @@ locs_more (void)
 }
 
 void
-locs_save (char *filename)
+locs_save (char *filename, qboolean gz)
 {
 	QFile *locfd;
 	int i;
 	char locfile[MAX_OSPATH];
 	
-	if (locisgz) {
+	if (gz) {
 		if (strncmp(filename + strlen(filename) - 3,".gz",3) != 0)
 			snprintf (locfile, sizeof (locfile), "%s.gz",filename);
 		else

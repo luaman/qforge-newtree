@@ -367,20 +367,14 @@ locs_loc (void)
 	
 	if (stricmp(Cmd_Argv(1),"save") == 0) {
 		if (Cmd_Argc () == 2) {
-			i = locisgz;
-			locisgz = 0;
-			locs_save(locfile);
-			locisgz = i;
+			locs_save(locfile, false);
 		} else 
 			Con_Printf("loc save :saves locs from memory into a .loc file\n");
 	}
 
 	if (stricmp(Cmd_Argv(1),"zsave") == 0) {
 		if (Cmd_Argc () == 2) {
-			i = locisgz;
-			locisgz = 1;
-			locs_save(locfile);
-			locisgz = i;
+			locs_save(locfile, true);
 		} else
 			Con_Printf("loc save :saves locs from memory into a .loc file\n");
 	}
