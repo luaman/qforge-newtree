@@ -38,6 +38,10 @@
 #include <stdio.h>
 #include "quakedef.h"
 
+#ifndef MAP_FAILED
+# define MAP_FAILED ((void *) -1)
+#endif
+
 int audio_fd;
 int snd_inited;
 
@@ -140,8 +144,7 @@ qboolean SNDDMA_Init(void)
 
 	shm->buffer = (unsigned char *) mmap(NULL, info.fragstotal
 		* info.fragsize, PROT_WRITE, MAP_FILE|MAP_SHARED, audio_fd, 0);
-	if (!shm->buffer)
-	{
+	if (shm->buffer == MAP_FAILED) {
 		perror("/dev/dsp");
 		Con_Printf("Could not mmap /dev/dsp\n");
 		close(audio_fd);
