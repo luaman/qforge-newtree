@@ -31,9 +31,6 @@
 #endif
 #include "quakedef.h"
 
-#ifdef _WIN32
-#include "winquake.h"
-#endif
 
 #define	PACKET_HEADER	8
 
