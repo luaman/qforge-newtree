@@ -33,10 +33,24 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 #include <GL/gl.h>
 #include <GL/fxmesa.h>
 #include <glide/sst1vid.h>
 #include <sys/signal.h>
+
+#ifdef HAVE_DLFCN_H
+# include <dlfcn.h>
+#endif
+#ifndef RTLD_LAZY
+# ifdef DL_LAZY
+#  define RTLD_LAZY     DL_LAZY
+# else
+#  define RTLD_LAZY     0
+# endif
+#endif
 
 #include "console.h"
 #include "glquake.h"
@@ -52,6 +66,8 @@
 #define WARP_HEIGHT             200
 
 static fxMesaContext fc = NULL;
+
+static void *dlhand;
 
 int	VID_options_items = 0;
 
