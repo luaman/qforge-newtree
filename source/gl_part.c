@@ -58,6 +58,7 @@
 
 #define MAX_PARTICLES			2048	// default max # of particles at one
 										//  time
+#define MAX_FIRES					128	// rocket flames
 #define ABSOLUTE_MIN_PARTICLES	512		// no fewer than this no matter what's
 										//  on the command line
 
@@ -72,6 +73,7 @@ int			r_numparticles;
 
 vec3_t			r_pright, r_pup, r_ppn;
 
+fire_t		r_firs[MAX_FIRES];
 
 /*
 ===============
@@ -435,6 +437,7 @@ void R_RocketTrail (vec3_t start, vec3_t end, int type)
 		}
 		else if (type == 0)
 		{	// rocket trail
+			R_AddFire (start, end, ent);
 			p->ramp = (rand()&3);
 			p->color = ramp3[(int)p->ramp];
 			p->type = pt_fire;
@@ -627,3 +630,199 @@ void R_DrawParticles (void)
 		glEnable(GL_ALPHA_TEST);
 }
 
+/*
+	R_AddFire
+
+	Nifty ball of fire GL effect.  Kinda a meshing of the dlight and
+	particle engine code.
+*/
+float r_firecolor_flame[4]={0.9,0.7,0.3,1.0};
+float r_firecolor_light[4]={0.9,0.7,0.3,0}; // alpha not used
+
+void
+R_AddFire (vec3_t start, vec3_t end, entity_t *ent)
+{
+	float		len;
+	fire_t		*f;
+	dlight_t	*dl;
+	vec3_t		vec;
+	int			key;
+
+	if (!gl_fires->value)
+		return;
+
+	VectorSubtract (end, start, vec);
+	len = VectorNormalize (vec);
+	key = ent-cl_entities+1;
+
+	if (len)
+	{
+		f = R_AllocFire (key);
+		VectorCopy (end, f->origin);
+		VectorCopy (start, f->owner);
+		f->size = 20;
+		f->die = cl.time + 0.5;
+		f->decay = -1;
+		f->color=r_firecolor_flame;
+
+		dl = CL_AllocDlight (key);
+		VectorCopy (end, dl->origin);
+		dl->radius = 200;
+		dl->die = cl.time + 0.5;
+		dl->color=r_firecolor_light;
+	}
+}
+
+/*
+	R_AllocFire
+
+	Clears out and returns a new fireball
+*/
+fire_t *
+R_AllocFire (int key)
+{
+	int		i;
+	fire_t		*f;
+	if (key)	// first try to find/reuse a keyed spot
+	{
+		f = r_fires;
+		for (i = 0; i < MAX_FIRES; i++, f++)
+			if (f->key == key)
+			{
+				memset (f, 0, sizeof(*f));
+				f->key = key;
+				f->color = f->_color;
+				return f;
+			}
+	}
+
+	f = r_fires;	// no match, look for a free spot
+	for (i = 0; i < MAX_FIRES; i++, f++)
+	{
+		if (f->die < cl.time)
+		{
+			memset (f, 0, sizeof(*f));
+			f->key = key;
+			f->color = f->_color;
+			return f;
+		}
+	}
+
+	f = &r_fires[0];
+	memset (f, 0, sizeof(*f));
+	f->key = key;
+	f->color = f->_color;
+	return f;	
+}
+
+/*
+	R_DrawFire
+
+	draws one fireball - probably never need to call this directly
+*/
+void
+R_DrawFire (fire_t *f)
+{
+	int		i, j;
+	vec3_t		vec,vec2;
+	float		radius;
+	float		*b_sin, *b_cos;
+
+	b_sin = bubble_sintable;
+	b_cos = bubble_costable;
+
+	radius = f->size + 0.35;
+
+	// figure out if we're inside the area of effect
+	VectorSubtract (f->origin, r_origin, vec);
+	if (Length (vec) < radius)
+	{
+		AddLightBlend (1, 0.5, 0, f->size * 0.0003);	// we are
+		return;
+	}
+
+	// we're not - draw it
+	glBegin (GL_TRIANGLE_FAN);
+	glColor4fv (f->color);
+	for (i=0 ; i<3 ; i++)
+		vec[i] = f->origin[i] - vpn[i] * radius;
+	glVertex3fv (vec);
+	glColor3f (0.0, 0.0, 0.0);
+
+	// don't panic, this just draws a bubble...
+	for (i=16 ; i>=0 ; i--)
+	{
+		for (j=0 ; j<3 ; j++) {
+			vec[j] = f->origin[j] + (*b_cos * vright[j]
+				+ vup[j]*(*b_sin)) * radius;
+			vec2[j] = f->owner[j] + (*b_cos * vright[j]
+				+ vup[j]*(*b_sin)) * radius;
+		}
+		glVertex3fv (vec);
+		glVertex3fv (vec2);
+
+		b_sin++;
+		b_cos++;
+	}
+	glEnd ();
+}
+
+/*
+	R_UpdateFires
+
+	Draws each fireball in sequence
+*/
+void
+R_UpdateFires (void)
+{
+	int		i;
+	fire_t	*f;
+
+	if (!gl_fires->value)
+		return;
+
+	glDepthMask (0);
+	glDisable (GL_TEXTURE_2D);
+	glShadeModel (GL_SMOOTH);
+	glEnable (GL_BLEND);
+	glBlendFunc (GL_ONE, GL_ONE);
+
+	f = r_fires;
+	for (i = 0; i < MAX_FIRES; i++, f++)
+	{
+		if (f->die < cl.time || !f->size)
+			continue;
+		f->size += f->decay;
+		f->color[3] /= 2.0;
+		R_DrawFire (f);
+	}
+
+	glColor3f (1.0, 1.0, 1.0);
+	glDisable (GL_BLEND);
+	glEnable (GL_TEXTURE_2D);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask (1);
+}
+
+void
+R_FireColor_f(void)
+{
+	int i;
+
+	if (Cmd_Argc() == 1) {
+		Con_Printf ("r_firecolor %f %f %f %f\n",
+					r_firecolor_flame[0],
+					r_firecolor_flame[1],
+					r_firecolor_flame[2],
+					r_firecolor_flame[3]);
+		return;
+	}
+	if (Cmd_Argc() !=6) {
+		Con_Printf ("Usage r_firecolor R G B A\n");
+		return;
+	}
+	for (i=0; i<4; i++) {
+		r_firecolor_flame[i]=atof(Cmd_Argv(i+1));
+		r_firecolor_light[i]=r_firecolor_flame[i];
+	}
+}

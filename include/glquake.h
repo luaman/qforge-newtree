@@ -251,6 +251,24 @@ void GL_EnableMultitexture (void);
 void GL_SelectTexture (GLenum target);
 
 //
+// gl_rpart.c
+//
+typedef struct {
+	int		key;                    // allows reusability
+	vec3_t	origin, owner;
+	float	size;
+	float	die, decay;             // duration settings
+	float	minlight;               // lighting threshold
+	float	_color[4];              // RGBA
+	float	*color;
+} fire_t;
+
+void R_AddFire (vec3_t, vec3_t, entity_t *ent);
+fire_t *R_AllocFire (int);
+void R_DrawFire (fire_t *);
+void R_UpdateFires (void);
+
+//
 // gl_warp.c
 //
 void GL_SubdivideSurface (msurface_t *fa);

@@ -57,8 +57,10 @@
 #include "glquake.h"
 
 qboolean VID_Is8bit(void);
-extern void R_InitBubble();
+void R_InitBubble();
+void R_FireColor_f(void);
 
+cvar_t *gl_fires;
 qboolean	allowskybox;		// allow skyboxes?  --KB
 
 /*
@@ -230,6 +232,8 @@ void R_Init (void)
 	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);
 	Cmd_AddCommand ("loadsky", R_LoadSky_f);
 
+	Cmd_AddCommand ("r_firecolor", R_FireColor_f);
+
 	r_norefresh = Cvar_Get("r_norefresh", "0", CVAR_NONE, "None");
 	r_lightmap = Cvar_Get("r_lightmap", "0", CVAR_NONE, "None");
 	r_fullbright = Cvar_Get("r_fullbright", "0", CVAR_NONE, "None");
@@ -257,6 +261,9 @@ void R_Init (void)
 	gl_flashblend = Cvar_Get("gl_flashblend",  "0", CVAR_NONE, "None");
 	gl_playermip = Cvar_Get("gl_playermip", "0", CVAR_NONE, "None");
 	gl_nocolors = Cvar_Get("gl_nocolors", "0", CVAR_NONE, "None");
+
+	gl_fires = Cvar_Get ("gl_fires", "0", CVAR_ARCHIVE,
+						 "Toggles lavaball and rocket fireballs");
 
 	gl_keeptjunctions = Cvar_Get("gl_keeptjunctions", "1", CVAR_NONE, "None");
 	gl_reporttjunctions = Cvar_Get("gl_reporttjunctions", "0", CVAR_NONE, "None");

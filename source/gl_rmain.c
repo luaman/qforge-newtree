@@ -1023,7 +1023,7 @@ void R_RenderScene (void)
 	GL_DisableMultitexture();
 
 	R_RenderDlights ();
-
+	R_UpdateFires ();
 	R_DrawParticles ();
 
 #ifdef GLTEST

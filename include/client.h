@@ -148,7 +148,8 @@ typedef struct
 	float	die;				// stop lighting after this time
 	float	decay;				// drop this each second
 	float	minlight;			// don't add when contributing less
-	float   color[3];			// Don't use alpha  --KB
+	float   _color[3];			// Don't use alpha  --KB
+	float	*color;
 } dlight_t;
 
 typedef struct
