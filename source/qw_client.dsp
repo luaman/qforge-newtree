@@ -194,25 +194,6 @@ SOURCE=.\cl_misc.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\cl_model.c
-
-!IF  "$(CFG)" == "qw_client - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-# PROP Exclude_From_Build 1
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=.\cl_parse.c
 # End Source File
 # Begin Source File
@@ -565,7 +546,64 @@ SOURCE=.\gl_mesh.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\gl_model.c
+SOURCE=.\gl_model_alias.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\gl_model_brush.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\gl_model_fullbright.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\gl_model_sprite.c
 
 !IF  "$(CFG)" == "qw_client - Win32 Release"
 
@@ -822,21 +860,18 @@ SOURCE=.\menu.c
 # Begin Source File
 
 SOURCE=.\model.c
+# End Source File
+# Begin Source File
 
-!IF  "$(CFG)" == "qw_client - Win32 Release"
+SOURCE=.\model_alias.c
+# End Source File
+# Begin Source File
 
-!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+SOURCE=.\model_brush.c
+# End Source File
+# Begin Source File
 
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
-
-# PROP Exclude_From_Build 1
-
-!ENDIF 
-
+SOURCE=.\model_sprite.c
 # End Source File
 # Begin Source File
 
@@ -1194,6 +1229,63 @@ SOURCE=.\snd_mix.c
 # Begin Source File
 
 SOURCE=.\snd_win.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sw_model_alias.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\sw_model_brush.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\sw_model_sprite.c
+
+!IF  "$(CFG)" == "qw_client - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "qw_client - Win32 GLRelease"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 

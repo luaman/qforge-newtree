@@ -139,6 +139,10 @@ SOURCE=.\model.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\model_brush.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\msg.c
 # End Source File
 # Begin Source File

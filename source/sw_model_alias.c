@@ -64,9 +64,9 @@ extern int                     posenum;
 
 void *Mod_LoadSkin (byte *skin, int skinsize, int *pskinindex, int snum, int gnum)
 {
-	byte	*pskin;
-	ushort	*pusskin;
-	int		i;
+	byte			*pskin;
+	unsigned short	*pusskin;
+	int				i;
 
 	pskin = Hunk_AllocName (skinsize * r_pixbytes, loadname);
 	*pskinindex = (byte *)pskin - (byte *)pheader;
@@ -76,7 +76,7 @@ void *Mod_LoadSkin (byte *skin, int skinsize, int *pskinindex, int snum, int gnu
 		memcpy (pskin, skin, skinsize);
 		break;
 	case 2:
-		pusskin = (ushort*)skin;
+		pusskin = (unsigned short*)skin;
 		for (i=0; i<skinsize; i++)
 			pusskin[i] = d_8to16table[skin[i]];
 		break;
