@@ -43,9 +43,7 @@
 #include <math.h>
 #include <string.h>
 
-
-// LordHavoc: disabled (needs new protocol)
-//int eval_alpha, eval_fullbright, eval_colormod, eval_glowsize, eval_glowcolor;
+int eval_alpha, eval_scale, eval_glowsize, eval_glowcolor, eval_colormod;
 
 int FindFieldOffset(char *field)
 {
@@ -68,12 +66,9 @@ eval_t *GETEDICTFIELDVALUE(edict_t *ed, int fieldoffset)
 
 void FindEdictFieldOffsets()
 {
-	// LordHavoc: disabled (needs new protocol)
-	/*
 	eval_alpha = FindFieldOffset("alpha");
-	eval_fullbright = FindFieldOffset("fullbright");
-	eval_colormod = FindFieldOffset("colormod");
+	eval_scale = FindFieldOffset("scale");
 	eval_glowsize = FindFieldOffset("glow_size");
 	eval_glowcolor = FindFieldOffset("glow_color");
-	*/
+	eval_colormod = FindFieldOffset("colormod");
 };

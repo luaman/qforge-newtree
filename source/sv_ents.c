@@ -41,6 +41,10 @@
 #include "sys.h"
 #include "pmove.h"
 
+// LordHavoc: added and removed certain eval_ items
+// Ender Extends (QSG - Begin)
+extern int eval_alpha, eval_scale, eval_glowsize, eval_glowcolor, eval_colormod;
+// Ender Extends (QSG - End)
 extern eval_t *GETEDICTFIELDVALUE(edict_t *ed, int fieldoffset);
 
 /*
@@ -215,6 +219,32 @@ void SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, qb
 	if ( to->modelindex != from->modelindex )
 		bits |= U_MODEL;
 
+	// LordHavoc: cleaned up Endy's coding style, and added missing effects
+// Ender (QSG - Begin)
+	if (stdver > 1)
+	{
+		if (to->alpha		!= from->alpha)
+			bits |= U_ALPHA;
+
+		if (to->scale		!= from->scale)
+			bits |= U_SCALE;
+
+		if (to->glowsize	!= from->glowsize)
+			bits |= U_GLOWSIZE;
+
+		if (to->glowcolor	!= from->glowcolor)
+			bits |= U_GLOWCOLOR;
+
+		if (to->colormod	!= from->colormod)
+			bits |= U_COLORMOD;
+	}
+
+	if (bits >= 16777216)
+		bits |= U_EXTEND2;
+
+	if (bits >= 65536)
+		bits |= U_EXTEND1;
+// Ender (QSG - End)
 	if (bits & 511)
 		bits |= U_MOREBITS;
 
@@ -239,6 +269,14 @@ void SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, qb
 	if (bits & U_MOREBITS)
 		MSG_WriteByte (msg, bits&255);
 
+	// LordHavoc: cleaned up Endy's tabs
+// Ender (QSG - Begin)
+	if (bits & U_EXTEND1)
+		MSG_WriteByte (msg, bits>>16);
+	if (bits & U_EXTEND2)
+		MSG_WriteByte (msg, bits>>24);
+// Ender (QSG - End)
+
 	if (bits & U_MODEL)
 		MSG_WriteByte (msg,	to->modelindex);
 	if (bits & U_FRAME)
@@ -261,6 +299,24 @@ void SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, qb
 		MSG_WriteCoord (msg, to->origin[2]);
 	if (bits & U_ANGLE3)
 		MSG_WriteAngle(msg, to->angles[2]);
+
+	// LordHavoc: cleaned up Endy's tabs, rearranged bytes, and implemented missing effects
+// Ender (QSG - Begin)
+	if (bits & U_ALPHA)
+		MSG_WriteByte(msg, to->alpha);
+	if (bits & U_SCALE)
+		MSG_WriteByte(msg, to->scale);
+	if (bits & U_EFFECTS2)
+		MSG_WriteByte(msg, (to->effects >> 8));
+	if (bits & U_GLOWSIZE)
+		MSG_WriteByte(msg, to->glowsize);
+	if (bits & U_GLOWCOLOR)
+		MSG_WriteByte(msg, to->glowcolor);
+	if (bits & U_COLORMOD)
+		MSG_WriteByte(msg, to->colormod);
+	if (bits & U_FRAME2)
+		MSG_WriteByte(msg, (to->frame >> 8));
+// Ender (QSG - End)
 }
 
 /*
@@ -529,7 +585,35 @@ void SV_WriteEntitiesToClient (client_t *client, sizebuf_t *msg)
 		state->colormap = ent->v.colormap;
 		state->skinnum = ent->v.skin;
 		state->effects = ent->v.effects;
-     }
+
+		// LordHavoc: cleaned up Endy's coding style, shortened the code,
+		//            and implemented missing effects
+// Ender: EXTEND (QSG - Begin)
+		{
+			eval_t  *val;
+			state->glowsize		= 0;
+			state->glowcolor	= 254;
+			state->colormod		= 255;
+			state->alpha		= 255;
+			state->scale		= 16;
+
+			if ((val = GETEDICTFIELDVALUE(ent, eval_alpha)) && val->_float != 0)
+				state->alpha = bound(0, val->_float, 1) * 255.0;
+
+			if ((val = GETEDICTFIELDVALUE(ent, eval_scale)) && val->_float != 0)
+				state->scale = bound(0, val->_float, 15.9375) * 16.0;
+
+			if ((val = GETEDICTFIELDVALUE(ent, eval_glowsize)) && val->_float != 0)
+				state->glowsize = bound(-1024, (int)val->_float, 1016) >> 3;
+
+			if ((val = GETEDICTFIELDVALUE(ent, eval_glowcolor)) && val->_float != 0)
+				state->glowcolor = (int) val->_float;
+
+			if ((val = GETEDICTFIELDVALUE(ent, eval_colormod)) && (val->vector[0] != 0 || val->vector[1] != 0 || val->vector[2] != 0))
+				state->colormod = ((int) (bound(0, val->vector[0], 1) * 7.0) << 5) | ((int) (bound(0, val->vector[1], 1) * 7.0) << 2) | (int) (bound(0, val->vector[2], 1) * 3.0);
+		}
+// Ender: EXTEND (QSG - End)
+	}
 
 	// encode the packet entities as a delta from the
 	// last packetentities acknowledged by the client

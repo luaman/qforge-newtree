@@ -755,6 +755,12 @@ void CL_ParseBaseline (entity_state_t *es)
 		es->origin[i] = MSG_ReadCoord ();
 		es->angles[i] = MSG_ReadAngle ();
 	}
+	// LordHavoc: set up the baseline to account for new effects (alpha, colormod, etc)
+	es->alpha = 255;
+	es->scale = 16;
+	es->glowcolor = 254;
+	es->glowsize = 0;
+	es->colormod = 255;
 }
 
 
@@ -789,6 +795,13 @@ void CL_ParseStatic (void)
 
 	VectorCopy (es.origin, ent->origin);
 	VectorCopy (es.angles, ent->angles);
+
+	// LordHavoc: make static entities visible
+	ent->alpha = 1;
+	ent->scale = 16;
+	ent->glowsize = 0;
+	ent->glowcolor = 254;
+	ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
 	
 	R_AddEfrags (ent);
 }

@@ -209,13 +209,13 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 //                if (bits&(1<<i))
 //                        bitcounts[i]++;
 
-        if (bits & U_EXTEND1)
-        {
-                bits |= MSG_ReadByte() << 16;
-                if (bits & U_EXTEND2)
-                        bits |= MSG_ReadByte() << 24;
-        }
-
+	// LordHavoc: Endy neglected to mark this as being part of the QSG version 2 stuff...
+	if (bits & U_EXTEND1)
+	{
+		bits |= MSG_ReadByte() << 16;
+		if (bits & U_EXTEND2)
+			bits |= MSG_ReadByte() << 24;
+	}
 
 	to->flags = bits;
 	
@@ -252,18 +252,24 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int bits)
 	if (bits & U_ANGLE3)
 		to->angles[2] = MSG_ReadAngle();
 
-        if (bits & U_GLOWSIZE)
-         to->glowsize = MSG_ReadByte();
-
-        if (bits & U_GLOWCOLOR)
-         to->glowcolor = MSG_ReadByte();
-
-        if (bits & U_COLORMOD)
-         to->colormod = MSG_ReadByte();
-
-        if (bits & U_ALPHA)
-         to->alpha = MSG_ReadByte();
-
+	// LordHavoc: Endy neglected to mark this as being part of the QSG version 2 stuff...
+	//            rearranged it and implemented missing effects
+// Ender (QSG - Begin)
+	if (bits & U_ALPHA)
+		to->alpha = MSG_ReadByte();
+	if (bits & U_SCALE)
+		to->scale = MSG_ReadByte();
+	if (bits & U_EFFECTS2)
+		to->effects = (to->effects & 0xFF) | (MSG_ReadByte() << 8);
+	if (bits & U_GLOWSIZE)
+		to->glowsize = MSG_ReadByte();
+	if (bits & U_GLOWCOLOR)
+		to->glowcolor = MSG_ReadByte();
+	if (bits & U_COLORMOD)
+		to->colormod = MSG_ReadByte();
+	if (bits & U_FRAME2)
+		to->frame = (to->frame & 0xFF) | (MSG_ReadByte() << 8);
+// Ender (QSG - End)
 
 	if (bits & U_SOLID)
 	{
@@ -520,11 +526,26 @@ void CL_LinkPacketEntities (void)
 			ent->scoreboard = NULL;
 		}
 
-		// LordHavoc: until a new protocol is written, there's no room for alpha and such
-		ent->glowsize	= 0;
-		ent->glowcolor	= 254;
-		ent->alpha		= 1;
-		ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
+
+		// LordHavoc: cleaned up Endy's coding style, and fixed Endy's bugs
+		// Ender: Extend (Colormod) [QSG - Begin]
+		//        N.B: All messy code below is the sole fault of LordHavoc and
+		//             his futile attempts to save bandwidth. :)
+		//
+		ent->glowsize    = s1->glowsize < 128 ? s1->glowsize * 8.0 : (s1->glowsize - 256) * 8.0;
+		ent->glowcolor   = s1->glowcolor;
+		ent->alpha       = s1->alpha / 255.0;
+
+		if (s1->colormod == 255)
+			ent->colormod[0] = ent->colormod[1] = ent->colormod[2] = 1;
+		else
+		{
+			ent->colormod[0] = (float) ((s1->colormod >> 5) & 7) * (1.0 / 7.0);
+			ent->colormod[1] = (float) ((s1->colormod >> 2) & 7) * (1.0 / 7.0);
+			ent->colormod[2] = (float) (s1->colormod & 3) * (1.0 / 3.0);
+		}
+		//
+		// Ender: Extend (Colormod) [QSG - End]
 
                  // set skin
 		ent->skinnum = s1->skinnum;

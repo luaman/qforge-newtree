@@ -129,6 +129,12 @@ void SV_CreateBaseline (void)
 			svent->baseline.modelindex =
 				SV_ModelIndex(PR_GetString(svent->v.model));
 		}
+		// LordHavoc: setup baseline to include new effects
+		svent->baseline.alpha = 255;
+		svent->baseline.scale = 16;
+		svent->baseline.glowsize = 0;
+		svent->baseline.glowcolor = 254;
+		svent->baseline.colormap = 255;
 
 		//
 		// flush the signon message out to a seperate buffer if

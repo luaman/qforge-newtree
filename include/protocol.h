@@ -277,10 +277,12 @@ typedef struct
 	int		skinnum;
 	int		effects;
 
-        byte            glowsize;
-        byte            glowcolor;
-        byte            colormod;
-        byte            alpha;
+	// LordHavoc: Endy neglected to mark this as a QSG version 2 thingy...
+	byte	alpha;
+	byte	scale;
+	byte	glowsize;
+	byte	glowcolor;
+	byte	colormod;
 } entity_state_t;
 
 
