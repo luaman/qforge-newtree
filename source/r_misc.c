@@ -251,7 +251,8 @@ R_NetGraph (void)
 	x = w - ((vid.width - 320) >> 1);
 	y = vid.height - sb_lines - 24 - r_graphheight->int_val * 2 - 2;
 
-	M_DrawTextBox (x, y, (w + 7) / 8, (r_graphheight->int_val * 2 + 7) / 8 + 1);
+	//M_DrawTextBox (x, y, (w + 7) / 8, (r_graphheight->int_val * 2 + 7) / 8 + 1);
+	M_DrawTextBox (x-w, y, (w+7)/8, (r_graphheight->int_val*2+7)/8+1);
 	y2 = y + 8;
 	y = vid.height - sb_lines - 8 - 2;
 
