@@ -169,8 +169,6 @@ int			host_hunklevel;
 byte		*host_basepal;
 byte		*host_colormap;
 
-netadr_t	master_adr;				// address of the master server
-
 cvar_t	*host_speeds;			// set for running times
 cvar_t	*show_fps;			// set for running times
 cvar_t	*developer;
@@ -1267,16 +1265,16 @@ void CL_InitCvars (void)
 	//
 	// info mirrors
 	//
-	name = Cvar_Get("name", "unnamed", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-	password = Cvar_Get("password",  "", CVAR_SERVERINFO|CVAR_USERINFO, "None");
-	spectator = Cvar_Get("spectator",  "", CVAR_SERVERINFO|CVAR_USERINFO, "None");
-	skin = Cvar_Get("skin", "", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-	team = Cvar_Get("team", "", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-	topcolor = Cvar_Get("topcolor", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-	bottomcolor = Cvar_Get("bottomcolor", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-	rate = Cvar_Get("rate", "2500", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-	msg = Cvar_Get("msg", "1", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
-	noaim = Cvar_Get("noaim", "0", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, "None");
+	name = Cvar_Get("name", "unnamed", CVAR_ARCHIVE|CVAR_USERINFO, "None");
+	password = Cvar_Get("password",  "", CVAR_USERINFO, "None");
+	spectator = Cvar_Get("spectator",  "", CVAR_USERINFO, "None");
+	skin = Cvar_Get("skin", "", CVAR_ARCHIVE|CVAR_USERINFO, "None");
+	team = Cvar_Get("team", "", CVAR_ARCHIVE|CVAR_USERINFO, "None");
+	topcolor = Cvar_Get("topcolor", "0", CVAR_ARCHIVE|CVAR_USERINFO, "None");
+	bottomcolor = Cvar_Get("bottomcolor", "0", CVAR_ARCHIVE|CVAR_USERINFO, "None");
+	rate = Cvar_Get("rate", "2500", CVAR_ARCHIVE|CVAR_USERINFO, "None");
+	msg = Cvar_Get("msg", "1", CVAR_ARCHIVE|CVAR_USERINFO, "None");
+	noaim = Cvar_Get("noaim", "0", CVAR_ARCHIVE|CVAR_USERINFO, "None");
 }
 
 /*
