@@ -63,8 +63,6 @@ OBJS = $(QFROOT)\SOURCE
 #EXE = $(QFROOT)\TARGETS
 EXE = $(QFROOT)
 
-# Path to your SCITECH root directory (where you installed MGL)
-SCITECHROOT=D:\SCITECH
 # Path to your Direct-X libraries and includes
 DIRECTXSDK=D:\project\dx7sdk
 # Path to ZLIB source code
@@ -73,12 +71,12 @@ ZLIB=D:\PROJECT\ZLIB
 # end of system dependant stuffs
 
 SYSLIBS = $(CROOT)\LIB
-MISCLIBS = $(DIRECTXSDK)\lib\borland;$(SCITECHROOT)\lib\win32\bc5
+MISCLIBS = $(DIRECTXSDK)\lib\borland
 LIBS=$(SYSLIBS);$(MISCLIBS)
 
 SYSINCLUDE = $(CROOT)\INCLUDE
 QFINCLUDES = $(QFROOT)\INCLUDE\WIN32\BC;$(QFROOT)\INCLUDE\WIN32;$(QFROOT)\INCLUDE;$(QFROOT)\INCLUDE\WIN32\RESOURCES
-MISCINCLUDES = $(SCITECHROOT)\include;$(DIRECTXSDK)\include;$(ZLIB)
+MISCINCLUDES = $(DIRECTXSDK)\include;$(ZLIB)
 
 INCLUDES = $(QFINCLUDES);$(SYSINCLUDE);$(MISCINCLUDES)
 
