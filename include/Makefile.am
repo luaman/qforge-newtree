@@ -12,4 +12,4 @@ EXTRA_DIST = adivtab.h anorm_dots.h anorms.h asm_draw.h asm_i386.h block16.h \
 	teamplay.h uint32.h vid.h view.h wad.h winquake.h world.h zone.h \
 	win32/fnmatch.h win32/bc/config.h win32/vc/config.h win32/vc/dirent.h \
 	win32/version.h win32/version.h.in context_x11.h dga_check.h gcc_attr.h \
-	joystick.h
+	joystick.h va.h pcx.h tga.h
