@@ -1,0 +1,16 @@
+o  it seems possible to crash a QF server still - need to fix this!
+o  water textures are seriously screwed in GL
+o  GL is still way too slow
+X  R_DrawParticles in software hangs
+o  Draw_Pic and friends need a cleanup in GL at least
+o  It's possible to stick on some obtuse-angled corners qwsv 2.3x didn't
+o  Scitech MGL used in win32 is screwed - dump it and use SDL
+o  software PCXs don't work in X11 at least if you're using 24/32 color
+o  console commands to see a user, ignore talk from them, etc
+o  more direct inter-team comms (ie, talk to offense or defense directly)
+o  improved crosshairs (custom file, 32 bit for GL, etc)
+o  Endy's effects need to be made to work properly
+?  software targets should mix color at 16/16 or 24/32 color
+?  Draw_Pic and other tex draw functions should to use local palettes
+?  wad loader should load wad3 and fall back to wad2 if necessary
+
