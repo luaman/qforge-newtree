@@ -3427,9 +3427,11 @@ void VID_MenuKey (int key)
 void VID_SetCaption (char *text)
 {
 	if (text && *text) {
-		SetWindowText(mainwindow,(LPSTR) va ("%s %s: %s", PROGRAM, VERSION, text));
+		char *temp = strdup (text);
+		SetWindowText (mainwindow, (LPSTR) va ("%s %s: %s", PROGRAM, VERSION, text));
+		free (temp);
 	} else {
-		SetWindowText(mainwindow,(LPSTR) va ("%s %s", PROGRAM, VERSION));
+		SetWindowText (mainwindow, (LPSTR) va ("%s %s", PROGRAM, VERSION));
 	}
 }
 

@@ -779,7 +779,7 @@ VID_DitherOn( void )
 
 
 void
-VID_DitherOff( void )
+VID_DitherOff (void)
 {
 	if (dither) {
 		vid.recalc_refdef = 1;
@@ -787,7 +787,8 @@ VID_DitherOff( void )
 	}
 }
 
-void VID_InitCvars ()
+void
+VID_InitCvars (void)
 {
 	// It may not look like it, but this is important
 }
@@ -806,7 +807,9 @@ void
 VID_SetCaption (char *text)
 {
 	if (text && *text) {
-		x11_set_caption (va ("%s %s: %s", PROGRAM, VERSION, text));
+		char *temp = strdup (text);
+		x11_set_caption (va ("%s %s: %s", PROGRAM, VERSION, temp));
+		free (temp);
 	} else {
 		x11_set_caption (va ("%s %s", PROGRAM, VERSION));
 	}

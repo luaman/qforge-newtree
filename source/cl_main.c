@@ -320,6 +320,7 @@ void CL_CheckForResend (void)
 
 	connect_time = realtime+t2-t1;	// for retransmit requests
 
+	VID_SetCaption (va ("Connecting to %s", cls.servername));
 	Con_Printf ("Connecting to %s...\n", cls.servername);
 	sprintf (data, "%c%c%c%cgetchallenge\n", 255, 255, 255, 255);
 	NET_SendPacket (strlen(data), data, adr);
@@ -467,7 +468,7 @@ void CL_Disconnect (void)
 
 	connect_time = -1;
 
-	VID_SetCaption("disconnected");
+	VID_SetCaption("Disconnected");
 
 // stop sounds (especially looping!)
 	S_StopAllSounds (true);
@@ -891,6 +892,7 @@ void CL_Reconnect_f (void)
 
 	if (cls.state == ca_connected) {
 		Con_Printf ("reconnecting...\n");
+		VID_SetCaption ("Reconnecting");
 		MSG_WriteChar (&cls.netchan.message, clc_stringcmd);
 		MSG_WriteString (&cls.netchan.message, "new");
 		return;

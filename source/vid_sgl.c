@@ -717,9 +717,11 @@ void
 VID_SetCaption (char *text)
 {
 	if (text && *text) {
-		SDL_WM_SetCaption(va ("%s %s: %s", PROGRAM, VERSION, text), NULL);
+		char *temp = strdup (text);
+		SDL_WM_SetCaption (va ("%s %s: %s", PROGRAM, VERSION, temp), NULL);
+		free (temp);
 	} else {
-		SDL_WM_SetCaption(va ("%s %s", PROGRAM, VERSION), NULL);
+		SDL_WM_SetCaption (va ("%s %s", PROGRAM, VERSION), NULL);
 	}
 }
 

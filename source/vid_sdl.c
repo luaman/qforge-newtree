@@ -519,18 +519,19 @@ IN_Move (usercmd_t *cmd)
 }
 
 
-void VID_InitCvars ()
+void
+VID_InitCvars (void)
 {
 	// It may not look like it, but this is important
 }
 
 void	
-VID_LockBuffer ( void )
+VID_LockBuffer (void)
 {	   
 }	   
 
 void
-VID_UnlockBuffer ( void )
+VID_UnlockBuffer (void)
 {	   
 }	   
 
@@ -538,9 +539,11 @@ void
 VID_SetCaption (char *text)
 {
 	if (text && *text) {
-		SDL_WM_SetCaption(va ("%s %s: %s", PROGRAM, VERSION, text), NULL);
+		char *temp = strdup (text);
+		SDL_WM_SetCaption (va ("%s %s: %s", PROGRAM, VERSION, temp), NULL);
+		free (temp);
 	} else {
-		SDL_WM_SetCaption(va ("%s %s", PROGRAM, VERSION), NULL);
+		SDL_WM_SetCaption (va ("%s %s", PROGRAM, VERSION), NULL);
 	}
 }
 
