@@ -71,7 +71,7 @@ void Cmd_ForwardToServer (void)
 			!strcasecmp(Cmd_Argv(0), "say_team"))
 		{
 			char		*s;
-			s = CL_ParseSay(Cmd_Args());
+			s = Team_ParseSay(Cmd_Args());
 			if (*s && *s < 32 && *s != 10)
 			{
 				// otherwise the server would eat leading characters

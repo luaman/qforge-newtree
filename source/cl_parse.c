@@ -44,6 +44,9 @@
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -276,6 +279,7 @@ void Model_NextDownload (void)
 	// all done
 	cl.worldmodel = cl.model_precache[1];	
 	R_NewMap ();
+	Team_NewMap ();
 	Hunk_Check ();		// make sure nothing is hurt
 
 	// done with modellist, request first of static signon messages
@@ -463,9 +467,9 @@ void CL_ParseDownload (void)
 				snprintf (oldn, sizeof(oldn), "%s/qw/%s", fs_userpath->string, cls.downloadtempname);
 				snprintf (newn, sizeof(newn), "%s/qw/%s", fs_userpath->string, cls.downloadname);
 			}
-			r = rename (oldn, newn);
+			r = Qrename (oldn, newn);
 			if (r)
-				Con_Printf ("failed to rename.\n");
+				Con_Printf ("failed to rename, %s.\n", strerror(errno));
 		}
 
 		cls.download = NULL;
@@ -1070,12 +1074,17 @@ void CL_SetStat (int stat, int value)
 
 	Sbar_Changed ();
 	
-	if (stat == STAT_ITEMS)
-	{	// set flash times
-		Sbar_Changed ();
-		for (j=0 ; j<32 ; j++)
-			if ( (value & (1<<j)) && !(cl.stats[stat] & (1<<j)))
-				cl.item_gettime[j] = cl.time;
+	switch (stat) {
+		case STAT_ITEMS: // set flash times
+			Sbar_Changed ();
+			for (j=0 ; j<32 ; j++)
+				if ( (value & (1<<j)) && !(cl.stats[stat] & (1<<j)))
+					cl.item_gettime[j] = cl.time;
+			break;
+		case STAT_HEALTH:
+			if (value <= 0)
+				Team_Dead();
+			break;
 	}
 
 	cl.stats[stat] = value;

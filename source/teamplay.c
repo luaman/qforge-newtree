@@ -26,11 +26,14 @@
 	$Id$
 */
 
+#include <string.h>
+
 #include "bothdefs.h"
-#include "client.h"
 #include "cmd.h"
-#include "cvar.h"
+#include "client.h"
 #include "teamplay.h"
+#include "locs.h"
+#include "sys.h"
 
 cvar_t	*cl_deadbodyfilter;
 cvar_t	*cl_gibfilter;
@@ -38,7 +41,7 @@ cvar_t	*cl_parsesay;
 cvar_t	*cl_nofake;
 
 
-void CL_BestWeaponImpulse (void)
+void Team_BestWeaponImpulse (void)
 {
 	int			best, i, imp, items;
 	extern int	in_impulse;
@@ -94,43 +97,136 @@ void CL_BestWeaponImpulse (void)
 }
 
 
-char *CL_ParseSay (char *s)
+char *Team_ParseSay (char *s)
 {
 	static char	buf[1024];
-	int		i;
-	char	c;
+	int		i, bracket;
+	char	c, chr, *t1, t2[128], t3[128];
+	static location_t	*location = NULL;
 
 	if (!cl_parsesay->value)
 		return s;
 
 	i = 0;
 
-	while (*s && i < sizeof(buf)-1)
-	{
-		if (*s == '$')
-		{
+	while (*s && (i <= sizeof(buf))) {
+		if (*s == '$') {
 			c = 0;
-			switch (s[1])
-			{
-			case '\\': c = 13; break;	// fake message
-			case '[': c = 0x90; break;	// colored brackets
-			case ']': c = 0x91; break;
-			case 'G': c = 0x86; break;	// ocrana leds
-			case 'R': c = 0x87; break;
-			case 'Y': c = 0x88; break;
-			case 'B': c = 0x89; break;
+			switch (s[1]) {
+				case '\\': c = 13; break;	// fake message
+				case '[': c = 0x90; break;	// colored brackets
+				case ']': c = 0x91; break;
+				case 'G': c = 0x86; break;	// ocrana leds
+				case 'R': c = 0x87; break;
+				case 'Y': c = 0x88; break;
+				case 'B': c = 0x89; break;
 			}
 			
-			if (c)
-			{
+			if (c) {
 				buf[i++] = c;
 				s += 2;
 				continue;
 			}
+		} else if (*s == '%') {
+			t1 = NULL;
+			memset(t2, '\0', sizeof(t2));
+			memset(t3, '\0', sizeof(t3));
+
+			if ((s[1] == '[') && (s[3] == ']')) {
+				bracket = 1;
+				chr = s[2];
+				s += 4;
+			} else {
+				bracket = 0;
+				chr = s[1];
+				s += 2;
+			}
+			switch (chr) {
+				case 'l':
+					bracket = 0;
+					location = locs_find(r_origin);
+					if (location) {
+						t1 = location->name;
+					} else
+						snprintf(t2, sizeof(t2), "Unknown!\n");
+					break;
+				case 'a':
+					if (bracket) {
+						if (cl.stats[STAT_ARMOR] > 50)
+							bracket = 0;
+
+						if (cl.stats[STAT_ITEMS] & IT_ARMOR3)
+							t3[0] = 'R' | 0x80;
+						else if (cl.stats[STAT_ITEMS] & IT_ARMOR2)
+							t3[0] = 'Y' | 0x80;
+						else if (cl.stats[STAT_ITEMS] & IT_ARMOR1)
+							t3[0] = 'G' | 0x80;
+						else {
+							t2[0] = 'N' | 0x80;
+							t2[1] = 'O' | 0x80;
+							t2[2] = 'N' | 0x80;
+							t2[3] = 'E' | 0x80;
+							t2[4] = '!' | 0x80;
+						}
+
+						snprintf(t2, sizeof(t2), "%sa:%i", t3, cl.stats[STAT_ARMOR]);
+					} else
+						snprintf(t2, sizeof(t2), "%i", cl.stats[STAT_ARMOR]);
+					break;
+				case 'A':
+					bracket = 0;
+					if (cl.stats[STAT_ITEMS] & IT_ARMOR3)
+						t2[0] = 'R' | 0x80;
+					else if (cl.stats[STAT_ITEMS] & IT_ARMOR2)
+						t2[0] = 'Y' | 0x80;
+					else if (cl.stats[STAT_ITEMS] & IT_ARMOR1)
+						t2[0] = 'G' | 0x80;
+					else {
+						t2[0] = 'N' | 0x80;
+						t2[1] = 'O' | 0x80;
+						t2[2] = 'N' | 0x80;
+						t2[3] = 'E' | 0x80;
+						t2[4] = '!' | 0x80;
+					}
+					break;
+				case 'h':
+					if (bracket) {
+						if (cl.stats[STAT_HEALTH] > 50)
+							bracket = 0;
+						snprintf(t2, sizeof(t2), "h:%i", cl.stats[STAT_HEALTH]);
+					} else
+						snprintf(t2, sizeof(t2), "%i", cl.stats[STAT_HEALTH]);
+					break;
+				default:
+					bracket = 0;
+			}
+
+			if (!t1) {
+				if (!t2[0]) {
+					t2[0] = '%';
+					t2[1] = chr;
+				}
+
+				t1 = t2;
+			}
+
+			if (bracket)
+				buf[i++] = 0x90; // '['
+
+			if (t1) {
+				int len;
+				len = strlen(t1);
+				if (i + len >= sizeof(buf))
+					continue;	// No more space in buffer, icky.
+				strncpy(buf + i, t1, len);
+				i += len;
+			}
+
+			if (bracket)
+				buf[i++] = 0x91; // ']'
+
+			continue;
 		}
-
-// TODO: parse team messages (%l, %a, %h, etc)
-
 		buf[i++] = *s++;
 	}
 	buf[i] = 0;
@@ -138,8 +234,29 @@ char *CL_ParseSay (char *s)
 	return	buf;
 }
 
+void Team_Dead ()
+{
+}
 
-void CL_InitTeamplay (void)
+void Team_NewMap ()
+{
+	char *mapname, *t1, *t2;
+
+	mapname = strdup(cl.worldmodel->name);
+	if (!mapname)
+		Sys_Error("Can't duplicate mapname!");
+	t1 = strrchr(mapname, '/');
+	t2 = strrchr(mapname, '.');
+	if (!t1 || !t2)
+		Sys_Error("Can't find / or .!");
+	t2[0] = '\0';
+
+	locs_reset();
+	locs_load(t1);
+	free(mapname);
+}
+
+void Team_InitTeamplay (void)
 {
 	cl_deadbodyfilter = Cvar_Get("cl_deadbodyfilter", "0", CVAR_NONE, "Hide dead player models");
 	cl_gibfilter = Cvar_Get("cl_gibfilter", "0", CVAR_NONE, "Hide gibs");

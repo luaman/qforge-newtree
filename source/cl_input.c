@@ -188,7 +188,7 @@ void IN_Impulse (void)
 	if (Cmd_Argc() <= 2)
 		return;
 
-	CL_BestWeaponImpulse();		// HACK HACK HACK
+	Team_BestWeaponImpulse();		// HACK HACK HACK
 }
 
 /*

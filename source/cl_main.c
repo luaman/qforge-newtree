@@ -1593,12 +1593,12 @@ void Host_Init (quakeparms_t *parms)
 	SCR_InitCvars ();
 	VID_InitCvars ();
 	COM_Init ();
-	CL_InitTeamplay ();
+	Team_InitTeamplay ();
 
 	// reparse the command line for + commands other than set
 	// (sets still done, but it doesn't matter)
-	Cmd_StuffCmds_f ();
-	Cbuf_Execute ();
+	//Cmd_StuffCmds_f ();
+	//Cbuf_Execute ();
 
 	Host_FixupModelNames();
 	
