@@ -31,4 +31,6 @@
 extern cvar_t	*cl_deadbodyfilter;
 extern cvar_t	*cl_gibfilter;
 
+// FIXME: prefix these with TP_ or Team_ ?
 void CL_InitTeamplay (void);
+void CL_BestWeaponImpulse (void);

@@ -26,11 +26,70 @@
 	$Id$
 */
 
+#include "bothdefs.h"
+#include "client.h"
+#include "cmd.h"
 #include "cvar.h"
 #include "teamplay.h"
 
 cvar_t	*cl_deadbodyfilter;
 cvar_t	*cl_gibfilter;
+
+
+void CL_BestWeaponImpulse (void)
+{
+	int			best, i, imp, items;
+	extern int	in_impulse;
+
+	items = cl.stats[STAT_ITEMS];
+	best = 0;
+
+	for (i = Cmd_Argc() - 1; i > 0; i--)
+	{
+		imp = atoi(Cmd_Argv(i));
+		if (imp < 1 || imp > 8)
+			continue;
+
+		switch (imp)
+		{
+			case 1:
+				if (items & IT_AXE)
+					best = 1;
+				break;
+			case 2:
+				if (items & IT_SHOTGUN && cl.stats[STAT_SHELLS] >= 1)
+					best = 2;
+				break;
+			case 3:
+				if (items & IT_SUPER_SHOTGUN && cl.stats[STAT_SHELLS] >= 2)
+					best = 3;
+				break;
+			case 4:
+				if (items & IT_NAILGUN && cl.stats[STAT_NAILS] >= 1)
+					best = 4;
+				break;
+			case 5:
+				if (items & IT_SUPER_NAILGUN && cl.stats[STAT_NAILS] >= 2)
+					best = 5;
+				break;
+			case 6:
+				if (items & IT_GRENADE_LAUNCHER && cl.stats[STAT_ROCKETS] >= 1)
+					best = 6;
+				break;
+			case 7:
+				if (items & IT_ROCKET_LAUNCHER && cl.stats[STAT_ROCKETS] >= 1)
+					best = 7;
+				break;
+			case 8:
+				if (items & IT_LIGHTNING && cl.stats[STAT_CELLS] >= 1)
+					best = 8;
+			
+		}
+	}
+	
+	if (best)
+		in_impulse = best;
+}
 
 
 void CL_InitTeamplay (void)
