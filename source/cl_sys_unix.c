@@ -219,7 +219,6 @@ int main (int c, char **v)
 {
 
 	double		time, oldtime, newtime;
-	quakeparms_t parms;
 	int j;
 
 //	static char cwd[1024];
@@ -227,30 +226,28 @@ int main (int c, char **v)
 //	signal(SIGFPE, floating_point_exception_handler);
 	signal(SIGFPE, SIG_IGN);
 
-	memset(&parms, 0, sizeof(parms));
+	memset(&host_parms, 0, sizeof(host_parms));
 
 	COM_InitArgv(c, v);
-	parms.argc = com_argc;
-	parms.argv = com_argv;
+	host_parms.argc = com_argc;
+	host_parms.argv = com_argv;
 
-	parms.memsize = 8 * 1024 * 1024;	// 8MB default heap
+	host_parms.memsize = 8 * 1024 * 1024;	// 8MB default heap
 
 	j = COM_CheckParm("-mem");
 	if (j)
-		parms.memsize = (int) (atof(com_argv[j+1]) * 1024 * 1024);
-	parms.membase = malloc (parms.memsize);
-	if (!parms.membase) {
+		host_parms.memsize = (int) (atof(com_argv[j+1]) * 1024 * 1024);
+	host_parms.membase = malloc (host_parms.memsize);
+	if (!host_parms.membase) {
 		printf("Can't allocate memory for zone.\n");
 		return 1;
 	}
-
-	parms.basedir = BASEDIR;
 
 	noconinput = COM_CheckParm("-noconinput");
 	if (!noconinput)
 		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | O_NONBLOCK);
 
-    Host_Init(&parms);
+    Host_Init();
 
     oldtime = Sys_DoubleTime ();
     while (1)

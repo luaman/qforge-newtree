@@ -149,19 +149,16 @@ void Sys_LowFPPrecision (void)
 
 void main (int argc, char **argv)
 {
-	quakeparms_t	parms;
-
-	parms.memsize = 5861376;
-	parms.membase = malloc (parms.memsize);
-	parms.basedir = ".";
+	host_parms.memsize = 5861376;
+	host_parms.membase = malloc (host_parms.memsize);
 
 	COM_InitArgv (argc, argv);
 
-	parms.argc = com_argc;
-	parms.argv = com_argv;
+	host_parms.argc = com_argc;
+	host_parms.argv = com_argv;
 
 	printf ("Host_Init\n");
-	Host_Init (&parms);
+	Host_Init ();
 	while (1)
 	{
 		Host_Frame (0.1);

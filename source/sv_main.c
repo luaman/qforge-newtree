@@ -53,7 +53,6 @@
 #include "ver_check.h"
 #include "world.h"
 
-quakeparms_t	host_parms;
 qboolean		host_initialized;	// true if into command execution
 
 double	sv_frametime;
@@ -1812,22 +1811,20 @@ SV_InitNet (void)
 	SV_Init
 */
 void
-SV_Init (quakeparms_t *parms)
+SV_Init ()
 {
-	COM_InitArgv (parms->argc, parms->argv);
+	COM_InitArgv (host_parms.argc, host_parms.argv);
 	// COM_AddParm ("-game");
 	// COM_AddParm ("qw");
 
 	if (COM_CheckParm ("-minmemory"))
-		parms->memsize = MINIMUM_MEMORY;
+		host_parms.memsize = MINIMUM_MEMORY;
 
-	host_parms = *parms;
-
-	if (parms->memsize < MINIMUM_MEMORY)
+	if (host_parms.memsize < MINIMUM_MEMORY)
 		SV_Error ("Only %4.1f megs of memory reported, can't execute game",
-				  parms->memsize / (float) 0x100000);
+				  host_parms.memsize / (float) 0x100000);
 
-	Memory_Init (parms->membase, parms->memsize);
+	Memory_Init (host_parms.membase, host_parms.memsize);
 	Cvar_Init ();
 	Sys_Init_Cvars ();
 	Sys_Init ();
@@ -1880,7 +1877,7 @@ SV_Init (quakeparms_t *parms)
 	host_initialized = true;
 
 //  Con_Printf ("Exe: "__TIME__" "__DATE__"\n");
-	Con_Printf ("%4.1f megabyte heap\n", parms->memsize / (1024 * 1024.0));
+	Con_Printf ("%4.1f megabyte heap\n", host_parms.memsize / (1024 * 1024.0));
 
 	Con_Printf ("\n%s server, Version %s (build %04d)\n\n", PROGRAM, VERSION,
 				build_number ());

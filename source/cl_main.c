@@ -166,8 +166,6 @@ entity_t		cl_visedicts_list[2][MAX_VISEDICTS];
 
 double			connect_time = -1;		// for connection retransmits
 
-quakeparms_t host_parms;
-
 qboolean	host_initialized;		// true if into command execution
 qboolean	nomaster;
 
@@ -1577,18 +1575,16 @@ void Host_Frame (float time)
 Host_Init
 ====================
 */
-void Host_Init (quakeparms_t *parms)
+void Host_Init ()
 {
 	if (COM_CheckParm ("-minmemory"))
-		parms->memsize = MINIMUM_MEMORY;
+		host_parms.memsize = MINIMUM_MEMORY;
 
-	host_parms = *parms;
-
-	if (parms->memsize < MINIMUM_MEMORY)
+	if (host_parms.memsize < MINIMUM_MEMORY)
 		Sys_Error ("Only %4.1f megs of memory reported, can't execute game",
-				   parms->memsize / (float)0x100000);
+				   host_parms.memsize / (float)0x100000);
 
-	Memory_Init (parms->membase, parms->memsize);
+	Memory_Init (host_parms.membase, host_parms.memsize);
 	Cvar_Init ();
 	Sys_Init_Cvars ();
 	Sys_Init();
@@ -1648,7 +1644,7 @@ void Host_Init (quakeparms_t *parms)
 	Mod_Init ();
 	
 //	Con_Printf ("Exe: "__TIME__" "__DATE__"\n");
-	Con_Printf ("%4.1f megs RAM used.\n",parms->memsize/ (1024*1024.0));
+	Con_Printf ("%4.1f megs RAM used.\n",host_parms.memsize/ (1024*1024.0));
 	
 	R_Textures_Init ();
  

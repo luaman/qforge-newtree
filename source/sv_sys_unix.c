@@ -161,29 +161,26 @@ main
 int main(int argc, char *argv[])
 {
 	double			time, oldtime, newtime;
-	quakeparms_t	parms;
 	fd_set	fdset;
 	extern	int		net_socket;
     struct timeval timeout;
 	int j;
 
-	memset (&parms, 0, sizeof(parms));
+	memset (&host_parms, 0, sizeof(host_parms));
 
 	COM_InitArgv (argc, argv);	
-	parms.argc = com_argc;
-	parms.argv = com_argv;
+	host_parms.argc = com_argc;
+	host_parms.argv = com_argv;
 
-	parms.memsize = 16*1024*1024;
+	host_parms.memsize = 16*1024*1024;
 
 	j = COM_CheckParm("-mem");
 	if (j)
-		parms.memsize = (int) (atof(com_argv[j+1]) * 1024 * 1024);
-	if ((parms.membase = malloc (parms.memsize)) == NULL)
-		Sys_Error("Can't allocate %d\n", parms.memsize);
+		host_parms.memsize = (int) (atof(com_argv[j+1]) * 1024 * 1024);
+	if ((host_parms.membase = malloc (host_parms.memsize)) == NULL)
+		Sys_Error("Can't allocate %d\n", host_parms.memsize);
 
-	parms.basedir = BASEDIR;
-
-	SV_Init (&parms);
+	SV_Init ();
 
 	// run one frame immediately for first heartbeat
 	SV_Frame (0.1);		

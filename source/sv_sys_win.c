@@ -196,7 +196,6 @@ char	*newargv[256];
 
 int main (int argc, char **argv)
 {
-	quakeparms_t	parms;
 	double			newtime, time, oldtime;
 	struct timeval	timeout;
 	fd_set			fdset;
@@ -205,27 +204,25 @@ int main (int argc, char **argv)
 
 	COM_InitArgv (argc, argv);
 	
-	parms.argc = com_argc;
-	parms.argv = com_argv;
+	host_parms.argc = com_argc;
+	host_parms.argv = com_argv;
 
-	parms.memsize = 16*1024*1024;
+	host_parms.memsize = 16*1024*1024;
 
 	if ((t = COM_CheckParm ("-heapsize")) != 0 &&
 		t + 1 < com_argc)
-		parms.memsize = atoi (com_argv[t + 1]) * 1024;
+		host_parms.memsize = atoi (com_argv[t + 1]) * 1024;
 
 	if ((t = COM_CheckParm ("-mem")) != 0 &&
 		t + 1 < com_argc)
-		parms.memsize = atoi (com_argv[t + 1]) * 1024 * 1024;
+		host_parms.memsize = atoi (com_argv[t + 1]) * 1024 * 1024;
 
-	parms.membase = malloc (parms.memsize);
+	host_parms.membase = malloc (host_parms.memsize);
 
-	if (!parms.membase)
+	if (!host_parms.membase)
 		Sys_Error("Insufficient memory.\n");
 
-	parms.basedir = ".";
-
-	SV_Init (&parms);
+	SV_Init ();
 
 	if (COM_CheckParm ("-nopriority"))
 	{
