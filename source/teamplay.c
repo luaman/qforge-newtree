@@ -145,6 +145,11 @@ char *Team_ParseSay (char *s)
 				s += 2;
 			}
 			switch (chr) {
+				case '%':
+					t2[0] = '%';
+					t2[1] = 0;
+					t1 = t2;
+					break;
 				case 's':
 					bracket = 0;
 					t1 = skin->string;

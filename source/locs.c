@@ -112,8 +112,13 @@ void locs_load(char *mapname)
 		loc[2] = strtol(t2, &t1, 0) * (1.0/8);
 		t1++;
 		t2 = strrchr(t1, '\n');
-		if (t2)
+		if (t2) {
 			t2[0] = '\0';
+			// handle dos format lines (COM_FOpenFile is binary only)
+			// and unix is effectively binary only anyway
+			if (t2 > t1 && t2[-1] == '\r')
+				t2[-1] = '\0';
+		}
 		locs_add(loc, t1);
 	}
 	Qclose(file);
