@@ -34,8 +34,6 @@
 #endif
 
 #include <string.h>
-#include <sys/time.h>
-#include <unistd.h>
 
 #include "cl_slist.h"
 #include "bothdefs.h"
@@ -96,8 +94,6 @@ SL_Del (server_entry_t *start, server_entry_t *del)
 
 	free (del->server);
 	free (del->desc);
-	if (del->status)
-		free (del->status);
 	if (del->prev)
 		del->prev->next = del->next;
 	if (del->next)
@@ -250,8 +246,6 @@ SL_Del_All (server_entry_t *start)
 		n = start->next;
 		free (start->server);
 		free (start->desc);
-		if (start->status)
-			free (start->status);
 		free (start);
 		start = n;
 	}
@@ -302,15 +296,4 @@ gettoklen (char *str, int req, char delim)
 		len++;
 	}
 	return len;
-}
-
-void timepassed (struct timeval *time1, struct timeval *time2)
-{
-	if (time2->tv_usec < time1->tv_usec)
-	{
-		time2->tv_usec = time2->tv_usec + 1000000;
-		time2->tv_sec--;
-	}
-	time2->tv_sec -= time1->tv_sec;
-	time2->tv_usec -= time1->tv_usec;
 }

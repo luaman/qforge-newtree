@@ -36,10 +36,6 @@
 typedef struct server_entry_s {
   	char *server;
 	char *desc;
-	char *status;
-	int waitstatus;
-	struct timeval pingsent;
-	struct timeval pongback;
 	struct server_entry_s *next;
 	struct server_entry_s *prev;
   } server_entry_t;

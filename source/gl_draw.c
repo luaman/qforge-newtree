@@ -216,8 +216,6 @@ typedef struct cachepic_s {
 static cachepic_t cachepics[MAX_CACHED_PICS];
 static int  numcachepics;
 
-static byte menuplyr_pixels[4096];
-
 qpic_t *
 Draw_PicFromWad (char *name)
 {
@@ -289,7 +287,7 @@ Draw_CachePic (char *path)
 
 	// Its not cached, lets make sure we have space in the cache..
 	if (numcachepics == MAX_CACHED_PICS)
-		Sys_Error ("menu_numcachepics == MAX_CACHED_PICS");
+		Sys_Error ("numcachepics == MAX_CACHED_PICS");
 
 	// Load the picture..
 	dat = (qpic_t *) COM_LoadTempFile (path);
@@ -321,15 +319,6 @@ Draw_CachePic (char *path)
 	// Now lets mark this cache entry as used..
 	pic->dirty = false;
 	numcachepics++;
-
-	// FIXME:
-	// A really ugly kluge, keep a specific image in memory
-	// for the menu system.
-	// 
-	// Some days I really dislike legacy support..
-
-	if (!strcmp (path, "gfx/menuplyr.lmp"))
-		memcpy (menuplyr_pixels, dat->data, dat->width * dat->height);
 
 	// And now we are done, return what was asked for..
 	return &pic->pic;
@@ -735,61 +724,6 @@ Draw_SubPic (int x, int y, qpic_t *pic, int srcx, int srcy, int width,
 	glEnd ();
 	glColor3ubv (lighthalf_v);
 }
-
-/*
-=============
-Draw_TransPicTranslate
-
-Only used for the player color selection menu
-=============
-*/
-void
-Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte * translation)
-{
-	int         v, u, c;
-	unsigned int trans[64 * 64], *dest;
-	byte       *src;
-	int         p;
-
-	glBindTexture (GL_TEXTURE_2D, translate_texture);
-
-	c = pic->width * pic->height;
-
-	dest = trans;
-	for (v = 0; v < 64; v++, dest += 64) {
-		src = &menuplyr_pixels[((v * pic->height) >> 6) * pic->width];
-		for (u = 0; u < 64; u++) {
-			p = src[(u * pic->width) >> 6];
-			if (p == 255)
-				dest[u] = p;
-			else
-				dest[u] = d_8to24table[translation[p]];
-		}
-	}
-
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 64, 64, 0, GL_RGBA,
-				  GL_UNSIGNED_BYTE, trans);
-
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	if (lighthalf)
-		glColor3f (0.4, 0.4, 0.4);
-	else
-		glColor3f (0.8, 0.8, 0.8);
-	glBegin (GL_QUADS);
-	glTexCoord2f (0, 0);
-	glVertex2f (x, y);
-	glTexCoord2f (1, 0);
-	glVertex2f (x + pic->width, y);
-	glTexCoord2f (1, 1);
-	glVertex2f (x + pic->width, y + pic->height);
-	glTexCoord2f (0, 1);
-	glVertex2f (x, y + pic->height);
-	glEnd ();
-	glColor3ubv (lighthalf_v);
-}
-
 
 /*
 	Draw_ConsoleBackground

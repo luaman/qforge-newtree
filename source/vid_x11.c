@@ -73,7 +73,6 @@
 #include "input.h"
 #include "input.h"
 #include "keys.h"
-#include "menu.h"
 #include "qargs.h"
 #include "qendian.h"
 #include "sys.h"

@@ -43,7 +43,6 @@
 #include "qtypes.h"
 #include "sys.h"
 #include "keys.h"
-#include "menu.h"
 #include "cmd.h"
 #include "console.h"
 #include "cvar.h"
@@ -70,13 +69,8 @@ keydest_t   key_dest;
 
 char       *keybindings[256];
 qboolean    consolekeys[256];			// if true, can't be rebound while in 
-
 										// console
-qboolean    menubound[256];				// if true, can't be rebound while in 
-
-										// menu
 int         keyshift[256];				// key to map to if shift held down
-
 										// in console
 int         key_repeats[256];			// if > 1, it is autorepeating
 qboolean    keydown[256];
@@ -744,10 +738,6 @@ Key_Init (void)
 	keyshift['`'] = '~';
 	keyshift['\\'] = '|';
 
-	menubound[K_ESCAPE] = true;
-	for (i = 0; i < 12; i++)
-		menubound[K_F1 + i] = true;
-
 //
 // register our functions
 //
@@ -823,12 +813,9 @@ Key_Event (int key, int alt_key, qboolean down)
 			case key_message:
 				Key_Message (key);
 				break;
-			case key_menu:
-				M_Keydown (key);
-				break;
 			case key_game:
 			case key_console:
-				M_ToggleMenu_f ();
+				Con_ToggleConsole_f ();
 				break;
 			default:
 				Sys_Error ("Bad key_dest");
@@ -863,27 +850,7 @@ Key_Event (int key, int alt_key, qboolean down)
 	if (cls.demoplayback && down && consolekeys[key] && key_dest == key_game
 		&& key != K_CTRL && key != K_DEL && key != K_HOME && key != K_END
 		&& key != K_TAB) {
-		M_ToggleMenu_f ();
-		return;
-	}
-//
-// if not a consolekey, send to the interpreter no matter what mode is
-//
-	if ((key_dest == key_menu && menubound[key])
-		|| (key_dest == key_console && !consolekeys[key])
-		|| (key_dest == key_game
-			&& (cls.state == ca_active || !consolekeys[key]))) {
-		kb = keybindings[key];
-		if (kb) {
-			if (kb[0] == '+') {			// button commands add keynum as a
-										// parm
-				snprintf (cmd, sizeof (cmd), "%s %i\n", kb, key);
-				Cbuf_AddText (cmd);
-			} else {
-				Cbuf_AddText (kb);
-				Cbuf_AddText ("\n");
-			}
-		}
+		Con_ToggleConsole_f ();
 		return;
 	}
 
@@ -898,10 +865,6 @@ Key_Event (int key, int alt_key, qboolean down)
 		case key_message:
 			Key_Message (key);
 			break;
-		case key_menu:
-			M_Keydown (key);
-			break;
-
 		case key_game:
 		case key_console:
 			Key_Console (key);
