@@ -52,7 +52,7 @@ static void
 GDT_InitDotParticleTexture (void)
 {
 	int         x, y, dx, dy, d;
-	byte        data[16][16][4];
+	byte        data[16][16][2];
 
 	// 
 	// particle texture
@@ -63,17 +63,15 @@ GDT_InitDotParticleTexture (void)
 	for (x = 0; x < 16; x++) {
 		for (y = 0; y < 16; y++) {
 			data[y][x][0] = 255;
-			data[y][x][1] = 255;
-			data[y][x][2] = 255;
 			dx = x - 8;
 			dy = y - 8;
 			d = 255 - 4 * (dx * dx + dy * dy);
 			if (d<0) d = 0;
 			if (d>255) d = 255;
-			data[y][x][3] = (byte) d;
+			data[y][x][1] = (byte) d;
 		}
 	}
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 16, 16, 0, GL_RGBA,
+	glTexImage2D (GL_TEXTURE_2D, 0, 2, 16, 16, 0, GL_LUMINANCE_ALPHA,
 				  GL_UNSIGNED_BYTE, data);
 
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -85,15 +83,14 @@ GDT_InitSmokeParticleTexture (void)
 {
 	int         i, x, y, d;
 	float       dx, dy;
-	byte        data[32][32][4], noise1[32][32], noise2[32][32];
+	byte        data[32][32][2], noise1[32][32], noise2[32][32];
 
 	for (i = 0; i < 8; i++) {
 		fractalnoise (&noise1[0][0], 32);
 		fractalnoise (&noise2[0][0], 32);
 		for (y = 0; y < 32; y++)
 			for (x = 0; x < 32; x++) {
-				data[y][x][0] = data[y][x][1] = data[y][x][2] =
-					(noise1[y][x] >> 1) + 128;
+				data[y][x][0] = (noise1[y][x] >> 1) + 128;
 				dx = x - 16;
 				dy = y - 16;
 				d = noise2[y][x] * 4 - 512;
@@ -105,15 +102,15 @@ GDT_InitSmokeParticleTexture (void)
 						d = 0;
 					if (d > 255)
 						d = 255;
-					data[y][x][3] = (byte) d;
+					data[y][x][1] = (byte) d;
 				} else
-					data[y][x][3] = 0;
+					data[y][x][1] = 0;
 			}
 		part_tex_smoke[i] = texture_extension_number++;
 		glBindTexture (GL_TEXTURE_2D, part_tex_smoke[i]);
 		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 32, 32, 0, GL_RGBA,
+		glTexImage2D (GL_TEXTURE_2D, 0, 2, 32, 32, 0, GL_LUMINANCE_ALPHA,
 					  GL_UNSIGNED_BYTE, data);
 
 	}
