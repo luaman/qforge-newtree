@@ -1001,9 +1001,6 @@ void R_MarkLeaves (void)
 	if (r_oldviewleaf == r_viewleaf && !r_novis->value)
 		return;
 	
-	if (mirror)
-		return;
-
 	r_visframecount++;
 	r_oldviewleaf = r_viewleaf;
 

@@ -956,11 +956,8 @@ void GL_Set2D (void)
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity ();
 
-	glEnable (GL_BLEND);
 	glDisable (GL_DEPTH_TEST);
 	glDisable (GL_CULL_FACE);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glColor3ubv(lighthalf_v);
 }

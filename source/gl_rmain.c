@@ -64,10 +64,6 @@ qboolean	envmap;				// true during envmap command capture
 int			particletexture;	// little dot for particles
 int			playertextures;		// up to 16 color translated skins
 
-int			mirrortexturenum;	// quake texturenum, not gltexturenum
-qboolean	mirror;
-mplane_t	*mirror_plane;
-
 //
 // view origin
 //
@@ -101,7 +97,6 @@ cvar_t	*r_speeds;
 cvar_t	*r_fullbright;
 cvar_t	*r_lightmap;
 cvar_t	*r_shadows;
-cvar_t	*r_mirroralpha;
 cvar_t	*r_wateralpha;
 cvar_t	*r_waterripple;
 cvar_t	*r_dynamic;
@@ -901,16 +896,7 @@ static void R_SetupGL (void)
 //    MYgluPerspective (yfov,  screenaspect,  4,  4096);
     MYgluPerspective (r_refdef.fov_y,  screenaspect,  4,  4096);
 
-	if (mirror)
-	{
-		if (mirror_plane->normal[2])
-			glScalef (1, -1, 1);
-		else
-			glScalef (-1, 1, 1);
-		glCullFace(GL_BACK);
-	}
-	else
-		glCullFace(GL_FRONT);
+	glCullFace(GL_FRONT);
 
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity ();
@@ -932,7 +918,6 @@ static void R_SetupGL (void)
 	else
 		glDisable (GL_CULL_FACE);
 
-	glEnable (GL_BLEND);
 	glDisable (GL_ALPHA_TEST);
 	glAlphaFunc (GL_GREATER, 0.5);
 	glEnable (GL_DEPTH_TEST);
@@ -1003,15 +988,10 @@ void R_RenderView (void)
 
 //	glFinish ();
 
-	mirror = false;
-
 	R_Clear ();
 
 	// render normal view
 	R_RenderScene ();
 	R_DrawViewModel ();
 	R_DrawWaterSurfaces ();
-
-	// render mirror view
-//	R_Mirror ();
 }

@@ -237,7 +237,6 @@ void R_Init (void)
 	r_drawentities = Cvar_Get("r_drawentities", "1", CVAR_NONE, "None");
 	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", CVAR_NONE, "None");
 	r_shadows = Cvar_Get("r_shadows", "0", CVAR_NONE, "None");
-	r_mirroralpha = Cvar_Get("r_mirroralpha", "1", CVAR_NONE, "None");
 	r_wateralpha = Cvar_Get("r_wateralpha", "1", CVAR_NONE, "None");
 	r_waterripple = Cvar_Get ("r_waterripple", "0", CVAR_NONE, "None");
 	r_dynamic = Cvar_Get("r_dynamic", "1", CVAR_NONE, "None");
@@ -489,15 +488,12 @@ void R_NewMap (void)
 
 	// identify sky texture
 	skytexturenum = -1;
-	mirrortexturenum = -1;
 	for (i=0 ; i<cl.worldmodel->numtextures ; i++)
 	{
 		if (!cl.worldmodel->textures[i])
 			continue;
 		if (!strncmp(cl.worldmodel->textures[i]->name,"sky",3) )
 			skytexturenum = i;
-		if (!strncmp(cl.worldmodel->textures[i]->name,"window02_1",10) )
-			mirrortexturenum = i;
  		cl.worldmodel->textures[i]->texturechain = NULL;
 	}
 	r_skyname = Cvar_FindVar ("r_skyname");
