@@ -590,18 +590,12 @@ M_Options_Draw (void)
 	if (vid_menudrawfn)
 		M_Print (16, 152, "         Video Options");
 
-#ifdef _WIN32
-	//FIXMEif (modestate == MS_WINDOWED) {
-#endif
-		if (_windowed_mouse) {
-			M_Print (16, 160, "             Use Mouse");
-			M_DrawCheckbox (220, 160, _windowed_mouse->int_val);
-		}
-#ifdef _WIN32
-	//FIXME}
-#endif
+	if (_windowed_mouse) {
+		M_Print (16, 160, "             Use Mouse");
+		M_DrawCheckbox (220, 160, _windowed_mouse->int_val);
+	}
 
-// cursor
+	// cursor
 	M_DrawCharacter (200, 32 + options_cursor * 8,
 					 12 + ((int) (realtime * 4) & 1));
 }
@@ -650,11 +644,19 @@ M_Options_Key (int k)
 #endif
 			if (options_cursor == 15 && !(vid_menudrawfn))
 				options_cursor--;
+			if ((options_cursor == 5) && !(contrast))
+				options_cursor--;
+			if ((options_cursor == 4) && !(brightness))
+				options_cursor--;
 			break;
 
 		case K_DOWNARROW:
 			S_LocalSound ("misc/menu1.wav");
 			options_cursor++;
+			if ((options_cursor == 4) && !(brightness))
+				options_cursor++;
+			if ((options_cursor == 5) && !(contrast))
+				options_cursor++;
 			if (options_cursor == 15 && !(vid_menudrawfn))
 				options_cursor++;
 #ifdef _WIN32
