@@ -79,6 +79,10 @@
 #define GL_DISTANCE_ATTENUATION_EXT 		0x8129
 #endif
 
+#ifndef GL_SHARED_TEXTURE_PALETTE_EXT
+#define GL_SHARED_TEXTURE_PALETTE_EXT 0x81FB
+#endif
+
 #ifndef GL_ARB_multitexture
 #define GL_TEXTURE0_ARB 					0x84C0
 #define GL_TEXTURE1_ARB 					0x84C1
