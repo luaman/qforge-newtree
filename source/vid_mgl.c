@@ -669,7 +669,7 @@ void VID_InitMGLDIB (HINSTANCE hInstance)
 	WNDCLASS		wc;
 	HDC				hdc;
 
-	hIcon = LoadIcon (hInstance, MAKEINTRESOURCE (IDI_ICON2));
+        hIcon = LoadIcon (hInstance, MAKEINTRESOURCE (IDI_ICON1));
 
 	/* Register the frame class */
     wc.style         = 0;

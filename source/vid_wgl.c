@@ -1580,7 +1580,7 @@ void	VID_Init (unsigned char *palette)
 	Cmd_AddCommand ("vid_describemode", VID_DescribeMode_f);
 	Cmd_AddCommand ("vid_describemodes", VID_DescribeModes_f);
 
-	hIcon = LoadIcon (global_hInstance, MAKEINTRESOURCE (IDI_ICON2));
+        hIcon = LoadIcon (global_hInstance, MAKEINTRESOURCE (IDI_ICON1));
 
 	InitCommonControls();
 
