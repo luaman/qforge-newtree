@@ -266,14 +266,13 @@ float CalcFov (float fov_x, float width, float height)
 }
 
 /*
-=================
-SCR_CalcRefdef
+	SCR_CalcRefdef
 
-Must be called whenever vid changes
-Internal use only
-=================
+	Must be called whenever vid changes
+	Internal use only
 */
-static void SCR_CalcRefdef (void)
+static void
+SCR_CalcRefdef (void)
 {
 	float           size;
 	int             h;
@@ -294,15 +293,9 @@ static void SCR_CalcRefdef (void)
 // bound field of view
 	Cvar_SetValue (scr_fov, bound (10, scr_fov->value, 170));
 
-// intermission is always full screen   
-	if (cl.intermission)
-		size = 120;
-	else
-		size = scr_viewsize->int_val;
-
-	if (size >= 120)
+	if (scr_viewsize->int_val >= 120)
 		sb_lines = 0;           // no status bar at all
-	else if (size >= 110)
+	else if (scr_viewsize->int_val >= 110)
 		sb_lines = 24;          // no inventory
 	else
 		sb_lines = 24+16+8;
@@ -313,8 +306,8 @@ static void SCR_CalcRefdef (void)
 	} else {
 		size = scr_viewsize->int_val;
 	}
-	if (cl.intermission)
-	{
+	// intermission is always full screen   
+	if (cl.intermission) {
 		full = true;
 		size = 100.0;
 		sb_lines = 0;
@@ -326,14 +319,13 @@ static void SCR_CalcRefdef (void)
 	else
 		h = vid.height - sb_lines;
 
-	r_refdef.vrect.width = vid.width * size;
-	if (r_refdef.vrect.width < 96)
-	{
+	r_refdef.vrect.width = vid.width * size + 0.5;
+	if (r_refdef.vrect.width < 96) {
 		size = 96.0 / r_refdef.vrect.width;
 		r_refdef.vrect.width = 96;      // min for icons
 	}
 
-	r_refdef.vrect.height = vid.height * size;
+	r_refdef.vrect.height = vid.height * size + 0.5;
 	if (cl_sbar->int_val || !full) {
   		if (r_refdef.vrect.height > vid.height - sb_lines)
   			r_refdef.vrect.height = vid.height - sb_lines;
@@ -349,35 +341,31 @@ static void SCR_CalcRefdef (void)
 	r_refdef.fov_y = CalcFov (r_refdef.fov_x, r_refdef.vrect.width, r_refdef.vrect.height);
 
 	scr_vrect = r_refdef.vrect;
+	printf ("%d %d %d %d %d\n", r_refdef.vrect.x, r_refdef.vrect.y, r_refdef.vrect.width, r_refdef.vrect.height, vid.height);
 }
 
 
 /*
-=================
-SCR_SizeUp_f
+	SCR_SizeUp_f
 
-Keybinding command
-=================
+	Keybinding command
 */
-void SCR_SizeUp_f (void)
+void
+SCR_SizeUp_f (void)
 {
 	Cvar_SetValue (scr_viewsize, scr_viewsize->int_val+10);
-
-	vid.recalc_refdef = 1;
 }
 
 
 /*
-=================
-SCR_SizeDown_f
+	SCR_SizeDown_f
 
-Keybinding command
-=================
+	Keybinding command
 */
-void SCR_SizeDown_f (void)
+void
+SCR_SizeDown_f (void)
 {
 	Cvar_SetValue (scr_viewsize, scr_viewsize->int_val-10);
-	vid.recalc_refdef = 1;
 }
 
 //============================================================================
@@ -982,24 +970,24 @@ void SCR_TileClear (void)
 	}
 }
 
-float oldsbar = 0;
+int oldsbar = 0;
+int oldviewsize = 0;
 extern void R_ForceLightUpdate();
 qboolean lighthalf;
 unsigned char lighthalf_v[3];
 extern cvar_t *gl_lightmode, *brightness, *contrast;
 
 /*
-==================
-SCR_UpdateScreen
+	SCR_UpdateScreen
 
-This is called every frame, and can also be called explicitly to flush
-text to the screen.
+	This is called every frame, and can also be called explicitly to flush
+	text to the screen.
 
-WARNING: be very careful calling this from elsewhere, because the refresh
-needs almost the entire 256k of stack space!
-==================
+	WARNING: be very careful calling this from elsewhere, because the refresh
+	needs almost the entire 256k of stack space!
 */
-void SCR_UpdateScreen (void)
+void
+SCR_UpdateScreen (void)
 {
 	double	time1 = 0, time2;
 	float	f;
@@ -1026,6 +1014,11 @@ void SCR_UpdateScreen (void)
 
 	if (oldsbar != cl_sbar->int_val) {
 		oldsbar = cl_sbar->int_val;
+		vid.recalc_refdef = true;
+	}
+
+	if (oldviewsize != scr_viewsize->int_val) {
+		oldviewsize = scr_viewsize->int_val;
 		vid.recalc_refdef = true;
 	}
 
