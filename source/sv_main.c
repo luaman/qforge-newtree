@@ -1594,8 +1594,9 @@ SV_InitLocal (void)
 
 	sv_highchars = Cvar_Get ("sv_highchars", "1", CVAR_NONE, "Toggle the use of high character color names for players");
 
-	sv_phs = Cvar_Get ("sv_phs", "1", CVAR_NONE, "FIXME: Please document"); /* FIXME: Needs documentation */
-
+	sv_phs = Cvar_Get ("sv_phs", "1", CVAR_NONE,
+	"Possibly Hearable Set. If set to zero, the server calculates sound hearability in realtime");
+	 
 	pausable = Cvar_Get ("pausable", "1", CVAR_NONE, "Toggle if server can be paused 1 is on, 0 is off");
 
 	// DoS protection
