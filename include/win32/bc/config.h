@@ -62,10 +62,13 @@
 #define X_DISPLAY_MISSING
 
 /* Version string */
+/* these are included by version.h
 #define QW_VERSION "2.40"
 #define VERSION "0.1.99pre0"
 #define PROGRAM "QuakeForge"
 #define PACKAGE "quakeforge"
+*/
+#include "version.h"
 
 /* Define if you want to use QF-style defaults instead of Id-style */
 #undef NEWSTYLE
