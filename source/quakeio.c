@@ -125,6 +125,11 @@ Qopen (const char *path, const char *mode)
 			zip = 1;
 			continue;
 		}
+#ifndef HAVE_ZLIB
+		if (strchr ("0123456789fh", *mode)) {
+			continue;
+		}
+#endif
 		*p++ = *mode;
 	}
 	*p = 0;

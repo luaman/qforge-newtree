@@ -353,7 +353,7 @@ GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 		// save out the cached version
 		// 
 		snprintf (fullpath, sizeof (fullpath), "%s/%s", com_gamedir, cache);
-		f = Qopen (fullpath, "wb");
+		f = Qopen (fullpath, "wbz9");
 		if (!f) {
 			COM_CreatePath (fullpath);
 			f = Qopen (fullpath, "wb");
