@@ -90,7 +90,6 @@ cvar_t	msg = {"msg","1", true, true};
 
 extern cvar_t cl_hightrack;
 
-
 client_static_t	cls;
 client_state_t	cl;
 
@@ -1074,7 +1073,8 @@ void CL_Init (void)
 	Info_SetValueForKey (cls.userinfo, "bottomcolor", "0", MAX_INFO_STRING);
 	Info_SetValueForKey (cls.userinfo, "rate", "2500", MAX_INFO_STRING);
 	Info_SetValueForKey (cls.userinfo, "msg", "1", MAX_INFO_STRING);
-	sprintf (st, "%s-%04d", QW_VERSION, build_number());
+//        sprintf (st, "%s-%04d", QW_VERSION, build_number());
+        sprintf (st, "%s", QW_VERSION);
 	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING);
 
 	CL_InitInput ();
