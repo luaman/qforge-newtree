@@ -32,6 +32,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+#include <string.h>
 
 #include "r_local.h"
 #include "sys.h"

@@ -310,9 +310,10 @@ Cmd_StuffCmds_f (void)
 		if (com_cmdline[i] == '+') {
 			i++;
 
-			for (j = i; ((com_cmdline[j] != '+')
-						 && (com_cmdline[j] != '-')
-						 && (com_cmdline[j] != 0)); j++);
+			for (j = i; !((com_cmdline[j] == '+')
+						  || (com_cmdline[j] == '-'
+						      && (j==0 || com_cmdline[j - 1] == ' '))
+						  || (com_cmdline[j] == 0)); j++);
 
 			c = com_cmdline[j];
 			com_cmdline[j] = 0;
