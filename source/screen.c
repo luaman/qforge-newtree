@@ -290,7 +290,7 @@ float CalcFov (float fov_x, float width, float height)
 
         x = width/tan(fov_x/360*M_PI);
 
-        a = atan (height/x);
+        a = (x == 0) ? 90 : atan(height/x); // 0 shouldn't happen
 
         a = a*360/M_PI;
 
@@ -328,21 +328,6 @@ static void SCR_CalcRefdef (void)
 	if (scr_viewsize->value > 120)
 		Cvar_Set (scr_viewsize,"120");
 
-// bound field of view
-/* 	if (scr_fov.value < 10)
- CVAR_FIXME */
-	if (scr_fov->value < 10)
-		Cvar_Set (scr_fov,"10");
-/* 	if (scr_fov.value > 170)
- CVAR_FIXME */
-	if (scr_fov->value > 170)
-		Cvar_Set (scr_fov,"170");
-
-/* 	r_refdef.fov_x = scr_fov.value;
- CVAR_FIXME */
-	r_refdef.fov_x = scr_fov->value;
-	r_refdef.fov_y = CalcFov (r_refdef.fov_x, r_refdef.vrect.width, r_refdef.vrect.height);
-
 // intermission is always full screen	
 	if (cl.intermission)
 		size = 120;
@@ -357,6 +342,22 @@ static void SCR_CalcRefdef (void)
 		sb_lines = 24;		// no inventory
 	else
 		sb_lines = 24+16+8;
+
+        r_refdef.vrect.height = vid.height * size;
+// bound field of view
+/* 	if (scr_fov.value < 10)
+ CVAR_FIXME */
+	if (scr_fov->value < 10)
+		Cvar_Set (scr_fov,"10");
+/* 	if (scr_fov.value > 170)
+ CVAR_FIXME */
+	if (scr_fov->value > 170)
+		Cvar_Set (scr_fov,"170");
+
+/* 	r_refdef.fov_x = scr_fov.value;
+ CVAR_FIXME */
+	r_refdef.fov_x = scr_fov->value;
+	r_refdef.fov_y = CalcFov (r_refdef.fov_x, r_refdef.vrect.width, r_refdef.vrect.height);
 
 // these calculations mirror those in R_Init() for r_refdef, but take no
 // account of water warping
