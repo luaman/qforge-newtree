@@ -1582,8 +1582,8 @@ void SV_InitLocal (void)
 	pausable = Cvar_Get("pausable",  "1", CVAR_NONE, "None");
 
 // DoS protection
-	Cmd_AddCommand ("dosexpire", SV_netDoSexpire_f);
-	Cmd_AddCommand ("dosvalues", SV_netDoSvalues_f);
+	Cmd_AddCommand ("netdosexpire", SV_netDoSexpire_f);
+	Cmd_AddCommand ("netdosvalues", SV_netDoSvalues_f);
 
 	Cmd_AddCommand ("addip", SV_AddIP_f);
 	Cmd_AddCommand ("removeip", SV_RemoveIP_f);
