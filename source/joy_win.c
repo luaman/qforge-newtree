@@ -33,29 +33,25 @@
 # include "config.h"
 #endif
 
-#include "console.h"
-#include "cvar.h"
-#include "protocol.h"
-#include "qtypes.h"
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
 #ifdef __MINGW32__
 # define INITGUID
 #endif
 
-#include "winquake.h"
+#define byte __byte
 #include <dinput.h>
-#include "client.h"
-#include "keys.h"
-#include "console.h"
-#include "qargs.h"
-#include "cmd.h"
-#include "input.h"
+#undef byte
+
 #include "cl_input.h"
-#include "view.h"
+#include "client.h"
+#include "cmd.h"
+#include "console.h"
+#include "cvar.h"
 #include "host.h"
+#include "input.h"
+#include "keys.h"
+#include "protocol.h"
+#include "qargs.h"
+#include "view.h"
 
 // Joystick variables and structures
 cvar_t     *joy_device;					// Joystick device name

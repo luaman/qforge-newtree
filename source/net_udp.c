@@ -74,7 +74,8 @@
 #include "qargs.h"
 
 #ifdef _WIN32
-# include "winquake.h"
+#include <windows.h>
+//# include "winquake.h"
 # undef EWOULDBLOCK
 # define EWOULDBLOCK    WSAEWOULDBLOCK
 #endif

@@ -30,9 +30,10 @@
 # include "config.h"
 #endif
 
-#include "winquake.h"
 #include <limits.h>
 #include <direct.h>
+#include <windows.h>
+
 #include "server.h"
 
 /* This is unused in the client, but we need the symbol there too. */

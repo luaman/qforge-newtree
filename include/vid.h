@@ -64,6 +64,7 @@ extern viddef_t 		vid;				// global video state
 extern unsigned short	d_8to16table[256];
 extern unsigned int 	d_8to24table[256];
 extern int scr_width, scr_height;
+extern qboolean		DDActive;
 
 // called at startup and after any gamma correction
 void VID_SetPalette (unsigned char *palette);
@@ -100,5 +101,8 @@ void VID_SetCaption (char *text);
 // used to set window caption
 
 void VID_GetWindowSize (int def_w, int def_h);
+
+int VID_ForceUnlockedAndReturnState (void);
+void VID_ForceLockState (int lk);
 
 #endif	// __vid_h_

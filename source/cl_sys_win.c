@@ -35,15 +35,17 @@
 #include <limits.h>
 #include <io.h>
 #include <conio.h>
+#include <windows.h>
 
-#include "host.h"
-#include "winquake.h"
-#include "resource.h"
-#include "sys.h"
-#include "screen.h"
-#include "qargs.h"
 #include "client.h"
 #include "console.h"
+#include "host.h"
+#include "qargs.h"
+#include "resource.h"
+#include "screen.h"
+#include "sound.h"
+#include "sys.h"
+#include "vid.h"
 
 qboolean    is_server = false;
 
@@ -318,7 +320,7 @@ Sys_ConsoleInput (void)
 						break;
 
 					default:
-						Con_Printf ("Stupid: %d\n",
+						Con_Printf ("Stupid: %ld\n",
 									recs[0].Event.KeyEvent.dwControlKeyState);
 						if (
 							((ch == 'V' || ch == 'v')
@@ -442,7 +444,9 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 	MEMORYSTATUS lpBuffer;
 	static char cwd[1024];
 	int         t;
+#ifdef SPLASH_SCREEN
 	RECT        rect;
+#endif
 
 	/* previous instances do not exist in Win32 */
 	if (hPrevInstance)
