@@ -1,10 +1,9 @@
 /*
 	cl_slist.h
 
-	serverlist addressbook interface
+	Server listing address book interface
 
-	Copyright (C) 1999,2000  contributors of the QuakeForge project
-	Please see the file "AUTHORS" for a list of contributors
+	Copyright (C) 1999,2000  Brian Koropoff
 
 	Author: Brian Koropoff
 	Date: 03 May 2000
@@ -29,6 +28,9 @@
 
 	$Id$
 */
+#ifndef _CL_SLIST_H
+#define _CL_SLIST_H
+
 #include "quakeio.h"
 
 typedef struct server_entry_s {
@@ -55,3 +57,5 @@ void Server_List_Shutdown(server_entry_t *start);
 
 char *gettokstart(char *str, int req, char delim);
 int gettoklen(char *str, int req, char delim);
+
+#endif	// _CL_SLIST_H

@@ -1,7 +1,7 @@
 /*
 	in_win.h
 
-	(description)
+	Win32 input prototypes
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
