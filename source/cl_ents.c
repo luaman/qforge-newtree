@@ -475,10 +475,8 @@ CL_LinkPacketEntities (void)
 {
 	entity_t  **ent;
 	packet_entities_t *pack;
-	entity_state_t *s1, *s2;
-	float       f;
+	entity_state_t *s1;
 	model_t    *model;
-	float       autorotate;
 	int         i;
 	int         pnum;
 	dlight_t   *dl;
@@ -487,13 +485,8 @@ CL_LinkPacketEntities (void)
 
 	pack = &cl.frames[cls.netchan.incoming_sequence & UPDATE_MASK].packet_entities;
 
-	autorotate = anglemod (100 * cl.time);
-
-	f = 0;								// FIXME: no interpolation right now
-
 	for (pnum = 0; pnum < pack->num_entities; pnum++) {
 		s1 = &pack->entities[pnum];
-		s2 = s1;	// FIXME: no interpolation right now
 
 		// spawn light flashes, even ones coming from invisible objects
 		if ((s1->effects & (EF_BLUE | EF_RED)) == (EF_BLUE | EF_RED))
@@ -583,43 +576,28 @@ CL_LinkPacketEntities (void)
 
 		if (model->flags & EF_ROTATE) { // rotate binary objects locally
 			(*ent)->angles[0] = 0;
-			(*ent)->angles[1] = autorotate;
+			(*ent)->angles[1] = anglemod (100 * cl.time);
 			(*ent)->angles[2] = 0;
 		} else {
-			float       a1, a2;
-
-			for (i = 0; i < 3; i++) {
-				a1 = s1->angles[i];
-				a2 = s2->angles[i];
-				if (a1 - a2 > 180)
-					a1 -= 360;
-				if (a1 - a2 < -180)
-					a1 += 360;
-				(*ent)->angles[i] = a2 + f * (a1 - a2);
-			}
+			VectorCopy(s1->angles, (*ent)->angles);
 		}
 
 		VectorCopy ((*ent)->origin, (*ent)->old_origin);
-		// calculate origin
-		for (i = 0; i < 3; i++)
-			(*ent)->origin[i] = s2->origin[i] + f * (s1->origin[i] - s2->origin[i]);
+		VectorCopy (s1->origin, (*ent)->origin);
 
 		// add automatic particle trails
 		if (!model->flags)
 			continue;
 
-		for (i = 0; i < 3; i++)
-			if (abs ((*ent)->old_origin[i] - (*ent)->origin[i]) > 128) {	// no trail
-																// if too far
-				VectorCopy ((*ent)->origin, (*ent)->old_origin);
-				break;
-			}
+		// No trail if too far.
+		if (VectorDistance_fast((*ent)->old_origin, (*ent)->origin) > (128^2))
+			VectorCopy ((*ent)->origin, (*ent)->old_origin);
 
 		if (model->flags & EF_ROCKET) {
 			dl = CL_AllocDlight (-(*ent)->keynum);
 			VectorCopy ((*ent)->origin, dl->origin);
-			dl->radius = 200;
 			VectorCopy (r_firecolor->vec, dl->color);
+			dl->radius = 200;
 			dl->die = cl.time + 0.1;
 			R_RocketTrail (0, (*ent));
 		} else if (model->flags & EF_GRENADE)
@@ -1188,7 +1166,7 @@ CL_EmitEntities (void)
 		return;
 
 	cl_oldnumvisedicts = cl_numvisedicts;
-	cl_oldvisedicts = cl_visedicts_list[(cls.netchan.incoming_sequence - 1) & 1];
+	cl_oldvisedicts = cl_visedicts_list[!(cls.netchan.incoming_sequence & 1)];
 	cl_visedicts = cl_visedicts_list[cls.netchan.incoming_sequence & 1];
 
 	cl_numvisedicts = 0;

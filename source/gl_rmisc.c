@@ -264,7 +264,6 @@ R_NewMap (void)
 	r_worldentity.model = cl.worldmodel;
 
 // clear out efrags in case the level hasn't been reloaded
-// FIXME: is this one short?
 	for (i = 0; i < cl.worldmodel->numleafs; i++)
 		cl.worldmodel->leafs[i].efrags = NULL;
 

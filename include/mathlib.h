@@ -53,13 +53,11 @@ extern  int nanmask;
  * Yes, this is the same as sqrt(VectorSubtract then DotProduct), 
  * however that way would involve more vars, this is cheaper.
  */
-#define VectorDistance(a, b)	sqrt(((a[0] - b[0]) * (a[0] - b[0])) + \
-									 ((a[1] - b[1]) * (a[1] - b[1])) + \
-									 ((a[2] - b[2]) * (a[2] - b[2])))
-
 #define VectorDistance_fast(a, b)	(((a[0] - b[0]) * (a[0] - b[0])) + \
 									 ((a[1] - b[1]) * (a[1] - b[1])) + \
 									 ((a[2] - b[2]) * (a[2] - b[2])))
+#define VectorDistance(a, b)	sqrt(VectorDistance_fast(a, b))
+
 
 #define lhrandom(MIN,MAX) ((rand() & 32767) * (((MAX)-(MIN)) * (1.0f / 32767.0f)) + (MIN))
 
