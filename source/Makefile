@@ -44,6 +44,7 @@ EXE_sources=\
   crc.c \
   cvar.c \
   mathlib.c \
+  math.S \
   md4.c \
   zone.c \
   pmove.c \
