@@ -888,6 +888,9 @@ void R_DrawSkyChain (msurface_t *s)
 			}
 		}
 	} else {
+		// skies have no lightmap to prevent overbrighting --KB
+		glColor3f (0.5, 0.5, 0.5);
+
 		GL_DisableMultitexture();
 
 		// used when gl_texsort is on
@@ -904,6 +907,9 @@ void R_DrawSkyChain (msurface_t *s)
 
 		for (fa=s ; fa ; fa=fa->texturechain)
 			EmitSkyPolys (fa);
+
+		// the rest of the texture chain does though  --KB
+		glColor3f (1.0, 1.0, 1.0);
 	}
 }
 

@@ -918,7 +918,8 @@ void DrawTextureChains (void)
 	if (!gl_texsort->value) {
 		GL_DisableMultitexture();
 
-		if (skychain) {
+		if (skychain)
+		{
 			R_DrawSkyChain(skychain);
 			skychain = NULL;
 		}
