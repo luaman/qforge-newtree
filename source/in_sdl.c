@@ -296,8 +296,8 @@ IN_SendKeyEvents (void)
 					if ((event.motion.x != (vid.width / 2))
 						|| (event.motion.y != (vid.height / 2))) {
 						// *2 for vid_sdl.c, *10 for vid_sgl.c.
-						mouse_x = event.motion.xrel * 2;
-						mouse_y = event.motion.yrel * 2;
+						mouse_x = event.motion.xrel * 10;
+						mouse_y = event.motion.yrel * 10;
 						if (
 							(event.motion.x <
 							 ((vid.width / 2) - (vid.width / 4)))
