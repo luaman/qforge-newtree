@@ -1378,8 +1378,12 @@ void R_DrawWorld (void)
 
 	R_BlendLightmaps ();
 
-	// Draw the skybox --KB
+	// Adjust the depth range and draw the skybox, ensuring it's behind
+	//  everhting else.  This fixes the problem where some things are
+	//  drawn as sky when something else should be drawn.  --KB
+	glDepthRange (gldepthmax, gldepthmax);
 	R_DrawSkyBox ();
+	glDepthRange (gldepthmin, gldepthmax);
 }
 
 
