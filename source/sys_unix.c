@@ -33,13 +33,13 @@
 #include <libc.h>
 #endif
 
-#if defined(__linux__) || defined(sun)
-#include <sys/stat.h>
-#include <unistd.h>
-#include <sys/time.h>
 #include <errno.h>
-#else
-#include <sys/dir.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+
+#ifdef HAVE_SYS_DIR_H
+# include <sys/dir.h>
 #endif
 
 cvar_t	sys_nostdout = {"sys_nostdout","0"};
