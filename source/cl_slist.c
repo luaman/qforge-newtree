@@ -3,8 +3,7 @@
 
 	serverlist addressbook
 
-	Copyright (C) 1999,2000  contributors of the QuakeForge project
-	Please see the file "AUTHORS" for a list of contributors
+	Copyright (C) 2000       Brian Koropoff <brian.hk@home.com>
 
 	Author: Brian Koropoff
 	Date: 03 May 2000

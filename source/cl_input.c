@@ -1,7 +1,7 @@
 /*
 	cl_input.c
 
-	(description)
+	builds an intended movement command to send to the server
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// cl.input.c  -- builds an intended movement command to send to the server
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

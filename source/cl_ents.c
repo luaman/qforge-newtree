@@ -1,7 +1,7 @@
 /*
 	cl_ents.c
 
-	(description)
+	entity parsing and management
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// cl_ents.c -- entity parsing and management
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

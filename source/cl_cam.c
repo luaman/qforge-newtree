@@ -1,7 +1,7 @@
 /*
 	cl_cam.c
 
-	(description)
+	Player camera tracking in Spectator mode
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -27,9 +27,6 @@
 */
 
 /* ZOID
- *
- * Player camera tracking in Spectator mode
- *
  * This takes over player controls for spectator automatic camera.
  * Player moves as a spectator, but the camera tracks and enemy player
  */

@@ -1,7 +1,7 @@
 /*
 	cl_main.c
 
-	(description)
+	Client main loop
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// cl_main.c  -- client main loop
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

@@ -1,7 +1,7 @@
 /*
 	com.c
 
-	(description)
+	misc functions used in client and server
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// com.c -- misc functions used in client and server
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

@@ -1,7 +1,7 @@
 /*
 	cl_parse.c
 
-	(description)
+	parse a message received from the server
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// cl_parse.c  -- parse a message received from the server
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

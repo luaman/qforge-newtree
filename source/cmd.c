@@ -1,7 +1,7 @@
 /*
 	cmd.c
 
-	Quake script command processing module
+	script command processing module
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// cmd.c -- Quake script command processing module
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

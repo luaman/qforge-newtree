@@ -1,7 +1,7 @@
 /*
 	cl_tent.c
 
-	(description)
+	client side temporary entities
 
 	Copyright (C) 1996-1997  Id Software, Inc.
 
@@ -25,7 +25,6 @@
 
 	$Id$
 */
-// cl_tent.c -- client side temporary entities
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
