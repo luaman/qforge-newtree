@@ -946,7 +946,7 @@ PF_precache_model (progs_t *pr)
 
 	if (sv.state != ss_loading)
 		PR_RunError
-			(pr, "PF_Precache_*: Precache can only be done in spawn functions");
+			(pr, "PF_Precache_model: Precache can only be done in spawn functions");
 
 	s = G_STRING (pr, OFS_PARM0);
 	G_INT (pr, OFS_RETURN) = G_INT (pr, OFS_PARM0);
@@ -955,11 +955,13 @@ PF_precache_model (progs_t *pr)
 	for (i = 0; i < MAX_MODELS; i++) {
 		if (!sv.model_precache[i]) {
 			sv.model_precache[i] = s;
+			Con_DPrintf ("PF_precache_model: %3d %s\n", i, s);
 			return;
 		}
 		if (!strcmp (sv.model_precache[i], s))
 			return;
 	}
+	Con_DPrintf ("PF_precache_model: %s\n", s);
 	PR_RunError (pr, "PF_precache_model: overflow");
 }
 
