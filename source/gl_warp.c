@@ -719,7 +719,7 @@ R_DrawSkyLayer (float s)
 		glTexCoord2f(0.5,0.5);
 		glVertex3f(r_refdef.vieworg[0],
 			   r_refdef.vieworg[1],
-			   r_refdef.vieworg[2]-domescale[2])
+			   r_refdef.vieworg[2]-domescale[2]);
 		glEnd ();
 	}
 }
