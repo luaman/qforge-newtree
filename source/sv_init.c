@@ -42,6 +42,7 @@
 #include "quakefs.h"
 #include "server.h"
 #include "world.h"
+#include "va.h"
 
 server_t    sv;							// local server
 
@@ -346,6 +347,8 @@ SV_SpawnServer (char *server)
 	// load progs to get entity field count
 	// which determines how big each edict is
 	PR_LoadProgs (&sv_progs);
+	Info_SetValueForStarKey (svs.info, "*progs", va ("%i", sv_progs.crc),
+							 MAX_SERVERINFO_STRING);
 
 	// allocate edicts
 	sv.edicts = Hunk_AllocName (MAX_EDICTS * sv_progs.pr_edict_size, "edicts");

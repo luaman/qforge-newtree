@@ -67,10 +67,10 @@ if ASM_ARCH
 world_ASM=	worlda.S
 endif
 
-server_SOURCES=	pr_cmds.c pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
+server_SOURCES=	pr_edict.c pr_exec.c pr_offs.c sv_ccmds.c sv_cvar.c \
 		sv_ents.c sv_init.c sv_main.c sv_misc.c sv_model.c \
-		sv_move.c sv_nchan.c sv_phys.c sv_progs.c sv_send.c sv_user.c \
-		ver_check.c world.c $(world_ASM)
+		sv_move.c sv_nchan.c sv_phys.c sv_pr_cmds.c sv_progs.c sv_send.c \
+		sv_user.c ver_check.c world.c $(world_ASM)
 
 qf_server_SOURCES=	$(common_SOURCES) $(server_SOURCES)
 qf_server_LDADD=	-L. -lqfsys_sv $(NET_LIBS) $(Z_LIBS) $(DL_LIBS)

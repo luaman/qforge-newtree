@@ -810,35 +810,24 @@ ED_ParseEdict (progs_t *pr, char *data, edict_t *ent)
 		if (keyname[0] == '_')
 			continue;
 
-		// If skyname is set, we want to allow skyboxes and set what
-		// the skybox name should be.  "qlsky" is supported since
-		// at least one other map uses it already.  --KB
-		if (stricmp (keyname, "sky") == 0 ||	// LordHavoc: added "sky" key 
-												// (Quake2 and DarkPlaces use 
-												// this)
-			stricmp (keyname, "skyname") == 0 ||
-			stricmp (keyname, "qlsky") == 0) {
-			Info_SetValueForKey (svs.info, "skybox",
-								 "1", MAX_SERVERINFO_STRING);
-			Cvar_Set (r_skyname, com_token);
-			continue;
-		}
-
 		key = ED_FindField (pr, keyname);
 		if (!key) {
-			Con_Printf ("%s is not a field\n", keyname);
-			continue;
+			if (!ED_Parse_Extra_Fields (pr, keyname, com_token)) {
+				Con_Printf ("%s is not a field\n", keyname);
+				continue;
+			}
+		} else {
+			if (anglehack) {
+				char        temp[32];
+
+				strncpy (temp, com_token, sizeof (temp));
+				temp[sizeof (temp) - 1] = 0;
+				snprintf (com_token, sizeof (com_token), "0 %s 0", temp);
+			}
+
+			if (!ED_ParseEpair (pr, (void *) &ent->v, key, com_token))
+				SV_Error ("ED_ParseEdict: parse error");
 		}
-
-		if (anglehack) {
-			char        temp[32];
-
-			strcpy (temp, com_token);
-			snprintf (com_token, sizeof (com_token), "0 %s 0", temp);
-		}
-
-		if (!ED_ParseEpair (pr, (void *) &ent->v, key, com_token))
-			SV_Error ("ED_ParseEdict: parse error");
 	}
 
 	if (!init)
@@ -927,7 +916,6 @@ void
 PR_LoadProgs (progs_t *pr)
 {
 	int         i;
-	char        num[32];
 	dstatement_t *st;
 
 // flush the non-C variable lookup cache
@@ -942,10 +930,8 @@ PR_LoadProgs (progs_t *pr)
 
 	Con_DPrintf ("Programs occupy %iK.\n", com_filesize / 1024);
 
-// add prog crc to the serverinfo
-	snprintf (num, sizeof (num), "%i",
-			  CRC_Block ((byte *) pr->progs, com_filesize));
-	Info_SetValueForStarKey (svs.info, "*progs", num, MAX_SERVERINFO_STRING);
+// store prog crc
+	pr->crc = CRC_Block ((byte *) pr->progs, com_filesize);
 
 // byte swap the header
 	for (i = 0; i < sizeof (*pr->progs) / 4; i++)

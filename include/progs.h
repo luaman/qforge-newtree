@@ -153,6 +153,10 @@ eval_t *GetEdictFieldValue(struct progs_s *pr, edict_t *ed, char *field);
 char *PR_GetString(struct progs_s *pr, int num);
 int PR_SetString(struct progs_s *pr, char *s);
 
+// externaly supplied functions
+
+int ED_Parse_Extra_Fields (struct progs_s *pr, char *key, char *value);
+
 //============================================================================
 
 #define MAX_STACK_DEPTH		32
@@ -195,6 +199,8 @@ typedef struct progs_s {
 	int				*num_edicts;
 	double			*time;
 	int				null_bad;
+
+	int				crc;
 } progs_t;
 
 #endif // _PROGS_H

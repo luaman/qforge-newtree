@@ -380,6 +380,8 @@ extern	cvar_t	*deathmatch;
 extern	cvar_t	*fraglimit;
 extern	cvar_t	*timelimit;
 
+extern	cvar_t	*r_skyname;
+
 extern	server_static_t	svs;				// persistant server info
 extern	server_t		sv;					// local server
 
