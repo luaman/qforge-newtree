@@ -1170,10 +1170,8 @@ GL_Upload32 (unsigned int *data, int width, int height, qboolean mipmap,
 	scaled_width = min (scaled_width, gl_max_size->int_val);
 	scaled_height = min (scaled_height, gl_max_size->int_val);
 
-	if (!
-		(scaled =
-		 malloc (scaled_width * scaled_height *
-				 sizeof (GLuint)))) Sys_Error ("GL_LoadTexture: too big");
+	if (!(scaled = malloc (scaled_width * scaled_height * sizeof (GLuint))))
+		Sys_Error ("GL_LoadTexture: too big");
 
 	samples = alpha ? gl_alpha_format : gl_solid_format;
 
