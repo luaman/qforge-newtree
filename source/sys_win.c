@@ -38,6 +38,44 @@
 /* This is unused in the client, but we need the symbol there too. */
 server_static_t	svs;
 
+/* The translation table between the graphical font and plain ASCII  --KB */
+static char qfont_table[256] =
+{
+	'\0', '#',  '#',  '#',  '#',  '.',  '#',  '#',
+	'#',  9,    10,   '#',  ' ',  13,   '.',  '.',
+	'[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
+	'6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
+	' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
+	'(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
+	'0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
+	'8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
+	'@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
+	'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
+	'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
+	'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
+	'`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
+	'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
+	'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
+	'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<',
+
+	'<',  '=',  '>',  '#',  '#',  '.',  '#',  '#',
+	'#',  '#',  ' ',  '#',  ' ',  '>',  '.',  '.',
+	'[',  ']',  '0',  '1',  '2',  '3',  '4',  '5',
+	'6',  '7',  '8',  '9',  '.',  '<',  '=',  '>',
+	' ',  '!',  '"',  '#',  '$',  '%',  '&',  '\'',
+	'(',  ')',  '*',  '+',  ',',  '-',  '.',  '/',
+	'0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',
+	'8',  '9',  ':',  ';',  '<',  '=',  '>',  '?',
+	'@',  'A',  'B',  'C',  'D',  'E',  'F',  'G',
+	'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
+	'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',
+	'X',  'Y',  'Z',  '[',  '\\', ']',  '^',  '_',
+	'`',  'a',  'b',  'c',  'd',  'e',  'f',  'g',
+	'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
+	'p',  'q',  'r',  's',  't',  'u',  'v',  'w',
+	'x',  'y',  'z',  '{',  '|',  '}',  '~',  '<'
+};
+
 /*
 ==============
 Sys_DoubleTime
@@ -56,7 +94,7 @@ double Sys_DoubleTime (void)
 		starttime = now;
 		return 0.0;
 	}
-	
+
 	if (now < starttime) // wrapped?
 		return (now / 1000.0) + (LONG_MAX - starttime / 1000.0);
 
@@ -65,7 +103,41 @@ double Sys_DoubleTime (void)
 
 	return (now - starttime) / 1000.0;
 }
+#define MAXPRINTMSG 4096
+/*
+================
+Sys_Printf
+================
+*/
+void Sys_Printf (char *fmt, ...)
+{
+	va_list		argptr;
+        char		msg[MAXPRINTMSG];
+	static char	lastmessage[MAXPRINTMSG];
+	static int	msgcount=0;
+	unsigned char	*p;
 
+	if (sys_nostdout->value)
+		return;
+
+	va_start (argptr, fmt);
+	vsnprintf (msg, sizeof(msg), fmt, argptr);
+	va_end (argptr);
+
+        if (strncmp(lastmessage,msg,MAXPRINTMSG)==0) {
+		msgcount+=1;
+		return;
+        } else {
+        	if (msgcount>0) printf("Last message repeated %d times\n",msgcount);
+		strncpy(lastmessage,msg,MAXPRINTMSG);
+	        msgcount=0;
+        }
+
+	/* translate to ASCII instead of printing [xx]  --KB */
+	for (p = (unsigned char *)msg; *p; p++)
+		putc(qfont_table[*p], stdout);
+	fflush(stdout);
+}
 
 /*
 ================
