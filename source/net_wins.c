@@ -27,7 +27,8 @@
 */
 
 #include "quakedef.h"
-#include "winquake.h"
+#include <windows.h>
+//#include "winquake.h"
 
 netadr_t	net_local_adr;
 
