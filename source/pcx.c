@@ -154,14 +154,13 @@ LoadPCX (QFile *f, int convert)
 */
 void
 WritePCXfile (char *filename, byte * data, int width, int height,
-			  int rowbytes, byte * palette, qboolean upload, qboolean flip)
+				int rowbytes, byte * palette, qboolean upload, qboolean flip)
 {
-	int         i, j, length;
-	pcx_t      *pcx;
-	byte       *pack;
+	int 	i, j, length;
+	pcx_t	*pcx;
+	byte	*pack;
 
-	pcx = Hunk_TempAlloc (width * height * 2 + 1000);
-	if (pcx == NULL) {
+	if (!(pcx = Hunk_TempAlloc (width * height * 2 + 1000))) {
 		Con_Printf ("WritePCXfile: not enough memory\n");
 		return;
 	}

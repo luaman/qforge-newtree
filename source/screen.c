@@ -660,26 +660,21 @@ SCR_ScreenShot_f (void)
 {
 	char        pcxname[MAX_OSPATH];
 
-	// 
 	// find a file name to save it to 
-	// 
 	if (!COM_NextFilename (pcxname, "qf", ".pcx")) {
 		Con_Printf ("SCR_ScreenShot_f: Couldn't create a PCX");
 		return;
 	}
-	// 
-	// save the pcx file 
-	// 
-	D_EnableBackBufferAccess ();		// enable direct drawing of console
-	// to back
-	// buffer
 
+	// enable direct drawing of console to back buffer
+	D_EnableBackBufferAccess ();
+
+	// save the pcx file
 	WritePCXfile (pcxname, vid.buffer, vid.width, vid.height, vid.rowbytes,
 				  host_basepal, false, false);
 
-	D_DisableBackBufferAccess ();		// for adapters that can't stay
-	// mapped in
-	// for linear writes all the time
+	// for adapters that can't stay mapped in for linear writes all the time
+	D_DisableBackBufferAccess ();
 
 	Con_Printf ("Wrote %s\n", pcxname);
 }
