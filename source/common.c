@@ -1467,7 +1467,8 @@ int COM_FOpenFile (char *filename, FILE **file)
 			for (i=0 ; i<pak->numfiles ; i++)
 				if (!strcmp (pak->files[i].name, filename))
 				{	// found it!
-					Sys_Printf ("PackFile: %s : %s\n",pak->filename, filename);
+					if(developer.value)
+						Sys_Printf ("PackFile: %s : %s\n",pak->filename, filename);
 				// open a new file on the pakfile
 					*file = fopen (pak->filename, "rb");
 					if (!*file)
