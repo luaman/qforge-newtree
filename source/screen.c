@@ -979,7 +979,7 @@ needs almost the entire 256k of stack space!
 */
 void SCR_UpdateScreen (void)
 {
-	static float	oldscr_viewsize;
+	static int	oldscr_viewsize;
 	vrect_t		vrect;
 
 	if (scr_skipupdate || block_drawing)

@@ -90,8 +90,6 @@ unsigned short	d_8to16table[256];
 unsigned int	d_8to24table[256];
 unsigned char	d_15to8table[65536];
 
-cvar_t	*vid_mode;
-
 #ifdef HAVE_DGA
 static int	hasdgavideo = 0;
 static int	hasdga = 0;
@@ -448,7 +446,6 @@ void VID_Init(unsigned char *palette)
 	char	gldir[MAX_OSPATH];
 
 	VID_GetWindowSize (640, 480);
-	vid_mode = Cvar_Get ("vid_mode","0",0,"None");
 	vid.maxwarpwidth = WARP_WIDTH;
 	vid.maxwarpheight = WARP_HEIGHT;
 	vid.colormap = host_colormap;

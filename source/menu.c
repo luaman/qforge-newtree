@@ -507,7 +507,7 @@ void M_Options_Draw (void)
 	M_Print (16, 48, "     Reset to defaults");
 
 	M_Print (16, 56, "           Screen size");
-	r = (scr_viewsize->int_val - 30) / (120 - 30);
+	r = (scr_viewsize->int_val - 30) / (120.0 - 30.0);
 	M_DrawSlider (220, 56, r);
 
 	M_Print (16, 64, "            Brightness");
