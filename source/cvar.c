@@ -229,7 +229,7 @@ Cvar_SetValue
 ============
 */
 // 1999-09-07 weird cvar zeros fix by Maddes
-void Cvar_SetValue (cvar_t *var_name, float value)
+void Cvar_SetValue (cvar_t *var, float value)
 {
 	char	val[32];
 	int		i;
@@ -239,7 +239,7 @@ void Cvar_SetValue (cvar_t *var_name, float value)
 	{
 		val[i] = 0;
 	}
-	Cvar_Set (var_name, val);
+	Cvar_Set (var, val);
 }
 
 /*
