@@ -54,6 +54,7 @@
 #define MAX_MODE_LIST	30
 #define VID_ROW_SIZE	3
 
+extern void (*vid_menudrawfn)(void);
 
 /* Unused */
 int		VGA_width, VGA_height, VGA_rowbytes, VGA_bufferrowbytes, VGA_planar;
