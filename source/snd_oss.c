@@ -114,7 +114,7 @@ SNDDMA_Init (void)
 	}
 
 	if (!(caps & DSP_CAP_TRIGGER) || !(caps & DSP_CAP_MMAP)) {
-		Con_Printf ("Error: Sound device can't do memory-mapped I/O.\n");
+		Con_Printf ("Sound device can't do memory-mapped I/O.\n");
 		close (audio_fd);
 		return 0;
 	}
