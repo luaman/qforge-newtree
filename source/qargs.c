@@ -115,7 +115,7 @@ void COM_InitArgv (int argc, char **argv)
 		{
 			strncat (com_cmdline, argv[i], len);
 			assert(len - strlen(com_cmdline) > 0);
-			strcat (com_cmdline, " ");
+			strncat (com_cmdline,  " ", sizeof(com_cmdline));
 		}
 		com_cmdline[len - 1] = '\0';
 	}

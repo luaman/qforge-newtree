@@ -108,7 +108,7 @@ void Mod_LoadAliasModel (model_t *mod, void *buffer)
 		for (len = com_filesize, p = buffer; len; len--, p++)
 			CRC_ProcessByte(&crc, *p);
 	
-		sprintf(st, "%d", (int) crc);
+		snprintf(st, sizeof(st), "%d", (int) crc);
 		Info_SetValueForKey (cls.userinfo, 
 			!strcmp(loadmodel->name, "progs/player.mdl") ? pmodel_name : emodel_name,
 			st, MAX_INFO_STRING);

@@ -620,10 +620,10 @@ void Con_DrawConsole (int lines)
 			y = x - i - 11;
 			strncpy(dlbar, text, i);
 			dlbar[i] = 0;
-			strcat(dlbar, "...");
+			strncat (dlbar,  "...", sizeof(dlbar));
 		} else
 			strcpy(dlbar, text);
-		strcat(dlbar, ": ");
+		strncat (dlbar,  ": ", sizeof(dlbar));
 		i = strlen(dlbar);
 		dlbar[i++] = '\x80';
 		// where's the dot go?

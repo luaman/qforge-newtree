@@ -31,9 +31,6 @@
 #endif
 
 #include <limits.h>
-#ifndef WIN32
-#include <sys/param.h>
-#endif
 #include <string.h>
 
 #include "client.h"

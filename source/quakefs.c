@@ -1145,5 +1145,5 @@ void COM_DefaultExtension (char *path, char *extension)
 		src--;
 	}
 
-	strcat (path, extension);
+	strncat (path,  extension, sizeof(path));
 }

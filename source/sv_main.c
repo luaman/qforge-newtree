@@ -545,7 +545,7 @@ SVC_Log (void)
 				 NET_AdrToString (net_from));
 
 	// sprintf (data, "stdlog %i\n", svs.logsequence-1);
-	// strcat (data, (char *)svs.log_buf[((svs.logsequence-1)&1)]);
+	// strncat (data,  (char *)svs.log_buf[((svs.logsequence-1)&1)], sizeof(data));
 	snprintf (data, sizeof (data), "stdlog %i\n%s",
 			  svs.logsequence - 1,
 			  (char *) svs.log_buf[((svs.logsequence - 1) & 1)]);
@@ -1210,7 +1210,7 @@ SV_SendBan (void)
 	data[0] = data[1] = data[2] = data[3] = 0xff;
 	data[4] = A2C_PRINT;
 	data[5] = 0;
-	strcat (data, "\nbanned.\n");
+	strncat (data,  "\nbanned.\n", sizeof(data));
 
 	NET_SendPacket (strlen (data), data, net_from);
 }

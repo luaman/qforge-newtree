@@ -328,7 +328,7 @@ void CL_CheckForResend (void)
 
 	VID_SetCaption (va ("Connecting to %s", cls.servername));
 	Con_Printf ("Connecting to %s...\n", cls.servername);
-	sprintf (data, "%c%c%c%cgetchallenge\n", 255, 255, 255, 255);
+	snprintf (data, sizeof(data), "%c%c%c%cgetchallenge\n", 255, 255, 255, 255);
 	NET_SendPacket (strlen(data), data, adr);
 }
 
@@ -596,9 +596,9 @@ void CL_Color_f (void)
 	if (bottom > 13)
 		bottom = 13;
 	
-	sprintf (num, "%i", top);
+	snprintf (num, sizeof(num), "%i", top);
 	Cvar_Set (topcolor, num);
-	sprintf (num, "%i", bottom);
+	snprintf (num, sizeof(num), "%i", bottom);
 	Cvar_Set (bottomcolor, num);
 }
 
@@ -1171,8 +1171,8 @@ void CL_Init (void)
 	Info_SetValueForKey (cls.userinfo, "bottomcolor", "0", MAX_INFO_STRING);
 	Info_SetValueForKey (cls.userinfo, "rate", "2500", MAX_INFO_STRING);
 	Info_SetValueForKey (cls.userinfo, "msg", "1", MAX_INFO_STRING);
-//	sprintf (st, "%s-%04d", QW_VERSION, build_number());
-	sprintf (st, "%s", QW_VERSION);
+//	snprintf (st, sizeof(st), "%s-%04d", QW_VERSION, build_number());
+	snprintf (st, sizeof(st), "%s", QW_VERSION);
 	Info_SetValueForStarKey (cls.userinfo, "*ver", st, MAX_INFO_STRING);
 	Info_SetValueForStarKey (cls.userinfo, "stdver", QSG_VERSION, MAX_INFO_STRING);
 

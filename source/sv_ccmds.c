@@ -528,7 +528,7 @@ void SV_ConSay_f(void)
 		p[strlen(p)-1] = 0;
 	}
 
-	strcat(text, p);
+	strncat (text,  p, sizeof(text));
 
 	for (j = 0, client = svs.clients; j < MAX_CLIENTS; j++, client++)
 	{
@@ -774,7 +774,7 @@ void SV_Snap (int uid)
 		return;
 	}
 
-	sprintf(pcxname, "%d-00.pcx", uid);
+	snprintf (pcxname, sizeof(pcxname), "%d-00.pcx", uid);
 
 	snprintf (checkname, sizeof(checkname), "%s/snap", com_gamedir);
 	COM_CreatePath (va ("%s/dummy", checkname));

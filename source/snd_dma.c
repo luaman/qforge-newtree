@@ -957,7 +957,7 @@ void S_Play(void)
 		if (!strrchr(Cmd_Argv(i), '.'))
 		{
 			strcpy(name, Cmd_Argv(i));
-			strcat(name, ".wav");
+			strncat (name,  ".wav", sizeof(name));
 		}
 		else
 			strcpy(name, Cmd_Argv(i));
@@ -981,7 +981,7 @@ void S_PlayVol(void)
 		if (!strrchr(Cmd_Argv(i), '.'))
 		{
 			strcpy(name, Cmd_Argv(i));
-			strcat(name, ".wav");
+			strncat (name,  ".wav", sizeof(name));
 		}
 		else
 			strcpy(name, Cmd_Argv(i));
