@@ -97,12 +97,15 @@ cvar_t		*vid_waitforrefresh;
  
 char	*framebuffer_ptr;
 
+/*
 cvar_t  mouse_button_commands[3] =
 {
     {"mouse1","+attack"},
     {"mouse2","+strafe"},
     {"mouse3","+forward"},
 };
+CVAR_FIXME */
+cvar_t	*mouse_button_commands[3];
 
 int     mouse_buttons;
 int     mouse_buttonstate;
@@ -896,6 +899,12 @@ void IN_Init(void)
 //		Cvar_RegisterVariable (&mouse_button_commands[0]);
 //		Cvar_RegisterVariable (&mouse_button_commands[1]);
 //		Cvar_RegisterVariable (&mouse_button_commands[2]);
+		mouse_button_commands[0] = Cvar_Get ("mouse1","+attack",
+					CVAR_NONE, "None");
+		mouse_button_commands[1] = Cvar_Get ("mouse2","+strafe",
+					CVAR_NONE, "None");
+		mouse_button_commands[2] = Cvar_Get ("mouse3","+forward",
+					CVAR_NONE, "None");
 		Cmd_AddCommand ("force_centerview", Force_CenterView_f);
 
 		mouse_buttons = 3;
