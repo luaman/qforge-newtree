@@ -120,7 +120,7 @@ CheckMultiTextureExtensions (void)
 byte
 LHFindColor(unsigned char *palette, int first, int last, int r, int g, int b)
 {
-	int bestdistance, bestcolor, distance, color[3];
+	int i, bestdistance, bestcolor, distance, color[3];
 	bestdistance = 1000000000;
 	bestcolor = first;
 	color[0] = r;
@@ -131,7 +131,7 @@ LHFindColor(unsigned char *palette, int first, int last, int r, int g, int b)
 	{
 		// LordHavoc: distance in color cube from desired color
 		distance = VectorDistance_fast(palette, color);
-		if (distance < bestdist)
+		if (distance < bestdistance)
 		{
 			bestdistance = distance;
 			bestcolor = i;
@@ -155,7 +155,7 @@ VID_SetPalette (unsigned char *palette)
 	// LordHavoc: cleaned up stupid endian-specific table building,
 	//            now builds directly as bytes
 	pal = palette;
-	out = (byte *)&table_8to24table;
+	out = (byte *)&d_8to24table;
 	for (i = 0; i < 255; i++) {
 		*out++ = *pal++;
 		*out++ = *pal++;
