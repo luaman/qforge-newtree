@@ -845,7 +845,7 @@ R_DrawAliasModel (entity_t *e)
 	if (clmodel->hasfullbrights && gl_fb_models->int_val &&
 		paliashdr->gl_fb_texturenum[currententity->skinnum][anim]) {
 		glBindTexture (GL_TEXTURE_2D, paliashdr->gl_fb_texturenum[currententity->skinnum][anim]);
-		if (gl_lerp_anim->int_val && !torch) {
+		if (gl_lerp_anim->int_val) {
 			R_SetupAliasBlendedFrame (currententity->frame, paliashdr, currententity, true);
 		} else {
 			R_SetupAliasFrame (currententity->frame, paliashdr, true);
