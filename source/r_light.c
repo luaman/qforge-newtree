@@ -76,7 +76,7 @@ DYNAMIC LIGHTS
 R_MarkLights
 =============
 */
-void R_MarkLights (dlight_t *light, int bit, mnode_t *node)
+void R_MarkLights (vec3_t lightorigin, dlight_t *light, int bit, mnode_t *node)
 {
 	mplane_t	*splitplane;
 	float		dist;
@@ -87,16 +87,16 @@ void R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 		return;
 
 	splitplane = node->plane;
-	dist = DotProduct (light->origin, splitplane->normal) - splitplane->dist;
+	dist = DotProduct (lightorigin, splitplane->normal) - splitplane->dist;
 	
 	if (dist > light->radius)
 	{
-		R_MarkLights (light, bit, node->children[0]);
+		R_MarkLights (lightorigin, light, bit, node->children[0]);
 		return;
 	}
 	if (dist < -light->radius)
 	{
-		R_MarkLights (light, bit, node->children[1]);
+		R_MarkLights (lightorigin, light, bit, node->children[1]);
 		return;
 	}
 		
@@ -112,8 +112,8 @@ void R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 		surf->dlightbits |= bit;
 	}
 
-	R_MarkLights (light, bit, node->children[0]);
-	R_MarkLights (light, bit, node->children[1]);
+	R_MarkLights (lightorigin, light, bit, node->children[0]);
+	R_MarkLights (lightorigin, light, bit, node->children[1]);
 }
 
 
@@ -122,10 +122,11 @@ void R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 R_PushDlights
 =============
 */
-void R_PushDlights (void)
+void R_PushDlights (vec3_t entorigin)
 {
 	int		i;
 	dlight_t	*l;
+	vec3_t	lightorigin;
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
 											//  advanced yet for this frame
@@ -135,7 +136,8 @@ void R_PushDlights (void)
 	{
 		if (l->die < cl.time || !l->radius)
 			continue;
-		R_MarkLights ( l, 1<<i, cl.worldmodel->nodes );
+		VectorSubtract(l->origin, entorigin, lightorigin);
+		R_MarkLights (lightorigin, l, 1<<i, cl.worldmodel->nodes );
 	}
 }
 

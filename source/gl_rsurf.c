@@ -861,13 +861,15 @@ void R_DrawBrushModel (entity_t *e)
 	// instanced model
 	if (clmodel->firstmodelsurface != 0 && !gl_flashblend->value)
 	{
+		vec3_t lightorigin;
 		for (k=0 ; k<MAX_DLIGHTS ; k++)
 		{
 			if ((cl_dlights[k].die < cl.time) ||
 				(!cl_dlights[k].radius))
 				continue;
 
-			R_MarkLights (&cl_dlights[k], 1<<k,
+			VectorSubtract(cl_dlights[k].origin, e->origin, lightorigin);
+			R_MarkLights (lightorigin, &cl_dlights[k], 1<<k,
 				clmodel->nodes + clmodel->hulls[0].firstclipnode);
 		}
 	}
@@ -1043,8 +1045,6 @@ void R_DrawWorld (void)
 	VectorCopy (r_refdef.vieworg, modelorg);
 
 	currententity = &ent;
-
-	R_PushDlights (); // LordHavoc: moved from V_RenderView to R_DrawWorld
 
 	glColor3f (1.0, 1.0, 1.0);
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));

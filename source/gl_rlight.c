@@ -214,31 +214,30 @@ R_MarkLights
 */
 // LordHavoc: heavily modified, to eliminate unnecessary texture uploads,
 //            and support bmodel lighting better
-void R_MarkLights (dlight_t *light, int bit, mnode_t *node)
+void R_MarkLights (vec3_t lightorigin, dlight_t *light, int bit, mnode_t *node)
 {
 	mplane_t	*splitplane;
 	float		dist, l, maxdist;
 	msurface_t	*surf;
 	int			i, j, s, t;
-	vec3_t		impact, lightorigin;
+	vec3_t		impact;
 	
 	if (node->contents < 0)
 		return;
 
-	VectorSubtract(light->origin, currententity->origin, lightorigin);
 	splitplane = node->plane;
 	dist = DotProduct (lightorigin, splitplane->normal) - splitplane->dist;
 	
 	if (dist > light->radius)
 	{
 		if (node->children[0]->contents >= 0) // save some time by not pushing another stack frame
-			R_MarkLights (light, bit, node->children[0]);
+			R_MarkLights (lightorigin, light, bit, node->children[0]);
 		return;
 	}
 	if (dist < -light->radius)
 	{
 		if (node->children[1]->contents >= 0) // save some time by not pushing another stack frame
-			R_MarkLights (light, bit, node->children[1]);
+			R_MarkLights (lightorigin, light, bit, node->children[1]);
 		return;
 	}
 
@@ -273,9 +272,9 @@ void R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 	}
 
 	if (node->children[0]->contents >= 0) // save some time by not pushing another stack frame
-		R_MarkLights (light, bit, node->children[0]);
+		R_MarkLights (lightorigin, light, bit, node->children[0]);
 	if (node->children[1]->contents >= 0) // save some time by not pushing another stack frame
-		R_MarkLights (light, bit, node->children[1]);
+		R_MarkLights (lightorigin, light, bit, node->children[1]);
 }
 
 
@@ -284,10 +283,11 @@ void R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 R_PushDlights
 =============
 */
-void R_PushDlights (void)
+void R_PushDlights (vec3_t entorigin)
 {
 	int		i;
 	dlight_t	*l;
+	vec3_t	lightorigin;
 
 	if (gl_flashblend->value)
 		return;
@@ -300,7 +300,8 @@ void R_PushDlights (void)
 	{
 		if (l->die < cl.time || !l->radius)
 			continue;
-		R_MarkLights ( l, 1<<i, cl.worldmodel->nodes );
+		VectorSubtract(l->origin, entorigin, lightorigin);
+		R_MarkLights (lightorigin, l, 1<<i, cl.worldmodel->nodes );
 	}
 }
 
