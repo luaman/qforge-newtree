@@ -1389,7 +1389,7 @@ Host_SimulationTime (float time)
 	float		timescale = 1.0;
 
 	if (cls.demoplayback) {
-		timescale = max (0.001, cl_demospeed->value);
+		timescale = max (0, cl_demospeed->value);
 		time *= timescale;
 	}
 
