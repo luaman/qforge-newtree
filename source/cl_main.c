@@ -58,6 +58,12 @@
 #include "draw.h"
 #include "qargs.h"
 #include "cdaudio.h"
+
+#ifdef __sun
+/* Sun's model_t in sys/model.h conflicts w/ Quake's model_t */
+#define model_t sunmodel_t
+#endif
+
 #ifdef _WIN32
 #include "winquake.h"
 #include "winsock.h"
@@ -65,7 +71,15 @@
 #else
 #include <netinet/in.h>
 #endif
+
+#ifdef __sun
+#undef model_t
+#endif
+
 #include <cl_slist.h>
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 
 
 // we need to declare some mouse variables here, because the menu system
