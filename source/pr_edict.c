@@ -29,24 +29,19 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "pr_comp.h"
-#include "progs.h"
-#include "console.h"
-#include "server.h"
-#include "world.h"
-#include "msg.h"
+
+#include <string.h>
+
 #include "cmd.h"
-#include "commdef.h"
+#include "console.h"
 #include "crc.h"
+#include "cvar.h"
+#include "progs.h"
+#include "qdefs.h"
 #include "qendian.h"
 #include "quakefs.h"
-
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
+#include "server.h"
+#include "world.h"
 
 cvar_t     *r_skyname;
 cvar_t     *pr_boundscheck;

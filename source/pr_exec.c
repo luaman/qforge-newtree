@@ -29,22 +29,12 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "pr_comp.h"
-#include "progs.h"
+
 #include "console.h"
+#include "cvar.h"
+#include "progs.h"
 #include "server.h"
-#include "world.h"
-#include "msg.h"
-#include "cmd.h"
-#include "commdef.h"
 #include "sys.h"
-
-#include <stdarg.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-
-void        SV_Error (char *error, ...);
 
 typedef struct {
 	int         s;

@@ -29,22 +29,14 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "pr_comp.h"
-#include "va.h"
-#include "progs.h"
-#include "console.h"
-#include "server.h"
-#include "world.h"
-#include "msg.h"
-#include "cmd.h"
-#include "commdef.h"
-#include "info.h"
 
-#include <stdlib.h>
-#include <math.h>
 #include <string.h>
 
-void        SV_Error (char *error, ...);
+#include "cmd.h"
+#include "msg.h"
+#include "server.h"
+#include "world.h"
+#include "va.h"
 
 #define	RETURN_EDICT(e) (((int *)pr_globals)[OFS_RETURN] = EDICT_TO_PROG(e))
 #define	RETURN_STRING(s) (((int *)pr_globals)[OFS_RETURN] = PR_SetString(s))

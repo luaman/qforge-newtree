@@ -29,19 +29,8 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "pr_comp.h"
-#include "progs.h"
-#include "console.h"
-#include "server.h"
-#include "world.h"
-#include "msg.h"
-#include "cmd.h"
-#include "commdef.h"
-#include "info.h"
 
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
+#include "progs.h"
 
 int         eval_alpha, eval_scale, eval_glowsize, eval_glowcolor,
 
