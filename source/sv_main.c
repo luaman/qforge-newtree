@@ -626,7 +626,7 @@ void SVC_GetChallenge (void)
 	}
 
 	// send it back
-	Netchan_OutOfBandPrint (net_from, "%c%i", S2C_CHALLENGE,
+	Netchan_OutOfBandPrint (net_from, "%c%i QF", S2C_CHALLENGE,
 			svs.challenges[i].challenge);
 }
 

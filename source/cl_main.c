@@ -82,6 +82,7 @@
 #include <strings.h>
 #endif
 
+void CL_RemoveQFInfoKeys ();
 
 // we need to declare some mouse variables here, because the menu system
 // references them even when on a unix system.
@@ -489,8 +490,7 @@ void CL_Disconnect (void)
 
 		cls.demoplayback = cls.demorecording = cls.timedemo = false;
 
-		Info_RemoveKey (cls.userinfo, "*cap");
-		Info_RemoveKey (cls.userinfo, "*qsg_version");
+		CL_RemoveQFInfoKeys ();
 	}
 	Cam_Reset();
 
@@ -658,19 +658,41 @@ void CL_FullServerinfo_f (void)
 	} else {
 		allowskybox = false;
 	}
-	if ((p = Info_ValueForKey (cl.serverinfo, "*qsg_version")) && *p) {
-		char cap[100] = "";		// max of 98 or so flags
-		// set the capabilities info. single char flags (possibly with
-		// modifiefs)
-		// defined capabilities:
+}
+
+/*
+
+	CL_AddQFInfoKeys
+
+*/
+
+void
+CL_AddQFInfoKeys ()
+{
+	char cap[100] = "";		// max of 98 or so flags
+	// set the capabilities info. single char flags (possibly with
+	// modifiefs)
+	// defined capabilities:
+	//  z   client can accept gzipped files.
 #ifdef HAVE_ZLIB
-		//  z   client can accept gzipped files.
-		strcat (cap, "z");
+	strcat (cap, "z");
 #endif
-		Info_SetValueForStarKey (cls.userinfo, "*cap", cap, MAX_INFO_STRING);
-		Info_SetValueForStarKey (cls.userinfo, "*qsg_version", QSG_VERSION,
-				MAX_SERVERINFO_STRING);
-	}
+	Info_SetValueForStarKey (cls.userinfo, "*cap", cap, MAX_INFO_STRING);
+	Info_SetValueForStarKey (cls.userinfo, "*qsg_version", QSG_VERSION,
+			MAX_SERVERINFO_STRING);
+	Con_Printf ("QuakeForge server detected\n");
+}
+
+/*
+
+	CL_RemoveQFInfoKeys
+
+*/
+void
+CL_RemoveQFInfoKeys ()
+{
+	Info_RemoveKey (cls.userinfo, "*cap");
+	Info_RemoveKey (cls.userinfo, "*qsg_version");
 }
 
 /*
@@ -1004,6 +1026,8 @@ void CL_ConnectionlessPacket (void)
 
 		s = MSG_ReadString ();
 		cls.challenge = atoi(s);
+		if (strstr (s, "QF"))
+			CL_AddQFInfoKeys ();
 		CL_SendConnectPacket ();
 		return;
 	}
